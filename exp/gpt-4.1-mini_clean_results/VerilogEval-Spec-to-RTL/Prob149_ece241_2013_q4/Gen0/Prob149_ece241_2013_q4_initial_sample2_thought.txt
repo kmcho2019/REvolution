@@ -1,0 +1,20 @@
+Design a synchronous state machine to track the previous water level state based on sensor inputs s. The state machine updates the previous water level state only when the sensor input changes in a way that crosses one of the sensor thresholds. The flow outputs fr2, fr1, fr0 are set according to the current sensor input to represent the nominal flow rates as per the table, and dfr (supplemental flow valve) is asserted if the current level is higher than the previous level (indicating the water level has risen past a sensor boundary). On synchronous reset, all outputs are asserted and the previous level state is set to "below s[0]" (lowest), which corresponds to no sensors asserted. The logic must properly decode s for current level, compare it with previous level, and produce outputs accordingly.
+
+Implementation steps:
+1. Define an enumerated type or parameters for water levels:
+   - Level 0: Below s[0] (none asserted)
+   - Level 1: Between s[1] and s[0] (s[0] asserted only)
+   - Level 2: Between s[2] and s[1] (s[0] and s[1] asserted)
+   - Level 3: Above s[2] (s[0], s[1], s[2] asserted)
+   
+2. Decode current sensor reading to current_level.
+
+3. Keep a register previous_level that is updated only when the sensor changes level (current_level != previous_level).
+
+4. Use previous_level and current_level to determine if water level rose (current_level > previous_level). If yes, dfr=1; else 0.
+
+5. Determine nominal flow outputs fr2, fr1, fr0 from current_level according to the table.
+
+6. On reset, set previous_level to 0 (lowest level) and all outputs to 1 (max flow).
+
+This approach models water level states and transitions neatly and fulfills all requirements.

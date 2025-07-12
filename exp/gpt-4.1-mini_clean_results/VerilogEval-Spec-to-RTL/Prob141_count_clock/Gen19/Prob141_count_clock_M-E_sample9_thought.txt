@@ -1,0 +1,9 @@
+Implement a fully BCD-coded 12-hour clock with separate two-digit BCD counters for hours, minutes, and seconds. Each digit is a 4-bit register. This avoids any binary-to-BCD conversions and simplifies output logic.
+
+- Use three separate always blocks for seconds, minutes, and hours incrementing on ena and clock, with synchronous reset.
+- Increment seconds units first; on rollover from 9 to 0 increment seconds tens; on seconds tens rollover from 5 to 0 increment minutes units; and so on.
+- For hours, count from 1 to 12 in BCD digits: increment hours units digit from 1 to 9, then tens digit for '1' (representing 10-12). When incrementing from 12, roll back to 01 and toggle pm.
+- PM toggles when hours roll over from 11 to 12; this can be detected by checking if hours tens == 1 and units == 2 before increment.
+- To handle hours increment, implement conditional logic for BCD increments within the valid 12-hour range.
+- Outputs are directly the registered BCD digits; no conversion needed.
+- This pure BCD approach reduces combinational logic, allows more uniform increment logic, and eases timing because all counters use BCD and simple rollover logic.

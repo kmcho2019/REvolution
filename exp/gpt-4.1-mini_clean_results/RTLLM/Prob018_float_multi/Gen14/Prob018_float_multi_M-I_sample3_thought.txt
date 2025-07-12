@@ -1,0 +1,32 @@
+To improve the design's performance, power, and area (PPA) while maintaining correctness:
+
+1. **Deeper Pipelining:** 
+   - Split the multiplication and normalization/rounding stages into separate pipeline stages. 
+   - This reduces the critical path delay in each clock cycle, allowing higher clock frequency.
+   - Use a 3-stage pipeline counter instead of 2-stage to separate input capture, multiplication, and normalization/rounding/output generation.
+
+2. **Reduce Signal Widths and Logic Depth:**
+   - Keep exponent widths at 9 bits internally (8 bits + 1 bit for overflow/underflow handling).
+   - Use narrower internal signals where possible.
+   - Perform rounding increment logic in a smaller combinational block.
+
+3. **Minimize Register Bitwidths and Move Complex Logic to Next Pipeline Stage:**
+   - Register only needed bits at each stage, especially for the 48-bit multiplication product.
+   - Use registers to break the 48-bit path after multiplication before normalization logic.
+
+4. **Clock Gating and Power Reduction:**
+   - Not explicitly added here due to complexity but by pipelining, dynamic switching activity per stage is reduced.
+   - Special case detection done once at input capture and passed down as flags to reduce repeated computation.
+
+5. **Maintain Clear Code and Use Nonblocking Assignments Only in Sequential Blocks.**
+
+This approach trades one extra clock cycle of latency for significantly improved clock speed potential and power/area optimizations by reducing combinational complexity per cycle.
+
+The pipeline stages:
+- Stage 0: Input capture and special case detection.
+- Stage 1: Mantissa multiplication, exponent addition, and sign calculation.
+- Stage 2: Normalization, rounding, overflow/underflow, and output formatting.
+
+Each stage has its own registered signals.
+
+This ensures better timing distribution and cleaner state control.

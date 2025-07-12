@@ -1,0 +1,9 @@
+I will refactor the 64-bit pipelined ripple carry adder by separating the combinational addition of each pipeline stage from the pipelined registers. The inputs will be sliced and registered per stage, and the addition and carry propagation for each stage will be done combinationally each clock cycle from the registered operands and carry-in.
+
+The pipeline stages will be implemented as arrays of registers for operand slices, sum slices, carry signals, and valid enable flags. Instead of combining all addition in one always block, each stage's sum and carry will be calculated by combinational assign statements feeding into registers at the next clock edge. 
+
+This approach improves clarity by distinguishing combinational and sequential logic, uses non-blocking assignments only in sequential logic, and uses assign statements for addition calculations. 
+
+The output enable signal is pipelined together with the data. Final result concatenation is done from registered sums and the last carry bit.
+
+Parameterization remains for DATA_WIDTH and STG_WIDTH, with default values 64 and 16. The module is purely synchronous with synchronous reset. This refactor will maintain the same pipeline latency and behavior but with clearer structure and signal separation.

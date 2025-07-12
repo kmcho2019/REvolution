@@ -1,0 +1,8 @@
+To solve this problem, we will implement a finite state machine (FSM) in Verilog. The FSM will have several states: 
+1. IDLE: This is the initial state where the module waits for the start bit.
+2. START_BIT: After detecting the start bit, the module enters this state.
+3. DATA_BITS: The module then enters this state to collect the 8 data bits.
+4. STOP_BIT: After collecting the data bits, the module waits for the stop bit in this state.
+5. STOP_BIT_ERROR: If the stop bit does not appear as expected, the module enters this state and waits for a stop bit before returning to the IDLE state.
+
+The module will use a counter to keep track of the number of data bits collected and a register to store the received data byte. The `done` signal will be asserted when a stop bit is detected, and the `out_byte` will be updated with the received data byte.

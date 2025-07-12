@@ -1,0 +1,11 @@
+Simplified and corrected design for 3.5x fractional divider:
+1. Maintain 7-state counter (0-6) for basic division ratio
+2. Generate two clock phases:
+   - Primary phase (clk_0) high for 4 cycles (0-3)
+   - Secondary phase (clk_180) high for 3 cycles (4-6)
+3. Use simple OR combination of both phases
+4. Key improvements:
+   - Eliminate negedge-triggered logic (potential timing issues)
+   - Use same counter for both phases (simpler synchronization)
+   - Clear phase relationship (4+3 cycles = 7 total)
+   - Maintains 50% duty cycle in combined output

@@ -1,0 +1,13 @@
+To improve power and performance while maintaining the correct behavior, we apply these enhancements:
+
+1. Reduce redundant condition evaluations by precomputing key signals like `fall_condition`, `start_dig`, and `bump_condition`. This can reduce fanout and glitches in combinational logic.
+
+2. Only update the `prev_ground` register when `ground` actually changes to reduce unnecessary toggling, decreasing power consumption.
+
+3. Implement input synchronization registers for asynchronous inputs `bump_left`, `bump_right`, and `dig` to reduce metastability and glitches, which helps power and reliability.
+
+4. Combine walk outputs into a single vector internally (direction signal), then split outputs to minimize combinational logic.
+
+5. Use explicit reset value for `prev_ground` and synchronize all asynchronous inputs on reset.
+
+These changes streamline the FSM logic, improve glitching behavior, and reduce dynamic power, while keeping area minimal and timing safe.

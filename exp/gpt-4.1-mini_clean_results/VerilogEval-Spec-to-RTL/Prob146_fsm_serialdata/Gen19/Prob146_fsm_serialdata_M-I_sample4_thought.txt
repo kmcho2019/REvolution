@@ -1,0 +1,27 @@
+To improve the existing FSM for better performance and power efficiency while maintaining correctness:
+
+1. Change state encoding from one-hot (4 flip-flops) to binary (2 flip-flops) to reduce area and routing complexity. Although one-hot can be faster, the FSM is small, so binary encoding will not degrade timing much but saves area.
+
+2. Optimize the bit counter by gating its enable only when counting is needed, which was already done, but implement the counter as a 3-bit binary counter with a clear signal, resetting it immediately upon leaving RECEIVE state to reduce toggling.
+
+3. Simplify the shift register update by shifting right (consistent with serial LSB first) and inserting input bit at MSB. This is a common convention and allows straightforward extraction of bits.
+
+4. Introduce an explicit enable signal for the shift register and counter that is asserted only during RECEIVE state to reduce unnecessary toggling.
+
+5. Register the input 'in' to synchronize and reduce combinational logic in next-state decision (optional but good practice).
+
+6. Output 'done' as a single-cycle pulse at the stop bit if valid; output 'out_byte' as registered data. Keep outputs registered to avoid glitches.
+
+7. Remove unnecessary resets to shift register when not needed, holding values stable.
+
+8. Implement next-state logic as simple combinational logic with binary states, minimizing combinational path delay.
+
+This strategy reduces area by halving the number of state FFs, reduces power by gating counters and shift registers, and maintains good timing by minimizing combinational logic depth and complexity.
+
+Note: Since stop bit must be '1', if stop bit is '0', we enter ERROR_WAIT state and wait for next stop bit before returning to IDLE.
+
+Summary of new state encoding:
+- IDLE = 2'b00
+- RECEIVE = 2'b01
+- STOP = 2'b10
+- ERROR_WAIT = 2'b11

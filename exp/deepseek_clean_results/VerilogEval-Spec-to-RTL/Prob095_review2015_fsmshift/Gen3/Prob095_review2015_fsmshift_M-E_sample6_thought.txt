@@ -1,0 +1,13 @@
+Here's a novel approach using a one-hot encoded state machine with explicit cycle counting:
+
+1. Instead of a binary counter, use a one-hot shift register to track the 4 active cycles
+2. Initialize with '0001' on reset, then shift left each cycle
+3. The shift_ena output is simply the OR of all shift register bits
+4. After 4 shifts, the register becomes '0000' and stays there until next reset
+5. This provides precise 4-cycle control with minimal logic and clear state transitions
+
+Advantages:
+- Explicit cycle counting through shifting
+- No need for comparison logic (just OR gate)
+- Naturally stops after 4 cycles
+- Easily extensible if cycle count needs to change

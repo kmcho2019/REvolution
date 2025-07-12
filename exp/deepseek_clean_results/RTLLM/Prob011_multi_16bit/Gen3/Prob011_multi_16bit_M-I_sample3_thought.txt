@@ -1,0 +1,23 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. **Timing Optimization**:
+   - Remove the pre-computed shift array and calculate shifts on-demand to reduce critical path
+   - Pipeline the shift operation by registering intermediate results
+   - Simplify state machine transitions
+
+2. **Power Optimization**:
+   - Only compute shifts when needed (when areg[count] is 1)
+   - Gate clock to registers when in IDLE state
+   - Add enable signals to prevent unnecessary toggling
+
+3. **Area Optimization**:
+   - Reduce register sizes where possible
+   - Use more efficient state encoding
+   - Share resources between operations
+
+Key changes:
+- Dynamic shift calculation instead of pre-computed array
+- Conditional accumulation to reduce switching
+- Simplified state machine with fewer transitions
+- Registered intermediate results for better timing
+- Optimized counter and register sizes

@@ -1,0 +1,34 @@
+The problem specifies implementing the final K-map function using one 4-to-1 multiplexer with selector inputs a and b (external and not inputs to TopModule), and generating its four data inputs (mux_in[3:0]) as functions of c and d only. We must use only 2-to-1 multiplexers (mux2) to build these signals, minimizing their count and complexity.
+
+Key clarifications and improvements:
+
+- Do NOT use a and b as inputs or selectors inside TopModule; a and b select the final 4-to-1 mux outside.
+
+- Implement all mux_in[i] purely as functions of c and d with mux2 modules where:
+  - NOT x = mux2(sel=x, in0=1, in1=0)
+  - AND(x,y) = mux2(sel=x, in0=0, in1=y)
+  - OR(x,y) = NOT(AND(NOT x, NOT y)), implemented as mux2 modules accordingly.
+
+- Use the K-map given for each ab column to derive mux_in[i]:
+
+  For ab=00 (mux_in[0]):
+    Values for cd=00,01,11,10 are 0,1,1,1.
+    Boolean expression minimized:
+    From K-map, this corresponds to (c + d)
+
+  For ab=01 (mux_in[1]):
+    All 0's.
+
+  For ab=11 (mux_in[2]):
+    Values: 0,0,1,0
+    Simplify: (c & d)
+
+  For ab=10 (mux_in[3]):
+    Values: 1,0,1,1
+    Simplify to d' + c*d = mux2(d, 1, c)
+
+- Carefully implement these expressions using mux2 modules with c and d as selectors and inputs, using the minimal number of mux2s.
+
+- Assign mux_in[1] = 0 directly.
+
+This approach aligns with the problem constraints, using only mux2 modules, no other gates, and external a,b select the 4-to-1 mux.

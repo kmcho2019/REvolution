@@ -1,0 +1,11 @@
+The design involves creating a shift register that collects serial input bits and converts them to parallel output. Here's the thought process:
+1. Use an 8-bit shift register to accumulate incoming serial bits
+2. Use a 4-bit counter to track received bits (since 3 bits can't count to 8)
+3. On each valid clock edge when din_valid is high:
+   - Shift in the new bit (MSB first)
+   - Increment the counter
+4. When counter reaches 8:
+   - Output the accumulated 8 bits
+   - Set dout_valid high for one cycle
+   - Reset the counter for next byte
+5. Handle synchronous reset to clear all registers

@@ -1,0 +1,17 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break critical path by registering the bit_count comparison (bit_count == 3'b111)
+   - Simplify state transition conditions by moving some logic to sequential block
+
+2. Power Optimization:
+   - Add clock gating for data_reg to reduce switching activity when not in RECEIVE state
+   - Optimize done_reg to only update when needed
+
+3. Area Optimization:
+   - Keep efficient 2-bit state encoding
+   - Maintain minimal register usage while ensuring functionality
+
+4. Functional Improvements:
+   - Add explicit reset values for all registers
+   - Ensure clean state transitions with default cases
+   - Maintain LSB-first reception with efficient shift

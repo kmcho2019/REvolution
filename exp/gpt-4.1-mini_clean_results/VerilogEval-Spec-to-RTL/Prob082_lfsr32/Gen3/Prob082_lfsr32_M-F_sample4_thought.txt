@@ -1,0 +1,10 @@
+Implement the 32-bit Galois LFSR with taps at bits 32, 22, 2, and 1 (1-based) by correctly mapping these taps to zero-based indices: 31, 21, 1, and 0. On each positive clock edge, if reset is active, synchronously reset q to 32'h1. Otherwise, shift right the entire register:
+
+- The new MSB q[31] takes the previous q[30].
+- For each bit position i from 30 down to 0:
+   - If (i) is a tapped position (21, 1, or 0), q[i] gets q[i+1] XOR feedback.
+   - Otherwise, q[i] gets q[i+1] (no XOR).
+
+- The feedback bit is q[0] before shift.
+
+This approach accurately follows Galois LFSR semantics: feedback is XORed only into tapped bits (except MSB, which just shifts in). The explicit bitwise assignment prevents off-by-one errors. Reset and clocking are synchronous and at the positive edge.

@@ -1,0 +1,7 @@
+Since the design only has two states and already uses one-hot encoding minimally (two flip-flops), the biggest lever for optimization is to simplify state encoding further while preserving correctness. Changing to binary encoding reduces the number of flip-flops from 2 to 1, decreasing area and power and potentially improving timing by reducing register-to-register delay.
+
+We keep the asynchronous active-high reset and Mealy output logic intact. The output logic is simple and is optimized with minimal logic operations.
+
+Additionally, to optimize combinational logic for synthesis and clarity, we use simple ternary operations and avoid case statements where possible.
+
+This reduces state register area and switching activity, simplifies next state and output logic, and leads to improved PPA metrics while preserving exact functionality.

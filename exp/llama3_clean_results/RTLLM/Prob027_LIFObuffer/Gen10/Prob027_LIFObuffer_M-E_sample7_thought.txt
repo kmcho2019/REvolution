@@ -1,0 +1,12 @@
+To design a novel LIFO buffer architecture, we will implement a circular buffer using a RAM array. The key components of this design are:
+
+1.  **RAM Array:** A RAM array will be used to store the data. The array will be defined as a 2D array, where each element is a 4-bit wide data.
+2.  **Read and Write Pointers:** Two pointers, `read_ptr` and `write_ptr`, will be used to track the current read and write positions in the RAM array. These pointers will be updated based on the `RW` signal and the buffer's full or empty status.
+3.  **Count:** A counter, `count`, will keep track of the number of elements currently stored in the buffer. This will help in determining the buffer's full or empty status.
+4.  **Flags:** The `EMPTY` and `FULL` flags will be generated based on the `count` value.
+
+The advantage of this architecture is that it eliminates the need for shifting data when an element is popped or pushed, resulting in improved performance and reduced power consumption.
+
+The `dataOut` signal will be assigned the value of the element at the `read_ptr` position when a read operation is performed.
+
+The `EMPTY` flag will be set high when `count` is 0, and the `FULL` flag will be set high when `count` equals the buffer size.

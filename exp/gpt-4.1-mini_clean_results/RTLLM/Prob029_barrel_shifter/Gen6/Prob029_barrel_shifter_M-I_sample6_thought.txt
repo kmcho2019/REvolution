@@ -1,0 +1,88 @@
+The original solution almost correctly implements the right rotations for the barrel shifter stages but inverts the 4-bit rotate stage, effectively performing a left rotation. To correct this, the 4-bit rotation must rotate right, i.e., the upper bits move to the lower positions, and the lower bits move to the upper positions accordingly. Specifically, for an 8-bit right rotation by 4, the bits [7:4] should move to [3:0], and bits [3:0] move to [7:4]. 
+
+Hence, the corrected 4-bit stage should be `{in[3:0], in[7:4]}` for a left rotate by 4, so to rotate right by 4, it should be `{in[3:0], in[7:4]}` but this is indeed a left rotate by 4, which is incorrect.
+
+Actually, for a right rotation by 4, the top 4 bits move to the bottom, and the bottom 4 bits move to the top, so the output should be `{in[3:0], in[7:4]}` to rotate left by 4, but for right rotate by 4 it should be `{in[3:0], in[7:4]}` swapped the other way.
+
+To clarify:
+
+- Left rotate by 4: `{in[3:0], in[7:4]}`
+- Right rotate by 4: `{in[3:0], in[7:4]}` with swapped halves would be `{in[3:0], in[7:4]}` is left rotate.
+
+So for right rotation by 4 bits, the bits shifted right by 4 are bits [3:0], followed by bits [7:4], i.e., `{in[3:0], in[7:4]}` is a left rotate, so we need `{in[3:0], in[7:4]}` flipped to `{in[3:0], in[7:4]}` which means right rotate is `{in[3:0], in[7:4]}`, the same expression—this is confusing.
+
+Actually, in 8 bits, rotating right by 4 bits means bits 0 moves to 4, bit 1 to 5, ..., bit 4 moves to 0, ..., bit 7 to 3.
+
+So right rotate by 4 bits is `{in[3:0], in[7:4]}` (concatenating lower nibble then upper nibble).
+
+Similarly, left rotate by 4 bits is `{in[3:0], in[7:4]}` reversed i.e. `{in[7:4], in[3:0]}`.
+
+Hence, the previous code actually did rotate left 4 in stage 1.
+
+Therefore, the corrected stage 1 should be:
+
+`{in[3:0], in[7:4]}` is right rotate 4? No, that's left rotate.
+
+Correct right rotate 4 is `{in[3:0], in[7:4]}` → left rotate.
+
+Correct right rotate 4 is `{in[3:0], in[7:4]}` reversed: `{in[3:0], in[7:4]}` reversed is `{in[3:0], in[7:4]}` (again same).
+
+So we must check with actual indices.
+
+Alternatively, rotate right by 4 is: `{in[3:0], in[7:4]}` or `{in[3:0], in[7:4]}` reversed?
+
+Try example:
+
+Input: 8'b 76543210 = 8'b 11110000
+
+Right rotate 4: should become `00001111` (lower nibble goes to upper nibble, upper to lower nibble)
+
+So `in = 11110000`
+
+Right rotate 4 bits: `00001111` -> `{in[3:0], in[7:4]} = 0000 1111` correct.
+
+So original code had `assign stage1 = ctrl[2] ? {in[3:0], in[7:4]} : in;` which is right rotate by 4.
+
+So the original code is correct in this part.
+
+Then check stage2 and stage3.
+
+`stage2 = ctrl[1] ? {stage1[1:0], stage1[7:2]} : stage1;` -> rotate right 2 bits
+
+`stage3 = ctrl[0] ? {stage2[0], stage2[7:1]} : stage2;` -> rotate right 1 bit
+
+These also appear correct.
+
+Then why did feedback say it was wrong?
+
+The feedback said that `assign stage1 = ctrl[2] ? {in[3:0], in[7:4]} : in;` was left rotate.
+
+But from the example above it is right rotate.
+
+Therefore, the previous feedback is wrong about the 4-bit rotate stage.
+
+Hence, the original code is functionally correct.
+
+Because the user wants an improved version using explicit `mux2X1` submodules and as per the problem statement (which calls for the usage of mux2X1 modules), we should provide a solution that explicitly instantiates these multiplexers per bit for the shift stages, reflecting the mux2X1 behavior.
+
+However, to improve PPA and clarity, I will use generate blocks with mux2X1 submodules to perform each stage, preserving the staged rotation structure, and preserve the rotation direction as right rotate.
+
+This way, the design meets the problem requirements, uses mux2X1 modules, and the function is correct.
+
+This approach also enables the user to study the mux-based shifting structure clearly.
+
+Hence, the plan:
+
+- Implement a mux2X1 submodule: simple 2-to-1 mux.
+
+- For each stage (4, 2, 1), implement a generate block that instantiates 8 mux2X1's, each selecting between the unshifted bit and the rotated bit per `ctrl[]`.
+
+- The input to each stage is the output of the previous stage.
+
+- Final output is the output of the last stage.
+
+- The rotation is done rightwards in each stage.
+
+- Use modular arithmetic to calculate indices for rotated bits.
+
+This meets problem spec exactly and ensures correctness.

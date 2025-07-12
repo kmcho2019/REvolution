@@ -1,0 +1,7 @@
+Optimize next state logic expressions by eliminating redundant conditions to reduce logic complexity and switching activity. For example, next_state[2] was coded as (S11 & d) | (S11 & ~d), which simplifies to S11 unconditionally. Remove such redundant expressions.
+
+Also, restrict next_state signals to only those required for output or transitions used in outputs, avoiding unused intermediate next_state bits or replacing them by intermediate wires. This reduces unnecessary combinational logic and area.
+
+Group logic terms more efficiently to minimize fan-in and balance logic depth, improving timing. Maintain the one-hot encoding and clear expression style for readability and correctness.
+
+Overall, the improvements reduce gate count and switching power without altering functionality.

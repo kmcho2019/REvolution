@@ -1,0 +1,22 @@
+The original implementation works correctly but uses a 7-entry case statement for state transitions, which increases logic complexity. The state machine cycles through 7 states (4 to 6, then 0 to 3) in order when a=0, and resets to 4 when a=1. 
+
+An improved approach is to represent the state machine as a modulo-7 counter with a custom mapping to align states with their integer values. Specifically:
+
+- When a=1, q is forced to 4.
+- When a=0, q increments modulo 7 along the cycle: 4 -> 5 -> 6 -> 0 -> 1 -> 2 -> 3 -> 4 ...
+
+By mapping q states to values mod 7 (0 through 6), we can implement q as a 3-bit register holding values 0..6 with wrap-around, and transform the reset state 4 to the counter value 0 internally. We then add an offset in output to map back to original state numbers. 
+
+To optimize logic:
+- Store internal count as 3'b000..3'b110 (0 to 6).
+- On reset (a=1), set count to 0, which corresponds to q=4 output.
+- On a=0, increment count modulo 7.
+- Output q = (count + 4) mod 7 to map internal count to output states.
+
+This arithmetic approach reduces combinational logic and avoids the case statement. The counter increments modulo 7 naturally by checking if count == 6 then wrap to 0 else count+1.
+
+This reduces logic complexity, power (fewer transitions as output changes only when count changes), and improves timing.
+
+Finally, to handle initial unknown state, we initialize count to 0 on reset (a=1).
+
+This approach yields a clean, arithmetic-based design with minimal combinational logic and better PPA.

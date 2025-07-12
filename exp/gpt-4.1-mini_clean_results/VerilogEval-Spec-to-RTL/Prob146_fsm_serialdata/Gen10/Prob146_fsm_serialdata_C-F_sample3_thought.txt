@@ -1,0 +1,14 @@
+I will fuse the two examples by adopting the clean FSM separation, modular always blocks, and explicit state encoding from Example 1, and the clear bit counter and pulse-done logic from Example 2. The new design will:
+
+- Use a 2-bit enumerated state for clarity (IDLE, RECEIVE, STOP, WAIT_STOP).
+- Sample the input bit LSB-first into an 8-bit shift register by shifting left and inserting the new bit at LSB (data_shift <= {in, data_shift[7:1]} is shift-right, inserting new bit at MSB, which is incorrect; instead, use data_shift <= {data_shift[6:0], in} to put new bit at LSB).
+- Update bit counter only in RECEIVE state.
+- Assert done as a one-cycle pulse when the valid stop bit is detected, and latch the received byte into out_byte at that time.
+- On invalid stop bit, enter WAIT_STOP state until the line goes idle (in == 1) before returning to IDLE.
+- Use synchronous active-high reset.
+- Avoid redundant assignments to reduce area and power.
+- Separate combinational next-state and done logic, state register, bit counter, data register, and output logic into distinct always blocks for clarity and optimization.
+- Clarify shifting direction explicitly for correctness (LSB first).
+- Maintain robustness and readability.
+
+This fusion keeps functional correctness, improves clarity and modularity, and aligns with best coding practices for FSM and sequential logic. The done pulse and output data are cleanly generated without glitches or latches.

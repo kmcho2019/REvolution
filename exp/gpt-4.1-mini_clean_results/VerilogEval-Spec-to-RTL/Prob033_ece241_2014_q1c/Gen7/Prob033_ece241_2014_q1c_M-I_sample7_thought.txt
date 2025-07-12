@@ -1,0 +1,19 @@
+The original design is functionally correct and uses carry-lookahead logic for better performance than ripple carry. However, it still implements the carry signals sequentially in a generate loop with a linear chain of assignments, which is essentially ripple carry in logic, only more readable. Although it computes carries with propagate and generate signals, it does not implement a true hierarchical or parallel carry-lookahead structure that can reduce delay by computing carries in parallel groups.
+
+For 8-bit addition, a fully hierarchical carry-lookahead might be overkill, but a small improvement can be made by computing group propagate and generate signals for the lower 4 bits and upper 4 bits, and then combining those for the final carries. This reduces the carry chain delay from 8 to 2 stages.
+
+Also, using a classic carry-lookahead approach for groups will slightly reduce critical path delay, and marginally reduce switching power as carry signals propagate faster and do not toggle unnecessarily.
+
+Area impact should be small, as it mainly adds a few additional gates for group signals.
+
+Summary of improvement strategy:
+- Compute bit-level propagate and generate signals.
+- Compute group propagate and generate signals for the lower and upper nibble.
+- Use group signals to compute carry into upper nibble faster.
+- Compute final carries for each bit using the hierarchical carry-lookahead formulas.
+- Keep sum and overflow logic the same.
+This hierarchical carry-lookahead reduces carry propagation delay and can marginally improve power by limiting the carry chain length.
+
+This approach trades slightly increased area for better timing and power, improving the PPA.
+
+We implement this hierarchical carry-lookahead in pure combinational Verilog using assign statements and generate loops.

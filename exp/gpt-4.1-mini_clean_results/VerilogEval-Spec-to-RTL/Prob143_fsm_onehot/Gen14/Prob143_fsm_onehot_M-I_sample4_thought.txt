@@ -1,0 +1,17 @@
+To optimize the existing design for better power, performance, and area (PPA), I will focus on reducing the number of gate-level operations by exploiting the structure of the FSM transitions.
+
+Key improvements:
+1. Merge common conditions in next_state assignments to reduce repetitive logic, e.g., next_state[0] is frequently the target for input=0 transitions from many states, so express it as a single OR of state bits ANDed with ~in.
+2. Use bitwise operations to compute next_state vectors in fewer expressions rather than individual bits where possible.
+3. Retain one-hot outputs logic as it is minimal and already optimal.
+
+By combining transitions with identical input conditions, we reduce the number of AND and OR gates, simplifying the logic and potentially reducing switching, power, and delay.
+
+This approach keeps purely combinational logic, preserving clarity and correctness, while improving logic synthesis results by giving the synthesizer more concise expressions to optimize.
+
+Summary of approach:
+- Use combined masks of states for input=0 and input=1 transitions that lead to each next state.
+- Compute next_state as OR of these masked conditions.
+- Use direct bitwise operations instead of many separate assigns.
+
+This should yield more compact and faster logic with less area and switching.

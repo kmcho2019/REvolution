@@ -1,0 +1,11 @@
+To improve PPA (Power, Performance, Area), remove the duplicated carry chain computations by sharing the carry chain between sum and overflow detection. Instead of having the TopModule recompute the carry chain separately and instantiating the NBitCLAAdder which also computes it, integrate the carry chain computation only once inside TopModule.
+
+Refactor TopModule to implement the carry-lookahead logic internally, producing both the sum and the carries. The overflow can then be directly computed from the carry into and carry out of the MSB, using the same carries.
+
+This eliminates redundant propagate/generate and carry calculations, reducing logic duplication, power consumption, and area, while maintaining the same performance. Also, this approach removes the NBitCLAAdder instantiation, keeping the design structurally clean but minimal.
+
+The key is to calculate propagate and generate once, compute the carries once in a function, and use these carries both to form sum and to determine overflow.
+
+This will reduce switching and static power caused by duplicated logic, reduce area by sharing combinational logic, and maintain zero timing penalty since carry computation is done once.
+
+The design remains synthesizable and modular, focusing on clarity and efficiency.

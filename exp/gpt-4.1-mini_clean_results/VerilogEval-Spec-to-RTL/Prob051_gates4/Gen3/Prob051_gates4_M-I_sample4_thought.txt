@@ -1,0 +1,11 @@
+The initial design already uses efficient Verilog reduction operators for implementing the four-input AND, OR, and XOR, which are optimal in terms of logic depth and area for such a small input size. To improve power slightly, I will register the outputs using a clock enable-style approach by adding an enable input that controls output updates, reducing unnecessary toggling when inputs don't change. However, the original interface does not include a clock or enable signals, so adding them would change the specification.
+
+Since the original specification is strictly combinational with no clock, an alternative optimization is to add explicit wire declarations for the outputs to avoid any unintended latch inference or tool warnings, even though synthesis tools typically infer combinational logic correctly with assigns.
+
+Additionally, I can instantiate explicit 4-input gate primitives (if available) or write gate-level logic to allow the synthesis tool maximum control over gate optimization, but this might increase area slightly and is not recommended.
+
+Given the problem constraints and results, the best move is to keep the code concise, explicitly declare outputs as wire (optional), and rely on synthesis optimizations. Thus, I will keep the original code but add `wire` declarations on outputs to explicitly show their combinational nature, which may help with tool clarity and slightly reduce risk of inferred latches.
+
+No change in logic, just explicit wire outputs and adding a comment on power optimization possibilities for larger designs.
+
+This balances minimal area/power increase and improved code clarity.

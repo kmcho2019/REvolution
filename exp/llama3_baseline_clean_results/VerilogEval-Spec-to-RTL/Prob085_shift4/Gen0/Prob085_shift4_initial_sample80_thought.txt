@@ -1,0 +1,7 @@
+To implement the 4-bit shift register module TopModule, we need to consider the different control signals and their priorities. 
+The module should have an asynchronous reset (areset) that resets the shift register to zero immediately when asserted.
+The load signal should have higher priority than the enable (ena) signal. 
+If the load signal is asserted, the shift register should be loaded with the data[3:0] on the next positive clock edge, regardless of the enable signal.
+If the load signal is not asserted but the enable signal is, the shift register should shift its contents one bit to the right, with the most significant bit (q[3]) becoming zero and the least significant bit (q[0]) being shifted out.
+If neither the load nor the enable signal is asserted, the shift register should maintain its current state.
+We will use a always block that is sensitive to the positive edge of the clock (clk) and the areset signal to implement this behavior.

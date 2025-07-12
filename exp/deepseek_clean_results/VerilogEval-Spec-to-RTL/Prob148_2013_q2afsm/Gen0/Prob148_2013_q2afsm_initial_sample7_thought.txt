@@ -1,0 +1,18 @@
+The problem requires implementing a priority-based arbiter FSM with 4 states (A, B, C, D) and specific transition rules. Here's the design approach:
+
+1. Define states using localparam (A=00, B=01, C=10, D=11)
+2. Use two always blocks:
+   - One for sequential state register with synchronous reset
+   - One for combinational next-state logic
+3. Implement output logic (g) combinationally based on current state
+4. Handle priority in state transitions:
+   - r[0] has highest priority (state B)
+   - r[1] has next priority (state C)
+   - r[2] has lowest priority (state D)
+5. Maintain grants while requests are active (states B, C, D)
+
+State transitions:
+- A: Default state, no grants
+- B: g[0]=1, stays if r[0]=1 else returns to A
+- C: g[1]=1, stays if r[1]=1 else returns to A
+- D: g[2]=1 (though not shown in transitions, implied by problem description)

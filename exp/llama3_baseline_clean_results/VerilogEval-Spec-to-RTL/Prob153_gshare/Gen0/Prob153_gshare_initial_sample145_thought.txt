@@ -1,0 +1,9 @@
+To implement the gshare branch predictor, we need to design a module with two main functionalities: prediction and training. 
+
+1. Prediction: When predict_valid is high, the module should use the provided PC and current global history to make a prediction. The prediction is based on the state of a 128-entry table of two-bit saturating counters, indexed by the hashed value of the PC and global history. The predicted branch direction and the current state of the global history register should be output. 
+
+2. Training: When train_valid is high, the module should update the corresponding entry in the pattern history table (PHT) based on the actual branch outcome. If the branch was mispredicted, the global history register should be recovered to the state immediately after the mispredicting branch completes execution.
+
+To handle the situation where training and prediction occur simultaneously, we should prioritize the training operation, as the branch being predicted will be discarded anyway. We also need to ensure that the prediction sees the PHT state before training, as the training only modifies the PHT at the next positive clock edge.
+
+We will use a 7-bit global branch history register and a 128-entry table of two-bit saturating counters to implement the gshare branch predictor.

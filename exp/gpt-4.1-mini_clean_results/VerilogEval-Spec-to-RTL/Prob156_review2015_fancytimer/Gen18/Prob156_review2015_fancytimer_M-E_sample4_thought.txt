@@ -1,0 +1,25 @@
+Use a 5-bit shift register to continuously shift in input bits MSB first (shift left, input at LSB). Detect the start pattern "1101" by comparing the top 4 bits of the shift register.
+
+Upon detection, lock the FSM in LOAD_DELAY state, shift in 4 delay bits MSB first into a 4-bit delay register.
+
+After loading delay, start counting (delay+1)*1000 cycles using a single 14-bit cycle counter (enough for up to 16,000 counts). The count output shows the current 4-bit segment, calculated by dividing the remaining cycle counts by 1000, representing how many 1000-cycle segments remain.
+
+Use explicit state transitions: SEARCH, LOAD_DELAY, COUNT, WAIT_ACK.
+
+On reset, clear all registers and start in SEARCH.
+
+Implement the counters and FSM transitions entirely synchronous on positive clk edge with synchronous active-high reset.
+
+This architecture simplifies pattern detection with a 5-bit shift register (sliding window), avoids complex multi-register management.
+
+Using a single large cycle counter for timing makes counting and output computation straightforward.
+
+Output `count` only during COUNT state; otherwise don't care.
+
+Assert `counting` only during COUNT state.
+
+Assert `done` only during WAIT_ACK state.
+
+Wait for `ack` to return to SEARCH state.
+
+This approach guarantees correct MSB-first shifting for pattern and delay bits and provides a clean counting mechanism with output reflecting the current segment.

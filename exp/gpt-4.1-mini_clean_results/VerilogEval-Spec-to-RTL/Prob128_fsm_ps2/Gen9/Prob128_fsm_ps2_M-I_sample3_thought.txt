@@ -1,0 +1,11 @@
+To optimize the PPA (Power, Performance, Area), we focus on reducing unnecessary toggling and simplifying logic while maintaining functional correctness. Since done is asserted for one cycle after the third byte, we can register done directly as a combinational function of the current and next state to avoid extra toggling. Also, encoding the FSM with one-hot or Gray coding won't reduce area here because we have only 3 states, so binary encoding is optimal.
+
+To reduce power, add a state register enable to avoid toggling state when not needed. However, in this simple FSM toggling every cycle is minimal. Still, we can remove the default case and rely on reset initialization for safe design.
+
+Another minor improvement is to combine done assignment into the state transition to avoid extra cycles with done=0, reducing glitching.
+
+Overall, we will keep a 2-bit binary FSM, but assign done combinationally right after the third byte, and use non-blocking assignments efficiently. This will slightly reduce toggling and gate switching.
+
+The synchronous reset remains to avoid metastability or asynchronous behavior. The FSM transitions exactly as before but with streamlined done logic.
+
+No major architectural changes are needed because the original design is already minimal.

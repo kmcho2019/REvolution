@@ -1,0 +1,17 @@
+Maintain a single 7-bit global history register (GHR) that always reflects the committed branch outcomes after training updates.
+
+At each clock edge:
+
+- If a misprediction training occurs, restore the GHR to the provided train_history to recover from the misprediction.
+- Else if a training (non-mispredicted) occurs, update the GHR by shifting in the actual train_taken.
+- Else if a prediction is valid and no training misprediction occurs, update the GHR by shifting in the predicted taken bit.
+
+For prediction, use the current GHR to index into the PHT with predict_pc XOR GHR, and output the prediction and the GHR *before* any update occurs.
+
+Updates to the PHT occur only on training cycles, indexed by train_pc XOR train_history.
+
+Since prediction output depends on GHR before update, latch outputs on the clock edge when prediction occurs.
+
+This priority ensures training misprediction updates take precedence and the outputs correspond to the exact predictor state used for prediction.
+
+The code uses simple if-else priority to manage GHR updates, and straightforward latching of outputs on predict_valid cycles.

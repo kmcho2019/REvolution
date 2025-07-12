@@ -1,0 +1,9 @@
+Implement the 100-bit rotator as a circular shift register using a shift-by-1 rotate operation controlled by load and enable signals. Instead of performing full concatenation for rotation, leverage bit indexing with modulo wrap-around using a function to explicitly calculate the rotated positions. On each clock cycle, if load is high, load the input data directly. If rotation is enabled, compute the next q as a rotated version of current q using bitwise indexing without wide concatenation, minimizing combinational logic fanout.
+
+Specifically:
+- Use a function to calculate rotated index with modulo arithmetic for both left and right rotation.
+- On the positive clock edge, update q synchronously with load or rotation.
+- If no operation, retain q.
+This approach trades off some verbosity for an explicit index-based rotate, which can be easier for synthesis tools to optimize, may reduce glitching from wide concatenation, and clearly separates load from rotation logic.
+
+This indexing method is also scalable and can help to reduce switching by limiting combinational dependencies to just the bits involved in rotation rather than reconstructing the entire vector with concatenations.

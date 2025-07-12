@@ -1,0 +1,17 @@
+Fuse the clear pointer and indexing strategy from Example 2 with the careful memory clearing and explicit dataOut update timing from Example 1 to ensure stable timing and clarity.
+
+Use a 3-bit stack pointer (SP) that points to the next free slot (0=empty, 4=full), incrementing on push and decrementing on pop.
+
+On reset, synchronously clear the stack_mem and set SP to 0, also clear dataOut.
+
+On push (RW=0), write dataIn to stack_mem[SP], then increment SP if not full.
+
+On pop (RW=1), first decrement SP if not empty, then output stack_mem[SP], and clear that memory slot explicitly to reduce stale data and aid power, consistent with Example 1’s memory clearing.
+
+Update EMPTY and FULL flags combinationally from SP.
+
+To improve timing and avoid using SP-1 indexing immediately after decrementing, cache SP-1 index in a temporary register before updating SP.
+
+Use non-blocking assignments consistently and avoid reading stack_mem using the updated SP value in the same clock edge.
+
+This fusion merges Example 2’s clearer pointer semantics with Example 1’s safe memory clearing and output timing, aiming for a clean, stable, and easy to understand design that is good for PPA.

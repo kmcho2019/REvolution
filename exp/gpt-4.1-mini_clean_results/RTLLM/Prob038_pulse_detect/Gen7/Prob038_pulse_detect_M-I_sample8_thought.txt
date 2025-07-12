@@ -1,0 +1,9 @@
+To optimize the given pulse_detect module for better power, performance, and area (PPA), we can:
+
+1. Merge the two sequential always blocks into one, reducing the number of flip-flops and the clock load. This lowers power and area.
+2. Use nonblocking assignments properly to avoid race conditions between state and pulse_detected signals.
+3. Simplify the pulse_detected logic by deriving it directly from next_state and data_in to allow pulse detection to be signaled on the same cycle as state transition.
+4. Keep the FSM minimal and intuitive with clearly defined states.
+5. Register the output data_out synchronously in the same always block to reduce glitches and ensure proper timing.
+
+This approach reduces the number of registers and clock toggles while maintaining the original functionality, asserting data_out for exactly one clock cycle at the end of each pulse pattern.

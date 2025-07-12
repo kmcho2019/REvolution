@@ -1,0 +1,11 @@
+To address the issues mentioned in the feedback, we need to modify the state machine and the logic for generating the intermediate clock signals. The first step is to recognize that we need two separate counters to track the longer and shorter parts of the divided clock cycle. This will allow us to accurately generate the phase-shifted versions of the divided clock signal.
+
+We will introduce two new counters, `cnt_long` and `cnt_short`, to keep track of the longer and shorter parts of the divided clock cycle, respectively. We will also modify the state machine to correctly handle the phase-shifting of the divided clock signals.
+
+Additionally, we will use a separate signal, `clk_div_int`, to store the intermediate divided clock output before phase-shifting. This will help us to correctly implement the logical OR operation between the phase-shifted clock signals.
+
+The phase-shifting will be achieved by delaying one of the intermediate clock signals by half a clock period and advancing the other by half a clock period. This can be done using a separate signal, `clk_div_shift`, which will store the phase-shifted version of the divided clock signal.
+
+Finally, we will assign the final divided clock output, `clk_div`, by performing a logical OR operation between the original and phase-shifted versions of the divided clock signal. This will ensure that the final output has a uniform period and correct phase-shifting.
+
+The use of separate counters and signals for the longer and shorter parts of the divided clock cycle, along with the implementation of phase-shifting, will allow us to correctly achieve the fractional frequency division of 3.5x.

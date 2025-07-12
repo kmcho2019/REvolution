@@ -1,0 +1,106 @@
+We need to implement the function defined by the 4-variable Karnaugh map with variables a,b as selector inputs of a 4-to-1 multiplexer, and c,d as inputs to TopModule. The TopModule provides the 4 mux inputs, which are functions of c and d only (since a,b are selectors of the  4-to-1 mux outside the TopModule).
+
+The K-map is:
+       ab
+    cd 00 01 11 10
+    00  0  0  0  1
+    01  1  0  0  0
+    11  1  0  1  1
+    10  1  0  0  1
+
+We see that the output depends on a,b,c,d, but since a,b select which mux input to use, the outputs mux_in[3:0] are functions only of c,d, corresponding to the values of the function when a,b=00,01,11,10 respectively.
+
+For each ab input, mux_in[ab] = function for fixed a,b and variables c,d.
+
+So we fix a,b for each mux input and create the function of c,d from the K-map by picking the column for ab:
+
+- mux_in[0] corresponds to ab=00 (first column):
+  cd=00->0
+  cd=01->1
+  cd=11->1
+  cd=10->1
+  So mux_in[0] = 1 except for cd=00
+
+- mux_in[1] corresponds to ab=01 (second column):
+  cd=00->0
+  cd=01->0
+  cd=11->0
+  cd=10->0
+  mux_in[1] = 0 always
+
+- mux_in[2] corresponds to ab=11 (third column):
+  cd=00->0
+  cd=01->0
+  cd=11->1
+  cd=10->0
+  mux_in[2] = 1 only if cd=11
+
+- mux_in[3] corresponds to ab=10 (fourth column):
+  cd=00->1
+  cd=01->0
+  cd=11->1
+  cd=10->1
+
+We must implement each of these functions for mux_in[3:0] using only 2-to-1 multiplexers. The idea is to use the minimum number of 2-to-1 multiplexers to implement these c,d logic functions.
+
+We will use a 2-to-1 mux module with select input c or d to implement the logic. We can implement logic functions of 2 variables using 2-to-1 multiplexers by choosing select lines and data inputs appropriately (0 or 1).
+
+We do not use other logic gates.
+
+Plan:
+
+- For mux_in[1], it's always zero -> tie to 0
+
+- For mux_in[0], function is 1 except cd=00. So cd=00 => c=0,d=0 -> 0 else 1
+  We can implement: mux with select c: if c=0, then output d (because only c=0,d=0=0 else 1), if c=1 output 1
+  Let's check:
+   c=0,d=0: output d=0 =>0
+   c=0,d=1: output d=1 =>1
+   c=1,d=0: output 1 =>1
+   c=1,d=1: output 1 =>1  OK
+
+- For mux_in[2], only 1 when cd=11, else 0
+  We can do mux with select c:
+    if c=0 output 0
+    if c=1 output d
+  Check:
+   c=0,d=0:0
+   c=0,d=1:0
+   c=1,d=0:0
+   c=1,d=1:1  OK
+
+- For mux_in[3], output 1 for cd=00,10,11 and 0 for cd=01
+  Truth:
+   c=0,d=0:1
+   c=0,d=1:0
+   c=1,d=1:1
+   c=1,d=0:1
+  We'll try to implement with mux select c:
+    if c=0 output ~d (because d=0=>1, d=1=>0)
+    if c=1 output 1
+  Check:
+   c=0,d=0: ~d=1 =>1
+   c=0,d=1: ~d=0 =>0
+   c=1,d=0: 1
+   c=1,d=1: 1  OK
+
+Since we can only use multiplexers and no logic gates, how to generate ~d? 
+
+We cannot use NOT gates directly, but we can implement inversion of d using a 2-to-1 mux with select d and inputs 1 and 0 swapped:
+ - For ~d, a mux with select d:
+    if d=0 output 1
+    if d=1 output 0
+
+So we create a NOT_d signal using a 2-to-1 mux with select d, inputs 1 and 0.
+
+Summary:
+- We'll implement NOT_d via mux2.
+- Use 2-to-1 muxes to build the required signals.
+- mux_in[1] = 0 (constant 0)
+- mux_in[0] = mux2 select c, 0->d, 1->1
+- mux_in[2] = mux2 select c, 0->0, 1->d
+- mux_in[3] = mux2 select c, 0->NOT_d, 1->1
+
+We only use one 4-to-1 mux outside, connecting mux_in[] as inputs and a,b as select signals.
+
+We implement the 2-to-1 mux module, then build the signals, then assign mux_in outputs.

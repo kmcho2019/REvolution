@@ -1,0 +1,5 @@
+To simplify the Mealy FSM detection for the sequence 10011, I will use a straightforward one always block design with synchronous reset and next state logic combined. The FSM states represent how many bits of the sequence have been matched so far. The output MATCH is asserted when the FSM is in the final state and input is 1, indicating the sequence was just matched at the current bit (Mealy output).
+
+Using a minimal binary encoding with 5 states, the next state transitions directly follow from input IN. This avoids extra functions and keeps the design clean and easy to read. The overlap and loop detection is naturally handled by transitions back to appropriate intermediate states, enabling continuous detection on streaming input without missing overlapping sequences.
+
+This simplification keeps the same functionality but reduces complexity by merging next state and output logic into one always block.

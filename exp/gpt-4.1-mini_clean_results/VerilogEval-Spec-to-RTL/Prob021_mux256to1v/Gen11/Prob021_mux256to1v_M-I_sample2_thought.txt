@@ -1,0 +1,10 @@
+The original design uses a two-level mux hierarchy by first assembling a 16-bit block of 4 4-bit words, then selecting the final 4-bit output using the lower 2 bits of sel. This introduces extra logic and intermediate signals, increasing delay, area, and power.
+
+To optimize for better performance, power, and area:
+
+- Eliminate the intermediate array and block wiring.
+- Use direct indexing of the input vector with sel multiplied by 4: `in[sel*4 +: 4]`.
+- This yields a simple, clean, single-level mux where sel directly selects the 4-bit slice in the 1024-bit vector.
+- This reduces mux fan-in, logic levels, and switching activity.
+
+The functionality remains identical, but the implementation is much simpler and more efficient for synthesis tools, improving PPA metrics without sacrificing clarity.

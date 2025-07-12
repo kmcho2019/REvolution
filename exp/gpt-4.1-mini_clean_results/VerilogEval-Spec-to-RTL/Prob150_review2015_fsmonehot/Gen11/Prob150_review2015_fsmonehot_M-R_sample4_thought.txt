@@ -1,0 +1,7 @@
+Refactor the FSM next-state and output combinational logic by directly implementing each next state and output signal as separate assign statements without aggregating the next state vector. This approach isolates next-state bit expressions individually for clarity and potentially easier synthesis mapping. Instead of creating a full 10-bit next_state bus, assign each next-state bit to its own wire based on the current state inputs.
+
+This improves readability by explicitly naming each next state signal, and it could help synthesis tools identify simple signals quickly. Outputs remain Moore-type, derived only from current state bits as before. No changes in logic or functionality occur; just a structural reorganization to improve modularity and clarity.
+
+Also, use more localparam constants for the state bit indices to ensure maintainability. This style is often preferred for generating individual next-state signals, especially in code bases that separate state register logic from next-state combinational logic.
+
+This keeps the same one-hot coding and logic simplicity but changes the combinational logic organization and style.

@@ -1,0 +1,27 @@
+module edge_detect (
+    input  wire clk,    // Clock input
+    input  wire rst_n,  // Asynchronous active-low reset
+    input  wire a,      // Input signal to detect edges on
+    output wire rise,   // High for one clock cycle on rising edge of 'a'
+    output wire down    // High for one clock cycle on falling edge of 'a'
+);
+
+    // Register to hold previous sampled value of 'a' for edge detection
+    reg a_prev;
+
+    // Sequential block: sample 'a' at rising edge of clk,
+    // asynchronously reset 'a_prev' to 0 when rst_n is low
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n)
+            a_prev <= 1'b0;
+        else
+            a_prev <= a;
+    end
+
+    // Combinational logic for edge detection:
+    // rise is asserted when 'a' changes from 0 to 1
+    // down is asserted when 'a' changes from 1 to 0
+    assign rise = (~a_prev) & a;
+    assign down = a_prev & (~a);
+
+endmodule

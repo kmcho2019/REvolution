@@ -1,0 +1,21 @@
+Improved strategy for correct implementation:
+
+1. For out_sop (Sum-of-Products):
+   - Clearly identify all input combinations that should output 1 (2,7,15)
+   - Implement each case explicitly with proper bit patterns
+   - Ensure all other cases (0,1,4,5,6,9,10,13,14) output 0 by not including them in the SOP
+
+2. For out_pos (Product-of-Sums):
+   - Identify all input combinations that should output 0 (0,1,4,5,6,9,10,13,14)
+   - Convert each to its maxterm form (OR of complemented inputs)
+   - AND all maxterms together to form the POS expression
+
+3. Verification approach:
+   - Cross-check each case against the specification
+   - Ensure no overlap with don't-care conditions (3,8,11,12)
+   - Maintain minimal form while guaranteeing correctness
+
+Key improvements:
+- Complete coverage of all specified cases
+- Clear separation of true and false conditions
+- Direct implementation of both canonical forms

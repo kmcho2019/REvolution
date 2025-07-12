@@ -1,0 +1,11 @@
+To implement a novel architectural idea for the serial communication protocol receiver, we can utilize a pipeline-based approach. The pipeline will consist of stages that are responsible for different aspects of the protocol, such as start bit detection, data bit collection, and stop bit verification. This approach can improve the performance and scalability of the receiver by allowing each stage to operate independently and concurrently, thereby increasing the throughput.
+
+The first stage will be responsible for detecting the start bit, which is indicated by a logic low level on the input signal. Once the start bit is detected, the pipeline will be enabled, and the subsequent stages will begin processing the incoming bits.
+
+The second stage will collect the 8 data bits. This can be achieved using a shift register that shifts the incoming bits into the register at each clock cycle.
+
+The third stage will verify the stop bit. If the stop bit is correct (logic high), the stage will generate a signal indicating that a valid byte has been received. If the stop bit is incorrect, the pipeline will be reset, and the process will start over.
+
+The pipeline approach allows for a more modular and scalable design, making it easier to add or remove stages as needed. Additionally, the use of a pipeline can help to improve the timing and reduce the complexity of the design.
+
+To further improve the design, we can utilize a FIFO (First-In-First-Out) buffer to store the received bytes. This will allow the receiver to handle multiple bytes concurrently and provide a more efficient way to manage the received data.

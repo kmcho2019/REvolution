@@ -1,0 +1,11 @@
+To combine the strengths of both examples, I will implement an 8-bit multiplier using a shift-and-add approach that:
+- Generates partial products combinationally by shifting A according to each bit of B.
+- Uses a balanced adder tree to sum partial products in stages, reducing the long critical path caused by adding all eight partial products in a single expression.
+This approach maintains a fully combinational design for simplicity and clarity, while improving performance by reducing the addition depth and improving the maximum achievable frequency. It also limits power and area overhead by avoiding a single large multi-operand addition.
+
+Specifically, the partial products will be generated as wires, then summed pairwise in three levels:
+- Level 1: sum 4 pairs (2 inputs each) → 4 sums
+- Level 2: sum 2 pairs (2 inputs each) → 2 sums
+- Level 3: sum the final 2 sums → final product
+
+This balanced tree reduces the addition depth from 7 (chaining 8 adds) to 3, substantially improving timing without changing the basic shift-and-add multiplication principle.

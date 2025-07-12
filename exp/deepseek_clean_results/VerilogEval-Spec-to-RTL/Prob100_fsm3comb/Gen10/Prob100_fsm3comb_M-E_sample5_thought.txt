@@ -1,0 +1,18 @@
+Here's a novel approach using a lookup table (LUT) based implementation:
+
+1. **LUT Concept**: Instead of using case statements, we'll implement the state machine using a combinational LUT that encodes all possible transitions. This can be more area-efficient for certain technologies.
+
+2. **Compact Encoding**: We'll concatenate the current state and input to form a 3-bit address (state[1:0] + in), then use this to index into a pre-computed LUT for next_state and output.
+
+3. **Output Integration**: The output can be derived directly from the state bits since it only depends on being in state D (11). This eliminates the need to store output values in the LUT.
+
+4. **Advantages**:
+   - Potentially better synthesis results in some technologies
+   - More regular structure that might be better for place-and-route
+   - Easier to modify if state transitions change
+   - Clear separation of transition logic from output logic
+
+5. **Implementation**:
+   - Create an 8-entry LUT (3-bit address) for next_state
+   - Output is simply state[1] & state[0] (AND of both state bits)
+   - Default case handled by LUT initialization

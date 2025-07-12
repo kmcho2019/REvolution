@@ -1,0 +1,9 @@
+To fix the early simulation mismatch, we need to ensure that the registered output Q has a defined initial value at simulation start. Since Verilog registers power-up as 'x' by default, adding an initial block to set Q to a known value (e.g., 0) will prevent unknown outputs and mismatches at the first clock edge.
+
+Functionally, the module remains a simple synchronous load flip-flop: on the rising edge of clk, Q is loaded with r_in if L is high, else it retains the value from q_in. The combinational 2:1 mux is expressed with a ternary operator.
+
+This change does not affect synthesis but improves simulation correctness and eliminates initial unknown states that cause mismatches.
+
+Thus, the updated TopModule:
+- Adds `initial Q = 0;` for defined startup state
+- Keeps the simple mux and synchronous always block unchanged

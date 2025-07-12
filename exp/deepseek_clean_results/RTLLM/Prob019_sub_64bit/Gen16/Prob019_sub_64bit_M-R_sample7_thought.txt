@@ -1,0 +1,19 @@
+Refactoring Strategy:
+1. **Simplification**:
+   - Remove redundant input registers (A_reg, B_reg) since they don't provide actual synchronization
+   - Convert the generate block to direct assignment statements for cleaner code
+2. **Optimization**:
+   - Implement subtraction using simpler ripple-carry structure since 64-bit lookahead may be overkill
+   - Combine overflow detection directly with subtraction logic
+3. **Clarity**:
+   - Make the two's complement operation explicit
+   - Use continuous assignments for all outputs
+4. **Efficiency**:
+   - Calculate overflow using the final carry bit rather than sign comparison
+   - Remove unnecessary intermediate wires
+
+Key Changes:
+- Simplified from 65 wires to 64-bit operations
+- Removed generate block for better readability
+- More direct overflow detection using carry-out
+- Reduced gate count while maintaining functionality

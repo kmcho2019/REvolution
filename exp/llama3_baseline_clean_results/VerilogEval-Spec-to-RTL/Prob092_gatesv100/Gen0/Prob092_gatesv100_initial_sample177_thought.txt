@@ -1,0 +1,19 @@
+To implement the TopModule with the specified interface, we need to 
+process each bit of the 100-bit input vector in and generate the 
+three output vectors out_both, out_any, and out_different according 
+to the given rules. 
+
+For out_both, we need to check each bit and its neighbour to the left, 
+except for the most significant bit (MSB) which has no left neighbour, 
+so we set the corresponding bit in out_both to 0.
+
+For out_any, we need to check each bit and its neighbour to the right, 
+except for the least significant bit (LSB) which has no right neighbour, 
+so we set the corresponding bit in out_any to 0.
+
+For out_different, we need to check each bit and its neighbour to the 
+left, wrapping around to the end of the vector when we reach the MSB, 
+so we compare the MSB with the LSB.
+
+This can be achieved using a single always block in Verilog, where we 
+use bitwise operations to generate the output vectors.

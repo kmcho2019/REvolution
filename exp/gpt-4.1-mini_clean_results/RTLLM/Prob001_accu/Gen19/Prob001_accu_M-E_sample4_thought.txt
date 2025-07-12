@@ -1,0 +1,11 @@
+Use a simple shift register of 4 stages to collect the four consecutive valid input data_in values whenever valid_in is asserted. After the shift register is full (count reaches 4), perform a combinational addition of all four 8-bit stored values to produce the accumulated sum in data_out and assert valid_out for one cycle. Then reset the count and prepare to receive the next four inputs. This approach separates data capturing and summation, keeping the sequential logic simple and the addition purely combinational at the output stage.
+
+By capturing all four samples first, this design avoids incremental accumulation and prevents the accumulation register from switching on each valid input, potentially reducing switching activity and power. The addition is done at once using a combinational adder, which might increase combinational delay for data_out but keeps the sequential logic minimal and timing well-defined.
+
+This design is straightforward, easy to debug, and modular since the input samples are explicitly stored before addition, which can facilitate pipelining or scaling the number of inputs in the future.
+
+The valid_out pulse is asserted exactly one cycle after receiving the 4th input, matching requirements.
+
+Width of data_out is 10 bits to accommodate the sum of four 8-bit values.
+
+In summary: shift register inputs on valid_in, count them, when count=4 do combinational add of stored values, output data_out with valid_out pulse, reset count and buffer for next accumulation.

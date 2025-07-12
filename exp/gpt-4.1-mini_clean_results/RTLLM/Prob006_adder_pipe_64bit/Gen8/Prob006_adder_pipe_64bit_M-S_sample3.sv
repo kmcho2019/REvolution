@@ -1,0 +1,75 @@
+module adder_pipe_64bit (
+    input               clk,
+    input               rst_n,
+    input               i_en,
+    input       [63:0]  adda,
+    input       [63:0]  addb,
+    output reg  [64:0]  result,
+    output reg          o_en
+);
+
+    localparam STG_WIDTH = 16;
+    localparam STAGES = 64 / STG_WIDTH; // 4 stages
+
+    // Pipeline registers for operand slices and sums
+    reg [STG_WIDTH-1:0] adda_reg [0:STAGES-1];
+    reg [STG_WIDTH-1:0] addb_reg [0:STAGES-1];
+    reg [STG_WIDTH-1:0] sum_reg  [0:STAGES-1];
+
+    // Carry registers between stages (carry_reg[0] is initial carry-in = 0)
+    reg carry_reg [0:STAGES];
+
+    // Pipeline enable signals
+    reg en_reg [0:STAGES];
+
+    integer i;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            // Reset pipeline registers and outputs
+            for (i = 0; i < STAGES; i = i + 1) begin
+                adda_reg[i] <= {STG_WIDTH{1'b0}};
+                addb_reg[i] <= {STG_WIDTH{1'b0}};
+                sum_reg[i]  <= {STG_WIDTH{1'b0}};
+                carry_reg[i] <= 1'b0;
+                en_reg[i] <= 1'b0;
+            end
+            carry_reg[STAGES] <= 1'b0;
+            en_reg[STAGES] <= 1'b0;
+
+            result <= 65'b0;
+            o_en <= 1'b0;
+        end else begin
+            // Stage 0: register input slices and enable; carry_in = 0
+            adda_reg[0] <= adda[STG_WIDTH-1:0];
+            addb_reg[0] <= addb[STG_WIDTH-1:0];
+            carry_reg[0] <= 1'b0;
+            en_reg[0] <= i_en;
+
+            // Add slice 0 + carry_in
+            {carry_reg[1], sum_reg[0]} <= adda_reg[0] + addb_reg[0] + carry_reg[0];
+
+            // For subsequent stages: pipeline operand slices and add with carry_in
+            for (i = 1; i < STAGES; i = i + 1) begin
+                adda_reg[i] <= adda[i*STG_WIDTH +: STG_WIDTH];
+                addb_reg[i] <= addb[i*STG_WIDTH +: STG_WIDTH];
+                // Add with carry_in from previous stage
+                {carry_reg[i+1], sum_reg[i]} <= adda_reg[i] + addb_reg[i] + carry_reg[i];
+                // Propagate enable
+                en_reg[i] <= en_reg[i-1];
+            end
+
+            // Final enable propagation
+            en_reg[STAGES] <= en_reg[STAGES-1];
+
+            // Concatenate sums and final carry_out to form result
+            result <= {carry_reg[STAGES],
+                       sum_reg[STAGES-1],
+                       sum_reg[STAGES-2],
+                       sum_reg[STAGES-3],
+                       sum_reg[0]};
+            o_en <= en_reg[STAGES];
+        end
+    end
+
+endmodule

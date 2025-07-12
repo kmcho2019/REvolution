@@ -1,0 +1,27 @@
+The input bits x[3:0] are already given, so instead of Gray-to-binary conversion and a large case statement, we directly use the given K-map with Gray code inputs. We analyze the K-map to find the minimal sum-of-products expression using the original Gray-coded inputs.
+
+From the given K-map (x[3]x[2] rows, x[1]x[0] columns):
+
+x[3]x[2] \ x[1]x[0]:
+      00  01  11  10
+00 | d  0  d  d
+01 | 0  d  1  0
+11 | 1  1  d  d
+10 | 1  1  0  d
+
+Taking don't-cares as helpful for minimization, we can write f as the sum of the following product terms directly in terms of x[3:0]:
+
+- When x[3]x[2]=11 or 10 and x[1]=0 (the left two columns), f=1 (since most are 1 or d):
+  That is: (x[3] & x[2]) | (x[3] & ~x[2]) combined with ~x[1] => x[3] & ~x[1]
+
+- When x[3]x[2]=11 or 10 and x[1]=1 and x[0]=0, f=1:
+  That is: x[3] & x[2] & x[1] & ~x[0]
+
+- When x[3]x[2]=01 and x[1]x[0]=11, f=1:
+  That is: ~x[3] & x[2] & x[1] & x[0]
+
+No other terms are needed. Combining, the simplified expression is:
+
+f = (x[3] & ~x[1]) | (x[3] & x[2] & x[1] & ~x[0]) | (~x[3] & x[2] & x[1] & x[0])
+
+This expression is minimal and implements the function directly without extra conversion or lookup, resulting in fewer gates and lower complexity.

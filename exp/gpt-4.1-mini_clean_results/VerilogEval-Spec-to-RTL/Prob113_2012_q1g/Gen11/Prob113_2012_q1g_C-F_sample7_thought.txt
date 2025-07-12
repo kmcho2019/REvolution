@@ -1,0 +1,24 @@
+To create a superior solution, we fuse the two examples by combining their strengths:
+
+- From Example 1, the term (~x3 & ~x1) covers the entire column in the Karnaugh map where x3=0 and x1=0, regardless of x2. This large coverage reduces product terms and literals.
+- Example 2 offers a more complex expression for the region where x3=1 and x2=1, splitting the term into (x3 & x2 & (~x0 | (x1 & x0))) to cover multiple minterms efficiently.
+- Example 1 uses (x2 & ~x0) to cover some minterms that Example 2 splits further, but Example 2’s factoring inside the last term reduces product literals by combining OR inside AND.
+- To fuse, we keep the large common term (~x3 & ~x1) from both solutions since it covers many minterms simply.
+- For the x3=1, x2=1 region, we adopt Example 2’s factorization (x3 & x2 & (~x0 | (x1 & x0))) which balances logic complexity and literal count.
+- For the remaining minterms covered by x2 & ~x0 in Example 1 but not in Example 2’s simplified expression, we observe that Example 1’s term (x2 & ~x0) covers minterms (x3=0,x2=1,x1=0,x0=0) and (x3=1,x2=1,x1=0,x0=0), partially overlapping with Example 2’s coverage.
+- To minimize literals and overlapping terms, we merge (x2 & ~x0) and (x3 & x2 & (~x0 | (x1 & x0))) into a single expression for x2 & ~x0 plus the remaining x3 & x2 & x1 & x0 term.
+- Therefore, the fused expression is:
+
+  f = (~x3 & ~x1)
+    | (x2 & ~x0)
+    | (x3 & x2 & x1 & x0);
+
+This combines Example 1’s minimal sum-of-products approach with Example 2’s factoring and coverage, eliminating the complex OR term inside AND to reduce gate levels.
+
+This expression is concise, covers all minterms, reduces logic depth, and balances power and area:
+
+- (~x3 & ~x1) covers 4 minterms in top-left block.
+- (x2 & ~x0) covers the "x2=1 and x0=0" area (both x3=0 and x3=1).
+- (x3 & x2 & x1 & x0) covers the single minterm at x3=1,x2=1,x1=1,x0=1.
+
+This final fused solution is functionally correct, simpler, and efficient in PPA.

@@ -1,0 +1,13 @@
+The TopModule can be implemented as a finite state machine (FSM) with several states: 
+1. IDLE: waiting for the start sequence 1101, 
+2. SHIFTING: shifting in the 4 bits for the delay, 
+3. COUNTING: counting down from (delay + 1) * 1000 clock cycles, 
+4. DONE: waiting for the ack signal after the timer has timed out.
+
+The FSM will be implemented using a parameterized case statement to handle the different states. 
+The delay and count variables will be implemented as registers, and will be updated based on the current state and inputs.
+
+The counting will be implemented using a counter that counts down from (delay + 1) * 1000, 
+and the current remaining time will be outputted on the count[3:0] pins.
+
+The ack signal will be used to reset the FSM to the IDLE state after the timer has timed out.

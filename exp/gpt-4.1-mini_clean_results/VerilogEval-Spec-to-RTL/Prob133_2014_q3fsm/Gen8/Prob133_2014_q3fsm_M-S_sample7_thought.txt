@@ -1,0 +1,7 @@
+Simplify the FSM by removing packed counters and using separate registers for cycle count and w accumulator for clarity. Use a single 2-bit cycle counter counting 0 to 2 for the three cycles and a 2-bit accumulator for counting the number of ones in w. Increment cycle count and accumulate w only in state B.
+
+Compute output z combinationally, asserting it one cycle after the 3rd w sample if exactly two w's were 1.
+
+Avoid resetting counters unnecessarily by resetting only on state transitions. Keep synchronous reset active-high.
+
+This simplification reduces bit-packing complexity and keeps next-state logic straightforward, improving readability and ease of verification without increasing state count or logic resources significantly.

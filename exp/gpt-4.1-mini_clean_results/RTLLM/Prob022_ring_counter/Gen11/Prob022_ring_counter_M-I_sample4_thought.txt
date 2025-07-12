@@ -1,0 +1,7 @@
+The original implementation is functionally correct and simple, but some synthesis tools cannot handle the concatenation assignment `{out[6:0], out[7]}` inside the always block for a reg vector due to slicing or concatenation limitations. 
+
+To fix this, I will implement the rotate-left operation without using slicing or concatenation assignments. Instead, I will use a temporary 8-bit register variable inside the always block and construct the rotated value bit-by-bit or with a conditional statement. For example, since the ring counter has exactly one '1' bit set, the next state can be computed by shifting left one bit, and when the MSB is 1, wrap around by clearing MSB and setting LSB. This can be done by checking the MSB bit separately and assigning the next state accordingly.
+
+This approach removes the unsupported concatenation assignment and ensures compatibility with limited synthesis tools, while preserving the exact cyclic ring counter behavior. The reset and output remain the same.
+
+This method is straightforward, fully synthesizable, and more widely compatible with synthesis tools.

@@ -1,0 +1,15 @@
+Since the original code correctly models a D latch behaviorally, the synthesis issue is due to the tool's inability to map the inferred latch to a known cell in the standard cell library (e.g., DLH_X1). This is not a code logic problem but a synthesis library configuration issue.
+
+To fix this purely from a Verilog perspective, I will keep the latch inference style intact (combinational always block, blocking assignment, no else branch) because it's the standard approach.
+
+However, to improve synthesis compatibility, I will:
+- Add an initial value to `q` for simulation clarity.
+- Use the newer `@*` sensitivity list to be more concise and synthesis-friendly.
+- Retain the reg type on `q`.
+- Optionally add synthesis attributes if needed for certain tools (commented for tool-specific use).
+
+This won't change the inferred hardware but makes the code cleaner and compatible across more tools.
+
+The real fix is to ensure the synthesis environment has a latch cell or to instantiate a vendor-specific latch primitive if needed. Without vendor primitives, the code below is best practice.
+
+No functional change from the original approach.

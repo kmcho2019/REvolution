@@ -1,0 +1,15 @@
+To improve the existing 64-bit Johnson counter solution, we will focus on optimizing the Performance, Power, and Area (PPA) metrics based on the provided feedback and metrics. 
+
+1. **Performance Optimization**: The critical path in the current implementation involves the conditional update of Q based on Q[0]. This logic is relatively straightforward but can be optimized further by ensuring the synthesis tool can pipeline the operation efficiently if necessary. However, given the simplicity of the expression, significant performance gains might be challenging to achieve without compromising other metrics.
+
+2. **Power Optimization**: Reducing switching activity is crucial for power optimization. The current implementation updates Q on every clock cycle unless in reset, which can lead to high switching activity. One potential strategy is to implement clock gating or partial updates based on specific conditions. However, given the nature of a Johnson counter, updating the state on every clock cycle is inherent to its operation. Thus, we will focus on ensuring that the logic is as efficient as possible to minimize unnecessary transitions.
+
+3. **Area Optimization**: The area footprint is dominated by the 64-bit register for Q. While the logic itself is straightforward and not overly complex, ensuring that the synthesis tool efficiently maps this logic to the target technology's resources is essential. Resource sharing or more efficient encoding schemes could potentially reduce the area footprint, but given the simplicity and linearity of the Johnson counter's operation, significant area savings might be difficult to achieve without compromising performance or power.
+
+Given these considerations, our improvement strategy involves refining the existing implementation to ensure it is as efficient as possible for the target technology, while also exploring minor tweaks to the logic to see if any small improvements can be made in terms of PPA metrics.
+
+One potential tweak is to explicitly define the reset condition and the update logic within separate always blocks, which might allow for slightly better optimization by the synthesis tool, as it can more clearly distinguish between the sequential logic paths.
+
+However, given the provided metrics, the current implementation seems quite efficient, with low power consumption and a reasonable area footprint. Thus, significant improvements might be challenging to achieve without specific knowledge of the target technology and its optimization capabilities.
+
+Our main focus, therefore, remains on ensuring the logic is as clear and synthesis-friendly as possible, while also considering any minor optimizations that do not compromise the overall functionality or significantly increase complexity.

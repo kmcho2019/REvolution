@@ -1,0 +1,12 @@
+To optimize the existing sequence detector FSM for better PPA (Timing, Power, and Area), I will:
+
+- Switch from one-hot encoding to binary encoding for states, which reduces flip-flop count from 5 to 3, lowering area and power.
+- Use an enumerated localparam with clear state names and 3-bit binary encoding.
+- Replace the "case (1'b1)" style with a straightforward case statement on state, improving code readability and tool optimization.
+- Derive the output (sequence_detected) as a registered Moore output from the current state rather than next_state to avoid glitches.
+- Retain synchronous active-low reset as per requirements.
+- Keep state transitions simple and clearly reflect the detection of the sequence "1001".
+- Maintain Moore FSM style to ensure output stability and better timing.
+- This approach improves area by reducing FF count, reduces switching activity (lower power), and may improve critical path delay through simpler combinational logic.
+
+This trade-off will maintain correct sequence detection functionality while improving PPA metrics over the original one-hot FSM.

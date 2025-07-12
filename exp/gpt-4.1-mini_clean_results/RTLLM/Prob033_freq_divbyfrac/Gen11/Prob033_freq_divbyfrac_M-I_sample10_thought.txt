@@ -1,0 +1,15 @@
+The previous design attempts to generate a fractional divide-by-3.5 clock by using two counters on positive and negative edges. However, both counters start synchronously at zero and count identically, which causes their phases not to be properly offset by half a clock cycle. This leads to overlapping or misaligned clock pulses, and thus the final clk_div output doesn't have a uniform period or duty cycle.
+
+To fix this, we must explicitly stagger the counters on opposite clock edges by initializing them differently, so that one counter is offset by half a clock cycle with respect to the other. A simple way is to initialize counter_n to a different value (e.g., 4) on reset while counter_p starts at 0, so their count sequences are out of phase by roughly half a clock cycle (3 or 4 clock ticks in a 7-count cycle).
+
+Both counters count modulo 7 (0 to 6), but the phase offset creates the half-cycle phase shift needed. Each generates a pulse that's high for 4 counts and low for 3 counts, consistent with a 3.5 division (7 cycles total). 
+
+By OR-ing the two staggered clocks, we obtain a uniform, glitch-free fractional clock output with a 50% duty cycle and frequency reduced by 3.5x.
+
+This approach preserves synchronous design principles, avoids glitches from direct signal copying, and improves the alignment and stability of the fractional clock output.
+
+The reset synchronizes both counters properly with the offset initialization.
+
+Additional minor optimization includes using the same type of sensitivity (posedge or negedge) consistently for the OR logic output (clk_div is a wire derived combinationally) and ensuring outputs change synchronously to avoid glitches.
+
+This corrected phase staggering approach fixes the timing issues while maintaining the original idea.

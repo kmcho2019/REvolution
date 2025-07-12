@@ -1,0 +1,13 @@
+The refactored design will:
+1. Use separate always blocks for clock domains to clearly delineate the crossing boundaries
+2. Implement the enable synchronization as a distinct two-stage pipeline
+3. Use a data capture register that only updates when the first sync stage is high
+4. Maintain output register that updates only when the second sync stage is high
+5. Keep all resets properly synchronized to their respective clock domains
+
+Key improvements:
+- Clear separation of clock domains (clk_a and clk_b) into different always blocks
+- Explicit two-stage synchronization pipeline for the enable signal
+- Data capture register that only loads when properly synchronized
+- Output register that only updates when fully synchronized
+- Maintains all original functionality while being more structurally clear

@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Combined Shift Register and State Machine: Use a 10-bit shift register that inherently tracks the protocol structure (start + 8 data + stop bits)
+2. Early Stop Bit Detection: Monitor the incoming stream continuously for protocol violations
+3. Implicit State Encoding: The shift register's content itself represents the state (no explicit state variables)
+4. Edge-triggered Processing: Process the complete byte only when the stop bit position is filled
+5. Power Optimization: Clock gating based on protocol phase detection
+6. Minimal Control Logic: Reduce FSM complexity by letting the shift register pattern dictate behavior
+
+Key Benefits:
+- Eliminates separate bit counter logic
+- Early detection of protocol violations
+- Reduced control logic complexity
+- Natural alignment with the serial protocol structure
+- Efficient use of shift register as both storage and state indicator

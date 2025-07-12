@@ -1,0 +1,9 @@
+Instead of directly storing the entire previous input vector and then comparing it on every clock, this approach uses a generate-for loop with bitwise individual edge detectors and a set-reset latch for each bit.
+
+Specifically, each bit has an independent flip-flop that latches high once a falling edge (1→0) is detected on that bit of `in`. The detection uses a separate register `prev_bit` for each bit to compare current and previous state. The output bits hold their latched value until a synchronous reset clears them.
+
+Architecturally, this is similar to 32 parallel single-bit falling-edge capture units. This fine-grained approach avoids any wide bitwise operations in one expression, potentially improving synthesis clarity and timing. It also inherently avoids race conditions from simultaneous vector updates by dealing with each bit separately.
+
+The synchronous reset clears all outputs and stored previous states. Since all registers update on the same clock edge, this design respects synchronous logic guidelines and should be robust in synthesis. The per-bit loop is unrolled by synthesis tools into parallel logic.
+
+This modular design is easy to understand, maintain, and extend for debugging or additional features like per-bit enable signals.

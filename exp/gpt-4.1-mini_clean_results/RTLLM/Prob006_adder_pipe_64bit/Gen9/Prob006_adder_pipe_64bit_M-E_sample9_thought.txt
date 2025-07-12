@@ -1,0 +1,25 @@
+Implement a 64-bit ripple carry adder with a 4-stage pipeline by splitting the 64-bit adder into four 16-bit ripple carry adder blocks. Each stage adds 16 bits plus a carry-in from the previous stage. This reduces pipeline depth and achieves a good balance of latency and performance.
+
+Key points of this approach:
+
+1. Inputs adda and addb are registered at stage 0.
+
+2. Stage 1 computes sum[15:0] and carry out of bit 15 using 16-bit ripple carry addition.
+
+3. Stage 2 computes sum[31:16] and carry out of bit 31, using previous carry.
+
+4. Stage 3 computes sum[47:32] and carry out of bit 47.
+
+5. Stage 4 computes sum[63:48] and carry out of bit 63.
+
+6. At each pipeline register clock edge, sums and carry-out propagate forward.
+
+7. Output result (65 bits) is assembled at stage 4 by concatenating all 16-bit sums plus final carry out.
+
+8. A 5-bit shift register delays the enable signal i_en to generate o_en when result is valid.
+
+This modular stage design reduces registers needed compared to 64 stages, keeps the pipeline shallow with 5-cycle latency, and preserves ripple carry semantics on 16-bit segments. The ripple carry delay inside a 16-bit block remains combinational logic within a stage.
+
+This new pipeline trades fewer pipeline registers and shorter latency (5 cycles) at a cost of somewhat longer combinational delay per stage compared to single-bit stages.
+
+Overall, this design is practical, synthesizable, and easier to verify/debug.

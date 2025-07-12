@@ -1,0 +1,21 @@
+Here's a novel approach using a carry-save adder structure with early zero detection:
+
+1. **Parallel Arithmetic**:
+   - Instead of a single adder, use two parallel adders (one for addition, one for subtraction)
+   - Select the result using do_sub as a mux control
+   - This eliminates the need for XOR operations on operand b
+
+2. **Early Zero Detection**:
+   - Compute zero flags for both possible results in parallel
+   - Use do_sub to select the correct zero flag
+   - This allows zero detection to happen concurrently with arithmetic
+
+3. **Power Optimization**:
+   - Only one adder path is active at any time (based on do_sub)
+   - The unused adder path can be gated to save power
+   - Early zero detection reduces switching activity in the flag logic
+
+4. **Timing Benefits**:
+   - The critical path is just the adder delay plus a 2:1 mux
+   - No additional XOR delay on the operand path
+   - Zero detection happens in parallel with result selection

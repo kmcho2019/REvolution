@@ -1,0 +1,13 @@
+To create a new and different solution, we will focus on designing a FSM that uses a shift register to track the input sequence. The shift register will be used to detect the specific bit patterns required for HDLC framing. This approach eliminates the need for a large case statement and multiple states, reducing the complexity of the FSM.
+
+Our novel architectural idea involves the following components:
+
+1. **Shift Register:** A 7-bit shift register will be used to store the last 7 bits of the input sequence. This allows us to efficiently track the sequence and detect the required patterns.
+
+2. **Pattern Detection Logic:** Combinational logic will be used to detect the patterns "01111110" (flag) and "0111111" followed by a '0' (discard). This logic will generate the output signals flag and disc.
+
+3. **Error Detection Logic:** A separate combinational logic block will detect if the shift register contains 7 or more consecutive '1's, indicating an error.
+
+4. **State Machine:** A simple state machine will be used to handle the reset and output signals. It will ensure that the output signals are asserted for a complete cycle after the corresponding condition is met.
+
+This approach simplifies the FSM and reduces the number of states, resulting in a more efficient and optimized design.

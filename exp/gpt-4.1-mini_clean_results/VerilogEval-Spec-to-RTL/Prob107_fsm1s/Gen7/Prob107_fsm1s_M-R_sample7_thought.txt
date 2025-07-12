@@ -1,0 +1,10 @@
+Refactor the FSM by encoding the states as a 1-bit register as before, but implement the next state and output logic purely with assign statements and a synchronous process only for the state update. This eliminates the always_comb block for next state and uses combinational logic expressions directly in assigns for next_state and output.
+
+The synchronous always block updates state from next_state or reset, but all combinational logic is handled with continuous assignments. This style makes the FSM behavior explicit through combinational equations, potentially improving clarity and easing formal verification.
+
+The FSM remains Moore with output solely dependent on current state register. The reset is still synchronous active-high.
+
+Advantages:
+- Clear separation of combinational and sequential logic.
+- Eliminates always @(*) block; simpler for certain tooling.
+- Output logic and next_state are easily visible as combinational expressions.

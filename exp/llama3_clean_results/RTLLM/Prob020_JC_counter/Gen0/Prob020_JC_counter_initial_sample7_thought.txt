@@ -1,0 +1,7 @@
+The Johnson counter is a type of shift register where the output of the most significant bit is fed back to the least significant bit. To implement a 64-bit Johnson counter in Verilog, we will create a module named JC_counter with input ports for the clock signal (clk) and the active-low reset signal (rst_n), and an output port for the 64-bit register (Q) representing the current count value.
+
+We will use the always @(posedge clk or negedge rst_n) block to handle the synchronous operation of the counter. Inside this block, we will first check if the reset signal (rst_n) is low, and if so, we will set the counter value (Q) to 0.
+
+If the reset signal (rst_n) is high, we will then check the least significant bit (Q[0]) of the counter value. If Q[0] is 0, we will shift the current value (Q[63:1]) to the right and append a 1 at the most significant bit position. If Q[0] is 1, we will shift the current value (Q[63:1]) to the right and append a 0 at the most significant bit position.
+
+We can achieve the shift operation using the concatenation operator ({}) in Verilog.

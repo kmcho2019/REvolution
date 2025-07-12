@@ -1,0 +1,16 @@
+A different approach to implement the next-state logic for y[1] would be:
+1. Instead of using a case statement, implement the logic using Boolean expressions derived from the state transition table
+2. Create a truth table mapping current state and input to next y[1]
+3. Observe that y[1] is set when transitioning to states D (011) or F (101)
+4. Express next_y1 as a function of current state bits and input w
+5. Use bitwise operations to simplify the logic
+
+Key insights:
+- y[1] is set when:
+  - Current state is B (001) and w=1 (transition to D)
+  - Current state is C (010) and w=1 (transition to D)
+  - Current state is D (011) and w=0 (transition to F)
+  - Current state is E (100) and w=1 (transition to D)
+  - Current state is F (101) and w=1 (transition to D)
+- y[1] is cleared otherwise
+- This can be expressed as: next_y1 = (state is B/C/D/E/F) AND specific w conditions

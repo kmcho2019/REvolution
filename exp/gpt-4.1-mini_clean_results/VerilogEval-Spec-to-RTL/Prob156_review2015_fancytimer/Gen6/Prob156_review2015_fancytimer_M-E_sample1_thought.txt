@@ -1,0 +1,21 @@
+A fresh approach to the timer FSM involves clearly separating pattern detection, delay loading, counting, and done/acknowledge phases with an explicit state machine.
+
+Key design points:
+1. Use a shift register to detect the start pattern 1101 by shifting in each data bit at every clock cycle in the IDLE state.
+2. After detecting the start pattern, move to DELAY_LOAD state to shift in exactly 4 bits MSB first for delay.
+3. Once delay is loaded, move to COUNTING state, counting exactly (delay + 1)*1000 cycles:
+   - Use two counters:
+     a. `block_counter` counts delay+1 blocks (each block = 1000 cycles).
+     b. `cycle_counter` counts cycles from 0 to 999 within each block.
+   - Output the remaining block count as `count`, which decrements after each 1000-cycle block.
+   - The `count` value starts at delay and counts down to zero, staying stable for 1000 cycles each.
+4. When counting completes, assert `done` signal in DONE state.
+5. Wait for `ack` input to return to IDLE and restart pattern detection.
+6. All logic is synchronous and all outputs are registered for glitch-free output.
+7. Reset synchronously clears all registers and goes to IDLE.
+
+This approach cleanly partitions operations, and counting is explicit and exact, ensuring the timer counts precisely (delay+1)*1000 cycles with stable output and well-defined handshaking. The counting output represents the "remaining time" in 4-bit ticks as required.
+
+The outputs during IDLE and DELAY_LOAD are don't-cares for `count` and `done`. `counting` is asserted only during COUNTING state.
+
+This state machine and counting logic ensure clarity, correctness, and easy verification.

@@ -1,0 +1,15 @@
+Fuse the strengths of both examples by implementing a parameterized, modular DFF that triggers on the negative edge of clk with synchronous active-high reset setting its output to a configurable reset value bit. Instantiate eight such DFFs in a generate loop in TopModule for explicit modularity and bit-level clarity, while maintaining minimal power and area by directly implementing synchronous reset inside the DFF.
+
+Key points of the fusion:
+- Each DFF individually handles synchronous reset, loading the corresponding bit of the reset value (0x34).
+- Using separate DFF instances improves modularity and bitwise clarity (from Example 2).
+- Incorporating synchronous reset functionality inside each DFF eliminates input mux and unused ports, improving area and power (combining Example 1's direct synchronous reset approach).
+- Negative edge triggered flip-flops as required.
+- Parameterize reset value in the DFF to promote reusability and clarity.
+- This design achieves modular clarity and flexibility with minimal extra muxing logic and clean synchronous reset inside each flip-flop.
+
+Benefits:
+- Avoids the reset mux in input path, reducing delay and toggling in input data line.
+- Clear per-bit reset logic for easy debugging and future extension.
+- Clean and consistent interface in DFF module.
+- Maintains negative edge triggering with synchronous reset to required reset value.

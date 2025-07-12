@@ -1,0 +1,10 @@
+To implement a 32-bit Galois LFSR with specified taps:
+1. Use a 32-bit register 'q' to store the current state
+2. On each clock edge:
+   - If reset is high, initialize q to 32'h1
+   - Else:
+     * The LSB (q[0]) becomes the new feedback bit
+     * For tap positions (32,22,2,1), XOR the current bit with q[0]
+     * All other bits simply shift right
+3. The taps are actually at positions 31,21,1,0 in 0-based indexing (since Verilog uses 0-based vectors)
+4. The feedback is applied before the shift occurs

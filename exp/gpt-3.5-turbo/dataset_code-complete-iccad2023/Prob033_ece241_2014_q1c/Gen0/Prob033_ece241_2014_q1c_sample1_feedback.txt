@@ -1,3 +1,0 @@
-The main issue in the code lies in the overflow detection logic. The overflow condition is incorrectly determined using XOR operation between the MSB of the sum and the carry out of the MSB. This logic is flawed because it doesn't take into account the true definition of signed overflow in 2's complement arithmetic. In 2's complement, overflow occurs if the sign of both operands is the same, and the sign of the sum is different. This code logic simply checks if the MSB of the sum and the carry out of the MSB are different, which is an oversimplified approach.
-
-To fix this issue, the overflow condition should be determined by checking the sign bits of the operands and the sum. This mismatch in overflow detection logic led to the 60 mismatches in the simulation log.

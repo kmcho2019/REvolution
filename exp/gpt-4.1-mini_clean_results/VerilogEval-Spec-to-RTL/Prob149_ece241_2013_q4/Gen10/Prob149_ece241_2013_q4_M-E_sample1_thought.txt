@@ -1,0 +1,18 @@
+Instead of encoding the water level into discrete states, I will directly interpret the sensor inputs to determine the nominal valve outputs and track the water level as a 3-bit sensor pattern. To handle the supplemental valve (dfr), I will compare the current sensor pattern to the previous one to detect whether the water level has increased.
+
+Architecture:
+
+- On each clock edge, sample the sensor input `s` into `current_s`.
+- Keep a registered previous sensor input `prev_s` from the prior clock cycle.
+- Nominal valve outputs (fr0, fr1, fr2) are combinationally generated from `current_s` following the given table:
+  - If all sensors asserted (s == 3'b111): all valves off.
+  - If s == 3'b011 (s[0] and s[1] asserted): only fr0 on.
+  - If s == 3'b001 (only s[0] asserted): fr0 and fr1 on.
+  - If s == 3'b000 (no sensors asserted): fr0, fr1, fr2 on.
+  - For any other pattern, treat as below lowest sensor and open all valves.
+- The supplemental flow valve (dfr) is asserted only when the water level rises, i.e., when `current_s` is "greater" (in water level terms) than `prev_s`. Define an ordering function to rank sensor patterns from lowest to highest water level:
+  Below (000) < Between s[1]-s[0] (001) < Between s[2]-s[1] (011) < Above s[2] (111).
+- Use a helper function to map sensor inputs to water level rank for comparison.
+- On reset, initialize `prev_s` to 000 (lowest level) and assert all valves, including dfr.
+
+This approach avoids encoding water levels into a small set of states and uses direct sensor inputs, enabling robust and clear determination of flow valves and rising water detection with minimal logic.

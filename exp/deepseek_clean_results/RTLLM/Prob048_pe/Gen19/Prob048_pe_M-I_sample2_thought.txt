@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. Pipeline the design to improve timing by breaking the critical path (multiplier + adder)
+   - Stage 1: Register inputs and perform multiplication
+   - Stage 2: Perform accumulation
+2. Add clock gating to the multiplier when reset is active to reduce power
+3. Keep operand isolation during reset for power optimization
+4. Maintain 64-bit intermediate product for correct arithmetic
+5. Use registered outputs for better timing closure
+6. Consider adding optional saturation logic (commented out) for applications that need it
+
+Key Optimizations:
+- Pipelining reduces critical path from multiplier+adder to just multiplier or adder
+- Clock gating saves power during reset
+- Registered outputs improve timing
+- Optional saturation provides flexibility
+- Maintains all original functionality while improving PPA

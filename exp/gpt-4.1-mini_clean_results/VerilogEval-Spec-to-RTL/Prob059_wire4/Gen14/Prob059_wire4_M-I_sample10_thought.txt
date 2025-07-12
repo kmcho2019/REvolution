@@ -1,0 +1,5 @@
+The original design uses a buffer instance for the duplicated outputs x and y driven by input b, which adds minor area and power overhead compared to direct assignments. Since the problem only requires wiring inputs to outputs without buffering constraints, the most optimal solution in terms of power and area is to directly assign outputs from their inputs.
+
+Thus, removing the buf_wrap module and replacing the buffer instance with simple continuous assignments for all outputs yields the simplest and lowest cost implementation while preserving functional correctness.
+
+This approach improves PPA by eliminating unnecessary logic and routing, reducing area and dynamic power without impacting timing, since this is purely combinational wiring.

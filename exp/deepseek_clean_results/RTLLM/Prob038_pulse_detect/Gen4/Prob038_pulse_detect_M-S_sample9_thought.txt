@@ -1,0 +1,18 @@
+To simplify the pulse detector while maintaining functionality, I'll implement a more straightforward state machine approach:
+
+1. State Reduction:
+- Only need 2 states: IDLE (waiting for first 0) and GOT_01 (received 0->1 sequence)
+- Eliminate the intermediate GOT_0 state by combining conditions
+
+2. Direct Output Logic:
+- Output is high only when we're in GOT_01 state and see a 0
+- This directly matches the pulse end condition
+
+3. Simplified Transitions:
+- From IDLE: only move to GOT_01 when seeing 0 (start of potential pulse)
+- From GOT_01: return to IDLE on either 0 (complete pulse) or 1 (reset condition)
+- This ensures strict 0->1->0 sequence requirement
+
+4. Reset Handling:
+- Maintain synchronous reset for consistency
+- Clear state and ensure clean initialization

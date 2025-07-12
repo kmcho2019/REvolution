@@ -1,0 +1,5 @@
+Refactor the design by explicitly separating the BCD correction detection logic into a separate combinational function-style block using an intermediate signal for the sum before correction. Then use a single always_comb block that performs the binary addition, checks the condition, applies the correction by direct addition of 6 if needed, and updates outputs accordingly.
+
+This approach consolidates all combinational logic in one always_comb block to improve readability and simulation coherence while preserving purely combinational behavior without registers. The conditional correction logic is moved into a single procedural block, simplifying debugging and making the design more modular by localizing the correction addition.
+
+Outputs are updated based on the corrected sum and carry-out extracted from the corrected 5-bit sum. This style is more typical in RTL where behavioral combinational blocks are preferred to multiple assign statements for clarity and maintenance.

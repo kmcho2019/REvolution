@@ -1,0 +1,12 @@
+Novel Architecture Idea: Carry Prediction with Early Overflow Detection
+1. Instead of computing the full sum first, predict overflow by examining the carry chain behavior
+2. For signed overflow, we only need to consider the carry into and out of the MSB
+3. Compute these carries separately using lookahead logic
+4. This allows overflow detection to happen in parallel with the sum computation
+5. The sum can still be computed conventionally, but overflow detection is now independent
+
+Key advantages:
+- Overflow detection path is separate from sum computation path
+- Potential for better timing as overflow doesn't wait for full sum
+- More modular design that could scale better for larger bit-widths
+- Clear separation of concerns between sum and overflow logic

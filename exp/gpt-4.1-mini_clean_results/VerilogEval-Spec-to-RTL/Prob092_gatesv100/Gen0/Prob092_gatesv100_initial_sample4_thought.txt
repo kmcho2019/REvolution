@@ -1,0 +1,15 @@
+We implement the TopModule with a 100-bit input vector and three 100-bit output vectors as specified:
+
+1. For out_both: 
+   - For indices 0 to 98, out_both[i] = in[i] & in[i+1]
+   - For index 99, out_both[99] = 0 since in[99] has no left neighbor.
+
+2. For out_any:
+   - For indices 1 to 99, out_any[i] = in[i] | in[i-1]
+   - For index 0, out_any[0] = 0 since in[0] has no right neighbor.
+
+3. For out_different with wrapping:
+   - For indices 1 to 99, out_different[i] = (in[i] ^ in[i+1])  [neighbor to left of in[i] is in[i+1]]
+   - For index 99, neighbor to left is in[0], so out_different[99] = in[99] ^ in[0].
+
+We'll implement this combinationally using assign statements and proper indexing to handle the edges and wrapping.

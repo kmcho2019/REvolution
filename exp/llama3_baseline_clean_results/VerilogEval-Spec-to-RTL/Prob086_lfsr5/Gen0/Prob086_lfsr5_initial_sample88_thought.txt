@@ -1,0 +1,15 @@
+To implement the TopModule with a 5-bit maximal-length Galois LFSR, we need to consider the following steps:
+- Define the module with the given interface (clk, reset, q).
+- Initialize the internal register (state) to a non-zero value to ensure it starts in a valid state.
+- Implement the LFSR logic, where taps at bit positions 5 and 3 are XORed with the LSB output bit (q[0]) to produce the next state of the corresponding bit positions, while other bit positions shift right unchanged.
+- Use the synchronous reset to reset the LFSR output to 1 when the reset signal is high.
+- Update the state register on the positive edge of the clock.
+
+Since we're implementing a 5-bit LFSR, we'll use a 5-bit internal register (state). The taps are at bit positions 5 (which doesn't exist in a 5-bit register, so we'll consider it as bit position 4, 0-indexed) and 3. The next state of the LFSR will be calculated based on the current state and the taps.
+
+The next state of the LFSR can be calculated as follows:
+- The MSB (bit 4) will be XORed with the LSB (bit 0) because of the tap at position 5.
+- The bit at position 3 will be XORed with the LSB (bit 0) because of the tap at position 3.
+- Other bits will simply shift right.
+
+The new state will then be updated with the calculated values on the positive edge of the clock.

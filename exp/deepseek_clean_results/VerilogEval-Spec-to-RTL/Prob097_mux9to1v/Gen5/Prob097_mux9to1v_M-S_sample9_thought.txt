@@ -1,0 +1,11 @@
+The original solution is already quite simple and efficient, using a direct case statement for the multiplexer. To further simplify:
+
+1. Remove the 'reg' keyword for the output since we can use continuous assignment with a case expression
+2. Use an always_comb block instead of always @(*) for clearer intent (though this is SystemVerilog)
+3. The default case already handles all unused cases efficiently
+
+However, since we want to maintain pure Verilog (not SystemVerilog) and the original is already minimal, the most we can do is:
+1. Convert to a continuous assignment with a conditional operator chain
+2. This eliminates the need for an always block entirely
+3. The conditional operators will synthesize similarly to the case statement
+4. Maintain the same default behavior for sel > 8

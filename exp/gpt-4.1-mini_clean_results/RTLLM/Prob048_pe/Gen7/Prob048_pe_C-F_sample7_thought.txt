@@ -1,0 +1,10 @@
+Fuse the strengths of both examples by:
+1. Using a 64-bit accumulator register to safely hold the full product accumulation and avoid overflow.
+2. Computing the 64-bit product combinationally each cycle for simplicity.
+3. Using a synchronous reset inside the always block triggered only on the clock's positive edge to align with typical FPGA/ASIC reset styles.
+4. Keeping the combinational product computation outside the sequential logic to reduce critical path inside the clocked always block.
+5. Outputting the lower 32 bits of the accumulator as the 32-bit result, meeting the output spec.
+
+This fusion ensures accuracy, clear separation of combinational and sequential logic, a straightforward reset scheme, and easy timing analysis. It also supports potential future optimizations like pipelining or clock gating without complicating the base logic.
+
+No asynchronous resets or mixing resets in sensitivity lists avoids synthesis and timing pitfalls. The design is clean, synthesizable, and easy to verify.

@@ -1,0 +1,17 @@
+The current solution works correctly but has timing violations (negative WNS). To improve PPA:
+
+1. Timing Optimization:
+   - The critical path involves the incrementer and wrap-around logic (ternary operator)
+   - Replace with simpler logic: use a registered version of the increment value
+   - This breaks the path into two clock cycles but eliminates the combinational path
+
+2. Power Optimization:
+   - Add clock gating when 'a' is high since q remains constant
+   - This reduces unnecessary register toggles
+
+3. Area remains minimal, so no changes needed
+
+The improved version will:
+- Use a registered increment value to meet timing
+- Implement clock gating for power savings
+- Maintain same functionality

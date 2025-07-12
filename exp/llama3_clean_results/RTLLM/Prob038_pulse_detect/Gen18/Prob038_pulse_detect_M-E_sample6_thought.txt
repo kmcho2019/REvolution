@@ -1,0 +1,9 @@
+To implement a novel pulse detection module, we can utilize a Finite State Machine (FSM) approach with a unique twist. The idea is to use a 2-bit counter to track the number of clock cycles for which `data_in` has been high after a low-to-high transition. This approach allows us to accurately detect pulses of any length. 
+
+The FSM will have four states:
+1. **IDLE**: Initial state, waiting for a low-to-high transition on `data_in`.
+2. **PULSE_START**: Detected a low-to-high transition, start counting cycles.
+3. **PULSE_COUNTING**: Continue counting cycles until `data_in` goes low.
+4. **PULSE_END**: `data_in` has gone low after being high, check the count to determine if it's a valid pulse.
+
+This approach ensures that we can detect pulses of varying lengths and accurately set `data_out` to 1 only at the end of a pulse, as required.

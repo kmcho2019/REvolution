@@ -1,0 +1,70 @@
+A different approach is to realize that the output mux_in[i] for each (a,b) combination is a 2-variable function of c and d, which can be expressed using only 2-to-1 muxes controlled by c or d and constants 0 or 1.
+
+For each mux_in[i]:
+
+- For i=0 (ab=00), values from K-map for cd=00,01,11,10 are 0,1,1,1.
+
+  Treat d as selector:
+
+  d=0:
+    c=0 => cd=00 => 0
+    c=1 => cd=10 => 1
+    So output = c
+
+  d=1:
+    c=0 => cd=01 =>1
+    c=1 => cd=11 =>1
+    Output=1
+
+  So mux_in[0] = d ? 1 : c
+
+- For i=1 (ab=01), values all zero, mux_in[1] = 0
+
+- For i=2 (ab=11), values for cd=00,01,11,10 are 0,0,1,0
+
+  Treat d as selector:
+
+  d=0:
+    c=0 => cd=00 =>0
+    c=1 => cd=10 =>0
+    Output=0
+
+  d=1:
+    c=0 => cd=01 =>0
+    c=1 => cd=11 =>1
+    Output = c
+
+  mux_in[2] = d ? c : 0
+
+- For i=3 (ab=10), values for cd=00,01,11,10 are 1,0,1,1
+
+  Treat c as selector:
+
+  c=0:
+    d=0 => cd=00 =>1
+    d=1 => cd=01 =>0
+    Output = ~d (not allowed as no invert gates)
+
+  Since inversion is disallowed, try d as selector:
+
+  d=0:
+    c=0 => cd=00 =>1
+    c=1 => cd=10 =>1
+    Output=1
+
+  d=1:
+    c=0 => cd=01 =>0
+    c=1 => cd=11 =>1
+    Output=c
+
+  So mux_in[3] = d ? c : 1
+
+Thus, all mux_in bits can be expressed using only 2-to-1 muxes, constants 0/1, and selects c or d.
+
+Implement one 2-to-1 mux module and build these outputs accordingly.
+
+This design uses only allowed components and meets minimal multiplexers usage.
+
+The final mux_in[3:0] are wired as {mux_in3,mux_in2,mux_in1,mux_in0}.
+
+This design implements the K-map exactly, with minimal 2-to-1 mux usage, no other gates, and the final 4-to-1 mux (outside this module) selects based on inputs a,b.

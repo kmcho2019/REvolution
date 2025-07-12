@@ -1,0 +1,78 @@
+To implement the given K-map differently, I will use a straightforward direct indexing approach based on the 4-bit input vector formed from (a,b,c,d). This allows me to represent the entire truth table as a 16-bit constant and simply use the inputs as an index into this lookup table. 
+
+Specifically:
+- Concatenate inputs {a,b,c,d} into a 4-bit vector (with a as MSB, d as LSB).
+- Store the 16-bit vector representing the K-map's output for each input combination.
+- Output the bit at the index formed by {a,b,c,d} in the lookup table.
+
+This approach uses a LUT-like logic, avoiding manual factorization, reducing human error, and showcasing a different coding style. It should synthesize efficiently as combinational ROM or muxes, and is very clear.
+
+The K-map given with the mapping:
+
+cd \ ab: 00(0),01(1),11(3),10(2)
+and input order is a,b,c,d.
+
+We need to confirm the indexing order to map the bits properly:
+
+Index bits: {a,b,c,d} (a is MSB, d is LSB)
+This means that index goes from 0000 (0) to 1111(15).
+
+We create a 16-bit vector LUT with bits from bit 0 to bit 15 corresponding to input vector index.
+
+Mapping each cell from the K-map to index:
+
+The K-map rows: cd
+00 = c=0,d=0
+01 = c=0,d=1
+11 = c=1,d=1
+10 = c=1,d=0
+
+The K-map columns: ab
+00 = a=0,b=0
+01 = a=0,b=1
+11 = a=1,b=1
+10 = a=1,b=0
+
+We need to map the output for each input (a,b,c,d) accordingly.
+
+Finally, the 16-bit LUT will be:
+
+index: a b c d | out
+0:  0 0 0 0 | K-map cd=00 ab=00 = 1
+1:  0 0 0 1 | cd=01 ab=00 = 1
+2:  0 0 1 0 | cd=10 ab=00 = 1
+3:  0 0 1 1 | cd=11 ab=00 = 0
+4:  0 1 0 0 | cd=00 ab=01 = 1
+5:  0 1 0 1 | cd=01 ab=01 = 0
+6:  0 1 1 0 | cd=10 ab=01 = 1
+7:  0 1 1 1 | cd=11 ab=01 = 1
+8:  1 0 0 0 | cd=00 ab=10 = 1
+9:  1 0 0 1 | cd=01 ab=10 = 1
+10: 1 0 1 0 | cd=10 ab=10 = 0
+11: 1 0 1 1 | cd=11 ab=10 = 1
+12: 1 1 0 0 | cd=00 ab=11 = 0
+13: 1 1 0 1 | cd=01 ab=11 = 0
+14: 1 1 1 0 | cd=10 ab=11 = 0
+15: 1 1 1 1 | cd=11 ab=11 = 1
+
+Arranging bits from index 15 down to 0 for LUT constant: 
+bit15 = out(15) = 1
+bit14 = out(14) = 0
+bit13 = out(13) = 0
+bit12 = out(12) = 0
+bit11 = out(11) = 1
+bit10 = out(10) = 0
+bit9  = out(9)  = 1
+bit8  = out(8)  = 1
+bit7  = out(7)  = 1
+bit6  = out(6)  = 1
+bit5  = out(5)  = 0
+bit4  = out(4)  = 1
+bit3  = out(3)  = 0
+bit2  = out(2)  = 1
+bit1  = out(1)  = 1
+bit0  = out(0)  = 1
+
+Hence, the 16-bit vector is: 16'b1000101111010111
+
+This LUT approach clearly differs from SOP expansion and uses array indexing for combinational logic.

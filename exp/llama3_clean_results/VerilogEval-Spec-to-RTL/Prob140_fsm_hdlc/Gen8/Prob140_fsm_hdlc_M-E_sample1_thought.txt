@@ -1,0 +1,7 @@
+To tackle this problem, we can design a Moore-type finite state machine (FSM) with a more straightforward approach. Instead of using multiple states to track the number of consecutive ones, we can use a single counter to keep track of the number of consecutive ones. This counter can be reset whenever a zero is encountered. We can also use a separate flag to track whether a discard signal should be sent. 
+
+When the counter reaches 5, we know that we have seen 5 consecutive ones, and we should discard the next bit. If the next bit is a zero, we can reset the counter and send a discard signal. If the next bit is a one, we know that we have seen 6 consecutive ones, and we should send a flag signal. 
+
+If the counter reaches 7 or more, we know that we have seen an error condition, and we should send an error signal. We can also use a separate state to track whether we are in an error condition, so that we can continue to send error signals until a zero is encountered.
+
+By using a counter and a separate flag, we can simplify the FSM and reduce the number of states, making it easier to understand and implement.

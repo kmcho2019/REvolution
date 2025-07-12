@@ -1,0 +1,26 @@
+1. First, clarify the input mapping:
+   - The input is x[3:0] (4 bits)
+   - Karnaugh map rows represent x[3]x[0] (since x[4] doesn't exist)
+   - Columns represent x[1]x[2]
+
+2. Reconstruct the correct K-map:
+   - Rows: x[3]x[0] (00, 01, 11, 10)
+   - Columns: x[1]x[2] (00, 01, 11, 10)
+   - Output values match the given table
+
+3. Identify all 1 outputs:
+   - x[3]x[0]=01 and x[1]x[2]=11
+   - x[3]x[0]=11 and x[1]x[2]=00 or 01
+   - x[3]x[0]=10 and x[1]x[2]=00 or 01
+
+4. Identify all 0 outputs:
+   - x[3]x[0]=00 and x[1]x[2]=01
+   - x[3]x[0]=01 and x[1]x[2]=00 or 10
+   - x[3]x[0]=10 and x[1]x[2]=11
+
+5. Optimal logic implementation:
+   - f = (x[3] & ~x[1]) | 
+         (x[0] & x[1] & x[2] & ~x[3]) |
+         (x[3] & x[0] & ~x[2])
+   - This covers all required 1 outputs while using don't-cares optimally
+   - Uses minimal gates for best PPA

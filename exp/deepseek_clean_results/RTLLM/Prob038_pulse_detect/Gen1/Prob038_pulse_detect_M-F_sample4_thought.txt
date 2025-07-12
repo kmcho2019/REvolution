@@ -1,0 +1,11 @@
+The feedback suggests the state machine logic is fundamentally sound but might have issues with timing or edge cases. To improve robustness:
+1. Keep the same 4-state approach but simplify the output logic to be purely combinatorial based on current state and input
+2. Ensure we properly handle all edge cases (consecutive 0s or 1s)
+3. Make the output exactly match the requirement: data_out=1 only on the last 0 of the pulse (0->1->0)
+4. Add explicit handling of the PULSE_DETECTED state to immediately return to IDLE
+
+Key changes:
+- Combine state transition and output logic in one always block for better timing
+- Make output depend on current state rather than next_state
+- Simplify state transitions to be more explicit
+- Ensure proper reset behavior

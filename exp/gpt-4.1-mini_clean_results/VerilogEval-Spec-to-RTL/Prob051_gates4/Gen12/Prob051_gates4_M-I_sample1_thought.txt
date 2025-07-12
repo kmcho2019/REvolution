@@ -1,0 +1,9 @@
+Since the original solution already uses Verilog built-in reduction operators which are optimal for combinational logic of this size, significant improvements at RTL level are unlikely. However, to potentially improve power and delay, we can use balanced tree structures explicitly, so synthesis tools might better optimize gate-level implementations, or fanout of large inputs might be reduced. By manually instantiating a balanced tree of 2-input gates for each function, we can give the synthesizer explicit hints about structure, possibly improving timing or power by reducing fanout and enabling parallelism. This comes at the cost of slightly more verbose code but may yield a marginal PPA improvement in some flows.
+
+Hence, implement each output as a balanced tree of 2-input gates using intermediate wires, avoiding wide fanin gates. This approach might reduce capacitance and glitches and could help in timing-critical paths or low-power designs.
+
+Note: The XOR tree is implemented as a cascade of 2-input XORs, the AND and OR similarly as cascaded 2-input ANDs and ORs.
+
+This manual structuring is especially beneficial when the target technology has optimizations for 2-input gates or when fanin of gates is limited.
+
+The outputs remain combinational and are declared as wires, with no registers introduced.

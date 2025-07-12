@@ -1,0 +1,18 @@
+To fuse the best ideas from both examples, I will combine the simplicity and clarity of Example 2 with the explicit count_enable signal from Example 1 for better readability and potential future extensibility.
+
+Specifically:
+
+- Use a single always block triggered on the rising edge of clk for synchronous reset and counting.
+- Implement the reset as active low (!rst_n), assigning 0 to out.
+- Use a count_enable wire assigned directly from valid_count (as in Example 1) to gate counting.
+- Within the always block, increment the counter only if count_enable is high, else hold the current value.
+- When the counter reaches 11, wrap back to 0.
+- Keep non-blocking assignments for proper synchronous design.
+- Avoid unnecessary combinational logic or separate next_state logic to maintain simplicity.
+- This approach maintains clarity, minimal logic, and good PPA potential: the counter increments only when enabled, holding otherwise, and resets asynchronously.
+
+This fusion captures Example 2’s straightforward sequential logic style and Example 1’s clarity with count_enable signal, making the design readable, efficient, and easy to extend if needed.
+
+No explicit clock gating is used to avoid synthesis complexity, but the enable signal effectively controls toggling.
+
+Overall, this design balances simplicity, readability, and performance.

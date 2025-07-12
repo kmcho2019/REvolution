@@ -1,0 +1,13 @@
+The ROM-based approach is unnecessarily complex for this simple decoding problem. We can achieve better PPA with a direct combinational logic implementation using a case statement. Here's the improved strategy:
+
+1. **Direct Case Statement**: Replace the ROM with a simple case statement that directly matches the 4 scancodes we care about.
+2. **One-Hot Encoding**: Maintain the same output encoding (one-hot) for consistency.
+3. **Default Case**: Explicitly handle all other cases with a default output of 0.
+4. **Optimization Benefits**:
+   - Eliminates ROM overhead (area reduction)
+   - Reduces power by only evaluating relevant cases
+   - Simplifies the design for better timing
+   - More readable and maintainable code
+   - Still easily extensible for additional keys
+
+This approach leverages Verilog's synthesis optimization for case statements while being more explicit about the intended functionality.

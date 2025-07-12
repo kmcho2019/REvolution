@@ -1,0 +1,12 @@
+To improve the existing carry-lookahead adder, I'll replace the sequential carry computation loop with a parallel prefix structure (Kogge-Stone style) for carry generation. This reduces the carry propagation delay significantly by computing carries in a tree-like fashion, leading to better performance (lower worst negative slack and faster timing). The logic will still be fully combinational and maintain the same interface and functionality.
+
+This approach:
+- Uses generate and propagate signals as before.
+- Constructs higher-level group generate and propagate signals in stages.
+- Calculates the carry bits in log2(N) stages instead of N sequential steps.
+- Improves the critical path by enabling parallel carry computation.
+- Slightly increases wiring and logic complexity but gains timing.
+
+Overflow detection remains the XOR of the MSB carry-in and carry-out.
+
+This design aims at improving performance while keeping power and area reasonable.

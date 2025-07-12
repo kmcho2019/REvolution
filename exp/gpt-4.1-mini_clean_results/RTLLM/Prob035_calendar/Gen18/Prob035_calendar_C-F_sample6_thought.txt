@@ -1,0 +1,12 @@
+Fuse the best aspects of both examples to create a superior calendar module by:
+
+- Using three separate always blocks triggered on posedge CLK or posedge RST for modularity and clear separation of concerns (improves readability and eases debugging).
+- Employing non-blocking assignments consistently to ensure correct sequential logic.
+- Narrowing Hours to 5 bits (0-23) to optimize area.
+- Keeping minutes and seconds 6 bits (0-59) as required.
+- Reducing unnecessary toggling by updating counters only when needed but without adding conditional register assignments inside always blocks to avoid added combinational complexity.
+- Removing redundant else assignments for Mins and Hours to enable synthesis tools to optimize power (clock gating and logic gating).
+- Simplifying and flattening increment and wrap-around logic for performance optimization and smaller logic depth.
+- Adding clear comments for maintainability.
+- Avoiding combinational variables inside always blocks to reduce logic complexity and critical path, using straightforward synchronous logic instead.
+- This fusion maintains design clarity, ensures correctness, optimizes area, and reduces power by enabling synthesis optimizations while keeping timing paths manageable.

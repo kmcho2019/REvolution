@@ -1,0 +1,23 @@
+Here's a novel approach using a hybrid of state machine and pattern matching:
+
+1. **Shift Register with State Encoding**: Instead of separate states for pattern matching, we'll encode the pattern detection directly into the state transitions using a compact state encoding that tracks progress.
+
+2. **Time-Integrated State Machine**: Combine the pattern matching and timeout monitoring into a single state machine with clever state transitions that eliminate the need for separate counters.
+
+3. **Output Generation Logic**: Use combinatorial logic for outputs that depends on both current state and input history, allowing more compact state representation.
+
+Key innovations:
+- State encoding represents both pattern progress and timeout status
+- Eliminates need for separate pattern shift register
+- Uses state transitions to implicitly track timing
+- Outputs are purely combinatorial functions of state
+
+States:
+- A: Reset state (f=0, g=0)
+- B: f pulse state (f=1, g=0)
+- C: Waiting for first '1' in pattern (f=0, g=0)
+- D: Saw '1', waiting for '0' (f=0, g=0)
+- E: Saw '1-0', waiting for '1' (f=0, g=0)
+- F: Pattern matched, monitoring y (f=0, g=1)
+- G: Permanent g=1 (f=0, g=1)
+- H: Permanent g=0 (f=0, g=0)

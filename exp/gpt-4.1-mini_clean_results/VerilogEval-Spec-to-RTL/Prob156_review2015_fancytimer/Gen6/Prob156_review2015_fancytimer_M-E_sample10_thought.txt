@@ -1,0 +1,16 @@
+Implement a clear FSM with enumerated states that distinctly separate the functions: PATTERN_SEARCH, DELAY_LOAD, COUNT, and WAIT_ACK.  
+
+Key points of the new architecture:
+- Use a 4-bit shift register to continuously shift in bits for pattern detection in PATTERN_SEARCH state.
+- Upon detecting 1101 pattern, transition to DELAY_LOAD to shift in 4 bits MSB first into a delay register.
+- Store the delay as the timer duration; the timer counts (delay + 1) intervals of 1000 clock cycles each.
+- Use a 10-bit cycle counter for counting 1000 clocks, and a 4-bit tick counter for how many 1000-cycle intervals remain.
+- Outputs: 
+    * `count` shows remaining tick count during COUNT state.
+    * `counting` is high only in COUNT state.
+    * `done` is high only in WAIT_ACK state.
+- After counting is done, assert done until `ack` is received, then reset to PATTERN_SEARCH.
+- All registers update synchronously with positive clock edge; reset is synchronous active-high.
+- Decouple pattern detection from delay loading and counting by controlling shift register enable only in PATTERN_SEARCH or DELAY_LOAD states respectively.
+- Properly initialize tick_counter with delay+1 to ensure exact timing.
+- This design is simple, modular, and uses clear state transitions, easing verification and synthesis.

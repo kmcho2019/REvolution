@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. **Power Optimization**: The current implementation is already power-efficient due to one-hot encoding's inherent low switching activity. However, we can slightly reduce power by minimizing the number of gate inputs (fan-in) for the Y3 calculation.
+
+2. **Area Optimization**: The current area is good (3.0 um²), but we can potentially reduce it further by:
+   - Using a single 3-input NOR gate for Y3 instead of separate OR+NOT operations
+   - Ensuring the synthesis tool can map this efficiently to standard cells
+
+3. **Timing Optimization**: The current timing is excellent (0.0 TNS/WNS). We'll maintain this by:
+   - Keeping the critical path as a single gate level
+   - Not adding any additional logic complexity
+
+4. **Implementation**: 
+   - Keep Y1 as is (optimal 2-input AND)
+   - Express Y3 using a single NOR3 operation (w | y[0] | y[3])'
+   - This reduces transistor count while maintaining the same functionality

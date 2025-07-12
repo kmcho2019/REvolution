@@ -1,0 +1,9 @@
+To optimize the counter for better performance, power, and area, I will simplify the terminal count detection logic by replacing the split-bit comparator with a single equality check (q == MAX_COUNT). Modern synthesis tools handle single comparisons efficiently, often better than manually split comparisons.
+
+Further, to minimize switching activity and reduce logic depth, I will use the fact that when q == MAX_COUNT, on the next clock cycle q wraps to zero. I can implement the increment with modulo arithmetic by checking if (q == MAX_COUNT), then reset to zero; else increment.
+
+This single equality check simplifies the comparator logic, reduces gate count, and potentially improves maximum frequency.
+
+The synchronous active-high reset remains unchanged.
+
+This approach preserves correctness while streamlining combinational logic for better PPA.

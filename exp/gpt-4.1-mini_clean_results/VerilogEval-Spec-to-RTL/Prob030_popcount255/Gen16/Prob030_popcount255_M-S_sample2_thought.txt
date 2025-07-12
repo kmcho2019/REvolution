@@ -1,0 +1,9 @@
+Simplify by flattening the design: directly sum the 255 bits in fixed-size 8-bit chunks using the efficient popcount8 module, then accumulate these partial counts with a simple adder chain.
+
+- Partition input into 31 groups of 8 bits plus 1 group of 7 bits.
+- Use popcount8 for all 8-bit groups, zero-padding the last 7-bit group.
+- Sum all 32 partial counts with a straightforward for-loop accumulator in a combinational always block.
+- This avoids recursion and complex adder trees, reducing code complexity while keeping efficient small blocks for population count and a simple final summation.
+- The final output is 8 bits, enough to hold max count of 255.
+
+This achieves a clear, flat, and synthesizable design with fewer modules and simpler wiring.

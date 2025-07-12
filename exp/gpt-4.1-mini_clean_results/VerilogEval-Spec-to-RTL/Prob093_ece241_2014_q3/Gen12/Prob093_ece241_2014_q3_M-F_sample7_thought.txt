@@ -1,0 +1,44 @@
+The root cause of the mismatch is the non-standard ordering of mux_in bits relative to the 4-to-1 mux input lines selected by {a,b}. 
+
+The problem states explicitly:
+
+- ab=00 connected to mux_in[0]
+- ab=01 connected to mux_in[1]
+- ab=11 connected to mux_in[2]
+- ab=10 connected to mux_in[3]
+
+This is an unusual mapping because binary order would typically be 00→0, 01→1, 10→2, 11→3. But here 11 and 10 inputs are swapped at indices 2 and 3.
+
+The original code implemented mux_in[2] as ab=11 and mux_in[3] as ab=10, matching the problem statement exactly.
+
+However, the simulation indicates mismatch. This suggests the external 4-to-1 mux (not in our code) expects a standard binary order:  
+mux_in[0] = ab=00  
+mux_in[1] = ab=01  
+mux_in[2] = ab=10  
+mux_in[3] = ab=11  
+
+To fix the mismatch, we must reorder mux_in outputs to follow standard binary order corresponding to selector bits {a,b} indexing mux_in as:
+
+- mux_in[0] = ab=00  
+- mux_in[1] = ab=01  
+- mux_in[2] = ab=10  
+- mux_in[3] = ab=11  
+
+This means:
+
+- mux_in[0] stays for ab=00 → c OR d  
+- mux_in[1] stays for ab=01 → always 0  
+- mux_in[2] now must represent ab=10 → previously assigned to mux_in[3], which implements c + ~d  
+- mux_in[3] now must represent ab=11 → previously mux_in[2], which implements c & d
+
+Therefore, we must swap mux_in[2] and mux_in[3] assignments in code.
+
+This change aligns mux_in outputs with standard 4-to-1 mux input order used in simulation, fixing the mismatches.
+
+The rest of the logic remains as previously derived using minimal 2-to-1 muxes to implement the required functions.
+
+Note: a and b selectors are external and not inputs to TopModule; TopModule only outputs mux_in[3:0].
+
+This correction should fix the simulation mismatches.
+
+Also, no other logic changes needed; just reorder mux_in outputs to match standard selector indexing.

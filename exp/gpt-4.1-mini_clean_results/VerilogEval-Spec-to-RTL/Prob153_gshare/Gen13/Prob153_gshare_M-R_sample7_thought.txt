@@ -1,0 +1,33 @@
+Refactor the design by separating purely combinational logic from sequential updates to clarify timing and output behavior. The key points are:
+
+- Use combinational assignments to determine prediction outputs directly from the current state of GHR and PHT, ensuring `predict_taken` and `predict_history` are always immediately available based on inputs and current registers, eliminating output registers.
+
+- Keep a register `predict_history_r` to hold the GHR value used for the prediction, updated at the clock edge when `predict_valid` is asserted. This register serves as the stable output of `predict_history`.
+
+- Use a combinational XOR for the index calculation.
+
+- Implement the 128-entry PHT as a register array updated synchronously on clock edge during training.
+
+- On each clock edge:
+  - If reset, initialize all state.
+  - Else, update PHT for training if valid.
+  - Update GHR with priority: training mispredict (recover GHR), else training update, else prediction update, else hold.
+  - Update `predict_history_r` only on `predict_valid` to capture GHR before update.
+
+- Remove registers for `predict_taken`; instead assign it combinationally from PHT at `predict_index`, so it reflects the immediate prediction bit for the given PC and current GHR.
+
+This restructuring makes the output signals more clearly combinational or registered as appropriate and clarifies update precedence, preventing timing confusion.
+
+---
+
+This approach meets specification:
+
+- `predict_taken` combinationally reports the prediction based on current GHR and PHT.
+
+- `predict_history` reports the GHR state used for prediction (captured in last clock edge when prediction was valid).
+
+- GHR updates only at clock edge and honors training vs prediction priority.
+
+- PHT updates only during training.
+
+The design is simpler to understand and trace for correctness and should fix observed timing mismatches.

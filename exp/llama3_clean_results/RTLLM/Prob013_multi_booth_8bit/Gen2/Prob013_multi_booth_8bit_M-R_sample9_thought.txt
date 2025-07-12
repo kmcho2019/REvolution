@@ -1,0 +1,7 @@
+To refactor the existing code, we'll adopt a different approach by utilizing a Finite State Machine (FSM) to control the multiplication process. The FSM will have two main states: an idle state and a multiplication state. In the idle state, the module waits for the reset signal to be low. Once the reset signal is low, the FSM transitions to the multiplication state, where it performs the Booth multiplication algorithm.
+
+We'll use a counter to track the number of clock cycles and a flag to indicate the completion of the multiplication process. The multiplicand register will be left-shifted on each clock cycle, and the product register will accumulate the value of the multiplicand register based on the current bit of the multiplier register.
+
+To simplify the logic and improve synthesizability, we'll use `assign` statements for combinational logic and separate `always` blocks for sequential logic. The `assign` statements will be used to generate the next state and output signals, while the `always` blocks will handle the sequential updates of the registers.
+
+The refactored code will maintain the same functionality as the original code but with a different structure, aiming to improve synthesizability and compatibility with the synthesis tool.

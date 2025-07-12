@@ -1,0 +1,12 @@
+I will implement the Mealy FSM for detecting the sequence "10011" using a one-hot state encoding scheme with six states: one reset state and five states corresponding to each matched prefix length. This one-hot approach simplifies the next-state logic, often improving timing at the expense of a few more flip-flops.
+
+Key points of the new design:
+1. One-hot state encoding for clarity and potentially better timing.
+2. Next-state logic is implemented combinationally using explicit AND-OR conditions.
+3. Output MATCH is a Mealy output asserted combinationally when the FSM reaches the final matching state and the last bit of the sequence is confirmed (IN=1).
+4. FSM supports overlapping and continuous input detection by carefully analyzing input and current states.
+5. Synchronous reset with non-blocking assignments to avoid glitches.
+6. The approach explicitly defines each state as a separate bit, making state transitions and output conditions very clear.
+7. Includes comments for readability and maintainability.
+
+This approach provides a fresh architectural style contrasting with binary encoding, focusing on clarity, modularity, and ease of modification or debugging.

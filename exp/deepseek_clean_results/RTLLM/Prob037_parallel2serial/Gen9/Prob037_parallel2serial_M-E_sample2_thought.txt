@@ -1,0 +1,12 @@
+Novel Architecture Idea: Bit Pointer with Circular Buffer
+1. Instead of using a state machine or shift register, implement a circular pointer that directly selects each bit in sequence.
+2. Use a 2-bit counter as a pointer to select the current bit from the parallel input.
+3. Store the input data in a register when the pointer wraps around (cnt==0).
+4. The valid_out signal is simply the MSB of the counter (cnt[1]), which is high only during the first cycle.
+5. This approach eliminates shift operations and reduces logic complexity by directly using the pointer for bit selection.
+
+Key Advantages:
+- No shift operations needed (reduces power and area)
+- Simple counter-based control logic
+- Direct bit selection from stored parallel data
+- Minimal gate count and clean timing paths

@@ -1,0 +1,12 @@
+I'll implement a one-hot encoded FSM with these key innovations:
+1. One-hot state encoding (4 bits) for potentially faster state transitions
+2. Parallel request evaluation using a priority encoder structure
+3. Combined state transition and output logic in a single always block for compactness
+4. Explicit state holding conditions to minimize unnecessary transitions
+
+The design evaluates all requests in parallel while maintaining priority:
+- r[0] has highest priority (checked first)
+- r[1] has middle priority
+- r[2] has lowest priority (checked last)
+Each state has explicit hold conditions when the active request remains high
+The outputs are directly derived from the one-hot state bits

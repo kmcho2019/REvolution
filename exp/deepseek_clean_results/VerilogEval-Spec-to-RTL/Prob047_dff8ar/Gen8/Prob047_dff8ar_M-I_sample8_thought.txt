@@ -1,0 +1,20 @@
+To optimize the PPA metrics while maintaining functionality, I propose the following improvements:
+
+1. **Power Optimization**:
+   - Remove the hierarchical DFF module and implement directly in TopModule to eliminate module instantiation overhead
+   - Use a single always block for all 8 bits to reduce control logic
+
+2. **Area Optimization**:
+   - Use a single 8-bit register instead of individual flip-flops to allow better synthesis optimization
+   - Remove generate block overhead by directly using vector operations
+
+3. **Performance Maintenance**:
+   - Keep the same positive-edge triggered behavior
+   - Maintain asynchronous reset functionality
+   - Use non-blocking assignments for proper synchronous design
+
+The improved version will:
+- Reduce area by eliminating hierarchical overhead and using vector operations
+- Maintain excellent timing characteristics
+- Potentially reduce power through simpler control logic
+- Keep the same functional behavior

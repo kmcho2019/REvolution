@@ -1,0 +1,10 @@
+Fuse the compact 3-bit saturating counter approach from Example 2 with the explicit Moore FSM output states and a clean next-state case-based logic from Example 1.
+
+- Use a 4-bit state encoding to represent counts (S0 to S6) plus three dedicated output states (SD, SF, SE) for disc, flag, and error, ensuring outputs are asserted exactly one cycle after detection and strictly in Moore style.
+- Implement next-state logic using a combinational case statement driven by {state, in} for clarity and ease of modification.
+- Separate outputs as combinational assignments depending only on current state for glitch-free Moore outputs.
+- Synchronously reset state to S0 to represent previous bit zero.
+- This fusion yields a small state machine with clear separation between counting states and output states, minimizes combinational logic depth by using straightforward next-state transitions, and maintains registered outputs with simple output decoding.
+- The approach combines the explicit output states of Example 1 (to clearly control output pulse timing) with the concise counting and saturation idea from Example 2, improving clarity, maintainability, and timing predictability without increasing area significantly.
+
+This will ensure outputs are asserted for a full clock cycle after conditions occur, the FSM is straightforward to understand and optimize, and the design meets all specifications for synchronous HDLC framing.

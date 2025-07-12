@@ -1,0 +1,8 @@
+To implement a Mealy-type finite state machine (FSM) in Verilog that recognizes the sequence "101" on the input signal x, we need to define the states and transitions of the FSM. Since we can only have 3 states, let's consider the following states: 
+- S0: Initial state
+- S1: '1' detected
+- S2: '01' detected
+
+The FSM will be in S0 initially. When a '1' is detected, it will move to S1. When a '0' is detected in S1, it will move to S2. When a '1' is detected in S2, it will assert the output z to 1 and move back to S1. For all other cases, it will either stay in the same state or move back to S0. The FSM will also have an asynchronous reset that will reset the state to S0 when the aresetn signal is low.
+
+We will use an enum to define the states of the FSM and a case statement to implement the state transitions and output logic.

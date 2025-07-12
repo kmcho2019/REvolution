@@ -1,0 +1,14 @@
+The original solution has a critical flaw in its output maintenance logic. The key improvements needed are:
+
+1. The output bits should be permanently latched high after detecting their first 1->0 transition, not just OR'd with new transitions
+2. Each bit should maintain its state independently until reset
+3. We can optimize by:
+   - Keeping the single 32-bit previous input register
+   - Using a more precise latching mechanism for outputs
+   - Still maintaining minimal resource usage
+
+The improved solution will:
+- Detect falling edges using (prev_in & ~in) as before
+- But instead of OR-ing, we'll SET the output bits permanently when a falling edge is detected
+- This ensures once a bit is set to 1, it stays 1 until reset
+- Maintains the same clock edge behavior and reset functionality

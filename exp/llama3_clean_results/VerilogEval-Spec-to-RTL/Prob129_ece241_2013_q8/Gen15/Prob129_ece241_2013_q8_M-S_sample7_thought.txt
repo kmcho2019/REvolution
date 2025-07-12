@@ -1,0 +1,7 @@
+To simplify the existing solution, we will analyze the provided design and focus on minimizing the complexity while maintaining the functionality. The current design uses a shift register to track the last two bits of the input sequence and asserts the output when the sequence "101" is detected. 
+
+We can simplify the design by using a finite state machine with three states: idle, seen_1, and seen_10. The idle state is the initial state where we have not seen any '1's yet. The seen_1 state is where we have seen one '1', and the seen_10 state is where we have seen the sequence "10". 
+
+From the idle state, if we see a '1', we move to the seen_1 state. From the seen_1 state, if we see a '0', we move to the seen_10 state. From the seen_10 state, if we see a '1', we assert the output and move back to the seen_1 state. 
+
+We will maintain the asynchronous reset to ensure correct reset behavior. By using a finite state machine with a minimal number of states, we can simplify the design and reduce complexity.

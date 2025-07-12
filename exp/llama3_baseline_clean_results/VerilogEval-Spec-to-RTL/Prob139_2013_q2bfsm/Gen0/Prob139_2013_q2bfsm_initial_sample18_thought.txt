@@ -1,0 +1,9 @@
+To implement the required finite state machine (FSM) in Verilog, we need to identify the states and transitions based on the given conditions. The states can be defined as follows:
+- State A (initial state, reset state): In this state, both outputs f and g are 0.
+- State B: This state is reached after resetn is de-asserted. In this state, f is set to 1 for one clock cycle.
+- State C: After State B, the FSM enters State C, where it monitors the input x to detect the sequence 1, 0, 1.
+- State D: Once the sequence 1, 0, 1 is detected on x, the FSM moves to State D, where g is set to 1.
+- State E: While in State D, the FSM monitors y. If y becomes 1 within two clock cycles, it stays in State D (or moves to a state that maintains g = 1 permanently).
+- State F: If y does not become 1 within two clock cycles of State D, the FSM moves to State F, where g is set to 0 permanently.
+
+We'll use an enum to define these states and a variable to keep track of the current state. We'll also need variables to count the clock cycles for detecting the sequence on x and the timeout for y.

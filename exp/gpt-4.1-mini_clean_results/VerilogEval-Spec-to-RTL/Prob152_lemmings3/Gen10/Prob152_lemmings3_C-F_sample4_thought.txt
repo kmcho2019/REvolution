@@ -1,0 +1,16 @@
+Fuse both examples by using a compact 3-bit state encoding that fully encodes mode (walking, falling, digging) and direction (left/right) in a single register, similar to Example 1, for simple output decoding. Adopt Example 2's concise and clean next state logic style that prioritizes falling over digging over bump-induced direction change, with explicit, minimal conditionals to enhance timing and clarity.
+
+Use these state encodings (3 bits):
+- Bits [2:1] = mode: 00=walk, 01=fall, 10=dig, 11=unused (defaults to walk)
+- Bit [0] = direction: 0=left, 1=right
+
+This encoding supports straightforward next state computation:
+- Falling takes precedence: if ground lost, enter falling mode preserving direction.
+- Digging next: if dig input while walking on ground, enter digging mode.
+- Direction switching on bumps only when walking and on ground, switching direction as per bump side rules.
+- While falling or digging, bumps are ignored.
+- Return to walking mode with previous direction on ground re-appearing from fall or dig.
+
+Outputs decode simply from state bits: walk_left/right from mode==walk and direction bit, aaah from fall mode, digging from dig mode.
+
+The asynchronous reset initializes state to walking left. The combinational next state logic is compact and minimizes redundant conditions, improving synthesis optimization and timing. This hybrid design blends clarity, compactness, and logic minimalism for a high-quality solution.

@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Power Optimization:
+   - Current design toggles outputs on every clock edge when state changes
+   - Add state change detection to gate outputs, reducing unnecessary switching
+   - Only update outputs when state actually changes
+
+2. Maintain Performance:
+   - Keep single always block for state transitions
+   - Preserve minimal logic depth (2:1 mux)
+   - Ensure timing remains at 0.2ns clock period
+
+3. Area Consideration:
+   - Add just one register for previous state comparison
+   - Minimal area impact (1 extra flip-flop) for significant power savings
+
+4. Readability:
+   - Keep clear case statement structure
+   - Add comments for state change detection logic

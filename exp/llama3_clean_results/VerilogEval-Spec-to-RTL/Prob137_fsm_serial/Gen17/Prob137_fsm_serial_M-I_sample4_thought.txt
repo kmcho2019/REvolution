@@ -1,0 +1,27 @@
+To improve the existing solution, we will address the issues mentioned in the feedback and optimize the design for better power, performance, and area (PPA) metrics.
+
+Firstly, we will simplify the state machine by removing the separate ERROR state and instead, use a single state (RECEIVE) to handle both the reception of the byte and the error handling. This will reduce the number of states and transitions, making the design more efficient.
+
+Secondly, we will optimize the counter and start detection flag reset logic to ensure continuous transmission without requiring a new start bit after every byte.
+
+Thirdly, we will remove the separate always block for resetting the 'done' signal and integrate it into the main always block.
+
+Lastly, to optimize the design for better PPA, we will consider reducing the size of the shift register, implementing a more efficient state machine encoding, and minimizing unnecessary updates to the shift_register.
+
+We will use a 2-bit state register to encode the two states: IDLE and RECEIVE. The IDLE state will wait for the start bit, and the RECEIVE state will collect the incoming bits.
+
+We will use a 4-bit counter to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
+
+The improved design will have the following states: IDLE and RECEIVE. The IDLE state will wait for the start bit, and the RECEIVE state will collect the incoming bits.
+
+We will use a 9-bit shift register to collect the start bit, 8 data bits, and the stop bit will be checked separately. This approach simplifies the logic and reduces the number of states required.
+
+The counter will be used to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.

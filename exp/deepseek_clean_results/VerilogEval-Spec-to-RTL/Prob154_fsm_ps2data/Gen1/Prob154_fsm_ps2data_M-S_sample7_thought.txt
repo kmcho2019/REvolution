@@ -1,0 +1,11 @@
+The simplified design maintains the same functionality with fewer registers and simpler logic:
+1. Use a 2-bit counter to track message bytes (0=IDLE, 1=first byte, 2=second byte)
+2. Store incoming bytes directly into their final positions in the 24-bit output register
+3. Eliminate separate byte storage registers by shifting bytes into out_bytes
+4. Generate 'done' signal when counter reaches 2 (after third byte)
+5. Reset sets counter to 0 and clears output
+
+This approach reduces area by:
+- Removing byte1/byte2 registers
+- Simplifying state machine to just a counter
+- Reducing multiplexing logic

@@ -1,0 +1,11 @@
+Implement a straightforward Moore FSM with clearly defined states that directly correspond to the problem description. Use a 3-bit shift register updated synchronously on each clock to track the last three samples of x, allowing detection of the '101' pattern. Outputs f and g are asserted exactly for the required cycles by tying them directly to the current state. The FSM will:
+
+- Stay in state A while resetn is low.
+- After resetn goes high, transition to state F_PULSE for one clock asserting f=1.
+- Then move to WAIT_PATTERN, continuously shifting x samples until detecting 101.
+- On pattern detection, go to G_PULSE asserting g=1 for one cycle.
+- Then to Y_MONITOR, checking y for up to two clocks:
+  - If y=1 in this window, go to G_ON holding g=1 permanently.
+  - If not, go to G_OFF holding g=0 permanently.
+  
+All counters and shift registers update synchronously. This approach reduces complexity by eliminating separate counters for y monitoring beyond a simple 2-step count, clearly separates combinational next-state logic from sequential registers, and outputs depend only on the current state, ensuring glitch-free signals and easier timing analysis.

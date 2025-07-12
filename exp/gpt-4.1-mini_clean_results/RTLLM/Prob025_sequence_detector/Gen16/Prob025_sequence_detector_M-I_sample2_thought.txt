@@ -1,0 +1,10 @@
+To optimize the existing 4-bit sequence detector for better PPA, I will:
+- Retain the binary encoded FSM for minimal area.
+- Simplify the next-state logic by explicitly considering overlapping sequences to reduce unnecessary transitions.
+- Generate the output combinationally from the next state and current input rather than in a sequential block, removing one cycle of latency and potentially improving performance.
+- Use non-blocking assignments consistently in sequential blocks.
+- Keep the synchronous active-low reset as per spec.
+
+This approach reduces output latency, potentially improves timing (lower WNS/TNS), and slightly simplifies output logic, without increasing area or power.
+
+Overall, this should enhance performance while maintaining low area and power.

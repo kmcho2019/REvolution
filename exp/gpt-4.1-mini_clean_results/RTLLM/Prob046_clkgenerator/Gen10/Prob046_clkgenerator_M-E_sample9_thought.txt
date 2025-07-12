@@ -1,0 +1,18 @@
+To create a synthesizable and parameterizable clock generator module without relying on simulation-only constructs like delays or initial blocks, we must assume the presence of an input clock (reference clock) and produce a slower clock output by frequency division.
+
+Since the original problem did not specify an input clock, to enable synthesis, we need to add an input clock port (e.g., `input clk_in`). Then, using a counter, the output clock toggles at every half PERIOD of the input clock cycles.
+
+We define the PERIOD parameter as the number of input clock cycles for a full output clock cycle. The counter counts input clock cycles and toggles the output clock every half PERIOD.
+
+This approach:
+- Uses only synchronous constructs, fully synthesizable.
+- Requires an input clock.
+- Produces an output clock whose frequency is `clk_in` frequency divided by PERIOD.
+
+This is the standard way to implement a clock generator / clock divider in hardware.
+
+If a truly standalone free-running clock generator is needed, that is only possible in simulation or via oscillator primitives outside Verilog. But for synthesis, this is the appropriate design.
+
+Hence, the module interface is updated to include an input clock. The output `clk` toggles every `PERIOD/2` input clock cycles.
+
+If `PERIOD` is odd, the toggling interval is truncated by integer division.

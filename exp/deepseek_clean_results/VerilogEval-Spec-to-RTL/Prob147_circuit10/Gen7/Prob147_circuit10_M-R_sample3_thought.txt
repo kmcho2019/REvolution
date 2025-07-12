@@ -1,0 +1,21 @@
+After carefully re-examining the waveform, here's the correct behavior:
+
+1. State Transition Logic:
+   - State toggles when (a XOR b) is true at the clock edge
+   - This explains all state changes in the waveform:
+     - Changes at 45ns (a=0,b=1), 65ns (a=1,b=0), 85ns (a=1,b=1), etc.
+
+2. Output Logic:
+   - q is the XOR of current state and b
+   - This matches all q values in the waveform:
+     - When state=0: q = b
+     - When state=1: q = ~b
+
+3. Initial State:
+   - Starts at 0 as seen in the waveform
+
+Refactoring approach:
+- Use continuous assignments for both state and output logic
+- Implement state as a D flip-flop with XOR feedback
+- Make output purely combinational
+- This removes the always block while maintaining identical functionality

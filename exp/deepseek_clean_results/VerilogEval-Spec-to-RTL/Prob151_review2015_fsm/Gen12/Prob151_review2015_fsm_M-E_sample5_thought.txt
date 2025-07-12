@@ -1,0 +1,16 @@
+Novel Approach: Parallel Pattern Detection with Early Shift Enable
+
+Key Innovations:
+1. Parallel pattern matching: Instead of shifting bits sequentially, we'll use a 4-bit window comparator to detect the 1101 pattern in parallel, eliminating the 1-cycle detection delay.
+
+2. Early shift enable: We'll assert shift_ena immediately upon pattern detection (same cycle) by using combinational logic, ensuring precise timing alignment.
+
+3. Predictive state transitions: The SHIFT state will use a down counter (3->0) for clearer cycle counting, and we'll transition to COUNT state when counter reaches 0 (after exactly 4 cycles).
+
+4. Output pipelining: We'll register all outputs to ensure clean transitions and avoid glitches, while maintaining correct timing relationships.
+
+This approach provides:
+- Immediate pattern detection (no 1-cycle delay)
+- Precise 4-cycle shift timing
+- Clean state transitions
+- Glitch-free outputs

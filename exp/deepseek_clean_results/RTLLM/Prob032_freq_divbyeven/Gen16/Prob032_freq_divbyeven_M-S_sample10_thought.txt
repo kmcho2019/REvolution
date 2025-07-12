@@ -1,0 +1,8 @@
+Simplified design approach:
+1. Remove the separate toggle register to reduce complexity
+2. Use the MSB of the counter directly as the divided clock output
+3. Adjust counter width and limit to maintain even division
+4. Reset counter and output to 0 on active-low reset
+5. Increment counter each clock cycle, wrapping at NUM_DIV-1
+6. Since NUM_DIV is even, MSB toggles at exactly half the frequency
+7. This eliminates one register and associated logic while maintaining functionality

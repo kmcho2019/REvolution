@@ -1,0 +1,10 @@
+Here's an alternative approach using a toggle flip-flop concept instead of explicit state encoding. The key idea is:
+1. Represent the walking direction as a single bit (0=left, 1=right)
+2. Use XOR operations to toggle the direction when bumps occur:
+   - bump_left toggles the direction to right
+   - bump_right toggles the direction to left
+   - Both bumps together effectively cancel out (toggle twice = no change)
+3. The output signals are derived directly from the direction bit
+4. Asynchronous reset initializes to walking left (direction=0)
+
+This approach eliminates explicit state parameters and reduces the state transition logic to simple XOR operations, potentially improving PPA metrics.

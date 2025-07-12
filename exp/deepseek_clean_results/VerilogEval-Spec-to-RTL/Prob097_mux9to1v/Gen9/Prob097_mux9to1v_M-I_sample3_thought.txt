@@ -1,0 +1,14 @@
+To optimize the design further based on the PPA metrics and feedback, I'll implement these improvements:
+
+1. Binary-encoded case statement: Replace one-hot encoding with a direct case statement for better timing and area efficiency. This eliminates the need for one-hot decoding logic.
+
+2. Output gating: Handle the default case more efficiently by gating the output directly in the case statement rather than computing mux_out first.
+
+3. Resource sharing: Use a single case statement for all 16 bits to allow synthesis tools to potentially share common logic between bits.
+
+4. Simplified structure: Remove intermediate signals and generate blocks to create a cleaner, more synthesis-friendly structure.
+
+The improved version should have:
+- Better timing (shorter critical path) due to simpler case statement
+- Reduced area by eliminating one-hot decoder and parallel generate blocks
+- Lower power consumption by minimizing unnecessary switching

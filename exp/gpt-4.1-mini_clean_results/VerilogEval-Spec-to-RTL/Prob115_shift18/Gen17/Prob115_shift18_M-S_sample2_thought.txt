@@ -1,0 +1,3 @@
+Since the shift amounts and directions are limited to fixed cases (left or arithmetic right shifts by 1 or 8 bits), we can simplify the shift operations by using concatenation and slicing instead of the shift operators. Shifts by 1 or 8 bits correspond to simple wiring: for left shifts, discard the most significant bits and append zeros; for arithmetic right shifts, discard least significant bits and replicate the sign bit at the MSB side.
+
+By using a single case statement on amount, we can directly assign the shifted value in a more straightforward manner, avoiding multiple intermediate wires and muxes. This reduces combinational logic and mux complexity while preserving synchronous load and enable behavior. The code stays clean and easier to synthesize efficiently.

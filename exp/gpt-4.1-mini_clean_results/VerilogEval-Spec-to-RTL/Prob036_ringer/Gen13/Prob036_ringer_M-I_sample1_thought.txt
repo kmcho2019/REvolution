@@ -1,0 +1,24 @@
+The original design is already minimal in logic, using simple combinational assignments that directly implement the spec. It uses two AND gates and two output wires, which is very efficient.
+
+However, we can slightly improve power and area by reducing the output logic to a single multiplexing operation rather than separate AND gates, consolidating output assignments. Since only one output can be active at a time, and when ring=0, both outputs are zero, we can use ring and vibrate_mode directly to select which output to activate.
+
+By expressing the outputs as:
+- ringer = ring & ~vibrate_mode
+- motor = ring & vibrate_mode
+
+which is already minimal, but we can implement this using a single wire that encodes output selection and then decode.
+
+Alternatively, to reduce wiring and potentially reduce gate count, assign outputs in an always_comb block or use a ternary operator.
+
+But given synthesizers are good at optimizing such code, the best improvement is clarity and ensuring zero glitches by implementing output selection in a single combinational always block.
+
+Therefore, implement a combinational always block assigning both outputs exclusively, guaranteeing that at any time only one output is asserted and both are zero when ring is low.
+
+This approach may slightly improve power by avoiding glitches in the output signals from multiple separate gate outputs.
+
+Summary:
+- Use a combinational always block to drive outputs
+- Single place for output assignments to avoid glitches
+- Outputs asserted exclusively as per spec
+
+This does not change logical behavior but can help with power by reducing glitching and potentially area by better logic sharing.

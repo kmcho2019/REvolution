@@ -1,0 +1,32 @@
+The output q updates only on the positive edge of clk. Observing the waveform:
+
+- At 15ns (clk rising edge), a=0, q=1
+- Subsequent clk rising edges with a=0 keep q=1
+- At 35ns (clk rising edge), a=1, q remains 1
+- At 45ns (clk rising edge), a=1, q=0
+- Then q stays 0 on next rising edges with a=1
+
+So the circuit appears to latch q=1 when a=0 on a rising clk edge, and latch q=0 when a=1 on a rising clk edge, but with a one-cycle delay for the a=1 case (since at 35ns a=1 but q remains 1, at 45ns a=1 and q=0). 
+
+This suggests q is simply the previous value of a sampled at the previous clk rising edge, but delayed by one clock cycle. 
+
+More specifically:
+- When a is 0, q is immediately set to 1 at next clk posedge.
+- When a is 1, q remains 1 for one cycle, then becomes 0.
+
+Alternatively, q can be seen as the inverse of the previous a sampled at clk rising edge.
+
+However, this contradicts with the data because at 15ns, a=0 and q=1 (good)
+At 45ns, a=1 and q=0, suggesting q = ~a_delayed
+
+Check if q = ~a delayed by one clock cycle:
+
+- At 15ns (clk rising edge), q=1, a=0 => q = ~a (0) = 1 correct
+- At 35ns, q=1, a=1 => q should be 0 if q=~a delayed one clk, but it's 1 (not matching)
+- At 45ns, q=0, a=1 => so q=~a delayed one clk is 0 at 45ns, so delayed a at 35ns must have been 1, so q=~1=0 good.
+
+So the first time a=1 at 35ns but q still 1 indicates that q is updated with ~a sampled at previous clk rising edge, i.e. q <= ~a_d (a delayed by one clock edge). The first time a=1 at 35ns, q is 1 because the previous a was 0 at 25ns, so q = ~0 =1.
+
+Therefore, q is ~a delayed by one clk rising edge.
+
+Hence the implementation is a D flip-flop that captures 'a' at posedge clk into a register, then output q = ~registered_a.

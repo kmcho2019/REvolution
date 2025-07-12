@@ -1,0 +1,12 @@
+To achieve a superior design that combines the strengths of both examples:
+
+- Use the explicit for-loop bit-by-bit shifting from Example 1 for clarity and debuggability, making the shift operation explicit and aiding synthesis tools in inferring a shift register structure.
+- Employ non-blocking assignments consistently throughout for proper sequential logic semantics and avoiding unexpected races.
+- Assign the MSB as the inverse of the current LSB (i.e., ~Q[0]), preserving the Johnson counter logic.
+- Maintain the asynchronous active-low reset for immediate initialization and robustness.
+- Use a small intermediate reg variable for the new MSB within the always block for clearer intent.
+- This approach balances clarity, maintainability, and potential synthesis optimizations (such as shift register inference or bitwise optimizations), while keeping the code concise and easy to understand.
+  
+Compared to the purely vectorized approach, this explicit shifting may aid debug and inspection by clearly showing the bitwise operations, while remaining synthesis-friendly. It also allows easy modifications or instrumentation on intermediate bits if needed.
+
+Overall, this fusion preserves the correctness and simplicity, improves code readability and potential hardware synthesis quality, and keeps the code aligned with standard Verilog best practices.

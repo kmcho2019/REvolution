@@ -1,0 +1,15 @@
+The refactored implementation maintains the same functionality but uses a different structural approach:
+
+1. Instead of separate wire declarations for each selection case, we'll use a single case statement within an always block. This makes the selection logic more compact and easier to read.
+
+2. We'll eliminate the intermediate wire for selected_input and directly assign q based on the case statement.
+
+3. The default case (c > 3) is handled explicitly in the case statement using the default keyword, making the code more self-documenting.
+
+4. This approach may allow synthesis tools to better optimize the multiplexer structure since all cases are explicitly listed in one place.
+
+The benefits of this refactoring are:
+- More concise code with fewer intermediate signals
+- Clearer representation of the selection logic
+- Potentially better synthesis optimization due to explicit case structure
+- Maintains all the original PPA advantages while improving readability

@@ -1,0 +1,7 @@
+Refactor the FSM implementation by using a one-hot state encoding instead of binary encoding to potentially improve timing and simplify combinational decoding. 
+
+Additionally, separate next_state logic and output logic into dedicated always_comb blocks for clarity. Use explicit state flip-flops with a single always_ff block and rely more on combinational assignments (assign) for outputs to reduce combinational logic complexity.
+
+The shift counter will be a 3-bit register counting 0 to 3 shifts, updated only during the shift state. The pattern detection states are one-hot encoded with individual state bits.
+
+This approach might increase flip-flop count but simplify combinational logic and reduce critical path delay, potentially improving performance while maintaining clear and structured code.

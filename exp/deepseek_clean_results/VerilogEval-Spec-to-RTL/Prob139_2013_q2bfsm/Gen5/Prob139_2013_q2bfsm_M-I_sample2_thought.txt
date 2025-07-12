@@ -1,0 +1,24 @@
+To fix this implementation, I'll focus on properly handling the reset condition and ensuring correct state transitions. Here's the improved design strategy:
+
+1. Reset Handling:
+   - Stay in IDLE state while reset is active (resetn=0)
+   - Only transition to PULSE_F state after reset is deasserted
+
+2. Output f:
+   - Generate exactly one clock cycle pulse after reset deassertion
+   - Automatically transition to MONITOR_X state after the pulse
+
+3. Sequence Detection:
+   - Maintain the 3-bit shift register for '101' pattern detection
+   - Only advance to MONITOR_Y state when pattern is detected
+
+4. y Monitoring:
+   - Use a 2-cycle timer (0→1→2) to track the monitoring window
+   - Set permanent g status based on y detection within the window
+   - Maintain g output permanently until next reset
+
+Key improvements:
+- Proper reset synchronization
+- Correct state transition timing
+- Simplified permanent output logic
+- Clear separation of state machine phases

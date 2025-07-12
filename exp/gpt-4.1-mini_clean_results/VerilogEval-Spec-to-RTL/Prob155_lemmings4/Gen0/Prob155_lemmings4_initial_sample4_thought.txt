@@ -1,0 +1,40 @@
+Design a Moore FSM with states encoding both direction (left/right) and activity (walking, falling, digging, splattered). The states will be:
+
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+- SPLAT
+
+At reset, start in WALK_LEFT.
+
+On each clock cycle:
+
+- If areset, go to WALK_LEFT.
+
+- Otherwise, depending on current state and inputs:
+
+  - If in SPLAT, remain in SPLAT forever.
+
+  - If FALLING:
+    - increment a fall counter
+    - if ground==1 and fall counter > 20: go to SPLAT
+    - if ground==1 and fall counter <=20: return to walking in same direction as before fall
+    - bump_left/right ignored when falling or digging
+
+  - If DIGGING:
+    - if ground==0: start falling in same direction, reset fall counter
+    - else continue digging
+    - bump ignored when digging
+
+  - If WALKING:
+    - If ground==0: start falling (fall counter = 0)
+    - else if dig==1: start digging
+    - else if bumped (bump_left or bump_right or both): switch walking direction
+    - else remain walking in current direction
+
+Outputs: assign walk_left=1 if walking or digging left, walk_right=1 if walking or digging right, aaah=1 if falling, digging=1 if digging, all zero in SPLAT.
+
+Implement FSM with registered state and fall counter. Use asynchronous posedge areset.

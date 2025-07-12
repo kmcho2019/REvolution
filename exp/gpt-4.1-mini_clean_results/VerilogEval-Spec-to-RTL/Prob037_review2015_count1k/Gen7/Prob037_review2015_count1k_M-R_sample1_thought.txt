@@ -1,0 +1,10 @@
+I will refactor the counter to use a combinational next-state logic with a registered state update. This separates the state transition computation from the register update, which can aid in clarity and potentially facilitate certain synthesis optimizations. Specifically:
+
+- Introduce a wire `next_q` for the next counter value computed combinationally.
+- Use a single always block for the sequential update of the `q` register.
+- Compute `next_q` using a conditional operator, simplifying increment or reset.
+- Maintain synchronous active-high reset.
+- Retain 10-bit width and count range 0 to 999 inclusive.
+- This structure explicitly shows next state logic and state register, a common finite state machine pattern.
+
+This style improves readability for certain flows and can make pipelining or further modifications easier.

@@ -1,0 +1,19 @@
+Simplified Radix-2 Divider Design:
+
+Key Simplifications:
+1. Removed early termination logic - keeps counter-based approach for consistent timing
+2. Eliminated separate state machine - uses counter directly for control
+3. Simplified sign handling - processes signs at input/output stages only
+4. Reduced register usage - combines quotient and remainder in single shift register
+5. Basic error handling - just detects divide-by-zero case
+6. Single subtraction unit - no parallel computation
+
+Core Algorithm:
+1. Convert inputs to absolute values if signed operation
+2. Initialize shift register with dividend (left-shifted by 1)
+3. Perform 8 non-restoring division steps:
+   - Subtract divisor from upper bits
+   - If result is positive, shift in 1; else shift in 0
+4. Final remainder correction if negative
+5. Apply sign to final quotient and remainder
+6. Output combined result when done

@@ -1,0 +1,19 @@
+To optimize the existing fully combinational 8-bit multiplier using shift-and-add:
+
+- Replace the balanced tree of wide 16-bit adders with a sequential addition process controlled by a small FSM. This trades off combinational complexity for sequential logic, greatly reducing the combinational path and total area, improving max frequency and lowering power.
+
+- The sequential approach:
+  - Initialize product register to zero.
+  - Iterate through each bit of B (multiplier) on each clock cycle.
+  - For each bit set in B, add the multiplicand A shifted by the bit index to the product.
+  - Shift through B bits one by one until done.
+  
+- This iterative multiplier uses one adder (16-bit) and a simple counter, reducing logic and power significantly.
+
+- Provide synchronous reset and start inputs for clean control; use done output to signal multiplication completion.
+
+- The original design is purely combinational, but the sequential approach is generally better for area, power, and timing on FPGA/ASIC and is industry standard.
+
+- The output product is registered and valid after completion, improving stability and timing.
+
+This approach is a classic iterative shift-and-add multiplier implementation that offers superior PPA compared to purely combinational implementations for 8-bit multiplication.

@@ -1,0 +1,22 @@
+Fuse the clean FSM structure, clear signal separation, and fully synchronous logic from Example 1 with the explicit control signals and modular datapath update style from Example 2. 
+
+Specifically:
+- Use a three-state FSM: IDLE (wait for reset release), LOAD (load inputs with sign extension), CALC (perform multiplication cycles).
+- On reset, set FSM to IDLE and clear outputs.
+- On reset release, load sign-extended multiplier and multiplicand into 16-bit signed registers.
+- Maintain a 5-bit counter iterating 16 times, each cycle:
+  - Check the multiplier bit at counter index.
+  - If 1, add multiplicand to product.
+  - Shift multiplicand left by 1.
+  - Increment counter.
+- When counter reaches 16, assert ready and latch product output.
+- Keep all registers (multiplicand, multiplier, product, counter, state, outputs) updated synchronously with nonblocking assignments.
+- Separate combinational logic for next state and control signals for clean, maintainable code.
+- Use clear control signals (load, add_en, shift) to drive datapath updates.
+- Ready signal goes high only in the last cycle, low otherwise.
+- Keep sign extension consistent with problem spec and inputs a (multiplier) and b (multiplicand).
+- This fusion leverages Example 1’s robust FSM and datapath design and Example 2’s explicit control signal clarity, resulting in a clean, modular, and efficient radix-2 Booth multiplier meeting all specs.
+
+Note: Although named radix-4, the provided algorithm is radix-2 shift-add (checking one multiplier bit per cycle). Proper radix-4 would examine 2 bits per cycle and require more complex encoding and fewer cycles. Here, we implement the problem as described (checking multiplier[ctr]) with left shifts and additions, iterating 16 cycles.
+
+This design optimizes clarity, synchronous design discipline, and modular control while fully meeting problem requirements.

@@ -1,0 +1,15 @@
+Implement a three-bit encoded FSM with explicit state and direction as separate registers for clarity and modularity. Use an enumerated state machine with states WALK_L, WALK_R, FALL, DIG, and SPLAT for easy output mapping. Handle asynchronous reset to WALK_LEFT.
+
+Maintain a 6-bit fall counter to count falling cycles; it increments only during FALL, saturates at max value to avoid overflow, and triggers SPLAT state when exceeding 20 cycles upon ground contact.
+
+Separate the direction register as a single bit, updated only during walking and never during fall/dig/splat, ensuring bumps only affect direction in WALK states. Prioritize fall > dig > bump as per spec in the combinational next-state logic.
+
+Outputs are derived directly from the state and direction registers (Moore outputs), preserving simplicity.
+
+This approach improves readability by decoupling direction from states, facilitates explicit transitions, and eases debugging while maintaining efficient encoding and logic. The fall counter is made wider to future-proof overflow, saturating at max. Using enumerated states improves code clarity and maintainability.
+
+The bump signals are processed only when walking, with explicit direction updates. Falling and digging states ignore bumps per spec. Splatter ceases all activity with all outputs zero.
+
+The FSM transition and outputs are handled in separate always blocks: synchronous process with async reset for state/direction/fall_counter and combinational process for next-state logic.
+
+This architectural choice favors clarity and modular design over minimal bit encoding.

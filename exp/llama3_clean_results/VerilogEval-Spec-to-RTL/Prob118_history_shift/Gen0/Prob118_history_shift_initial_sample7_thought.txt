@@ -1,0 +1,7 @@
+The design idea is to create a module named TopModule that implements a 32-bit global history shift register. 
+It should have support for rolling back state in response to a pipeline flush caused by a branch misprediction.
+When a branch prediction is made, it shifts in predict_taken from the LSB side to update the branch history for the predicted branch.
+When a branch misprediction occurs, it loads the branch history register with the history after the completion of the mispredicted branch.
+This is achieved by using a combination of conditional statements and shift operations within a clocked always block.
+The module should also handle the case where both a prediction and misprediction occur at the same time, giving precedence to the misprediction.
+Finally, it should reset the history counter to zero on a positive edge triggered asynchronous reset.

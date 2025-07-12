@@ -1,0 +1,5 @@
+The TopModule can be implemented using a 32-bit register to store the branch history. 
+When predict_valid is high, the branch history is updated by shifting in the predict_taken value from the LSB side.
+When train_mispredicted is high, the branch history is loaded with the train_history concatenated with the train_taken value.
+If both predict_valid and train_mispredicted are high at the same time, the train_mispredicted operation takes precedence.
+The module should also include an asynchronous reset that resets the branch history to zero when areset is high.

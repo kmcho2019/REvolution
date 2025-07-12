@@ -1,0 +1,17 @@
+To fuse the best ideas from both examples and create a superior Mealy FSM detecting "101" with overlapping sequences and asynchronous negative edge reset, we apply these principles:
+
+1. Use clear localparam 2-bit binary state encoding with three states (IDLE/S0, ONE/S1, TEN/S2) as in both examples for area efficiency.
+
+2. Separate combinational next state and output logic for clarity, maintainability, and timing optimization, as in example 2.
+
+3. Combine the straightforward state transition logic from example 1 with the clean separation from example 2 to minimize logic complexity.
+
+4. Maintain the asynchronous negative edge reset from both examples, ensuring synthesis-friendly reset behavior.
+
+5. Use blocking assignments (`=`) in combinational always blocks and non-blocking (`<=`) in sequential blocks, as best practice.
+
+6. Implement the Mealy output `z` combinationally as a simple function of current state and input, asserting `z=1` exactly when the sequence "101" is detected (in TEN/S2 state with input x=1).
+
+7. Optimize default next state assignment in combinational block to current state, reducing unnecessary logic.
+
+This fusion combines the clarity, timing friendliness, and minimal logic depth of example 2 with the straightforward transitions and minimal logic of example 1, producing a concise, synthesis-friendly, and clear design.

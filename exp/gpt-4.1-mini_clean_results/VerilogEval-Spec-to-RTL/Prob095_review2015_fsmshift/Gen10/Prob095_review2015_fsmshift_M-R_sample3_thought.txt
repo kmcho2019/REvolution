@@ -1,0 +1,14 @@
+The original code introduced an undeclared input `pattern_detected` which is not allowed by the problem interface, causing simulation issues. Since the problem requires asserting `shift_ena` for exactly 4 clock cycles right after a synchronous active-high reset and then keeping it low forever until the next reset, the design can be simplified as a straightforward counter triggered only by reset.
+
+I will implement a small finite state machine with two states:
+- IDLE: shift_ena = 0
+- ENABLE: shift_ena = 1 for 4 cycles
+
+On synchronous reset, the FSM transitions to ENABLE state with a 2-bit counter set to 4. Each clock cycle in ENABLE decrements the counter until zero, then the FSM transitions back to IDLE and keeps shift_ena low indefinitely until the next reset.
+
+This FSM-based structure avoids extra inputs and is easy to follow. The outputs will be combinationally assigned from state. All sequential logic uses positive-edge clock triggers and synchronous reset as required.
+
+This achieves:
+- On reset: shift_ena asserted for exactly 4 cycles
+- Afterwards: shift_ena stays low forever
+- No extra inputs beyond problem spec

@@ -1,0 +1,14 @@
+The design of an unsigned 16-bit multiplier module can be achieved through a Finite State Machine (FSM) that controls the shift and accumulate operations. The module has several key components: 
+1. A shift count register (i) that keeps track of the current bit position in the multiplicand.
+2. A multiplicand register (areg) to store the multiplicand.
+3. A multiplier register (breg) to store the multiplier.
+4. A product register (yout_r) to accumulate the product.
+5. A completion flag (done_r) to indicate the completion of the multiplication operation.
+
+The FSM is responsible for updating these components based on the input control signals (clk, rst_n, start) and the current state of the shift count register. 
+At each clock cycle, the module checks if the reset signal is low or if the start signal is active. 
+If the reset signal is low, it resets all registers and flags. 
+If the start signal is active, it starts the multiplication operation by storing the multiplicand and multiplier in their respective registers and initializing the shift count register to 0. 
+Then, for each clock cycle, it checks the bit at the current shift count position in the multiplicand register. 
+If the bit is high, it accumulates the shifted value of the multiplier register into the product register. 
+Once all bits have been processed (i.e., the shift count register reaches 16), it sets the completion flag to indicate the end of the multiplication operation.

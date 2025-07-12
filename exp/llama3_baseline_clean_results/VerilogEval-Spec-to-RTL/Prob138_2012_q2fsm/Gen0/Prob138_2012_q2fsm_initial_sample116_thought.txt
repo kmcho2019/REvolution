@@ -1,0 +1,12 @@
+To implement the given state machine, we can use a two-stage approach in Verilog: one always block to define the next state logic (state table) based on the current state and inputs, and another always block to implement the state flip-flops (sequential logic) that update the current state based on the next state. Since the output z does not depend on the input w directly but only on the current state, we can use a continuous assignment to define z based on the current state. 
+
+The states can be encoded in binary for simplicity, with each state (A, B, C, D, E, F) represented by a unique binary code. Given the state transitions, we can use 3 bits to encode the states since we have 6 states.
+
+- A = 000
+- B = 001
+- C = 010
+- D = 011
+- E = 100
+- F = 101
+
+We will use a variable `current_state` to hold the current state of the FSM and `next_state` to hold the next state based on the state table logic. The `current_state` is updated on every positive edge of the clock based on `next_state`, and `z` is determined directly from `current_state`.

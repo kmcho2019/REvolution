@@ -1,0 +1,5 @@
+Fuse the two examples by using a single 16-bit register q updated synchronously on clk with a synchronous active-low reset, and implement byte enables using a single masked assignment. This approach combines the clarity and simplicity of a unified register (from Example 1) with the power-efficient selective byte updates of Example 2.
+
+Specifically, on reset, clear q. Otherwise, update q with only the bytes enabled by byteena, using bitwise masks to replace the corresponding bytes from d while preserving the others. This single masked assignment reduces unnecessary toggling and logic duplication compared to separate conditional assignments per byte. It also avoids the extra combinational concatenation logic needed when separate byte registers are used.
+
+This fusion yields a design that is concise, power-efficient (updating only enabled bytes), minimal in area (single register and masked logic), and likely to have improved timing due to simplified combinational paths and fewer multiplexers.

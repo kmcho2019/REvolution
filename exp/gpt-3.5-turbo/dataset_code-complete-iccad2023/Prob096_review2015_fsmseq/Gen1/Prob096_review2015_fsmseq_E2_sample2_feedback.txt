@@ -1,7 +1,0 @@
-The code has a fundamental issue in the state transitions logic. The FSM is designed to detect the sequence "1101" in the input bit stream and set the "start_shifting" flag when the sequence is found. However, the state transitions are incorrect. 
-
-In state 3 (4'b0011), when the fourth '1' of the desired sequence is detected, the state is correctly set back to 4'b0000 to start searching for the sequence again. But the issue arises with setting the "start_shifting" signal. The "start_shifting" signal should be set to 1 when the desired sequence is found, but it is incorrectly set inside the if condition for detecting the '1' in state 3. This leads to incorrect behavior and mismatch in simulation results.
-
-To correct this issue, the code should set the "start_shifting" signal outside the if condition for detecting the '1' in state 3. It should be set after the state transition back to 4'b0000, indicating that the desired sequence was found. Additionally, the reset condition should ensure that "start_shifting" is reset to 0 when a reset occurs.
-
-These incorrect state transitions and signal handling logic are causing the mismatches in the simulation results.

@@ -1,0 +1,19 @@
+Analyzing the waveform, the circuit has two 1-bit registers `p` and `q` updated on the rising edge of the clock, starting with unknown values. Observations:
+
+- At the first rising edge when `a=0`, `p=0` and `q` remains unknown (`x`).
+- Later when `a=1` on rising edges, `p` becomes 1, and `q` follows `p` from previous clock.
+- At falling edges, `p` and `q` sometimes update, indicating dual-edge behavior.
+- Between clock edges, output `q` changes only at falling edge of clock, while `p` changes only at rising edge.
+
+Thus, the outputs `p` and `q` behave as two 1-bit registers clocked on different edges:
+
+- `p` updates on the rising edge of `clock` and follows input `a` directly.
+- `q` updates on the falling edge of `clock` and follows the current value of `p`.
+
+This behavior matches the waveform: `p` is essentially a flip-flop clocked on the rising edge sampling `a`, and `q` is a flip-flop clocked on the falling edge sampling `p`.
+
+To implement this, use two sequential always blocks: one triggered on the posedge to update `p` with `a`, and one triggered on the negedge to update `q` with the current `p`. No reset is specified.
+
+This matches the timing and transitions observed in the waveform and respects the initial unknown states.
+
+This dual-edge design aligns with the waveform provided and produces the exact same sequence for outputs `p` and `q`.

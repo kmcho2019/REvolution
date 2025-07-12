@@ -1,0 +1,11 @@
+Refactoring Strategy:
+1. Single Clock Domain: Eliminate the gated clock to simplify timing analysis and reduce power consumption by using only the main clk.
+2. Combinational Output: Use an assign statement for wave_out to make the output generation more transparent and reduce sequential logic.
+3. Simplified Counter Logic: Handle all cases (including freq=0) within a single always block for cleaner state management.
+4. Edge Case Handling: Explicitly handle freq=0 case by forcing wave_out to 0 through the counter reset logic.
+
+Key Changes:
+1. Removed gated clock and associated logic
+2. Combined all sequential logic into one always block
+3. Used continuous assignment for wave_out
+4. Simplified freq=0 handling by integrating it into counter logic

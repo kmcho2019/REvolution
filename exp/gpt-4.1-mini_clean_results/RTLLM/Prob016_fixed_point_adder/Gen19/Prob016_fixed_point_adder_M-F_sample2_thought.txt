@@ -1,0 +1,21 @@
+The main issue highlighted was not with the internal fixed-point addition logic, but with external parameter passing and module instantiation consistency. To fix and improve the code:
+
+1. Keep the module name exactly `fixed_point_adder` to match the problem statement and avoid confusion.
+
+2. Use `always @(*)` for combinational logic, but since output `c` is assigned only combinationally, declare it as `reg` as done.
+
+3. Keep parameter names and default values consistent with the specification.
+
+4. Ensure all internal registers and signals have consistent widths and no overflow warnings.
+
+5. Avoid using intermediate regs wider than needed; use only what is necessary.
+
+6. Keep the combinational logic inside one `always @(*)` block.
+
+7. Add explicit casting when doing addition or subtraction to avoid size mismatch.
+
+8. Document the code for clarity.
+
+By doing this, and using the correct instantiation syntax in the testbench as recommended, the module will be synthesizable and functionally correct for fixed-point addition of two's complement operands.
+
+No functional logic changes are needed since the original logic matches the requirement. The fix is mainly in code clarity, consistency, and ensuring it works well with parameterized instantiation.

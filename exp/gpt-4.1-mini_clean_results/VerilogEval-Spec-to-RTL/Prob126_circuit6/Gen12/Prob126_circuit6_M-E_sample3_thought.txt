@@ -1,0 +1,5 @@
+To implement the combinational mapping from a 3-bit input to a 16-bit output differently, I will use a combinational case statement. This approach explicitly enumerates all input values and assigns the corresponding constant output. This style is straightforward, fully synthesizable, and helps synthesis tools easily optimize the logic into a minimal multiplexer or ROM. It avoids variable shift logic and stores the constants as literals in code rather than as a concatenated vector, which may help improve power by reducing switching on unused bits.
+
+Additionally, by using a `case` in a combinational `always @*` block, the code is clear and easy to maintain or extend, and ensures full coverage of all 3-bit input combinations, with a default output for safety. This is a classic approach to small LUT implementations in RTL.
+
+This new architecture trades off the compactness of vector slicing for direct combinational multiplexing.

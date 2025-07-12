@@ -1,0 +1,7 @@
+Implement a Mealy FSM with 4 states representing the longest suffix matched so far, allowing output assertion on transitions instead of states. The sequence "1101" detection output (start_shifting) will be generated combinationally based on the current state and input, enabling immediate assertion of start_shifting for one cycle when the sequence is detected.
+
+The FSM transitions to next states based on the input bit, capturing overlapping occurrences naturally. Once start_shifting is asserted, a dedicated latch holds it high until a synchronous reset, achieving the sticky output behavior.
+
+This approach reduces state count and uses a Mealy output to detect sequences faster than Moore, while output latching ensures the output remains high indefinitely once triggered. Synchronous reset and positive-edge clocking are preserved. The output latch is clocked, driven high when the sequence is detected, and cleared on reset.
+
+This architecture balances state minimization and immediate output assertion, with a simple latch to hold the output sticky, avoiding increased FSM complexity or clock gating.

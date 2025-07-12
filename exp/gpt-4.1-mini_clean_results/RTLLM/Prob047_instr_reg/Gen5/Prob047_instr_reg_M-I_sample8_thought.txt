@@ -1,0 +1,7 @@
+Improve the design by implementing two separate 8-bit registers ins_p1 and ins_p2 to directly store instructions from source 1 and source 2 respectively, as originally described. This avoids the need for a source_sel flag and output multiplexing, reducing combinational output logic and possibly improving timing and area. 
+
+Keep active low reset to clear both registers to zero. On each clock edge, update ins_p1 if fetch==2'b01, and ins_p2 if fetch==2'b10; otherwise, hold previous values. 
+
+Outputs ins and ad1 derive from ins_p1's high 3 and low 5 bits respectively, and ad2 outputs ins_p2 fully. This straightforward assignment reduces output muxing logic and unnecessary switching, potentially lowering dynamic power. 
+
+Use non-blocking assignments consistently. This approach better aligns with the problem requirements and improves PPA while maintaining functionality.

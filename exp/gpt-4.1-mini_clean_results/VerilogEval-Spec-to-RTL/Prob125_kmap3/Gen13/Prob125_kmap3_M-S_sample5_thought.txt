@@ -1,0 +1,23 @@
+Analyze the Karnaugh map to find the minimal sum-of-products expression ignoring d (don't-care) cells.
+
+The K-map:
+
+         ab
+    cd  01 00 10 11
+    00 | d | 0 | 1 | 1 |
+    01 | 0 | 0 | d | d |
+    11 | 0 | 1 | 1 | 1 |
+    10 | 0 | 1 | 1 | 1 |
+
+Treating d as convenient, the minimal expression is:
+
+out = a | (c & ~b)
+
+Explanation:
+- All cells where a=1 are 1 (columns 10 and 11).
+- When a=0, outputs with c=1 and b=0 are 1.
+- So out = a + c * ~b
+
+This uses only two literals and is simpler than previous solution, avoiding redundant terms and unnecessary intermediate wires.
+
+Implementing this simple expression reduces gate count and area while maintaining correctness.

@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Maintain separate always blocks for each register to keep fanout low
+   - Move output assignments into sequential blocks to reduce critical path
+   - Add pipeline registers for outputs if timing remains critical
+
+2. Power Optimization:
+   - Implement clock gating for registers when fetch signals are inactive
+   - Add explicit enable conditions to prevent unnecessary toggling
+   - Use bit-slicing directly in sequential blocks to reduce switching activity
+
+3. Area Optimization:
+   - Keep minimal register implementation
+   - Remove redundant logic by combining control signals
+   - Optimize output assignments to use direct register connections
+
+Key Changes:
+- Added clock gating through enable conditions
+- Moved output assignments into sequential blocks
+- Simplified control logic by combining fetch conditions
+- Maintained reset functionality while improving power efficiency

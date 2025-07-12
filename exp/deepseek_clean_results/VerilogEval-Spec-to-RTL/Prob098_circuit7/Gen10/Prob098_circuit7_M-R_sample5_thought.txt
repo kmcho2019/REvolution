@@ -1,0 +1,5 @@
+The original solution uses a sequential always block to update a register on clock edges. We can refactor this to use a continuous assignment with a clock-gated expression. The key insight is that the output q is simply the inverted value of input 'a' sampled at the positive clock edge. We can achieve this by:
+1. Using an assign statement with a ternary operator
+2. Creating a temporary wire that holds the inverted value of 'a'
+3. Making the assignment conditional on the positive clock edge
+This approach eliminates the explicit register declaration while maintaining the same functionality.

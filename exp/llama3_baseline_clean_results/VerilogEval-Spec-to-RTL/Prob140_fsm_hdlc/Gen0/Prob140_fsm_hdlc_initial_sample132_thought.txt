@@ -1,0 +1,7 @@
+To implement the required functionality, we can design a Moore-type finite state machine (FSM) with states that track the number of consecutive 1s seen and whether we are currently discarding a bit or have encountered an error. The states can be defined as follows:
+- State 0: Initial state, no consecutive 1s
+- State 1-5: 1-5 consecutive 1s
+- State 6: 6 consecutive 1s, discard next bit if it is 0, else error
+- State 7: Error, 7 or more consecutive 1s
+
+The FSM will transition between these states based on the input 'in' and the current state. If the FSM is in State 6 and 'in' is 0, it will assert 'disc' and reset to State 0. If the FSM is in State 6 and 'in' is 1, it will assert 'err'. If the FSM is in State 5 and 'in' is 1, it will move to State 6 and assert 'flag' on the next clock cycle if 'in' is 0, indicating the end of a frame. The FSM will reset to State 0 when the 'reset' signal is high.

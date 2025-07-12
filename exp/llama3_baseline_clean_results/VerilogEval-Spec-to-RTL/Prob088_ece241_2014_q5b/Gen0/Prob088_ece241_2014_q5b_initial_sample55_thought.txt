@@ -1,0 +1,11 @@
+To implement the given Mealy finite-state machine using one-hot encoding, we first need to define the states and their corresponding next states based on the input x. Since we are using one-hot encoding, each state will be represented by a binary vector where only one bit is high (1) and all others are low (0). 
+
+In this case, we have two states: A and B. We can represent state A as 2'b01 and state B as 2'b10. However, since we're using one-hot encoding, we actually represent A as 2'b01 and B as 2'b10. But to correctly implement one-hot, we'll use 2'b01 for A and 2'b10 for B. 
+
+The next state logic and output z can be determined based on the current state and the input x. 
+
+For state A (2'b01), if x = 0, the next state remains A and z = 0. If x = 1, the next state becomes B and z = 1. 
+
+For state B (2'b10), regardless of the value of x, the next state remains B and z = x.
+
+We will use an asynchronous active-high reset, which means when the reset signal areset is high, the module immediately resets to state A, regardless of the clock.

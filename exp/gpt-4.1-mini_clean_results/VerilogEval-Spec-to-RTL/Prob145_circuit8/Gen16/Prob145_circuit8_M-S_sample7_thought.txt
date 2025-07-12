@@ -1,0 +1,11 @@
+The waveform suggests the circuit behaves like a simple set-reset latch controlled by `a` sampled on the rising edge of the clock, with the outputs `p` and `q` holding the state in a flip-flop pair.
+
+A simpler model is:
+
+- At every rising edge of the clock, update `p` to `a OR p` (set when `a` is high, hold otherwise).
+- Update `q` synchronously on the same clock edge to `p`.
+- Initialize `p` and `q` to zero on simulation start.
+
+This approach removes the use of negative edge sensitivity, uses synchronous logic on the positive edge only, and avoids inferred latches while matching the waveform by making `p` latch the set condition and `q` follow `p` with one clock delay.
+
+This simplification maintains the essential behavior seen in the waveform (outputs changing at clock edges, `p` stays high once set by `a`, `q` follows `p`), and reduces complexity and potential timing issues.

@@ -1,0 +1,25 @@
+To optimize this pipelined 8-bit multiplier for better PPA (Power, Performance, Area), I'll implement these key improvements:
+
+1. **Performance Optimization**:
+   - Break the 4-operand additions into two stages to reduce critical path
+   - Use carry-save adder structure for partial product reduction
+   - Balance pipeline stages for better timing
+
+2. **Power Optimization**:
+   - Add clock gating for pipeline registers when mul_en_in is low
+   - Replace OR-based partial products with multiplexers
+   - Reduce unnecessary toggling in intermediate registers
+
+3. **Area Optimization**:
+   - Share adders between sum_low and sum_high calculations
+   - Use Booth encoding for partial product generation
+   - Optimize enable signal pipeline width
+
+Key changes:
+1. New 4-stage pipeline structure:
+   - Stage 1: Input registration
+   - Stage 2: Partial product generation (Booth encoded)
+   - Stage 3: Carry-save addition
+   - Stage 4: Final addition and output
+2. Clock gating for power reduction
+3. Booth encoding for area efficiency

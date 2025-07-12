@@ -1,0 +1,9 @@
+Combine the explicit, clear case statement for next_state logic (from Example 2) which is more synthesis-friendly and readable, with the use of a purely combinational wire assignment for next_state (from Example 1) to separate combinational logic cleanly from sequential logic.
+
+This fusion uses a combinational always block to generate next_state with a case statement, enhancing readability and synthesis efficiency. Then a wire assignment carries next_state. On posedge clk, q updates to next_state. This separates combinational and sequential logic cleanly, improving timing and clarity.
+
+Additionally, avoid unnecessary register toggles by updating q only when next_state differs from q (like in Example 1's idea but implemented using a clock enable style). This can save power by reducing switching activity.
+
+No reset is implemented to match waveform (q unknown at start). The default case forces a safe state.
+
+This fusion yields a clean, readable, and efficient FSM that should maintain or improve PPA compared to prior examples.

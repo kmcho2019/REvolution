@@ -1,0 +1,13 @@
+To optimize the original design for better performance, power, and area (PPA), I will:
+
+1. Remove redundant default assignments like `bit_count <= bit_count;` and `data_shift <= data_shift;` to simplify the sequential logic and reduce unnecessary muxing.
+2. Replace the `typedef enum` with localparam state encoding for simpler synthesis, which may slightly reduce area and improve timing.
+3. Use a shift-left operation (`data_shift <= {in, data_shift[7:1]};`) as in the original, but guard the shifting strictly during the RECEIVE state and increment the bit counter only when shifting, reducing toggling in other states.
+4. Add an enable signal to the data shift and bit counter registers to prevent unnecessary switching during IDLE, STOP, and WAIT_STOP states, reducing power.
+5. Combine reset and enable control cleanly.
+6. Keep done asserted for exactly one clock cycle on a successful byte reception.
+7. Make sure the FSM cleanly handles stop bit errors by remaining in WAIT_STOP until `in` returns to idle (1).
+   
+These changes reduce switching activity (power), simplify combinational logic (timing), and reduce unnecessary register toggling (area). The clear separation of enable signals can help synthesis tools optimize register clocks or use gating if supported.
+
+The functionality and interface remain unchanged, and the design still uses synchronous reset and positive-edge clocking.

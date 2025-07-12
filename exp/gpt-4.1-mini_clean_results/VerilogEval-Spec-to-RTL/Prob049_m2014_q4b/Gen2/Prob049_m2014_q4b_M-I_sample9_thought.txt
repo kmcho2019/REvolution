@@ -1,0 +1,9 @@
+The original solution already correctly implements a positive edge-triggered D flip-flop with an asynchronous active-high reset. Given its simplicity, there is little scope to improve timing or area at the RTL level.
+
+For power optimization, since the asynchronous reset 'ar' input can cause immediate toggling of 'q', we can consider synchronizing the reset to avoid spurious toggles and reduce switching power. However, this would alter the asynchronous reset behavior, which may not meet the specification.
+
+An alternative minor optimization is to use non-blocking assignment only inside the clocked always block, which the original code already does, ensuring synthesis-friendly design.
+
+Thus, the optimal solution is to keep the RTL as is, as it already is minimal, clear, and synthesis-friendly. Adding comments and minimal style improvements can slightly enhance readability without impacting PPA.
+
+Hence, the improvement focuses on code clarity and maintainability while preserving the original functional behavior and efficiency.

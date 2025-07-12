@@ -1,0 +1,8 @@
+The original design is already minimal and clean, using two 8-bit registers and simple logic for edge detection. The main power and area contributors are the pedge and prev_in registers, which update every clock cycle regardless of input change. To improve power without impacting area or performance significantly, we can add a clock enable that updates the registers only when the input changes, preventing unnecessary register toggling and logic switching when input is stable.
+
+This optimization reduces dynamic power consumption by gating register updates based on input stability, while preserving the simple, single always block structure and minimal logic. It does not affect timing since gating is done combinationally, and area overhead is minimal as only an additional comparator and gating logic are added.
+
+Thus, the improvement strategy:
+- Add a wire 'input_changed' that flags if current input differs from prev_in.
+- Use this signal as a clock enable to update pedge and prev_in registers only when input changes.
+- This reduces switching activity and power usage while keeping performance and area overhead low.

@@ -1,0 +1,25 @@
+To implement a fractional frequency divider by 3.5 using a double-edge clocking technique and achieve an approximately 50% duty cycle fractional clock output, a novel approach is to use a single counter running at the input clock rate and generate output transitions both on the posedge and negedge of the input clock based on this counter.
+
+Key idea:
+- Use a modulo-7 counter since 3.5 = 7/2, representing 7 input clock cycles over 2 output clock cycles.
+- On every posedge and negedge of the input clock, increment the counter modulo 7.
+- Define the output clock edges (toggles) at specific counter values on posedge and negedge separately.
+- This ensures that the output clock period is exactly 7 input clock cycles long (because the counter resets every 7 edges), but toggling output on both edges divides the frequency by 3.5.
+- The output clock toggles on a well-defined pattern of counter values sampled on posedge and negedge, achieving a fractional division and smooth duty cycle.
+
+Benefits:
+- Only one counter needed, simpler synchronization.
+- Toggling output on posedge and negedge edges with the counter as timing source achieves required fractional division and phase shift.
+- Avoids complex dual FSMs.
+- The output toggles produce a clock with period 7 input clock cycles (divided by 3.5), balanced across posedge and negedge.
+- Clean synchronous resets and no overlapping pulses.
+
+Implementation details:
+- Counter increments modulo 7 on each clk edge (posedge and negedge).
+- Output clock toggles on:
+   * posedge clk when counter equals 0 or 4
+   * negedge clk when counter equals 2 or 6
+- This pattern equally spaces toggles to generate a clock with half integer division and good duty cycle.
+- On reset, output clock starts low.
+
+This method synthesizes the fractional divider elegantly with minimal complexity and exact timing.

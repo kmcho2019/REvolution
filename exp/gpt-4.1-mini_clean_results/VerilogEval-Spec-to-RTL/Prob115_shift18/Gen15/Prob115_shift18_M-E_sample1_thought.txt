@@ -1,0 +1,9 @@
+Implement the 64-bit shift register as a single 64-bit register that either loads new data or shifts by a fixed amount on each clock edge. Instead of a multi-stage barrel shifter, perform the shift inside the clocked process using a conditional case statement:
+
+- Use a single always @(posedge clk) block.
+- On load, load the data directly.
+- Else if enable is high, shift based on amount, handling four cases explicitly.
+- For left shifts, fill vacated bits with zeros.
+- For arithmetic right shifts, replicate the sign bit (MSB) for vacated bits.
+- Avoid intermediate wire computations and large combinational muxes by performing shift and sign-extension directly in the sequential block.
+- This approach trades off a potentially longer clock-to-Q for simpler combinational logic and minimal wiring, which could reduce area.

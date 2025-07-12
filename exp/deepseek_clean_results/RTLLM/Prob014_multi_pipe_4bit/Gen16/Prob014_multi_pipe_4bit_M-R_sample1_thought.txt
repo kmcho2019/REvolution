@@ -1,0 +1,16 @@
+Refactored Pipeline Multiplier Design:
+
+Key Changes:
+1. **Explicit Partial Product Calculation**: Replace the generate block with direct assignment of shifted partial products
+2. **Simplified Pipeline Stages**: 
+   - Stage 1: Register inputs and compute all partial products in parallel
+   - Stage 2: Accumulate partial products in two steps (reducing adder tree depth)
+3. **Direct Assignment for Combinational Logic**: Use assign statements for combinational portions
+4. **Clearer Reset Logic**: Separate reset handling for each pipeline stage
+5. **Optimized Register Usage**: Reduce unnecessary registers while maintaining pipeline benefits
+
+Advantages:
+1. **Better Synthesis Compatibility**: Avoids potential synthesis issues with generate blocks
+2. **Improved Readability**: Clear separation of combinational and sequential logic
+3. **Maintained Performance**: Still achieves pipelined throughput
+4. **Reduced Logic Depth**: Balanced adder tree improves timing

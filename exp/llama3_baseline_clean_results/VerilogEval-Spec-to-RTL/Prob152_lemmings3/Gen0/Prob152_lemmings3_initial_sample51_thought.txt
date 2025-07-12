@@ -1,0 +1,14 @@
+To implement the Lemmings' behavior, we can design a finite state machine (FSM) with the following states: 
+- idle_left (initial state)
+- idle_right
+- falling
+- digging_left
+- digging_right
+
+The state transitions will be based on the input signals (bump_left, bump_right, ground, dig). 
+When the ground disappears, the FSM will transition to the falling state. 
+When the dig signal is high and the ground is present, the FSM will transition to the digging state. 
+When the FSM is in the digging state and the ground disappears, it will transition to the falling state. 
+When the FSM is in the falling state and the ground reappears, it will transition back to the idle state (left or right, depending on the previous state).
+
+We will use a Moore state machine, which means the output signals (walk_left, walk_right, aaah, digging) will be determined solely by the current state of the FSM.

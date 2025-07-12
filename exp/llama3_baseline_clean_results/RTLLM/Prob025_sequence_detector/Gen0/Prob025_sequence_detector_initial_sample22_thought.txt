@@ -1,0 +1,11 @@
+The sequence detector module will be implemented as a finite state machine (FSM) with five states: IDLE, S1, S2, S3, and S4. The FSM will transition through these states based on the input data_in and will assert sequence_detected when the specific sequence 1001 is detected. The module will also include a reset input to return the FSM to the IDLE state.
+
+The state machine will work as follows:
+- Start in the IDLE state.
+- When the first '1' is detected, transition to S1.
+- When a '0' is detected in S1, transition to S2.
+- When a '0' is detected in S2, transition to S3.
+- When a '1' is detected in S3, transition to S4 and assert sequence_detected.
+- When reset_n is low, reset the state machine to IDLE.
+
+The FSM will use a parameterized state type to define the different states, and a always block to implement the state machine's logic.

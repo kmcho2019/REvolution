@@ -1,0 +1,11 @@
+The main problem was that on a misprediction flush, `fetch_ghr` is recovered from the old value of `train_ghr` before `train_ghr` is updated to `train_history`. This causes `fetch_ghr` to recover incorrectly, leading to wrong subsequent predictions.
+
+To fix this, we must ensure that `fetch_ghr` recovery on flush uses the *new* flush history (`train_history`) immediately, not the outdated `train_ghr`. The simplest fix is to assign `fetch_ghr` directly from `train_history` when a misprediction training occurs, rather than from `train_ghr`.
+
+We keep updating `train_ghr` as before. On flush, `train_ghr` updates to `train_history`. But since both happen in the same clock, `fetch_ghr` cannot read the updated `train_ghr` in this cycle; thus, directly using `train_history` fixes the race.
+
+This matches the spec that on a misprediction, the global history register is recovered to the branch history state after the mispredicted branch completes execution.
+
+All other behaviors remain the same.
+
+Hence, update the flush logic to:

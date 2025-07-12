@@ -1,0 +1,5 @@
+To refactor while preserving functionality, I will implement the 8 D flip-flops using an array of individual single-bit flip-flops instantiated inside a generate block. Each flip-flop is driven by the same clock and captures one bit of input `d`. This approach emphasizes structural coding instead of a single always block and a vector register. The output `q` will be formed by concatenating the outputs of the eight single-bit registers.
+
+This removes the single reg vector and initial block in favor of instantiated single-bit registers with synchronous reset behavior implicitly absent (matching original spec). This structure can also clarify the underlying hardware mapping (8 DFF cells). It also avoids initial blocks and preserves the clocked behavior with non-blocking assignments internally.
+
+This solution meets the requirement while showing an alternative coding style focusing on modular single-bit registers.

@@ -1,0 +1,15 @@
+The fusion strategy combines the precise and minimal toggling approach from both examples with clean synchronous reset and single-cycle valid_out pulse signaling. 
+
+Key points:
+- Use one always block triggered on the clock's positive edge.
+- Synchronously reset all registers.
+- Default valid_out to 0 each cycle to ensure a clean one-cycle pulse.
+- Update accumulator and count only when valid_in is high to reduce unnecessary toggling, effectively acting like clock gating at logic level.
+- Accumulate data_in for the first three valid inputs progressively.
+- On the 4th valid input, output the sum of accumulator plus current data_in and then reset accumulator and count.
+- Use nonblocking assignments exclusively for proper sequential semantics.
+- Keep accumulator width 10 bits for safe addition of four 8-bit inputs.
+- Use a 2-bit counter for counting inputs.
+- This approach optimizes power by minimizing register toggling, optimizes timing by limiting combinational addition to once per output event, and keeps area minimal.
+
+This fusion yields a clean, power-efficient, timing-friendly, and functionally robust accumulator module.

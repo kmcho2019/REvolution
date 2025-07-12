@@ -1,0 +1,14 @@
+Implement a 4-bit unsigned pipelined multiplier with two pipeline stages by splitting the multiplication into two phases:
+
+- Stage 1: Generate and register all shifted multiplicand bits gated by multiplier bits (partial products).
+- Stage 2: Accumulate the two halves of partial products sums separately in two registers, then sum these two partial sums into the final product.
+
+Details:
+- Inputs (mul_a and mul_b) extended with zeros on MSB side for uniform shift and width (2*size).
+- Partial products are generated combinationally by AND-ing each bit of mul_b with the shifted mul_a.
+- Stage 1: Register each partial product.
+- Stage 2: Partition the partial products into two groups (lower half and upper half), sum each group into intermediate registers, then sum these two intermediate sums into the final product register.
+- Using this hierarchical summation reduces combinational addition depth in stage 2.
+- Synchronous reset active low.
+- Fully parameterized with size=4 default.
+This approach creates a neat two-stage pipeline with clear intermediate registers and balanced addition logic to optimize timing.

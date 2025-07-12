@@ -1,0 +1,19 @@
+Instead of using multiple stages of 2-to-1 multiplexers to perform staged rotation shifts, implement the barrel shifter by directly computing the final rotated output based on the total rotation amount indicated by the 3-bit control signal. Since the shift amount can be decoded from the bits in `ctrl` (shift by 1, 2, and 4 positions combined), sum those to get a single rotation value (0-7). Then perform a direct rotate-left by that amount with modular indexing.
+
+This approach treats the shift amount as a single integer and uses a generate loop that selects each output bit directly from the appropriately rotated input bit, avoiding multi-stage multiplexers and reducing logic depth to one stage of multiplexers.
+
+Advantages:
+- Simpler logic with only one stage of multiplexers (one mux per output bit).
+- Potentially faster combinational path (only one mux stage).
+- Clear and straightforward design.
+- The same modular rotation is done in a single combinational assignment.
+
+This is a different architectural style from the multi-stage mux pipeline. It utilizes a single multiplexed indexing per bit with the rotation amount calculated by summing the bits of `ctrl` shifted by their position weights (1,2,4).
+
+The output bit `out[i]` = `in[(i + rotate_amt) % 8]`, where `rotate_amt = ctrl[0]*1 + ctrl[1]*2 + ctrl[2]*4`.
+
+We implement a 2-to-1 mux for each output bit to select among the 8 possible rotated inputs using a 3-bit select (rotation amount). Since Verilog does not allow variable part-select indexing directly inside a bit slice, we implement this using a `case` or combinational logic inside a `generate` block with a 8-way mux built from 3-bit control.
+
+To use a consistent mux style, implement a single 8-to-1 multiplexer module (`mux8X1`) for each output bit selecting from 8 possible rotated inputs, indexed by rotation amount (from the decoded ctrl).
+
+This solution provides a novel architectural style focusing on direct decoding rather than stage-wise shifting.

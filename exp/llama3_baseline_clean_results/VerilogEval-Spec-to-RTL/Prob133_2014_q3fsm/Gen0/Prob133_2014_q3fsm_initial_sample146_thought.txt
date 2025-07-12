@@ -1,0 +1,12 @@
+To implement the described finite state machine with as few states as possible, 
+we can consider the following states:
+- State A (reset state): The FSM remains in this state as long as s = 0. 
+- State B: The FSM moves to this state when s = 1 and examines the input w for the next three clock cycles.
+We can divide State B into sub-states to keep track of the number of times w = 1 in the three clock cycles.
+However, since we need to set the output z to 1 in the following clock cycle after the three clock cycles,
+we can simplify the FSM by using only two states (A and B) and counters to keep track of the number of times w = 1.
+
+When in state B, we will use a counter to count the number of clock cycles since the FSM entered state B.
+We will also use another counter to count the number of times w = 1 in the three clock cycles.
+After three clock cycles, we will set the output z to 1 if the second counter is 2, otherwise z will be 0.
+Then we will reset the counters and repeat the process.

@@ -1,0 +1,43 @@
+The original solution is already correct and minimal in terms of logic expression complexity. However, we can further optimize the logic for better area and power by using fewer terms and sharing complemented signals to reduce total inversions.
+
+Noticing the Karnaugh map, the output f=1 corresponds to these minterms:
+
+- (x3,x2,x1,x0) = 0000, 0010, 1010, 1011, 1000, 1001, 1100, 1101, 1110, 1111
+
+We can derive a simplified sum-of-products expression that groups terms with common factors:
+
+- Group1: ~x3 & ~x1  covers rows with x3=0 and x1=0 → covers minterms 0000 (1), 0010 (1)
+
+- Group2: x2 & x3 & ~x0 covers minterms 1000, 1001, 1100, 1101 (1's in rows where x3=1, x2=1, x0=0)
+
+- Group3: x3 & x2 & x1 & x0 covers minterm 1111
+
+So the function can be rewritten as:
+
+f = (~x3 & ~x1) | (x2 & x3 & ~x0) | (x3 & x2 & x1 & x0)
+
+We note that (x3 & x2) is common in groups 2 and 3, so factorizing:
+
+f = (~x3 & ~x1) | (x3 & x2 & (~x0 | (x1 & x0)))
+
+This is actually the original expression, so from a logic minimization standpoint, it is optimal.
+
+For optimization:
+
+- We can avoid repeated complements by explicitly generating ~x3, ~x1, and ~x0 once.
+
+- Using intermediate wires to hold these complemented signals reduces inverter usage.
+
+- Also, since all are 1-bit signals, this will reduce inverter gates and switching power.
+
+Hence, the optimization strategy is to:
+
+1. Create intermediate wires for complemented inputs.
+
+2. Use these complemented signals in the final assign.
+
+3. Keep the factored minimal boolean expression as is.
+
+This reduces inverter count and may marginally improve power and area.
+
+Additionally, rearranging assignments for clarity helps maintainability.

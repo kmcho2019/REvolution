@@ -1,0 +1,7 @@
+Redesign module B as a combinational function that replicates the given waveform behavior using input x and y and an internal state machine modeled by a simple 4-bit counter incremented at each clock cycle. This counter encodes the time steps, and the output z is determined combinationally from the counter and inputs, matching the waveform values exactly.
+
+Then, the top-level module instantiates two A modules and two B modules (both B modules driven by the same clock and inputs). Outputs from the first pair (A1 and B1) feed into an OR gate, the second pair (A2 and B2) feed into an AND gate, and finally, an XOR of these two gate outputs drives the top-level output z.
+
+This approach uses an internal counter inside B to mimic time-based waveform without explicit delay statements, making the design synthesis friendly and fully RTL. The testbench generates a clock and drives the inputs x and y as per the waveform timings.
+
+This new approach treats B as a synchronous FSM with combinational output logic dependent on the internal counter and current inputs, rather than using large case statements with explicit time values.

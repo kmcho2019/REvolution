@@ -1,0 +1,15 @@
+To improve the original design for better PPA and synthesis clarity, I will:
+
+1. Replace the large if-else chain with a case statement to clarify operation decoding and enable the synthesis tool to optimize muxing better, potentially improving timing.
+
+2. Compute only the necessary operation within each case to reduce unnecessary toggling, lowering dynamic power.
+
+3. Share the adder-subtractor logic into a single 33-bit module by selecting add or subtract, reducing area.
+
+4. Compute the carry and overflow only for arithmetic operations to avoid spurious toggling in logic and shift instructions.
+
+5. Drive the flag output to 0 when not used (instead of high impedance) for synthesis friendliness and to avoid unnecessary toggling.
+
+6. Combine shift computations by using a variable shift amount extracted from either 'a' or 'b' based on the opcode.
+
+This approach preserves the original functionality while reducing area by shared adder-subtractor, lowering power by conditional computations, and improving timing clarity by a case statement.

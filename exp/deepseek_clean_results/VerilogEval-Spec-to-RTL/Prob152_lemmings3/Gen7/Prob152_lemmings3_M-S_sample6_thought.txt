@@ -1,0 +1,13 @@
+To simplify the Lemming state machine while maintaining functionality:
+1. Use only 3 states (WALK, FALL, DIG) encoded in 2 bits
+2. Track direction separately with a single bit (left/right)
+3. Implement priority handling explicitly: fall > dig > bump
+4. Make outputs purely combinatorial based on state and direction
+5. Simplify transition logic by:
+   - Checking ground first (highest priority)
+   - Then checking dig (middle priority)
+   - Finally handling bumps (lowest priority)
+6. Remove redundant checks by:
+   - Only checking bumps when in WALK state with ground
+   - Only checking dig when in WALK state with ground
+7. Use asynchronous reset for initialization

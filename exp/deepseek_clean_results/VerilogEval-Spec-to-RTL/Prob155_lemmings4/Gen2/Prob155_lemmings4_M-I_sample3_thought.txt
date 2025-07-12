@@ -1,0 +1,29 @@
+Improvement strategy for the Lemming state machine:
+
+1. State Representation:
+   - Keep 4 states (WALK, FALL, DIG, SPLAT) but simplify transitions
+   - Use a separate register for direction (left/right)
+
+2. Priority Handling:
+   - Implement strict priority: Fall > Dig > Direction change
+   - Ensure transitions respect these priorities in all cases
+
+3. Fall Counter:
+   - Count only during FALL state
+   - Reset when leaving FALL state
+   - Splat only when hitting ground after >20 cycles
+
+4. Direction Logic:
+   - Update direction only in WALK state when not falling/digging
+   - Preserve direction during falls and digs
+
+5. Output Logic:
+   - Simplify output assignments
+   - Ensure SPLAT state zeros all outputs
+
+Key improvements:
+- Clearer state transition logic
+- Proper priority handling
+- Correct direction preservation
+- Accurate fall counter behavior
+- Simplified output assignments

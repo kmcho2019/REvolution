@@ -1,0 +1,9 @@
+To implement the TopModule, we need to follow these steps:
+
+1. Initialize the branch history register to zero on asynchronous reset.
+2. On every positive edge of the clock, check the inputs for a prediction or a misprediction.
+3. If a prediction is made (predict_valid = 1), shift in predict_taken from the LSB side to update the branch history.
+4. If a misprediction occurs (train_mispredicted = 1), load the branch history register with the history after the completion of the mispredicted branch.
+5. In case of both a prediction and a misprediction happening at the same time, prioritize the misprediction.
+
+We will use a 32-bit register to store the branch history, and update it according to the inputs on every clock cycle.

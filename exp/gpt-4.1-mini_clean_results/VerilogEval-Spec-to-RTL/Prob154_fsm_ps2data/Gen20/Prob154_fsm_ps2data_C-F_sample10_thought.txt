@@ -1,0 +1,9 @@
+To create a superior solution, fuse the strengths of both examples by:
+
+- Using a clear, binary-encoded 2-bit FSM (WAIT_SYNC, BYTE2, BYTE3) with explicit combinational next-state logic, ensuring clarity and synthesis friendliness.
+- Implementing a 3-byte shift register approach for out_bytes that shifts in new bytes as they arrive, simplifying datapath logic and reducing toggling since only one 8-bit load and a shift per valid byte is needed.
+- Generating a single load enable signal based on FSM state and input to gate updates and reduce spurious toggling and glitching.
+- Asserting done as a one-cycle pulse immediately after receiving the third byte, derived directly from the FSM state transition, ensuring timing correctness and minimal power.
+- Applying synchronous active-high reset to all registers.
+- Ensuring out_bytes is valid exactly when done is asserted, with minimal toggling during other cycles.
+- This fusion minimizes power by using a shift register to avoid random writes, improves timing due to simpler datapath, and maintains clear FSM design for maintainability and area efficiency.

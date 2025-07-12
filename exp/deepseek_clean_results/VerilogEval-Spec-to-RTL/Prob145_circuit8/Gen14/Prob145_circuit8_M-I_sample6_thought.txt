@@ -1,0 +1,20 @@
+After carefully analyzing the waveform and the issues in the previous solution, here's the corrected approach:
+
+1. Key Observations:
+   - p should follow 'a' only at rising clock edges when q is 0
+   - q becomes 1 in the cycle after p was 1 for a full clock period
+   - q resets to 0 when 'a' is high at any falling edge
+   - p is always 0 when q is 1
+
+2. Corrected Implementation Strategy:
+   - Use a single state bit (q) to track the mode
+   - Sample 'a' at rising edge to set p when q is 0
+   - Set q on next rising edge if p was 1 in previous cycle
+   - Reset q immediately at falling edge when a is high
+   - Ensure clean state transitions with proper timing
+
+3. Improvements:
+   - Clear separation of rising and falling edge behaviors
+   - Correct state transition logic for q
+   - Proper handling of p output based on q state
+   - Avoid race conditions by separating edge-sensitive logic

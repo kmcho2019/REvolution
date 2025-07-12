@@ -1,0 +1,13 @@
+To simplify the JK flip-flop implementation, I'll optimize the combinational logic by recognizing that:
+1. When J=K=0, we keep the old value (Q)
+2. When J≠K, we take the value of J
+3. When J=K=1, we toggle the value (~Q)
+
+This can be expressed more concisely as:
+Q_next = (J & ~K) | (~J & K & Q) | (J & K & ~Q)
+But we can further simplify by observing that:
+- When J≠K, output follows J
+- When J=K, output toggles
+Thus, Q_next = (J ^ K) ? J : (J ^ Q)
+
+This reduces the logic to a simple mux between J and the toggled Q, controlled by whether J equals K.

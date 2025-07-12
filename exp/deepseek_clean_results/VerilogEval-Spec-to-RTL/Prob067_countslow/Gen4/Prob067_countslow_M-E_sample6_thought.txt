@@ -1,0 +1,10 @@
+Here's a novel approach using a shift register implementation for the decade counter:
+1. Instead of a binary counter, use a circular shift register with 10 states represented by one-hot encoding
+2. The shift register will rotate left by 1 position when enabled (slowena=1)
+3. Reset will set the first bit (0000000001) which represents 0
+4. The output q will be encoded from the one-hot state to binary
+5. Benefits:
+   - No need for comparison logic (simpler wrap-around)
+   - Lower switching activity (only one bit changes per count)
+   - Potential power savings since only one flip-flop toggles per count
+   - More regular structure could improve placement/routing

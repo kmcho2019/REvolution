@@ -1,0 +1,12 @@
+A novel approach to solving this problem is to use a Moore machine with four distinct states, each representing a different prefix of the target sequence '1101'. The machine starts in an initial state and transitions to subsequent states as the input stream matches the prefix of the target sequence. When the machine reaches the final state, it sets the 'start_shifting' signal to 1 and remains in that state until the 'reset' signal is asserted.
+
+This approach involves designing a finite-state machine with the following states:
+- S0: Initial state, no prefix matched
+- S1: '1' prefix matched
+- S2: '11' prefix matched
+- S3: '110' prefix matched
+- S4: '1101' prefix matched, set 'start_shifting' to 1
+
+The machine transitions between these states based on the input data and current state. If the input data matches the expected next bit in the sequence, the machine transitions to the next state. If the input data does not match, the machine resets to the initial state or a previous state based on the input data.
+
+This design provides a straightforward and efficient way to search for the target sequence in the input stream and sets the 'start_shifting' signal accordingly.

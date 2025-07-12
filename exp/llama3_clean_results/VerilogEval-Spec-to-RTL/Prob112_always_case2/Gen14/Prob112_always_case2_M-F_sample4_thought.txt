@@ -1,0 +1,9 @@
+To fix the existing implementation of the 4-bit priority encoder, we need to correct the logic to prioritize the most significant bit first and then move to the less significant bits. This can be achieved by using a cascaded if-else statement that checks each bit position from most significant to least significant.
+
+The corrected approach should first check if the most significant bit (in[3]) is high. If it is, the output should be set to 2'b11, indicating that the first '1' bit is at position 3. If the most significant bit is not high, the next bit (in[2]) should be checked. If in[2] is high, the output should be set to 2'b10, indicating that the first '1' bit is at position 2.
+
+This process should continue until the least significant bit (in[0]) is checked. If none of the bits are high, the output should be set to 2'b00, indicating that there are no '1' bits in the input vector.
+
+By using this corrected approach, the priority encoder's logic can be implemented correctly, and the output should match the expected results.
+
+Additionally, we can simplify the code by removing the unnecessary checks for specific input combinations and instead using a single logic block that checks each bit position in sequence.

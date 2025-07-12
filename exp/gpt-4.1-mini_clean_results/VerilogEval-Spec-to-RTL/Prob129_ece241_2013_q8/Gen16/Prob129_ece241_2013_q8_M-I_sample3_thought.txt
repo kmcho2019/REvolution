@@ -1,0 +1,29 @@
+To optimize the existing minimal-area 3-state Mealy FSM for better PPA (Timing, Power, Area), I will make the following refinements:
+
+1. **Performance (Timing):**  
+   - Replace the always @(*) combinational blocks with continuous assignments where possible to reduce logic depth and enhance synthesis optimization.  
+   - Compute the output `z` as a continuous assignment directly from the state and input to reduce logic levels and latency.  
+   - Use a combinational function-like approach for next_state to help synthesis tools better pipeline and optimize.
+
+2. **Power:**  
+   - Minimize signal toggling by avoiding redundant assignments in combinational logic.  
+   - Using binary encoding remains optimal for area and power here; state encoding stays the same.
+
+3. **Area:**  
+   - The design is already minimal (2-bit state encoding, 3 states).  
+   - Simplifying combinational logic into continuous assignments can sometimes help the synthesis tool better optimize area.
+
+4. **Coding style:**  
+   - Use nonblocking assignments only in sequential always blocks to clarify intent.  
+   - Use `wire` for combinational signals and continuous assignments to help synthesis and static timing analysis.
+
+5. **Reset:**  
+   - Preserve asynchronous negative-edge reset on the clock posedge as specified.
+
+In summary, the improved code will:  
+- Use continuous assignment for output `z`.  
+- Use a combinational always block for next_state with default assignment to prevent latches, keeping blocking assignment in combinational logic.  
+- Keep the same localparam encoding.  
+- Maintain asynchronous negative-edge reset.
+
+This should marginally improve timing and possibly reduce area slightly by reducing logic levels on the output and clarifying combinational logic for synthesis.

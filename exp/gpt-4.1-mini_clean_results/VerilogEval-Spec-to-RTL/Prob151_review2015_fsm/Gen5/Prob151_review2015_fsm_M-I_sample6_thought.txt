@@ -1,0 +1,18 @@
+To correct and improve the FSM implementation, the following enhancements are applied:
+
+- **Stabilize pattern detection:**  
+  Register the `pattern_detected` signal synchronously to avoid glitches and multiple triggers on the same pattern occurrence. Use a flag `start_pattern_detected` that is set only once per pattern detection and cleared when entering SHIFT state.
+
+- **Control FSM transitions carefully:**  
+  Transition to SHIFT state only when `start_pattern_detected` is set and has not yet triggered shifting. This prevents repeated re-entry.
+
+- **Synchronize outputs with registered state:**  
+  Assign outputs synchronously within the clocked always block instead of combinationally, preventing glitches and ensuring outputs align with state transitions.
+
+- **Implement SHIFT cycle counting properly:**  
+  Use a 2-bit counter to enable `shift_ena` for exactly 4 cycles, incremented only in SHIFT state. Transition to COUNT after 4 cycles.
+
+- **Reset and flags:**  
+  On synchronous reset, clear all registers and flags to known states.
+
+This approach avoids multiple triggers per pattern detection, aligns output signals tightly with states, and yields reliable FSM behavior as required.

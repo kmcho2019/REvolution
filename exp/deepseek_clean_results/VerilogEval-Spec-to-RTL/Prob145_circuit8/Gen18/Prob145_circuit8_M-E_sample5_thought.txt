@@ -1,0 +1,17 @@
+1. New approach based on waveform analysis:
+   - p appears to be a delayed version of 'a' that only updates when clock is high
+   - q appears to be a latched version of p that updates on clock falling edges
+   - Both outputs maintain their values until specific clock edges occur
+
+2. Key observations:
+   - p follows 'a' but only when clock is high (like a transparent latch)
+   - q captures p's value on clock falling edges (like a flip-flop)
+   - Outputs don't immediately respond to inputs but wait for clock edges
+
+3. Novel solution:
+   - Use a transparent latch for p that's enabled when clock is high
+   - Use a negative-edge triggered flip-flop for q that samples p
+   - This creates a two-stage pipeline where:
+     * First stage (p) tracks input during high clock
+     * Second stage (q) captures p's state at clock falling edges
+   - This matches the waveform's behavior where changes propagate through the stages

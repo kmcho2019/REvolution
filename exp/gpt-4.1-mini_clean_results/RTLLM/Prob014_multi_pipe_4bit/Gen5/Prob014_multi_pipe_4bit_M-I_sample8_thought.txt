@@ -1,0 +1,47 @@
+To strictly follow the problem's requirement of two levels of registers and produce a 4-bit unsigned multiplier with pipelined operation:
+
+- First, extend inputs by concatenating size zeros to MSB side of mul_a.
+
+- Level 1 registers: Register extended multiplicand and multiplier inputs (stage0 registers).
+
+- Level 2 registers: Register partial products generated from the registered inputs (stage1 registers).
+
+- After this, on the next clock cycle, sum the partial products combinationally, and register the final sum as the output (mul_out).
+
+This matches the problem statement:
+
+1. Extend inputs (mul_a extended with zeros on MSB).
+
+2. Use generate block to generate partial products from multiplier bits and shifted multiplicand.
+
+3. Register these partial products (first level of registers).
+
+4. On the next clock edge, sum the registered partial products and store the sum in a second-level register.
+
+5. Output register stores the final product from that sum.
+
+Thus, two levels of registers are used: one for partial products, one for the final product output.
+
+Reset is handled asynchronously active-low, setting registers to 0.
+
+This approach matches the problem statement, is simpler than the example solution with multiple pipeline stages, and avoids extra latency or complexity.
+
+It is scalable, easy to understand, and meets the problem requirements.
+
+The product latency will be two clock cycles:
+
+- cycle 1: register extended inputs.
+
+- cycle 2: register partial products.
+
+- cycle 3: sum partial products and register product output.
+
+(If desired, partial product summation and final product can be combined in one clock cycle to keep strictly two levels of registers for intermediate values.)
+
+Here, to keep two levels of registers, we consider partial products as level 1 and the final product as level 2 output register.
+
+This avoids combinational loops and ensures the multiplication process is pipelined.
+
+No need for multiple sums and intermediate pairing since the partial products are directly summed in combinational logic between the two pipeline stages.
+
+Code follows below.

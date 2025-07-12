@@ -1,0 +1,27 @@
+From the waveform, observe that:
+
+- The state updates only on the positive clock edge.
+- `state` seems to hold its value when both a and b are 0.
+- `state` becomes 1 when b is 1 and a is 0.
+- `state` resets to 0 when both a and b are 1.
+- When a is 1 and b is 0, `state` remains unchanged or is cleared, depending on previous state and transitions.
+- Output `q` equals `state & b`, which matches the waveform showing q=1 only when state=1 and b=1.
+  
+Simplifying the state transition:
+
+- next_state = (~state & ~a & b) | (state & ~(a & b))
+  - This means:
+    - Set state to 1 if currently 0 and inputs are (a=0, b=1)
+    - Otherwise, keep state 1 only if inputs are not both 1 (a=1,b=1)
+    - Else state is 0
+
+Output q is `state & b`.
+
+This logic matches the waveform transitions and output values succinctly.
+
+Implementation:
+
+- Register state on posedge clk
+- next_state as above
+- q combinational from state and b
+- Initialize state to 0 for simulation

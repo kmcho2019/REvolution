@@ -1,0 +1,7 @@
+Here's an innovative approach using a barrel shifter with delayed validation:
+1. Instead of using a counter or circular buffer, implement a barrel shifter that rotates the parallel register
+2. Each valid serial input is inserted at the LSB position while shifting existing bits left
+3. Use a delayed valid signal chain to track when 8 valid inputs have been received
+4. The validation chain acts like a shift register that propagates the din_valid signal through 8 stages
+5. When the delayed valid reaches the end of the chain, it triggers the output valid signal
+6. This eliminates explicit counting logic and leverages the natural propagation of valid signals

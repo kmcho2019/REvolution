@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. Use a single case statement for the 9-to-1 mux instead of hierarchical 2-to-1 muxes
+2. Handle all valid cases (sel=0-8) explicitly and use default for invalid cases (sel=9-15)
+3. Directly assign 16-bit outputs instead of bit-sliced operations
+4. Remove intermediate wires and complex conditional logic
+5. Let synthesis tool optimize the mux implementation
+
+Key Benefits:
+- Single case statement is more readable and easier to maintain
+- Synthesis tool can choose optimal mux implementation (tree, LUT, etc.)
+- Default case handling is straightforward
+- No unnecessary bit-wise operations
+- Reduced logic complexity while maintaining same functionality

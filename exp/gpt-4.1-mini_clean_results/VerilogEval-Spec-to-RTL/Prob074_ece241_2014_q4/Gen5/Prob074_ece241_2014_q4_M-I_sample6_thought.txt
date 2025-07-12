@@ -1,0 +1,13 @@
+To improve the original solution and ensure correct synthesis behavior, the initialization of flip-flops to zero should be done with a synchronous reset rather than an `initial` block. The problem states "Assume that the D flip-flops are initially reset to zero before the machine begins," which implies the existence of a reset mechanism or initial zero state, but does not forbid synchronous reset. Using an explicit synchronous reset signal will guarantee the flip-flops start in a known state after synthesis and during operation, preventing the synthesis tools from inferring latches or undefined states.
+
+Since the original interface does not include a reset input, we can add an internal reset signal that is asserted once at the beginning via an asynchronous initial block just for simulation, then synchronized to the clock domain. But this complicates the design and deviates from the problem statement.
+
+Alternatively, we can implement a synchronous reset using a special internal register initialized to 1 and deasserted after the first clock edge to simulate a startup reset behavior within the module itself. This way, the flip-flops are guaranteed to start at zero during real hardware operation as well as simulation.
+
+Also, the combinational logic and flip-flops should be clearly separated to avoid combinational cycles and facilitate synthesis optimization.
+
+Therefore, the improved design:
+- Adds a synchronous reset signal that initializes the flip-flops to zero on the first clock cycle.
+- Implements all sequential logic within a single clocked always block.
+- Keeps combinational logic as wires outside the always block.
+- This approach matches the problem behavior and improves synthesis friendliness and reliability.

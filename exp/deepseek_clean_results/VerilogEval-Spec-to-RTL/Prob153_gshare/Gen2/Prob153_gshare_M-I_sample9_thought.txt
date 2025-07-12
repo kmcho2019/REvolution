@@ -1,0 +1,18 @@
+The key issues in the previous implementation relate to timing and priority handling between training and prediction operations. Here's the improved strategy:
+
+1. **Single GHR Register**: Use a single GHR register to maintain consistency, with proper priority handling between training and prediction updates.
+
+2. **Prediction Timing**: Ensure predictions use the current GHR value at prediction time, and the output is properly registered.
+
+3. **Training Priority**: Implement strict priority where training updates override prediction updates when they occur in the same cycle.
+
+4. **Misprediction Recovery**: Correctly handle GHR recovery for mispredictions by using the provided train_history.
+
+5. **Synchronous Outputs**: Register all outputs to maintain proper timing relationships.
+
+The improved implementation will:
+- Use a single GHR register with proper update priority
+- Register prediction outputs for correct timing
+- Implement proper PHT update timing
+- Handle misprediction recovery correctly
+- Maintain weakly-taken initialization

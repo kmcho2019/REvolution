@@ -1,0 +1,13 @@
+To refactor the provided code, we will aim to simplify the state machine's logic, reduce unnecessary switching activity, and potentially improve the timing performance by restructuring the combinational logic. The core idea remains the same: to implement a finite state machine that identifies correctly received bytes from a stream of bits in a serial communication protocol.
+
+Our approach involves the following steps:
+
+1. **Simplify State Encoding**: Instead of using a one-hot encoded state register, we will use a binary encoded state register. This simplification can potentially reduce the area required for the state register and simplify the combinational logic for state transitions.
+
+2. **Restructure State Machine Logic**: We will reorganize the state machine's logic to minimize the number of transitions and simplify the conditions for each state transition. This includes directly checking for the start bit, shifting the incoming bits, and verifying the stop bit without unnecessary intermediate states.
+
+3. **Optimize Combinational Logic**: We will aim to reduce the complexity of the combinational logic by minimizing the number of operations required for each state transition. This includes efficiently checking for the start and stop bits, and directly updating the 'done' signal without additional logic.
+
+4. **Reduce Switching Activity**: By minimizing unnecessary state transitions and simplifying the combinational logic, we aim to reduce switching activity, which can help in reducing power consumption.
+
+5. **Use Assign Statements for Combinational Logic**: Where possible, we will use `assign` statements for combinational logic to clearly distinguish it from sequential logic and potentially improve synthesis results.

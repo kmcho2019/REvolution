@@ -1,0 +1,27 @@
+Instead of using direct Boolean equations derived from the Karnaugh map, I will implement the function as a simple 16-to-1 LUT lookup table using a combinational always block with a case statement. This approach treats the 4-bit input as an address and outputs the corresponding f value from the Karnaugh map directly. It is a straightforward and architecture-neutral way to implement arbitrary functions without Boolean algebra minimization, which can be more general and easier to verify or modify.
+
+This method may slightly increase logic area compared to optimized expressions but offers clarity and direct mapping from truth table to code.
+
+Mapping input bits [x3 x2 x1 x0] to a 4-bit address indexing into the truth table:
+
+Index : f
+0  (0000): 1
+1  (0001): 0
+2  (0010): 1
+3  (0011): 0
+4  (0100): 0
+5  (0101): 0
+6  (0110): 0
+7  (0111): 0
+8  (1000): 1
+9  (1001): 1
+10 (1010): 0
+11 (1011): 1
+12 (1100): 0
+13 (1101): 0
+14 (1110): 1
+15 (1111): 1
+
+This directly corresponds to the Karnaugh map rows and columns.
+
+This design is easy to maintain and modify for any changes in logic function.

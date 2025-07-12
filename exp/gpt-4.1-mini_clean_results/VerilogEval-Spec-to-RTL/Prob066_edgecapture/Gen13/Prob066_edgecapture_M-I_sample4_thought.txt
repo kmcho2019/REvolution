@@ -1,0 +1,7 @@
+The main functional issue is caused by initializing `prev_in` to all ones at reset, leading to false falling-edge detections on the first clock cycle after reset. To fix this, synchronize `prev_in` to the current input `in` on reset, so the first detected edges occur only on real transitions after reset. This prevents spurious falling edge captures at startup.
+
+Also, maintain the clear separation between combinational edge detection (`fall_edge = prev_in & ~in`) and sequential logic updating `prev_in` and latching outputs. This approach meets the requirement and ensures that `out` latches falling edges until reset clears it.
+
+The synchronous active-high reset resets both `prev_in` and `out`. 
+
+This fix improves functional correctness while keeping the design straightforward and efficient.

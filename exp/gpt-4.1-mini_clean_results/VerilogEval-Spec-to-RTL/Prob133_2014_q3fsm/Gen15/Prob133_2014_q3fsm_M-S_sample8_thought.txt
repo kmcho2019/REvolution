@@ -1,0 +1,5 @@
+Use a single 2-bit counter in state B to count cycles (0 to 2) and a 2-bit register to count how many times w=1 has occurred in the current 3-cycle window. Instead of separate next-state and next-counter variables, update registers directly on the clock edge with synchronous reset.
+
+Keep only two states (A and B). In A, wait for s=1 to enter B. In B, accumulate w and increment the cycle count each clock. When cycle count reaches 2 (end of 3rd cycle), output z=1 if w=1 exactly twice, else 0. Then reset counters for next window.
+
+This simplified design removes combinational always block, reduces signals by combining updates in sequential always block, and uses minimal arithmetic (simple additions and comparisons). It maintains correctness and reduces logic complexity.

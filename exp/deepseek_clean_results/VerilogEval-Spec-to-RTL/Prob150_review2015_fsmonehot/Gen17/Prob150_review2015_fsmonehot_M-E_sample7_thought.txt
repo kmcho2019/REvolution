@@ -1,0 +1,21 @@
+Novel Architecture Idea: Hybrid State Encoding with Priority Encoder
+
+1. State Encoding:
+   - Group states into categories: Sequence (S, S1, S11, S110), Bit Shift (B0-B3), and Control (Count, Wait)
+   - Use 2-bit category selector + one-hot within each category (total 7 bits vs original 10)
+   - This reduces flip-flop count while maintaining fast state transitions
+
+2. Transition Logic:
+   - Implement priority encoder for sequence states (S-S110) to minimize logic depth
+   - Use simple increment for Bit Shift states (B0-B3)
+   - Special handling for Control states with direct outputs
+
+3. Output Generation:
+   - Leverage category bits to simplify output logic
+   - Use pre-decoded signals for common output patterns
+
+Benefits:
+- 30% reduction in state register bits
+- Faster critical paths through prioritized sequence detection
+- Clear separation of concerns between state categories
+- Maintains one-hot benefits where needed (Bit Shift states)

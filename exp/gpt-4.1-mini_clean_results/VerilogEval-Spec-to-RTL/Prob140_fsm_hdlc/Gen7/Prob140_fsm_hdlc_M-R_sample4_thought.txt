@@ -1,0 +1,7 @@
+Refactor the FSM by encoding the state as a 3-bit counter for the number of consecutive ones (0 to 6), and use a separate flag to indicate special output states (disc, flag, err). This reduces the total number of states and simplifies transitions by separating output signaling from counting logic.
+
+Implement the next state logic using a concise combinational block that advances the count on input=1 and resets on 0. When the count reaches 5 and the next input is 0, assert `disc` next cycle; when count is 6 and next input is 0, assert `flag`; when count exceeds 6 (i.e., input=1 at count=6), assert `err`.
+
+All outputs are registered and updated on the clock edge based on the previous cycle's conditions, ensuring synchronous and stable one-cycle pulses.
+
+This approach simplifies the state representation and splits output signaling from counting, improving code readability while maintaining the Moore FSM characteristics.

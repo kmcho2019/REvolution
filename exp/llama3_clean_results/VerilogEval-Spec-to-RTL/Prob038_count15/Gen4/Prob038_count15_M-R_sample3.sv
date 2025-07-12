@@ -1,0 +1,17 @@
+module TopModule (
+    input clk,
+    input reset,
+    output reg [3:0] q
+);
+
+always_ff @(posedge clk) begin
+    if (reset) begin
+        q <= 4'd0;
+    end else if (q == 4'd15) begin // Optional but adds clarity for the maximum count
+        q <= 4'd0;
+    end else begin
+        q <= q + 1'd1;
+    end
+end
+
+endmodule

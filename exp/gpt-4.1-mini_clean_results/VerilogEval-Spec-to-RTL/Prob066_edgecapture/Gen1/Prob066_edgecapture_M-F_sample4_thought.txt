@@ -1,0 +1,3 @@
+The original design logic is fundamentally correct, but the initialization and ordering of signals at reset can cause detection errors on the first cycles after reset. To fix this, initialize prev_in to all ones (32'hFFFFFFFF) during reset so that the first actual input 'in' can correctly detect a 1->0 transition. This ensures the first falling edge from 1 to 0 on any bit is captured properly. Also, keep the assignment order the same, as prev_in on the RHS uses the old value correctly.
+
+This initialization guarantees no missed transitions immediately after reset and aligns the design with expected behavior in simulation.

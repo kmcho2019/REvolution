@@ -1,0 +1,15 @@
+To improve the existing solution, we will focus on optimizing the design for better PPA metrics, particularly performance, power efficiency, and area utilization. 
+
+1. **Performance Optimization**: The current design has a relatively straightforward approach, which might lead to some timing overhead due to the sequential updates of the registers. To optimize performance, we can reduce the number of combinational logic levels by merging the `en_reg` and `en_delay` updates into a single always block.
+
+2. **Power Optimization**: To reduce power consumption, we can apply clock gating to the registers when they are not in use. Additionally, using low-power clock buffers and level shifters can help minimize power dissipation.
+
+3. **Area Optimization**: To optimize area, we can explore resource sharing and optimization of the register structures. For example, using a single register with a wider bit width instead of multiple registers with smaller bit widths can reduce area usage.
+
+The improved design will have the following components:
+- A data register (`data_reg`) that stores the input `data_in` signal on the positive edge of `clk_a`.
+- An enable register (`en_reg`) that stores the `data_en` signal on the positive edge of `clk_a`.
+- A delayed enable register (`en_delay`) that stores the previous value of `en_reg` on the positive edge of `clk_b`.
+- A clock-gated dataout register (`dataout`) that updates its value when `en_delay` is active.
+
+By applying these optimizations, the improved design aims to achieve better PPA metrics while maintaining the required functionality.

@@ -1,0 +1,10 @@
+To meet the original specification strictly, I will implement the frequency divider using two separate counters and two divided clock signals, clk_div1 and clk_div2, each triggered on opposite clock edges (posedge and negedge of clk).
+
+- cnt1 increments on the positive edge of clk; cnt2 increments on the negative edge.
+- Both counters count from 0 up to NUM_DIV-1, then wrap.
+- When cnt1 reaches (NUM_DIV-1)/2, clk_div1 toggles; when cnt1 reaches NUM_DIV-1, clk_div1 toggles again (similar for clk_div2 with cnt2).
+- The final clk_div output is the OR of clk_div1 and clk_div2, ensuring both halves of the output clock cycle are covered.
+- Resetting rst_n asynchronously initializes the counters and clk_div outputs.
+- This dual-counter approach realizes an odd frequency division by properly handling both clock edges, producing an output frequency of clk / NUM_DIV with near 50% duty cycle.
+
+The implementation uses separate always blocks triggered by posedge and negedge clk respectively. This structure follows the problem requirement exactly, improving clarity and correctness.

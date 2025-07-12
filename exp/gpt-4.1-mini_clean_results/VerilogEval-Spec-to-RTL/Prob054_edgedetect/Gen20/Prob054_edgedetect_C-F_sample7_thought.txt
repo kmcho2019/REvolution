@@ -1,0 +1,10 @@
+Both examples use the same minimal approach: store the previous 8-bit input in a register and detect 0->1 transitions by bitwise comparison with the current input on each clock. This achieves the functional requirement with minimal logic and registers. To further improve, fuse ideas by:
+
+- Using a single always block with non-blocking assignments for synchronous operation and clean timing.
+- Use bitwise operations to detect edges efficiently.
+- Add an enable signal generated internally to gate the update of pedge and prev_in registers only when a positive edge is detected on any bit, reducing unnecessary switching and power usage.
+- This selective update doesn't affect functionality but can reduce power by avoiding register toggling when no positive edge occurs.
+- This optimization maintains minimal area and keeps critical path low, since enable is combinational and only gates register updates.
+- Such clock gating inside a module isn't the same as a gated clock but used as a register enable which synthesis tools handle well, often better for power than clock gating.
+
+This fusion leverages minimal registers and logic from both examples while reducing power via enable gating without adding complexity or affecting timing significantly.

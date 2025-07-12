@@ -1,0 +1,30 @@
+Design a pipelined 3-cycle IEEE 754 single-precision floating-point multiplier.
+
+Cycle 0 (counter=0):
+- On reset, clear all registers.
+- Extract sign, exponent, mantissa from inputs a and b.
+- Detect special cases: zero, infinity, NaN.
+- Prepare mantissas by adding implicit leading 1 for normalized inputs.
+- Determine sign of the result as XOR of input signs.
+- Add exponents, then subtract bias (127).
+
+Cycle 1 (counter=1):
+- Multiply mantissas (24x24 bits) -> 48-bit product.
+- Normalize product:
+  - If MSB of product (bit 47) = 1, shift right by 1 and increase exponent by 1.
+  - Else no shift.
+- Extract rounding bits (guard, round, sticky) from product lower bits.
+
+Cycle 2 (counter=2):
+- Perform rounding (round to nearest even).
+- Adjust exponent after rounding overflow.
+- Handle exponent overflow (result infinity) and underflow (result zero).
+- Handle special cases from inputs:
+  - If either operand NaN, output NaN.
+  - If one operand infinity and other zero, output NaN.
+  - Else infinity propagation.
+- Assemble final 32-bit IEEE 754 float result.
+
+Finally, latch output on cycle 2.
+
+This approach uses pipeline registers and combinational logic within clocked process for clarity and precise control over the multiply steps.

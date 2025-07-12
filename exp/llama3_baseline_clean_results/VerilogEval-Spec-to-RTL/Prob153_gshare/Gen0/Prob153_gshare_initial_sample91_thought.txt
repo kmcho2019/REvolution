@@ -1,0 +1,10 @@
+To implement the TopModule, we need to create a module that has two main components: 
+1. A predictor that takes the current PC and global branch history to predict the branch direction.
+2. A trainer that updates the predictor based on the actual branch outcome.
+
+The predictor will use a 7-bit global branch history register and a 7-bit PC to create a 7-bit index into a 128-entry table of two-bit saturating counters.
+The trainer will update the predictor based on the actual branch outcome and whether the branch was a misprediction.
+
+We will also need to handle the case where a prediction and a training request occur in the same cycle, giving precedence to the training request.
+
+We will use Verilog's always block to implement the sequential logic, and the non-blocking assignment operator (<=) to assign values to the registers.

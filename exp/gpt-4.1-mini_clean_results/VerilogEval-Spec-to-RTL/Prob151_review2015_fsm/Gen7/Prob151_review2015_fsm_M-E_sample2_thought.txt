@@ -1,0 +1,22 @@
+Instead of a separate pattern detection FSM, implement a 4-bit shift register that captures the latest 4 serial bits of 'data' each clock cycle. When this 4-bit shift register equals the target pattern 4'b1101, the FSM moves from IDLE to SHIFT.
+
+This approach avoids complex FSM pattern matching and uses simple combinational logic to detect the pattern.
+
+The main FSM has these states:
+
+- IDLE: Waiting for pattern 1101 to appear in the 4-bit shift register.
+- SHIFT: Assert shift_ena for exactly 4 clock cycles to shift in the timer duration.
+- COUNT: Assert counting until done_counting is asserted.
+- DONE: Assert done until ack is asserted.
+
+A 2-bit counter tracks shift cycles (from 0 to 3). Outputs shift_ena, counting, and done are asserted synchronously according to the current FSM state.
+
+All registers and FSM transitions happen on the rising clock edge with synchronous active-high reset.
+
+This design is simple, fully synchronous, and leverages a shift register for pattern detection without a separate FSM, ensuring clean and reliable detection of the start pattern.
+
+By only shifting in the data input and checking the latest 4 bits, overlapping patterns (e.g., multiple 1101) will be detected naturally as the input stream flows.
+
+The FSM waits for done_counting after shifting, then waits for ack before returning to IDLE.
+
+This straightforward architecture cleanly implements the required timer FSM without complex pattern detection FSM logic.

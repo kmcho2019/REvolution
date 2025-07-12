@@ -1,0 +1,19 @@
+To simplify the TopModule implementation while maintaining functionality:
+
+1. Eliminate generate blocks since we can directly assign all bits in one statement
+2. For out_both:
+   - Set bit 99 to 0
+   - For bits 98:0, use a bitwise AND with shifted input (in[98:0] & in[99:1])
+
+3. For out_any:
+   - Set bit 0 to 0
+   - For bits 99:1, use a bitwise OR with shifted input (in[99:1] | in[98:0])
+
+4. For out_different:
+   - Use XOR between input and circularly shifted input (in ^ {in[0], in[99:1]})
+   - This handles the wrap-around requirement elegantly with concatenation
+
+This approach reduces code complexity by:
+- Removing generate blocks
+- Using vector operations instead of bit-by-bit assignments
+- Maintaining the same functionality with cleaner syntax

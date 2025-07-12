@@ -1,0 +1,13 @@
+To improve clarity and ensure correct timing of the clk_div toggle, I will refactor the frequency divider by counting up to NUM_DIV/2 cycles and toggling clk_div at that point, then resetting the counter. 
+
+Instead of counting from 0 to HALF_DIV-1 and toggling when equal, I will count from 1 to HALF_DIV and toggle on the terminal count. This approach aligns the toggle event with the completion of half the division cycles, making timing and toggling more intuitive.
+
+I will keep the counter width computed as $clog2(NUM_DIV/2), and initialize clk_div and counter to zero on reset.
+
+The toggle happens exactly when counter reaches HALF_DIV, then counter resets to zero.
+
+This refactor maintains the core logic but uses clearer boundaries and ensures clk_div toggles precisely every HALF_DIV cycles, improving waveform alignment with input clock edges.
+
+I will retain the parameter check for even NUM_DIV and maintain the counter as a register.
+
+This approach avoids off-by-one counting errors and better matches timing expectations.

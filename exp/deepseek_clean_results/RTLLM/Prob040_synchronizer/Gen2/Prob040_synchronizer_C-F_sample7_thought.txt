@@ -1,0 +1,13 @@
+The fusion strategy combines the best aspects of both examples while addressing their limitations:
+
+1. Maintain the robust two-stage synchronizer structure from both examples for metastability protection
+2. Keep the clear separation of clock domains (clk_a for input, clk_b for synchronization and output)
+3. Add power optimization by only updating data_reg when data_en is high (since data_in is stable during this period)
+4. Improve readability by grouping related registers and operations
+5. Maintain independent reset handling for both clock domains
+
+Key improvements:
+- Power optimization by gating data_reg updates with data_en
+- Clearer signal naming (en_sync1, en_sync2 instead of en_clap_one/two)
+- More efficient reset implementation
+- Better documentation of design intent

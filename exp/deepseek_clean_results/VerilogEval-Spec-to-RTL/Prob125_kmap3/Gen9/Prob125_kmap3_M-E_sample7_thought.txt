@@ -1,0 +1,8 @@
+Here's a novel approach using a multiplexer-based implementation that leverages the don't-care conditions differently. Instead of deriving a minimal SOP expression, we'll use the inputs to select between different constant values based on specific input patterns:
+
+1. When a=1, output is always 1 (covers most 1s in the K-map)
+2. When a=0, we use b and c to determine the output:
+   - If b=0 and c=1, output is 1
+   - Else output is 0
+
+This approach uses the observation that 'a' is the dominant input, and only when a=0 do we need to consider other inputs. The d input remains unused as specified. This implementation might be more efficient in certain FPGA architectures where MUXes are readily available.

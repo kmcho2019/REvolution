@@ -1,0 +1,7 @@
+To fix the issue with uninitialized flip-flops causing mismatches between simulation and synthesis, I will add a synchronous reset input `rst` to the module. This reset will initialize all flip-flops to zero at the next clock edge when asserted, ensuring that hardware and simulation start from the same known state.
+
+This approach respects the problem statement assumption that flip-flops start at zero and makes the design synthesizable and predictable without relying on non-synthesizable `initial` blocks.
+
+The rest of the logic remains the same, with the D inputs calculated from the gates as described. The FSM updates on the positive clock edge, and reset has priority to clear the flip-flops.
+
+This way, hardware will have a clear initialization mechanism, avoiding undefined states and mismatches in post-synthesis simulation.

@@ -1,0 +1,18 @@
+To improve the given 4-bit comparator design for better power, performance, and area (PPA), I will:
+
+1. Reduce logic levels in borrow generation by implementing a classic subtractor carry chain approach, chaining borrows from LSB to MSB, which maps well to typical standard cells or FPGA carry chains and reduces logic depth compared to the expanded lookahead logic.
+
+2. Maintain a simple and fast equality check using a single reduction XOR and negate to detect equality, which reduces gate count and logic depth versus multi-level AND trees.
+
+3. Generate mutually exclusive outputs directly from borrow chain and equality to minimize redundant logic and glitches.
+
+4. Use explicit intermediate borrow wires to clearly show the subtraction carry chain, aiding synthesis tool optimizations.
+
+This approach strikes a balance between minimal gate depth and gate count, potentially reducing delay (improving WNS), dynamic power due to less combinational fanout, and area by leveraging simple, fast carry chain structures commonly optimized by synthesis tools.
+
+Outputs:
+- A_less = borrow_out from MSB subtraction stage
+- A_equal = all bits equal (detected by XOR reduction)
+- A_greater = ~A_less & ~A_equal (mutually exclusive with other two)
+
+This solution is functionally equivalent but likely offers improved timing and area efficiency.

@@ -1,0 +1,30 @@
+To achieve a fractional frequency division by 3.5 (i.e., output frequency = input frequency / 3.5), we need to generate an output clock that toggles every 3.5 input clock cycles on average.
+
+A novel approach is to generate a clock enable signal that is asserted in a pattern of 4 and 3 input clock cycles alternately, creating an average toggle interval of 3.5 cycles.
+
+**Key idea:**
+
+- Use a 1-bit output clock that toggles on an enable pulse.
+- Generate a "toggle enable" pulse every 3 or 4 input clock cycles alternately.
+- We can implement this by a small state machine with a modulo-7 counter:
+  - The counter counts from 0 to 6.
+  - When counter == 3 or counter == 6, toggle the output clock.
+- The toggling at count 3 creates a high period lasting 4 cycles (from count 0 to 3).
+- The toggling at count 6 creates a high period lasting 3 cycles (from 3 to 6).
+- This yields an average period of 7 input clocks for two full output clock cycles, so output frequency = clk / 3.5.
+
+To improve the duty cycle and smoothness:
+
+- Use double-edge clocking by creating two toggling signals:
+  - One toggles on the posedge clk at count 3 and 6 (call it clk_a).
+  - One toggles on the negedge clk at count 0 and 3 (call it clk_b), effectively shifted by half cycle.
+- OR the two toggling signals to get final clk_div.
+- This interleaving creates a fractional division clock with a better duty cycle and reduced jitter.
+
+All counters and toggling registers are synchronous to clk or negedge clk with proper reset.
+This approach avoids complex delays or phase shift primitives and relies purely on counters and toggles.
+
+Advantages:
+- Single simple modulo-7 counter.
+- Double-edge toggling to mimic half-cycle phase shifts.
+- Balanced toggling points creating uneven high/low pulse lengths for fractional division.

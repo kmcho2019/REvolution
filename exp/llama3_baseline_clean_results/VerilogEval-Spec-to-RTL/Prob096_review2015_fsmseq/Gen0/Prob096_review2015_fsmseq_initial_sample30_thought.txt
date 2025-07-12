@@ -1,0 +1,7 @@
+The design will utilize a finite-state machine (FSM) to track the sequence 1101 in the input data stream. The FSM will have five states: IDLE, S1, S2, S3, and FOUND. It starts in the IDLE state. 
+- In the IDLE state, if the input data is 1, it transitions to the S1 state.
+- In the S1 state, if the input data is 1, it transitions to the S2 state; otherwise, it goes back to the IDLE state.
+- In the S2 state, if the input data is 0, it transitions to the S3 state; otherwise, it goes back to the IDLE state.
+- In the S3 state, if the input data is 1, it transitions to the FOUND state; otherwise, it goes back to the IDLE state.
+- Once in the FOUND state, it sets start_shifting to 1 and remains in this state until reset.
+The reset signal will asynchronously set the FSM to the IDLE state and set start_shifting to 0.

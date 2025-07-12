@@ -1,0 +1,16 @@
+Hybrid Carry-Select Adder Approach:
+1. Split the 8-bit adder into two 4-bit sections (lower and upper)
+2. Implement lower 4 bits as ripple-carry for area efficiency
+3. Implement upper 4 bits as carry-select for better performance
+4. The carry-select section computes both possible sums (for carry=0 and carry=1)
+5. Use the actual carry-out from lower section to mux the correct upper sum
+6. Benefits:
+   - Better critical path than pure ripple-carry (only 4-bit ripple + mux delay)
+   - More area efficient than full carry-select
+   - Balanced trade-off between speed and area
+
+Key Features:
+- First 4 bits use optimized ripple-carry structure
+- Upper 4 bits compute both possible sums in parallel
+- Final output selection based on lower carry-out
+- Expected to have better timing than pure ripple-carry with modest area increase

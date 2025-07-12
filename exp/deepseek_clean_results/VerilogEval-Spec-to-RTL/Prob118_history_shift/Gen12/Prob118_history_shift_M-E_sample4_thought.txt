@@ -1,0 +1,13 @@
+Novel Architectural Idea: 
+1. Implement a dual-buffer approach where we maintain both current and previous history states
+2. Use a shadow register to store the pre-prediction state when a prediction occurs
+3. On misprediction, we can directly restore from the shadow register concatenated with actual taken bit
+4. This eliminates the need to store and forward train_history separately
+5. The shadow register updates only during valid predictions, reducing switching activity
+6. Reset clears both main and shadow registers
+
+Key Advantages:
+- Reduced critical path by separating prediction and misprediction paths
+- Lower power since shadow register only updates during predictions
+- More elegant misprediction recovery using pre-stored state
+- Same functionality but with potentially better timing characteristics

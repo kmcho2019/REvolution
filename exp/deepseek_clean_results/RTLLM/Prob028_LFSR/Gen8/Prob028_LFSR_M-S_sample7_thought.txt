@@ -1,0 +1,15 @@
+Simplified LFSR design approach:
+1. Revert to basic Fibonacci LFSR structure for simplicity
+2. Remove unnecessary configuration options (feedback_sel, invert_fb, max_length)
+3. Keep core functionality: 4-bit shift register with XOR feedback
+4. Maintain synchronous reset (active high) to initialize state
+5. Use standard left-shift with feedback to LSB
+6. Feedback is XOR of bits 3 and 2 as specified
+7. Initialize to non-zero state (4'b0001) to prevent lock-up
+8. Single clock domain design for reliability
+
+Key simplifications:
+- Removed all configuration parameters
+- Single feedback path (XOR of bits 3 and 2)
+- Fixed initialization value
+- Clean, minimal implementation matching problem spec

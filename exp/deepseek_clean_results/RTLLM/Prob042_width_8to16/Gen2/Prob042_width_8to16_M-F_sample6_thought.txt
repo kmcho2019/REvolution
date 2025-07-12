@@ -1,0 +1,8 @@
+Revised approach addressing the feedback issues:
+1. Maintain a simple 2-state FSM but with improved handling of intermediate states
+2. Use separate 8-bit registers for first and second bytes instead of a shift register
+3. Clear both registers on reset to avoid undefined values
+4. Add proper state transition handling for cases where valid_in isn't asserted
+5. Ensure valid_out is only asserted when both bytes are properly collected
+6. Reset the byte collection registers after each complete output
+7. Make the state transitions more explicit and robust

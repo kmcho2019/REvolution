@@ -1,0 +1,10 @@
+The core concept remains counting 7 half-cycles to achieve a divide-by-3.5 fractional divider, with two internal clocks toggling at different counts on rising and falling edges. To improve timing alignment and simplify logic, I will:
+- Use a free-running counter that increments every half clock cycle (both edges) using a single clock domain.
+- Generate an internal half-clock enable pulse on both edges.
+- Instead of capturing counter at negedge, derive the two toggle signals directly from the counter values using combinational logic tied to posedge clk and negedge clk domains.
+- Use two toggling registers (clk_pos and clk_neg), each updated on a dedicated clock edge, but using conditions computed combinationally from the current counter.
+- Remove the explicit double-registering of the counter; instead, count from 0 to 6 synchronously and update toggles accordingly.
+- This will ensure better phase alignment between clk_pos and clk_neg, improving duty cycle balance.
+- The final clk_div output is OR of clk_pos and clk_neg, producing the fractional divided clock with half-cycle phase shifts combined for smooth output.
+
+This structure simplifies timing by having the counter update on posedge only and logically controlling toggling on posedge and negedge via combinational conditions based on the counter's value. It avoids metastability from capturing counter asynchronously and produces more deterministic toggling points.

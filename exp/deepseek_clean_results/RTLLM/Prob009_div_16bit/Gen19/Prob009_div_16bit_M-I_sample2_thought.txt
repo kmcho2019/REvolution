@@ -1,0 +1,18 @@
+To optimize the 16-bit divider implementation for better PPA metrics:
+
+1. **Reduce storage overhead**: Instead of using a 16-element temp array, use a single 8-bit register that gets updated iteratively, reducing storage from 144 bits to 8 bits.
+
+2. **Simplify comparison logic**: Since we know the divisor is 8-bit, we can directly compare against B without zero-extension, saving logic.
+
+3. **Optimize remainder handling**: Make the remainder output 8-bit since higher bits are always zero, reducing output routing.
+
+4. **Streamline quotient calculation**: Combine the comparison and subtraction into a single operation per bit.
+
+5. **Remove generate loop**: Unroll the loop manually for better synthesis control and potential optimization.
+
+Key improvements:
+- 8x reduction in temporary storage (144b → 8b)
+- Simplified comparison logic
+- Reduced output width where possible
+- Maintains same functionality
+- Better PPA expected

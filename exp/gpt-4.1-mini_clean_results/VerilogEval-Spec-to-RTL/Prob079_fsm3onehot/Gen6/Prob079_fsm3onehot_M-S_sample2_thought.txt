@@ -1,0 +1,12 @@
+Since the one-hot encoding means only one state bit is high at a time, the next state bits can be simplified by combining conditions directly without intermediate signals or factoring the input signal repeatedly. Each next_state bit is the OR of its originating states masked by input or its complement, but we can rewrite directly based on the transitions:
+
+- next_state[0] (A) = (A & ~in) | (C & ~in) = ~in & (A | C)
+- next_state[1] (B) = (A & in) | (B & in) | (D & in) = in & (A | B | D)
+- next_state[2] (C) = (B & ~in) | (D & ~in) = ~in & (B | D)
+- next_state[3] (D) = (C & in)
+
+Since the logic is already minimal, the simplest is to directly assign these expressions without intermediate wires or more signals, keeping the code compact while preserving clarity.
+
+Output is just D, the current state bit for D.
+
+This reduces logic lines to minimal and avoids unnecessary wires.

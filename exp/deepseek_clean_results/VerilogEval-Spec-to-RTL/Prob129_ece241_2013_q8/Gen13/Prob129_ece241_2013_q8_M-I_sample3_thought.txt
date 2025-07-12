@@ -1,0 +1,16 @@
+The existing solution is already highly optimized for PPA metrics, but we can make one final optimization by:
+
+1. Using a single-bit state representation instead of 2-bit history:
+   - We only need to track if we've seen a "10" pattern (state=1) or not (state=0)
+   - This reduces the register count from 2 bits to 1 bit
+
+2. Simplifying the output logic further:
+   - z=1 only when we're in state=1 (seen "10") and current x=1
+   - This reduces the combinational logic slightly
+
+3. Maintaining all other benefits:
+   - Same Mealy machine behavior
+   - Same overlapping sequence detection
+   - Same async reset functionality
+
+This change reduces area by using fewer registers while maintaining the same performance and power characteristics.

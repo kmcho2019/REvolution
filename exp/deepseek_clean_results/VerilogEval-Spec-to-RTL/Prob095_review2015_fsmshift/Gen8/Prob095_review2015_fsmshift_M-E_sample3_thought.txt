@@ -1,0 +1,15 @@
+Novel approach using a state machine with explicit cycle counting:
+1. Implement a 3-state FSM: IDLE, COUNTING, DONE
+2. IDLE state waits for reset (shift_ena = 0)
+3. On reset, transition to COUNTING and initialize a 2-bit cycle counter
+4. In COUNTING, assert shift_ena and count 4 cycles (0-3)
+5. After 4 cycles, transition to DONE (shift_ena = 0)
+6. Remain in DONE until next reset
+7. All state transitions synchronous to clock edge
+
+Key advantages:
+- Explicit state tracking makes behavior clear
+- Guarantees exactly 4 cycles of shift_ena
+- Clean synchronous design
+- Easy to modify if requirements change
+- No combinational paths from reset to output

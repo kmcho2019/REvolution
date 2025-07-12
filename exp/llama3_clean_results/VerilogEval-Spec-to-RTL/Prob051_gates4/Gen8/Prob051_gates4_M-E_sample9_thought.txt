@@ -1,0 +1,7 @@
+The novel architectural idea for this task is to utilize a tree-like structure for the gate implementations, specifically a binary tree. This approach can efficiently reduce the number of gates required for the 4-input operations. The idea involves creating a module for a binary tree node that can perform AND, OR, or XOR operations. Each node in the tree will take two inputs and produce one output, which will be propagated up the tree. 
+
+For a 4-input operation, the binary tree will have three levels (excluding the input level): the first level will perform operations on the first and second inputs and on the third and fourth inputs, the second level will perform an operation on the results of the first level, and the final result will be obtained at the root of the tree.
+
+This approach allows for a modular and scalable design, as adding more inputs would simply require adding more levels to the tree. It also reduces the complexity of the individual modules, as each node in the tree only needs to perform a simple 2-input operation.
+
+To implement this idea, we will first define a base module for a binary tree node that can perform any of the three operations. Then, we will instantiate this module in a hierarchical manner to create the binary tree for each of the 4-input gates. The top-level module will instantiate these trees to produce the final outputs.

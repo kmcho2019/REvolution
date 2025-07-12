@@ -1,0 +1,5 @@
+Refactor the frequency divider by separating the counter and toggle logic into combinational and sequential blocks. Instead of toggling `clk_div` inside the same always block where the counter increments, use a signal `toggle_clk` that asserts when the counter reaches half of `NUM_DIV - 1`. Then, use a clock-enable style register to toggle `clk_div` based on that signal. Also, replace the counter increment condition to count up to `NUM_DIV-1` and reset, ensuring a clean and clear counter wraparound. This approach separates counting and toggling logic, improving readability and modularity.
+
+Additionally, calculate counter width using a function to generalize bit width calculation.
+
+This structure still meets the requirements: count `NUM_DIV` clock cycles, toggle `clk_div` at half count, reset on `rst_n`, and support only even division factors.

@@ -1,0 +1,7 @@
+To implement the state output logic for the given finite-state machine, we need to derive the next state logic for each flip-flop based on the current state and input. Given the one-hot encoding, each state is represented by a unique bit set to 1. We will use this encoding to derive the next state logic for Y1 and Y3. 
+
+For Y1, which corresponds to state B, we need to consider transitions to state B. From the state machine diagram, we see that state B can be reached from state A when w is 0. So, Y1 will be set when the current state is A (y[0] is 1) and w is 0, or when the current state is B and w is 0 (to stay in B), or when the current state is D and w is 1 (transition from D to B is not directly mentioned, but we can infer the need to set Y1 when transitioning from D to B through other states). However, given the transitions, B is directly reached from A when w=0, and we should consider the one-hot encoding and transitions to directly affect Y1.
+
+For Y3, which corresponds to state D, we look at transitions to state D. State D can be reached from states B (when w=0), C (when w=0), E (when w=0), and F (when w=0, but F transitions to C when w=1, then C can transition to D). Given this, Y3 should be set when the current state is B and w is 0, or when the current state is C and w is 0, or when the current state is E and w is 0, or when the current state is F and w is 0 (considering the one-hot encoding).
+
+We will implement these conditions using logical operators in Verilog to derive the next state logic for Y1 and Y3.

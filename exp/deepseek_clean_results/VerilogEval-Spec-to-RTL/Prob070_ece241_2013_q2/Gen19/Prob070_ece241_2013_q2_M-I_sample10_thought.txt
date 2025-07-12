@@ -1,0 +1,21 @@
+Improved strategy for minimal SOP and POS forms with don't-care optimization:
+
+1. For SOP (out_sop):
+   - Start with original true cases (2,7,15)
+   - Use don't-care conditions (3,8,11,12) to minimize the expression
+   - Combine terms where possible using don't-cares to reduce literals
+
+2. For POS (out_pos):
+   - Start with original false cases (0,1,4,5,6,9,10,13,14)
+   - Use don't-care conditions to combine terms and minimize the expression
+   - Apply De Morgan's laws to convert to product-of-sums form
+
+3. Key optimizations:
+   - For SOP: Combine terms 2 (0010) and 3 (0011) by dropping d
+   - For POS: Combine multiple terms by observing common patterns
+   - Resulting forms are both minimal and properly handle don't-cares
+
+4. Verification:
+   - Maintains correct output for all specified input patterns
+   - Don't-care outputs are consistent with minimal form requirements
+   - Reduced gate count compared to original implementation

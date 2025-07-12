@@ -1,0 +1,9 @@
+The original solution had a critical functional bug in the rollback logic upon a misprediction. The rollback state must be the older history (`train_history`) concatenated with the actual outcome of the mispredicted branch (`train_taken`), with the youngest branch history at LSB. Since `predict_history[0]` holds the youngest branch outcome, the rollback should be:
+`predict_history <= {train_taken, train_history[31:1]};`
+This preserves the 32-bit width correctly, shifting in the actual branch outcome as the newest bit and pushing out the oldest bit.
+
+Similarly, when shifting in a new prediction, the new predicted bit is shifted in at LSB (youngest), and the oldest bit is shifted out at MSB, which is consistent.
+
+This fix addresses the correctness issue. The reset and other logic remain the same. No further PPA optimization is necessary for such a simple register.
+
+Hence, the improved code corrects the rollback concatenation to maintain proper history semantics and match the problem specification.

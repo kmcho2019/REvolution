@@ -1,0 +1,5 @@
+The problem requires implementing a finite state machine in Verilog to detect message boundaries in a byte stream. The FSM should discard bytes until it encounters a byte with in[3]=1, which marks the start of a message. It then signals the receipt of a message once all 3 bytes have been received. The datapath module should output the 24-bit message whenever a packet is received. 
+
+To implement this, we can design a simple FSM with two states: IDLE and RECEIVE. In the IDLE state, the FSM discards bytes until it encounters a byte with in[3]=1. Once this condition is met, the FSM transitions to the RECEIVE state and starts counting the received bytes. After receiving 3 bytes, the FSM signals the receipt of a message by asserting the done signal and outputs the 24-bit message.
+
+We will use a counter to keep track of the number of bytes received and a register to store the received message. The reset signal will be used to reset the FSM to the IDLE state and clear the message register.

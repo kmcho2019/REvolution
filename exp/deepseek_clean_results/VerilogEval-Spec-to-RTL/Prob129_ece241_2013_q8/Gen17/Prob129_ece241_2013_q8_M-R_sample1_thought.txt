@@ -1,0 +1,13 @@
+I'll refactor the solution to use a traditional 3-state Mealy FSM while maintaining the same functionality. The key changes are:
+1. Replace the shift register with explicit state transitions
+2. Use named states for better readability
+3. Implement the Mealy output logic that depends on both current state and input
+4. Maintain the same asynchronous reset functionality
+5. Keep the ability to detect overlapping sequences
+
+The state machine will have these states:
+- IDLE: Initial state, waiting for first '1'
+- GOT1: Received first '1', waiting for '0'
+- GOT10: Received '10', waiting for final '1'
+
+The output z will be asserted when in GOT10 state and current input is '1'.

@@ -1,0 +1,17 @@
+Refactoring the Mealy FSM with these key changes:
+
+1. State Encoding: Maintain binary encoding but explicitly handle GOT1001 as a separate state (3 bits) to avoid encoding conflicts and improve clarity.
+
+2. Output Handling: Keep MATCH as combinational logic but simplify the condition by directly checking state transitions where the pattern completes.
+
+3. State Transitions: 
+   - Use a single always block for both state transition and reset
+   - Simplify next state logic by removing the default case (all states covered)
+   - Make state transitions more explicit by showing all possible input conditions
+
+4. Parameter Naming: Use more descriptive state names to clearly show the sequence progress.
+
+The new implementation will have:
+- 5 states encoded in 3 bits (IDLE, GOT1, GOT10, GOT100, GOT1001)
+- Clear state transition conditions
+- Same functional behavior with improved readability

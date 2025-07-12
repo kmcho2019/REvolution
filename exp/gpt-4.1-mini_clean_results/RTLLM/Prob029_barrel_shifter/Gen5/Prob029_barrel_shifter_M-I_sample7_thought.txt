@@ -1,0 +1,13 @@
+The original design is functionally correct and straightforward, using a series of 2-to-1 multiplexers to implement a 3-stage barrel shifter with rotate-right behavior controlled by the bits of `ctrl`.
+
+To improve PPA (performance, power, and area), I will:
+
+1. Inline the mux2X1 functionality directly inside the generate blocks. Since `mux2X1` is a simple 2-to-1 mux, explicit instantiation of many small modules adds synthesis overhead and could increase area and delay. Writing the mux function inline allows the synthesizer to optimize better.
+
+2. Use bit slicing and concatenation to implement rotations compactly, replacing the explicit indexing with modular arithmetic by wiring. This can also help synthesis tools with cleaner logic expressions.
+
+3. Retain the staged shifting structure, which maps well to hardware for timing and power efficiency.
+
+The functionality remains unchanged: the input is rotated right by the sum of the positions indicated by ctrl bits (4, 2, 1). 
+
+This approach simplifies the code and may improve synthesis results by reducing module overhead, while preserving clarity and easy verification.

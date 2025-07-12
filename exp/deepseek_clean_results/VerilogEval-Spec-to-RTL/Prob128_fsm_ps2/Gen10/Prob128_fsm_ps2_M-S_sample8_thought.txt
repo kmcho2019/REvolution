@@ -1,0 +1,11 @@
+The solution can be further simplified by:
+1. Recognizing that we only need to track the count of bytes received in the current message (0-2)
+2. Using a simple 2-bit counter that increments for each byte after the start
+3. Resetting the counter when we see in[3]=1 and we're not in a message (count=0)
+4. Asserting done when the counter reaches 2 (after receiving 3 bytes)
+
+Key improvements:
+- Eliminates the shift register in favor of a simple counter
+- Fewer state transitions (only increment or reset)
+- Same functionality with even simpler logic
+- Done signal timing remains correct

@@ -1,0 +1,14 @@
+This solution takes a fundamentally different approach by recognizing that the state machine behavior can be implemented using a single T flip-flop (toggle flip-flop) with clever input logic. The key insights are:
+
+1. **T Flip-Flop Behavior**: A T flip-flop toggles its state when its input is 1. We can use this to implement the state transitions.
+
+2. **Input Logic Optimization**: By analyzing the state transitions, we can derive that:
+   - In state B (0): Toggles to A (1) only when in=0
+   - In state A (1): Toggles to B (0) only when in=0
+   This means the T input should be the XOR of the current state and the input.
+
+3. **Output Mapping**: The output is simply the complement of the state bit (out = ~state).
+
+4. **Reset Handling**: The T flip-flop is reset to 0 (state B) synchronously.
+
+This approach eliminates explicit state transition logic and instead uses the inherent behavior of a T flip-flop with optimized input logic, potentially reducing the critical path.

@@ -1,0 +1,9 @@
+The existing design uses four separate DFF module instances created by a generate loop, which ensures modularity but might slightly increase area and power due to module overhead and routing of multiple nets. To optimize for better PPA (Power, Performance, Area):
+
+- Replace the generate loop and multiple module instantiations with a single vector register implemented in one always block.
+- Keep synchronous active-low reset and positive edge clock triggering.
+- This approach reduces instantiation overhead and nets, enabling better register packing and potential power savings due to fewer transitions.
+- Performance remains high because the shift register logic is simple combinational inside the always block.
+- Overall, this reduces area and power without compromising clarity or functionality.
+
+This solution leverages a single 4-bit shift register vector and keeps the code compact and synthesis-friendly.

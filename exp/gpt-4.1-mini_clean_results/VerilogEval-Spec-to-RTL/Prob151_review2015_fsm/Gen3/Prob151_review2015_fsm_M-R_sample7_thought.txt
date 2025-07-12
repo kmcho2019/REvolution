@@ -1,0 +1,7 @@
+Refactor the FSM by separating the pattern detection shift register from the main FSM state register and only update it during the IDLE state to avoid unintended shifts during other states. This ensures the pattern detection is precise and not overwritten while shifting in delay bits or counting.
+
+Use a one-hot state encoding with individual registers for each state for clarity, updating states in a synchronous always block. Implement a shift counter that enables shift_ena for exactly four cycles in the SHIFT state.
+
+Drive outputs with combinational assignments based on the current state to ensure zero cycle latency in outputs relative to state.
+
+This structure isolates pattern detection from later states, tightly controls shift_ena timing, and keeps outputs clean and combinational for better timing and clarity, which should correct output mismatches and align the FSM with the expected simulation behavior.

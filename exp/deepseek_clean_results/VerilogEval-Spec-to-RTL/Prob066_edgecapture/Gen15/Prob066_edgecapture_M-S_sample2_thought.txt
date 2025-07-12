@@ -1,0 +1,12 @@
+Simplified solution approach:
+
+1. The core requirement is to detect 1→0 transitions on each bit and maintain a sticky output until reset
+2. Key simplifications:
+   - Remove the unnecessary masking with ~out since we want to detect all falling edges regardless of previous detections
+   - The sticky behavior is naturally achieved by OR-ing new detections with previous output
+   - Only need to store previous input value for edge detection
+3. Resulting benefits:
+   - Fewer logic operations (removed & ~out)
+   - Clearer implementation that directly matches requirements
+   - Maintains all functionality with simpler code
+4. Reset behavior remains the same - clears all outputs and previous input

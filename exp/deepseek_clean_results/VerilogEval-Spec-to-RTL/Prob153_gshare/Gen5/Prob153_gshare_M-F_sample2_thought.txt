@@ -1,0 +1,18 @@
+To fix the issues identified in the feedback, I'll make these key adjustments:
+
+1. **Separate Prediction and Update Timing**: Ensure predictions use current state while updates happen at next clock edge. This means:
+   - Predictions see current PHT and GHR values
+   - Training updates PHT and GHR at next clock edge
+   - Misprediction recovery updates GHR at next clock edge
+
+2. **Maintain Proper Priority**: Training operations (including misprediction recovery) must take precedence over prediction updates to GHR.
+
+3. **Correct Initial State**: Keep PHT initialized to weakly taken (2'b01) and GHR to 0, but ensure they're properly synchronized.
+
+4. **Handle Concurrent Access**: When training and prediction access the same PHT entry in same cycle, prediction sees pre-training state.
+
+The key changes are:
+- Remove immediate GHR update during prediction
+- Make all state updates strictly synchronous
+- Maintain proper priority between training and prediction
+- Keep combinational outputs based strictly on current state

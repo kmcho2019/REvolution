@@ -1,0 +1,16 @@
+After carefully analyzing the feedback and waveform, here's the corrected understanding:
+1. Output p is high only when 'a' is high during the clock being high (not just on edges)
+2. Output q is set when p was high in the previous cycle and remains set until 'a' goes high during clock low
+3. Need to properly handle the clock phase detection and state transitions
+
+Key corrections:
+1. p should be high only when both clock and a are high (combinational)
+2. q needs to be set on posedge clock when p was high last cycle
+3. q needs asynchronous clear when a is high during clock low
+4. Need to track previous p value for q's behavior
+
+Implementation approach:
+1. Make p combinational (clock & a)
+2. Use flip-flop to store previous p value
+3. Implement q with synchronous set and asynchronous clear
+4. Properly handle clock phase detection

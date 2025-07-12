@@ -1,0 +1,12 @@
+Refactor the multiplier pipeline to explicitly separate partial product generation and accumulation stages using registers to pipeline the summation process. Instead of summing all partial products combinationally at once, accumulate partial products two at a time over multiple pipeline stages.
+
+Specifically:
+1. Register inputs on mul_en_in.
+2. Generate partial products combinationally.
+3. Use a 3-stage pipeline to accumulate partial products in pairs, reducing combinational logic per stage.
+4. Shift mul_en_in through a pipeline register of length 4 to align output enable with final product.
+5. Output product is registered at the last stage and only valid when output enable is high.
+
+This approach reduces the combinational path at each pipeline stage, improving timing while preserving throughput. It also cleanly pipelines partial sums and uses always blocks only for synchronous logic, while combinational logic uses assign statements. The output enable pipeline is lengthened to 4 to match the deeper pipeline.
+
+This structure keeps the same functionality but with improved timing and a clearer pipeline flow.

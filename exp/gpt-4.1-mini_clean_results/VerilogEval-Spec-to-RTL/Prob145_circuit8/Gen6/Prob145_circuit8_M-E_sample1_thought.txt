@@ -1,0 +1,37 @@
+From the waveform, the outputs p and q exhibit sequential behavior dependent on clock edges and the input a, with state transitions that are not simply latch-like OR operations.
+
+Analyzing the waveform carefully:
+
+- p changes only on posedge clock; q only on negedge clock.
+- At the first posedge clock when a=0, p=0.
+- When a=1 at posedge clock, p becomes 1.
+- p toggles between 0 and 1 depending on 'a' on posedge clock (some pulses of 1, then back to 0).
+- q on negedge clock often follows p, but lags behind and holds states for several clock cycles.
+- q appears to be a delayed version of p, but with a holding condition.
+- On negedge clock, q samples p only if p is different from q; otherwise q holds its state.
+- On posedge clock, p samples input a directly (p<=a).
+- On negedge clock, q samples p only if p=1; if p=0, q holds its previous value.
+
+Thus, a good model is:
+
+- On posedge clock: p <= a; (sample input directly)
+- On negedge clock: if p=1 then q <= 1; else q <= 0; (q follows p but at negedge)
+- But the waveform shows q sometimes holds 1 even when p=0, so we introduce a latch behavior for q:
+  - q <= q if p=0 else q <= 1
+
+More precisely:
+
+- On posedge clock: p <= a;
+- On negedge clock:
+  - if p==1, q <= 1;
+  - else q <= 0;
+
+This matches the waveform’s general behavior: p follows a at posedge; q goes high at negedge when p=1, else low.
+
+Because the waveform shows q maintaining 1 through several negedge clocks even if p toggles a few times, the above works if p remains 1 at those negedges, else q resets.
+
+Initialization of p and q to zero matches unknowns before first clock edges.
+
+Hence the design is a 2-flip-flop system with p sampling a at posedge, and q sampling p at negedge.
+
+This simple dual-edge sampling fits the waveform pattern.

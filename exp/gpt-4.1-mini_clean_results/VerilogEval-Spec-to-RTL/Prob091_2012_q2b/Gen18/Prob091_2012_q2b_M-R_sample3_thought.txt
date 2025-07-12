@@ -1,0 +1,5 @@
+Refactor the implementation by removing the submodule and directly computing Y1 and Y3 inside TopModule using assign statements. Instead of introducing intermediate wires, write the expressions directly with minimal logic, leveraging the one-hot encoding explicitly by using y[0], y[1], y[2], etc., to clearly express the state dependencies.
+
+This flattening reduces hierarchy, simplifying the design for tools that prefer flat RTL. Also, express Y3 in terms of OR and AND rather than multiple negations to provide a different logical form that is equally correct, i.e., Y3 = ~w & (y[1] | y[2] | y[4] | y[5]) based on the states that transition to D on w=0. This improves readability, showing directly from which states we can reach D.
+
+Overall, the function remains the same, but the structure becomes flatter and the logic expressions different to illustrate alternative implementation styles.

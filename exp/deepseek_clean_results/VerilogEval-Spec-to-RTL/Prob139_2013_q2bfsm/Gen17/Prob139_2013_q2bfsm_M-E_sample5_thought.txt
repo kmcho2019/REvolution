@@ -1,0 +1,15 @@
+Here's a novel approach using a shift register for pattern detection and a timeout counter with explicit cycle counting:
+
+1. **Shift Register for Pattern Detection**: Instead of tracking the 1-0-1 sequence with state transitions, use a 3-bit shift register to directly detect the pattern. This simplifies the state machine by moving sequence detection to parallel hardware.
+
+2. **Explicit Cycle Counter**: For the y monitoring phase, use a proper 2-bit counter to track exactly two clock cycles, making the timeout condition clear and precise.
+
+3. **Simplified State Machine**: Reduce the state machine to just 4 states (IDLE, F_PULSE, MONITOR_Y, FINAL) by handling the x pattern detection separately from the state transitions.
+
+4. **Output Control**: Generate outputs combinatorially based on current state and conditions, with registers only for state storage. This ensures clean timing.
+
+Key advantages:
+- Clear separation of pattern detection and state logic
+- Precise cycle counting for timeout conditions
+- Reduced state complexity
+- More maintainable and verifiable design

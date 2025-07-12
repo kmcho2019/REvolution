@@ -1,0 +1,13 @@
+Implement a two-stage pipeline with a simple state machine that explicitly tracks whether the first 8-bit input has been stored, and waits for the second input to arrive.
+
+- Use a register `data_lock` to hold the first 8-bit data.
+- Use a 1-bit state flag `has_data` to indicate if `data_lock` is occupied.
+- On receiving a valid input (`valid_in` == 1):
+  - If `has_data` == 0, store `data_in` in `data_lock` and set `has_data` = 1.
+  - If `has_data` == 1, concatenate `data_lock` (high 8 bits) and `data_in` (low 8 bits), register this 16-bit result in `data_out`, assert `valid_out` = 1, and clear `has_data` to 0.
+- When no valid input arrives, output `valid_out` = 0.
+- `valid_out` and `data_out` are registered and updated on the clock edge, ensuring output signals are generated exactly one clock cycle after the second valid input arrives.
+- Use only one set of output registers for `valid_out` and `data_out` to reduce complexity.
+- Reset clears all registers.
+
+This approach ensures deterministic timing, avoids output signal glitches, and cleanly separates input buffering from output generation without intermediate "next" signals. The pipeline is controlled by the simple `has_data` flag acting as a state machine.

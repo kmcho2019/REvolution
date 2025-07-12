@@ -1,0 +1,17 @@
+Keep the same fully combinational logic for sign, magnitude extraction, addition/subtraction, and two's complement reconstruction, but improve the parameter usage and code clarity. Add default values for parameters N and Q for safer instantiation without explicit parameters, improving integration with testbenches and synthesis tools.
+
+Additionally, optimize power and area by computing only the needed arithmetic operation (addition or subtraction) depending on the input signs, avoiding parallel calculation of sum_abs and diff_abs.
+
+Use blocking assignments for clarity in the combinational always block.
+
+Document Q parameter more clearly for fixed-point precision (even if it is not used in logic, it serves for user reference).
+
+This approach maintains a simple, readable, and synthesizable fixed-point adder module with parameterization and proper sign handling, suitable for integration and elaboration in any environment.
+
+The module interface remains unchanged but with default parameters.
+
+The main logic branches only to calculate sum or difference as needed.
+
+The internal signals and registers are sized carefully (e.g. sum_abs as N+1 bits to detect overflow).
+
+Finally, assign the combinational result to output reg c inside always @* block.

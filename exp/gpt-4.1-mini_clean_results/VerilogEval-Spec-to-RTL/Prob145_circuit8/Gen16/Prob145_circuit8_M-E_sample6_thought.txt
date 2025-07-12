@@ -1,0 +1,39 @@
+The waveform suggests a sequential state machine with two state bits represented by outputs p and q, which update synchronously on the clock edges, but the output updates are more complex than a simple shift register.
+
+Observing the waveforms:
+- Outputs are unknown at the start (uninitialized).
+- p becomes 0 at the first rising edge of clock when a=0.
+- When a=1 on clock=1 edges, p is set to 1; when a=0, p can remain or reset.
+- q changes only on falling edges of clock, while p changes on rising edges.
+- After clock falling edge at 115 ns, p and q both become 1 and hold steady during low clock.
+- At the next rising clock edges, p updates based on a and prior q, while q remains stable.
+- On falling clock edges, q updates based on p.
+
+This suggests a 2-bit state machine where:
+- p updates on the rising edge of clock depending on a and q.
+- q updates on the falling edge of clock depending on p.
+
+This "half-clock period" state update scheme is non-standard but matches waveform transitions:
+- On posedge clock: p <= a OR q; (latching new data influenced by a and previous q)
+- On negedge clock: q <= p; (q follows p delayed by half cycle)
+
+Thus the circuit behaves like a two-bit state machine with staggered updates:
+- p is computed from input a and stored q on rising edge.
+- q latches p on falling edge.
+
+This generates output changes aligned to the waveform timing where outputs update on both clock edges.
+
+We implement the outputs as registers, updated synchronously:
+- At posedge clock, update p from a and q.
+- At negedge clock, update q from p.
+
+This model explains the observed waveforms with alternating updates of p and q on opposite clock edges and correct output values.
+
+Hence, the final design is a two-bit state machine with p updated on posedge clock and q updated on negedge clock:
+
+- always @(posedge clock): p <= a | q;
+- always @(negedge clock): q <= p;
+
+This fits the waveform pattern including stable output intervals and transitions.
+
+No reset is needed since outputs start as unknown and settle after the first clock edges.

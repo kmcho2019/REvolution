@@ -1,0 +1,5 @@
+To simplify the Mealy FSM detecting the sequence "10011", I will encode the states as a simple binary-coded FSM rather than one-hot to reduce register count and next-state logic complexity. The FSM will track the number of matched bits so far.
+
+Using a numeric state (0 to 5) representing how many bits have been matched of the target sequence, the next state depends only on the current state and input IN. Overlaps are naturally handled by moving to proper states depending on input.
+
+MATCH will be asserted combinationally when reaching the last state (matched 4 bits) and the input is '1', completing the sequence. This binary approach reduces the complexity in next-state logic and state register size while maintaining the same functionality and continuous detection.

@@ -1,0 +1,25 @@
+To optimize the original 4-stage pipeline multiplier for better Power, Performance, and Area (PPA), the following improvements are applied:
+
+1. Match enable pipeline length with pipeline stages to avoid unnecessary delay and toggling:
+   - Use a 3-stage enable pipeline corresponding exactly to the 3 pipeline stages (input registers, partial sums registers, final sum register).
+   
+2. Modify enable signal and registers update logic to hold values when enable is low instead of resetting to zero. This reduces unnecessary switching and power consumption.
+
+3. Distribute partial product addition more evenly by:
+   - Splitting the 8 partial products into 3 groups: two groups of three partial products and one group of two partial products.
+   - This reduces the number of operands added at once, shortening critical paths in adder stages.
+
+4. Add an additional pipeline stage to sum the two three-product groups before combining with the last two-product group.
+   - Pipeline stages:
+     Stage 0: Input sampling (mul_a_reg, mul_b_reg)
+     Stage 1: Generate and sum partial_products[0..2] and partial_products[3..5]
+     Stage 2: Sum two stage 1 sums
+     Stage 3: Add stage 2 sum to sum of partial_products[6..7], final product register
+
+5. Use the 3-bit enable pipeline for stages 1 to 3, and assign mul_en_out from the last stage's enable bit.
+
+6. Output logic assigns zero when output enable is low, and holds registered value only when output is valid.
+
+This refined pipeline architecture reduces critical path lengths by lowering the number of simultaneous addends, saves power by avoiding resets to zero, and matches enable propagation with data flow stages for correctness and lower toggle rate.
+
+Overall, it should improve timing and power metrics without increasing area significantly.

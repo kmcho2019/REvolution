@@ -1,0 +1,12 @@
+Fuse the best qualities of both examples to produce an 8-bit unsigned multiplier with a balanced four-stage pipeline. The approach includes:
+
+1. Input and enable signal registering with pipelined enable shifting for precise output enable generation.
+2. Partial products generated combinationally using a clean generate loop for clarity and maintainability.
+3. Balanced addition tree split into pairwise sums, then summed in subsequent pipeline stages to reduce combinational delay.
+4. Each pipeline stage has its own enable signal pipelined in parallel, ensuring data-valid signal alignment throughout the pipeline.
+5. Pipeline registers zeroed on reset, and conditional clears on stage enables inactive to minimize glitches and switching.
+6. Non-blocking assignments used consistently.
+7. Output enable assigned from the MSB of the shifted enable register as in Example 1, ensuring a clean timing reference.
+8. The final output is gated by the output enable to prevent invalid data propagation.
+
+This design balances timing, clarity, and enable control while keeping partial product generation and addition stages modular and straightforward, improving maintainability and synthesis friendliness.

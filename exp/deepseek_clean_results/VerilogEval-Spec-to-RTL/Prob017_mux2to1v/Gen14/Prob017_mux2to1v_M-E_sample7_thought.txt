@@ -1,0 +1,11 @@
+Tree-Based Hierarchical MUX Architecture:
+1. Instead of flat bitwise operations or fixed-size chunks, implement a binary tree of 2:1 muxes
+2. First level: 100 individual 1-bit muxes (leaf nodes)
+3. Higher levels: Combine mux outputs in pairs, reducing fanout at each level
+4. Benefits:
+   - Naturally balanced critical path (log2 depth)
+   - Progressive fanout reduction (100->50->25->13->7->4->2->1)
+   - Enables clock gating opportunities at higher levels
+   - Better for physical implementation (localized routing)
+   - Scales well to larger bus widths
+5. Implementation uses recursive module instantiation to build the tree

@@ -1,0 +1,5 @@
+To solve this problem, we will design a Verilog module named width_8to16 that performs the required data width conversion. This module will have input ports for the clock signal (clk), an active-low reset signal (rst_n), a valid input signal (valid_in), and 8-bit input data (data_in). It will also have output ports for indicating the validity of the output data (valid_out) and the 16-bit output data (data_out).
+
+The module will utilize a flag to track whether a valid 8-bit data has been received and stored. If a valid data is received and the flag is inactive, the data will be stored in a temporary register (data_lock) and the flag will be set. On the next clock cycle, when another valid data is received and the flag is active, the stored data in data_lock and the new data_in will be concatenated to form the 16-bit output data_out, and the valid_out signal will be set. The data_out register will be triggered on the positive edge of the clock signal or the negative edge of the reset signal.
+
+We will also include a reset condition that clears the data_out register and resets the flag when the reset signal is active (rst_n = 0).

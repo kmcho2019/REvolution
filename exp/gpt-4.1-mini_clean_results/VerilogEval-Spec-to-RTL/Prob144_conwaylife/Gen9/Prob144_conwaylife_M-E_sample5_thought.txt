@@ -1,0 +1,22 @@
+Implement the 16x16 toroidal Game of Life with a novel pipeline stage to reduce combinational path delay.
+
+Instead of summing all 8 neighbors combinationally in a single cycle, split the computation into two pipeline stages:
+
+- Stage 1: For each cell, compute partial neighbor sums by summing its three neighbors in the previous row, the three neighbors in the same row (excluding self), and two neighbors in the next row separately, producing three partial sums of up to 3 each.
+
+- Stage 2: Sum these three partial sums to get total neighbors per cell, and then apply game rules.
+
+This 2-stage pipeline halves the addition depth and critical path. Register partial sums at stage 1 to improve timing. 
+
+Also, represent the 16x16 state as an array of 16 16-bit registers, enabling efficient bit slicing and wrap-around by using rotate/shift operations on rows for horizontal neighbors. Vertical wrap-around is done with modular indexing on rows. 
+
+Horizontal neighbors of each row can be extracted by rotating the 16-bit vector left and right by 1, avoiding per-bit indexing for horizontal neighbors. Vertical neighbors come from the rows above and below.
+
+The load signal synchronously loads the entire 256-bit state as 16 rows of 16 bits each.
+
+This architecture:
+
+- Reduces combinational depth by pipelining neighbor addition.
+- Exploits bitwise rotations for horizontal neighbor access.
+- Uses array indexing and modular arithmetic only on row indices.
+- Minimizes logic complexity for better timing and area.

@@ -1,0 +1,19 @@
+The fusion strategy combines the best aspects of both examples while addressing their limitations:
+
+1. From Example 1, we keep the independent bit-wise processing which offers better modularity and potential power savings when only some bits change.
+
+2. From Example 2, we adopt the more compact implementation style that eliminates intermediate wires and combines detection with storage.
+
+3. Key improvements in the fused version:
+   - Uses registered outputs for better timing (like Example 2)
+   - Maintains independent bit processing (like Example 1)
+   - Simplifies the history storage to just previous state (more efficient than 2-bit shift registers)
+   - Combines edge detection and storage in a single always block
+   - Uses non-blocking assignments consistently
+
+This should result in:
+- Better timing than both examples (reduced critical path)
+- Similar or better power than Example 1
+- Same compact area as both examples
+- Cleaner code structure than Example 1
+- More modular than Example 2

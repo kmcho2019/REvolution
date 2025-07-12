@@ -1,0 +1,5 @@
+Refactor the TopModule to combine the 2:1 multiplexer logic directly in a continuous assignment for the D input of the flip-flop, eliminating the separate mux module. This reduces module overhead and simplifies the design while maintaining the same functionality.
+
+Also, implement the flip-flop using a single always block with non-blocking assignment, and avoid instantiating a separate DFF module. The mux functionality is integrated using a combinational assign to a wire `d`, which is then latched by the flip-flop on the clock's rising edge.
+
+This maintains clear code separation and synthesis-friendly constructs, while providing a more compact and straightforward hierarchy for the submodule, easing integration and potentially improving timing by reducing logic levels.

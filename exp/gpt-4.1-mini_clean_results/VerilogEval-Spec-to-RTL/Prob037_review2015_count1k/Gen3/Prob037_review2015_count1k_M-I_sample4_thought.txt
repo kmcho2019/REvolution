@@ -1,0 +1,13 @@
+To improve PPA, I will replace the equality comparator (q == 999) with a simpler arithmetic check that leverages the carry-out from the addition operation. Specifically, adding 1 to q will overflow when q is 999, since 999 + 1 = 1000 (binary 1111101000 + 1 = 1111101001 in 10 bits cannot hold 1000, but detecting overflow on a 10-bit addition is not straightforward). Instead, I can precompute the next value and check if it overflows the max count by comparing if the next value is zero after incrementing at 999.
+
+However, since 999 is less than 2^10 - 1 (1023), we cannot detect overflow by a carry-out alone on a 10-bit addition. Alternatively, I can compare only relevant bits to reduce comparator complexity: 999 decimal = 10'b1111100111. Checking only a subset of bits (like the most significant bits) can reduce gate count and timing.
+
+An alternative is to use a max count of 999 hardcoded as a parameter and precompute the wrap-around with the help of a max counter. Since the max is 999, counting mod 1000, we can implement the counter as a 10-bit binary up counter with a synchronous reset and a conditional wrap.
+
+To reduce toggling and power, I will implement an enable signal that is asserted when the counter is not at max, so that the counter increments only when necessary, but since the counter counts every cycle until 999 and wraps, it always toggles; thus no gating is beneficial here.
+
+Therefore, to optimize timing, the idea is to replace the comparator (q == 999) with a combinational less-than comparison: (q < 999), so the next value is q + 1 if q < 999 else 0. This can be implemented using a subtraction or magnitude comparator which may be faster in some synthesis tools.
+
+Overall, the main improvement is to implement the counter increment and wrap-around logic using (q < 999) instead of (q == 999) to possibly reduce critical path delay and slightly improve power and area due to simpler logic.
+
+Also, define the maximum count as a parameter for clarity and ease of maintenance.

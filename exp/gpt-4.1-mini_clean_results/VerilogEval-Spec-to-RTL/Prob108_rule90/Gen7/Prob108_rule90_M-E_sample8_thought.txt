@@ -1,0 +1,7 @@
+Implement the entire 512-bit Rule 90 cellular automaton as a single 512-bit register. Calculate the next state of all bits simultaneously using bitwise operations and carefully handle boundary conditions with zero-padding. Instead of bit-by-bit generate loops, use vectorized bitwise XOR of shifted versions of the register to get left and right neighbors efficiently.
+
+Specifically, at each clock cycle (or on load), the state updates to next_state = (q shifted left by 1 with 0 inserted at LSB) XOR (q shifted right by 1 with 0 inserted at MSB). This leverages native wide bit shifts and XORs for a compact and fast combinational next-state logic.
+
+This approach simplifies the design by avoiding modularization, reduces inter-module routing and interface signals, and may improve timing by using built-in wide operators. The boundary condition is directly handled by concatenating zeros at both ends before shifting. Nonblocking assignments are used to update the state on the rising clock edge.
+
+This architecture is compact, clean, and exploits vectorized operations for clarity and synthesis efficiency, suitable for FPGA or ASIC.

@@ -1,0 +1,10 @@
+To simplify the Moore state machine implementation:
+1. Leverage one-hot encoding properties where each state is mutually exclusive
+2. Eliminate the case statement since we can directly compute each next state bit based on current state and input
+3. Output is simply the MSB of current state (state[3])
+4. Each next state bit can be computed independently:
+   - next_state[0] = (state == A && !in) || (state == C && !in)
+   - next_state[1] = (state == A && in) || (state == B && in) || (state == D && in)
+   - next_state[2] = (state == B && !in) || (state == D && !in) || (state == C && in)
+   - next_state[3] = (state == C && in)
+5. This reduces logic depth by computing each bit in parallel

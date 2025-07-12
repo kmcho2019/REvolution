@@ -1,0 +1,16 @@
+To further simplify the traffic light controller while maintaining all functionality, I'll:
+
+1. Remove the default state case since we already cover all states
+2. Combine the pedestrian request check with the green state transition logic
+3. Use a single always block for both state and counter logic
+4. Make outputs purely combinatorial based on current state
+5. Keep the minimal 2-bit state encoding
+6. Maintain the same timing requirements (60 green, 5 yellow, 10 red)
+7. Simplify the pedestrian request handling by making it part of the green state logic
+
+The simplified design will:
+- Start in red state on reset
+- Transition between states based on counter values
+- Handle pedestrian requests by shortening green time to 10 if >10 remains
+- Have minimal logic and state transitions
+- Maintain all original functionality

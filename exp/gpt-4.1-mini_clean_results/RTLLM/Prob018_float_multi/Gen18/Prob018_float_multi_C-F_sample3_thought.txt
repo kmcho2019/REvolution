@@ -1,0 +1,16 @@
+Fuse the strong pipelined architecture and fine-grained stage separation of Example 1 with the clear FSM-style state machine control and modular separation of Example 2 to achieve both clarity and timing efficiency.
+
+Fusion strategy:
+- Use a 3-stage pipeline as in Example 1 for throughput, but control stages with an explicit FSM like Example 2 for clarity and easy debugging.
+- Stage 1 (DECODE): Extract inputs, determine special cases, prepare mantissas, and register everything.
+- Stage 2 (MULTIPLY + NORMALIZE): Perform 24x24 multiplication, exponent add/subtract bias, normalize mantissa, and generate rounding bits.
+- Stage 3 (ROUND_OUTPUT): Apply round-to-nearest-even, adjust exponent and mantissa, handle overflow/underflow, generate final IEEE-754 output.
+- Incorporate the detailed special case detection and handling from Example 1 with the explicit states of Example 2.
+- Maintain 10-bit intermediate exponent registers to avoid overflow in addition.
+- Use nonblocking assignments everywhere for synchronous logic.
+- Compute sticky bit using an OR reduction.
+- Use combinational next_state logic for FSM simplicity.
+- Reset clears pipeline registers and output.
+- Keep signals well named and pipeline registers stage-separated for synthesis friendliness.
+- Output latency is 3 clock cycles, with new inputs accepted every cycle for continuous throughput.
+- This fusion balances readability, correctness, and performance optimizations, resulting in a maintainable, synthesizable, and well-structured IEEE-754 multiplier.

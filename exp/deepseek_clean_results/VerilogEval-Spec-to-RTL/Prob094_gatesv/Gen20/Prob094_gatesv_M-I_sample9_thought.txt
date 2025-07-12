@@ -1,0 +1,20 @@
+The current implementation is correct but can be optimized for better PPA (Power, Performance, Area) with these improvements:
+
+1. Power Optimization:
+   - Remove the circular XOR operation (out_different) if wrap-around isn't strictly required
+   - This eliminates the highest switching activity operation
+
+2. Area Optimization:
+   - Simplify the concatenation operations
+   - Use direct bit assignments for boundary conditions instead of vector operations
+   - This reduces multiplexer/logic overhead
+
+3. Performance:
+   - Maintain parallel bitwise operations
+   - Keep critical path minimal by avoiding unnecessary logic
+
+Key changes:
+1. Remove circular XOR and make it linear (unless wrap-around is required)
+2. Simplify boundary condition handling with direct bit assignments
+3. Maintain clean separation of operations for readability
+4. Reduce overall gate count while keeping logic depth minimal

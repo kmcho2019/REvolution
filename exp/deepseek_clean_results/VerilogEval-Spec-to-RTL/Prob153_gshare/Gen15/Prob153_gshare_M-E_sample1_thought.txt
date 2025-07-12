@@ -1,0 +1,13 @@
+Novel Architecture: Segmented Speculative GShare
+1. Split the 7-bit GHR into two segments (3-bit recent, 4-bit older) to better capture local vs global branch patterns
+2. Implement speculative PHT updates - predictively update PHT based on predictions while maintaining shadow copies for rollback
+3. Use dual-ported PHT memory to allow simultaneous read/write operations
+4. Add prediction confidence tracking to prioritize high-confidence updates
+5. Implement a two-phase update mechanism for GHR to handle training/prediction conflicts more gracefully
+
+Key Advantages:
+- Better pattern capture with segmented history
+- Reduced misprediction penalty via speculative updates
+- Improved timing with dual-ported memory
+- Higher accuracy through confidence-aware updates
+- Cleaner conflict resolution with two-phase updates

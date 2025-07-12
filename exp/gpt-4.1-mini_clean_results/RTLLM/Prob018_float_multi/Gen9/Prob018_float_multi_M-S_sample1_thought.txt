@@ -1,0 +1,15 @@
+To simplify the IEEE-754 32-bit floating-point multiplier while maintaining functionality, the design will be implemented in a single sequential always block with a small FSM-like counter controlling the operation steps across multiple clock cycles. This approach reduces pipeline registers and complexity.
+
+Key simplifications:
+- Use a cycle counter to sequence operation stages: input decoding, multiplication, normalization, rounding, and output generation.
+- Avoid multi-stage pipelining and large register arrays; use fewer internal signals updated in steps.
+- Extract sign, exponent, and mantissa with implicit bit once.
+- Detect special cases (NaN, Inf, zero) and handle them directly during output generation.
+- Multiply mantissas using 24x24 multiplication producing 48-bit product.
+- Normalize product by checking MSB and shifting mantissa and adjusting exponent accordingly.
+- Implement round-to-nearest-even using guard, round, and sticky bits extracted from product.
+- Handle exponent overflow (set to Inf) and underflow (flush to zero).
+- Final output assembled as IEEE-754 format in 'z' register after all steps complete.
+- The design uses simple registers and combinational logic inside sequential blocks only, making it clear and easy to verify.
+
+This approach is easier to understand and maintain, and avoids complex pipelining while still providing correct IEEE-754 multiplication behavior, including handling special cases, normalization, rounding, and overflow/underflow.

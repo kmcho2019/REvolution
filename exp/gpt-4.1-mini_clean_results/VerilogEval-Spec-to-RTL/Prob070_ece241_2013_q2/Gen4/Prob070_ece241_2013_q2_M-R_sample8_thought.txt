@@ -1,0 +1,27 @@
+The original solution used continuous assign statements with direct minterm expressions, but had a bit-ordering mismatch causing incorrect logic. The problem states 7 corresponds to inputs (a,b,c,d) = 0,1,1,1, which means 'a' is the most significant bit (MSB) and 'd' is the least significant bit (LSB). We must carefully order bits to form the 4-bit input vector as {a,b,c,d} with 'a' as MSB.
+
+To fix this and refactor, I will:
+- Create a 4-bit wire vector `in_vec = {a,b,c,d}`.
+- Use a combinational always block with a case statement on `in_vec` to check values.
+- Set `out_sop` to 1 for 2, 7, 15; to 0 for the specified zeros.
+- Since 3,8,11,12 never occur, they can be defaulted.
+- Then derive minimal SOP and POS expressions by boolean simplification (already known from corrected minterms).
+- Implement `out_sop` as combinational logic from the case, and derive `out_pos` as the complement of `out_sop` logically using minimal POS expression.
+- Using an always block to assign out_sop allows clear combinational mapping without confusion over bit positions.
+- `out_pos` will be assigned with continuous assign using minimal POS expression derived from the minterms.
+
+This approach is structurally different (uses always block instead of pure assign for out_sop), aligns bit ordering properly, and verifies output correctness. It is easy to maintain and understand.
+
+Minimal SOP for out_sop (values 2,7,15) with inputs a,b,c,d (a MSB) are:
+- 2 (0010) = a=0,b=0,c=1,d=0  -> ~a & ~b & c & ~d
+- 7 (0111) = a=0,b=1,c=1,d=1  -> ~a & b & c & d
+- 15(1111) = a=1,b=1,c=1,d=1  -> a & b & c & d
+
+Minimal SOP = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+Minimal POS is the complement of zeros (0,1,4,5,6,9,10,13,14):
+Minimal POS = (a + b + ~c + d) & (a + ~b + c + d) & (~a + b + c + d)
+
+We implement this for out_pos.
+
+This refactoring fixes bit-order issues, uses a different coding style, and implements minimal logic expressions.

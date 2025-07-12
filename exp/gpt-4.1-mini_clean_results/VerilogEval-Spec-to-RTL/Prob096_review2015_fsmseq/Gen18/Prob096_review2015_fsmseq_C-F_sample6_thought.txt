@@ -1,0 +1,9 @@
+Fuse the advantages of both FSM examples by:
+- Retaining one-hot state encoding to reduce next-state combinational logic complexity, improving timing and reducing glitches.
+- Using a clean case statement for next-state logic (instead of if-else) to leverage synthesis tools’ parallel-case optimizations and reduce logic depth.
+- Maintaining a sticky detected state (S4) that latches start_shifting high forever until reset, preventing unnecessary toggling.
+- Keeping synchronous active-high reset for predictable initialization.
+- Using combinational output logic (Moore style) derived from the current state to avoid glitches.
+- Including a default next_state assignment in the combinational block for latch prevention.
+- Using blocking assignments in the combinational always block for clarity and synthesis friendliness.
+This fusion yields a clear, fast, power-efficient, and compact FSM detecting the sequence "1101" with robust synchronous reset and minimal switching after detection.

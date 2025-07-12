@@ -1,0 +1,13 @@
+To fix the existing code, we need to address two primary issues: 
+1. Ensure that training takes precedence over prediction when both occur in the same cycle for the same PHT entry. 
+2. Update the pattern history table (PHT) at the next positive clock edge after a training request, rather than at the same clock edge.
+
+The strategy involves modifying the existing code to correctly handle these cases. 
+
+Firstly, when updating 'next_global_history', we should prioritize training over prediction. This can be achieved by checking 'train_valid' and 'train_mispredicted' before checking 'predict_valid'. 
+
+Secondly, to update the PHT at the next positive clock edge after a training request, we can introduce a new signal, 'train_pending', which is set high when 'train_valid' is high and reset when the PHT update is completed. This ensures that the PHT update occurs at the next clock edge, as required.
+
+Additionally, we need to ensure that the prediction sees the PHT state before training. This can be achieved by updating the PHT after the prediction has been made, which is naturally ensured by the sequential nature of the always blocks.
+
+By addressing these issues, we can ensure that the branch predictor functions correctly, providing accurate predictions and updates to the global history and PHT.

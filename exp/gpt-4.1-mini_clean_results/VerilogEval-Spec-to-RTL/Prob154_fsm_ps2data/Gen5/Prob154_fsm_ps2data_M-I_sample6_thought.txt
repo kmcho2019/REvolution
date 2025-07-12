@@ -1,0 +1,7 @@
+To improve PPA, I will convert the FSM from one-hot to binary encoding, reducing flip-flop usage (3 FFs to 2 FFs), which should decrease area and dynamic power. The FSM states: WAIT_SYNC=2'b00, BYTE2=2'b01, BYTE3=2'b10.
+
+I will keep synchronous reset and non-blocking assignments. The done signal is asserted only one cycle after receiving the third byte.
+
+Byte registers update only when needed (load enables). I will keep out_bytes updated only on done to avoid unnecessary toggling.
+
+This binary encoding should simplify logic and reduce FF count while preserving the original functionality and timing.

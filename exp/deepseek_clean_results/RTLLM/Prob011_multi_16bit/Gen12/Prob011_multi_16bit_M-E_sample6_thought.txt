@@ -1,0 +1,15 @@
+This design implements a 16-bit unsigned multiplier using a hybrid approach:
+1. Partial products are generated in parallel using AND gates (Booth encoding could be used but omitted for simplicity)
+2. A parallel prefix adder tree (Kogge-Stone architecture) is used for fast accumulation
+3. The design features pipelined operation with 3 stages:
+   - Stage 1: Load operands and generate partial products
+   - Stage 2: First level of reduction using carry-save adders
+   - Stage 3: Final addition using the PPA tree
+4. The control logic is simplified with a 2-bit counter tracking pipeline stages
+5. Done flag is generated combinatorially based on the counter state
+
+Key advantages:
+- Fixed latency of 3 cycles (vs variable 16 cycles in shift-add)
+- Better timing due to parallel prefix addition
+- Pipelined operation allows new multiplications every cycle
+- Scalable to larger bit widths with minimal timing impact

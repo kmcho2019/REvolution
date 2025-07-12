@@ -1,0 +1,10 @@
+Refactor the design by using a single counter that runs on the positive edge only, and generate two toggle signals derived from that counter to produce the divided clock with an odd divisor. 
+
+- Instead of two separate counters on positive and negative edges, use one posedge clocked counter modulo NUM_DIV.
+- Generate two toggle signals (clk_div1 and clk_div2) by comparing the counter to specific counts: toggle clk_div1 at count 0, toggle clk_div2 at count HALF_DIV+1.
+- Use non-blocking assignments for synchronous updates; toggle clk_div1 and clk_div2 outputs when the counter reaches these values.
+- Combine clk_div1 and clk_div2 by OR to produce the final output.
+- This removes the negative edge triggered always block, improving synthesis friendliness.
+- The reset initializes the counter and toggle outputs.
+- Keep parameter checks and counter width calculations as before.
+- This approach preserves the functionality, creating a 50% duty-cycle approximate clock at an odd division.

@@ -1,0 +1,11 @@
+Use binary-encoded states with a 2-bit state register to reduce flip-flop count compared to one-hot encoding. Assign states as: A=2'b00 (idle), B=2'b01 (grant device 0), C=2'b10 (grant device 1), D=2'b11 (grant device 2). This reduces area by halving flip-flops.
+
+Implement the synchronous reset on positive edge with active-low resetn.
+
+Separate always blocks for next state logic and state register.
+
+Use an always @(*) block for next state logic with a case statement on current state and priority-based transitions based on input requests.
+
+Output logic is combinational using continuous assignments, decoding the state to generate grants, ensuring only one grant bit asserted or none if idle.
+
+This binary encoding trades slightly more complex next-state logic for fewer flip-flops and potentially lower power and area, while maintaining functionality and synchronous reset behavior.

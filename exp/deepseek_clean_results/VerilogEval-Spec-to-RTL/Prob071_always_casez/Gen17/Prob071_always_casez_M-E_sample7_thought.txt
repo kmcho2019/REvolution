@@ -1,0 +1,10 @@
+This design uses a parallel prefix computation to efficiently determine the first set bit. The key idea is:
+1. Create a mask that propagates the first '1' to all more significant bits (thermometer effect)
+2. XOR this mask with a shifted version of itself to isolate the first set bit
+3. Use a logarithmic encoder to convert the one-hot position to binary
+
+Advantages:
+- The parallel prefix operation can be efficiently implemented in hardware
+- Logarithmic depth (O(log n)) similar to the previous solution, but with different implementation
+- Avoids nested conditional logic, potentially better for synthesis
+- Naturally handles the all-zeros case

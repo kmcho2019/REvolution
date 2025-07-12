@@ -1,7 +1,0 @@
-1. The main issue in the code lies in the `STOP_BIT` state. The condition `if (in && (shift_reg[8:1] == 8'b00000000))` is used to detect the stop bit, but this condition is incorrect. It is comparing the data bits instead of checking for the actual stop bit value of 1. This incorrect check causes the FSM to fail in identifying the stop bit accurately.
-
-2. Another issue is related to the transition back to the `IDLE` state. After correctly identifying the stop bit, the state should transition back to IDLE, but the code does not explicitly assign the `IDLE` state in this case. This leads to the FSM staying in the `STOP_BIT` state, resulting in further inconsistencies.
-
-3. Additionally, the initial value assigned to `shift_reg` during reset might also need to be revisited. Since the protocol starts with an idle (logic 1) phase, the `shift_reg` might need to be initialized accordingly for correct operation.
-
-By addressing these issues, the FSM should be able to correctly identify the start and stop bits while receiving a byte, ensuring proper byte delimitation.

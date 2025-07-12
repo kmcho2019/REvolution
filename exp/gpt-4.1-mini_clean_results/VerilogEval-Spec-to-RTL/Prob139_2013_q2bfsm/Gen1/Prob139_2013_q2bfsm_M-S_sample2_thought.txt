@@ -1,0 +1,16 @@
+Simplify the FSM by using fewer states and clear sequence detection logic:
+
+- State A: reset state, f=0, g=0.
+- State B: output f=1 for exactly one cycle after reset de-assertion.
+- State C: sequence detection for x = 1,0,1 over successive clocks using a simple 2-bit sequence progress counter (0 to 3).
+- State D: g=1, start monitoring y for up to 2 cycles with a 2-bit counter.
+- State E: permanent g=1 (success).
+- State F: permanent g=0 (failure).
+
+Sequence detection logic uses a sequence progress variable (0 to 3) rather than multiple states to simplify FSM states.
+
+Counters and states update synchronously with clk and synchronous active low reset.
+
+Outputs f and g are assigned combinationally based on state.
+
+This approach reduces state count and logic complexity while maintaining all required behaviors and timing.

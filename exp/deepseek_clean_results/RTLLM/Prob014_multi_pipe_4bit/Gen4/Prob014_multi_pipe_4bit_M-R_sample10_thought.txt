@@ -1,0 +1,24 @@
+The refactored design maintains the 3-stage pipeline structure but improves implementation with these key changes:
+
+1. Simplified Partial Product Generation:
+   - Remove problematic clock gating from combinational logic
+   - Generate all partial products unconditionally
+   - Let synthesis tools optimize unused products
+
+2. Clean Pipeline Stages:
+   - Use consistent bit-widths throughout (8 bits for all stages)
+   - Clear stage separation with registered outputs
+   - Maintain proper alignment of shifted partial products
+
+3. Improved Reset Handling:
+   - Reset only affects registered values
+   - Combinational logic remains independent of reset
+
+4. Optimized Final Sum:
+   - Properly align all partial products before final addition
+   - Use full-width registers in all stages for clarity
+
+5. Structural Improvements:
+   - Use explicit wire declarations for better readability
+   - Group related operations together
+   - Add comments for each pipeline stage

@@ -1,0 +1,8 @@
+Simplify the popcount by using a straightforward generate loop that sums all bits into a single accumulator in a single combinational always block, instead of multiple hierarchical modules and balanced adder trees. This reduces code complexity and size while maintaining a fully combinational popcount.
+
+Since the input is 255 bits and output is 8 bits, just loop through the bits and increment a count whenever a bit is set. This method is less optimal timing-wise but is much simpler and still synthesizable. It also uses no extra modules or complex hierarchies.
+
+This approach:
+- Uses a single always_comb block for the popcount
+- Avoids hierarchical modules and multiple generate loops
+- Keeps output width at 8 bits to count up to 255 ones

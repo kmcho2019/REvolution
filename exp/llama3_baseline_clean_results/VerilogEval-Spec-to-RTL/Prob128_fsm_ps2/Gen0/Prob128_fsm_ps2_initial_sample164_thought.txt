@@ -1,0 +1,7 @@
+To solve this problem, we will implement a finite state machine (FSM) in Verilog that can detect message boundaries in a continuous byte stream based on the PS/2 mouse protocol. The FSM will start in an idle state, and upon receiving a byte with in[3]=1, it will transition to a state where it starts counting bytes. Once it has received three bytes (assuming the first byte with in[3]=1 is the start of a message), it will signal that a message has been received by setting the 'done' output high for one clock cycle. The FSM will then reset to its idle state, ready to detect the next message.
+
+The states we will use are:
+- IDLE: Waiting for a byte with in[3]=1.
+- BYTE1, BYTE2, BYTE3: States to count the bytes after a potential message start has been detected.
+
+The FSM will also handle the reset condition, where if reset is high, it will return to the IDLE state and reset all internal counters and outputs.

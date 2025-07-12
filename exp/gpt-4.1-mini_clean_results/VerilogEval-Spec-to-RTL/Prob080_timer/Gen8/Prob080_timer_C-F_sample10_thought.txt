@@ -1,0 +1,13 @@
+To fuse the strengths of both examples for a superior solution:
+
+- From Example 1, the use of a clock enable signal (`ce`) derived from `load` and `counter != 0` is excellent for power efficiency. It prevents unnecessary register toggling when the counter is zero and no load occurs, reducing dynamic power without extra registers.
+- From Example 2, the clear and explicit sequential logic in the always block improves code clarity and potentially synthesis friendliness by explicitly defining the priority of operations (load first, then decrement, else hold zero).
+- Combine these by keeping the explicit conditional structure from Example 2 inside an always block gated by the enable signal from Example 1. This means the counter updates only on clock edges when `load` or `counter != 0` is true, otherwise it holds state without toggling.
+- Keep the terminal count output `tc` as a continuous assignment `(counter == 0)` for simplicity and clarity.
+- This approach maintains the requirement of a single 10-bit register (one D flip-flop) and yields better power efficiency by gating updates, while preserving clarity and maintainability.
+- Also, by gating updates to when needed, combinational logic changes less often reducing glitching.
+- The decrement remains a simple subtraction by one for minimal logic.
+  
+In summary, use a clock enable `ce = load | (counter != 0)` combined with explicit sequential logic inside the always block to update the counter, loading on `load` or decrementing when nonzero, holding otherwise, thus merging power savings with code clarity and maintainability.
+
+This fusion should provide a better power profile than Example 2, clearer code than Example 1, and potentially slightly improved timing by reducing unnecessary toggling of the register.

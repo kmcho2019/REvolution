@@ -1,0 +1,15 @@
+The original code is functionally correct and follows a clear FSM structure. However, to improve the design's clarity and correctness in terms of radix-2 division behavior as per the problem statement, the shift register SR should be implemented exactly as specified: initializing with the absolute dividend shifted left by 1, updating it through subtraction with the negated divisor, shifting left, and inserting the carry-out as the least significant bit.
+
+Also, the original code mixes remainder and quotient handling into separate registers, but the problem specifically uses a single 17-bit shift register approach (though simplified here for 8-bit operands and 9-bit SR width). By explicitly implementing the SR as described, and using the negated divisor as subtraction operand (instead of direct subtraction with borrow detection), the code aligns better with the problem statement.
+
+The improvements:
+- Implement a 17-bit shift register SR composed of dividend absolute shifted left by one (9 bits remainder part + 8 bits quotient part).
+- Implement NEG_DIVISOR as negated absolute divisor and perform subtraction to update SR.
+- Use a 4-bit counter cnt counting from 1 to 8, stopping when the MSB is set.
+- Use start_cnt signal to start the division.
+- Manage res_valid according to cnt and start_cnt per the problem.
+- Perform signed correction at the end.
+- Use only registers inside always blocks and keep combinational logic in separate blocks.
+- Overall, preserve the problem's exact algorithm flow for radix-2 division.
+
+This approach fully respects the problem requirements and improves conceptual clarity and correctness over the prior solution.

@@ -1,0 +1,13 @@
+The shift register approach is already quite simple and efficient. To further simplify while maintaining functionality:
+
+1. Keep the 4-bit shift register as it's the most straightforward way to track the sequence
+2. Remove the reset condition since Verilog registers initialize to 0 by default (matches our IDLE state)
+3. Make the output purely combinational without any additional registers
+4. The design now has minimal components: just a shift register and comparator
+
+This simplification:
+- Removes reset logic while maintaining same behavior (initial state is all zeros)
+- Keeps the efficient parallel comparison
+- Reduces gate count by eliminating reset circuitry
+- Maintains single-cycle detection capability
+- Still handles overlapping sequences naturally

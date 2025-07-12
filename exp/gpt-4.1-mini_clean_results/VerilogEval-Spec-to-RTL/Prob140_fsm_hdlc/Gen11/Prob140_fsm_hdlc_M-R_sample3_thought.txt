@@ -1,0 +1,13 @@
+Refactor the original FSM by replacing the combinational always block for next_counter calculation with continuous assignments using ternary operators and a combinational function for the next state logic.
+
+Instead of defining next_counter inside an always block, express it with a wire assigned using a conditional expression, which can make the logic more concise and potentially simpler for synthesis tools to optimize.
+
+Similarly, define the outputs as wires directly from current counter and input.
+
+Then, use a single always block on clk for registering both the counter and outputs on the positive clock edge with synchronous reset.
+
+This style leverages continuous assignments for combinational logic and a single sequential block for state/output updates, making the dataflow more explicit and modular.
+
+The functionality remains identical: counting consecutive ones (capped at 7), asserting outputs for one cycle after the event, and synchronous reset initializes the counter to zero.
+
+This alternative structure may improve code clarity and help certain synthesis tools better optimize logic, without changing behavior or performance characteristics.

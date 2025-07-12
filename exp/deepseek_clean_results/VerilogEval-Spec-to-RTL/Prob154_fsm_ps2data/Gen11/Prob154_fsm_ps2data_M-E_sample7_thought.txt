@@ -1,0 +1,16 @@
+Novel Architectural Idea: Shift Register with State Tracking
+1. Instead of separate state tracking and byte storage, use a shift register that inherently tracks progress
+2. Implement a 24-bit shift register that shifts in new bytes when valid
+3. Use a 2-bit counter to track how many bytes have been received
+4. The done signal is generated when the counter reaches 3
+5. Reset clears both the shift register and counter
+6. Only shift in new bytes when either:
+   - We're in IDLE state and in[3] is set (first byte)
+   - We're already collecting a message (counter > 0)
+
+Advantages:
+- Combines state tracking and data storage into one unified structure
+- Eliminates separate state machine logic
+- Naturally handles the 3-byte sequence
+- More efficient area usage as the shift register serves dual purpose
+- Clearer timing paths as all operations are shift-based

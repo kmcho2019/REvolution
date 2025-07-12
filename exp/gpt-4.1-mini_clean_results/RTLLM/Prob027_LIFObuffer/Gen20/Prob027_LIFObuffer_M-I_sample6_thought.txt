@@ -1,0 +1,23 @@
+To improve the existing well-structured LIFObuffer for better PPA metrics, the focus is on simplifying the stack pointer arithmetic and reducing power usage by minimizing unnecessary toggling and arithmetic complexity:
+
+1. **Change Stack Pointer (SP) Counting Direction:**
+   Instead of counting down from 4 (empty) to 0 (full), count up from 0 (empty) to 4 (full). This allows push operations to write at the current SP position before incrementing, and pop operations to decrement before reading the top element. This removes subtraction from the push indexing (no SP - 1 needed), simplifying pointer arithmetic and potentially improving timing.
+
+2. **Update Push and Pop Logic:**
+   - Push: Write dataIn at SP, then increment SP.
+   - Pop: Decrement SP, then read data from SP.
+   This pointer scheme removes the need for subtraction in array indexing and reduces combinational logic.
+
+3. **Maintain Synchronous Reset Clearing:**
+   Keep clearing all stack memory locations on reset, as synthesis tools handle this well, and reset is infrequent.
+
+4. **Output Data Register Update:**
+   Update dataOut only on pop to reduce toggling.
+
+5. **Avoid clearing stack memory on pop (to reduce unnecessary switching).**
+
+6. **Simplify conditional logic and use parameters for stack depth for easy scaling.**
+
+7. **Use nonblocking assignments consistently to prevent timing issues.**
+
+These changes aim to reduce critical path delay (by removing subtraction in index calculation) and reduce toggling power (only write on push and update dataOut on pop). The pointer encoding is straightforward, reducing arithmetic complexity. This should slightly improve timing (WNS), reduce power, and keep area minimal.

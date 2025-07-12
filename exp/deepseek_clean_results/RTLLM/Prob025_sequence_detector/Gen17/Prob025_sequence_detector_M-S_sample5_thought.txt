@@ -1,0 +1,12 @@
+To simplify the sequence detector while maintaining functionality, I'll:
+1. Use a minimal state machine approach instead of shift register
+2. Reduce the number of states by tracking only necessary sequence progress
+3. Combine state transitions and output logic for simplicity
+4. Maintain the same reset behavior
+
+The simplified FSM will have:
+- IDLE: Initial state
+- GOT1: First '1' detected
+- GOT10: '1' followed by '0' detected
+- GOT100: '1', '0', '0' detected
+Output is asserted when in GOT100 state and next bit is '1'

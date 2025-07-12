@@ -1,0 +1,25 @@
+The current implementation is already minimal and optimal in logic complexity for the given one-hot FSM transitions. However, to slightly improve power and possibly area, we can leverage two minor refinements:
+
+1. Use explicit wire declarations for intermediate signals to improve synthesis clarity.
+2. Replace the OR of multiple state bits for Y3 with a reduced form if possible.
+
+Looking at Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]):
+
+- These states correspond to B, C, E, and F.
+- Checking the state bits, these are all bits except A (y[0]) and D (y[3]).
+- Since states are one-hot encoded, and only one bit is high, the OR of these four bits equals (~y[0] & ~y[3]) assuming only one bit is set.
+
+So we can rewrite (y[1] | y[2] | y[4] | y[5]) as ~(y[0] | y[3]) because if y[0] or y[3] is set, then the state is not B, C, E, or F.
+
+So:
+
+Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])  
+   = (~w) & ~(y[0] | y[3])
+
+This may reduce OR fan-in and could reduce dynamic power due to fewer gates and transitions.
+
+This small logic simplification can reduce gate count and transitions for Y3, yielding minor power and area improvements.
+
+We will retain clear comments and keep the module straightforward.
+
+No change to Y1 logic as it is already minimal.

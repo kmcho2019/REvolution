@@ -1,0 +1,15 @@
+Novel Split-Mantissa Multiplier Architecture:
+1. Mantissa Splitting: Split 24-bit mantissas into 12-bit halves (A1,A0 and B1,B0) to enable partial product reduction
+2. Early Normalization Prediction: Predict normalization shift amount during multiplication using leading-zero detection on partial products
+3. Parallel Exponent Adjustment: Calculate exponent adjustments for all possible shift cases in parallel
+4. Sticky Bit Pre-calculation: Compute sticky bits for rounding during multiplication phase
+5. Hybrid Rounding: Combine traditional rounding with LSB correction for improved accuracy
+6. Dynamic Pipeline Control: Variable latency based on input characteristics (fast path for simple cases)
+
+Key Innovations:
+- Split-mantissa approach reduces multiplier complexity
+- Early normalization prediction reduces critical path
+- Parallel exponent calculation eliminates post-multiplication adder delay
+- Pre-computed sticky bits enable faster rounding
+- Hybrid rounding improves precision for corner cases
+- Dynamic pipeline improves average-case performance

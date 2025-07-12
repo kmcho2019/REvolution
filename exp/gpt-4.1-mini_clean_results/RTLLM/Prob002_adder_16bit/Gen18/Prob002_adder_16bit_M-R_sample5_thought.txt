@@ -1,0 +1,7 @@
+Refactor the 16-bit adder design to keep the same modular 8-bit adder hierarchy and combinational logic, but implement the carry chain in the 8-bit adder using explicit assignments without a generate loop. This makes the carry logic explicit and potentially easier for some tools or readers to follow.
+
+The 16-bit adder still instantiates two 8-bit adders with ripple carry between them.
+
+This approach uses explicit wire declarations for carry bits and direct assignments to each carry element, rather than the generate-for loop. The sum calculation remains as XOR of propagate and carry-in per bit.
+
+The design remains fully combinational, clean, and modular but with a more explicit and straightforward carry chain in the 8-bit adder.

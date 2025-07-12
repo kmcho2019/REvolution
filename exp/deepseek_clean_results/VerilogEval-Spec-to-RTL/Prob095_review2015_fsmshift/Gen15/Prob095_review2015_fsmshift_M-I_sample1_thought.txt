@@ -1,0 +1,7 @@
+Improvement strategy:
+1. The original solution correctly implements the 4-cycle shift_ena assertion but uses a 3-bit counter when only 2 bits are needed
+2. We can optimize by using a 2-bit counter (saving one flip-flop) while maintaining the same functionality
+3. The counter will count from 3 down to 0 (inclusive), giving exactly 4 cycles of shift_ena assertion
+4. shift_ena will be asserted when counter is non-zero (3,2,1,0) but we'll adjust the comparison to stop at 0
+5. This maintains the exact same behavior but with reduced hardware (2 bits instead of 3)
+6. Reset still initializes the counter to start the 4-cycle sequence

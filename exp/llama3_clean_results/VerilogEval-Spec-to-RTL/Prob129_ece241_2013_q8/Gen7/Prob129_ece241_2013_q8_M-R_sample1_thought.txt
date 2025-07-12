@@ -1,0 +1,15 @@
+To refactor the given Verilog code, we can maintain the core idea of a Mealy-type finite state machine that recognizes the sequence "101" on the input signal x, while optimizing the structure and potentially improving the Power, Performance, and Area (PPA) metrics.
+
+One approach to refactoring is to use a state machine with explicit states rather than a shift register. This allows for a more traditional state machine implementation, where each state corresponds to a specific sequence of inputs seen so far. We can then use combinational logic to determine the next state and the output based on the current state and input.
+
+By explicitly defining the states, we can potentially simplify the logic and make it more efficient, both in terms of area and power consumption. Additionally, using explicit states can make the code more readable and maintainable, as the intent of each state is clearly defined.
+
+We can define three states: IDLE (initial state, no sequence detected), SEQ_10 (sequence "10" detected), and SEQ_101 (sequence "101" detected). The output z is asserted when the state machine is in the SEQ_101 state.
+
+The state machine transitions are as follows:
+- From IDLE to SEQ_10 when x is 1.
+- From SEQ_10 to SEQ_101 when x is 1.
+- From any state to IDLE when x is 0 and the current state is not SEQ_101.
+- Remain in the current state otherwise.
+
+This approach allows us to recognize overlapping sequences and maintain a simple, efficient implementation.

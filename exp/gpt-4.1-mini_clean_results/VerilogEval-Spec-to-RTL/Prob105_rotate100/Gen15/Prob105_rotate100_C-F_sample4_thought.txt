@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by using vector concatenation for rotations (which is concise and synthesis-friendly) while computing the rotated vectors only when needed, thus avoiding redundant rotate_left and rotate_right signals that toggle unnecessarily every cycle.
+
+Implement a combinational next_value mux selecting between data (for load), rotated versions (computed on-demand), and the hold value, which reduces toggling and can be optimized well by synthesis.
+
+Use a single always @(posedge clk) block to update q with next_value, avoiding assignment q <= q when no change, to minimize unnecessary toggling.
+
+This approach keeps clear priority: synchronous load > rotate left/right > hold.
+
+In addition, the conditional rotation calculation is embedded inside the combinational logic to avoid generating both rotate_left and rotate_right signals unconditionally, reducing combinational logic switching and area.
+
+Overall, this fusion balances clarity, synthesis efficiency, reduced switching, and maintains concise vector operations rather than bitwise loops, improving PPA while preserving specified behavior.

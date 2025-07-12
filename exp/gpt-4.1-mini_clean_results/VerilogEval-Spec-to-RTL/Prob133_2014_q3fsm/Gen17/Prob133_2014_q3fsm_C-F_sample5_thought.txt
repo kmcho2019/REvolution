@@ -1,0 +1,11 @@
+Fuse the best aspects of both examples by:
+
+1. Keeping the clear separation of combinational next-state and output logic from the sequential update (Example 2) to improve readability and synthesis friendliness.
+2. Use minimal, binary state encoding with a 1-bit reg as in Example 1 to keep area and logic simple.
+3. Perform counter increments and w_sum additions only when in state B, avoiding unnecessary toggling in state A to reduce dynamic power.
+4. Register the output z and update it only when needed (at the end of 3-cycle window) to minimize toggling.
+5. Use non-blocking assignments consistently in sequential logic for clarity.
+6. Avoid redundant default state logic to keep code minimal but safe.
+7. Compute the output z only at the clock edge, avoiding combinational outputs, improving timing.
+
+This fusion creates a clean, power- and area-efficient FSM with minimal critical path complexity and toggling, while maintaining explicit next-state logic and registered outputs for easier debugging and better synthesis results.

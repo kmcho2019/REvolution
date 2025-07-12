@@ -1,0 +1,5 @@
+To implement a triangle wave generator in a novel way, we can use a single register `wave` and a direction signal encoded as +1 or -1 in a 1-bit flag. Instead of using an explicit two-state FSM, the direction bit toggles whenever the wave value reaches the boundaries 0 or 31. On each clock cycle, the wave value increments or decrements by 1 depending on the direction.
+
+This design uses a single always block triggered on clock and reset, making it compact and easy to understand. The direction bit acts as a toggle flag instead of an explicit state machine. This also avoids the boundary hold cycles, providing a smooth continuous triangle waveform cycling through 0 to 31 and back.
+
+This design meets all requirements, provides efficient logic, and is different architecturally from the previous FSM approach.

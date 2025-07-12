@@ -1,0 +1,5 @@
+To simplify the solution, we can observe that:
+1. Y1 only depends on state A (y[0]) and input w, so it can remain as a simple AND operation.
+2. For Y3, we notice that state D is the destination whenever w=0 and we're in any state except A and D itself. Since one-hot encoding ensures only one y[i] is active, we can simplify the Y3 logic by checking if w=0 and any of y[1], y[2], y[4], or y[5] is active. This is equivalent to checking if w=0 and y[3] is not active (since y[3] represents D, and we don't transition to D from D).
+
+This reduces the Y3 logic from a 4-input OR to a simpler condition checking ~w and ~y[3].

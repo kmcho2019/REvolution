@@ -1,0 +1,12 @@
+To ensure both functional correctness and synthesis compatibility, the fixed-point subtractor should be implemented using an explicit combinational always block with a register `res` to store the intermediate subtraction result, as originally requested.
+
+Key improvements:
+- Use an `always @(*)` block for combinational logic to handle subtraction and zero-detection, ensuring the design is synthesizable by all tools.
+- Implement subtraction directly in two's complement since it naturally handles sign and magnitude.
+- After subtraction, check if result is zero; if yes, force the sign bit to zero explicitly.
+- Assign the registered result to output `c`.
+- This approach avoids direct continuous assignments with concatenation and conditional logic on outputs, improving synthesis robustness.
+- Maintain parameterization for flexible fractional and total bit widths.
+- The code will be clear, straightforward, and synthesis friendly while meeting the design requirements.
+
+This solution fully satisfies the problem statement while improving synthesis compatibility and maintainability.

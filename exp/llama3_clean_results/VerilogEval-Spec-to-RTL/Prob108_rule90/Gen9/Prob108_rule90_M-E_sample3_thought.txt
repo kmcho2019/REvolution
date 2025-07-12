@@ -1,0 +1,9 @@
+To address the issues in the previous implementation and provide a novel solution, we can approach the Rule 90 cellular automaton with a focus on pipelining and distributed computation. The key idea is to design a modular, cascaded structure where each cell's next state is computed based on the current states of its neighbors, leveraging the inherent parallelism of the problem.
+
+The main points of this novel architectural idea are:
+1. **Modular Cell Design**: Design a basic cell module that takes the current states of three neighboring cells as inputs and produces the next state of the center cell according to Rule 90. This module can be reused for all cells in the automaton.
+2. **Cascaded Structure**: Arrange the cell modules in a cascaded fashion to compute the next states of all cells in parallel. This approach ensures that the computation for each cell is distributed and can be performed concurrently.
+3. **Boundary Handling**: Implement the boundary conditions by introducing dummy cells at the ends of the automaton. These dummy cells are always set to 0 (off), ensuring that the leftmost and rightmost cells' next states are correctly calculated.
+4. **Pipelining**: To enhance the throughput and reduce the combinational path delay, consider adding pipelining stages between the cell modules. This allows for the processing of multiple sets of input data simultaneously, increasing the overall performance.
+
+By adopting this modular, pipelined, and distributed approach, the design can efficiently simulate the Rule 90 cellular automaton, potentially leading to improvements in simulation speed and scalability.

@@ -1,0 +1,20 @@
+The original solution updates p at posedge and q at negedge clock, causing mismatched timing and complexity. The waveform shows that p and q transition synchronously and have a two-bit state memory behavior dependent on input 'a' and the clock.
+
+Improvement strategy:
+- Use a single always block triggered on posedge clock only.
+- Maintain p and q as state bits that update synchronously.
+- Derive next states for p and q based on current states and input 'a'.
+- Initialize p and q as '0' at time zero to remove ambiguous 'x'.
+- From waveform, q appears to latch the old p value from previous cycles.
+- p updates to '1' when 'a' is 1 and q=0, and holds when q=1.
+- On posedge clock:
+  - q <= p (capture previous p)
+  - p <= a | (p & q) (p sets to 'a' or stays high if both p and q are 1)
+  
+This logic matches the observed waveform transitions:
+- Initially p=0, q=0
+- When a=1 and q=0, p=1, q updates to old p=0
+- p holds high if q=1 and either a=1 or p=1
+- This matches the toggling and hold behavior in the waveform.
+
+This approach uses fully synchronous logic, no reliance on 'x' states or negedge triggers, and yields a stable and clean design that reproduces the waveform.

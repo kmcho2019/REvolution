@@ -1,0 +1,19 @@
+After carefully analyzing the waveform, I've identified the correct behavior:
+1. p becomes 1 when:
+   - Clock is high AND
+   - a is high AND
+   - This is the first cycle where a has been high since the last p=1
+
+2. q becomes 1 when:
+   - p was 1 in the previous cycle AND
+   - a is low at the current cycle
+
+3. The circuit needs to track whether we've seen a rising edge on 'a' since the last p=1
+
+Implementation strategy:
+- Use a state machine with 2 states:
+  * WAIT: Waiting for a=1
+  * PULSE: p=1 has occurred, waiting for a=0 to allow next cycle
+- p is high only in PULSE state when clock is high
+- q is set when leaving PULSE state and a is low
+- All transitions happen on clock edges

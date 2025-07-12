@@ -1,0 +1,7 @@
+Fuse the succinctness and area-efficiency of Example 1's binary counter with the power-saving advantage of Example 2's one-hot state toggling minimization. To do this, keep the binary 4-bit counter for minimal area and simplicity, but optimize the counting logic to reduce toggling and comparator complexity. Instead of using a direct comparator (q == 9), leverage arithmetic and minimal combinational logic to generate the next value modulo 10, avoiding large multiplexers or complex comparisons.
+
+Implement a synchronous active-high reset and a simple non-blocking assignment that counts up from 0 to 9, wrapping to 0. To reduce toggling, use a flag that indicates when to reset to zero without a full comparator, such as detecting when the counter reaches 9 by checking a minimal logic expression (e.g., q[3] & ~q[2] & q[1] & q[0] for decimal 9 binary 1001).
+
+This approach balances the minimal area and high performance of the binary counter, while slightly reducing power by limiting toggling to simple logic. It also maintains clear and synthesizable code with no complex one-hot state decoding.
+
+This fusion yields a clean, efficient decade counter with synchronous reset and straightforward logic that improves overall PPA beyond both prior examples.

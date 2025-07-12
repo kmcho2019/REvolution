@@ -1,0 +1,7 @@
+I will implement the 4-bit right shift register using two separate always blocks to demonstrate a modular approach: one asynchronous reset block that clears the register, and another synchronous clocked block that handles loading and shifting based on control signals.
+
+The asynchronous reset block will be a separate always block triggered on the positive edge of areset, clearing the register instantly.
+
+The synchronous clocked always block will trigger on the positive edge of clk, and only update q if not in reset. Within this block, priority is given first to load (loading the input data), else if ena is asserted, perform a right shift (shift right with MSB zero), else maintain the current value.
+
+This architectural separation enhances clarity by isolating asynchronous reset behavior from synchronous operation. It also allows better simulation and synthesis tool interpretations of asynchronous and synchronous domains.

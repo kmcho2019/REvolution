@@ -1,0 +1,26 @@
+Use a simple Moore FSM that counts consecutive ones up to 7, starting from a reset state assuming previous bit was 0. Each clock cycle, on input 'in':
+
+- If input is 0: move to S0 (zero consecutive ones).
+- If input is 1: increment count state (S1..S7).
+
+Outputs depend solely on the current state:
+
+- disc (discard bit) is asserted for one cycle after detecting the inserted zero after five ones. This happens when we see a zero input after five consecutive ones. So we flag disc in the state after receiving that zero (i.e., when transitioning from S5 to S0).
+- flag (01111110): When we see 6 consecutive ones followed by a zero (S6 then input=0), assert flag for one cycle.
+- err: asserted whenever count reaches 7 or more consecutive ones (S7 state).
+
+Because outputs are Moore, they depend only on current state, not input. To implement outputs asserted the cycle after condition detection, we assert disc and flag when in the zero state after specific previous counts.
+
+Concretely:
+
+- States: S0 (0 ones), S1..S7 (1 to 7 ones).
+- On input 1: advance states up to S7.
+- On input 0: go to S0.
+- Outputs:
+   - disc: asserted when in S0 and previous count was 5 (means a zero after 5 ones).
+   - flag: asserted when in S0 and previous count was 6 (zero after 6 ones).
+   - err: asserted whenever in S7.
+
+To implement output detection after zero inputs, store previous count before zero. We'll implement this by defining an FSM with current state as the count, and track outputs combinationally based on transitions.
+
+This is a clean, minimal FSM fulfilling all requirements with outputs asserted exactly one clock cycle after condition detection.

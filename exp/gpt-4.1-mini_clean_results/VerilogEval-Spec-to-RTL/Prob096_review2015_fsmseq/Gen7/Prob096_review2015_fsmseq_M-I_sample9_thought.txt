@@ -1,0 +1,13 @@
+To optimize the existing FSM for better PPA, we can leverage a one-hot state encoding, which typically improves performance on FPGA and ASICs by reducing combinational logic depth for next state logic at the expense of slightly increased area. However, the small FSM size makes this overhead negligible.
+
+We'll also add a clock enable signal that disables state updates after the sequence is detected (sticky final state), minimizing unnecessary toggling in the flip-flops to reduce power consumption.
+
+The synchronous reset remains unchanged for clean initialization.
+
+The output remains combinational, high in the final sticky state.
+
+This approach balances performance improvements (reduced combinational logic and shorter critical path) with slight power savings via clock gating, while area increase is minimal due to only 5 state bits instead of 3.
+
+Additionally, we use non-blocking assignments consistently and cleanly separate next-state logic.
+
+Overall, this should yield better timing, slight power reduction, and maintain design clarity.

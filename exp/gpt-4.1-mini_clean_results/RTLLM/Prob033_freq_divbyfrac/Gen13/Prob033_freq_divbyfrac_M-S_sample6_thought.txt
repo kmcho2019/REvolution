@@ -1,0 +1,11 @@
+To simplify the fractional clock divider by 3.5 using double-edge clocking, we can use a single counter that counts modulo 7 on the rising edge of clk. Then:
+
+- Generate a base divided clock signal (`clk_pos`) that is high for 4 cycles and low for 3 cycles of the input clk (7 cycles total).
+
+- Generate a second clock signal (`clk_neg`) sampled from `clk_pos` but delayed by half a clock cycle by latching it on the negative edge of clk.
+
+- Finally, OR the two signals to produce a fractional clock with period 7 input clk cycles and improved duty cycle.
+
+This approach avoids separate counters on posedge and negedge, removing asynchronous counting issues, and uses the natural half-cycle delay from negative edge sampling to create the phase-shifted clock.
+
+Also, synchronous reset ensures clean startup. This design is simpler and robust while still achieving the fractional division by 3.5.

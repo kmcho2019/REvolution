@@ -1,0 +1,13 @@
+The problem requires the flip-flops to be initially reset to zero before operation, but the only input signals allowed are clk and x. Since no external reset is available, we can implement an internal reset at startup using an internal initialization signal.
+
+A common synthesis-friendly method is to have an internal reset signal that is asserted only once at the beginning after power-up or after synthesis startup. We can use a register initialized to 1, then cleared to 0 after the first clock edge.
+
+This internal reset will synchronously clear the flip-flops on the first clock, ensuring they start at zero.
+
+Implementation steps:
+- Introduce a one-bit register 'init' that is initialized to 1 (reset active).
+- At the first positive clock edge, 'init' is cleared to 0.
+- The flip-flops are synchronously reset to zero when 'init' is 1, otherwise updated normally.
+- The rest of the combinational logic and output remains unchanged.
+
+This meets the requirement of flip-flops being initially zero, uses only the given inputs, and is synthesizable and simulation compatible.

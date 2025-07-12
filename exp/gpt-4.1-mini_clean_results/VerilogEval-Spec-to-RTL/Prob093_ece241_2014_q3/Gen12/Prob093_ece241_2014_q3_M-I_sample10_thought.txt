@@ -1,0 +1,26 @@
+The original solution included inputs a,b in the TopModule, but per problem statement, TopModule only has inputs c,d and outputs mux_in[3:0]. The 4-to-1 mux outside TopModule uses a,b as selectors to select one bit from mux_in.
+
+Therefore, I will correct the module interface to only inputs c,d and outputs mux_in[3:0].
+
+Next, I will implement each mux_in[i] as the function of c,d only, matching the K-map values for each ab combination.
+
+Use only 2-to-1 muxes (?: operator) and constant 0 or 1 inputs, no logic gates.
+
+Rewrite the logic expressions to minimize 2-to-1 mux usage:
+
+- For ab=00 (mux_in[0]), K-map: cd=00:0, 01:1, 11:1, 10:1
+  This is: if c=0 then d else 1; i.e., mux_in[0] = c ? 1 : d
+
+- For ab=01 (mux_in[1]), all zeros
+
+- For ab=11 (mux_in[2]), K-map: cd=00:0, 01:0, 11:1, 10:0
+  This is: mux_in[2] = c & d = c ? d : 0; (using mux: c? d : 0)
+
+- For ab=10 (mux_in[3]), K-map: cd=00:1, 01:0, 11:1, 10:1
+  This is: if c=0 then ~d else 1
+  Since inversion is not allowed, express ~d as (d ? 0 : 1)
+  So mux_in[3] = c ? 1 : (d ? 0 : 1)
+
+This satisfies the problem constraints, uses only 2-to-1 muxes and constants, and corrects the module interface. This fixes the simulation mismatch and clarifies design.
+
+No a,b inputs needed inside TopModule.

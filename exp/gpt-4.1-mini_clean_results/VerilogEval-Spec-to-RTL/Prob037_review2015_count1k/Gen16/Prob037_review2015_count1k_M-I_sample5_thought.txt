@@ -1,0 +1,5 @@
+To optimize for better PPA (timing, power, and area), simplify the max count detection logic by replacing the split-bit matching (`upper_match` and `lower_match`) with a single direct comparator against the MAX_COUNT constant (999). This reduces combinational logic levels and the number of gates, improving timing and area.
+
+Maintain the structure of separating combinational next-state logic and sequential register update, which is clean and good practice. Retain synchronous active-high reset behavior and counting from 0 to 999.
+
+This approach should slightly reduce critical path delay and area while keeping power roughly the same or slightly lower due to simpler logic.

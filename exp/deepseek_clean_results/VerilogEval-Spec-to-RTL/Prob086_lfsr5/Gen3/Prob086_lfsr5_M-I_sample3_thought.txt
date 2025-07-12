@@ -1,0 +1,14 @@
+To implement a correct 5-bit maximal-length Galois LFSR with taps at positions 5 and 3 (1-based indexing):
+1. Use right-shift operation (MSB to LSB direction)
+2. For tap positions (bit 4 and bit 2 in 0-based indexing):
+   - XOR the current LSB (q[0]) with the tap bit to generate next value
+3. For non-tap positions:
+   - Simply shift right the previous bit
+4. Reset to 5'b00001 (1 in decimal) to avoid all-zero state
+5. The correct state update should be:
+   - q[4] (MSB) = q[0] XOR q[4]
+   - q[3] = q[4]
+   - q[2] = q[0] XOR q[2]
+   - q[1] = q[2]
+   - q[0] = q[1]
+6. This will generate a maximal-length sequence of 31 states (2^5-1)

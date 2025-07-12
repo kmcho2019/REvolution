@@ -1,0 +1,7 @@
+To implement the serial receiver module, we will design a finite state machine (FSM) with four main states: idle, start, data, and stop. 
+- The idle state waits for a start bit (0) to begin the reception of a byte.
+- The start state waits for one clock cycle after detecting the start bit, then transitions to the data state.
+- The data state collects the 8 data bits. Since the protocol sends the least significant bit first, we will shift the received bits into the most significant bit of the out_byte register each clock cycle.
+- The stop state verifies that the stop bit is 1, then asserts the done signal and transitions back to the idle state, but only after seeing a stop bit.
+- If the stop bit is not 1 when expected, the FSM will wait until it sees a stop bit before attempting to receive the next byte.
+- The FSM will be reset to the idle state upon assertion of the reset signal.

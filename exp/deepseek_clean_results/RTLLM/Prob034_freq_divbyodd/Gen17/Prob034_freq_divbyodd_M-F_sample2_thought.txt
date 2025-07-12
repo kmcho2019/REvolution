@@ -1,0 +1,12 @@
+Revised odd frequency divider with proper synchronization:
+1. Maintain dual counter approach but with proper synchronization
+2. Use separate counters for posedge and negedge domains
+3. Both counters count to NUM_DIV-1 but are reset independently
+4. Toggle clocks at (NUM_DIV-1)/2 in their respective domains
+5. Add proper reset synchronization between domains
+6. Key improvements:
+   - Eliminates counter sync delay issues
+   - Proper phase relationship between clocks
+   - Maintains 50% duty cycle
+   - Correct reset behavior
+   - Handles edge cases properly

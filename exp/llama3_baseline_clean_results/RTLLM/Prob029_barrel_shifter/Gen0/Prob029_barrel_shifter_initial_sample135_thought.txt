@@ -1,0 +1,8 @@
+To implement the barrel shifter, we will break it down into stages that correspond to the bits of the control signal. Each stage will use multiplexers to select between the shifted input and the original input, based on the corresponding control bit. The `mux2X1` submodule will be used throughout to make these selections. 
+
+The shifting process can be divided into three main stages:
+1. Shift by 4 positions (controlled by `ctrl[2]`): This involves shifting the input by 4 positions to the right and then selecting between the shifted input and the original input based on `ctrl[2]`.
+2. Shift by 2 positions (controlled by `ctrl[1]`): Take the output from the previous stage, shift it by 2 positions to the right, and select between this new shifted output and the previous stage's output based on `ctrl[1]`.
+3. Shift by 1 position (controlled by `ctrl[0]`): Finally, shift the output from the second stage by 1 position to the right and select between this final shifted output and the output from the second stage based on `ctrl[0]`.
+
+We'll also define a `mux2X1` submodule that takes two 8-bit inputs and a select signal, and outputs the first input if the select signal is high, and the second input if the select signal is low.

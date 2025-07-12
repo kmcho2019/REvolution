@@ -1,0 +1,10 @@
+To address the issues mentioned in the feedback, we need to modify the design to correctly handle the update logic for the 'global_history' register when both training and prediction occur in the same cycle. This involves ensuring that the prediction uses the state of 'global_history' before the update due to training. Additionally, we must implement the correct saturation logic for the counters in the cache to prevent them from going out of bounds.
+
+The key steps to fix the design are:
+1. **Separate Prediction and Training Logic**: Ensure that the prediction logic sees the state of 'global_history' before any updates due to training. This can be achieved by using the current state of 'global_history' for predictions and updating it separately based on training or prediction outcomes.
+
+2. **Correct Saturation Logic for Counters**: Implement the correct saturation logic for the counters in the cache. This involves ensuring that when a counter is at its maximum value (2'b11) and needs to be incremented, it remains at 2'b11, and when it is at its minimum value (2'b00) and needs to be decremented, it remains at 2'b00.
+
+3. **Prioritize Training Over Prediction for 'global_history' Update**: When both training and prediction occur in the same cycle, prioritize the training information for updating 'global_history'. This ensures that any misprediction recovery or update based on actual branch outcomes takes precedence over predictions.
+
+By addressing these points, we can correct the functional errors and improve the overall design of the gshare branch predictor.

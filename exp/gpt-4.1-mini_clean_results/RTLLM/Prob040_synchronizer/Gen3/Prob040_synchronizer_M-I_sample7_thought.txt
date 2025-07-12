@@ -1,0 +1,9 @@
+To optimize the design for better PPA while maintaining correctness:
+
+1. Simplify the enable synchronization logic by removing the conditional update checks on en_clap_one and en_clap_two. These gates reduce toggling but add complexity and possibly critical path delay. Straightforward 2-stage synchronizers with unconditional updates improve timing closure and reduce combinational logic, leading to better WNS and area.
+
+2. Update dataout in clk_b domain only when en_clap_two is asserted, as in the original, but remove the extra conditional check to update dataout only on data change. This slight increase in toggling is acceptable because the input data changes infrequently (at least 10 clk_b cycles apart) and data_en stays high for at least 3 cycles, so the toggling overhead is minimal.
+
+3. Retain the domain separation and reset handling as is.
+
+This trade-off simplifies the design, reduces critical path and combinational logic for enable synchronization, and improves overall timing and area, while power impact is minimal due to low data change rate and enable duration.

@@ -1,0 +1,12 @@
+To implement the given Karnaugh map, we need to derive the Boolean expression for f. Looking at the map:
+1. The output is 1 in the following cases:
+   - x[3]x[2]x[1]x[0] = 0000 (top-left corner)
+   - x[3]x[2]x[1]x[0] = 0010 (top-right corner)
+   - x[3]x[2]x[1]x[0] = 1100, 1101, 1110 (third row)
+   - x[3]x[2]x[1]x[0] = 1000, 1001, 1010 (bottom row)
+
+The simplified expression is:
+f = (~x[3]&~x[2]&~x[0]) | (~x[3]&~x[2]&x[1]) | (x[3]&x[2]&~x[1]) | (x[3]&~x[2]&~x[1]) | (x[3]&~x[2]&~x[0])
+
+This can be further simplified to:
+f = (~x[2]&~x[0]) | (~x[2]&x[1]) | (x[3]&~x[1]) | (x[3]&x[2]&~x[1])

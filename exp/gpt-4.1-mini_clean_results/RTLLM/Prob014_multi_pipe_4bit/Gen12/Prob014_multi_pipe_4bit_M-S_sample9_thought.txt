@@ -1,0 +1,9 @@
+Simplify the 4-bit pipelined multiplier by generating partial products in a generate loop, accumulating sums across two pipeline stages.
+
+- Zero-extend multiplicand by size bits to 2*size width.
+- Use a generate loop to create partial products for each bit of mul_b (shifted or zero).
+- In the first pipeline stage, register partial products individually.
+- Sum all partial products combinationally.
+- In the second pipeline stage, register the final sum as output.
+- Reset registers and output asynchronously with active-low reset.
+This keeps two pipeline stages, reduces repetitive code by using generate blocks, and maintains clarity.

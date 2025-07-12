@@ -1,0 +1,11 @@
+To improve the existing frequency divider code, we will focus on correcting the implementation, simplifying the logic, and optimizing the design for better performance, power, and area (PPA) metrics. 
+
+The main strategy will involve:
+1. Utilizing two counters, one for tracking the rising edges of the clock and one for the falling edges.
+2. Implementing separate clock dividers for positive and negative edges of the clock, toggled when their respective counters reach half of the odd divisor `NUM_DIV`.
+3. Revising the logic for generating the final divided clock output `clk_div` to accurately reflect the desired odd divisor value by logically OR-ing the two clock dividers.
+4. Employing a more efficient approach for handling the reset and minimizing unnecessary switching activity.
+
+To correct the implementation, we need to ensure that the counters are incremented correctly on every clock cycle and that the clock dividers are toggled at the appropriate count value. This approach will accurately divide the input clock frequency by an odd number defined by the parameter `NUM_DIV`.
+
+To optimize the design for better PPA metrics, we will use a more efficient approach for handling the reset, minimize unnecessary switching activity, and reduce area consumption by using a simple and straightforward logic.

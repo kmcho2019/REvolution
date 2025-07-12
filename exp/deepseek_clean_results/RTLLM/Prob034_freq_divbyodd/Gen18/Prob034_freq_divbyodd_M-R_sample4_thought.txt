@@ -1,0 +1,14 @@
+Refactored approach for odd frequency division:
+1. Maintain the dual-counter concept but use a single always block with both edge triggers
+2. Generate toggle signals directly from counter values using continuous assignments
+3. Implement the output clock using a flip-flop to ensure clean transitions
+4. Calculate toggle points using arithmetic right shift for proper half-cycle timing
+5. Combine the edge-triggered signals with OR operation for correct duty cycle
+6. Keep parameter validation and reset functionality
+
+Key improvements:
+- Single always block reduces potential for timing mismatches
+- Flip-flop output ensures clean clock edges
+- Clearer relationship between counters and output generation
+- Maintains 50% duty cycle requirement
+- More robust edge alignment

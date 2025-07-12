@@ -1,0 +1,11 @@
+To solve this problem, we will implement a novel finite state machine (FSM) architecture in the TopModule that utilizes a counter to keep track of the bytes received since the last byte with in[3]=1. 
+
+The FSM will have three states: IDLE, RECV, and DONE. 
+
+In the IDLE state, the FSM will wait for a byte with in[3]=1 and then transition to the RECV state, resetting the counter.
+
+In the RECV state, the FSM will increment the counter for each byte received and store the byte. 
+
+Once the counter reaches 3, the FSM will transition to the DONE state, signaling the receipt of a message by setting the done signal high. The FSM will then transition back to the IDLE state, ready to search for the next message.
+
+The FSM will also have a reset mechanism to reset the FSM to the IDLE state when the reset signal is high.

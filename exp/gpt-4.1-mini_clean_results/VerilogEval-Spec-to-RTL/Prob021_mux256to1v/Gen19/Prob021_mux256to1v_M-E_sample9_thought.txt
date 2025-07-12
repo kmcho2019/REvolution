@@ -1,0 +1,15 @@
+I will implement the 256-to-1 4-bit multiplexer by using an 8-bit selector as an index directly on the packed input vector, leveraging Verilog's variable part-select feature for slicing. 
+
+Concept:
+- Since each 4-bit word is stored consecutively, I can select the 4-bit slice at position `sel * 4` using the `+:` part-select operator.
+- This avoids explicit decoding or masking, resulting in a very compact, low-latency design.
+- The design is purely combinational with one line of assignment for the output.
+- This method greatly reduces logic complexity, area, and power consumption compared to one-hot decoding or mux-tree implementations.
+- The approach is synthesizable and supported in modern synthesis tools.
+
+Advantages:
+- Very efficient in area and power.
+- Minimal logic delay, since it is basically just a direct connection.
+- Simple and clean code.
+
+This approach directly uses the packed input vector and the selector to output the corresponding 4-bit chunk.

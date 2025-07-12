@@ -1,0 +1,12 @@
+Simplify the FSM by encoding states minimally and reducing the number of states used for sequence detection and y monitoring. Use clear, sequential states as follows:
+
+- S_A: reset state, hold until resetn=1  
+- S_B: output f=1 for one cycle immediately after reset release  
+- S_SEQ0, S_SEQ1, S_SEQ2: detect the sequence x=1,0,1 in three consecutive cycles  
+- S_MON: output g=1 and monitor y input for at most 2 cycles  
+- S_G1: g=1 permanently  
+- S_G0: g=0 permanently
+
+Use a 2-bit counter only in S_MON to track the two cycles of y monitoring. Increment counter only in S_MON and reset in other states. Outputs depend solely on the current state (no outputs driven by next_state). This reduces complexity and state duplication. The simplified states and logic make the FSM easier to verify and maintain while fulfilling all functional requirements.
+
+All sequential logic triggered on posedge clk with synchronous active-low reset. Counter and outputs reset appropriately on reset.

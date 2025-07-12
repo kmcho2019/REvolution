@@ -1,0 +1,5 @@
+The original design correctly implements the required functionality, but the 32-bit mux between load and shift values introduces a large combinational delay and switching activity. To optimize timing and power, the improvement strategy is to replace the wide 32-bit mux with a bit-wise clock gating scheme that only updates bits that actually change. This can be done by computing the next state for each bit and then gating the register clock enable signals individually based on whether the bit value changes. 
+
+Additionally, since misprediction load and prediction shift are mutually exclusive and only one update mode happens per cycle, clock gating the whole register on no-update cycles also reduces unnecessary toggling.
+
+This fine-grained clock gating reduces switching power and may reduce the critical path mux delay for timing. The code structure remains clean, preserving the asynchronous reset and correct precedence. The slight increase in logic for clock gating is acceptable for the power and timing gain.

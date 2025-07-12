@@ -1,0 +1,23 @@
+I will implement the function by directly mapping the 4-bit input to the output using a combinational logic expression derived from the Karnaugh map. Instead of Gray-to-binary conversion or a case lookup, I will decode the input bits using their original positions and create a minimized sum-of-products expression using the Karnaugh map.
+
+First, I will identify which input bits correspond to the rows and columns exactly as given (x[3],x[2] as row; x[1],x[0] as column).
+
+Then, I will mark all positions where f=1 and derive the minimal expression manually.
+
+From the map, the '1's appear at positions:
+- Row 01 col 11 (row=0b01, col=0b11): input x[3..0]= {0,1,1,1}
+- Row 11 col 00 (row=0b11, col=0b00): {1,1,0,0}
+- Row 11 col 01 (row=0b11, col=0b01): {1,1,0,1}
+- Row 10 col 00 (row=0b10, col=0b00): {1,0,0,0}
+- Row 10 col 01 (row=0b10, col=0b01): {1,0,0,1}
+
+I will derive logic to cover these minterms directly in sum-of-products form.
+
+Using a logic synthesis approach:
+- Express f = (x[3]&x[2]&~x[1]) | (x[3]&~x[2]&~x[1]) | (x[3]&~x[2]&~x[0]) | (~x[3]&x[2]&x[1]&x[0])
+
+This formula is inferred from the minterms coverage.
+
+I will implement this as a purely combinational assign statement for best clarity and performance, no additional decoding or case statements needed.
+
+This reduces logic levels, avoids LUTs or case statements, and directly exploits the map structure.

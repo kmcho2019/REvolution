@@ -1,0 +1,13 @@
+This design implements a 16-bit multiplier using a parallel prefix adder structure with carry-save optimization. Key features:
+1. Instead of sequential shift-and-add, we use parallel partial product generation
+2. Carry-save adders reduce critical path by deferring final carry propagation
+3. Wallace tree structure for efficient partial product reduction
+4. Early termination detection for power savings
+5. Pipelined final adder for better timing
+
+The architecture:
+- Generate all 16 partial products in parallel
+- Reduce them using 4:2 compressors in a Wallace tree
+- Final addition uses carry-select adder for better timing
+- Control logic tracks operation state and early termination
+- Power gating for unused partial product generators

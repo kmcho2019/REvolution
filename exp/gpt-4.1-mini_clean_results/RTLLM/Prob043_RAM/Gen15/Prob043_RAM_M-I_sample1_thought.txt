@@ -1,0 +1,25 @@
+To optimize the existing design for better PPA while maintaining functionality and correctness, the key points are:
+
+1. Reset Behavior:  
+   Instead of resetting all RAM contents on every negative edge of rst_n (which can cause a long reset time and significant switching), initialize the RAM once at power-up using an initial block, assuming the synthesis tool supports it. This avoids runtime reset logic, improving both performance and power.  
+   If reset must be supported, then use an asynchronous reset only to clear the read_data register (if it were registered) but since our read_data is combinational, we can skip resetting memory.
+
+2. Write Enable Clock Gating:  
+   To reduce switching during idle write cycles, gate the write operation with write_en inside the clocked process as before.
+
+3. Read Port:  
+   Keep the combinational read to have zero read latency and power gating via read_en.
+
+4. Address Width:  
+   Maintain minimal address width using $clog2(DEPTH).
+
+5. Overall Synthesis Practicality:  
+   Use an initial block for RAM initialization to zero if the target synthesis tool supports it (typical for FPGA and modern ASIC flows).  
+   This removes the costly reset-time RAM clearing loop, thus improving reset timing and lowering dynamic power during reset.
+
+6. Additional Considerations:  
+   Avoid any unnecessary signal toggling; read_data output is gated by read_en, reducing switching.
+
+Therefore, the improved design initializes RAM once via initial block, removes the reset logic for RAM clearing, keeps synchronous write, and keeps gated combinational read. This reduces reset overhead, improves reset timing, reduces power, and maintains the original functionality and interface.
+
+If the initial block is not supported by your synthesis tool for RAM initialization, revert to the synchronous reset loop approach.

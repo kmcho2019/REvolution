@@ -1,0 +1,7 @@
+To refactor the given code, we will focus on optimizing the combinational logic to reduce power consumption and area usage without compromising the performance. One strategy for improvement is to apply logic simplification techniques to the existing expressions for Y1 and Y3. We will also consider the one-hot encoding and ensure that the synthesis tool is correctly optimizing the logic.
+
+In the original code, two separate modules `StateBNext` and `StateDNext` were used to generate the next state values for `Y1` and `Y3`. However, we can simplify the logic by directly implementing the state machine in a single module `TopModule`. This approach reduces the overhead of module instantiation and can potentially lead to more efficient synthesis.
+
+We will use `assign` statements to directly implement the logic for `Y1` and `Y3` based on the state machine transitions. For `Y1`, the logic remains the same as it depends directly on the input `w` and the current state `y[0]`. For `Y3`, we will ensure that the synthesis tool recognizes the opportunity to use a single gate for the OR operation if possible.
+
+By refactoring the code in this manner, we aim to achieve better PPA metrics by reducing the complexity of the combinational logic and allowing the synthesis tool to optimize the design more effectively.

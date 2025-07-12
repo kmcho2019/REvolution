@@ -1,0 +1,12 @@
+To solve this problem, we will design a Moore-type finite state machine (FSM) in Verilog. The FSM will track the sequence of bits to identify the patterns of interest (0111110, 01111110, and 01111111...). We will use a state machine with enough states to keep track of consecutive 1s and distinguish between the different patterns. Since the FSM needs to remember the history of bits to some extent, it will transition between states based on the current input and its current state.
+
+The states of the FSM can be broadly categorized as follows:
+- An initial or idle state where it waits for a '1' to start counting consecutive 1s.
+- States to count consecutive 1s.
+- A state to indicate the detection of a discard condition (0111110).
+- A state to indicate the detection of a flag condition (01111110).
+- A state to indicate an error condition (7 or more consecutive 1s).
+
+Given the patterns, we can implement a state machine with 8 states (including the idle state) to keep track of the sequence of bits and to distinguish between the sequences of interest. The outputs will be asserted based on the current state of the FSM, following the Moore machine model where the output depends only on the current state.
+
+We'll implement the FSM using a parameterized state type and a case statement to manage the transitions between states. The FSM's state transitions will be updated on the positive edge of the clock, and the output signals will be driven directly by the current state of the FSM.

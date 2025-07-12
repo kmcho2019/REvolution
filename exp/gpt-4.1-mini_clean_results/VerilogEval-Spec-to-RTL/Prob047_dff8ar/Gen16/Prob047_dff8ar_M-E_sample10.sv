@@ -1,0 +1,33 @@
+module SingleDFF_AR (
+    input  clk,
+    input  areset,
+    input  d,
+    output reg q
+);
+    // One-bit D flip-flop with async active-high reset
+    always @(posedge clk or posedge areset) begin
+        if (areset)
+            q <= 1'b0;
+        else
+            q <= d;
+    end
+endmodule
+
+module TopModule (
+    input        clk,
+    input        areset,
+    input  [7:0] d,
+    output [7:0] q
+);
+
+    // Instantiate 8 one-bit DFFs with async reset
+    SingleDFF_AR dff0 (.clk(clk), .areset(areset), .d(d[0]), .q(q[0]));
+    SingleDFF_AR dff1 (.clk(clk), .areset(areset), .d(d[1]), .q(q[1]));
+    SingleDFF_AR dff2 (.clk(clk), .areset(areset), .d(d[2]), .q(q[2]));
+    SingleDFF_AR dff3 (.clk(clk), .areset(areset), .d(d[3]), .q(q[3]));
+    SingleDFF_AR dff4 (.clk(clk), .areset(areset), .d(d[4]), .q(q[4]));
+    SingleDFF_AR dff5 (.clk(clk), .areset(areset), .d(d[5]), .q(q[5]));
+    SingleDFF_AR dff6 (.clk(clk), .areset(areset), .d(d[6]), .q(q[6]));
+    SingleDFF_AR dff7 (.clk(clk), .areset(areset), .d(d[7]), .q(q[7]));
+
+endmodule

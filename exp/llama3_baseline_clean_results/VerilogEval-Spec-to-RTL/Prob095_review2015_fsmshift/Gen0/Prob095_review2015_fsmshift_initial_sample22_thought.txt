@@ -1,0 +1,7 @@
+To implement the TopModule, we can use a finite state machine (FSM) with two main states: IDLE and SHIFT_ENABLE. When the FSM is in the IDLE state, it waits for a reset signal. Upon receiving a reset, it transitions to the SHIFT_ENABLE state and starts a counter to keep track of the number of clock cycles. In the SHIFT_ENABLE state, the shift_ena signal is asserted for exactly 4 clock cycles. After the counter reaches 4, the FSM stays in the IDLE state, keeping shift_ena deasserted until the next reset.
+
+Since we want the shift_ena to be asserted for 4 cycles when the module is reset, we can use a simple counter to keep track of the number of cycles. We will use a 2-bit counter to count from 0 to 3.
+
+The FSM will have two states: IDLE (0) and SHIFT_ENABLE (1). When the FSM is in the IDLE state, it checks for the reset signal. If reset is high, it transitions to the SHIFT_ENABLE state. In the SHIFT_ENABLE state, it asserts shift_ena and increments the counter. When the counter reaches 3, the FSM stays in the IDLE state and deasserts shift_ena.
+
+We will use a 2-bit counter (2 bits can count from 0 to 3) to keep track of the number of clock cycles. The counter is reset when the FSM enters the IDLE state.

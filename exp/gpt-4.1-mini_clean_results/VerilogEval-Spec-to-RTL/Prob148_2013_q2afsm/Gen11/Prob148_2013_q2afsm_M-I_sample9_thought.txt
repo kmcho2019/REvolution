@@ -1,0 +1,17 @@
+To improve the PPA while preserving correct functionality, the following refinements are applied:
+
+1. **Clock gating for output register update:**  
+   The grant output `g` is combinational and depends only on `state`. Updating `g` in a register is not necessary here since it's purely combinational from the FSM state, so use a continuous assignment to eliminate unnecessary flip-flops. This reduces switching power and area.
+
+2. **Simplify synchronous reset logic in the state flip-flops:**  
+   Use the active-low reset signal directly in the state flip-flops with a synchronous reset, as before, keeping the reset handling consistent.
+
+3. **Next state logic:**  
+   Minor code clean-up for readability by explicitly assigning default next_state to state to reduce inferred latches and potential glitching.
+
+4. **State encoding and outputs:**  
+   Retain the 2-bit encoding as it's optimal for 4 states. The continuous combinational assignment for `g` avoids unnecessary clocked registers, further reducing switching.
+
+These changes keep the FSM behavior identical but reduce area and power by removing the `g` register, and make the design slightly cleaner for synthesis.
+
+Overall, this should improve power and area, while maintaining or slightly improving timing by simplifying output logic and lowering switching.

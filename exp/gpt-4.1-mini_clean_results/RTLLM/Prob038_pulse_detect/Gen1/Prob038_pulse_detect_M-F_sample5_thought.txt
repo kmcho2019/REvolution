@@ -1,0 +1,7 @@
+The original design correctly detects the pulse pattern 0->1->0 and asserts data_out for one clock cycle at the end of the pulse. However, the data_out signal is assigned both combinationally and sequentially, which is redundant and could cause confusion or synthesis issues.
+
+To fix this, data_out should be driven purely by sequential logic to register the output pulse precisely at the clock edge. The combinational block will only determine next_state, and data_out will be asserted in the sequential block when the pulse end condition is met (transition from WAIT_LOW state and data_in==0). This clean separation improves clarity and eliminates the redundant combinational assignment to data_out.
+
+Also, the states can be renamed slightly for clarity, but keeping the three-state FSM is sufficient and minimal. The output pulse will be generated with exactly one cycle width on the clock edge following the detection, which meets the specification.
+
+This fix respects the feedback and ensures robust, clear, and efficient pulse detection FSM logic.

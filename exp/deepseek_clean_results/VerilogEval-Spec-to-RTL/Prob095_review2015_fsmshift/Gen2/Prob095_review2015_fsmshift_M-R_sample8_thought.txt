@@ -1,0 +1,12 @@
+To refactor this implementation while maintaining the same functionality, I'll make these key changes:
+
+1. Use a simpler approach with just a counter and no explicit state machine, since we only have two behaviors (active for 4 cycles, then idle)
+2. Replace the state register with a direct comparison of the counter value
+3. Use an assign statement for shift_ena output based on counter value
+4. Maintain the 2-bit counter (since 0-3 covers 4 cycles) and synchronous reset
+
+The refactored version will:
+- Reset counter to 0 and assert shift_ena (since 0 <= 3)
+- Count up to 3 (4 cycles total) while asserting shift_ena
+- Stop counting and deassert shift_ena once counter reaches 3
+- Remain in this state until next reset

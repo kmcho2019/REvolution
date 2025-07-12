@@ -1,0 +1,9 @@
+The feedback highlights the issue of undefined initial state causing simulation mismatches. Since the problem explicitly states there is no reset, we need to handle this properly. Here's the solution approach:
+
+1. Keep the core functionality: XOR between input and flip-flop output, stored in a positive-edge triggered flip-flop
+2. Since no reset is allowed, we must accept that the initial state is undefined in hardware (X in simulation)
+3. However, for simulation purposes, we can initialize the flip-flop output to 0 to ensure predictable behavior
+4. This initialization is only for simulation and won't affect synthesis (synthesis tools will treat it as uninitialized)
+5. Maintain the same compact structure with direct feedback from output to XOR input
+
+This solution provides consistent simulation results while meeting the problem constraints of no reset signal.

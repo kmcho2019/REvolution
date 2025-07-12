@@ -1,0 +1,9 @@
+To improve the PPA metrics from the original linear accumulation approach, I will replace the linear chain of additions with a balanced adder tree. This approach reduces the critical path delay by halving the number of partial sums at each stage, enabling faster synthesis timing (improved WNS and TNS). 
+
+The balanced tree will combine pairs of partial products in parallel at each stage, reducing the longest combinational delay path from 8 additions in series to about 3 stages of additions. This generally leads to better timing and possibly lower power since fewer additions are chained linearly, reducing glitching.
+
+Area might slightly increase due to more adders in parallel, but this is often offset by improved timing and reduced power from shorter paths.
+
+The partial products will be generated as before by shifting A conditioned on bits of B. The accumulation will be done in stages, each stage adding pairs of sums from the previous stage until only one final sum remains, which is the product.
+
+This approach is still fully combinational and straightforward to synthesize while improving the critical path delay substantially.

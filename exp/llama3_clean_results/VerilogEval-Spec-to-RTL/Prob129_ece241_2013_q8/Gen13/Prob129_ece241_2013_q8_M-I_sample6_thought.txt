@@ -1,0 +1,5 @@
+The existing solution recognizes the "101" sequence using a Mealy-type finite state machine with two flip-flops to track the previous and second previous input values. To optimize this design for better PPA (Power, Performance, and Area) metrics, we can focus on minimizing the combinational logic and reducing the switching activity of internal signals. 
+
+One approach is to encode the state machine using a single 2-bit state variable instead of two separate flip-flops. This can potentially reduce the area and power consumption. We can define three states: IDLE (00), STATE1 (01), and STATE2 (10), where IDLE is the initial state, STATE1 is reached when the input sequence starts with '1', and STATE2 is reached when the input sequence is '10'. The output z is asserted when the current state is STATE2 and the input is '1'.
+
+Additionally, we can simplify the combinational logic generating the output z and the next state logic to reduce the critical path delay and minimize the switching activity of internal signals.

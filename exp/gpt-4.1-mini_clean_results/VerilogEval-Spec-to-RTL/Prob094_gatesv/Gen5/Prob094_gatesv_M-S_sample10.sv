@@ -1,0 +1,19 @@
+module TopModule (
+    input  [3:0] in,
+    output [3:0] out_both,
+    output [3:0] out_any,
+    output [3:0] out_different
+);
+
+    // out_both[i] = in[i] & in[i+1], except out_both[3]=0 (no left neighbor)
+    assign out_both = {3{1'b0}} | ((in[3:1] & in[2:0]) << 0);
+    // Explanation: in[3:1] & in[2:0] gives bits for i=0..2, assigned to out_both[0..2], out_both[3]=0
+
+    // out_any[i] = in[i] | in[i-1], except out_any[0] = 0 (no right neighbor)
+    assign out_any = {in[3:1] | in[2:0], 1'b0};
+    // out_any[3:1] from OR of in[3:1] and in[2:0], out_any[0]=0
+
+    // out_different[i] = in[i] ^ in[(i+1)%4], wrap-around
+    assign out_different = in ^ {in[0], in[3:1]};
+
+endmodule

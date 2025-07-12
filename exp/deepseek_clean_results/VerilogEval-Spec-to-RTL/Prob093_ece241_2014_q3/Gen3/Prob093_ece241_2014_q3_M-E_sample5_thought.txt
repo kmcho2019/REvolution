@@ -1,0 +1,20 @@
+After carefully re-examining the Karnaugh map, I propose a novel approach that uses the 4-to-1 multiplexer's selection inputs (a,b) as part of the logic generation. Here's the key insight:
+
+1. For mux_in[0] (ab=00):
+   - The pattern is 0 when cd=00, else 1
+   - This is equivalent to NOR(c,d) followed by NOT
+   - Can be implemented with one 2-to-1 mux selecting between 1 and !(c|d)
+
+2. For mux_in[1] (ab=01):
+   - Always 0 (no mux needed)
+
+3. For mux_in[2] (ab=11):
+   - The pattern matches c AND d
+   - Implement with one 2-to-1 mux selecting between d and 0 based on c
+
+4. For mux_in[3] (ab=10):
+   - The pattern is 1 except when cd=01
+   - This is equivalent to !(c & !d)
+   - Can be implemented with one 2-to-1 mux selecting between 1 and !(c & !d)
+
+The innovation here is using the mux selection patterns to our advantage and implementing the required logic with minimal 2-to-1 muxes (3 total). Each mux input is carefully derived to match the K-map while maintaining the constraint of using only multiplexers.

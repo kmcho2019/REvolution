@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the 3-input adder with a balanced adder tree (1-bit + 1-bit first, then add the third)
+   - Simplify phase comparison by using a 1-bit phase indicator (since we only need to detect phase=0)
+
+2. Power Optimization:
+   - Gate the w_history updates to only occur in state B
+   - Compute popcount only when needed (at phase=0)
+
+3. Area Optimization:
+   - Reduce phase counter to 1-bit by using clever encoding (00,01,10 becomes 0,1,1)
+   - Implement popcount as a simple case statement (3-input LUT)
+
+Key Changes:
+- New phase tracking using single bit + state
+- Conditional popcount calculation
+- Balanced adder implementation
+- Reduced register updates

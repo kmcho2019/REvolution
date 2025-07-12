@@ -1,0 +1,14 @@
+The ALU design needs to handle various arithmetic and logical operations based on the 6-bit control signal (aluc). Key considerations:
+1. Signed vs unsigned operations need different overflow/carry handling
+2. Shift operations need proper handling of shift amounts
+3. Comparison operations (SLT/SLTU) need special result handling
+4. Status flags (zero, carry, negative, overflow) must be correctly set
+5. The flag output is specifically for SLT/SLTU results
+
+Implementation approach:
+- Use a case statement to handle each operation
+- For arithmetic operations, perform both signed and unsigned variants
+- Calculate status flags based on operation results
+- Handle shift operations with proper shift amount selection
+- Special handling for LUI (load upper immediate)
+- Default to high-impedance for undefined operations

@@ -1,0 +1,14 @@
+Novel Shift Register Counter Design:
+1. Use a 10-bit circular shift register where only one bit is '1' at any time (one-hot encoding)
+2. The '1' position represents the current count value (bit 0 = 0, bit 1 = 1, ..., bit 9 = 9)
+3. Implement shift operation when slowena is high
+4. Add feedback to create circular behavior (when bit 9 is '1', next cycle sets bit 0)
+5. Reset sets bit 0 to '1' and others to '0'
+6. Output encoding converts the one-hot state to binary using priority encoder logic
+
+Advantages:
+- Simple shift operation with minimal combinational logic
+- Natural circular behavior without complex wrap-around detection
+- Glitch-free outputs since only one bit changes at a time
+- Easy to extend to different counter ranges
+- Power-efficient when counting is paused (only clock tree toggles)

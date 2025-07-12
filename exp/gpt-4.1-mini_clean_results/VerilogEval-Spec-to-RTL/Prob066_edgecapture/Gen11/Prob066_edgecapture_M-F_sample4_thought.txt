@@ -1,0 +1,10 @@
+The main issue is with the initialization of `prev_in` on reset. Assigning `prev_in` to the current input `in` during synchronous reset can cause missed falling edge detections immediately after reset if the input was previously 1 and becomes 0 right after reset. This is because the comparator (`prev_in & ~in`) may not detect a falling edge on that first clock cycle after reset.
+
+To fix this, initialize `prev_in` to all ones (`32'hFFFFFFFF`) during reset so that any transition from 1 to 0 on the next cycle will be properly detected as a falling edge. This ensures that at reset, all bits are logically assumed to be 1, so a transition from 1 to 0 will be captured correctly.
+
+The rest of the logic remains the same:
+- Detect falling edges by comparing the previous input and current input.
+- OR the detected falling edges into the output register to hold these bits until reset.
+- Use a synchronous active high reset that clears the output register and sets `prev_in` to all ones.
+
+This small change improves the reliability of falling edge detection immediately after reset without altering the core design structure. It avoids missed detections while preserving the performance, power, and area benefits.

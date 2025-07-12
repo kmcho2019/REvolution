@@ -1,0 +1,11 @@
+Here's a novel approach using a shift register and XOR-based edge detection:
+
+1. Instead of storing two full cycles of history, we'll use a single 8-bit register to store the previous input state
+2. For edge detection, we'll:
+   - First compute which bits have changed (using XOR between current and previous input)
+   - Then mask this with the current input to get only 0->1 transitions
+3. This reduces the register usage by half compared to the previous solution
+4. The edge detection is now purely combinational based on the current and previous states
+5. The output is still registered on the next clock cycle after the transition occurs
+
+This approach is more area-efficient while maintaining the same functionality and timing characteristics.

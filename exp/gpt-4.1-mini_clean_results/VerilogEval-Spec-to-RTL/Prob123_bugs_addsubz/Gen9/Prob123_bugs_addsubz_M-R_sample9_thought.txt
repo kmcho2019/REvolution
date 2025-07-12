@@ -1,0 +1,5 @@
+I will refactor the module to implement the adder-subtractor logic and zero detection purely with continuous assignments, removing the combinational always block entirely. The output and zero flag will be declared as wires internally and assigned with `assign`. To keep the output ports as `reg` types (per original interface), I will instantiate an always block clocked or triggered only by changes in internal wires to register the outputs. 
+
+This structure clearly separates combinational logic (implemented by continuous assignment) from output registers, improving readability and synthesis clarity. It also helps avoid potential latches or inferred memory by ensuring outputs are always assigned. The subtraction is still performed by XOR-ing B with do_sub and adding do_sub as carry-in. The zero flag uses reduction NOR on the result.
+
+This approach differs from the previous by isolating combinational and registered logic distinctly, which is a common and clean design style.

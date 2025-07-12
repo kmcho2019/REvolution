@@ -1,0 +1,15 @@
+I will implement the JK flip-flop using a sequential always block that directly computes the next state with an explicit if-else structure rather than combinational logic expressions. This approach emphasizes clarity in the state transitions by explicitly enumerating each JK condition and updating Q accordingly inside the synchronous process.
+
+The idea is to use a single always @(posedge clk) block and inside it:
+- If J=0 and K=0, maintain Q (no change).
+- Else if J=0 and K=1, reset Q to 0.
+- Else if J=1 and K=0, set Q to 1.
+- Else (J=1 and K=1), toggle Q.
+
+This method:
+- Is simple and easy to understand, showing the explicit state machine behavior of JK flip-flop.
+- Does not use intermediate combinational wires; logic and storage are tightly integrated.
+- May be more intuitive to less experienced engineers and easier to debug.
+- Slightly increases code size but improves self-documenting clarity.
+
+This approach provides a fully synchronous JK flip-flop implementation with clear state transition logic directly inside the clocked process.

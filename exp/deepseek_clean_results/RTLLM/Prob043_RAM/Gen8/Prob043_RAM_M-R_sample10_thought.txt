@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. Convert the synchronous write operation to use continuous assignment with clock gating
+2. Replace the for-loop reset with individual register declarations for better synthesis control
+3. Use ternary operators for both read and write paths to maintain combinational behavior
+4. Implement the memory array as separate registers for better visibility and control
+5. Benefits:
+   - More explicit data flow with continuous assignments
+   - Better synthesis optimization potential with discrete registers
+   - Clearer separation of read/write paths
+   - Maintains same functionality while being more explicit about data flow
+
+Key Changes:
+- Memory array now declared as 8 discrete 6-bit registers
+- Write operation implemented with clock-gated continuous assignment
+- Read path remains combinational but with explicit register selection
+- Reset implemented through direct assignments to each register

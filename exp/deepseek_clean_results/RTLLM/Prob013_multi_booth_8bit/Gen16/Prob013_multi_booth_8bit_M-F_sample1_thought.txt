@@ -1,0 +1,21 @@
+Corrected Radix-4 Booth Multiplier Implementation:
+
+1. Counter Fix:
+   - Use 4-bit counter (0-15) to properly track 8-bit Radix-4 steps (4 iterations needed)
+   - Each iteration processes 2 multiplier bits (Radix-4)
+
+2. Pipeline Removal:
+   - Revert to single-cycle-per-iteration approach for simplicity and correctness
+   - Maintain proper sign extension throughout all operations
+
+3. Zero Detection:
+   - Only detect true zero multiplicand (a == 0)
+   - Remove incorrect all-1s multiplier detection
+
+4. Completion Logic:
+   - Set rdy when counter reaches 4 (4 Radix-4 iterations)
+   - Maintain proper product accumulation
+
+5. Sign Handling:
+   - Properly extend and maintain sign bits during shifts
+   - Correctly handle negative number operations

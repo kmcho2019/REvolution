@@ -1,0 +1,16 @@
+To create a novel asynchronous FIFO design, we will introduce a new architectural concept that leverages a combination of a ring buffer and a token-based synchronization mechanism. 
+
+The key components of this design are:
+
+1. **Ring Buffer**: A circular buffer with a fixed size, used to store the data being written and read from the FIFO. The ring buffer is implemented using a dual-port RAM, allowing for simultaneous read and write operations.
+2. **Token-Based Synchronization**: A token is used to keep track of the available space in the FIFO. When a write operation is performed, the token is passed from the write controller to the read controller, indicating that a new data item is available for reading. When a read operation is performed, the token is passed back to the write controller, indicating that the previous data item has been read and the space is now available for writing.
+3. **Write and Read Controllers**: These controllers manage the write and read operations, respectively. They use the token to synchronize the access to the ring buffer and ensure that the FIFO operates correctly.
+4. **Clock Domain Crossing (CDC) Module**: This module is used to synchronize the token across the clock domains, ensuring that the write and read controllers operate correctly even when the clocks are not synchronized.
+
+The benefits of this design include:
+
+* **Improved performance**: The ring buffer and token-based synchronization mechanism allow for high-speed write and read operations, making it suitable for high-performance applications.
+* **Low latency**: The token-based synchronization mechanism ensures that the write and read controllers respond quickly to changes in the FIFO's state, reducing latency and improving overall system performance.
+* **Scalability**: The design can be easily scaled up or down to accommodate different FIFO sizes and performance requirements.
+
+The code for this design is provided below.

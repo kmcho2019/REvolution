@@ -1,0 +1,25 @@
+To improve the existing solution, we need to address the issues mentioned in the feedback. 
+
+Firstly, we can optimize the state machine encoding to reduce the combinational logic depth, which could improve the effective clock period.
+
+Secondly, we can simplify the assignments to reduce the critical path delay.
+
+For power optimization, we can minimize unnecessary updates to the shift_register by only shifting when a new bit is needed.
+
+Lastly, to optimize the design for better area, we can consider using a single register for both the shifting and counting functionality or exploiting any patterns in the data that could simplify the logic.
+
+We will implement the improved design using the following steps:
+
+1. Simplify the state machine by using a two-stage approach for receiving the start bit and the 8 data bits.
+2. Reduce the size of the shift register to 8 bits to store the 8 data bits and use a separate variable to check the start and stop bits.
+3. Implement a more efficient counter using a single variable to keep track of the number of bits received.
+4. Optimize the logic for resetting the 'done' signal to reduce unnecessary switching activity.
+5. Use a single always block to handle all the logic.
+
+The improved design will have the following states: IDLE, RECEIVE, and WAIT_STOP. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, and the WAIT_STOP state will wait for a stop bit when the previous stop bit was incorrect.
+
+We will use an 8-bit shift register to collect the 8 data bits and a separate variable to check the start and stop bits. This approach simplifies the logic and reduces the number of states required.
+
+The counter will be used to keep track of the number of bits received and to determine when to check the stop bit.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.

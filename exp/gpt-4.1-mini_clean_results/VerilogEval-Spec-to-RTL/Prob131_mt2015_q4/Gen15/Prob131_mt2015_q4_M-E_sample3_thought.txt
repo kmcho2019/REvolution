@@ -1,0 +1,11 @@
+Instead of sharing intermediate signals like xor_xy and its inversion among all submodules, this new approach encapsulates all logic of A and B modules inside the top-level module as parameterized functional units with inputs x and y only, making each instance self-contained. Each A module computes z = (x ^ y) & x internally, and each B module computes z = ~(x ^ y) internally as well.
+
+The top module instantiates two A modules and two B modules with inputs x and y. Then it connects the output of the first pair (A1, B1) to a 2-input OR gate, the output of the second pair (A2, B2) to a 2-input AND gate, and finally XORs these two results for the output.
+
+This design respects the requirement of two A and two B instances, but does not share intermediate signals outside submodules. The A and B modules are self-contained and compute their function from primary inputs directly.
+
+By doing so, the design is more modular and easier to maintain. It allows each module to be independently changed or replaced without affecting the others or top-level wiring. This may increase the total gate count due to repeated XOR and inversion calculations inside each submodule, but improves clarity and reusability.
+
+The top module uses simple gates (OR, AND, XOR) to combine the submodule outputs as specified.
+
+This new architecture trades off minimal sharing for higher modularity and separation of concerns.

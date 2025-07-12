@@ -1,0 +1,11 @@
+Implement the 64-bit subtractor using a 64-bit carry-select adder (CSLA) based subtraction approach, which partitions the 64-bit operands into 8 blocks of 8 bits each. For each 8-bit block, we precompute two sums and carries: one assuming carry-in = 0, another assuming carry-in = 1. Then, the actual carry-in selects which precomputed sum and carry-out to use. This structure reduces carry propagation delay by parallelizing sum computation within blocks and selecting the correct result quickly.
+
+Subtraction is done as A + (~B) + 1 like before, but the carry-select adder improves performance compared to ripple or simple CLA. The overflow detection remains the same: check sign bits of A, B, and result to detect signed overflow in subtraction.
+
+This architecture balances complexity and performance, uses moderate hardware for speedup, and keeps the design modular and readable.
+
+The module will:
+- Invert B internally.
+- Add A + (~B) + 1 using an 8-bit block carry-select adder.
+- Output the 64-bit result.
+- Detect overflow with sign bits of A, B, and result.

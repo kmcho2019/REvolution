@@ -1,0 +1,15 @@
+Improve the original pipeline multiplier by removing the array of registers and replacing it with individual register signals for each partial product. This enhances synthesis tool friendliness and ensures compatibility across a wider range of synthesis tools (like Yosys), which sometimes have issues handling arrays of registers.
+
+In addition, unroll the summation of partial products explicitly without a generate block or loop, which simplifies synthesis and may improve timing.
+
+Keep the two pipeline stages:
+- Stage 1: Register each partial product separately.
+- Stage 2: Sum all registered partial products combinationally and register the result.
+
+Use parameter `size` consistently, and keep it at default 4 for simplicity.
+
+This approach also helps better area and timing by straightforward logic and simple registers, ensuring clarity and easier debugging.
+
+Reset synchronous registers on falling edge of `rst_n` as specified.
+
+This design directly matches the spec and improves compatibility and maintainability without altering the intended pipeline structure.

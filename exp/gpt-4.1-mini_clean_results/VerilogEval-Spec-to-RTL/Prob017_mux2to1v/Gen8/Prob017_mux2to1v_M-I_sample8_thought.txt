@@ -1,0 +1,16 @@
+The existing solution is clean and efficient, leveraging a parameterized vector mux and simple continuous assignment, which is already optimal for performance and area for a 100-bit 2:1 mux.
+
+To improve power slightly, we can reduce unnecessary switching by implementing clock gating or input gating, but since this is a purely combinational module without clocks, we cannot use clock gating here.
+
+An effective technique for power reduction in large muxes is to split the mux into smaller blocks, controlled by the same select signal, which can help synthesis tools optimize routing and potentially reduce capacitance and glitches due to smaller fanout per mux.
+
+Therefore, I will partition the 100-bit input vectors into 10 chunks of 10 bits each and instantiate ten 10-bit mux blocks. This hierarchical approach can enable better physical synthesis optimization while maintaining clean design modularity and the same logical behavior.
+
+This split modular design:
+- Maintains correctness and clarity.
+- Can improve power by localizing switching activity.
+- May also benefit timing and routing due to smaller fanout and improved placement.
+
+Hence, the improvement is a chunked approach combining modularity with flat vectorized muxes in smaller groups.
+
+The TopModule instantiates a small 10-bit mux module 10 times, each handling 10 bits, selecting either a or b chunk depending on sel.

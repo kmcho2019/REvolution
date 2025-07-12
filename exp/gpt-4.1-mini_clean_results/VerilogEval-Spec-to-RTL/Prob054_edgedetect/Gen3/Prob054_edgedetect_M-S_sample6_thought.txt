@@ -1,0 +1,7 @@
+The current design is already minimal and clean, using only two 8-bit registers and one always block. To simplify further, we can combine the storage of previous input and edge detection into a single always block with direct logic, avoiding any extra intermediate signals or separate assignments. However, since the design already uses one always block and minimal registers, the simplest effective way is to use only one register for prev_in and derive the edge detection combinationally on each clock, then register the output in the same always block. This eliminates any redundant logic and keeps the design very simple, with minimal registers and straightforward logic.
+
+Thus, the simplified idea is:
+- Register prev_in on each clock.
+- Compute the pedge output as the bits that transitioned from 0 to 1 by comparing prev_in and current input in the same always block.
+- Register the pedge output synchronously on clock edge.
+This results in clean, minimal, and clear code.

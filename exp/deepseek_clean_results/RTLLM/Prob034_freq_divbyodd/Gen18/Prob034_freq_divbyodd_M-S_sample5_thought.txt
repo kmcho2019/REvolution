@@ -1,0 +1,14 @@
+Simplified odd frequency divider using dual-edge counting:
+1. Use a single counter that counts both edges (effectively running at 2x clock rate)
+2. Generate two phase-shifted clocks (clk_pos and clk_neg) from the counter
+3. Combine these clocks with XOR to create the final divided clock
+4. Reset initializes counter and clock outputs
+5. Counter rolls over at NUM_DIV-1 (since we're counting edges)
+6. Duty cycle is maintained by precise toggling at (NUM_DIV-1)/2 points
+
+Key simplifications:
+- Eliminates separate counters for pos/neg edges
+- Uses mathematical relationship between counter and toggle points
+- Single always block for edge counting
+- XOR combination ensures proper phase alignment
+- Maintains 50% duty cycle through precise toggle points

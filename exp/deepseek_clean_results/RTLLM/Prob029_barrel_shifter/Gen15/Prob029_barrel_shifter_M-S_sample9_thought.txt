@@ -1,0 +1,11 @@
+Here's a simplified yet correct implementation of the barrel shifter:
+
+1. Maintain the multi-stage approach as specified, but simplify the implementation
+2. Each stage handles a specific shift amount (4, 2, or 1) controlled by corresponding ctrl bit
+3. Use conditional assignments instead of explicit mux2X1 submodules for cleaner code
+4. The stages cascade naturally:
+   - First stage shifts by 4 if ctrl[2] is set
+   - Second stage shifts by 2 if ctrl[1] is set (operates on previous stage's output)
+   - Final stage shifts by 1 if ctrl[0] is set (operates on previous stage's output)
+5. This maintains the required functionality while reducing complexity
+6. Rotation is achieved by concatenating the input with itself and selecting the appropriate bits

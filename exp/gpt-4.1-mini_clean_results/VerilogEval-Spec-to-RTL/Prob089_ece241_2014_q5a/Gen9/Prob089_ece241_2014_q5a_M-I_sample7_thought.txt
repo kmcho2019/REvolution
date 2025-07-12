@@ -1,0 +1,9 @@
+To optimize the existing Moore FSM for better PPA:
+
+- Replace asynchronous reset with synchronous reset to improve timing closure by avoiding asynchronous reset timing complexities.
+- Remove the separate x_reg register by sampling input 'x' directly in the sequential logic that updates the state and output register, reducing registers and potential glitches.
+- Move the output 'z' to a registered output to reduce combinational path delay and improve timing stability, converting the output from combinational to registered.
+- Use a 2-bit state encoding to explicitly model the FSM states, which can improve clarity and synthesis optimization, although the current 1-bit encoding is minimal.
+- Since the machine only needs to detect the first '1' and then invert subsequent bits, keep state as a single bit but register output for a fully synchronous design.
+- The output is generated purely from registered signals, keeping it stable and reducing glitches.
+- This synchronous reset, fully registered output approach balances timing and power better and simplifies clock gating if added later.

@@ -1,0 +1,12 @@
+Novel Architecture:
+1. Counter-Based State Tracking: Instead of explicit states, use a 4-bit counter to track progress through the protocol (0-10 bits). This reduces state encoding overhead.
+2. Parallel Data Capture: Sample all 8 data bits simultaneously when the counter reaches the stop bit position, eliminating the need for a shift register.
+3. Early Stop Bit Detection: Check the stop bit condition immediately after the 8th data bit is sampled, allowing faster error recovery.
+4. Idle Detection Optimization: Use the counter's MSB as an idle indicator, saving an explicit state check.
+5. Minimal Registers: Only maintain the essential counter and data registers, reducing area.
+
+Key Advantages:
+- Eliminates shift operations, reducing power consumption
+- Faster error recovery by detecting stop bit violations immediately
+- Smaller area due to simplified state representation
+- More efficient idle detection using counter MSB

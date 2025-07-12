@@ -1,0 +1,13 @@
+The original LFSR module correctly implements the intended functionality; the feedback is the inverted XOR of out[3] and out[2], and the register shifts left with feedback inserted at LSB on each clock cycle, with synchronous reset.
+
+However, resetting the LFSR to zero causes it to get stuck there because the feedback bit on zero state will always be 1 (since ~(0^0) = 1), but shifting with that feedback never escapes zero once started from all zeros, which is a trivial lock-up state in an LFSR.
+
+To improve the design's PPA (Power, Performance, Area) and functional usability, I will:
+
+1. Change the reset value from zero to a non-zero seed (e.g., 4'b0001). This avoids lock-up in zero state, ensuring maximal length sequence for the 4-bit LFSR.
+2. Maintain synchronous reset for simplicity and timing closure.
+3. Keep combinational feedback calculation for clarity and optimization.
+4. Add a clear, concise comment describing the function and reset seed choice.
+5. Keep the testbench as is, since it properly exercises the design with correct signal widths and timing.
+
+This seed choice improves the LFSR's utility as a maximal length pseudo-random generator and avoids a trivial lock-up state, enhancing robustness without affecting area or timing significantly.

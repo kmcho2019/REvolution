@@ -1,0 +1,18 @@
+Use a shift register to hold the last 8 bits of input to detect sequences directly, combined with a simple counter of consecutive ones to keep track of the current run length. 
+
+- Implement a serial 8-bit shift register that shifts in each input bit.
+- On each clock cycle (after reset), update the count of consecutive ones by:
+  - Increment if input is 1 and count < 7
+  - Reset to 0 if input is 0
+- After shifting in the bit, inspect the shift register to detect:
+  - disc: if the pattern "111110" is seen at bits [6:1], i.e., the 6-bit pattern 0111110 aligned with LSB (the zero after five ones). We assert disc on the clock cycle after this is detected.
+  - flag: if the full 8-bit shift register matches the flag pattern "01111110", asserting flag the next cycle.
+  - err: if the consecutive one count saturates at 7 or above (meaning 7 or more ones), assert err the next cycle.
+
+This approach decouples detection of patterns from just the FSM count, allowing straightforward pattern matching on the shift register.
+
+Outputs are registered and delayed by one cycle to maintain Moore-type behavior.
+
+Reset synchronously initializes the shift register and count to 0, simulating previous input zero.
+
+This design uses a simple shift register and counter, avoiding a multi-state FSM, which can improve clarity and ease pattern detection for future extensions.

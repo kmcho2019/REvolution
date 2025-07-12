@@ -1,0 +1,21 @@
+Refactoring Strategy:
+
+1. Core Functionality Preservation:
+   - Maintain same LFSR sequence generation (XOR of bits 3 and 2 with inversion)
+   - Keep same reset behavior (initialize to 0001)
+
+2. Structural Changes:
+   - Replace always block with continuous assignments
+   - Use combinational logic for feedback calculation
+   - Implement shift register using explicit wiring
+
+3. Benefits:
+   - More transparent data flow (visible in schematic)
+   - Eliminates sequential logic where not strictly needed
+   - Each operation is explicitly visible
+
+Key Changes:
+- Feedback calculation moved to separate assign statement
+- Shift operation implemented via explicit bit selection
+- Reset multiplexing done with ternary operator
+- Maintains same cycle-accurate behavior

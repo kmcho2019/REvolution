@@ -1,0 +1,19 @@
+The optimal fusion strategy combines the strengths of both examples while addressing their minor weaknesses:
+
+1. From Example 1, we retain the clear case statement structure which is more readable and maintainable for scancode decoding, especially when more keys might be added later.
+
+2. From Example 2, we adopt the parallel output assignments which provide better timing characteristics by evaluating all outputs simultaneously.
+
+3. We optimize power by:
+   - Only evaluating the lower byte when we have an extended key (0xE0 prefix)
+   - Using a default assignment to ensure all outputs are defined
+
+4. We maintain area efficiency by:
+   - Using simple equality comparisons
+   - Letting synthesis tools optimize the case statement
+
+This approach provides:
+- Better readability than Example 2 (clear case statement)
+- Similar timing to Example 2 (parallel outputs)
+- Better power efficiency than both (conditional lower byte evaluation)
+- Maintained area efficiency

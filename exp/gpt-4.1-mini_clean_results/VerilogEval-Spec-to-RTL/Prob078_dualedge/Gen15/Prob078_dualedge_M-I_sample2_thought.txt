@@ -1,0 +1,14 @@
+To optimize the dual-edge triggered flip-flop for better PPA, I will focus on reducing glitching and critical path delay on the output mux, as well as lowering dynamic power by minimizing unnecessary toggling.
+
+Improvements:
+
+- Replace the continuous assign mux with a register-based latch to synchronize the output selection. This mitigates glitches and reduces the critical path delay caused by the mux toggling directly on clk level.
+- Use a two-stage approach: sample data on posedge and negedge into two flip-flops, then use a simple register clocked on posedge to latch the output selection. This pipelining balances timing by removing combinational mux on clk level.
+- Eliminate generating inverted clock signals; use single clock domain.
+- Maintain modular EdgeFF for clarity and reusability.
+- This approach introduces a cycle latency (output delayed by half clock), but improves timing and power by reducing glitches and glitch-induced switching.
+- This is a classic approach to implement dual-edge sampling in single-edge FF FPGAs with better timing and power trade-offs.
+
+The trade-off is minor latency for improved timing and power efficiency, which is beneficial for high-frequency designs.
+
+This approach will lower dynamic power by reducing toggling from mux glitches, lower mux critical path delay, and possibly improve max frequency and area due to simpler routing and logic.

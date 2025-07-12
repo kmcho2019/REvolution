@@ -1,0 +1,12 @@
+To optimize the original purely combinational divider for better PPA (Power, Performance, Area), I will simplify the design by:
+
+- Eliminating the first always block that simply copies inputs combinationally, as it adds no timing or area benefits.
+- Using only one always block for the combinational division to reduce the logic duplication.
+- Implementing the division logic with only scalar regs to avoid unpacked arrays that may synthesize into large multiplexers.
+- Storing intermediate remainder as a single scalar register shifted and updated in each iteration.
+- Using a simple for-loop with partial remainder shifting and subtracting to reduce combinational complexity.
+- Assigning the quotient bits one-by-one without using a large array.
+- This reduces both the logic complexity and the amount of intermediate signals, likely improving area and power.
+- The remainder is padded to 16 bits with zeros in the upper bits as before.
+
+This preserves the functionality and the combinational logic but with fewer registers and simpler logic, improving PPA while maintaining clarity.

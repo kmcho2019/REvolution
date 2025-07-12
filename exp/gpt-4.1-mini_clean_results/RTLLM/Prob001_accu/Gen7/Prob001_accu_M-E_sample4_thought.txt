@@ -1,0 +1,8 @@
+I will implement the accumulator using a small FIFO-like shift register of 4 elements to hold the last four valid inputs and sum them together once the 4th data is received. This approach separates the data storage and summation logic:
+
+1. When valid_in is high, the new data_in is shifted into a 4-element register array.
+2. A count increments with each valid input until it reaches 4.
+3. When count == 4, the module sums all 4 stored inputs simultaneously using a combinational adder and outputs the result on data_out with valid_out asserted for one cycle.
+4. After output, count resets to 0 for the next batch.
+5. Using this method, the additions happen combinationally only once every 4 valid inputs instead of incrementally accumulating every cycle, potentially easing the critical path.
+6. The 10-bit width for data_out is preserved to accommodate the max sum.

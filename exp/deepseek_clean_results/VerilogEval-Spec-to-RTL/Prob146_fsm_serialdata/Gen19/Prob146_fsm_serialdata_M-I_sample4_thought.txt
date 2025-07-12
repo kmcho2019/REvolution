@@ -1,0 +1,21 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. Performance:
+- Change shift direction to left-shift to reduce critical path
+- Register next_state logic to break timing paths
+- Add pipeline stage for the shift operation
+
+2. Power:
+- Add enable signals to reduce unnecessary switching
+- Make done signal a one-cycle pulse instead of maintained high
+- Only update shift register when in RECEIVE state
+
+3. Area:
+- Use one-hot encoding for FSM states (better for synthesis)
+- Remove ERROR state by handling it in IDLE
+- Optimize bit counter to 2 bits (since we count 0-7)
+
+The improved FSM will have these states:
+- IDLE: Wait for start bit
+- RECEIVE: Shift in 8 data bits (MSB first now)
+- STOP: Check stop bit and output data

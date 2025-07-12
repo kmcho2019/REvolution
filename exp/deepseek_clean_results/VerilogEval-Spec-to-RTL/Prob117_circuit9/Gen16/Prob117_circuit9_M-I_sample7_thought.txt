@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Timing Optimization: The negative WNS (-0.23ns) suggests timing issues in the counter logic. We'll:
+   - Pre-compute the next counter value in a separate combinational block
+   - Register the output to break the critical path
+2. Power Optimization: Add clock gating when 'a' is high since the counter remains static
+3. Area Optimization: Simplify the wrap-around logic using bitwise operations instead of comparison
+4. Gray Code Implementation: Reduce power consumption by minimizing bit transitions during counting
+
+Key Changes:
+- Split combinational and sequential logic
+- Implement clock gating
+- Use Gray code for counter state
+- Optimized wrap-around logic

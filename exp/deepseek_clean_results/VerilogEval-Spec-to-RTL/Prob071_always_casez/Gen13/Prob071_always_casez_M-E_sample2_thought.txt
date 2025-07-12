@@ -1,0 +1,12 @@
+Here's a novel approach using a logarithmic priority encoder that reduces the critical path by using parallel comparisons and a binary tree structure:
+
+1. Instead of sequential checking, we'll use parallel comparators to detect the first '1' in groups
+2. The design uses a binary tree structure to hierarchically determine the position
+3. First level: Divide the 8 bits into 4 pairs (bits 0-1, 2-3, etc.)
+4. Second level: For each pair that has at least one '1', determine which bit is first
+5. Third level: Select the lowest pair that has a '1'
+6. This approach reduces the critical path to log2(8) = 3 levels of logic
+7. The output is constructed by combining the pair selection with the bit selection within the pair
+8. Special case for all zeros is handled by the initial OR reduction
+
+This method provides better timing characteristics for larger encoders and is more scalable.

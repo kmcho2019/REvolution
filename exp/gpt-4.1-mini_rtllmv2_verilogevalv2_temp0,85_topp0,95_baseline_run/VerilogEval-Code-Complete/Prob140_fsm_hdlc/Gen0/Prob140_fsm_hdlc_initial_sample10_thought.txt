@@ -1,9 +1,0 @@
-Design a Moore FSM that counts consecutive ones after a leading zero. The FSM starts assuming the previous input was 0. States represent the count of consecutive ones seen (from 0 to 6). On input zero, reset count to 0. On input one, increment count.
-
-- At count 5 and input 0: we have 0111110 (5 ones then zero) -> discard bit (disc=1).
-- At count 6 and input 0: we have 01111110 (6 ones then zero) -> flag=1.
-- At count 6 and input 1: error state (7 or more ones) -> err=1.
-
-Outputs are registered and asserted for one cycle on the clock after the condition is detected. We'll use one-hot or encoded states for counts 0 to 6 plus error state. On reset, start at count 0 (previous bit zero). The outputs disc, flag, err are assigned in the always block based on the next state.
-
-Implementation uses synchronous reset, registers current state on clk edge, outputs depend on current state.

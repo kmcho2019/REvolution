@@ -1,0 +1,9 @@
+To improve performance, power, and area, I will compute the feedback signal combinationally once before the clocked process. Then I'll update the entire register with a single non-blocking assignment using a shift-right operation combined with the feedback at the MSB. This reduces the dependency chain and logic levels, minimizing the critical path delay.
+
+This approach avoids multiple non-blocking assignments to individual bits dependent on each other within the same always block, reducing complexity and improving timing.
+
+The taps at bit positions 5 and 3 correspond to q[4] and q[2]. The feedback is q[0] XOR q[2] XOR q[4]. On each clock cycle, the register shifts right, with the new MSB as the feedback.
+
+Synchronous active-high reset sets the register to 1 (5'b00001).
+
+This method is a classic Galois LFSR implementation with a clean feedback and shift logic, expected to improve performance and slightly reduce power and area.

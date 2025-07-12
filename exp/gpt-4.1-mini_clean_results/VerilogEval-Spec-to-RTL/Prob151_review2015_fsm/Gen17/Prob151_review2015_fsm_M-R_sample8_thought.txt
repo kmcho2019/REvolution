@@ -1,0 +1,9 @@
+Refactor the FSM by separating the state register update, next-state logic, and output logic more distinctly, and implement outputs using `assign` statements instead of always blocks to clearly reflect a Moore machine style.
+
+Use a `case` statement for next state combinational logic, but move output generation outside always blocks into continuous assignments driven by the current state.
+
+This style emphasizes combinational outputs and a synchronous state register update, making output logic easier to optimize and analyze.
+
+Keep the shift counter logic synchronous but separate from FSM state register, controlled by an enable signal derived from the FSM state.
+
+This approach improves code clarity and synthesis friendliness by cleanly separating combinational and sequential logic and using explicit continuous assignments for outputs.

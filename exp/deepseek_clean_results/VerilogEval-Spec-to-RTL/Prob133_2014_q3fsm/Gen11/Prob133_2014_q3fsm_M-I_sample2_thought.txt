@@ -1,0 +1,18 @@
+Optimization Strategy:
+1. Critical Path Optimization:
+   - Pipeline the ones_count calculation by registering intermediate results
+   - Move eval_now generation to previous cycle to break timing dependency
+
+2. Power Reduction:
+   - Gate the w_history updates only when needed (state B and not reset)
+   - Only calculate ones_count when evaluation is imminent (next cycle)
+
+3. Area Optimization:
+   - Replace 3-bit w_history with 2-bit rolling sum to count '1's
+   - Use one-hot encoding for pos_cnt to simplify window tracking logic
+
+Key Improvements:
+- Reduced critical path by registering intermediate results
+- Lower power consumption through conditional updates
+- Slightly reduced area by optimizing storage
+- Maintained same functionality with better timing characteristics

@@ -1,0 +1,13 @@
+To improve the given 16-bit unsigned multiplier based on shift and accumulate:
+
+- Introduce a single accumulator register `yout_r` for product.
+- Load multiplicand and multiplier into registers at the start.
+- Use a shift count register `i` running from 0 to 16 to control operation.
+- Instead of shifting `areg` right and `breg` left every cycle, keep `areg` fixed and shift `breg` only in accumulation to reduce toggling.
+- At each cycle (i from 0 to 15), check if the i-th bit of `areg` is set; if yes, add `breg` shifted left by i to the accumulator.
+- This avoids shifting registers every clock cycle, reducing switching power.
+- Maintain FSM with IDLE, RUNNING, DONE states for clarity and precise control.
+- Use clock enable signals to minimize switching.
+- Generate `done` flag as registered signal when count reaches 16.
+- All registers use non-blocking assignments.
+- This approach balances low toggling, clear control, and minimal critical path delay.

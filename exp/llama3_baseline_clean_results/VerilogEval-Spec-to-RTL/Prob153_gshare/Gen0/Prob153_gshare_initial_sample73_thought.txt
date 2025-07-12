@@ -1,0 +1,7 @@
+To implement the gshare branch predictor, we first need to define the module TopModule with the specified interface. We'll use a 7-bit global branch history register to store the branch history. The branch predictor will have two main functions: prediction and training.
+
+For prediction, we'll use the predict_valid signal to determine when to make a prediction. We'll hash the pc and global branch history using xor to get a 7-bit index into the pattern history table (PHT). The PHT is a 128-entry table of two-bit saturating counters. We'll use the PHT entry to determine the predicted branch direction.
+
+For training, we'll use the train_valid signal to determine when to update the PHT. We'll update the PHT entry based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, we'll also recover the branch history register to the state immediately after the mispredicting branch completes execution.
+
+We'll use an asynchronous active-high reset to reset the module. We'll also make sure that all sequential logic is triggered on the positive edge of the clock.

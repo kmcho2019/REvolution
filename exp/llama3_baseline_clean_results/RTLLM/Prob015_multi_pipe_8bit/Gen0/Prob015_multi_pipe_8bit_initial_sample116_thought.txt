@@ -1,0 +1,15 @@
+To design an unsigned 8-bit multiplier using pipelining, we will create a module called `multi_pipe_8bit`. This module will take in two 8-bit numbers, `mul_a` and `mul_b`, and output their product as a 16-bit number, `mul_out`. We will utilize a clock signal `clk`, an active-low reset signal `rst_n`, and an input enable signal `mul_en_in` to control the multiplication operation. The module will also provide an output enable signal `mul_en_out` to indicate when the multiplication result is valid.
+
+We will break down the multiplication process into several stages: input control, partial product generation, partial sum calculation, and final product calculation. Each stage will be synchronized with the clock signal, allowing for pipelined processing and improving the overall performance of the multiplier.
+
+For the input control stage, we will sample the input enable signal `mul_en_in` and store it in a register `mul_en_out_reg`. The output enable signal `mul_en_out` will be derived from the most significant bit of `mul_en_out_reg`.
+
+The input registers `mul_a_reg` and `mul_b_reg` will store the input multiplicand and multiplier, respectively. These registers will only be updated when the input enable signal is active.
+
+For partial product generation, we will perform bitwise operations between the multiplicand and the individual bits of the multiplier. The partial products will be stored in a set of wires, `temp`.
+
+The partial sum calculation stage will perform addition operations on the partial products to calculate partial sums. These partial sums will be stored in a set of registers, `sum`.
+
+Finally, the final product calculation stage will sum up all the partial sums to obtain the final product, which will be stored in a register `mul_out_reg`.
+
+The output assignment will be based on the output enable signal and the value in `mul_out_reg`. If the output enable signal is active, the value in `mul_out_reg` will be assigned to `mul_out`. Otherwise, `mul_out` will be set to 0.

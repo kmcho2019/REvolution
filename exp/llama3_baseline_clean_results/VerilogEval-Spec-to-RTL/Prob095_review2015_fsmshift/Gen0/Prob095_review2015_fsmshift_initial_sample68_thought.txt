@@ -1,0 +1,5 @@
+To solve this problem, we can design a finite state machine (FSM) that has two main states: idle and shifting. When the FSM is in the idle state, it constantly checks for the reset signal. If the reset signal is high, it transitions to the shifting state and starts a counter to keep track of the number of clock cycles. Once the counter reaches 4, it transitions back to the idle state but keeps the shift_ena signal low. The shift_ena signal is asserted high when the FSM is in the shifting state and deasserted low when the counter reaches 4.
+
+However, in this case, since we do not have any specific "proper bit pattern" to detect as mentioned, we'll consider the reset as the trigger for the shift operation. When reset is asserted, the module will enable the shift register for exactly 4 clock cycles and then keep it disabled until the next reset.
+
+We can implement this using a counter and a state machine in Verilog.

@@ -1,0 +1,11 @@
+To optimize the design for better PPA metrics while maintaining correctness:
+
+1. **Separate next-state and output logic**: Breaking the combined logic into separate always blocks allows better synthesis optimization and potentially shorter critical paths.
+
+2. **Direct computation of Y0**: Since only Y[0] is needed as output, we can compute just this bit instead of the full 3-bit next state vector, saving area.
+
+3. **Optimized case structure**: Using a case statement instead of nested ternary operators improves readability and may help synthesis tools optimize better.
+
+4. **Clock gating consideration**: While not implemented here (as it's combinational logic), the separation makes it easier to add clock gating in a sequential version.
+
+5. **Minimize unnecessary computations**: Only compute what's needed for the outputs (z and Y0) based on current state and input x.

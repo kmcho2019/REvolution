@@ -1,0 +1,20 @@
+Here's the corrected approach addressing all feedback points:
+
+1. **Level Encoding Fix**: Reverse the priority encoder logic to properly represent water levels:
+   - Above s[2] (all sensors on) = highest level
+   - Below s[0] (no sensors) = lowest level
+   - Intermediate levels in between
+
+2. **Output Logic Correction**: Implement exact output patterns from the specification table:
+   - fr0, fr1, fr2 should follow the nominal flow rates precisely
+   - All outputs active when below s[0] (reset state)
+
+3. **Supplemental Flow Fix**: dfr should activate when water level is rising (current > previous)
+
+4. **Reset Implementation**: Ensure reset forces all outputs active (fr2, fr1, fr0, dfr = 1) and sets history to lowest level
+
+Key changes:
+- Correct level encoding matches physical sensor arrangement
+- Precise output logic implementing the specification table
+- Proper rising edge detection for dfr
+- Reset fully initializes system to specified state

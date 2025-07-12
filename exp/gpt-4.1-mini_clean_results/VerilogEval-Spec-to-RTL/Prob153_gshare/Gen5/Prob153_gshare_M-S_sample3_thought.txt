@@ -1,0 +1,17 @@
+Implement the gshare branch predictor with a simple synchronous RAM for the PHT and a single global history register (GHR). 
+
+Key simplifications and behaviors:
+- PHT is a 128x2-bit register array read synchronously on the clock.
+- Use a pipeline register to hold the prediction outputs combinationally before clocking, ensuring the predictor's output uses the PHT contents and GHR state as they are before any updates.
+- Prediction is done by reading the PHT entry indexed by (predict_pc ^ GHR) from the previous cycle.
+- On each clock edge:
+  - If train_valid is asserted:
+    - Update the PHT entry indexed by (train_pc ^ train_history) by saturating the counter with train_taken.
+    - If train_mispredicted, restore GHR to train_history (flush).
+    - Else if no misprediction and predict_valid was asserted last cycle, update GHR with the predicted taken bit from prediction made last cycle.
+  - Else if no train_valid but predict_valid was asserted last cycle, update GHR with predicted taken bit.
+- This approach cleanly separates PHT updates and predictions by pipeline stage, avoiding combinational read-write conflicts.
+- Use asynchronous reset to initialize PHT entries to weakly taken (2'b10) and GHR to zero.
+- Output predict_taken and predict_history registered values, reflecting the state used at prediction time.
+- Training always takes precedence over prediction for updating GHR.
+- The delayed prediction output corresponds to the inputs from previous cycle, fitting the spec that predictions see the PHT state before training updates.

@@ -1,0 +1,16 @@
+To fix the issues, declare the next-state and carry signals as local variables (reg) inside a combinational always block or simply as variables inside the sequential block without re-declaration errors. Since Verilog doesn't allow reg declarations inside an always block, we can use intermediate wire variables or separate the combinational next-state calculation into a combinational always block or use variables inside a clocked block without re-declaring types.
+
+In this context, since all logic is synchronous, best practice is to declare the next-state variables as "reg" outside the always block and assign them inside. However, that can be verbose and less readable.
+
+Alternatively, simply compute the carry signals as wires using the current register values (combinational) before the clocked block, then in the clocked block update the digits and outputs using these wires.
+
+Also, update the output `q` using the newly computed digit values, not the previous register values, to avoid 1-cycle latency.
+
+Enable signals `ena` represent when each upper digit is incremented: assign them synchronously as per the carry-out signals computed.
+
+Overall, the improvements are:
+- Declare carry signals as wire or logic combinational outside the clocked block.
+- Use the combinational carry signals inside the sequential block to update digits and `ena`.
+- Update `q` from updated digit values to reflect current count.
+- Keep all sequential registers updated only inside the clocked always block with nonblocking assignments (`<=`).
+This approach yields a clean, synthesizable, and functionally correct 4-digit BCD counter with proper enable outputs.

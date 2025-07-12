@@ -1,0 +1,19 @@
+Novel Architecture Idea:
+1. Hierarchical State Grouping:
+   - Group states into 3 categories: Pattern Detection (S, S1, S11, S110), Shifting (B0-B3), and Control (Count, Wait)
+   - Implement separate transition logic for each group to reduce fan-in
+
+2. Output Encoding Optimization:
+   - Recognize that outputs are mutually exclusive (except shift_ena)
+   - Use priority encoding for outputs to minimize logic depth
+
+3. State Transition Optimization:
+   - Implement next-state signals as hierarchical conditions
+   - Use don't-care optimizations where possible
+   - Leverage state grouping to share common terms
+
+Key Innovations:
+- Three-tiered state grouping reduces combinatorial complexity
+- Priority-based output encoding minimizes critical paths
+- Shared term extraction reduces redundant logic
+- Clear separation of concerns in the implementation

@@ -1,0 +1,7 @@
+Refactor the design by splitting the counter and toggle logic into two separate always blocks to improve modularity and clarity. The first always block handles counting and reset, incrementing count only when enabled, while the second always block manages toggling the output wave_out on count rollover. This structure separates concerns—counter logic versus output toggle—making the design more readable and potentially easier to analyze or modify.
+
+Additionally, compute the toggle event as a register signal that triggers the wave_out toggle, avoiding combinational signals tied to outputs and improving synchronous timing paths.
+
+Keep the synchronous reset active-high and non-blocking assignments consistent. Maintain the gating behavior to prevent toggling and counting when freq is zero, preserving output stability and reducing unnecessary toggling.
+
+This approach demonstrates how to partition the logic and control signals in a sequential design without changing the functionality.

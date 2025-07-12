@@ -1,0 +1,9 @@
+To refactor while keeping the same core behavior, we can implement the next_state logic and output logic using continuous assign statements instead of an always @(*) combinational block. The state flip-flop will still be clocked on the positive edge.
+
+We define next_state as a wire computed by combinational logic of inputs a, b, and current state. Then on each positive clock edge, the state register updates to next_state.
+
+For q, also use continuous assignment matching the original logic: q = state & ~(a & b).
+
+This refactoring avoids an explicit always @(*) block for next_state, instead using combinational assignments, making the dataflow clearer and separating combinational and sequential parts. The initialization of state is kept in an initial block.
+
+This approach retains the original circuit logic but with a more dataflow style coding, which might be more intuitive and easier to verify.

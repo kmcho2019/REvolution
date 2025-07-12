@@ -1,0 +1,11 @@
+To improve the existing solution, we should focus on optimizing the design for better PPA metrics without compromising functionality. The current implementation uses a straightforward approach with 8 D flip-flops, each triggered by the negative edge of the clock and having an active high synchronous reset to a specific value (0x34). 
+
+Given the PPA metrics, the power consumption is relatively low, but there is no clear indication of timing issues. The area is reasonable for 8 DFFs. 
+
+Our improvement strategy will involve exploring optimizations that could potentially reduce power consumption without affecting area or timing negatively. We will also consider if there are any opportunities to improve the timing (performance) or reduce the area without compromising power or functionality.
+
+One potential optimization is to ensure that the reset logic is as efficient as possible, minimizing unnecessary switching activity. Since the reset value is a constant (0x34), we can directly assign this value to the DFFs during reset, which is already done in the existing implementation.
+
+Another consideration is the use of a single always block for all 8 DFFs, which is area-efficient. We will maintain this approach as it does not seem to negatively impact the design's performance or power consumption.
+
+Given that the current design seems efficient, and the PPA metrics do not indicate significant areas for improvement, our primary goal will be to ensure that the design remains optimal in terms of power, performance, and area while maintaining its functionality.

@@ -1,0 +1,13 @@
+The current solution uses a LUT with 8 entries of 16 bits each, matching the waveform data exactly. While already compact and fast, we can optimize area and power slightly by exploiting a common pattern in the data. Observing the outputs, the lower byte (bits 7:0) changes more than the upper byte (bits 15:8). Also, some outputs repeat multiple times, indicating potential for encoding or use of separate LUTs for upper and lower bytes.
+
+One effective improvement is to split the 16-bit output into two 8-bit LUTs: one for the high byte and one for the low byte. This reduces LUT width and might improve synthesis efficiency. Additionally, since the LUT values are constants, using `localparam` arrays (instead of `wire` arrays) prevents unnecessary registers or logic being inferred, potentially lowering power and area.
+
+Further, if synthesis supports it, declaring the LUTs as `localparam` arrays and using `case` statements could yield better mapped combinational logic or ROMs with fewer bits toggling.
+
+Hence, the strategy:
+- Split 16-bit LUT into two 8-bit `localparam` arrays for high and low bytes.
+- Use a combinational `always_comb` block or continuous assign with concatenation to form output.
+- Use `case` statements indexed by `a` to explicitly assign outputs to maximize synthesis optimization.
+- This may improve area and power slightly by simplifying logic and avoiding vector LUTs.
+
+This approach balances clarity, ease of synthesis, and PPA improvements while preserving correctness and functionality.

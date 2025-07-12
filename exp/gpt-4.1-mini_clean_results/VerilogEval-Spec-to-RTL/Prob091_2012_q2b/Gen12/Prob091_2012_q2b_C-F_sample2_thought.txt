@@ -1,0 +1,11 @@
+Fuse the explicit modularity and clear gate instantiations from Example 1 with the compact and optimized logic expressions from Example 2, aiming for a balanced, readable, and efficient design:
+
+- Keep localparam definitions for state readability from Example 1.
+- Use direct assign statements for combinational logic rather than small gate modules to reduce area and power.
+- Implement Y1 as y[A] & w directly, which matches both examples and is minimal.
+- Implement Y3 as (~w) & ~(y[A] | y[D])—an optimized form from Example 2 that logically covers all transitions to D from B, C, E, and F, reducing OR inputs from 4 to 2, lowering switching and area.
+- Use an explicit wire for inverted w for clarity.
+- Integrate all combinational logic inside TopModule for simplicity since logic is small.
+- This fusion maintains modular clarity, reduces gate count and fan-in, and optimizes power and area without sacrificing readability or correctness.
+
+This approach yields a design that is clean, easy to understand, synthesis-friendly, and minimal in power and area, while preserving explicit FSM state naming and the exact logic from the problem statement.

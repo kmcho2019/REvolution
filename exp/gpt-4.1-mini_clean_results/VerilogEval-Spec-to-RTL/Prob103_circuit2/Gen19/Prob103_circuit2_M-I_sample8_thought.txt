@@ -1,0 +1,5 @@
+The existing design computes the even parity function using a four-input XOR followed by a negation, which is minimal and optimal in gate count and delay. However, we can slightly optimize power and area by factoring the XOR into two two-input XORs, which may help synthesis tools optimize further and potentially reduce switching activity by localizing transitions.
+
+Specifically, compute an intermediate wire as xor_ab = a ^ b, then xor_cd = c ^ d, and finally q = ~(xor_ab ^ xor_cd). This modular approach clarifies the structure and can improve optimization for some synthesis tools, possibly reducing glitching and dynamic power slightly while keeping the same logical function and timing.
+
+Hence, the final logic remains q = NOT(a XOR b XOR c XOR d), but implemented with two levels of XOR for better synthesis friendliness.

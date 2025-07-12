@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor by leveraging direct Verilog arithmetic operators for subtraction instead of implementing a custom CLA. Use a continuous assignment for the subtraction result (`assign result = A - B;`), which synthesizers will internally optimize efficiently, often mapping to a hardware adder/subtractor or optimized macro.
+
+For overflow detection, keep the same sign-bit logic for clarity and minimalism. Implement the overflow detection logic in a separate always_comb block for readability or as a continuous assign statement.
+
+This simplifies the design by removing the explicit carry-lookahead adder module, reducing code size and enhancing readability while relying on synthesis tools for efficient implementation. The functional behavior and overflow conditions remain exactly the same.
+
+This approach matches typical high-level Verilog coding styles for arithmetic operations and makes the code more concise without changing the core arithmetic logic.

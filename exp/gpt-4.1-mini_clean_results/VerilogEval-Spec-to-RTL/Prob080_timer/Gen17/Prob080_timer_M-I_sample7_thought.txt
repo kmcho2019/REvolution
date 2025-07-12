@@ -1,0 +1,5 @@
+To optimize the design for better power and timing performance, I will add a clock enable signal that disables counting when the counter is zero and load is low. This gating prevents unnecessary register toggling and combinational activity when counting is idle, reducing dynamic power. The terminal count signal (tc) is derived directly from the counter. The decrement logic remains combinational, but the register only updates when enabled (load or counting), which can improve timing by reducing switching activity on the counter register inputs and outputs.
+
+This approach uses a single D flip-flop register as required but adds a clock enable style control in the always block. The code is still simple and clear while helping power and timing by reducing toggling. Area overhead is minimal since no actual clock gating cell is implemented; it is synthesized as enable logic in the register.
+
+Overall, this is a minimal change targeting power and timing improvement with no functional change.

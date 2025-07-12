@@ -1,0 +1,10 @@
+The problem requires implementing a finite state machine (FSM) with 4 states (A, B, C, D) that acts as a priority arbiter for three devices. The FSM should:
+1. Stay in state A when no requests are present
+2. Transition to state B when r[0] is 1 (highest priority)
+3. Transition to state C when r[1] is 1 and r[0] is 0 (medium priority)
+4. Transition to state D when r[2] is 1 and both r[0] and r[1] are 0 (lowest priority)
+5. Maintain current state while the granted device keeps its request high
+6. Return to state A when the granted device drops its request
+7. Output g[i] should be 1 when in corresponding state (B, C, D)
+
+I'll use binary encoding for states (A=00, B=01, C=10, D=11) and implement with two always blocks (one for state transition, one for state storage) and continuous assignments for outputs.

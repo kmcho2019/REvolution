@@ -1,0 +1,10 @@
+Simplify the comparator by avoiding explicit borrow generate/propagate signals and balanced trees. Instead, directly compare bits from MSB to LSB using combinational logic to determine greater, equal, or less status.
+
+Approach:
+- Generate per-bit equality signals.
+- Use a chain of comparisons from MSB to LSB:
+  - If at any bit A[i] > B[i], then A > B.
+  - If at any bit A[i] < B[i], then A < B.
+  - If all bits equal, then A == B.
+- This logic is straightforward, easy to understand, and synthesizes into efficient combinational logic for a small 4-bit comparator.
+- Outputs remain mutually exclusive by the chain priority.

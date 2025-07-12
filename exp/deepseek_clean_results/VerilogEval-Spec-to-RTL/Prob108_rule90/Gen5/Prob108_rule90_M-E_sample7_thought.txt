@@ -1,0 +1,14 @@
+Novel architectural approach using shift registers and parallel XOR:
+1. Instead of calculating each cell's next state individually, use shift registers to align neighbors
+2. Create left-shifted and right-shifted versions of the current state
+3. Perform parallel XOR between these shifted versions to compute next state
+4. Boundary conditions handled by padding with zeros during shifting
+5. Uses vector operations for better synthesis and timing
+6. Eliminates generate blocks for cleaner implementation
+7. Maintains same Rule 90 behavior but with more efficient implementation
+
+Key advantages:
+- Single vector operation replaces hundreds of individual XOR gates
+- Shift operations are highly optimized in synthesis tools
+- Clear data flow from current state to next state
+- Easier to pipeline if needed for higher performance

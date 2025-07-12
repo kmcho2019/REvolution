@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. **State Representation**: 
+   - Since this is a one-hot FSM with only two states, we can represent it with a single bit (state_A), as state_B is always ~state_A.
+   
+2. **State Transition Logic**:
+   - The next state depends only on current state and input x.
+   - When in state_A, stay if x=0, transition if x=1.
+   - Once in state_B, stay there forever (no need for sticky logic).
+
+3. **Output Logic**:
+   - z = x in state_A, ~x in state_B (same as original).
+   - This can be implemented as a simple XOR between x and state_A.
+
+Key Improvements:
+- Eliminated redundant state_B register by using single-bit state representation
+- Simplified state transition logic to a single condition
+- Maintained same output behavior with simpler logic
+- Still properly handles asynchronous reset

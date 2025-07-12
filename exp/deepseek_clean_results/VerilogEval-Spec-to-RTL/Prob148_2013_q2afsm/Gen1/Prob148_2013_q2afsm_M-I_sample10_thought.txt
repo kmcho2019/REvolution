@@ -1,0 +1,19 @@
+To optimize the FSM implementation for better PPA (Power, Performance, Area), I'll make the following improvements:
+
+1. **Performance Optimization**:
+   - Register the input signals to break timing paths and improve clock-to-q timing
+   - Use binary state encoding (only 2 bits needed for 4 states) which is more area-efficient than one-hot for small FSMs
+
+2. **Power Optimization**:
+   - Gate the output assignments to only update when the state changes
+   - Use registered outputs to reduce glitching
+
+3. **Area Optimization**:
+   - Remove redundant default case (all states are covered)
+   - Use simpler binary encoding instead of one-hot
+   - Combine output logic into state transition block to reduce routing
+
+The improved design will:
+- Maintain the same functionality but with better timing closure
+- Reduce power consumption by minimizing unnecessary switching
+- Potentially reduce area through more efficient encoding and logic sharing

@@ -1,0 +1,11 @@
+Novel Architectural Idea:
+1. Dual-Register Approach: Maintain two separate history registers - one for predictions (prediction_history) and one for training (training_history). This eliminates the need for a large multiplexer and simplifies the critical path.
+2. Shadow Register for Mispredictions: Use the training_history register as a shadow copy that only updates on mispredictions, reducing switching activity.
+3. Parallel Update Logic: Process prediction updates and misprediction recovery in parallel rather than serially, improving timing.
+4. Early Mux Resolution: Resolve the output mux selection (between prediction and training histories) early in the cycle based on train_mispredicted.
+
+Key Benefits:
+- Reduced critical path by separating prediction and misprediction paths
+- Lower power consumption due to reduced switching in the training_history register
+- Simpler logic for each update path
+- Maintains same functionality with better timing characteristics

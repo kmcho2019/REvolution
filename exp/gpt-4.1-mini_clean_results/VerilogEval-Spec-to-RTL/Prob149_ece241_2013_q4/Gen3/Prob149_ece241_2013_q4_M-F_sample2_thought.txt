@@ -1,0 +1,7 @@
+To fix the design, consolidate all sequential state updates and output assignments into a single clocked always block to avoid multiple drivers and conflicting assignments. On each clock, synchronously register the sensor inputs, decode the water level exactly as specified (only four exact sensor patterns), and update `prev_level` and `curr_level` registers properly using non-blocking assignments.
+
+Detect `level_increased` by comparing the newly decoded `curr_level` with the stored `prev_level` within the same clock cycle after both are updated. Then drive outputs in the same always block based on `curr_level` and `level_increased`.
+
+On reset, synchronously set the state to the BELOW_S0 level and assert all flow outputs as required.
+
+This approach ensures all state and output signals have a single driver, maintain synchronous behavior, and produce glitch-free outputs aligned with the problem specification.

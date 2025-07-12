@@ -1,0 +1,7 @@
+Fuse the strengths of both examples by implementing a clean, Moore FSM with standard Verilog syntax using localparam for state encoding to ensure compatibility and clarity. Keep pattern detection embedded in sequential states for immediate, overlap-capable detection of "1101". Use a 2-bit shift counter that increments only in the SHIFT state and resets otherwise to minimize toggling and reduce power.
+
+Separate sequential logic (state and counter updates) and combinational logic (next state and outputs) clearly to improve timing and avoid race conditions. Drive outputs combinationally from the current state (Moore FSM), which yields simpler timing and clear signal generation.
+
+To reduce toggling further, register outputs to avoid glitching and potentially reduce switching noise in downstream logic. Use non-blocking assignments consistently in sequential logic for synthesis safety and readability.
+
+This fusion yields a robust, easy-to-understand FSM that is synthesizable and portable, minimizing area and power while maintaining clear timing paths and correct behavior.

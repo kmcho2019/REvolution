@@ -1,0 +1,12 @@
+Refactor the FSM by encoding the states using one-hot encoding instead of binary state encoding. This means each state is represented by a separate flip-flop, which can reduce the combinational decoding logic complexity and potentially improve timing.
+
+Implement the FSM with three always blocks:
+- One synchronous block updating the one-hot state registers with synchronous reset.
+- One combinational block for next-state logic computed from current state bits and input.
+- One combinational block for output logic.
+
+The start_shifting output will be asserted once the detection state is reached, and it remains high (sticky) until reset by maintaining the detection state's flip-flop set.
+
+Use bitwise logic in next state assignments to minimize decoding complexity.
+
+This approach trades off a few more flip-flops for simpler combinational logic and clean one-hot style FSM design.

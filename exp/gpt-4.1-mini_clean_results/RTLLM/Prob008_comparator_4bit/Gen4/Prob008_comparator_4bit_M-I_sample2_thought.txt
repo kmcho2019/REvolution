@@ -1,0 +1,21 @@
+To optimize the given 4-bit comparator for better performance, power, and area, the following improvements are made:
+
+1. Equality Check Simplification:
+   - Replace the expression `eq_bits = &((A ^ B) == 4'b0000)` with a more direct and efficient bitwise XNOR reduction:
+     `eq_bits = &(~(A ^ B))`
+   - This reduces logic depth and gate count for equality detection.
+
+2. Borrow Logic Optimization:
+   - Rewrite borrow logic using the standard full-subtractor borrow generation formula for clarity and potential synthesis optimization:
+     `borrow_out = (~A & B) | ((~(A ^ B)) & borrow_in)`
+   - This eliminates extra XOR gates and redundant inversion, allowing synthesis tools to optimize better.
+
+3. Remove the explicit computation of diff bits, since the subtraction result is not used directly to generate outputs, only borrow chain is needed.
+
+4. Maintain generate loop for scalability and clean design.
+
+5. Ensure outputs are mutually exclusive by explicit logic.
+
+These changes simplify the logic, reduce gate count, and potentially improve timing by minimizing logic depth especially in equality detection. The borrow chain remains ripple style due to the subtraction nature, but logic simplification can yield better power and area.
+
+Overall, the design remains combinational and readable, with a cleaner equality check and borrow generation logic.

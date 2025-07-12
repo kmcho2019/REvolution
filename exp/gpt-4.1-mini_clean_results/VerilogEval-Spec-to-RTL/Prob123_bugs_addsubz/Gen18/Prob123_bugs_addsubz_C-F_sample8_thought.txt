@@ -1,0 +1,11 @@
+Fuse the two solutions by leveraging the efficient behavioral arithmetic operators for the adder-subtractor operation combined with explicit, clear zero detection and fully combinational logic in one always_comb block. This approach improves performance and area by allowing synthesis tools to implement optimized carry-lookahead or other efficient adders internally, instead of manually coding ripple carry logic. The zero flag is computed correctly and unconditionally by reduction NOR, avoiding latch inference and fixing the original bug.
+
+Key fusion points:
+- Use a single always_comb block with blocking assignments for clarity, explicitness, and synthesis friendliness.
+- Use a conditional operator (`do_sub ? a - b : a + b`) to select operation, enabling synthesis to generate an efficient adder-subtractor with optimized carry logic.
+- Calculate the zero flag with reduction NOR of the output to fix incorrect zero flag and avoid latches.
+- Keep outputs as reg driven by combinational logic, ensuring compatibility with original interface and synthesis tools.
+- Avoid redundant variables and loops for better area and potentially better timing.
+- The design remains fully combinational with no implicit latches, and synthesis tools can leverage built-in optimizations for the arithmetic operation.
+
+This fusion achieves the correctness and clarity of Example 1 and 2’s zero flag and interface handling, while benefiting from the synthesis tool's capability to generate the best underlying hardware, improving performance and area metrics while maintaining low power through reduced switching logic.

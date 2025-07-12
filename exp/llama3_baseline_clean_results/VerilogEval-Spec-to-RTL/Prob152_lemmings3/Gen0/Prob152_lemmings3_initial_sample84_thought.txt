@@ -1,0 +1,24 @@
+To model the behavior of a Lemming using a finite state machine, we will define several states that represent the different actions of the Lemming: walking left, walking right, falling, and digging. We will use a Moore state machine, where the outputs are dependent only on the current state. The next state will be determined based on the current state and the inputs.
+
+The states we will define are:
+- IDLE_LEFT: The Lemming is walking left.
+- IDLE_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+
+We will also define the outputs based on the current state:
+- walk_left: The Lemming is walking left.
+- walk_right: The Lemming is walking right.
+- aaah: The Lemming is falling.
+- digging: The Lemming is digging.
+
+The next state logic will be determined based on the current state and the inputs:
+- If the current state is IDLE_LEFT or IDLE_RIGHT and ground = 0, the next state will be FALLING.
+- If the current state is IDLE_LEFT or IDLE_RIGHT and dig = 1 and ground = 1, the next state will be DIGGING.
+- If the current state is IDLE_LEFT and bump_right = 1, the next state will be IDLE_RIGHT.
+- If the current state is IDLE_RIGHT and bump_left = 1, the next state will be IDLE_LEFT.
+- If the current state is FALLING and ground = 1, the next state will be IDLE_LEFT or IDLE_RIGHT depending on the previous direction.
+- If the current state is DIGGING and ground = 0, the next state will be FALLING.
+- If the current state is DIGGING and ground = 1, the next state will be IDLE_LEFT or IDLE_RIGHT depending on the previous direction.
+
+We will use a 2-bit register to store the current state and a 1-bit register to store the previous direction.

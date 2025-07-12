@@ -1,0 +1,7 @@
+The novel architectural idea for the 12-hour clock design involves utilizing separate counters for hours, minutes, and seconds. The counters will be clocked by a fast-running `clk`, with a pulse on `ena` whenever the clock should increment (i.e., once per second). 
+
+The hours, minutes, and seconds will be represented as separate counters, each with its own wrapping logic. The hours counter will have 12 possible values (01-12), while the minutes and seconds counters will have 60 possible values (00-59). 
+
+To handle the AM/PM logic, a separate variable `am_pm` will be used to keep track of the current AM/PM state. When the hours counter reaches 12, the `am_pm` state will be toggled. 
+
+The reset functionality will be handled by a simple if statement, which will reset all counters and the AM/PM indicator to their initial values when the `reset` signal is high.

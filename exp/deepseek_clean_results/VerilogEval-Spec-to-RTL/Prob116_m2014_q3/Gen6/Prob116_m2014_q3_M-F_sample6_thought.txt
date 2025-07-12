@@ -1,0 +1,27 @@
+1. Correct input mapping understanding:
+   - Input is x[3:0] (4 bits)
+   - Karnaugh map rows represent x[3]x[0] (since x[4] doesn't exist in 4-bit input)
+   - Columns represent x[1]x[2]
+
+2. Reconstruct the correct K-map with proper bit assignments:
+   - Rows: x[3]x[0] (00, 01, 11, 10)
+   - Columns: x[1]x[2] (00, 01, 11, 10)
+   - Output values match the given table
+
+3. Identify all essential 1 outputs:
+   - x[3]x[0]=01 and x[1]x[2]=11 (term: ~x[3] & x[0] & x[1] & x[2])
+   - x[3]x[0]=11 and x[1]x[2]=00 or 01 (term: x[3] & x[0] & ~x[2])
+   - x[3]x[0]=10 and x[1]x[2]=00 or 01 (term: x[3] & ~x[0] & ~x[1])
+
+4. Identify all essential 0 outputs (to avoid):
+   - x[3]x[0]=00 and x[1]x[2]=01
+   - x[3]x[0]=01 and x[1]x[2]=00 or 10
+   - x[3]x[0]=10 and x[1]x[2]=11
+
+5. Optimized logic implementation:
+   - f = (~x[3] & x[0] & x[1] & x[2]) |  // 01-11 case
+         (x[3] & x[0] & ~x[2]) |        // 11-01 case
+         (x[3] & ~x[0] & ~x[1])         // 10-00/01 cases
+   - This covers all required 1 outputs while respecting 0 outputs
+   - Uses don't-cares optimally to minimize logic
+   - Correctly maps all bit positions

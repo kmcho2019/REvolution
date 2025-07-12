@@ -1,0 +1,13 @@
+Implement a simplified asynchronous FIFO with parameterizable WIDTH and DEPTH using Gray-coded read/write pointers for synchronization between clock domains.
+
+The design will have:
+- A dual-port RAM submodule with separate clocks for write and read.
+- Write and read pointers as binary counters converted to Gray code.
+- Two-stage synchronizers to safely pass Gray-coded pointers across clock domains.
+- Full and empty detection logic based on Gray code comparison:
+  - FIFO is empty when write and read pointers match.
+  - FIFO is full when write pointer is one step ahead of read pointer with MSB bits inverted.
+- Simple pointer increment logic with write/read enable gated by full/empty signals.
+- Gray code conversion functions directly implemented.
+- All logic contained in a single Verilog file for clarity.
+This simplification removes extra buffering and keeps pointer logic straightforward while maintaining correctness.

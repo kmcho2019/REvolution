@@ -1,0 +1,19 @@
+Simplified approach using edge detection:
+
+1. Single-bit state tracking:
+- Instead of a 3-bit shift register, track just the previous value of data_in
+- This reduces storage requirements while maintaining detection capability
+
+2. Edge detection logic:
+- Detect rising edge (0->1 transition) and store in a flag
+- On next cycle, if we see falling edge (1->0) and flag is set, we have a pulse
+- This reduces comparison logic to simple edge detection
+
+3. Output generation:
+- Output is high only when we detect falling edge with flag set
+- Immediately clear flag after pulse detection
+
+4. Advantages:
+- Uses only 2 flip-flops (prev_data and flag) instead of 3
+- Simpler combinational logic (no 3-bit comparison)
+- Same functionality with reduced hardware

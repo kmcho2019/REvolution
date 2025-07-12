@@ -1,0 +1,31 @@
+I will implement the gshare predictor with a single global history register and a pattern history table (PHT) of 128 2-bit saturating counters. To handle simultaneous prediction and training in the same cycle while respecting priorities, I will do the following:
+
+1. Use one global history register `ghr` representing the speculative history state.
+
+2. On reset, initialize PHT entries to weakly not taken (2'b01) and clear `ghr`.
+
+3. For prediction:
+   - Compute the index by XOR of `predict_pc` and the current `ghr`.
+   - Read the PHT asynchronously.
+   - Output `predict_taken` as the MSB of the saturating counter.
+   - Output `predict_history` as the *current* `ghr` (the speculative history before update).
+   - At the clock edge, if prediction is valid and no training (or training is invalid), update the `ghr` by shifting in the predicted bit.
+
+4. For training:
+   - Compute index by XOR of `train_pc` and `train_history`.
+   - Update the PHT at that index with saturating counter updated by `train_taken`.
+   - If `train_mispredicted` is high:
+     - Recover `ghr` to `train_history` immediately on clock edge (recover global history after misprediction).
+   - Else (correct prediction):
+     - Update `ghr` by shifting in `train_taken`.
+
+5. If both training and prediction valid in the same clock edge:
+   - Training update (including possible recovery) takes precedence.
+   - Prediction does not update `ghr`.
+   - Prediction output uses `ghr` before update, so no conflict.
+   
+6. The PHT reads are asynchronous; prediction reads the PHT before update, so it sees previous state even if training updates the same entry.
+
+This approach avoids maintaining separate committed and speculative histories, simplifying state and making updates atomic and deterministic. The output `predict_history` always reflects the global history that was used for prediction and which the PHT index is computed from.
+
+This design cleanly respects timing and priority requirements and minimizes mismatch risk.

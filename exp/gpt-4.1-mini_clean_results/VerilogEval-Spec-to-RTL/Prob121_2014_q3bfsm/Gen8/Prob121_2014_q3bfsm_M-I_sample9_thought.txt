@@ -1,0 +1,9 @@
+To optimize the FSM for better timing and power, I will convert the state encoding from binary to one-hot. One-hot encoding uses one flip-flop per state, which reduces the complexity of next-state combinational logic, often improving timing at the expense of area. Since the FSM has only five states, the area increase is minimal.
+
+One-hot encoding can reduce switching activity in the combinational next-state logic by eliminating multi-bit comparisons, potentially reducing power. Also, the output logic will be simplified to a direct OR of the one-hot state bits that produce a '1' output.
+
+The synchronous reset will now reset the one-hot state register to the bit corresponding to state S0.
+
+This approach aims to improve timing slack (WNS) and reduce total negative slack (TNS), possibly at a slight area cost. The power may also improve due to simpler combinational logic.
+
+The module interface remains unchanged.

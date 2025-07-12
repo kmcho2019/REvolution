@@ -1,0 +1,10 @@
+To implement the serial 2's complementer Moore state machine, we can use a finite state machine with two states: idle and convert. 
+The machine starts in the idle state and transitions to the convert state when reset is released. 
+It stays in the convert state until reset is asserted again. 
+In the convert state, we accumulate the input bits in a register and then output the inverted bits with a carry bit (if the first bit is 1).
+We use an additional register to store the carry bit.
+When the machine is in the convert state, at each clock cycle, we shift the accumulated bits to the left, add the new input bit to the least significant bit, 
+and if the current bit is 1, we set the carry bit. 
+The output is the most significant bit of the accumulated bits if there's no carry, otherwise, it's the inverted most significant bit.
+We also need to handle the case where the machine is in the idle state and the reset is released, 
+in this case, we start the conversion process by setting the accumulated bits and carry bit to zero.

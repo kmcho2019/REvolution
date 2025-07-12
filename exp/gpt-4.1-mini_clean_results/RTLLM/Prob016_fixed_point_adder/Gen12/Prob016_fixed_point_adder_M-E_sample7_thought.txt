@@ -1,0 +1,18 @@
+Instead of explicitly converting to sign-magnitude form and doing conditional addition or subtraction, use the properties of two's complement fixed-point arithmetic directly:
+
+- Since `a` and `b` are signed fixed-point numbers in two's complement, simply add them using regular two's complement addition.
+- The result naturally fits into N bits representing the correct fixed-point sum with the same Q fractional bits.
+- Handle overflow by saturating the output to the maximum or minimum representable value.
+  
+This approach leverages native two's complement behavior for fixed-point addition, simplifying the design while ensuring correct fixed-point semantics.
+
+The saturation logic detects if overflow occurs by checking the sign bits of operands and result:  
+- If adding two positives yields a negative result, overflow positive → saturate to max positive.
+- If adding two negatives yields a positive result, overflow negative → saturate to max negative.
+- Otherwise, output the sum directly.
+
+This method provides correct fixed-point addition with saturation to avoid wrap-around, preserves Q fractional bits precision, and simplifies hardware (a single adder plus overflow detection and saturation logic).
+
+The internal register `res` stores the intermediate sum before saturation, complying with problem requirements.
+
+This approach is more straightforward, area-efficient, and synthesizable, producing a robust fixed-point adder module.

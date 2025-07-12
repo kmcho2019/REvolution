@@ -1,0 +1,13 @@
+To optimize for better PPA, reduce the combinational complexity of full-width 8-bit shifts by implementing the shifts via concatenations and replications instead of the direct wide '<<' or '>>' operators. This often leads synthesis tools to produce simpler logic (especially for the arithmetic right shift). Also, reorganize the shift selection logic to reduce multiplexing depth by combining amount selection signals efficiently. This lowers critical path delay.
+
+Specifically:
+
+- Left shifts by 1 and 8 bits implemented via concatenation with zeros.
+- Arithmetic right shifts by 1 and 8 bits implemented by concatenation of sign bits and slices of q (instead of '>>' operator).
+- Use one mux selecting shift amount within direction, then one mux selecting direction to minimize mux logic levels.
+- Keep synchronous load and enable logic unchanged.
+- This reduces both area (simpler shift logic, less wiring) and improves timing (fewer mux levels and simpler shift expressions).
+
+Power benefits come from reduced toggling due to simpler logic.
+
+Overall, maintain the original functionality but implement shifts explicitly and optimize multiplexing.

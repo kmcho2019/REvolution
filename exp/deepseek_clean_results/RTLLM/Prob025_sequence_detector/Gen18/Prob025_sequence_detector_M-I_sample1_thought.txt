@@ -1,0 +1,15 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. State Machine Optimization: Replace the shift register with an explicit FSM to reduce area and power. The FSM will only have 5 states (IDLE + 4 sequence states) instead of storing 4 bits.
+
+2. Early Termination: Add logic to reset to IDLE state if an incorrect bit is detected, saving power by avoiding unnecessary state transitions.
+
+3. Output Optimization: Use registered output to improve timing by breaking the combinatorial path.
+
+4. Clock Gating: Add enable logic to prevent state updates when not needed (though not shown in code due to complexity).
+
+The improved design should:
+- Reduce area by eliminating the 4-bit shift register
+- Improve timing by reducing combinatorial path
+- Lower power by minimizing unnecessary state transitions
+- Maintain correct functionality for sequence detection

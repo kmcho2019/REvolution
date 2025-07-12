@@ -1,0 +1,16 @@
+To improve the solution, we need to address the issues identified in the analysis. The correct approach would be to use a counter to keep track of the number of clock cycles after reset and assert the shift_ena signal for exactly 4 cycles. We can achieve this by using a 2-bit counter and a simple conditional statement to control the shift_ena signal.
+
+The improvement strategy involves the following steps:
+
+1. Initialize the counter to 0 when the reset signal is high.
+2. Increment the counter every clock cycle when the reset signal is low and the counter is less than 4.
+3. Assert the shift_ena signal when the counter is between 1 and 4 (inclusive).
+4. Deassert the shift_ena signal when the counter is 0 or greater than 4.
+
+By implementing this strategy, we can ensure that the shift_ena signal is asserted for exactly 4 clock cycles after reset and then remains low until the next reset.
+
+To optimize the design for better PPA metrics, we can use a single always_ff block to combine the counter increment and shift_ena assignment logic. This reduces the number of logic gates and minimizes switching activity.
+
+Additionally, we can use a simple if-else statement to control the shift_ena signal, which is more efficient than using a case statement.
+
+Overall, the improved design provides a correct and efficient solution for controlling the shift register enable signal, while minimizing the number of logic gates and reducing switching activity.

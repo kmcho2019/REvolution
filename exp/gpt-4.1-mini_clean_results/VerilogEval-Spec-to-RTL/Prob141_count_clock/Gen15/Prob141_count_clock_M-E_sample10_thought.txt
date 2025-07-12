@@ -1,0 +1,11 @@
+Implement a hierarchical approach by encoding the entire clock time as a single binary counter representing total seconds elapsed since 12:00 AM, modulo 43200 seconds (12 hours). On every enable pulse (once per second), increment this total_seconds counter.  
+Use combinational logic to convert total_seconds to BCD hours, minutes, and seconds outputs and the PM flag.  
+The conversion includes:  
+- Calculating hours, minutes, and seconds from total_seconds using integer division and modulo operations.  
+- Hours are adjusted to 12-hour format, with hour=0 mapped to 12.  
+- The PM flag is derived from total_seconds being >= 43200/2 (21600 seconds, i.e., after 12 PM).  
+Synchronous reset sets total_seconds to zero (12:00 AM).  
+This single-counter design minimizes sequential logic complexity and branching, reduces toggling to a single register increment, and simplifies timing paths.  
+The combinational BCD conversion ensures outputs are always valid without multi-stage counting and enables straightforward code structure.  
+This approach should improve timing and power by reducing sequential logic overhead and avoids nested counter carry chains.  
+The downside is a slightly heavier combinational conversion, but for a 12-hour clock, this is manageable and can be optimized by synthesis tools.

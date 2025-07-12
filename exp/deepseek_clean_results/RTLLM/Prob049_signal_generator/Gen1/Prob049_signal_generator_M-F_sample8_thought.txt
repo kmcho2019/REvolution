@@ -1,0 +1,11 @@
+The corrected triangle wave generator should maintain clean transitions at the boundaries (0 and 31) without showing intermediate values. The fix involves:
+1. When reaching 31 in increment state, immediately switch to decrement state without first decrementing
+2. When reaching 0 in decrement state, immediately switch to increment state without first incrementing
+3. The wave value should hold at boundary values for one clock cycle before changing direction
+4. All other behavior remains the same - increment/decrement by 1 in respective states
+
+This ensures proper triangle waveform generation where:
+- The wave rises from 0 to 31 in steps of 1
+- Holds at 31 for one clock cycle before starting to descend
+- Falls from 31 to 0 in steps of 1
+- Holds at 0 for one clock cycle before starting to rise again

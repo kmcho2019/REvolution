@@ -1,0 +1,14 @@
+module TopModule (
+    input clk,
+    input a,
+    output reg q
+);
+
+always @(posedge clk) begin
+    if (a == 1'b0)
+        q <= 1'b1;  // set q when a=0
+    else
+        q <= 1'b0;  // reset q when a=1
+end
+
+endmodule

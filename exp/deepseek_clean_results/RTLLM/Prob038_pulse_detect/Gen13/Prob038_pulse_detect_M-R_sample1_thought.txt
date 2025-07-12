@@ -1,0 +1,14 @@
+I'll refactor the code to use a more explicit state machine approach while maintaining the same functionality. This makes the design more maintainable and easier to modify if pulse detection requirements change. The key changes are:
+
+1. Replace the shift register with explicit states that clearly show the pulse detection sequence
+2. Use named states for better readability
+3. Move the output logic to a continuous assignment (assign) for potential synthesis optimization
+4. Keep the registered output for clean timing
+
+The state machine will have 4 states:
+- IDLE: Waiting for first 0
+- GOT_0: Received first 0, waiting for 1
+- GOT_1: Received 1, waiting for 0 (pulse complete)
+- PULSE_DETECTED: Temporary state to generate output
+
+This approach makes the pulse detection sequence more explicit in the code while maintaining similar PPA characteristics.

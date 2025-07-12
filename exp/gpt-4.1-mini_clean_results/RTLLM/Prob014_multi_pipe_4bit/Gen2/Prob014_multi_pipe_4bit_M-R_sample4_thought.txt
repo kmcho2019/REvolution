@@ -1,0 +1,17 @@
+To address the timing and output latency issues, I will refactor the design by:
+
+1. Keeping partial product generation combinational and zero-extended as before.
+
+2. Using two pipeline registers stages explicitly for intermediate sums:
+   - Stage 1: Register all partial products.
+   - Stage 2: Register sum of partial products in pairs.
+   
+3. Performing the final addition combinationally from the registered pair sums and registering the final product output.
+
+4. Using combinational addition for the final stage avoids the sequential update problem and ensures the output always reflects the correct sum of intermediate sums from the previous cycle.
+
+5. All pipeline registers will be updated synchronously on the clock's positive edge with synchronous active-low reset.
+
+6. No procedural for-loops in the final addition; instead, explicit sums and assign statements will be used for clarity and synthesis friendliness.
+
+This approach balances pipeline stages and fixes the latency mismatch in the original design by ensuring the final output register always holds the combinational sum of stable inputs from previous pipeline stages.

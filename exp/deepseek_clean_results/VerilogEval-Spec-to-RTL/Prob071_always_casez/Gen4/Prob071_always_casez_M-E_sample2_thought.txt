@@ -1,0 +1,11 @@
+This design uses a parallel prefix computation to propagate the 'first set bit' information across the input vector. The key idea is to:
+1. Generate a mask that identifies all bits to the right of the first set bit
+2. Use this mask to isolate the first set bit
+3. Convert this isolated bit position to binary encoding
+
+The implementation creates a 'leftmost one' mask by:
+- First computing individual bit positions
+- Then using a parallel prefix OR operation to propagate the 'first set' information
+- Finally converting the isolated bit position to binary using a logarithmic encoder
+
+This approach offers good parallelism and scales well to wider inputs, with O(log n) logic depth for the prefix computation.

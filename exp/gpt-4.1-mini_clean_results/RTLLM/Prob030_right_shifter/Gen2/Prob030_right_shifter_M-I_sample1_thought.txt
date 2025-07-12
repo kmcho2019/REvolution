@@ -1,0 +1,12 @@
+To improve the original design for better power efficiency, introduce a clock enable signal to update the shift register only when needed. This will reduce unnecessary toggling and switching activity in the register, lowering power consumption. For the minimal functionality described (always shifting each clock), we can simulate this by adding a shift_enable input. If shift_enable is high, shift and update q; otherwise, retain the current value. This allows gating the register update and minimizing switching.
+
+The shift operation itself remains the same for performance and area reasons: using concatenation is optimal. Initialization remains via initial block.
+
+If the requirement is to always shift each clock, shift_enable can be tied high externally. But adding the enable improves the design's flexibility and can reduce power in scenarios where shifting is conditional.
+
+Thus, the improved design adds:
+- An input shift_enable.
+- Updates q only when shift_enable is high.
+- Otherwise, hold q constant.
+
+This change reduces power by disabling unnecessary shifts, with minimal impact on timing or area.

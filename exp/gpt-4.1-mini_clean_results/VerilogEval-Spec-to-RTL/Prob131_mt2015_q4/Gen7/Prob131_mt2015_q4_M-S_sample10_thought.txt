@@ -1,0 +1,12 @@
+Since both pairs of modules A and B in the top-level receive identical inputs and their outputs feed into OR and AND gates, which then XOR for the final output, we can simplify the entire logic by expressing the overall output function algebraically.
+
+Let a = (x ^ y) & x (output of A)
+Let b = ~(x ^ y) (output of B)
+
+The final output z = (a | b) ^ (a & b)
+
+Using Boolean algebra, (a | b) ^ (a & b) = a ^ b
+
+Therefore, z = a ^ b = ((x ^ y) & x) ^ ~(x ^ y)
+
+This lets us implement the whole design as a single module with direct combinational logic, eliminating the need to instantiate modules A and B and the intermediate OR, AND, XOR gates, thus simplifying and reducing the design complexity while preserving the exact functionality.

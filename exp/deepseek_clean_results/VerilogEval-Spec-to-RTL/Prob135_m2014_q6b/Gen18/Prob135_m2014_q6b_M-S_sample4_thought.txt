@@ -1,0 +1,19 @@
+To correctly implement the next-state logic for y[1], we need to:
+
+1. Identify all cases where y[1] should be 1 in the next state:
+   - From state B (001) to C (010) when w=0 (y[1] becomes 0)
+   - From state C (010) to E (100) when w=0 (y[1] becomes 0)
+   - From state D (011) to F (101) when w=0 (y[1] becomes 0)
+   - From state F (101) to C (010) when w=0 (y[1] becomes 0)
+   - From state E (100) stays when w=0 (y[1] remains 1)
+   - All transitions to D (011) when w=1 (y[1] becomes 1)
+
+2. Simplify by observing:
+   - y[1] is 1 in next state only when:
+     * Transitioning to D (w=1 and not from A when w=1)
+     * Staying in E (y=100 and w=0)
+   - All other cases result in y[1]=0
+
+3. Final logic:
+   - y[1] is 1 when:
+     (w=1 and not (y=000 and w=1)) OR (y=100 and w=0)

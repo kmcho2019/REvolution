@@ -1,0 +1,5 @@
+Simplify the design by directly mapping the sensor input pattern to water level states using exact pattern matching. Represent water levels with a simple 2-bit encoding where lower numbers indicate lower water levels. Use registers to track current and previous water levels synchronously on the clock, with a synchronous reset initializing to the lowest water level state.
+
+Outputs fr0, fr1, fr2 are asserted based on the current water level per the problem table, and dfr is asserted if the water level rose compared to the previous cycle, indicating supplemental flow is needed.
+
+This straightforward approach removes unnecessary conditionals, uses exact sensor patterns for state decoding, and cleanly separates combinational output logic from sequential state updates, ensuring simpler and correct logic.

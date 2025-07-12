@@ -1,0 +1,16 @@
+To fix the syntax errors, all temporary signals and registers must be declared at the module level, outside any always blocks. Combinational calculations related to subtraction and updates should be performed in continuous assignments or separate combinational always blocks. The main sequential always block handles only registers declared previously and updates them synchronously.
+
+Here, I will declare all needed temp variables (like SR_shifted, remainder_next, quotient_bit, subtraction result and borrow) at module level as regs or wires as appropriate.
+
+The division iteration logic will be split:
+
+- On each clock edge when working is asserted:
+  1) Shift SR left by 1 with 0 inserted at LSB.
+  2) Perform subtraction of divisor_abs from upper 9 bits of shifted SR.
+  3) Based on borrow, update remainder bits of SR and set quotient bit accordingly.
+
+By computing subtraction and borrow combinationally using continuous assignments on the shifted SR value (which will be saved in a separate reg), the logic becomes clean and syntax error free.
+
+At division completion (after 8 cycles), sign corrections are done on quotient and remainder, and result and res_valid are updated.
+
+This clear separation of combinational and sequential logic, with all variables declared properly at module level, will eliminate syntax errors and ensure correct functionality.

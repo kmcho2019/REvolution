@@ -1,0 +1,7 @@
+To refactor the D flip-flop with asynchronous reset differently while preserving its behavior, I will implement it using a flip-flop primitive with asynchronous reset semantics by utilizing a register with an initial default value and an asynchronous reset in a separate always block. Since a register cannot be driven from multiple always blocks in Verilog, instead, I'll implement the same functionality by combining an asynchronous reset signal with synchronous data loading using a single always block, but this time using non-blocking assignments (`<=`) and explicitly specifying the reset condition first and then the data condition to emphasize clarity. 
+
+Also, I will invert the asynchronous reset to active-low internally to demonstrate a different coding style, i.e., treat `ar` as an active-high reset but handle it as an active-low reset internally to highlight a structural difference. The output will remain the same.
+
+Thus, the structure of the always block changes by inverting reset and using non-blocking assignments while preserving correct functionality. This differs from the prior implementation that used blocking assignments.
+
+This approach is synthesizable, clean, and aligned with recommended coding styles.

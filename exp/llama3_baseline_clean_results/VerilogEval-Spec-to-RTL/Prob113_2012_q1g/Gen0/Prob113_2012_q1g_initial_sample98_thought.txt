@@ -1,0 +1,17 @@
+To implement the function f, we can analyze the given Karnaugh map and find the minimum sum of products (SOP) form. We look for adjacent 1's in the map, and for each group, we identify the corresponding minterm. The SOP is then the OR of these minterms. For this problem, we identify the following groups: 
+1. A group of 1's in the bottom left and top right corners when x[2]x[3] = 00, x[0]x[1] = 00, and x[2]x[3] = 10, x[0]x[1] = 10 respectively.
+2. A group of 1's when x[2]x[3] = 11.
+3. A group of 1's when x[2]x[3] = 10, x[0]x[1] = 01, and x[2]x[3] = 11, x[0]x[1] = 01.
+The SOP for this problem is: 
+f = x[2]'x[3]'x[0]'x[1]' + x[2]'x[3]'x[0]x[1] + x[2]x[3] + x[2]x[1]'x[3] 
+However, upon simplifying we get:
+f = x[2]'x[0]' + x[2]'x[0] + x[2]x[3] + x[2]x[1]'x[3]
+Further simplifying the expression by using laws of Boolean algebra:
+f = x[2]'(x[0]' + x[0]) + x[2]x[3] + x[2]x[1]'x[3]
+f = x[2]'(1) + x[2]x[3] + x[2]x[1]'x[3]
+f = x[2]' + x[2]x[3] + x[2]x[1]'x[3]
+f = x[2]' + x[2](x[3] + x[1]'x[3])
+f = x[2]' + x[2]x[3](1 + x[1]')
+f = x[2]' + x[2]x[3]
+The final SOP expression to be implemented is: 
+f = x[2]' + x[2]x[3]

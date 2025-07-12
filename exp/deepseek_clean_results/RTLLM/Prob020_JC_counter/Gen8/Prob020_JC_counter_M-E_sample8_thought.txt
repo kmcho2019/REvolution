@@ -1,0 +1,8 @@
+Novel approach using parallel processing and state prediction:
+1. Instead of a single 64-bit shift register, implement 8 parallel 8-bit Johnson counters
+2. Each 8-bit segment operates independently but synchronizes with neighbors
+3. Use a predictor bit to determine when to propagate state changes between segments
+4. This reduces critical path length by breaking the 64-bit shift into smaller chunks
+5. Maintains same overall behavior but with better timing characteristics
+6. Reset initializes all segments to 0
+7. Each segment's MSB is determined by its own LSB XOR predictor bit from previous segment

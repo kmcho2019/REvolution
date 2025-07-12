@@ -1,0 +1,11 @@
+The current solution uses a ripple carry adder implemented by a generate loop with manual carry logic, which is functionally correct but can be optimized in terms of PPA.
+
+Improvement Strategy:
+1. Simplify the adder-subtractor by leveraging the built-in '+' operator with the conditional inversion and carry-in for subtraction. This lets the synthesis tool infer an optimal adder implementation (carry lookahead, carry select, etc.) for better performance and area.
+2. Remove explicit carry chain logic for cleaner, more compact code.
+3. Use assign statements with wires for combinational logic, keeping outputs as wires for simpler synthesis.
+4. Use the ternary operator to select addition or subtraction via conditional operand modification.
+5. For zero detection, use reduction NOR (~|) on the result as before, which is efficient.
+6. This approach reduces gate count, potentially decreases delay and power by allowing the tool to infer optimized arithmetic circuits.
+
+This method maintains the same functionality but yields better PPA due to simpler, higher-level RTL and synthesis optimizations.

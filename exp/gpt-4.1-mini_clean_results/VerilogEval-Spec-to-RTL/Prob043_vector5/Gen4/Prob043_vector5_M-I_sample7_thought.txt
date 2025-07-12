@@ -1,0 +1,19 @@
+To optimize the existing solution for better Power, Performance, and Area (PPA), we can exploit the symmetry of the pairwise equality matrix. Since the equality comparison is symmetric (i.e., (x,y) == (y,x)), we only need to compute the diagonal and either the upper or lower triangle of the 5x5 matrix. This reduces the number of unique comparisons from 25 to 15.
+
+Specifically:
+- Compute the diagonal elements (a~^a, b~^b, ..., e~^e) which are always 1.
+- Compute only the upper triangle pairs where the first input is "before" the second input in order (e.g., (a,b), (a,c), ..., (d,e)).
+- Fill the lower triangle by mirroring the upper triangle values.
+
+The final 25-bit output is then constructed from these computed unique values, reducing redundant comparators and thus saving area and power. This also potentially improves timing by reducing logic depth and switching activity.
+
+I will implement this by:
+1. Storing inputs in a 5-element array for convenience.
+2. Using a nested generate loop to compute only unique pairs (i<=j).
+3. Storing computed bits in a 2D reg/wire array.
+4. Mirroring values for i>j.
+5. Flattening the matrix into the 25-bit output, maintaining the specified order.
+
+This approach keeps output bits in the same order as before (out[24] = (a,a), ... out[0] = (e,e)) for consistency and easier verification, but optimizes logic generation internally.
+
+This preserves functionality and correctness, while reducing area and power, and may improve timing due to less logic and switching.

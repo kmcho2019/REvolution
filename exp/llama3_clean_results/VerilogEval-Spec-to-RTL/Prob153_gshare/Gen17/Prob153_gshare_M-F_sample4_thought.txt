@@ -1,0 +1,12 @@
+To address the issues with the existing code, we need to focus on the following key areas:
+1. **Proper Asynchronous Reset**: Ensure that the asynchronous reset is handled correctly to prevent inconsistent behavior. This involves checking for the reset condition at the beginning of the always block and resetting the registers accordingly.
+
+2. **Prioritization of Training and Prediction**: Implement logic to prioritize training over prediction when both occur in the same cycle. This can be achieved by checking the training valid signal before the prediction valid signal.
+
+3. **Correct Update Logic for Global History Register**: Update the global history register based on the predicted branch direction during prediction, and based on the actual branch direction during training.
+
+4. **Correct Cache Update Logic**: Update the cache based on the actual branch outcome and the predicted branch direction. If the prediction was correct, increment the counter; otherwise, decrement it.
+
+5. **Optimize Combinational Logic**: Consider using sequential logic to update the global history register and the cache to reduce the complexity of the combinational logic and improve power consumption and area utilization.
+
+By addressing these areas, we can ensure that the gshare branch predictor functions correctly and efficiently.

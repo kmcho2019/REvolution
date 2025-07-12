@@ -1,0 +1,8 @@
+Implement a deeper pipelined multiplier by splitting the multiplication into three pipeline stages to improve timing and throughput.  
+Stage 1: Sample inputs and enable signals, and generate partial products as 8 partial 16-bit terms (mul_a shifted by each bit of mul_b, masked by that bit).  
+Stage 2: Sum partial products in pairs to form four 16-bit sums, registered.  
+Stage 3: Sum pairs again to form two 16-bit sums, registered.  
+Stage 4: Final sum of the last two partial sums to produce the 16-bit product, registered along with output enable.  
+
+This approach reduces the critical path by spreading the large addition tree over multiple pipeline stages, increasing clock frequency capability. The enable signal is pipelined along with data to indicate valid output. The output is zeroed when enable is low. Reset is synchronous active low.  
+This architecture trades increased latency for better timing and throughput, making it suitable for high-performance pipelined designs.

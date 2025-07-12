@@ -1,0 +1,17 @@
+Refactoring Approach:
+1. Core Concept Preservation: Maintain the dual-edge functionality using two separate storage elements (for pos/neg edges) and clock-based output selection.
+
+2. Structural Changes:
+   - Replace always blocks with continuous assignments using clock-gated expressions
+   - Use wire declarations instead of reg for the flip-flop outputs
+   - Implement the storage elements using ternary operators in continuous assignments
+
+3. Benefits:
+   - More concise implementation using only assign statements
+   - Eliminates procedural blocks, making it purely dataflow style
+   - Maintains same functionality while potentially improving synthesis optimization
+
+4. Trade-offs:
+   - Slightly less readable than the original version
+   - May not map as cleanly to physical flip-flops in some synthesis tools
+   - Still maintains the same PPA characteristics as original

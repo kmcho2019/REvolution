@@ -1,0 +1,12 @@
+To address the feedback about the floating reset_n signal:
+1. Remove the reset functionality entirely since it's not being used in the testbench
+2. Simplify to just the basic 8-bit register with positive edge-triggered DFFs
+3. Maintain the original interface exactly as specified (no additional inputs)
+4. Keep the generate block for clean instantiation of 8 DFFs
+5. Ensure all flip-flops initialize to a known state (0) at power-up through synthesis pragmas
+
+Key changes:
+- Eliminates the reset_n input that was causing issues
+- Still provides clean initialization through synthesis directives
+- Maintains the exact required interface
+- Preserves the correct functionality of 8 positive edge-triggered DFFs

@@ -1,0 +1,11 @@
+To refactor the frequency divider with the same core functionality but a different structure, I will implement it using a synchronous process for the counter and generate the divided clock output with an always block that toggles the output when the count reaches half the division count.
+
+Instead of combining the toggle and counter increment logic in the same always block, I will split the counter increment and output toggle logic: the counter increments each clock cycle, and when it reaches half of NUM_DIV, the clk_div toggles and the counter resets. 
+
+This approach clearly separates counting and output toggling steps, improving readability and maintainability.
+
+Also, the output clock `clk_div` will be driven by a register toggling at the event, maintaining a 50% duty cycle for even NUM_DIV.
+
+Finally, I will keep the parameter check for evenness and use a localparam for counter width. Reset logic remains synchronous active-low.
+
+This structure uses two always blocks: one for counting and one for output toggling on the specific count, highlighting the design steps distinctly.

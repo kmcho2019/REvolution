@@ -1,0 +1,7 @@
+The task requires designing a finite state machine (FSM) to detect message boundaries in a PS/2 mouse protocol byte stream. The new approach involves using a counter-based FSM that keeps track of the number of bytes received since the last message boundary was detected. This approach eliminates the need for explicit state definitions for each byte in the message.
+
+The FSM starts in an IDLE state and transitions to a COUNTING state when a byte with in[3] = 1 is encountered. The counter is then incremented for each subsequent byte received, and when the counter reaches 3, the FSM signals 'done' and resets the counter. This approach simplifies the state machine and reduces the number of state transitions.
+
+To further optimize the design, we can use a single counter variable to keep track of the number of bytes received and avoid explicit state definitions. This approach minimizes the area required for the FSM and reduces the number of state transitions, resulting in improved power efficiency.
+
+The new architectural idea involves using a hybrid approach that combines the benefits of counter-based and state-based FSMs. The counter variable is used to keep track of the number of bytes received, and a single-bit flag is used to indicate whether a message boundary has been detected. This approach provides a good balance between area efficiency and performance.

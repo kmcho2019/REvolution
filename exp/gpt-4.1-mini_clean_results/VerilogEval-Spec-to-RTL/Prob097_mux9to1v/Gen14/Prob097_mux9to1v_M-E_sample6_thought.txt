@@ -1,0 +1,9 @@
+Implement the 9-to-1 mux as a hierarchical structure of smaller 3-to-1 multiplexers, followed by a final 3-to-1 mux stage, reflecting a balanced tree. This reduces the fan-in and may improve timing and power efficiency.
+
+- First, group the nine inputs into three groups of three inputs each: group0 (a,b,c), group1 (d,e,f), group2 (g,h,i).
+- Each group is selected by the two least significant bits of sel to produce an intermediate 16-bit output.
+- Then, a final 3-to-1 mux selects among the three intermediate outputs based on the higher bits of sel.
+- For sel values from 9 to 15 (i.e., sel[3:0] >= 9), output all ones.
+- The muxes use combinational logic implemented with ternary operators for succinctness.
+- This approach can improve logic balance and reduce intermediate signal fan-in compared to a large flat mux.
+- Output is combinational, driven by a reg inside an always block to clearly indicate combinational logic.

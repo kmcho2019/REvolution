@@ -1,0 +1,26 @@
+Here's a novel approach using a hierarchical state machine with explicit state encoding:
+
+1. Use a 3-bit state encoding to represent all possible states:
+   - 000: WALK_LEFT
+   - 001: WALK_RIGHT
+   - 010: FALL_LEFT (falling while last direction was left)
+   - 011: FALL_RIGHT (falling while last direction was right)
+   - 100: DIG_LEFT (digging while facing left)
+   - 101: DIG_RIGHT (digging while facing right)
+
+2. Implement priority-based transitions:
+   - Falling has highest priority (ground=0)
+   - Then digging (dig=1 when on ground)
+   - Finally bump handling (only in walking states)
+
+3. Key innovations:
+   - Explicit state encoding makes transitions clearer
+   - Separate falling states preserve direction information
+   - Outputs are direct decodes of state bits
+   - No need for separate direction tracking registers
+
+4. Benefits:
+   - More straightforward state transitions
+   - Clear separation of concerns
+   - Easier to extend with additional states
+   - Reduced combinational logic complexity

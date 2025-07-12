@@ -1,0 +1,9 @@
+To fix the functional errors in the design, we need to address the issues identified in the analysis. The first issue is the behavior of the FSM when reset is asserted. According to the problem description, when reset is asserted, the FSM should assert shift_ena for 4 cycles and then keep it at 0 forever until reset is asserted again. However, the current implementation sets the state to IDLE when reset is asserted, which immediately sets shift_ena to 0.
+
+To fix this, we can modify the sequential logic block to set the state to SHIFT_ENABLE_1 when reset is asserted, and then let the state machine transition through the enable states. This way, shift_ena will be asserted for 4 cycles after reset is asserted.
+
+Another issue mentioned in the analysis is that the code does not implement the detection of the "proper bit pattern" as mentioned in the problem description. However, upon re-reading the problem description, it seems that this condition is not actually required for the current implementation, as the problem statement mentions "whenever the FSM is reset" as the condition for enabling the shift register.
+
+Therefore, our focus will be on correcting the reset behavior and ensuring the state machine transitions correctly to enable shift_ena for exactly 4 clock cycles after reset.
+
+We will also review the state machine encoding and transition logic to ensure it aligns with the required behavior and is optimized for performance and area utilization.

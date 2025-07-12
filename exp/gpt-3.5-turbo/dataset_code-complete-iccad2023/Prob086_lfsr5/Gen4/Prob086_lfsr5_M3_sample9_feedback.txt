@@ -1,5 +1,0 @@
-The issue in the provided Verilog code is in the LFSR shifting logic inside the `always` block. The line `q <= {q[4] ^ q[2] ^ q[0], q[4:1]};` is incorrectly implementing the Galois LFSR shifting. In a Galois LFSR, the bits without tap positions should simply shift right, while the tap positions should be XORed with certain bits. 
-
-In this case, the correct implementation should be `q <= {q[4] ^ q[2], q[4:1]};` to correctly represent the Galois LFSR with taps at positions 5 and 3. By XORing bits at positions 4 and 2 and shifting the other bits to the right, the LFSR would function as intended. The incorrect XOR operation on bit position 0 needs to be removed.
-
-This incorrect implementation is leading to mismatches during simulation since the LFSR is not cycling through the correct sequence of states as expected for a maximal-length LFSR.

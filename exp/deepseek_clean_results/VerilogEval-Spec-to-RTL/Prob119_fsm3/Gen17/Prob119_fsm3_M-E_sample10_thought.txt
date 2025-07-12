@@ -1,0 +1,13 @@
+Instead of using a traditional state register with binary encoding, I'll implement the state machine using a 4-bit shift register where each bit represents a state (one-hot like but with shifting behavior). The key innovations are:
+
+1. Each state is represented by a unique position in the shift register
+2. State transitions are implemented by shifting left/right based on input
+3. Reset initializes to '0001' (state A)
+4. Output is directly tapped from the D state position
+5. Parallel load capability allows arbitrary state transitions
+
+This approach offers:
+- Potentially simpler transition logic (just shift operations)
+- Fast output generation (direct bit selection)
+- Easy scalability to more states
+- Clear physical meaning of each register bit

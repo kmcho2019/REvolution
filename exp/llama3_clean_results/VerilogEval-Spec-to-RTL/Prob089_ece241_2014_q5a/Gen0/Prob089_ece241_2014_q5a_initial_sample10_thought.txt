@@ -1,0 +1,17 @@
+To implement a serial 2's complementer Moore state machine, we need to consider two states: one for accumulating the input bits and calculating the 2's complement, and another for handling the reset. 
+
+We'll use a counter to keep track of the input bits received so far and an internal register to accumulate the input bits. When the reset is released, the counter and internal register are reset. 
+
+We'll also use an output register to store the result. Since this is a Moore state machine, the output will be the current state of the machine. 
+
+In this case, the output will be the most significant bit of the accumulated input, inverted if we have received an odd number of 1's so far (i.e., the current input bit plus the previous input bits that were 1's will be inverted). 
+
+We'll also need to consider the carry bit from the previous bit addition. 
+
+The state machine will work as follows: 
+- When reset is asserted, the machine resets the internal register, counter, and output.
+- When reset is released, the machine starts accepting input bits.
+- For each input bit, the machine checks the current state (carry bit from previous addition) and updates the internal register and counter accordingly.
+- The machine stops accepting input bits when reset is asserted again.
+
+The Verilog implementation will use always blocks to handle the combinational and sequential logic. We'll use the 'posedge' keyword to trigger the sequential logic on the positive edge of the clock.

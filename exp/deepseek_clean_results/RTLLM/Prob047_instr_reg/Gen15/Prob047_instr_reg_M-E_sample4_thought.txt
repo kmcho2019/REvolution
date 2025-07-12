@@ -1,0 +1,21 @@
+Novel Architecture Concept:
+1. Dual-edge Triggering:
+   - Utilize both rising and falling edges of the clock to potentially double throughput
+   - Rising edge captures instruction part 1 (ins_p1)
+   - Falling edge captures instruction part 2 (ins_p2)
+
+2. Output Pipelining:
+   - Add pipeline registers for outputs to improve timing
+   - Separate the output generation from instruction capture
+   - Enables higher clock frequencies at the cost of 1-cycle latency
+
+3. Power-Aware Design:
+   - Use clock enables to prevent unnecessary toggling
+   - Implement output isolation during reset
+   - Separate power domains not needed for this small design
+
+Key Advantages:
+- Potential throughput improvement with dual-edge operation
+- Better timing characteristics due to pipelined outputs
+- Maintains clean reset functionality
+- Power efficient with proper clock gating

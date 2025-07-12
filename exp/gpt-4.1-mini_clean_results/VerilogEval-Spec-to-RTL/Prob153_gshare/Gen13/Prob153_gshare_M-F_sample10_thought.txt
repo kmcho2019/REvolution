@@ -1,0 +1,29 @@
+To fix the timing and correctness issues, I will adjust the prediction pipeline and PHT read to strictly align with synchronous read semantics, ensuring stable and correct outputs:
+
+1. Introduce explicit pipeline registers for the PHT read address and enable a synchronous RAM style access:
+   - On the clock edge following predict_valid, latch the prediction PC and GHR, form the index, and store it.
+   - On the next clock edge, use the latched index to read the PHT synchronously.
+   This adds one cycle of latency but guarantees stable synchronous reads and consistent outputs.
+
+2. Delay the prediction outputs (`predict_taken` and `predict_history`) to the stage after the synchronous PHT read is available. This matches the two-cycle pipeline prediction latency:
+   - Stage 1: latch predict inputs and GHR
+   - Stage 2: latch index to PHT and start synchronous read
+   - Stage 3: latch PHT output and produce outputs
+
+3. Maintain the global history register (GHR) update on the positive clock edge, with training taking priority over prediction:
+   - If training with mispredict: recover GHR to train_history.
+   - Else if training valid: update GHR with train_taken.
+   - Else if prediction valid in final pipeline stage: update GHR with predicted bit.
+   This is done after outputs are registered, so outputs reflect history state before update.
+
+4. Ensure that prediction outputs use the GHR value that was present at prediction request time (i.e., the GHR latched in stage 1), not the updated GHR.
+
+5. Initialize the PHT entries to weakly not taken (2'b01) on reset.
+
+6. The synchronous read of PHT is modeled by registering the address and reading data at the next clock cycle, thus respecting synchronous RAM behavior.
+
+7. Priority of GHR update ensures correct recovery on mispredict and proper updating after prediction, avoiding race conditions.
+
+This fix introduces a three-stage prediction pipeline to correctly time the synchronous RAM read and output the stable prediction signals, fully respecting the spec and removing the mismatches in predict_history and predict_taken outputs.
+
+The resulting design matches the required branch predictor behavior with clean timing and correctness.

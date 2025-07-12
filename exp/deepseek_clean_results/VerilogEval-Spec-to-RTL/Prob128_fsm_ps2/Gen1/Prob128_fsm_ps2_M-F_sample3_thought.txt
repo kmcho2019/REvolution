@@ -1,0 +1,11 @@
+To fix the implementation, we need to adjust the state machine and output logic to properly time the 'done' signal. The key changes are:
+1. The DONE state should be used to assert 'done' for exactly one cycle after receiving the third byte.
+2. The state machine should transition through DONE state before returning to IDLE.
+3. The output logic should assert 'done' only when in the DONE state.
+4. All state transitions should occur on each clock edge when receiving valid bytes.
+
+The corrected FSM flow will be:
+- IDLE: Wait for first byte (in[3]=1)
+- BYTE2: After first byte, wait for second byte (any value)
+- BYTE3: After second byte, wait for third byte (any value)
+- DONE: Assert 'done' and immediately return to IDLE

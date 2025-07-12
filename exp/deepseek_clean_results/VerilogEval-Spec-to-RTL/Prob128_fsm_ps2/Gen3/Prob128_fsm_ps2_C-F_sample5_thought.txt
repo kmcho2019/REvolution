@@ -1,0 +1,21 @@
+The fusion strategy combines the best aspects of both examples while addressing their weaknesses:
+
+1. From Example 1, we keep the efficient counter-based approach (simpler than explicit state machine) but improve it by:
+   - Removing unnecessary 'done' toggling by only asserting it when needed
+   - Maintaining the small area advantage (20.0 um² vs 32.0 um²)
+
+2. From Example 2, we incorporate the proper timing of the 'done' signal by:
+   - Ensuring 'done' is asserted exactly one cycle after receiving the third byte
+   - Making the state transitions more explicit and reliable
+
+3. Additional optimizations:
+   - Use a 2-bit counter like Example 1 but with clearer state semantics
+   - Remove default assignments that cause unnecessary toggling
+   - Simplify the reset logic
+   - Make the byte counting logic more explicit
+
+The result is a design that:
+- Has better timing (shorter critical path than Example 2)
+- Maintains low power consumption (better than both examples)
+- Keeps the small area footprint of Example 1
+- Provides correct and reliable operation

@@ -1,0 +1,21 @@
+After carefully analyzing the waveform behavior and the issues in the previous implementation, here's the improved approach:
+
+1. Key Behavioral Insights:
+   - p should mirror 'a' only during high clock phases when q=0
+   - q becomes 1 only after p has been continuously high for one full clock cycle (both edges)
+   - q resets to 0 when 'a' is high during a falling clock edge
+   - p remains 0 when q=1
+   - Initial state has both outputs at 0
+
+2. Improved Implementation Strategy:
+   - Use a single always block for synchronous behavior (posedge clock)
+   - Track p's state through the full clock cycle using a registered version
+   - Implement q setting based on full-cycle p observation
+   - Add synchronous reset for q when a=1 at rising edge (simplified from dual-edge approach)
+   - Remove the problematic negedge block to avoid race conditions
+
+3. State Management:
+   - p updates immediately when q=0 and clock is high
+   - full_p tracks if p was high for entire previous cycle
+   - q updates based on full_p observation
+   - Reset condition simplified to synchronous behavior

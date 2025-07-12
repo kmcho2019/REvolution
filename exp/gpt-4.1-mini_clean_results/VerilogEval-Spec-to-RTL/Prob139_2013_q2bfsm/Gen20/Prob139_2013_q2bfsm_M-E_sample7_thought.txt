@@ -1,0 +1,17 @@
+Use a Mealy FSM design with explicit states that incorporate the pattern detection as a rolling shift register and direct output assertion. 
+
+Key points of the new approach:
+- Use synchronous active low reset to initialize the FSM to STATE_A.
+- On release of reset, go to STATE_B, assert f=1 for exactly one cycle.
+- Then go to STATE_C, where we continuously shift in x samples each clock and check the last 3 bits for the pattern 1-0-1 in a rolling fashion.
+- When pattern detected, go to STATE_D, assert g=1 for one cycle (pulse).
+- Then go to STATE_E, hold g=1 and monitor y for 2 cycles max.
+- If y=1 detected within these 2 cycles, go to STATE_F (permanent g=1).
+- If not detected, go to STATE_G (permanent g=0).
+- Outputs f and g are asserted as combinational signals based on the state and also for f, asserted only in STATE_B.
+- Use a 3-bit shift register for x samples updated every cycle in STATE_C.
+- Use a 2-bit counter for y monitoring in STATE_E.
+- Design next_state logic carefully to guarantee immediate output changes on state transitions.
+- Maintain outputs and internal signals synchronized with clock.
+- This architecture avoids the ambiguity of pattern_ready flag by always shifting in x samples in STATE_C and pattern checking immediately.
+- This is a cleaner architecture that aligns output pulses with states explicitly and uses Mealy logic for pattern detection and transitions.

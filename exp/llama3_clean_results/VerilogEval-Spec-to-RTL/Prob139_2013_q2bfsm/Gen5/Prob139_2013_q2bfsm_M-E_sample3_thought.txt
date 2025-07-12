@@ -1,0 +1,8 @@
+To create a novel architectural solution for the finite state machine (FSM) controlling the motor based on inputs x and y and producing outputs f and g, we can leverage a modular approach by breaking down the functionality into smaller, manageable modules. Each module will handle a specific aspect of the overall FSM behavior, allowing for easier design, verification, and modification.
+
+The key idea is to use three main modules:
+1. **Reset and Initialization Module**: Handles the reset signal and the initial setup of the FSM, ensuring it starts correctly after a reset.
+2. **Sequence Detector Module**: Specifically designed to detect the sequence 1, 0, 1 in the input x over three consecutive clock cycles, triggering the transition to set output g.
+3. **Y Monitor and Output Controller Module**: Responsible for monitoring the y input after g has been set to 1, ensuring that if y becomes 1 within two clock cycles, g remains 1 permanently, and otherwise, g is set to 0 permanently after two clock cycles without seeing a 1 on y.
+
+By structuring the FSM in this modular way, we can more easily ensure that each component of the desired behavior is correctly implemented and that the overall system functions as intended. The modularity also facilitates testing and debugging, as each module can be verified independently before integrating them into the complete FSM.

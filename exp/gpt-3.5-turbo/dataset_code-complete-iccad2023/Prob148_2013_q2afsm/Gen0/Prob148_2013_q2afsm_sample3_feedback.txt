@@ -1,7 +1,0 @@
-The simulation log indicates 307 mismatches in 1054 samples, primarily in the output 'g'. The issues stem from incorrect transitions in the state machine implementation. 
-
-1. In state B, the condition for transitioning back to state A should consider if neither r[1] nor r[2] is high. However, the current code transitions back to A even if r[2] is high, causing incorrect behavior.
-2. In state C, a similar issue arises where the transition back to state A should occur only if neither r[1] nor r[2] is high, but the code allows transition back to A even if r[1] is high.
-3. In state D, the transition conditions are incorrect. The state should only transition back to A if none of the request signals are high. However, the code allows transitions back to state D under certain request conditions.
-
-These incorrect state transition conditions lead to the wrong grant outputs being assigned, causing the mismatches observed during simulation.

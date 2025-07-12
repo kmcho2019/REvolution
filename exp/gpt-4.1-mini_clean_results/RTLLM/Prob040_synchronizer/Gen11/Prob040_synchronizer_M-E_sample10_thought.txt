@@ -1,0 +1,11 @@
+Implement the multi-bit synchronizer using a handshake-like scheme to safely transfer data from clk_a to clk_b domains. Instead of only synchronizing the enable signal, also generate a "data valid" pulse synchronized to clk_b using a toggle synchronization method for the enable signal. 
+
+In clk_a domain, when data_en is high, latch data_in and toggle a data_valid flag to indicate new data is ready. This toggle flag is transferred to clk_b domain using a two-stage synchronizer. In clk_b domain, detect toggle edge on this flag to know when new data is available. Upon detection, capture the latched data_in value into dataout register.
+
+This toggle-based handshake ensures reliable data transfer across clock domains without relying on MUX-based enable gating logic. It also cleanly handles multiple clock cycles of data_en high, and ensures dataout updates only on new data arrival. The reset handling remains asynchronous.
+
+Key points:
+- clk_a domain: latch data_in and toggle data_valid flag on data_en high.
+- clk_b domain: synchronize toggle flag via double flip-flop, detect toggle edge to latch data.
+- Output dataout updates only when a new data toggle event is detected.
+- This avoids mux and enables deterministic output data update synchronized to clk_b.

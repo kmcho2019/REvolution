@@ -1,0 +1,22 @@
+The original solution is already minimal and direct, using straightforward combinational logic for Y1 and Y3 derived by inspection from the FSM transitions. The signals Y1 and Y3 are outputs feeding the next-state inputs for state flip-flops y[1] and y[3]. 
+
+The current implementation uses OR and AND gates with multiple inputs and simple negation, which is minimal given the state assignments and the one-hot encoding.
+
+Potential improvements:
+- Factorize common terms or use De Morgan's laws for potentially smaller logic gates.
+- However, since y[1], y[2], y[4], y[5] are disjoint one-hot bits (only one state active), (y[1] | y[2] | y[4] | y[5]) is true if the FSM is in any of those states, so no redundant logic.
+- The only negation is on w, which is needed.
+
+Given the one-hot code and that the four bits are disjoint, any logic simplification is unlikely to reduce gates or switching, so no PPA improvement is expected.
+
+Therefore, the best improvement is to add a registered output style to reduce glitches by registering Y1 and Y3 (assuming clock available), but the problem does not specify a clock or registers.
+
+Since no clock is available, or output registers requested, the original implementation is optimal.
+
+Hence, the improved solution is to keep the original logic, but explicitly document that these are combinational assignments, and potentially declare Y1 and Y3 as wires (by default in assign).
+
+Therefore, the best action is to keep the original code as is, as it is already optimal.
+
+If allowed, adding input signal type declarations (wire) can be done explicitly for clarity, but not required.
+
+Summary: No meaningful PPA improvement is possible without changing the FSM encoding or adding registers. Keep the code minimal and direct.

@@ -1,0 +1,9 @@
+To fix the multiple drivers issue for MATCH, we must drive MATCH consistently from a single always block. Since MATCH is a Mealy output dependent on the current state and input, it is best to generate MATCH combinationally from the current state and input signals, without registering it. This avoids conflicts and clarifies timing.
+
+We keep state updates synchronous on the clock and reset, and generate next_state combinationally.
+
+MATCH is assigned in a separate combinational block or as a continuous assignment, based only on the current state and input, reflecting the Mealy FSM output behavior.
+
+This approach resolves conflicting assignments by separating state update and output generation, making MATCH purely combinational, and keeping state and next_state updates synchronous and clean.
+
+The FSM state encoding remains the matched prefix length of "10011" (0 to 5), and MATCH is asserted when next_state reaches full match (state 5) on input=1.

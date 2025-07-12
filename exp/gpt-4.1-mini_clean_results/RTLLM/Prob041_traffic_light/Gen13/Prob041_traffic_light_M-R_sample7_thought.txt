@@ -1,0 +1,8 @@
+Refactor by separating combinational and sequential parts more explicitly:  
+1. Use a combinational always block solely for next-state and next-counter calculations without modifying flags inside this block, instead update the pedestrian shortened flag in a separate sequential block to keep state updates clear.  
+2. Implement outputs as registered signals updated synchronously from state to ensure timing stability and easier timing closure.  
+3. Use a synchronous reset only, removing asynchronous resets to simplify design for modern FPGA flows.  
+4. Use a case statement for state transitions and counter reload/decrement logic inside a single combinational block but keep flag updates in sequential logic.  
+5. Provide the counter width as 8 bits to align with interface and allow more headroom; use a localparam for max count values for clarity.  
+6. Avoid multiple assignments of next_ped_shortened in combinational logic, updating it solely in sequential logic based on conditions from combinational outputs and inputs.  
+7. This structure improves readability by making flag updates deterministic and avoids mixing combinational and sequential logic for the same signals, aiding in synthesis and formal verification.

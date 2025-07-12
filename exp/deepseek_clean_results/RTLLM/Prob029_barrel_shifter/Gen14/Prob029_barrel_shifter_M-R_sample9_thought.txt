@@ -1,0 +1,14 @@
+The refactored implementation will maintain the same functionality but use a different structural approach:
+
+1. Instead of using intermediate wires (stage1_out, stage2_out), we'll implement the shifts in a single continuous assignment using nested conditional operators.
+
+2. The shift operations will be performed in one expression that evaluates all control bits at once, though still maintaining the same cascaded shift behavior.
+
+3. This approach eliminates the intermediate wires while keeping the same logical flow:
+   - First check ctrl[2] for 4-bit shift
+   - Then check ctrl[1] for 2-bit shift on the previous result
+   - Finally check ctrl[0] for 1-bit shift on that result
+
+4. The benefit is more compact code while maintaining the same clear shift stages conceptually.
+
+5. The shifts remain right rotations as in the original implementation.

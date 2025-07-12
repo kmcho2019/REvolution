@@ -1,0 +1,16 @@
+Novel Architecture: Pipelined Carry-Save MAC
+1. Split the 32-bit multiplication into 4 parallel 8x8 multiplications (partial products)
+2. Use carry-save adders for intermediate accumulation to reduce critical path
+3. Implement 2-stage pipelining:
+   - Stage 1: Partial product generation
+   - Stage 2: Final accumulation with carry propagation
+4. Add operand gating during reset to reduce power
+5. Use sign-extension for correct signed arithmetic handling
+6. Implement saturation arithmetic to prevent overflow
+
+Key Benefits:
+- Reduced critical path through partial product parallelism
+- Carry-save technique minimizes propagation delay
+- Pipelining enables higher clock frequency
+- Power-efficient through operand gating
+- More robust with saturation arithmetic

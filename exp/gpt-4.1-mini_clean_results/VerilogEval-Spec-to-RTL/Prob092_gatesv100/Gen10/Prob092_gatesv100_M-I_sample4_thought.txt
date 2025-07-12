@@ -1,0 +1,23 @@
+To improve the PPA further, focus on minimizing fanout and logic depth by reorganizing the bitwise operations with shifted vectors, reducing gate levels and possibly lowering power.
+
+Currently, out_both and out_any are implemented via direct AND and OR of shifted input slices with concatenation. The concatenation creates zero boundary bits explicitly but still involves two separate vector parts.
+
+We can optimize by leveraging vector shifts and bitwise operations to implement the neighbor logic uniformly, then mask out boundary bits, thus enabling synthesis tools to optimize common parts.
+
+For out_both:
+- Use the bitwise AND of the input vector and the input vector shifted left by one bit.
+- Since the MSB has no left neighbor, mask out the MSB bit after the AND to zero it.
+
+For out_any:
+- Use the bitwise OR of the input vector and the input vector shifted right by one bit.
+- Since the LSB has no right neighbor, mask out the LSB bit after the OR to zero it.
+
+For out_different:
+- Use XOR of the input vector with the input vector rotated left by one bit (wrap-around).
+- This remains the same for wrap-around functionality.
+
+This approach unifies the logic as shift operations plus a masking step, which can often be implemented efficiently by synthesis tools using shift registers and bit masks, potentially reducing area and power due to minimized explicit concatenations and enabling better logic sharing.
+
+Additionally, using shifts and masks may reduce wiring congestion and improve timing, as no manual concatenation boundaries are explicitly created.
+
+Overall, this leads to a more uniform and potentially more power- and area-efficient implementation.

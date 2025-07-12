@@ -1,0 +1,28 @@
+Revised design approach for robust 3.5x fractional divider:
+
+1. Counter and Phase Management:
+   - Maintain a 3-bit counter (0-6) for the 7-cycle pattern
+   - Generate two clock phases with proper alignment:
+     * Phase A: Standard 4 high, 3 low pattern
+     * Phase B: Same pattern but shifted by 3.5 cycles (half period)
+
+2. Precise Phase Shifting:
+   - Use separate counters for each phase to avoid timing issues
+   - Phase B counter runs on negative edge to achieve proper shift
+   - Eliminate modulo operation that caused previous issues
+
+3. Glitch-free Output:
+   - Register intermediate clocks before OR combination
+   - Ensure clean transitions between phases
+   - Maintain proper reset synchronization
+
+4. Timing Improvements:
+   - Align phase transitions with clock edges
+   - Remove combinational dependencies between phases
+   - Verify duty cycle through simulation
+
+Key fixes:
+- Separate counters for each phase
+- Proper edge-triggered phase generation
+- Registered output combination
+- Simplified phase shift calculation

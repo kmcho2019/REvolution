@@ -1,0 +1,9 @@
+Refactor the implementation by directly encoding the combinational next-state logic for y[1] using continuous assign statements and a combinational function. Instead of an always block, use a combinational logic expression or a combinational function with case statements that returns next_y1 based on current y and w.
+
+This approach simplifies the design by removing the reg and always block, uses a combinational function to express next state logic clearly, and directly drives an output port for the next y[1]. Since the problem only requires next-state logic for y[1] and outputs Y1 as current y[1], we will keep Y1 = y[1], and also add a separate output next_y1 to expose the computed next state bit y[1].
+
+If the interface must only have input y, w and output Y1, then Y1 should be driven as next y[1] (the next state bit), since the problem is to implement next-state logic. But since the problem states Y1 = y[1] (current y[1]) and implement next state logic only for y[1], it is cleaner to add an output next_y1 to expose next state bit.
+
+To strictly follow the problem interface (no next_y1 port), we will keep Y1 = y[1] and internally compute next_y1 combinationally (but do not register it). This matches the problem statement exactly. The logic is in assign statements, which is a standard clean practice.
+
+This refactoring results in simpler, readable, and synthesizable combinational logic for next_y1 and output Y1 = y[1].

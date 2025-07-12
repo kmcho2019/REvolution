@@ -1,0 +1,7 @@
+To optimize for better PPA, remove the redundant 'enable' signal tied to constant 1 to simplify logic and reduce toggling. Additionally, implement the counter using an asynchronous reset instead of synchronous reset if allowed; however, the spec requires synchronous active-high reset, so we keep synchronous reset. To reduce power further, minimize unnecessary toggling by not incrementing when reset is asserted, which is already done. The original design is nearly optimal given the constraints.
+
+Another minor optimization is to use an explicit increment expression to ensure that the synthesis tool can infer an efficient carry chain adder instead of potential ripple carry.
+
+Finally, we keep the non-blocking assignments and positive edge clocking.
+
+Overall, the main practical improvement is removing the redundant enable signal and its conditional check to simplify logic, reduce area and power marginally, improving timing slightly.

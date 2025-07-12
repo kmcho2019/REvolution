@@ -1,0 +1,13 @@
+To combine the strengths of both examples, I will:
+
+1. Use a minimal two-state FSM (IDLE / HIGH) as in Example 1 for clear semantics and minimal state register size.
+2. Register data_in with a one-cycle delay to detect edges cleanly, improving timing and reducing glitches.
+3. Separate state register update and output logic to ensure output is synchronous to clk (registered output), increasing output stability and timing reliability.
+4. Assert data_out for exactly one clock cycle at the falling edge of data_in after a high state, matching the pulse definition (0->1->0).
+5. Keep the asynchronous active-low reset for quick initialization.
+6. Use nonblocking assignments inside the clocked always block for state and data_in_d updates.
+7. Use a combinational block for next state logic to maintain clear FSM design and ease synthesis.
+
+This fusion preserves the minimal area and low power from the examples while improving output timing and robustness by registering the output signal. It also makes the design easier to integrate into systems that require synchronous outputs.
+
+The result is a small, clean FSM with registered output and edge detection via delayed input sampling, balancing timing, power, and area optimally.

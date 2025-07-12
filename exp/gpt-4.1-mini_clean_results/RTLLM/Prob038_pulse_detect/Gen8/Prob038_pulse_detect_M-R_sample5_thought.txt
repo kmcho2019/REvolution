@@ -1,0 +1,9 @@
+Refactor the pulse detection by implementing it as a finite state machine (FSM) instead of using a shift register and combinational pattern matching. The FSM will have states to represent the expected sequence of inputs corresponding to the pulse pattern 0 -> 1 -> 0. On each clock cycle, it transitions through states as data_in changes. When the FSM reaches the final state of the pulse (after observing the sequence 0-1-0), it asserts data_out for one cycle.
+
+This approach provides clear state visibility, is easy to extend or modify for other patterns, and avoids shift register comparisons. The FSM resets to the initial state on active low reset. The output data_out is a registered pulse aligned with the clock edge.
+
+Key steps:
+- Define states: IDLE (waiting for 0), WAIT_FOR_1 (got 0, waiting for 1), WAIT_FOR_0 (got 0->1, waiting for final 0)
+- On transitions matching data_in, move through states accordingly.
+- Assert data_out = 1 when final 0 is detected.
+- Keep data_out = 0 otherwise.

@@ -1,0 +1,3 @@
+The given module has a bug because the `shut_off_computer` and `keep_driving` signals are not properly reset when their respective conditions are not met. In the original code, once `shut_off_computer` is set to 1, it remains 1 even after `cpu_overheated` becomes 0. Similarly, once `keep_driving` is set, it does not get reset when `arrived` becomes 1. To fix this bug, we need to ensure that these signals are reset when their conditions are not met.
+
+We will modify the code to handle these resets properly by setting `shut_off_computer` to 0 when `cpu_overheated` is 0 and setting `keep_driving` to 0 when `arrived` is 1 or `gas_tank_empty` is 1.

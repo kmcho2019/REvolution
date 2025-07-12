@@ -1,0 +1,9 @@
+Refactor the radix-2 divider by introducing a simple FSM with three states: IDLE, RUNNING, DONE. This improves clarity and control flow:
+
+- Use a state register to track the division progress.
+- On IDLE and opn_valid, latch inputs, compute absolute values, determine signs, initialize shift register and counters, and move to RUNNING.
+- In RUNNING, perform one iteration per clock: subtract divisor, update shift register accordingly, increment counter.
+- When 8 iterations complete, move to DONE and apply sign correction to quotient and remainder.
+- In DONE, assert res_valid until next opn_valid triggers new operation and returns to IDLE.
+- Use mostly combinational logic for sign handling and next state transitions, and synchronous registers for data and control.
+- This FSM structure clarifies operation start, iterative division, and result output, enhancing readability and maintainability.

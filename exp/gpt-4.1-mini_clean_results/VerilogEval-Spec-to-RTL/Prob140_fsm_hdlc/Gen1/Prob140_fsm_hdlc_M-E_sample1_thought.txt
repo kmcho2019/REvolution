@@ -1,0 +1,21 @@
+Implement a Moore FSM where each state encodes the count of consecutive 1s after a zero, from 0 up to 6, plus an error state. On each clock cycle (after reset), the FSM transitions based on the current input bit:
+
+- If input=1, increment consecutive ones count state until max (6), then move to error state (7).
+- If input=0, transition to state 0 (no consecutive ones).
+
+Outputs are generated purely based on the current state, enabling Moore logic:
+
+- When in state 5 (five consecutive 1s) and the input on the next cycle is 0, a zero-stuffed bit is detected, so the *disc* signal should be asserted *one cycle later* (in that next state's cycle).  
+- When in state 6 (six consecutive 1s) and the input on the next cycle is 0, a flag (01111110) is detected, so *flag* is asserted one cycle later.  
+- When reaching the error state (7 or more consecutive 1s), *err* is asserted continuously.
+
+To achieve this, the FSM will include combinational next-state logic and synchronous state updates. We will register outputs directly from the current state to meet the Moore FSM requirement. Because outputs must be asserted one cycle after the pattern occurs, the transitions and outputs naturally align in the next state:  
+- For example, receiving a zero after 5 ones moves from state 5 to state 0, so when in state 0 with previous state 5, disc must assert.
+
+Hence, we introduce a registered previous state signal. At every clock cycle, outputs are assigned based on the *previous* state and current state transition (captured via previous state and current state):
+
+- disc asserted if previous state was 5 and current state is 0 (detect zero after five 1s).
+- flag asserted if previous state was 6 and current state is 0 (detect zero after six 1s).
+- err asserted if current state is the error state 7.
+
+This approach cleanly separates combinational next-state logic, synchronous state registers, and Moore output logic with proper one-cycle delayed assertion of outputs.

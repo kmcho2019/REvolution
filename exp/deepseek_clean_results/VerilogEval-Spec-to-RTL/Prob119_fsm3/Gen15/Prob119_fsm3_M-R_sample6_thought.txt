@@ -1,0 +1,21 @@
+I'll refactor the state machine implementation while maintaining the same functionality. The key changes will be:
+
+1. State Representation:
+   - Switch from Gray code to one-hot encoding (4 bits) for potentially better timing
+   - Keep the same state names but with different encoding
+
+2. Implementation Style:
+   - Use continuous assignments (assign) for next-state logic instead of procedural blocks
+   - Separate the state transition logic from the state register
+   - Use explicit combinational logic for next-state calculation
+
+3. Optimizations:
+   - One-hot encoding simplifies state decoding (output is just one bit)
+   - Separate combinational logic might help with synthesis optimization
+   - Maintain asynchronous reset functionality
+
+The advantages of this approach:
+- One-hot encoding often yields better timing in FPGAs
+- Clear separation of combinational and sequential logic
+- Output logic becomes trivial (just one bit check)
+- Maintains same Moore machine behavior

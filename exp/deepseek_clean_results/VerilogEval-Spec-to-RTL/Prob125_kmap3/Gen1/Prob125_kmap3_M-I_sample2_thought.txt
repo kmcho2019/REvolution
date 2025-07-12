@@ -1,0 +1,24 @@
+To correctly implement the given Karnaugh map, let's analyze it systematically:
+
+1. For cd=00 (first row):
+   - Output is 0 when ab=00
+   - Output is 1 when ab=10 or 11
+   - Don't care when ab=01 (can treat as 0)
+
+2. For cd=01 (second row):
+   - Output is 0 when ab=00 or 01
+   - Don't care when ab=10 or 11 (can treat as 0 for minimal logic)
+
+3. For cd=11 (third row):
+   - Output is 0 when ab=01
+   - Output is 1 for all other ab combinations
+
+4. For cd=10 (fourth row):
+   - Output is 0 when ab=01
+   - Output is 1 for all other ab combinations
+
+The simplified logic can be expressed as:
+out = (~c & ~d & (a | ~b)) |  // First row conditions
+      (c & (b | (~a & ~d)))   // Third and fourth row conditions
+
+This covers all specified 1's while optimally using don't-care conditions.

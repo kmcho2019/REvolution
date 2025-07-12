@@ -1,0 +1,13 @@
+To implement the TopModule, we can design a finite-state machine (FSM) with states that track the sequence of the input bits. The FSM will start in an initial state (e.g., IDLE) and transition through states based on the input bits. Each state will check for the specific sequence of bits. Once the sequence '1101' is detected, the FSM will transition to a final state (e.g., SEQUENCE_FOUND) where it will set start_shifting to 1. The FSM will remain in this state until reset is asserted.
+
+The states and transitions can be designed as follows:
+- IDLE: Initial state. If input bit is 1, transition to STATE_1.
+- STATE_1: If input bit is 1, transition to STATE_11. If input bit is 0, transition to STATE_10.
+- STATE_11: If input bit is 0, transition to STATE_110. If input bit is 1, transition to STATE_11.
+- STATE_10: If input bit is 1, transition to STATE_101. If input bit is 0, transition to IDLE.
+- STATE_110: If input bit is 1, transition to SEQUENCE_FOUND. If input bit is 0, transition to IDLE.
+- STATE_101: If input bit is 0, transition to IDLE. If input bit is 1, transition to STATE_1011.
+- STATE_1011: If input bit is 0, transition to IDLE. If input bit is 1, transition to IDLE.
+- SEQUENCE_FOUND: Final state. Set start_shifting to 1. If reset is asserted, transition to IDLE.
+
+However, this can be optimized to reduce the number of states. A more efficient approach is to directly check for the sequence by shifting the current state's bits based on the input, using a 4-bit shift register. If the current state matches '1101', set start_shifting to 1. This approach simplifies the FSM into fewer states (e.g., IDLE and SEQUENCE_FOUND), making it easier to implement.

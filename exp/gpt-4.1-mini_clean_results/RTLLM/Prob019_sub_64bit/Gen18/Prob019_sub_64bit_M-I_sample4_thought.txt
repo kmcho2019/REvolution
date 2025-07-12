@@ -1,0 +1,7 @@
+To improve the PPA (performance, power, area) of the 64-bit subtractor, we can replace the ripple carry adder structure with a more efficient carry lookahead adder (CLA) architecture, which reduces carry propagation delay and thus improves maximum operating frequency (WNS, TNS). This reduces critical path length by calculating carries in parallel using hierarchical generate/propagate signals. Power is also reduced as long carry chains toggle less frequently.
+
+To keep area reasonable, a hierarchical 4-level CLA structure (using 4-bit blocks) is implemented: each 4-bit block computes local generate/propagate signals, and a higher-level CLA computes carries for blocks. This is a good trade-off for 64 bits.
+
+Functionality remains the same: perform A - B = A + (~B + 1) and detect signed overflow using sign bits.
+
+This approach maintains correctness and overflow logic, while significantly improving performance and slightly reducing power compared to ripple carry. Area is moderately increased but still efficient given timing gains.

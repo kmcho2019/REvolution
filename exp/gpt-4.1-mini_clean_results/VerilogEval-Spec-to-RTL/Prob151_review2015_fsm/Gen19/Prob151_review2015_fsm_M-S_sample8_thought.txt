@@ -1,0 +1,11 @@
+Simplify the FSM by merging the partial pattern matching states into a single 4-bit shift register that continuously captures the last 4 bits of serial data. On each clock, shift in the new data bit and check if the pattern "1101" is detected. This eliminates multiple SEARCH states and related complex transitions.
+
+After detecting "1101", transition to the SHIFT state and count exactly 4 cycles (using a 2-bit counter) to enable shift_ena.
+
+Then move to COUNT state, wait for done_counting to go high.
+
+Finally, assert done in DONE state until ack is received, then return to pattern detection.
+
+All outputs are purely combinational based on the current state.
+
+This reduces states from 7 to 4 and simplifies next-state logic, while preserving all functionality.

@@ -1,0 +1,5 @@
+To solve this problem, we can design a finite state machine (FSM) with four states: IDLE, BYTE1, BYTE2, and BYTE3. 
+In the IDLE state, the FSM discards incoming bytes until it sees a byte with in[3] = 1, then it transitions to BYTE1. 
+From BYTE1, the FSM moves to BYTE2 after one clock cycle, and from BYTE2, it moves to BYTE3 after one clock cycle. 
+In the BYTE3 state, the FSM signals done in the next clock cycle, then returns to the IDLE state to start searching for the next message boundary.
+The FSM should also handle the reset signal, which should transition the FSM to the IDLE state and deassert the done signal.

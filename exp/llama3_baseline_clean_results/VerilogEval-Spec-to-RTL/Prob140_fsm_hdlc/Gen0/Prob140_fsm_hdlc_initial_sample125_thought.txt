@@ -1,0 +1,13 @@
+To solve this problem, we can design a Moore-type finite state machine (FSM) that keeps track of the consecutive 1s seen so far and generates the output signals based on the current state. We'll use a 3-bit state register to keep track of the consecutive 1s seen so far and the current state. The states will be:
+- S0: Initial state, no consecutive 1s seen
+- S1: One 1 seen
+- S2: Two 1s seen
+- S3: Three 1s seen
+- S4: Four 1s seen
+- S5: Five 1s seen
+- S6: Six 1s seen
+- S7: Seven 1s seen (error state)
+
+The next state logic will be determined based on the current state and the input bit. The output signals will be generated based on the current state. The disc signal will be asserted when the FSM is in state S5 and the next input bit is 0. The flag signal will be asserted when the FSM is in state S6 and the next input bit is 0. The err signal will be asserted when the FSM is in state S7.
+
+We'll use a case statement to implement the next state logic and the output signals.

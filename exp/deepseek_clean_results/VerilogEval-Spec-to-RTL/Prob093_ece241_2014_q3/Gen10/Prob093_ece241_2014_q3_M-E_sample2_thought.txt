@@ -1,0 +1,26 @@
+New approach using multiplexers as specified:
+
+1. Key observation: The K-map shows different patterns for each ab combination (mux_in outputs). We need to generate these patterns using only 2-to-1 muxes.
+
+2. For mux_in[0] (ab=00):
+   - Pattern: 0 (cd=00), 1 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is equivalent to: output 0 when cd=00, else 1
+   - Can be implemented with a 2-to-1 mux selecting between 0 and 1, controlled by (c | d)
+
+3. For mux_in[1] (ab=01):
+   - Always 0, no mux needed
+
+4. For mux_in[2] (ab=11):
+   - Pattern: 0 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This is equivalent to: output c (since when c=1, output is 1 regardless of d)
+   - No mux needed, just connect to c
+
+5. For mux_in[3] (ab=10):
+   - Pattern: 1 (cd=00), 0 (cd=01), 1 (cd=11), 1 (cd=10)
+   - This can be expressed as: output is d' when c=0, else 1
+   - Requires one 2-to-1 mux selecting between ~d and 1, controlled by c
+
+6. Total multiplexers used:
+   - One 2-to-1 for mux_in[0]
+   - One 2-to-1 for mux_in[3]
+   - Plus the required 4-to-1 mux (external to this module)

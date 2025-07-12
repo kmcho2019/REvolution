@@ -1,0 +1,31 @@
+The original code implements a simple bit-serial multiplier resembling basic Booth encoding but not radix-4 Booth. The main issue reported is the mixing of positive edge reset and clock in the same always block and usage of `$signed` inside always blocks leading to complex inferred primitives (like DLH_X1 latches) which cause synthesis compatibility issues.
+
+To fix this, we refactor the design to:
+
+1. Use an explicit synchronous reset (active high) on the clock edge only, avoiding posedge reset in the same always block.
+2. Implement a small FSM with states IDLE and BUSY:
+   - On reset or idle, load multiplier and multiplicand registers with sign-extended inputs, clear product, counter, ready.
+   - On BUSY state, process 16 cycles:
+     - Each cycle, check multiplier bit at current counter.
+     - If bit is 1, add multiplicand to product.
+     - Shift multiplicand left by 1 (prepare for next cycle).
+     - Increment counter.
+   - When counter reaches 16, set ready and return to IDLE or hold ready.
+3. Use only synchronous logic without asynchronous reset signals in always blocks.
+4. Avoid `$signed` inside always blocks by declaring registers and variables as signed where needed.
+5. Clearly separate combinational logic and sequential logic.
+6. Use a `reg signed [15:0]` type for multiplicand, multiplier, and product registers to simplify signed arithmetic.
+7. Output product and ready as registered outputs updated each clock cycle.
+
+This approach improves synthesis friendliness and maintains functionality. Although it does not implement radix-4 Booth algorithm (which is more complex), it follows the original problem’s core operation flow but in a better-structured, synthesis-friendly way.
+
+We use:
+
+- States: IDLE(0), BUSY(1)
+- On reset: load and prepare registers
+- In BUSY: run the 16 cycles accumulating partial sums based on multiplier bits
+- After 16 cycles, ready is set high and multiplication result is stable.
+
+This fully synchronous design avoids asynchronous resets and implicit latches.
+
+The final code below implements this.

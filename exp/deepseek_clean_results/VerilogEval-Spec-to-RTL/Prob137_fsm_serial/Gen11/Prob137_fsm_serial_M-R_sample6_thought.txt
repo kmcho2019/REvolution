@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Convert the Mealy-style FSM to a Moore-style FSM for better timing characteristics and simpler state transitions
+2. Output Logic: Move 'done' generation to combinational logic using assign statement instead of registered output
+3. Bit Counting: Replace the 3-bit counter with a terminal count signal for simpler comparison logic
+4. State Encoding: Keep the same state encoding but simplify transition logic by removing default case (handled by initialization)
+5. Data Shifting: Maintain LSB-first shifting but make the shift operation more explicit in the code
+6. Reset Handling: Keep synchronous reset but initialize all registers in a single block for clarity
+
+Key Improvements:
+- Moore FSM eliminates output dependency on inputs for better timing
+- Combinational done output simplifies the design
+- Terminal count signal reduces comparison logic
+- Clearer state transitions without default case
+- More explicit data shifting operation
+- Consolidated reset handling

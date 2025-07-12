@@ -1,0 +1,13 @@
+The asynchronous FIFO module, asyn_fifo, is designed to handle data transfer between two different clock domains. The module uses a dual-port RAM to store data and includes separate logic for managing read and write pointers, gray code conversion, pointer buffers, and determining full and empty conditions.
+
+The dual-port RAM, instantiated as a submodule, provides separate clock inputs for write and read operations, as well as separate address inputs for write and read operations. The RAM module has a write enable input and a write data input, and a read enable input and a read data output.
+
+The write and read pointers are represented by binary registers, which are incremented based on the write and read increment signals. The write pointer is incremented on the positive edge of the write clock and reset to 0 on write reset. The read pointer is incremented on the positive edge of the read clock and reset to 0 on read reset.
+
+The write and read pointers are converted to Gray code using XOR operations with right-shifted values. The converted write and read pointers are stored in registers. The Gray code conversion reduces glitches and ensures proper synchronization of the write and read pointers.
+
+The module includes buffer registers to hold the previous values of the write and read pointers. The buffer registers are updated on the positive edge of the respective clocks and reset to 0 on the respective resets. The buffer registers are used to synchronize the write and read pointers for determining the full and empty conditions.
+
+The module compares the current write and read pointers to determine if the FIFO is full or empty. The wfull output is set to 1 when the write pointer is equal to the bitwise negation of the most significant bit of the read pointer concatenated with the remaining bits of the read pointer. The rempty output is set to 1 when the read pointer is equal to the write pointer.
+
+The module connects the input and output signals to the dual-port RAM module based on the control signals and pointer values. The wen and ren signals control the write and read enable signals of the RAM module, respectively. The wdata input is connected to the write data input of the RAM module, and the rdata output is connected to the read data output of the RAM module.

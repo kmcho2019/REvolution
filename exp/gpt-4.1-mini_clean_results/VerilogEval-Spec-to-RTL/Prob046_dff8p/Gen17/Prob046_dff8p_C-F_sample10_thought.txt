@@ -1,0 +1,9 @@
+Fuse the straightforward, clear negative edge triggered synchronous reset design from Example 1 with the power optimization idea of using clock enable logic from Example 2 — but do so without adding extra comparator logic or additional registers to minimize area and timing complexity.
+
+Specifically, implement an 8-bit negative edge triggered synchronous reset register loading 8'h34 on reset, updating q only when reset is asserted or input d changes from the last stored value. To track changes without the expensive comparator on all bits, use a simple XOR reduction of d and q for the clock enable signal, avoiding an extra register for d_reg.
+
+This approach keeps the clean negative edge clocking and synchronous reset behavior from Example 1, but reduces unnecessary toggling like Example 2, without extra storage or comparator overhead. Using a single always block with a vector register ensures area and power efficiency, and the single XOR comparison reduces switching power by gating updates only when needed.
+
+The TopModule instantiates this register directly, preserving modularity and clarity.
+
+Overall, this combines clarity, correctness, and a balanced power optimization with minimal complexity, improving upon both examples.

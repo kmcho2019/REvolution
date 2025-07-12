@@ -1,0 +1,10 @@
+The original FSM toggled state whenever bump_left or bump_right was asserted at the clock edge, but it assumed bump inputs are stable and synchronous. To ensure reliable behavior, especially if bump signals are asynchronous or short pulses, we should synchronize the inputs and detect rising edges of bump signals on the clock domain. 
+
+The FSM should switch direction only on the rising edge of any bump input (i.e., when bump goes from 0 to 1). This avoids multiple toggles if bump signals remain high for multiple clock cycles or glitches. We will:
+
+1. Synchronize bump_left and bump_right with two-stage flip-flops to avoid metastability.
+2. Detect rising edges by comparing current and previous synchronized bump signals.
+3. Toggle the walking direction state on the clock edge if a rising bump edge is detected.
+4. Keep asynchronous reset active-high resetting the FSM to walk_left.
+
+This improves functional correctness and robustness without adding excessive complexity.

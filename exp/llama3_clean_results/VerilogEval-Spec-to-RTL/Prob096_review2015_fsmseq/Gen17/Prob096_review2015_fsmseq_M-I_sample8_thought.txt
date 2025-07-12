@@ -1,0 +1,11 @@
+To improve the existing solution, we'll focus on optimizing the finite-state machine (FSM) for better performance, power, and area (PPA) based on the provided metrics. The strategy involves simplifying the combinational logic, reducing unnecessary state transitions, and optimizing state encoding for area efficiency.
+
+1. **Simplify Combinational Logic**: Review the case statement for next state calculation and simplify it by minimizing the number of conditions and making it more straightforward.
+
+2. **Reduce Unnecessary State Transitions**: Since once the sequence '1101' is detected and `start_shifting` is set to 1, the state machine remains in the `STATE_1101` state. We can bypass the state machine after detecting the sequence to prevent unnecessary transitions and reduce power consumption.
+
+3. **Optimize State Encoding for Area Efficiency**: While the current binary encoding is area-efficient, we should ensure it's the best choice considering the synthesis tool and target device. We might explore one-hot encoding as an alternative to see if it offers better area utilization in the context of the synthesis and mapping process.
+
+4. **Review Sequential Logic Update**: Ensure that all paths through the case statement and the sequential update logic have minimal delay to improve timing performance.
+
+Given the FSM's simplicity and the objective to optimize for PPA, these strategies aim to balance performance, power, and area, ensuring the design is efficient and scalable.

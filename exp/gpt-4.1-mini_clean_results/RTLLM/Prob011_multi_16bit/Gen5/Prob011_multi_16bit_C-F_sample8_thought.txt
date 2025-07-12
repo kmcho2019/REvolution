@@ -1,0 +1,31 @@
+Fuse strengths of both examples to optimize timing, power, and area while following the spec:
+
+- From Example 1:
+  * Use multiplier_reg (bin) shifted right each cycle to examine its LSB, avoiding wide left shifts on the multiplier.
+  * Shift multiplicand (ain) left by counter i-1 for accumulation, leveraging simple shift-and-add logic.
+  * Start and done control with explicit counter boundary handling for clarity.
+
+- From Example 2:
+  * Maintain multiplicand (areg) and multiplier (breg_ext) registers for stable input storage and easier control.
+  * Avoid unnecessary register updates by using clock enables and conditional additions.
+  * Only update product_reg (yout_r) when accumulation occurs to reduce toggling.
+
+Fusion strategy:
+- Store ain in a 32-bit register (multiplicand_ext) shifted left by 0 for alignment to match the product width (simplifies addition).
+- Store bin in multiplier_reg shifted right each cycle.
+- Use a 5-bit counter i (0 to 17) to control operation:
+  * At i=0, load registers.
+  * For 1 <= i <= 16, if LSB of multiplier_reg is 1, add multiplicand_ext shifted left by i-1 to product_reg.
+  * Shift multiplier_reg right by 1 bit each cycle.
+- Update done flag on i=16; reset done at i=17 or when start is deasserted.
+- Use clock gating (via start signal and conditions) to update registers only when needed.
+- Avoid unnecessary register updates to reduce power and simplify logic.
+- Maintain non-blocking assignments with synchronous reset for design clarity and robust synthesis.
+  
+This fusion offers:
+- Timing: fewer large shifts by shifting the multiplier right instead of the multiplicand left excessively.
+- Power: conditional accumulation and minimal register updates reduce toggling.
+- Area: simple shifting and addition logic without extra wide multiplexers or storage.
+- Clarity: explicit state transitions and consistent use of registers with aligned widths.
+
+The final design strictly follows the problem's control and update conditions while optimizing PPA metrics.

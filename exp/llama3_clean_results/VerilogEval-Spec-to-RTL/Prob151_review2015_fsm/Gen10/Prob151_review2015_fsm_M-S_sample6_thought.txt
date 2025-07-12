@@ -1,0 +1,5 @@
+A simplified approach to solving this problem is to utilize a single finite-state machine (FSM) that handles all the required states. This FSM can be designed to detect the input sequence '1101', manage the shift enable signal for exactly 4 clock cycles, wait for the counting process to finish, and then assert the done signal until acknowledged.
+
+The proposed FSM will have five states: idle, start, shifting, counting, and done. The idle state waits for the start sequence '1101'. Once the sequence is detected, the FSM transitions to the shifting state, where it asserts the shift enable signal for 4 clock cycles. After shifting, it moves to the counting state, waiting for the done_counting signal. Upon receiving the done_counting signal, it transitions to the done state, asserting the done signal until the ack signal is received, at which point it returns to the idle state.
+
+This approach simplifies the design by eliminating the need for a separate sequence detector and timer controller, reducing the overall complexity of the code.

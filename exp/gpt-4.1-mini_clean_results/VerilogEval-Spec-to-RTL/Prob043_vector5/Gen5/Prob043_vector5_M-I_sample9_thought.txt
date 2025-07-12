@@ -1,0 +1,8 @@
+The original design correctly implements the pairwise equality outputs as bits of the 25-bit vector using nested loops and bitwise XNOR. To improve PPA (power, performance, area) without altering correctness, I propose two optimizations:
+
+1. Simplify the input ordering and output indexing by defining inputs as {a,b,c,d,e} instead of reversed order. This avoids confusion and makes code clearer.
+2. Use a single generate loop over the 25 pairs directly, computing the pair indices from the bit index, thus reducing the complexity of double nested loops and improving synthesis friendliness.
+3. Use the XNOR operator directly (^) with negation replaced by XNOR (`~(a ^ b)` == `a ~^ b`), which is more concise and may map better in synthesis.
+4. Store inputs as a vector in natural order and calculate output indices accordingly.
+
+This reduces complexity and improves readability. Overall logic remains the same, and since all 25 pairwise comparisons are needed, the area and power are minimally reducible, but the code becomes more synthesis-friendly and potentially slightly faster due to simplified indexing.

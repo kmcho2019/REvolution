@@ -1,0 +1,7 @@
+The TopModule should be a simple loadable flip-flop with a 2:1 mux at its input. It doesn't need to know about the feedback logic - that's handled by the full_module's wiring. We can simplify to:
+
+1. Single D flip-flop with synchronous load
+2. 2:1 mux selects between:
+   - r_in when L=1 (load)
+   - q_in when L=0 (operation)
+3. No need for any additional logic - the XOR and bit shuffling will be handled by how full_module connects these instances

@@ -1,0 +1,21 @@
+To optimize this state machine further for PPA, I'll implement the following improvements:
+
+1. **Output Logic**:
+   - Keep the simple OR gates for outputs since they're already optimal
+   - Use continuous assignments for better readability and synthesis
+
+2. **State Transition Logic**:
+   - Replace nested if-statements with parallel casez statements for more efficient decoding
+   - Group similar state transitions to minimize redundant logic
+   - Use bitwise operations to reduce gate count
+   - Precompute common conditions (~in and in) once to avoid repeated calculations
+
+3. **Power Optimization**:
+   - Minimize switching activity by reducing unnecessary evaluations
+   - Structure logic to have fewer levels for critical paths
+
+4. **Area Optimization**:
+   - Share common transition patterns (like S0 transition)
+   - Use more efficient encoding for the state transitions
+
+The new implementation will maintain the same functionality but with better PPA metrics through more parallel logic and reduced redundant operations.

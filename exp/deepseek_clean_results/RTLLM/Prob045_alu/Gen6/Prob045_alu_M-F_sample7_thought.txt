@@ -1,0 +1,24 @@
+Based on the feedback, here's the optimized ALU design with the following improvements:
+
+1. Arithmetic Unit Optimization:
+   - Implemented early muxing to select between add/sub operations before computation
+   - Simplified carry chain by using dedicated adder/subtractor logic
+   - Merged overflow detection directly into arithmetic unit
+
+2. Shift Unit Enhancement:
+   - Implemented hierarchical barrel shifter with 5 stages (1/2/4/8/16-bit shifts)
+   - Optimized shift amount selection to only activate for variable shifts
+
+3. Power Efficiency:
+   - Added operation-specific enables for arithmetic and shift units
+   - Gated flag output to only update for comparison operations
+
+4. Area Reduction:
+   - Shared logic between similar operations (AND/OR/NOR)
+   - Simplified overflow detection by reusing arithmetic unit signals
+   - Optimized shift amount mux to only activate when needed
+
+5. Timing Improvements:
+   - Reduced critical path by early operation decoding
+   - Balanced pipeline stages in barrel shifter
+   - Simplified flag generation logic

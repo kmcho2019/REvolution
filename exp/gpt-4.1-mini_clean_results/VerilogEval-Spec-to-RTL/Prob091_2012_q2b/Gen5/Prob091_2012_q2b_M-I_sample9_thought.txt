@@ -1,0 +1,33 @@
+The original solution is already minimal and clean, using the most straightforward combinational logic to implement Y1 and Y3. Given the very low power and area reported, further optimization is challenging without altering functionality. 
+
+However, we can make a slight improvement in power by limiting unnecessary toggling on Y3. Currently, Y3 depends on (~w) & (y[1] | y[2] | y[4] | y[5]). Since y is one-hot encoded, only one bit is active at a time, so checking these four bits is equivalent to checking if the state is any of B, C, E, or F.
+
+To reduce toggling, we can gate the OR computation by ~w first, so the OR only evaluates when ~w=1, avoiding unnecessary switching when w=1. This is done by changing the order:
+
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w  (original)
+
+To:
+
+Y3 = ~w & (y[1] | y[2] | y[4] | y[5])   (same logically, but we can implement the OR only if ~w=1)
+
+However, in logic synthesis, the order usually does not affect gate count as the logic is optimized automatically.
+
+Another possible micro-optimization is using a reduction OR operator rather than listing bits explicitly for clarity:
+
+or_y = |{y[1], y[2], y[4], y[5]};
+
+This helps synthesis tools and clarifies intent.
+
+Overall, the change is mostly stylistic to possibly help synthesis and maintainability with no functional difference or significant PPA gain.
+
+Therefore, the improved code will:
+
+- Use a reduction OR operator to compute or_y
+
+- Keep the same logic for Y1 and Y3
+
+This balances clarity and minimal logic with the original requirements.
+
+No structural changes, no additional registers or complex gating since that would add area or latency.
+
+This change aligns with best practice for combinational logic expressions.

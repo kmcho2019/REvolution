@@ -249,8 +249,8 @@ def plot_highlighted_top_scorers_alt(all_data, ref_power, ref_area, groups, grou
 
 def main():
     parser = argparse.ArgumentParser(description="Generate Pareto front and scoring diagrams for evolutionary coding algorithm results.")
-    parser.add_argument("--generation_log", default='./deepseek_final_log_only/VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c/generation_log.jsonl', help="Path to the generation_log.jsonl file.")
-    parser.add_argument("--summary_json", default='./deepseek_final_log_only/VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c/Prob033_ece241_2014_q1c_summary.json', help="Path to the summary JSON file (*_summary.json).")
+    parser.add_argument("--generation_log", default='./exp/deepseek_clean_results/VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c/generation_log.jsonl', help="Path to the generation_log.jsonl file.")
+    parser.add_argument("--summary_json", default='./exp/deepseek_clean_results/VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c/Prob033_ece241_2014_q1c_summary.json', help="Path to the summary JSON file (*_summary.json).")
     parser.add_argument("--max_area", type=float, default=60, help="Set the maximum x-axis (Area) cutoff for all plots.")
     parser.add_argument("--max_power", type=float, default=0.0035, help="Set the maximum y-axis (Power) cutoff for all plots.")
     parser.add_argument("--output_dir", default='VerilogEval_Prob033_ece241_2014_q1c_plots', help="Directory to save the output plots.")

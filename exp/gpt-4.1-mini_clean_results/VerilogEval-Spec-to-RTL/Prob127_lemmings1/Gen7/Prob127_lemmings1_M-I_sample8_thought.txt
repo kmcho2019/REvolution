@@ -1,0 +1,5 @@
+To optimize for better PPA, simplify the next_state logic by combining bump conditions into a single expression that toggles the state if either bump_left or bump_right is high, since the Lemming should switch direction on any bump. This avoids separate if-else and redundant checks, reducing combinational logic depth. 
+
+Also, generate outputs walk_left and walk_right directly from the single state signal and its complement instead of separate reg assignments, minimizing logic and power. Keep asynchronous reset and synchronous state update as before.
+
+Overall, this approach reduces combinational logic, simplifies output logic, and minimizes toggling to improve timing, power, and area without changing functionality.

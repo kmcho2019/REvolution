@@ -1,0 +1,13 @@
+Implement the 0-to-999 counter by splitting the 10-bit counter into two smaller counters: a 6-bit "low" counter counting from 0 to 63 and a 4-bit "high" counter counting from 0 to 15. We first increment the low counter every clock cycle; when the low counter reaches 63 (max for 6 bits), it resets to 0 and increments the high counter by 1. When the combined count reaches 999 (0x3E7), the counters reset to 0. 
+
+This approach breaks the large 10-bit counting operation into two smaller counters with simpler max values, allowing easier logic and potentially faster timing due to smaller comparators and adders. We then combine the two counters into a single 10-bit output.
+
+Synchronous reset clears both counters.
+
+Summary:
+- Two smaller counters in cascade (6-bit low and 4-bit high).
+- Increment low counter every cycle.
+- Increment high counter on low counter rollover.
+- Reset both when count reaches 999.
+- Output q is concatenation of high and low counters forming the 10-bit count.
+This architecture promotes modularity and can reduce the critical path delay in comparison and increment logic.

@@ -1,0 +1,9 @@
+Fuse the best of both designs by:
+- Using a combined enable (`ena = shift_ena | count_ena`) to gate updates and reduce unnecessary toggling, lowering power.
+- Avoiding an explicit initialization register or reset since the problem doesn't specify reset, and initial state is undefined anyway; this reduces area and complexity.
+- Implementing the shift as a shift-left operation with the new data entering as LSB, consistent with shifting in data MSB first.
+- Using a synthesis-friendly subtract operation (`q - 1`) for down counting, letting synthesis optimize the decrementer for minimal delay and area.
+- Prioritizing shift_ena when both enables are asserted (even if that case is don't care) for predictable behavior.
+- Using a single always block with non-blocking assignments for clean sequential logic and straightforward timing.
+- Not updating q if neither enable is active, further reducing toggling and saving power.
+This fusion keeps the design minimal, clean, and efficient in power, performance, and area.

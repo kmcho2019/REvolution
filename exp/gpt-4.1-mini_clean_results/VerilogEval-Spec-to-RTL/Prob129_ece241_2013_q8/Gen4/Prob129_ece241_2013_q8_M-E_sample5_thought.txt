@@ -1,0 +1,11 @@
+Implement a 3-state Mealy FSM for detecting "101" sequence by encoding states differently:
+
+- IDLE (S0): waiting for '1' to start sequence
+- FOUND_1 (S1): received first '1', waiting for '0'
+- FOUND_10 (S2): received "10", waiting for '1' to complete "101"
+
+Detect overlapping sequences by transitioning accordingly after detection. Output z is asserted combinationally based on current state and input to ensure Mealy behavior.
+
+Use asynchronous reset on negative edge of aresetn, with state updated on posedge clk.
+
+In this design, assign output z outside state transition logic for clarity. This solution uses simple enumerated states with explicit 2-bit binary encoding, different from previous approach. The output z is combinational logic purely dependent on current state and input, without setting it inside next_state logic block.

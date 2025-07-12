@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. State Machine: Keep simple 3-state FSM (IDLE, BYTE1, BYTE2) with binary encoding
+2. Data Storage: Store bytes directly into output register when received
+3. Output Control: Only update output registers when needed (during state transitions)
+4. Reset: Synchronous reset clears state and outputs
+5. Done Signal: Assert only after third byte is received
+6. Optimization: Remove unnecessary default assignments and simplify state transitions
+
+Key Simplifications:
+- Remove redundant default assignments
+- Direct byte storage without shifting
+- Minimal state transitions
+- Output remains don't-care when not done
+- Only update registers when actually storing data

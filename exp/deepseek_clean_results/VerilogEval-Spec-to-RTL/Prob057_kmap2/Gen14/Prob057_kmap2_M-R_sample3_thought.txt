@@ -1,0 +1,15 @@
+Refactoring Approach:
+1. Expression Simplification:
+   - The original solution correctly implements the K-map but can be further optimized
+   - Notice that (~a & ~b & c & d) can be combined with (b & ~c & d) by factoring out d
+   - The (a & b & (~c | ~d)) term can be rewritten using De Morgan's laws
+
+2. Implementation Strategy:
+   - Use direct assign statements for clarity
+   - Break down the logic into intermediate terms for better readability
+   - Apply Boolean algebra optimizations to reduce gate count
+
+3. Optimized Expression:
+   - out = ~[d & (~a & ~b & c | b & ~c) | a & (b & ~(c & d) | c & ~d)]
+   - This groups terms by common factors (d and a) to minimize logic operations
+   - Results in fewer total gates while maintaining the same functionality

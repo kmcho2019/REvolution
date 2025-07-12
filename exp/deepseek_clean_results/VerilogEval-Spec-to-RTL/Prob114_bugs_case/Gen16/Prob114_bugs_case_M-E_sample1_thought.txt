@@ -1,0 +1,15 @@
+Novel LUT-based approach:
+1. Instead of using case statements or parallel comparisons, we'll implement a ROM-based lookup table
+2. The 8-bit input serves as an address to the ROM
+3. The ROM stores both the decoded value (4 bits) and valid flag (1 bit) in each location
+4. Only the valid scancodes are stored in the ROM; all others default to 0
+5. Benefits:
+   - Single memory access for both outputs
+   - Clean separation of data and control
+   - Easily scalable to more key codes
+   - Potentially better synthesis for large code sets
+   - Clear mapping between address and output
+6. Implementation:
+   - Use a parameterized ROM with 256 entries (for all 8-bit codes)
+   - Initialize only the valid codes
+   - Default all other locations to 0

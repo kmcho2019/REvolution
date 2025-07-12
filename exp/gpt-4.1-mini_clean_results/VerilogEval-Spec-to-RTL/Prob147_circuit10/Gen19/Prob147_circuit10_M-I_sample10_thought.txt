@@ -1,0 +1,25 @@
+From the waveform, we analyze the state transitions and outputs to deduce the logic. The state is one bit updated on posedge clk. Observing the waveform:
+
+- When state = 0:
+  - state stays 0 if b=0 (e.g., times 15-40)
+  - state becomes 1 when b=1 and a=0 (e.g., time 45)
+  - state becomes 0 when a=1 and b=1 (e.g., time 65)
+- When state = 1:
+  - state remains 1 if a=1 and b=1 (e.g., times 95-110)
+  - state goes to 0 if a=0 and b=1 or a=1 and b=0 (e.g., times 115, 125)
+  - state remains 1 if a=0 and b=0 (e.g., times 75-80)
+
+From this, next_state can be expressed as:
+- next_state = (state & ~(a ^ b)) | (~state & b & ~a)
+Explanation:
+- If current state is 1 and a equals b, next_state stays 1
+- If current state is 0 and b=1 and a=0, next_state goes to 1
+- Otherwise next_state is 0
+
+For output q, from the waveform:
+- q = state & ~a & b | ~state & a & b
+- Simplified: q = b & (state ^ a)
+
+Implement these expressions with one flip-flop for state, updated at posedge clk, with combinational logic for next_state and q.
+
+This matches all the given waveform samples, providing correct state and q outputs.

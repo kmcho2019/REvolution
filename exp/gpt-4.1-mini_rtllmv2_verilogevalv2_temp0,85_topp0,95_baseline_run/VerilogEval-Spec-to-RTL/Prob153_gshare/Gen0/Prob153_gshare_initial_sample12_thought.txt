@@ -1,8 +1,0 @@
-Implement a gshare predictor with:
-- A 7-bit global history register (GHR).
-- A 128-entry pattern history table (PHT), each entry a 2-bit saturating counter.
-- Prediction interface: when predict_valid is asserted, XOR the 7-bit PC and current GHR to index into PHT, output prediction bit (MSB of 2-bit counter) and current GHR as predict_history. At next clock edge, update GHR with predicted taken bit unless training with misprediction is happening (training takes precedence).
-- Training interface: when train_valid is asserted, at next clock edge update PHT entry indexed by train_pc XOR train_history with train_taken (increment/decrement 2-bit counter accordingly). If mispredicted, restore GHR to train_history at the same clock edge, overriding prediction update.
-- Handle simultaneous training (with misprediction) and prediction: training update and GHR restore take precedence over GHR update for prediction.
-- Asynchronous active-high reset: reset GHR and PHT entries to weakly taken (01) or strongly not taken (00), I'll choose weakly not taken (01) for better start bias.
-- All sequential updates happen at posedge clk.

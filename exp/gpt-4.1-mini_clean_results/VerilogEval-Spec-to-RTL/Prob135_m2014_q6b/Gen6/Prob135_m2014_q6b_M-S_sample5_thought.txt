@@ -1,0 +1,11 @@
+To simplify, I'll remove intermediate named signals for state decoding and directly express the next-state logic for y[1] as a single combinational expression. This reduces verbosity while keeping clarity by using simple bitwise operations and minimal parentheses. The output Y1 will still be the next value of y[1].
+
+By inlining the decoded states in the expression:
+- B = (y == 3'b001) → ~y[2] & ~y[1] & y[0]
+- C = (y == 3'b010) → ~y[2] & y[1] & ~y[0]
+- E = (y == 3'b100) → y[2] & ~y[1] & ~y[0]
+- F = (y == 3'b101) → y[2] & ~y[1] & y[0]
+
+Then next_y1 = B | ((C | E) & w) | F
+
+This factors the common 'w' term for C and E, minimizing logic and improving readability.

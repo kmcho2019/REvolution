@@ -1,0 +1,16 @@
+The original design has minimal storage and uses a 2-bit counter to index the bits of input `d` directly for serialization, asserting `valid_out` only when outputting the MSB. This is functionally correct but may lead to glitching and power inefficiency due to dynamic multiplexing on the input `d`, which is not registered internally.
+
+To improve power and timing, I propose capturing the parallel input `d` into a 4-bit internal register (`data_reg`) once every 4 cycles when starting a new serialization sequence (i.e., when counter `cnt` is zero). Then, instead of indexing `d` combinationally, we use a shift register approach to shift out bits MSB first on each clock cycle. This approach reduces toggling on input `d` lines, confines glitches within internal registers, and minimizes the complexity of combinational logic at the output.
+
+The counter counts from 0 to 3. On count 0, we load new data `d` into `data_reg`, assert `valid_out` to 1 (indicating MSB output is valid), and output the MSB (bit 3). On subsequent cycles, `valid_out` is 0 and `data_reg` shifts left by 1 bit each cycle so that the MSB of `data_reg` is the next output bit, continuing from MSB to LSB.
+
+This method aligns with the user's original requirement:
+- `valid_out` is asserted when the MSB is output,
+- Data is output MSB to LSB sequentially,
+- Uses a simple 2-bit counter and 4-bit register,
+- Reduces glitches and switching power on `d` input,
+- Simplifies synthesis and can improve timing by eliminating dynamic indexing multiplexers.
+
+Reset is synchronous (active low), and registers initialize to zero.
+
+This is a good balance between power, performance, and area.

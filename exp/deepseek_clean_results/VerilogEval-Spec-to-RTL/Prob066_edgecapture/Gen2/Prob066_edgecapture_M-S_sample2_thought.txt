@@ -1,0 +1,11 @@
+To simplify the solution while maintaining functionality:
+1. Remove the separate combinational edge detection logic and perform the transition check directly in the sequential block
+2. Use a single register to store both the previous input and the output state
+3. Perform the 1→0 transition check by comparing current input with the stored previous value
+4. Maintain the set-until-reset behavior by OR-ing new detections with existing output
+
+Key simplifications:
+- Eliminate the edge_detect wire and its combinational logic
+- Combine the transition detection and output update in one sequential block
+- Still properly handles clocking and reset
+- Maintains identical functionality with fewer components

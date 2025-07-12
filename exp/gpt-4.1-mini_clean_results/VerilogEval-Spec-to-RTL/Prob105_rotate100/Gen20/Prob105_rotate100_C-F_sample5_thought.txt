@@ -1,0 +1,12 @@
+Fuse the efficient, minimal toggle approach from Example 2 with the structured next-state combinational logic and explicit hold from Example 1 to balance clarity, power, and synthesis friendliness.
+
+Key fusion points:
+- Use a combinational block to compute next_q to enable clear, centralized control of next state based on load and ena signals.
+- Assign next_q = q in the no-rotation case to explicitly indicate holding state and prevent unintended toggling, aiding power efficiency.
+- Keep load synchronous and highest priority.
+- Use concise vector concatenation for left/right rotations, avoiding bitwise loops and minimizing logic depth.
+- Use a single sequential block updating q from next_q on posedge clk, simplifying timing and logic.
+- This approach reduces toggling by avoiding unnecessary register updates and avoids redundant q <= q assignments in the sequential block.
+- Improves synthesis friendliness by explicitly describing next state transitions, aiding optimizations like clock gating.
+
+This fusion yields a clean, power-conscious, performance-aware design that is easy to understand and synthesize with optimized PPA.

@@ -1,0 +1,7 @@
+To fix the interface mismatch causing simulation elaboration failure, parameterize the adder module with `DATA_WIDTH` (default 64) and `STG_WIDTH` (default 16) to match the testbench expectations. This makes the module flexible and consistent with the testbench parameters.
+
+Reimplement the pipelined ripple carry adder such that the number of pipeline stages equals `DATA_WIDTH / STG_WIDTH`. Each pipeline stage adds corresponding slices of inputs with a registered carry-in, producing a sum and a carry-out registered for the next stage. The input enable `i_en` and output enable `o_en` are pipelined through the stages to indicate valid data.
+
+Use generate blocks and arrays of registers to handle parameterized widths and pipeline stages cleanly. The final 65-bit result is assembled by concatenating all stage sums and the last carry-out. The output enable `o_en` reflects the valid output after pipeline latency.
+
+This approach maintains the original functionality and pipeline structure while matching the testbench parameters and enabling scalability.

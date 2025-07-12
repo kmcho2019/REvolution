@@ -1,0 +1,26 @@
+Novel Architecture Idea: Pipelined Rule 90 with Shift Register Approach
+
+Key Innovations:
+1. Shift Register Implementation:
+   - Instead of parallel XOR gates, use a shift register approach that naturally handles neighbor relationships
+   - This reduces combinatorial logic depth and improves timing
+
+2. Two-Stage Pipeline:
+   - Stage 1: Capture left and right neighbors through shift operations
+   - Stage 2: Compute XOR of neighbors
+   - This breaks the long combinatorial path into two shorter stages
+
+3. Boundary Handling:
+   - Use register concatenation for clean boundary conditions (0's automatically inserted)
+   - Eliminates need for conditional logic at boundaries
+
+4. Power Optimization:
+   - Only shift registers when not loading (reduces unnecessary toggling)
+   - Smaller clock domain for shift operations
+
+Advantages:
+- Better timing due to pipelining
+- Reduced combinatorial logic
+- Cleaner boundary handling
+- Lower power when idle
+- More scalable for larger arrays

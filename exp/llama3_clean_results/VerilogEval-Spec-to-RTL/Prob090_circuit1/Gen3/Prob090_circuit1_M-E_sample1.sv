@@ -1,0 +1,15 @@
+module TopModule(
+    input  a,
+    input  b,
+    output reg q
+);
+
+    always @(*)
+    begin
+        if (a == 1'b1 && b == 1'b1)
+            q = 1'b1;
+        else
+            q = 1'b0;
+    end
+
+endmodule

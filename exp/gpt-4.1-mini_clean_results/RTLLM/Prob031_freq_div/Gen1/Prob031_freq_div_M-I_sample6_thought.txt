@@ -1,0 +1,7 @@
+To optimize the frequency divider for better power and area, I will share a single counter for both CLK_10 and CLK_1 since their frequencies are multiples (10 and 100). This reduces redundant counters and logic. CLK_50 remains separate because it toggles every clock cycle (divide by 2) and cannot share counting logic easily. 
+
+The shared counter counts up to 49 (for CLK_1), and inside that cycle, CLK_10 toggles every 5 counts, so the toggling condition for CLK_10 is when the shared counter modulo 5 equals 4. This eliminates one entire counter register and comparison, reducing area and power. 
+
+I will implement the shared counter with a 6-bit register and produce both CLK_10 and CLK_1 toggles based on counter value comparisons. This optimizes area by reducing registers and comparators, and can reduce power by limiting toggling logic. 
+
+Reset logic remains synchronous and all outputs are initialized properly. This approach keeps the design simple while improving PPA over three separate counters.

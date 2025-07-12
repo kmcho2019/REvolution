@@ -1,0 +1,15 @@
+Novel Architecture: Parallel Counters with State Machine Control
+1. Instead of cascaded rollover logic, use parallel counters with enable signals
+2. Implement a 3-state FSM to control counter updates (IDLE, SEC_INCR, MIN_INCR)
+3. Each counter has its own dedicated increment logic
+4. Rollover conditions generate enable signals for higher-order counters
+5. Optimized bit-width usage with 6-bit seconds/minutes and 5-bit hours
+6. Single always block for sequential logic to minimize area
+7. Early termination of state transitions for power efficiency
+
+Key Advantages:
+- Eliminates timing-critical cascaded rollover paths
+- State machine provides clear operational phases
+- Parallel operation improves timing margin
+- Reduced switching activity through state-based enables
+- Clean separation of counter control logic

@@ -1,0 +1,16 @@
+Novel approach using a rotating buffer and pattern matching:
+1. Use a 2-bit counter to track position within each 3-cycle window (0,1,2)
+2. Maintain a 3-bit register that stores w values in a circular buffer fashion
+3. Each cycle in state B:
+   - Store current w value in the appropriate position
+   - Increment position counter (modulo 3)
+   - When counter wraps around (position 2 → 0), compare the stored pattern
+4. Compare the stored 3-bit pattern against all possible "two 1's" patterns
+5. Output z=1 in the next cycle if there's a match
+6. This approach minimizes states while clearly delineating evaluation windows
+
+Advantages:
+- Explicit tracking of window boundaries via modulo counter
+- Efficient pattern matching using bitwise comparisons
+- Clear separation between data collection and evaluation phases
+- Minimal state machine complexity (only 2 states)

@@ -1,0 +1,27 @@
+Revised design approach:
+1. State encoding: Use 4 bits to properly represent all 9 required states (0-8)
+2. Correct state transitions:
+   - After 5 consecutive 1s (STATE_5), next input determines:
+     - 0: Transition to STATE_DISC (discard next bit)
+     - 1: Transition to STATE_FLAG (flag detected)
+   - From STATE_FLAG:
+     - 0: Return to STATE_0
+     - 1: Transition to STATE_ERR (error condition)
+3. Output generation:
+   - Pure Moore machine: outputs depend only on current state
+   - disc: asserted in STATE_DISC
+   - flag: asserted in STATE_FLAG
+   - err: asserted in STATE_ERR
+4. Reset behavior:
+   - Initialize to STATE_0 (as if previous input was 0)
+   - Clear all outputs during reset
+5. Timing:
+   - Outputs asserted for exactly one cycle when entering target states
+   - Registered outputs ensure clean one-cycle pulses
+
+Key fixes:
+- Proper state encoding with 4 bits
+- Correct state transition logic
+- Simplified output generation
+- Proper handling of error persistence
+- Clear timing for output assertions

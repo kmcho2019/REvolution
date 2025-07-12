@@ -1,0 +1,14 @@
+A different approach to implement the 64-bit Johnson counter is to use a conditional concatenation-based shift update focusing explicitly on the value of Q[0] at each clock cycle, without relying on looping constructs or bitwise iteration.
+
+Specifically:
+- Maintain Q as a 64-bit register.
+- On reset, initialize Q to zero.
+- On each rising clock edge (or reset), check Q[0]:
+  - If Q[0] == 0, shift right by one bit and insert '1' at the MSB.
+  - Otherwise (Q[0] == 1), shift right by one bit and insert '0' at the MSB.
+
+This method captures the Johnson counter behavior compactly with a single concatenation, making the code succinct and potentially enabling better synthesis optimization by avoiding the loop and explicit per-bit updates.
+
+Since the logic depends only on the current Q[0], the critical path will be through Q[0] to the MSB generation, which may yield better timing than a serial chain of flip-flops shifting bit by bit.
+
+Overall, this solution offers clarity, minimal combinational logic, and a direct expression of the Johnson counting principle via concatenation and conditional MSB insertion.

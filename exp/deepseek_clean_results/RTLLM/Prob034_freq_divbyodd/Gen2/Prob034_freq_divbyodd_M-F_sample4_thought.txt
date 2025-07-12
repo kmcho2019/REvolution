@@ -1,0 +1,8 @@
+To properly implement an odd frequency divider with 50% duty cycle:
+1. Use two separate counters as originally specified - one for positive edges (cnt1) and one for negative edges (cnt2)
+2. Create two intermediate clock signals (clk_div1 and clk_div2) that toggle at half the division period
+3. Combine these signals using an OR operation to produce the final divided clock
+4. Each counter runs at half the input clock frequency (on opposite edges)
+5. Reset initializes both counters and intermediate clocks
+6. Maintain parameter validation for odd NUM_DIV
+7. The dual-edge approach ensures correct odd division with 50% duty cycle

@@ -1,0 +1,12 @@
+Novel approach using a unified counter and digit extraction:
+1. Use a single 14-bit binary counter (counts up to 9999)
+2. Convert binary count to BCD digits on-the-fly using double dabble algorithm
+3. Generate enable signals by comparing current and previous count values
+4. Advantages:
+   - Single counter simplifies increment logic
+   - Double dabble conversion is pipelined for better timing
+   - Enable signals derived from digit changes rather than rollover detection
+5. Implementation:
+   - Maintain previous count for change detection
+   - Use combinational double dabble for BCD conversion
+   - Generate ena signals when higher digits change

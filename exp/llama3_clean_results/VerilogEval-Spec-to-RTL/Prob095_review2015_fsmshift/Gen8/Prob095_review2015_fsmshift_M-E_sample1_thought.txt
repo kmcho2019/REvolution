@@ -1,0 +1,7 @@
+We will design a new module named TopModule that implements a finite state machine (FSM) to control the shift register. The FSM will have two states: IDLE and SHIFT_ENABLE. When the module is reset, it will transition to the SHIFT_ENABLE state and stay there for exactly 4 clock cycles. After the 4th cycle, it will transition back to the IDLE state and remain there until the next reset. To optimize the design for better PPA, we will use a simple and efficient FSM implementation that minimizes the number of combinational logic gates and reduces switching activity.
+
+We will use a 2-bit counter to keep track of the number of clock cycles in the SHIFT_ENABLE state. The counter will be initialized to 0 when the module is in the IDLE state and will be incremented every clock cycle when the module is in the SHIFT_ENABLE state. The output shift_ena will be asserted when the module is in the SHIFT_ENABLE state and will be deasserted when the module is in the IDLE state.
+
+To ensure proper synchronization with the clock and reset signals, we will use a synchronous reset approach. The FSM will be reset to the IDLE state when the reset signal is asserted, and the counter will be initialized to 0.
+
+This approach ensures that the shift_ena output is correctly asserted for exactly 4 clock cycles after a reset and that the FSM transitions correctly between its states. By minimizing the number of combinational logic gates and reducing switching activity, this design optimizes for better PPA.

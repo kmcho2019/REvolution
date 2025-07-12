@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace bit_count comparison with terminal count signal to reduce critical path
+   - Simplify STOP state transition logic by removing redundant condition
+   - Use one-hot state encoding for faster state transitions
+
+2. Power Optimization:
+   - Add enable condition for data_shift register updates
+   - Gate done signal to only pulse when actually needed
+   - Merge WAIT state into IDLE to reduce state transitions
+
+3. Area Optimization:
+   - Reduce state encoding to 2 bits (4 states) while maintaining clarity
+   - Keep minimal bit counter (3 bits) but optimize comparison logic
+   - Maintain clean separation of combinational and sequential logic
+
+Key Changes:
+- Simplified state machine with merged WAIT functionality into IDLE
+- Optimized bit counting with clear terminal count signal
+- Reduced unnecessary register updates with enable conditions
+- Maintained robust error handling while improving timing
+- Kept clear state naming for maintainability

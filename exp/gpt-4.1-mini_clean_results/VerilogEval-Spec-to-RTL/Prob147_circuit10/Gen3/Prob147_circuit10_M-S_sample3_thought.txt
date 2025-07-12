@@ -1,0 +1,24 @@
+The circuit has one bit of state updated on the rising edge of clk. From the waveform:
+
+- At a=0, b=0: state holds (no change).
+- At a=0, b=1: state becomes 1.
+- At a=1, b=1: state becomes 0.
+- At a=1, b=0: state remains 0 (no toggling observed).
+
+The earlier assumption of toggling for (a=1,b=0) is incorrect based on the waveform.
+
+Output q matches the current state only when b=1; otherwise q=0.
+
+Thus:
+- next_state = state if (a=1 and b=0) or (a=0,b=0)
+- next_state = 1 if (a=0,b=1)
+- next_state = 0 if (a=1,b=1)
+
+This simplifies to:
+next_state = (a==0 & b==1) ? 1 :
+             (a==1 & b==1) ? 0 :
+             state;
+
+And q = state & b.
+
+This logic matches the waveform transitions and outputs, and is simpler and clearer.

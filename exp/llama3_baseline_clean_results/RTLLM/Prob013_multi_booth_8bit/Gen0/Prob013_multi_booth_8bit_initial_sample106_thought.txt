@@ -1,0 +1,8 @@
+The Radix-4 Booth multiplier can be implemented using a finite state machine that controls the multiplication process. The multiplier and multiplicand are loaded into registers when the reset signal is high. The multiplicand register is left-shifted in each clock cycle to simulate the Booth algorithm's shifting operation. The product register accumulates the multiplicand value based on the current bit of the multiplier register. The ready signal is set to 1 when the multiplication process is complete.
+
+We will use a 5-bit counter (ctr) to control the multiplication process, which will iterate 8 times (for 8-bit inputs) to generate the final product.
+
+To implement the Radix-4 Booth algorithm, we will use the following steps:
+- If the current bit of the multiplier register (multiplier[ctr]) is 1 and the next bit (multiplier[ctr+1]) is 0, or the current bit is 0 and the next bit is 1, we accumulate the multiplicand value into the product register (p) with the appropriate sign.
+- If the current bit of the multiplier register (multiplier[ctr]) is 1 and the next bit (multiplier[ctr+1]) is 1, we accumulate 2 times the multiplicand value into the product register (p).
+- If the current bit of the multiplier register (multiplier[ctr]) is 0 and the next bit (multiplier[ctr+1]) is 0, we do not accumulate any value into the product register (p).

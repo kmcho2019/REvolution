@@ -1,0 +1,25 @@
+module counter_12(
+    input rst_n,    // Reset signal (active low)
+    input clk,      // Clock signal
+    input valid_count, // Signal to enable counting
+    output reg [3:0] out  // 4-bit output representing the current count value
+);
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        // Reset the counter when reset signal is active low
+        out <= 4'b0000;
+    end else if (valid_count) begin
+        // Check the current count value
+        if (out == 4'd11) begin
+            // Wrap around the counter
+            out <= 4'b0000;
+        end else begin
+            // Increment the counter
+            out <= out + 1;
+        end
+    end 
+    // Do nothing if valid_count is 0, output remains unchanged
+end
+
+endmodule

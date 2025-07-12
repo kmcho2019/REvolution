@@ -1,0 +1,11 @@
+To create a novel solution, we will introduce a different architectural approach by utilizing a hybrid finite state machine (FSM) that combines the benefits of both Mealy and Moore machines. This approach will allow us to optimize the design for better Power, Performance, and Area (PPA) metrics.
+
+The key idea is to use a 4-state FSM (IDLE, START, DATA, STOP) where each state has a specific function. The IDLE state waits for the start bit, the START state checks the start bit, the DATA state collects the 8 data bits, and the STOP state verifies the stop bit.
+
+To reduce the area consumption, we will use a 3-bit counter to keep track of the number of data bits received, instead of a 9-bit shift register. This will also simplify the logic and reduce the combinational logic depth.
+
+To improve performance, we will use a single always block to handle all the logic, and we will optimize the sequential logic updating the counter and the state machine.
+
+Additionally, we will use a clock gating technique to reduce power consumption by disabling the clock signal to non-essential parts of the circuit when not in use.
+
+Finally, we will analyze the design's critical path and optimize it to improve the effective clock period.

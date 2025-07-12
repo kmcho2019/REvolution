@@ -1,9 +1,0 @@
-1. The main issue lies in the state transitions and output assignments in the Moore state machine. Particularly:
-   - In the `WALK_LEFT` state, the next state calculation for being bumped is incorrect. It should check `bump_left` before `bump_right`.
-   - Similar to `WALK_LEFT`, in the `WALK_RIGHT` state, the order of checking `bump_left` and `bump_right` for the next state is incorrect.
-   - The `FALLING` state's output logic is incorrect; it should not directly set `walk_left` and `walk_right` based on the current state but based on the previous walking direction before falling.
-   - In the `GROUND` state, the next state calculation after landing should maintain the walking direction based on the state before falling, not the current state at landing.
-
-2. The discrepancy in `aaah` outputs might be due to incorrect handling of the `ground` signal in certain states, possibly impacting the fall and rise behavior of the Lemming.
-
-3. The simulation log reports mismatches early on, indicating fundamental issues in the state transitions and output assignments across various states of the Lemming's behavior.

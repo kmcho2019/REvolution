@@ -1,0 +1,22 @@
+Novel Architectural Idea: Parallel State Prediction
+1. Instead of computing each next state bit sequentially, predict all possible next states in parallel:
+   - Create 4 parallel predictors (one per current state)
+   - Each predictor calculates its contribution to the next state
+   - Combine predictions using OR operations
+
+2. Key Innovations:
+   - Each state's transition logic is completely independent
+   - No shared terms between state computations
+   - Uses pure parallel structure for maximum speed
+   - Each prediction block is self-contained with clear semantics
+
+3. Benefits:
+   - Maximum parallelism in state computation
+   - No combinational path dependencies between states
+   - Easier timing closure due to balanced paths
+   - More scalable for larger state machines
+   - Clear separation of concerns in implementation
+
+4. Output Logic:
+   - Maintain direct mapping from state D to output
+   - No change needed as it's already optimal

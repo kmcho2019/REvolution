@@ -1,0 +1,13 @@
+To improve the PPA metrics, especially timing (tns/wns), the signed 17-bit arithmetic can be simplified to unsigned 16-bit addition/subtraction. Using an unsigned counter allows direct increment or decrement without sign extension, reducing logic complexity and critical path. Also, removing the ternary operator inside a continuous assignment and using a simpler conditional update inside the always block can help synthesis tools optimize better.
+
+Additionally, by gating the count update only when the reset is not active, we prevent unnecessary switching. This is standard but was already done.
+
+No saturation or wrapping logic is required as unsigned addition and subtraction naturally wrap around, which fits the 16-bit counter behavior.
+
+This approach reduces the arithmetic width from 17 to 16 bits, eliminates signed arithmetic overhead, and relies on straightforward conditional logic inside the always block. This should reduce critical path delay and logic area slightly while preserving functional correctness and synchronous reset behavior.
+
+Hence, the improvement plan is:
+- Remove signed 17-bit arithmetic and use simple unsigned 16-bit increment/decrement inside the always block.
+- Use if-else statements inside always block for clarity and synthesis friendliness.
+- Keep synchronous reset and count update on rising edge of clk.
+- Ensure counter wraps naturally by relying on 16-bit arithmetic overflow.

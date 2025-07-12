@@ -1,0 +1,15 @@
+Fuse the first example’s clear separation of combinational next-state logic and synchronous registers with the second example’s internal use of binary counters to simplify arithmetic and avoid complex BCD increment logic. Use simple binary counters for seconds (6-bit), minutes (6-bit), and hours (4-bit) internally, as in Example 2, which simplifies counting and reduces combinational complexity.
+
+At each clock edge with ena asserted (or reset), update these binary counters synchronously. Then, combinationally convert these binary counters to BCD outputs (hh, mm, ss) suitable for display, similarly to Example 2, but replace the multiplication by 10 with efficient arithmetic using shifts and adds to reduce critical path delay.
+
+Keep the pm toggle logic on the hour transition from 11 to 12, implemented synchronously in the clocked block for deterministic timing.
+
+This fusion preserves the clarity and timing advantages of a binary counter internally with combinational BCD conversion, while leveraging the explicit combinational next state from Example 1's approach for easier reasoning about increment conditions.
+
+Additional enhancements:
+- Use simple combinational math for BCD conversion to avoid explicit multiplication (e.g., multiply digit by 10 = digit*8 + digit*2).
+- Register the BCD outputs and pm to avoid glitches and to meet timing.
+- Maintain synchronous reset with highest priority.
+- Avoid unnecessary toggling in BCD conversion by only recomputing BCD outputs combinationally from stable binary counters.
+
+This hybrid strategy aims for improved timing, area, and power compared to either example alone.

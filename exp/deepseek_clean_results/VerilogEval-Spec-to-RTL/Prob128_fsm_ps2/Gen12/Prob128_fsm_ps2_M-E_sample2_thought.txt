@@ -1,0 +1,13 @@
+Instead of using a counter-based FSM, we can implement a shift register that stores the last 3 bytes received. The solution works by:
+1. Continuously shifting in new bytes into a 24-bit shift register (3 bytes)
+2. Checking the oldest byte's in[3] bit whenever a new byte arrives
+3. If the oldest byte has in[3]=1, we've found a valid message frame
+4. The done signal is asserted when we have 3 new bytes AND the oldest has in[3]=1
+5. This approach naturally handles continuous streams and detects message boundaries without explicit state tracking
+
+Advantages:
+- No explicit state machine needed
+- Naturally handles back-to-back messages
+- Simple pattern matching logic
+- Easily extendable to longer message formats
+- Lower power as shift register updates only happen on byte reception

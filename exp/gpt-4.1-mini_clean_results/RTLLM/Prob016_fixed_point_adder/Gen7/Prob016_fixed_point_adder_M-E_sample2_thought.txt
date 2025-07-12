@@ -1,0 +1,17 @@
+Implement fixed-point addition using sign-magnitude decomposition to follow the problem's requirements explicitly:
+
+1. Extract sign bits and magnitudes from inputs `a` and `b`.
+2. If signs are equal:
+    - Add magnitudes.
+    - Set result sign same as inputs' sign.
+3. If signs differ:
+    - Compare magnitudes.
+    - Subtract smaller magnitude from larger magnitude.
+    - Result sign is sign of operand with larger magnitude.
+4. Store result in internal register `res`.
+5. Assign output `c` from `res`.
+6. Magnitudes and the result are all represented as `N-1` bits (excluding the sign).
+7. Handle zero result sign to zero.
+8. Overflow in addition of magnitudes is trimmed to `N-1` bits, possibly saturating or wrapping (as problem states just fitting within N bits).
+9. Inputs and output retain fixed-point interpretation via parameters `Q` (fractional bits) and `N` (total bits), but no arithmetic scaling needed beyond bit operations, because magnitudes are purely bits interpreted as unsigned integers.
+10. This approach precisely matches the problem statement: conditional add/sub based on sign bits and uses absolute value arithmetic explicitly.

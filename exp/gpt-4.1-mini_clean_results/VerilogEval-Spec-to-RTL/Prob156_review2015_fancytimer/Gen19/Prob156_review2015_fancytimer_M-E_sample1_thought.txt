@@ -1,0 +1,15 @@
+Use a three-part process with a single FSM and a single shift register:
+
+1. **Pattern detection**: Shift in bits LSB-first into a 4-bit shift register. Because data comes serially, detect the pattern `1101` by comparing the shift register to `4'b1011` (the reverse of `1101`) since bits enter LSB-first. This simplifies shifting and detection.
+
+2. **Delay loading**: After detecting the pattern, load the next 4 bits MSB-first into a separate 4-bit delay register. Use a counter from 3 down to 0 for loading bits; shift left and insert new bit at LSB to build delay value MSB-first.
+
+3. **Counting**: Use a 20-bit total cycle counter counting down from `(delay + 1) * 1000`. Also maintain a 4-bit count register showing the current count value (starting from delay down to 0), each lasting exactly 1000 cycles. On every 1000 cycles elapsed, decrement count.
+
+4. **Done & Ack**: After counting finishes, assert done and wait for ack to reset FSM.
+
+This method avoids off-by-one errors by using a single cycle counter and count register, and by consistent shifting directions (LSB-first for pattern detection, MSB-first for delay load). The output count reflects the current count value, stable for 1000 cycles, matching the problem description exactly.
+
+Synchronous reset resets FSM and all registers. All outputs are updated on clock edges, with clear combinational next_state logic and clean state transitions.
+
+This approach is simpler and robust, reduces complexity by using one big cycle counter, and neatly separates pattern detection and delay loading with consistent shift directions.

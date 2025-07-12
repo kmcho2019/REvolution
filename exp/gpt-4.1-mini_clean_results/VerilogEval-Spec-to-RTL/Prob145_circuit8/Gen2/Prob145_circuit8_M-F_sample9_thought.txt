@@ -1,0 +1,55 @@
+The feedback highlights that using separate always blocks on both rising and falling edges of the clock is unconventional and does not match the waveform behavior. The waveforms indicate that outputs p and q are sequential outputs derived from an internal state machine or state registers updated synchronously on one clock edge (preferably rising edge) rather than dual-edge triggered logic.
+
+Analyzing the waveform:
+
+- Initially, p and q are unknown until the first rising edge.
+- p changes mostly on rising clock edges depending on 'a' and possibly previous states.
+- q changes on rising edges too, but delayed or conditional on previous p.
+- After reset-like initial unknown, the outputs settle into a pattern where p and q update synchronously on rising edges.
+- q appears to hold the previous value of p from the previous clock cycle or a related internal state.
+- p seems to capture 'a' in some cycles but also maintain 1 under some conditions.
+- q holds '1' after some time, indicating it follows p but possibly delayed by one cycle.
+
+Hence, the design should use synchronous logic on the rising edge only:
+
+- Implement two registers p and q updated at every posedge clock.
+- At each rising edge, p is updated based on input 'a' and/or previous p and q.
+- At each rising edge, q updates based on previous p.
+- No use of negedge clock; dual-edge clocking removed.
+- Initial values of p and q are unknown (no initial block or reset) matching waveform start.
+- Implement combinational logic for next-state calculation to replicate the behavior seen in waveforms.
+
+A likely interpretation is:
+
+- p captures 'a' at rising edge, but holds '1' once set until cleared under some condition (e.g., a=0 and q=1).
+- q follows previous p delayed by one clock cycle.
+
+Thus, the typical pattern:
+
+- q <= p;
+- p <= a | (p & ~clear_condition);
+
+But since the waveform shows p=1 at certain times when a=1, and holding 1 across cycles, q appears to track p with one cycle delay.
+
+Concretely:
+
+- At rising edge: q <= p;
+- At rising edge: p <= a OR p (latch 1 once set by a=1 until cleared).
+
+Checking waveform time 90ns and onwards:
+
+- when a=1 at posedge clock, p=1.
+- q holds previous p value.
+
+Thus, implement:
+
+- p_next = a | p; (p latches 1 once set by a=1)
+- q_next = p;
+
+This matches the waveform showing p sets to 1 when a=1 and maintains it. q follows delayed p.
+
+This approach uses only one always block triggered on posedge clock, ensuring synchronous design compatible with typical FPGA/ASIC design flows.
+
+This design also removes the usage of negedge clock and removes the initial block, thus matching unknown start states.
+
+Implementing this logic should greatly reduce mismatches and better replicate the waveform.

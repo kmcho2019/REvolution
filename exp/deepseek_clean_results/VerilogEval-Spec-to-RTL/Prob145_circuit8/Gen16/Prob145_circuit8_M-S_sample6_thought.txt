@@ -1,0 +1,19 @@
+After carefully analyzing the waveform behavior, here's a simplified approach:
+
+1. Key Observations:
+   - p directly follows 'a' during the positive clock phase when q=0
+   - q becomes 1 when p was high for a full clock cycle (both rising and falling edges)
+   - q resets to 0 when 'a' is high during any clock edge
+   - p is only active when q=0
+
+2. Simplified Strategy:
+   - Use a single always block for both edges (dual-edge triggered)
+   - Track previous 'a' value to detect changes
+   - Set q when we see two consecutive 'a'=1 samples (full cycle)
+   - Clear q immediately when 'a'=1 is detected
+   - p simply follows 'a' when q=0
+
+3. Benefits:
+   - Single always block reduces complexity
+   - No need for separate edge-triggered behaviors
+   - Clear state transition logic

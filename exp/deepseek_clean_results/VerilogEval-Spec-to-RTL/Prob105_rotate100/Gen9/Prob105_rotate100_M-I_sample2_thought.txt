@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break down the 100-bit rotation into two stages to reduce critical path
+   - First stage handles load vs rotate selection
+   - Second stage handles direction selection
+   - This reduces the fanout and combinational depth of the rotation logic
+
+2. Power Optimization:
+   - Add explicit clock gating for the no-rotation case (ena=2'b00/2'b11)
+   - This prevents unnecessary toggling of the register when no rotation occurs
+
+3. Area Optimization:
+   - Maintain the current efficient mux structure
+   - The two-stage approach may slightly increase area but significantly improves timing
+
+Key Changes:
+1. Split the rotation logic into two always blocks
+2. Add explicit clock gating for static cases
+3. Maintain same functionality with improved timing

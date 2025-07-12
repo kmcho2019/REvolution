@@ -1,0 +1,13 @@
+Refactor the fixed-point adder by avoiding variable-width shift and masking expressions inside functions to eliminate elaboration errors. Instead, perform sign and magnitude extraction and reconstruction using consistent, explicitly declared bit-width vectors. 
+
+Key points:
+- Extract the sign bit and magnitude from the inputs as `(N-1)`-bit unsigned vectors.
+- Compute absolute values by conditional two's complement if sign is negative.
+- For same sign inputs, sum absolute values; for different sign inputs, subtract smaller from larger absolute value.
+- Determine the sign of the result accordingly.
+- Reconstruct the two's complement fixed-point result from sign and magnitude without variable-width masks or shifts.
+- Use combinational `always @(*)` block for clarity.
+- Declare all internal signals with explicit widths.
+- This approach retains the original functionality but ensures elaboration correctness and cleaner width management.
+
+This restructuring resolves the indefinite-width operation issues by removing shifts/masks with parameter-dependent widths and replaces them with fixed, parameterized vector slicing and explicit two's complement logic.

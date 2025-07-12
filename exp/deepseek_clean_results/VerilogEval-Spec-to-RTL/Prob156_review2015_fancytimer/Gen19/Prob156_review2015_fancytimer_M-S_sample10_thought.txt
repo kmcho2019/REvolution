@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. Use a clear 4-state FSM: IDLE (pattern detection), CAPTURE (get delay), COUNT (timer), DONE (wait for ack)
+2. Simplify pattern detection: Shift register for 1101 sequence
+3. Streamline delay capture: Fixed 4-bit shift after pattern
+4. Optimize counting: Single counter with 1000-cycle blocks
+5. Clear output logic: Direct assignments from state
+
+Key Simplifications:
+- Remove redundant bit_counter by using delay_value shift count
+- Simplify cycle counting with block counter and sub-counter
+- Make outputs directly state-dependent
+- Clear reset conditions for all registers
+- Remove unnecessary intermediate variables

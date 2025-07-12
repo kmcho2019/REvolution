@@ -1,0 +1,3 @@
+We can simplify the FSM to just track which byte of the message we're on using a 2-bit counter. We discard bytes until we find one with in[3] = 1, marking the start of a message (byte 1). Then, on each clock cycle, we increment the counter until we reach the third byte. After receiving the third byte, we assert done for one cycle immediately after, then reset the counter to look for the next message.
+
+This removes the need for multiple explicit states; the counter encodes the current byte position, and the logic is straightforward. The done signal is registered and asserted synchronously for one cycle following the third byte reception. Reset clears the counter and done. The design assumes that input bytes arrive one per clock cycle.

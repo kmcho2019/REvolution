@@ -1,0 +1,25 @@
+To simplify the fractional divide-by-3.5 clock divider using double-edge clocking:
+
+- Use a modulo-7 counter running on the rising edge of clk.
+
+- Generate clk_intA as high for counts 0 to 3 (4 cycles).
+
+- Generate clk_intB as high for counts 0 to 2 (3 cycles).
+
+- Instead of registering clk_intB on both edges, directly generate clk_intB_pos on posedge clk and clk_intB_neg on negedge clk using the counter's value sampled appropriately.
+
+- Implement a simple dual-edge triggered process:
+
+  - One always block on posedge clk updates the counter and clk_intA, clk_intB_pos.
+
+  - One always block on negedge clk updates clk_intB_neg from the counter sampled at posedge clk (stored in a register).
+
+- Finally, output clk_div as OR of clk_intA and clk_intB_neg.
+
+This method ensures clk_intB_neg is sampled on negedge clk in sync with the stored counter value to avoid glitches.
+
+It eliminates asynchronous resets on negedge clk to simplify reset logic and minimize metastability.
+
+The fractional divided clock will have alternating high periods of 4 and 3 clk cycles, with the second clock phase shifted by half a cycle via sampling clk_intB on negedge clk, producing a smooth 3.5 division.
+
+This approach reduces complexity and improves reliability while maintaining the fractional division function.

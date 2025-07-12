@@ -1,0 +1,5 @@
+Implement the ROM using a synchronous read with a clock input, where the output data is registered for improved timing and metastability robustness in synchronous designs. The ROM content is preloaded during initialization, same as before, but now access is performed on the rising edge of the clock, capturing the output data into a register. This approach supports timing closure in high-speed designs by synchronizing the output data and reducing combinational path delays.
+
+The module includes a clock input. The memory is still a 256x16-bit array with initialized values at addresses 0-3. On every clock rising edge, dout is updated with the value stored at the given address. This design adds synchronous read latency of one clock cycle but improves performance in synchronous environments.
+
+This also helps ease integration with synchronous systems by ensuring output data changes only on clock edges and preventing glitches on dout.

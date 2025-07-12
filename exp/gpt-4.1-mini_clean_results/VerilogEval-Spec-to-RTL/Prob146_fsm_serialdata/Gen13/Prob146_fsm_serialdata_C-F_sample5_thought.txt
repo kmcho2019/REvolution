@@ -1,0 +1,12 @@
+Fuse the two examples by adopting the clear, low-area 2-bit binary FSM states and gating from Example 2, but enhance toggling reduction and code clarity from Example 1. Use an explicit enable signal to update bit_count and data_shift only during RECEIVE/READ_BITS state to save power. Use a Moore FSM style where the done signal and output are registered and valid only one clock cycle immediately after detecting a valid stop bit, minimizing output toggling. Retain a separate RECOVER/WAIT_STOP state to handle invalid stop bits and wait for idle line. 
+
+Implement shift register to shift in the serial LSB first by shifting right and placing new bit into MSB, consistent with the serial protocol. Use a synchronous active-high reset for all registers.
+
+This combined design uses:
+- Binary FSM states (IDLE, READ_BITS/RECEIVE, CHECK_STOP/STOP, RECOVER/WAIT_STOP) for minimal area.
+- Clock-enable style gating on bit counter and shift register updates to reduce toggling and power.
+- Registered done pulse and out_byte update only on valid stop bit detection.
+- Clean separation of sequential and combinational logic for better timing optimization.
+- The done signal pulses high for one cycle immediately after a valid byte reception.
+
+This fusion aims at better power efficiency (due to clock gating), good area (small FSM), and clear, robust FSM design for reliable operation.

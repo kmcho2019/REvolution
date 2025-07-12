@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. State Transition Optimization:
+   - Recognize that state_B is a "sticky" state - once entered, it never transitions back
+   - Simplify next_state_B to just be state_B OR (state_A AND x)
+   - This matches the FSM behavior exactly while using minimal logic
+
+2. Output Logic Optimization:
+   - Keep the efficient output calculation (z = state_A ? x : ~x)
+   - This directly implements the Mealy machine output requirements
+
+3. Reset Simplification:
+   - Maintain simple asynchronous reset to state A
+   - One-hot encoding remains with just two states (A and B)
+
+Key Improvements:
+- Reduced next_state_B logic to its minimal form
+- Maintained all functionality with fewer operations
+- Kept clean separation between state and output logic

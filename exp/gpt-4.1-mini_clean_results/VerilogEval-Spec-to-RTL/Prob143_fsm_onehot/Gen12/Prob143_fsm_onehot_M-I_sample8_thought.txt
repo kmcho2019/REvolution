@@ -1,0 +1,15 @@
+The existing solution is functionally correct and reasonably efficient for a 10-state one-hot FSM. However, some improvements can be made for better clarity, synthesis friendliness, and slightly improved PPA:
+
+1. Replace the always @* and reg next_state_reg with purely combinational continuous assignments for next_state bits. Since each next_state bit is driven by ORing several one-hot current states combined with input conditions, explicitly defining each next_state bit as a combinational expression improves clarity and synthesis results by enabling better optimization and parallelism without the overhead of a for loop and case.
+
+2. This approach also avoids the need for a for loop and case statement, eliminating any perceived unnecessary complexity or longer combinational paths, as synthesis tools often unroll such loops anyway.
+
+3. For outputs, keep the direct bitmask approach but clean up comments and remove redundant code to improve maintainability and reduce confusion.
+
+4. This also results in smaller logic depth and more balanced paths, helping timing and possibly power.
+
+Overall, this is a clean, explicit, and optimized combinational description of next_state and outputs, leveraging the one-hot encoding to write clear boolean expressions.
+
+The code will define next_state[9:0] using ORs of expressions dependent on input and current states. Outputs out1 and out2 are direct ORs of the relevant state bits.
+
+This improves synthesis quality, clarity, and potentially timing and power metrics without changing functionality.

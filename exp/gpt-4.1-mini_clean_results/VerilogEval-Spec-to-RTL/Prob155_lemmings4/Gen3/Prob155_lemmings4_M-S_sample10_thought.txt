@@ -1,0 +1,8 @@
+Simplify the FSM by using a single 2-bit mode state and a 1-bit direction, keeping the fall timer as 5 bits.  
+- Combine the bump logic to set direction in a cleaner if-else structure.  
+- Use a single always_ff block for sequential logic (including fall timer increment) and a simpler always_comb for next state logic.  
+- Optimize mode transitions by clearly prioritizing fall > dig > bump conditions, and avoid unnecessary variable assignments.  
+- Saturate fall_timer at 21 (since splatter threshold is >20), simplifying the comparison.  
+- The outputs derive directly from mode and direction.  
+- Keep the asynchronous reset as required.  
+This approach keeps the code smaller, easier to read, and functionally equivalent.

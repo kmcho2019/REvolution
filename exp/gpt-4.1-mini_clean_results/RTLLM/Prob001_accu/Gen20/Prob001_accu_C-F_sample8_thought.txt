@@ -1,0 +1,7 @@
+Fuse the two examples by using a single always block with synchronous active-low reset and non-blocking assignments for clarity and synthesis friendliness. Use a clock enable signal derived from valid_in to gate all register updates, minimizing switching when no valid data arrives, improving power efficiency.
+
+Accumulate inputs progressively in a 10-bit accumulator and increment a 2-bit counter. On the fourth valid input (count==3), output the sum (accumulator + current data_in) and pulse valid_out for one cycle, then reset accumulator and counter to zero to prepare for the next batch.
+
+Default valid_out to zero each cycle to create a clean single-cycle pulse. Avoid redundant combinational logic and keep the design minimal for area efficiency. This approach combines the clarity and power gating of the first example with the slight pipeline and explicit next-state calculation style of the second example, yielding a robust, minimal, low-power, and high-performance solution.
+
+This fusion ensures minimal critical path length (one adder for accumulation/output), low toggle rate by gating registers via valid_in, and a clean output timing with a one-cycle valid pulse, meeting all requirements elegantly.

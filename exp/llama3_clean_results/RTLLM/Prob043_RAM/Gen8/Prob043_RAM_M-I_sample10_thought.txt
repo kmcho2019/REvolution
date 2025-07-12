@@ -1,0 +1,11 @@
+To improve the given solution, we will focus on optimizing the PPA metrics. The current design uses a combination of synchronous and asynchronous elements. We will aim to simplify the design while maintaining its functionality. 
+
+Firstly, we can observe that the use of both `reg_file` and `async_mem` is redundant since both are storing the same data. We can remove `async_mem` and use `reg_file` for both read and write operations. This simplification can help reduce the area consumption.
+
+Secondly, the clock-gating logic can be simplified. Instead of using a separate `clk_gated` signal, we can directly use the `write_en` signal to control the write operation. This can reduce the complexity of the design and potentially improve the performance by reducing the number of gates in the critical path.
+
+Thirdly, we will keep the asynchronous read operation as it is, since it provides a good balance between performance and power consumption.
+
+Lastly, we will ensure that the reset operation is correctly implemented to clear all the registers in the design.
+
+Our improvement strategy involves simplifying the design, reducing redundancy, and optimizing the clock-gating logic to achieve better PPA metrics.

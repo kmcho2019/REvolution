@@ -1,0 +1,12 @@
+To optimize the given solution for better PPA (Timing, Power, Area) without changing functionality:
+
+1. Reduce unnecessary toggling of the direction register by updating it only when direction changes.
+2. Gate the fall_timer counter to increment only when falling; this avoids toggling the counter in other states.
+3. Simplify next_state logic by evaluating bumps and direction updates separately and avoid redundant assignments.
+4. Replace the fall_timer > 20 check with a simple unsigned comparison (fall_timer >= 21) which is logically equivalent but might simplify hardware.
+5. For fall_timer saturation at 31, use a simpler conditional increment or clamp logic.
+6. Keep the FSM implementation clean and modular for maintainability.
+
+These changes aim to reduce switching activity, simplify combinational logic, and improve critical path delay slightly.
+
+The outputs remain Moore-type and the async reset resets to walk_left state as specified.

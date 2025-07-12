@@ -1,0 +1,15 @@
+To address the issues in the original code and improve the overall design, we can adopt a novel architectural approach that leverages a finite state machine (FSM) with a more straightforward and efficient implementation. 
+
+1. **Simplified State Machine**: Instead of using multiple states for shifting and counting, we can design a state machine with only four states: IDLE, START, COUNTING, and DONE. This simplification will reduce the complexity of the design and make it easier to debug.
+
+2. **Pattern Detection**: To detect the pattern 1101, we can use a separate module that shifts in the data input and checks for the pattern. Once the pattern is detected, the state machine transitions to the START state.
+
+3. **Delay Shifting**: In the START state, we can shift in the next 4 bits from the data input to determine the delay. This delay value will be used to control the counting process.
+
+4. **Counting**: In the COUNTING state, we can use a counter to decrement the remaining time every clock cycle. The counting process will continue until the remaining time reaches zero.
+
+5. **Done Signal**: Once the counting process is complete, the state machine transitions to the DONE state, and the done signal is asserted. The state machine will remain in the DONE state until the ack input is high.
+
+6. **Reset**: The reset signal is used to reset the state machine to the IDLE state.
+
+By adopting this novel architectural approach, we can create a more efficient and accurate design that meets the requirements of the problem.

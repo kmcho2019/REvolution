@@ -1,0 +1,11 @@
+Refactor the radix-2 divider design into a clear Finite State Machine (FSM) structure to improve readability and control flow.
+
+- Define explicit states: IDLE (waiting for input), PREPARE (capture inputs and initialize registers), DIVIDE (perform division steps), DONE (output result and wait for acknowledgment).
+- Use synchronous registers for state transitions and counters.
+- Calculate absolute values and sign flags during PREPARE state.
+- Use a 17-bit shift register (SR) for remainder (upper 9 bits) and quotient (lower 8 bits).
+- Perform subtraction and quotient bit update combinationally during DIVIDE state.
+- On DONE, apply sign correction to quotient and remainder, output the 16-bit result.
+- Manage res_valid in DONE state and clear it when a new operation is started.
+- Handle division by zero by immediately skipping division and outputting zero result.
+- This structure separates datapath and control clearly, improving maintainability and easing debugging.

@@ -1,9 +1,0 @@
-Implement a synchronous FSM with these states:
-- SEARCH: shift in bits and detect the 1101 pattern in a 4-bit shift register.
-- LOAD_DELAY: shift in next 4 bits MSB first as delay value.
-- COUNTING: count down (delay+1)*1000 cycles, output count value that changes every 1000 cycles from delay down to 0.
-- DONE: assert done, wait for ack=1 to reset and go back to SEARCH.
-
-Use a 4-bit shift register to detect the start pattern. After detecting 1101, shift in 4 bits for delay. Use a 12-bit cycle counter (since max delay=15, max count = (15+1)*1000=16000 cycles) to count the 1000 cycles per count decrement. Output current count for 1000 cycles, then decrement count until zero. The count output is only valid during counting; otherwise, it's don't-care. When counting ends, assert done and wait for ack to restart.
-
-All logic synchronous to clk with synchronous reset active high.

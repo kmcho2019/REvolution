@@ -1,0 +1,19 @@
+Here's a novel approach using a dual-buffer system to handle mispredictions more efficiently:
+
+1. Instead of a single history register, maintain two buffers:
+   - current_history: tracks the actual committed branch history
+   - speculative_history: tracks in-flight predictions
+
+2. Normal operation:
+   - Update speculative_history by shifting in predict_taken
+   - current_history remains unchanged
+
+3. Misprediction recovery:
+   - Discard speculative_history
+   - Update current_history with the correct history (train_history + train_taken)
+
+4. Output selection:
+   - predict_history always shows speculative_history during normal operation
+   - During misprediction, it shows the newly updated current_history
+
+This approach reduces critical path by separating the committed and speculative histories, allowing parallel updates. The misprediction recovery becomes simpler as we just need to discard the speculative buffer.

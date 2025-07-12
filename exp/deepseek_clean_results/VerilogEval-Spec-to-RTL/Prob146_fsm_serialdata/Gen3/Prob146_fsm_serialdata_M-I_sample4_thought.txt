@@ -1,0 +1,23 @@
+To fix the issues in the original solution and properly implement the serial protocol receiver, I'll make these key improvements:
+
+1. Correct Bit Ordering:
+   - Implement right-shift (LSB first) as specified in the protocol
+   - Ensure proper bit collection order for the 8 data bits
+
+2. State Machine Fixes:
+   - Properly handle all 8 data bits before checking stop bit
+   - Ensure FSM always returns to IDLE after stop bit detection (regardless of value)
+   - Simplify state transitions for better timing
+
+3. Done Signal Generation:
+   - Make done signal valid only when stop bit is '1'
+   - Ensure done is a single-cycle pulse synchronized with out_byte
+
+4. Reset Handling:
+   - Clear all registers on synchronous reset
+   - Ensure clean startup from reset state
+
+The improved FSM will have these states:
+- IDLE: Wait for start bit (0)
+- RECEIVE: Collect 8 data bits (LSB first)
+- STOP: Check stop bit and output if valid

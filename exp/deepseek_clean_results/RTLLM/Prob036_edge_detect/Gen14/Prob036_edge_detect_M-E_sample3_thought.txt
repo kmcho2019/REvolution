@@ -1,0 +1,16 @@
+Instead of using simple combinatorial logic, this implementation uses a Moore state machine with 3 states:
+1. IDLE: No edge detected
+2. RISING: Rising edge detected (outputs rise=1)
+3. FALLING: Falling edge detected (outputs down=1)
+
+The state machine transitions:
+- IDLE → RISING when a changes 0→1
+- IDLE → FALLING when a changes 1→0
+- Both RISING and FALLING return to IDLE on next clock
+
+Benefits:
+1. More explicit state representation
+2. Easier to extend (e.g., add debouncing)
+3. Clear separation of edge detection logic
+4. Outputs are registered, improving timing
+5. More robust against glitches

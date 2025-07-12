@@ -1,0 +1,16 @@
+Novel DDS-inspired Approach:
+1. Instead of using a simple counter, implement a phase accumulator that continuously adds the frequency control word
+2. The MSB of the accumulator naturally becomes our square wave output, eliminating the need for explicit comparison logic
+3. This provides several advantages:
+   - Linear frequency control (output period is exactly proportional to 1/freq)
+   - No explicit counter comparison needed (reduces critical path)
+   - Automatic handling of freq=0 case (accumulator won't advance)
+   - Phase continuity when frequency changes
+4. Added benefit of potential future expansion to generate other waveforms by using more accumulator bits
+
+Key Features:
+- 16-bit phase accumulator for finer frequency resolution
+- Output derived directly from accumulator MSB
+- No explicit comparison operations in critical path
+- Single always block for all sequential logic
+- Power-efficient design (only accumulator updates when freq≠0)

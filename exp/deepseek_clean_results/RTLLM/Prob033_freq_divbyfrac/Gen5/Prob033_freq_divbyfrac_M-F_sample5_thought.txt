@@ -1,0 +1,28 @@
+Revised Approach for 3.5x Fractional Division:
+
+1. **Cycle Counting**:
+   - Implement a 3-bit counter to track 7 clock cycles (0-6) for 3.5x division
+   - Counter rolls over after reaching 6 to maintain the division ratio
+
+2. **Phase Generation**:
+   - Generate two phase-shifted clocks:
+     * Primary phase: High for 4 cycles (0-3), low for 3 cycles (4-6)
+     * Secondary phase: Delayed by half-cycle (3.5 clock periods)
+
+3. **Half-Cycle Delay**:
+   - Create a half-cycle delayed version using negative edge triggering
+   - This provides the necessary phase shift for duty cycle correction
+
+4. **Output Combination**:
+   - Combine both phases using OR logic
+   - This merges the two phase-shifted clocks to create uniform 3.5x division
+
+5. **Reset Handling**:
+   - Initialize counter to 0 and all outputs to 0
+   - Ensure clean startup when reset is released
+
+Key Improvements:
+- Precise cycle counting for accurate 3.5x division
+- Proper phase shifting through negative edge triggering
+- Correct duty cycle through logical combination
+- Maintains all timing requirements

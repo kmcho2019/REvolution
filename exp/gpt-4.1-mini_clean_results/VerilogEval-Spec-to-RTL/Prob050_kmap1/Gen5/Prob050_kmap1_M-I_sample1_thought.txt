@@ -1,0 +1,9 @@
+The original implementation uses a 3-input OR gate which is already minimal in terms of logic complexity and area since the output is only zero when all inputs are zero. Any attempt to change this logic would add complexity or gates, worsening area and power. The given power is very low and the delay minimal since it is just one gate.
+
+To optimize for even lower power, we could attempt to reduce switching activity. However, since the output depends on all inputs (any input high leads to output high), no inputs can be ignored. Introducing gating or other logic will increase area and delay.
+
+Given these considerations, the original solution is already optimal for PPA. No further optimization is feasible without altering the function.
+
+Therefore, the best improvement is to keep the same minimal logic, but write the code with explicit comments highlighting the minimality and ensuring synthesis tools see the design clearly.
+
+This will help tools optimize and ensure no accidental changes degrade PPA.

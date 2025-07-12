@@ -1,0 +1,7 @@
+Implement the sequential logic by encoding the state in the 3-bit output `q` and using a synchronous process triggered by the clock's rising edge. Use a simpler approach: when `a` is high, reset `q` directly to 4; when `a` is low, increment `q` by one modulo 7 (0 to 6), cycling through the states. 
+
+Instead of combinational logic for next_state, compute the next state inline during the clock edge, which reduces combinational logic and removes the need for an intermediate next_state register. This approach yields a straightforward synchronous counter with synchronous set to 4 on `a` high.
+
+No asynchronous reset is used, and the initial state is undefined as per waveform.
+
+This approach trades off a little modular arithmetic for concise code and minimal combinational logic, making it easy to understand and synthesize.

@@ -1,0 +1,25 @@
+To improve the provided Mealy FSM detection circuit, we can consider the following strategies:
+
+1.  **Correct State Transitions**: We need to ensure that the state machine correctly transitions between states based on the input sequence. This involves checking the input bit at each state and transitioning to the next state accordingly.
+2.  **Sequence Detection Logic**: The sequence detection logic should be implemented such that the MATCH signal is asserted when the sequence "10011" is detected. This involves checking the input bits at each state and setting the MATCH signal accordingly.
+3.  **Continuous Input Handling**: The state machine should be designed to handle continuous input sequences, including loop detection. This involves resetting the state machine to the initial state when the input sequence does not match the desired sequence.
+4.  **Optimize State Encoding**: Instead of using a 3-bit state register, we can use a 5-state machine to achieve this, where each state represents a specific position in the sequence.
+5.  **Simplify Reset Logic**: We can use a synchronous reset to simplify the reset logic and reduce timing overhead.
+6.  **Optimize Comparison Logic**: The current comparison logic checks the input bit at each state transition. We can simplify this by using a more efficient comparison method, such as checking only the necessary bits.
+
+To optimize the design for better PPA, we will focus on minimizing state encoding, optimizing comparison logic, reducing flip-flops, and simplifying reset logic. Additionally, we will ensure that the state machine transitions are correctly implemented to reduce power consumption and improve timing performance.
+
+The improved design will use a 5-state machine to detect the sequence "10011". The states will be encoded as follows:
+*   State 0: Initial state
+*   State 1: '1' detected
+*   State 2: '0' detected after '1'
+*   State 3: Second '0' detected
+*   State 4: First '1' detected after two '0's
+
+The state transitions will be implemented based on the input bit, and the MATCH signal will be asserted when the sequence is detected.
+
+We will also ensure that the state machine correctly handles continuous input and loop detection by resetting the state machine to the initial state when the input sequence does not match the desired sequence.
+
+The MATCH signal will be set to 1 when the sequence is detected and reset to 0 when the sequence is not detected.
+
+By implementing these improvements, we can ensure that the Mealy FSM detection circuit is correct, efficient, and optimized for better PPA.

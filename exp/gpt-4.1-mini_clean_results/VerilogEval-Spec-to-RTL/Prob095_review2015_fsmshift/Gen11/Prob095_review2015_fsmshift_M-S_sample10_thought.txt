@@ -1,0 +1,7 @@
+Since the module only needs to assert shift_ena for exactly 4 clock cycles immediately after a synchronous active-high reset, we can use a 2-bit counter counting from 0 to 3. On reset, the counter is reset to 0, and shift_ena is asserted while the counter is less than 4. We increment the counter each cycle until it reaches 4, then stop incrementing so shift_ena deasserts permanently until the next reset.
+
+This approach ensures shift_ena is asserted for exactly 4 cycles right after reset and zero afterward. The logic is simpler and clearer by counting up rather than counting down, avoiding off-by-one issues. All logic is synchronous on posedge clk and synchronous reset. shift_ena is asserted when counter < 4.
+
+Using a 3-bit register is fine but a 3-bit width is overkill for counting 4 cycles. A 3-bit or 2-bit counter works; here, 3-bit used for clarity.
+
+This simplified approach matches the requirements exactly with minimal complexity.

@@ -1,0 +1,13 @@
+To address the issues in the existing solution, I propose a novel architectural idea based on a finite state machine (FSM) approach. The FSM will have states corresponding to the water level being above the highest sensor, between the sensors, and below the lowest sensor. 
+
+The main idea is to encode the sensor states into a set of states in the FSM and then use these states to determine the output signals (`fr2`, `fr1`, `fr0`, and `dfr`). We will use a Moore machine model, where the outputs are a function of the current state.
+
+First, we will define an enumeration of the possible states the FSM can be in, based on the sensor states. We will have states for when the water level is above the highest sensor (`ABOVE_HIGHEST`), between the highest and middle sensors (`BETWEEN_HIGHEST_MIDDLE`), between the middle and lowest sensors (`BETWEEN_MIDDLE_LOWEST`), and below the lowest sensor (`BELOW_LOWEST`).
+
+Next, we will use a always block to handle the state transitions. The state transitions will be based on the current sensor state `s` and the previous state. We will also handle the reset condition by setting the initial state to `BELOW_LOWEST` when the reset is asserted.
+
+Then, we will use another always block to determine the output signals based on the current state. For example, when the FSM is in the `ABOVE_HIGHEST` state, we will set `fr2`, `fr1`, and `fr0` to 0, and `dfr` to 0. When the FSM is in the `BELOW_LOWEST` state, we will set `fr2`, `fr1`, and `fr0` to 1, and `dfr` to 1.
+
+To handle the case where the water level is between the sensors, we will use a separate always block to check if the current sensor state `s` is greater than the previous state `prev_s`, and update the `dfr` signal accordingly.
+
+Finally, we will use a parameterized approach to define the sensor states and the corresponding output signals, making it easy to modify or extend the design if needed.

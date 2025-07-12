@@ -1,0 +1,13 @@
+The original design uses two 4-bit CLA blocks to implement an 8-bit adder, which is already efficient. However, the carry between the two blocks is computed sequentially, creating a small ripple carry between the two 4-bit blocks.
+
+To optimize PPA further:
+1. Implement a single 8-bit carry lookahead adder instead of two 4-bit CLAs. This eliminates the inter-block carry ripple and computes all carry signals in parallel.
+2. Compute propagate and generate signals for each bit and then compute all internal carry signals using carry lookahead logic.
+3. This reduces the carry propagation delay for the whole 8-bit adder, improving timing (smaller WNS).
+4. It also reduces the area by avoiding extra wiring and module instantiations.
+5. Power might slightly improve due to more parallel logic and fewer intermediate signals.
+6. Keep purely combinational logic with no sequential elements.
+
+The tradeoff is a slightly more complex carry logic, but for 8 bits this remains manageable and improves PPA compared to hierarchical 4-bit CLAs.
+
+Thus, the improved solution is a flat 8-bit CLA adder computing all carries in parallel for minimal delay.

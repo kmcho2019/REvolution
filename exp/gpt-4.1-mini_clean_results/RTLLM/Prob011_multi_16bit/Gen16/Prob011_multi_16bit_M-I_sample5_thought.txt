@@ -1,0 +1,25 @@
+Improvement Strategy:
+
+To optimize the provided shift-and-accumulate 16-bit multiplier for better power, performance, and area (PPA), while preserving its behavior and control signals, I will:
+
+1. Add clock enables for all registers (`areg`, `breg`, `yout_r`, and counter `i`) to update only when necessary, thereby reducing unnecessary switching and saving dynamic power.
+
+2. Optimize the done flag update to be combinationally derived from the counter and start signals rather than stored in a register, simplifying logic and possibly reducing area and delay.
+
+3. Simplify the shift operations: 
+   - Shift `areg` right by 1 on each step (to check next bit).
+   - Shift `breg` left by 1 only during accumulation steps.
+   
+   This avoids shifting `breg` unnecessarily and reduces toggling.
+
+4. Reduce combinational adder activity by enabling addition only when the current `areg` LSB is 1, gating the addition properly.
+
+5. Hold register values during idle (no start) or post-completion cycles to prevent toggling.
+
+6. Replace the 5-bit counter limit and conditions with clearer constants for better readability.
+
+7. Keep all reset behavior synchronous and active low.
+
+This will reduce toggling on unused clock cycles, limit addition to only necessary cycles, and simplify done flag logic, improving power and timing while maintaining area efficiency.
+
+The code remains fully synthesizable and behaviorally equivalent.

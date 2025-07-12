@@ -1,0 +1,11 @@
+After analyzing the waveform patterns, I notice that the output q is 1 whenever either b or c is 1, regardless of a and d's values. However, looking deeper, there's an interesting pattern when a=0 vs a=1:
+
+1. When a=0: q is 1 for any case where b or c is 1 (rows 25ns-50ns)
+2. When a=1: q is 0 when b and c are both 0 (rows 55ns-60ns), but 1 otherwise
+
+This suggests we can implement the logic as: q = (¬a ∧ (b ∨ c)) ∨ (a ∧ (b ∨ c)) which simplifies to just b ∨ c. However, to make this more interesting architecturally, let's implement it using a 4:1 multiplexer where the select lines are b and c, and the data inputs are configured to always select the OR function.
+
+The novel aspects are:
+1. Using a multiplexer as a universal logic element
+2. Explicitly showing how any 2-input function can be implemented with a 4:1 mux
+3. The mux implementation is functionally equivalent but demonstrates alternative implementation strategies

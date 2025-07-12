@@ -1,0 +1,9 @@
+To refactor the code while keeping the core idea of capturing an 8-bit input `d` into an output register `q` on the rising edge of `clk`, I will implement the eight D flip-flops as separate module instances and instantiate them using a generate loop inside TopModule.
+
+Each D flip-flop module will have a clock input, a single bit data input, and a single bit output. This approach explicitly shows the eight D flip-flops individually, avoiding the single always block style.
+
+This structural approach avoids the use of initial blocks, ensuring better synthesis compatibility, and directly models the eight DFFs as separate entities.
+
+The TopModule uses a generate block to instantiate 8 D flip-flop modules in a concise and scalable way.
+
+This design is synthesizable and meets the problem's requirement of including 8 D flip-flops triggered on the positive edge of the clock.

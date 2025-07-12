@@ -1,0 +1,9 @@
+To address the issues in the current implementation, we need to re-design the frequency divider module to correctly handle odd divisors and ensure proper synchronization of the counters and clock divider outputs. 
+
+The key insight is to use a single counter that increments on every clock edge (both rising and falling) and toggles the clock divider output when the counter reaches half of the odd divisor value. This approach eliminates the need for separate counters for rising and falling edges and ensures that the clock divider output is correctly synchronized.
+
+We will also adjust the comparison logic to accurately reflect the odd divisor value, taking into account the integer division issue that caused incorrect truncation. 
+
+Furthermore, to improve the design, we will use a single always block that handles both the reset and the update of the counter and clock divider outputs, ensuring proper synchronization and minimizing the risk of unexpected behavior.
+
+By simplifying the counter logic, adjusting the comparison to handle odd divisors correctly, and ensuring proper synchronization, we can create a reliable frequency divider module that correctly divides the input clock frequency by an odd number defined by the parameter.

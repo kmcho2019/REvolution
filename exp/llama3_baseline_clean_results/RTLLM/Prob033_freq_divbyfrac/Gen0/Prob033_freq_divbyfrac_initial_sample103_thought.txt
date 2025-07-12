@@ -1,0 +1,7 @@
+To implement the frequency divider that divides the input clock frequency by a fractional value of 3.5x, we need to employ the double-edge clocking technique. This involves counting clock cycles and generating intermediate divided clock signals with uneven periods. We then phase-shift these intermediate clocks to achieve a smooth fractional clock output. The key steps are:
+1. Initialize a counter to cycle through 7 clock cycles (MUL2_DIV_CLK = 7).
+2. Generate two intermediate clock signals, one with 4 source clock cycles and another with 3 source clock cycles, creating uneven clock periods.
+3. Phase-shift the intermediate clocks by half a clock period, delaying one and advancing the other.
+4. Logically OR the phase-shifted clocks to produce the final fractional divided clock output, ensuring a uniform period.
+
+To achieve this in Verilog, we use a combination of counters, comparators, and logical operations. We also utilize the double-edge clocking technique by employing both the rising and falling edges of the clock signal to generate the phase-shifted clocks.

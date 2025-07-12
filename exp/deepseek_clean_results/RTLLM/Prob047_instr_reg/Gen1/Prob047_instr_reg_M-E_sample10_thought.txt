@@ -1,0 +1,12 @@
+New Architecture Idea:
+1. Instead of using two separate 8-bit registers, we'll use a single 16-bit register that can store both instructions in a packed format.
+2. The fetch signal will determine which half of the register gets updated (lower byte for source 1, upper byte for source 2).
+3. Outputs will be derived directly from the packed register, eliminating the need for separate combinational logic.
+4. We'll add output registers to improve timing and reduce glitching.
+5. The design will use a more efficient reset strategy that only clears necessary bits.
+
+Benefits:
+- Reduced area (single register instead of two)
+- Better timing (registered outputs)
+- Lower power (reduced switching activity)
+- More efficient reset implementation

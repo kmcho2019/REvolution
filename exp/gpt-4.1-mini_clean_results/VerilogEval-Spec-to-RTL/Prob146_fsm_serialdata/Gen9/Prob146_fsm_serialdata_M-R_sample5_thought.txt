@@ -1,0 +1,9 @@
+Refactor the FSM to use a one-hot encoded state machine for potentially better timing at the cost of slightly larger area. Separate the FSM into explicit state bits (IDLE, RECEIVE, STOP, WAIT_STOP) with one-hot encoding, which can simplify next-state combinational logic and improve synthesis for some flows.
+
+Implement the data shift register and bit counter inside a single always block gated by an enable signal to reduce toggling and clearly encapsulate data reception logic.
+
+Use continuous assignment (`assign`) for the `done` signal combinationally generated from the FSM state and input, rather than a registered done pulse, since done is a single-cycle pulse on valid stop bit detection.
+
+Keep synchronous reset and all sequential logic on the positive edge of the clock.
+
+This restructuring maintains the core functionality, ensures clear separation between state logic and data processing, and provides an alternative FSM style that some tools optimize better for timing.

@@ -1,0 +1,6 @@
+The design implements a multi-bit synchronizer that safely transfers data from clock domain A (clk_a) to clock domain B (clk_b). The key aspects are:
+1. Data and enable signals are registered in their native clock domain (clk_a)
+2. The enable signal is synchronized to clk_b domain using a 2-stage flip-flop chain
+3. The synchronized enable controls when the data is captured in the clk_b domain
+4. Reset signals are properly handled in their respective clock domains
+5. The design ensures data stability during transfer by requiring data_en to be active for at least 3 clk_b cycles

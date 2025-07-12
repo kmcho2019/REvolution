@@ -1,0 +1,12 @@
+After carefully re-analyzing the waveform, here's the correct behavior:
+
+1. p behavior: p is high for one clock cycle whenever 'a' is high during a positive clock edge (p follows a with one cycle delay)
+2. q behavior: q becomes high in the cycle following p being high, and stays high until the next positive clock edge where 'a' is low
+3. The outputs should only update on positive clock edges
+4. There is no continuous reset - outputs maintain state until specific conditions are met
+
+Key improvements:
+1. Remove incorrect reset condition
+2. Properly implement the one-cycle delay for p
+3. Make q track p's previous value
+4. Ensure outputs only update on clock edges

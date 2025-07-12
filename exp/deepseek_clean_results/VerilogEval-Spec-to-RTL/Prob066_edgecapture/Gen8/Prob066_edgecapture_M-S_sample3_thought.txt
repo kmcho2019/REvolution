@@ -1,0 +1,13 @@
+Simplified approach with direct edge detection and capture:
+
+1. **Single Register Storage**: Instead of separate registers for previous input and captured state, use one register to store the captured edges.
+
+2. **Immediate Edge Detection**: Detect falling edges by comparing current input with previous input directly in the always block, eliminating the need for a separate combinational assignment.
+
+3. **Sticky Behavior**: Maintain the sticky capture by OR-ing new edge detections with the existing state, ensuring once a bit is set, it stays set until reset.
+
+Key simplifications:
+- Removed intermediate combinational logic (falling_edge wire)
+- Reduced to one always block with clear sequential behavior
+- Fewer signals and simpler structure
+- Maintains identical functionality with proper edge detection

@@ -1,0 +1,7 @@
+To simplify the fractional frequency divider by 3.5, we can avoid using negedge-triggered logic for phase shifting, which can cause timing and synthesis issues. Instead, use a modulo-7 counter and generate the output clock by toggling a register at uneven counts, creating alternating 4-cycle and 3-cycle high/low periods. This produces a fractional divide without explicit phase-shifting.
+
+We generate a single output clock (`clk_div`) that toggles at count 3 and count 6, effectively creating one half-period of 4 cycles and another half-period of 3 cycles, yielding a 3.5 division with approximately 50% duty cycle.
+
+This approach keeps all logic synchronous on the posedge clk with synchronous reset, ensuring robustness and simplicity while maintaining the fractional division.
+
+Although this single toggling signal does not explicitly produce the double-edge phase shift, the uneven toggle intervals naturally yield the required fractional frequency division by 3.5 with a good duty cycle.

@@ -1,0 +1,7 @@
+I will refactor the 16-bit CLA block to explicitly compute the carry signals using the CLA carry lookahead logic formulas rather than a ripple style generate loop. Specifically, I will implement the standard CLA group propagate and generate signals and use them to compute internal carries in a hierarchical fashion, which is the essence of the CLA.
+
+The top-level 32-bit adder will still instantiate two 16-bit CLA blocks, but the internal carry logic within each 16-bit block will be done using CLA equations, implemented with continuous assignments (assign statements) without always blocks. This will give a fully combinational carry-lookahead behavior inside each 16-bit block, reducing carry propagation delay inside the blocks.
+
+This restructuring preserves the modularity and top-level structure while enhancing the internal carry logic clarity and explicitness, fully exploiting CLA logic inside the 16-bit blocks rather than simple ripple.
+
+This version uses bit slicing to generate group signals and computes carries in stages, making the carry generation more efficient and readable.

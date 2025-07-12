@@ -1,0 +1,27 @@
+The current design is already minimal and functionally correct, using continuous assignments that map directly to combinational logic. The keep_driving signal is currently implemented as the NOR of (arrived | gas_tank_empty), which is an optimal gate-level implementation for this logic.
+
+Given that the shut_off_computer output is just cpu_overheated, it is already the simplest form possible.
+
+To optimize PPA further, especially power, we can consider using explicit assign statements that are simpler and ensure the synthesizer infers minimal logic without additional inversions. The current NOR expression is already minimal for keep_driving.
+
+An alternative minimal equivalent for keep_driving could be expressed as:
+
+keep_driving = ~arrived & ~gas_tank_empty;
+
+This expression is the same logic but uses two ANDed inverted inputs instead of a NOR gate.
+
+However, in typical CMOS logic, NOR and NAND structures have similar cost, so this is largely a stylistic choice.
+
+For improved readability and potentially simpler synthesis mapping, I'll use the AND of inverted inputs expression.
+
+Also, specifying outputs as wires rather than regs matches the continuous assignment style and helps synthesis tools optimize better.
+
+Therefore, I will:
+
+- Change outputs to wires instead of reg
+
+- Use continuous assign statements
+
+- Use keep_driving = ~arrived & ~gas_tank_empty
+
+This should be equivalent, with similar or slightly better power and area characteristics, and no functional change.

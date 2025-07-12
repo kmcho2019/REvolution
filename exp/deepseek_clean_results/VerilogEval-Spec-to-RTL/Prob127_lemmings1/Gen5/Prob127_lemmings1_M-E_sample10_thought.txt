@@ -1,0 +1,13 @@
+Instead of using a traditional state machine with explicit state encoding, we can implement this using a single toggle flip-flop. The key insight is that the Lemming only needs to remember whether it's currently walking left or right, and the direction changes are essentially toggles when bumped.
+
+This approach:
+1. Uses a single bit register to represent direction (0=left, 1=right)
+2. Toggles the direction when either bump signal is active (XOR operation)
+3. Prioritizes bumps over maintaining direction
+4. Still maintains clean Moore machine outputs
+5. Reduces logic complexity by eliminating the need for state comparison logic
+
+Benefits:
+- Fewer logic gates needed (just an XOR instead of muxes)
+- More direct mapping between inputs and state transitions
+- Same functionality with potentially better timing

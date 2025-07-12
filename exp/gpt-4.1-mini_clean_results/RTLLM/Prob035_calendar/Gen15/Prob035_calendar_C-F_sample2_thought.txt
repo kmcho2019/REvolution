@@ -1,0 +1,12 @@
+To create a superior perpetual calendar module, I will combine the strengths of both examples by:
+
+- Using a single always block triggered on posedge CLK or posedge RST for synchronous reset and synchronous updates, simplifying timing analysis and synthesis.
+- Using local combinational variables inside the always block to compute the next values of seconds, minutes, and hours before the register update, which helps to flatten combinational logic and ease debugging.
+- Minimizing unnecessary register toggling by only updating counters when rollover occurs, which reduces dynamic power.
+- Keeping Hours as 5 bits (0-23), and Mins and Secs as 6 bits (0-59) for proper range and minimal area.
+- Adding clear comments for maintainability and clarity.
+- Using non-blocking assignments consistently to ensure proper sequential semantics.
+- Avoiding explicit self-assignments to registers when values do not change, reducing switching activity.
+- Thus achieving better timing, power, and area through clearer, modular combinational logic and gated counter increments while maintaining simplicity.
+
+This fusion strategy enhances modularity and potential synthesis optimizations, while maintaining the requested functional behavior precisely.

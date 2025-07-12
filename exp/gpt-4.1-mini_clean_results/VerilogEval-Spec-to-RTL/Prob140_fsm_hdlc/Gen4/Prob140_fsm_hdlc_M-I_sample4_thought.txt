@@ -1,0 +1,37 @@
+The original FSM implementation is functionally correct and meets the specification: it counts consecutive ones, uses extra states for one-cycle delayed outputs (disc, flag), and detects errors at 7+ ones. Outputs are purely Moore, asserted for exactly one cycle after the pattern detection.
+
+To optimize for PPA without sacrificing correctness:
+
+1. **State Encoding:**
+   Use a compact 4-bit encoding with an enumerated type is good, but we can optimize to 3 bits by encoding 8 states, merging SD and SF into one output state with an output signal to distinguish disc or flag. However, separating disc and flag states improves clarity. Since 10 states don't fit into 3 bits, we'll keep 4 bits but simplify encoding with fewer state constants.
+
+2. **FSM Simplification:**
+   - Combine disc and flag output states into a single "output" state with a flag signal indicating which output to assert. This reduces the number of states and simplifies transitions.
+   - Error state remains separate.
+
+3. **Signal Reduction:**
+   - Instead of three separate output signals (disc, flag, err) each set independently, generate them from simple combinational logic based on current state and an output flag.
+
+4. **Implementation details:**
+   - Keep Moore FSM with outputs depending only on the current state.
+   - Outputs asserted exactly one clock cycle after the triggering event by having the output state.
+   - Reset synchronously to zero state.
+   
+This reduces the FSM states from 10 to 8 states, improving area and potentially timing, with slightly simpler next-state logic.
+
+Summary of optimized FSM states:
+
+- S0-S6: Count 0-6 consecutive ones.
+- SO: Output state after detecting either disc or flag condition. Uses an internal signal to distinguish output.
+- SE: Error state.
+
+Transitions:
+
+- From S5 on zero input: go to SO with disc flag set.
+- From S6 on zero input: go to SO with flag flag set.
+- From SO: next state is always S0.
+- From S6 on 1 input: go to SE.
+- From SE on zero input: go to S0; else stay in SE.
+- Others count ones or reset to S0 on zero.
+
+This optimization reduces states and can improve power and area without changing the functional behavior.

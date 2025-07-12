@@ -1,0 +1,8 @@
+Use a simple FSM with four states: SEARCH for pattern 1101, SHIFT_DELAY to shift in 4 delay bits MSB first, COUNTING to count (delay+1)*1000 cycles, and DONE_WAIT_ACK to assert done and wait for ack.  
+Shift pattern and delay bits synchronously each clock in the respective states.  
+Initialize the delay_counter to delay+1 on entering COUNTING. Use a cycle_counter (0 to 999) counting clock cycles per block.  
+Decrement delay_counter at the end of each 1000-cycle block.  
+Output count as the current remaining delay_counter-1 during counting, or zero otherwise.  
+counting asserted only in COUNTING, done only in DONE_WAIT_ACK.  
+Reset synchronous and outputs cleared or don't care in other states.  
+This single always block with clear state transitions and counters is simpler and meets the spec without complex timing flags.

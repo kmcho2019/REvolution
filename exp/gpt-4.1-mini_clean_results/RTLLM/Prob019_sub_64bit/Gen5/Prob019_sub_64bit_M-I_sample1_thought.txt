@@ -1,0 +1,13 @@
+To improve the original 64-bit subtractor with overflow checking for better performance and power while maintaining correctness, I will replace the simple bit-wise ripple carry chain in the CLA with a hierarchical carry-lookahead adder that partitions the 64-bit addition into eight 8-bit blocks.
+
+Each 8-bit block will have its own propagate and generate signals and produce a block-level carry-out. A top-level carry lookahead logic will quickly compute carries between these blocks, reducing the carry propagation delay from 64-bit ripple to 8-block ripple, significantly improving max clock frequency.
+
+This hierarchical approach reduces fanout and wiring complexity compared to a flat 64-bit carry chain, which decreases dynamic power and can help area by simpler routing and smaller logic gates.
+
+The overflow detection remains the same, relying on sign bits of inputs and result.
+
+Overall, this optimization preserves functionality while improving timing and power efficiency.
+
+The module uses:
+- 8 instances of an 8-bit CLA block for sum computation and local carry.
+- A top-level carry lookahead for the block carry signals.

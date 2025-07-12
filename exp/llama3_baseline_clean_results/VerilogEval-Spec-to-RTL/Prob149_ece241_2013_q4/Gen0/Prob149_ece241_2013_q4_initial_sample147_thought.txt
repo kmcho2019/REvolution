@@ -1,0 +1,9 @@
+To implement the TopModule, we need to first decode the input sensors to determine the current water level. We then use a state machine to keep track of the previous water level. Based on the current and previous levels, we determine the nominal flow rate and whether to open the supplemental flow valve. The outputs fr2, fr1, and fr0 will be asserted based on the nominal flow rate, and the output dfr will be asserted if the water level is rising. The state machine will be reset to the "low water level" state when the reset signal is asserted.
+
+The state machine will have the following states:
+- LOW: no sensors asserted, all four outputs asserted
+- LOW_RISING: s[0] asserted, fr0, fr1, and fr2 asserted
+- MIDDLE: s[0] and s[1] asserted, fr0 and fr1 asserted
+- HIGH: s[0], s[1], and s[2] asserted, no outputs asserted
+
+The state machine will transition between these states based on the current and previous water levels.

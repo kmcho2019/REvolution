@@ -1,0 +1,9 @@
+To create a novel architectural solution for the frequency divider, we can utilize a different approach that still achieves the desired output frequencies but potentially offers improvements in terms of power, area, or performance. 
+
+One such approach is to use a single counter that can generate all the required frequencies. By using a counter that counts up to a value that is a multiple of the divisors (2, 10, and 100), we can generate the output clocks based on the counter's value. This method could potentially reduce the area required compared to using separate counters for each output frequency.
+
+For example, we could use a counter that counts up to 100, which is the least common multiple of 2, 10, and 100. Then, we can generate `CLK_50` by toggling it every 50 counts, `CLK_10` by toggling it every 10 counts, and `CLK_1` by toggling it every count. This approach simplifies the logic and potentially reduces the area required.
+
+Additionally, we can incorporate clock gating to reduce power consumption when the outputs are not needed. By adding enable signals for each output clock and only incrementing the counter when at least one of the outputs is enabled, we can minimize unnecessary switching activity.
+
+This novel approach combines the benefits of simplicity, potential area reduction, and power savings, making it an attractive solution for the frequency divider problem.

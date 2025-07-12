@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. Instead of using XOR for edge detection, implement explicit state tracking for each bit
+2. Use a two-stage pipeline:
+   - First stage: Detect and store the transition type (rising, falling, or none)
+   - Second stage: Generate the output based on stored transition type
+3. Benefits:
+   - More explicit state tracking makes timing easier to analyze
+   - Pipeline stages can be independently optimized
+   - Potential for lower power as transitions are explicitly categorized
+   - Could be extended to differentiate between rising/falling edges if needed
+4. Implementation:
+   - First always block tracks previous state and detects transitions
+   - Second always block generates output based on detected transitions
+   - Uses 3-state encoding for transition types (00=no edge, 01=rising, 10=falling)

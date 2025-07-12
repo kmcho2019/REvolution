@@ -1,0 +1,23 @@
+Implement the Lemming controller as a Moore FSM with four states: WALK_LEFT, WALK_RIGHT, FALL, and SPLAT. The WALK and DIG behaviors will be modeled within the WALK states by using an internal "digging" flag. We will use direction encoded in the state name (WALK_LEFT or WALK_RIGHT), avoiding a separate direction register. This reduces control signals and state bits.
+
+Use a fall_timer counter to track how long the Lemming has fallen. The FSM transitions as follows:
+
+- From WALK_LEFT or WALK_RIGHT:
+  - If ground=0, transition to FALL.
+  - Else if dig=1 and on ground, set digging=1 and remain in current walk state.
+  - Else if bump detected (bump_left or bump_right), switch to opposite WALK state and set digging=0.
+  - Else remain in current WALK state and update digging based on dig signal and ground.
+
+- From FALL:
+  - Increment fall_timer while ground=0.
+  - If ground=1 and fall_timer > 20, transition to SPLAT.
+  - Else if ground=1, transition back to last walk direction state, digging=0.
+  - Otherwise remain in FALL.
+
+- SPLAT is a terminal state disabling all outputs.
+
+Outputs are generated from the state and digging flag only (Moore outputs). Reset asynchronously sets state to WALK_LEFT and clears dig/fall_timer.
+
+This approach removes the separate direction register by encoding direction in states and keeps dig as a separate flag. It simplifies bump handling since each WALK state responds differently to bumps. This solution leverages state encoding to simplify combinational logic and explicitly tracks dig status separate from state. Saturate fall_timer at 31 to prevent overflow.
+
+This architecture reduces registers and concentrates logic in FSM state transitions, achieving the same functionality with a clean state encoding and concise logic.

@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) as described, we can break down the functionality into states and transitions based on the inputs `s` and `w`. The FSM starts in state A and transitions to state B when `s` becomes 1. Once in state B, it enters a loop where it checks the value of `w` over three consecutive clock cycles. We can manage this by using a counter to keep track of the clock cycles and a variable to count the number of times `w` is 1 during these cycles. If `w` is 1 exactly twice, we set `z` to 1 in the following cycle; otherwise, `z` remains 0. We need to handle the reset condition by returning to state A when `reset` is high.
+
+Given the description, we will implement the FSM using two states (A and B) and utilize a counter and a flag within state B to manage the checking of `w`. The states will be encoded using two bits (though only two states are mentioned, we might need more for the implementation details like managing the `w` checks).
+
+The main idea is to:
+1. Start in state A and wait for `s` to become 1 to move to state B.
+2. In state B, count the number of clock cycles and the occurrences of `w=1` over three cycles.
+3. Based on the count of `w=1`, set `z` accordingly in the next cycle after the three cycles are completed.
+4. Continuously reset to state A if `reset` is high.

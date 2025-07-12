@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Circular Buffer: Instead of a simple shift register, use a 3-slot circular buffer to store the last 3 w values. This eliminates the need for shifting operations.
+2. Parallel Comparison: Implement all possible 2-out-of-3 combinations in parallel for immediate pattern detection.
+3. State Machine Simplification: Reduce the FSM to just tracking when we're in the evaluation phase (state B).
+4. Edge-Triggered Evaluation: Use the transition points of the circular buffer index to trigger output evaluation.
+5. Output Pipeline: Register the output one cycle after detection for clean timing.
+
+Key Advantages:
+- Eliminates the need for a cycle counter by using buffer index directly
+- Parallel pattern matching reduces critical path
+- Circular buffer reduces switching power
+- Clean output timing with registered output
+- Minimal state transitions

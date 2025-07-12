@@ -1,0 +1,11 @@
+To fix this module, we need to:
+1. Properly store the previous input value in a register to compare with current input
+2. Use the stored previous value (from actual previous cycle) for transition detection
+3. Detect 1->0 transitions by comparing current input with properly delayed previous input
+4. Set output bits when transitions are detected and maintain them until reset
+5. Ensure the transition detection happens before updating the previous input register
+
+Key fixes:
+- Separate the transition detection logic from the register update
+- Use the registered prev_in value for accurate cycle-to-cycle comparison
+- Maintain the output bits correctly using proper bitwise OR operation

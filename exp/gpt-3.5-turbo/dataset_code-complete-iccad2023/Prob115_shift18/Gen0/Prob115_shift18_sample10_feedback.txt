@@ -1,5 +1,0 @@
-The code has multiple issues in the shifting logic of the `ShiftRegister` module:
-1. Shifting left by 1 bit (`2'b00`) and 8 bits (`2'b01`) is incorrect. The code shifts by 1 and 8 bits to a fixed position, overwriting existing bits.
-2. Shifting right by 1 bit (`2'b10`) and 8 bits (`2'b11`) has the correct direction but does not perform an arithmetic shift. For example, in the right shift by 1 bit, `q[63:1]` should be shifted right by 1 position, but the existing code does a circular right shift.
-These issues lead to mismatches in the simulation output.
-To fix the code, the shifting logic needs to correctly shift the bits based on the specified `amount` for both left and right shifts, including the arithmetic right shift.

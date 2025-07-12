@@ -1,0 +1,8 @@
+To implement the next-state signals Y1 and Y3 corresponding to signals y[0] and y[2], we need to derive the logic equations by inspection assuming the one-hot encoding. 
+Given the state machine, we can see that Y1 (y[0]) is set when the current state is A (000001) and the input w is 0. 
+Similarly, Y3 (y[2]) is set when the current state is C (000100) and the input w is 0, or when the current state is E (100000) and the input w is 1.
+We can derive the logic equations for Y1 and Y3 as follows:
+Y1 = (y[0] & w') + (y[3] & w') 
+Y3 = (y[2] & w') + (y[5] & w)
+where y[0], y[2], y[3], and y[5] represent the current states A, C, D, and F respectively, and w' represents the inverse of input w.
+These equations can be implemented in Verilog using the given module interface.

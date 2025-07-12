@@ -1,0 +1,17 @@
+Implement a fully binary clock internally, representing hours as a 4-bit binary (1 to 12), and minutes and seconds as two 6-bit binary counters (0-59). Use a single always block triggered on clk, with synchronous reset and enable. Increment seconds on ena, and roll over seconds to minutes and minutes to hours accordingly, toggling PM at the 12-hour wraparound.
+
+For the output interface, convert the binary minutes and seconds to BCD on-the-fly using combinational double-dabble (shift-add-3) logic or a small combinational function, avoiding storing minutes and seconds in BCD internally.
+
+For hours, use a small combinational function converting 1-12 binary to two BCD digits.
+
+This approach minimizes the amount of sequential BCD logic and associated carry chains inside clocked logic, instead performing simple binary incrementing synchronously and doing combinational binary to BCD conversion at output.
+
+This should reduce sequential logic complexity and toggle rate, since binary counters are simpler and smaller than multiple BCD counters.
+
+By leveraging combinational double-dabble modules for minutes and seconds outputs and a simple combinational mapping for hours, the design achieves a compact, modular, and balanced architecture between sequential simplicity and output interface needs.
+
+Reset sets time to 12:00:00 AM, pm is 0 at reset.
+
+All sequential updates happen on clk's positive edge.
+
+This solution is a clean architectural contrast with the previous mixed BCD/binary approach, pushing conversion into combinational output logic rather than clocked counting.

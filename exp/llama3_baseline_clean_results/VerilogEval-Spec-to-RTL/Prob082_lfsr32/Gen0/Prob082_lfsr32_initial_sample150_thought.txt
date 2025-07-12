@@ -1,0 +1,14 @@
+To implement a 32-bit Galois LFSR with taps at bit positions 32, 22, 2, and 1, 
+we need to create a shift register and apply XOR operations at the specified tap positions.
+Since we're implementing a Galois LFSR that shifts right, the next state of each bit will be 
+the current state of the bit to its left, except for the bits with taps where the next state 
+will be the XOR of the current state of the bit to its left and the current state of the LSB.
+Given the tap positions are at bits 32, 22, 2, and 1, and considering 0-based indexing, 
+the taps should actually be considered at positions 31, 21, 1, and 0 because Verilog uses 
+0-based indexing. The MSB (q[31]) will be the XOR of the current q[30] and q[0]. The bit 
+at position 21 will be the XOR of the current q[20] and q[0]. The bit at position 1 will 
+be the XOR of the current q[0] and q[0], which simplifies to just q[0]. However, the bit 
+at position 0 (LSB) should not be an XOR of itself with anything else in this context; 
+it shifts from the MSB. On reset, the entire register should be set to 1, which in binary 
+is '1', thus all bits should be '1', but given the initial value specified is 32'h1, 
+only the LSB (q[0]) should be '1', and the rest should be '0'.

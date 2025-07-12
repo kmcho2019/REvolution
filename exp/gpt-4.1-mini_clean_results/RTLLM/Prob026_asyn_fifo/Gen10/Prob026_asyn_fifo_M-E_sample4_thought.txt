@@ -1,0 +1,15 @@
+Implement an asynchronous FIFO with parameterizable width and depth by dividing the design into modular blocks:
+1. A true dual-port RAM with separate read/write clocks, enables, addresses, and data ports for storage.
+2. Binary write and read pointers incremented independently on their clock domains when write/read enable signals are asserted.
+3. Convert binary pointers to Gray code for crossing clock domains.
+4. Use two-stage synchronizers for crossing Gray pointers into the opposite clock domain.
+5. The read and write addresses for RAM are extracted from the lower bits of the binary pointers.
+6. Use the synchronized Gray pointers to detect full and empty conditions:
+   - FIFO empty if read pointer Gray matches synchronized write pointer Gray.
+   - FIFO full if write pointer Gray equals read pointer Gray with the top two bits inverted and lower bits equal.
+7. On write, data is stored into RAM at the write address if not full.
+8. On read, data is read from RAM at the read address if not empty.
+9. Outputs rempty and wfull flag the empty/full conditions, and read data is registered on read clock domain.
+This approach ensures safe pointer crossing, clean logic separation, and modular code.  
+A different synchronization approach uses dedicated modules for Gray code conversion and pointer synchronization, but combining Gray code conversion inside the pointer update logic keeps it efficient.  
+Additionally, avoid output register on the read data port for immediate output reflecting the RAM read output for immediate visibility.

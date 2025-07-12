@@ -1,0 +1,9 @@
+Simplified implementation while maintaining full functionality:
+1. Remove the separate data buffer register since we can directly build the output register
+2. Use a simple 3-bit counter to track received bits
+3. Shift incoming bits into the output register (MSB first)
+4. Generate dout_valid for one cycle when counter reaches 7
+5. Reset clears all registers synchronously
+6. Reduced from 2 registers (data_buf + dout_parallel) to just 1 register (dout_parallel)
+7. Maintains same timing and power characteristics but with less area
+8. Simpler control logic with direct assignment to output register

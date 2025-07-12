@@ -1,0 +1,9 @@
+To refactor the given Verilog code, we can restructure the finite state machine to correctly handle the receipt of each byte in a message. The state machine should transition to the next state only when a valid byte is received, and it should assert the `done` signal in the cycle immediately after the third byte of each message was successfully received.
+
+We will introduce a new state variable `count` to keep track of the number of bytes received in the current message. When a byte with `in[3]=1` is received, we reset the `count` to 1 and transition to the `BYTE1` state. If the `count` is already greater than 0, we increment it and check if it has reached 3. If `count` is 3, we assert the `done` signal and reset the `count` to 0.
+
+By introducing the `count` variable, we can simplify the state machine and reduce the number of states required. This approach also allows us to handle the condition when a byte with `in[3]=1` is received while the FSM is not in the IDLE state.
+
+We will use a combinational logic block (`always_comb`) to determine the next state and the `done` signal based on the current state, `count`, and `in[3]`. The sequential logic block (`always_ff`) will update the `count` and state registers based on the next state and `done` signals.
+
+This refactored code will correctly implement the finite state machine and ensure that the `done` signal is asserted in the cycle immediately after the third byte of each message was successfully received.

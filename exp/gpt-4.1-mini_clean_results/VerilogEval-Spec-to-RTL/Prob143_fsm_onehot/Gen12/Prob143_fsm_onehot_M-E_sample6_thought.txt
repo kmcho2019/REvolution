@@ -1,0 +1,11 @@
+A novel architectural idea is to implement the next state logic and outputs using parallel combinational logic without loops, directly encoding the state transitions as bitwise expressions. Since the states are one-hot encoded, the next state bits can be computed by bitwise OR of each state's contribution. This approach creates explicit combinational logic equations for each next_state bit by OR-ing the conditions under which that next state is reached.
+
+For example, next_state[0] is set if any current state transitions to S0 on the given input. Similarly, each next_state bit is the OR of all state-input combinations that transition to that state.
+
+Outputs can be assigned by explicitly OR-ing the bits of the current states that produce them, reflecting the one-hot encoding.
+
+This method avoids loops and case statements, resulting in a flat combinational logic network that may be easier for synthesis tools to optimize for timing and area. Also, it clarifies the transition logic through direct Boolean expressions, making debugging and formal verification straightforward.
+
+Additionally, because next_state bits are computed independently, it supports multiple simultaneous active states and their combined transitions naturally.
+
+Hence, this direct combinational logic approach will produce clear, maintainable code without sacrificing functionality or support for multiple active states.

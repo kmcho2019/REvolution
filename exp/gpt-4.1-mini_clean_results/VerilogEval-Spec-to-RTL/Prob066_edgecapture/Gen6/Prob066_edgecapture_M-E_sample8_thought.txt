@@ -1,0 +1,10 @@
+Instead of storing the entire previous input vector and directly comparing it with the current input, we can implement a per-bit state machine that tracks whether each bit has ever seen a falling edge (1->0). This approach uses a latch register that sets its bit to 1 when a falling edge is detected on that bit, and never clears it until reset.
+
+To do this robustly, on each clock edge (synchronous to clk), for each bit:
+- If reset is asserted, clear all output bits to zero.
+- Else, if the current input bit is 0 and the previous input bit was 1, set the output bit to 1.
+- Otherwise, maintain the output bit at its current value.
+
+To implement this, we store a registered copy of `in` as `prev_in`, and compute `(prev_in & ~in)` per bit to detect falling edges. Once a bit in `out` is set, it stays set until reset clears it.
+
+This modular approach clearly separates input sampling and output capturing, ensuring stable and explicit detection of the desired events.

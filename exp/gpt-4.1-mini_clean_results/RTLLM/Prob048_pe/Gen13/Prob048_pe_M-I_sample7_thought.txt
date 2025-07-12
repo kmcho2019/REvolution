@@ -1,0 +1,11 @@
+To improve the PPA (Performance, Power, Area) while maintaining correctness and saturation behavior, the key optimization targets are the 32x32 multiplier and the 33-bit adder on the critical path.
+
+Improvement strategy:
+1. Pipeline the design by registering the inputs before multiplication and the product before accumulation, introducing one cycle latency but reducing critical path delay and enabling higher clock frequencies.
+2. Separate multiplication and accumulation into two stages, each with registered outputs, which reduces combinational delay in a single cycle.
+3. Maintain synchronous reset and saturation logic as before.
+4. This pipelining reduces maximum combinational delay per stage, improves timing (better WNS and TNS), lowers power by enabling simpler clock gating, and may reduce area pressure on the multiplier and adder at once.
+5. Output `c` will reflect the accumulated value from previous cycles with one cycle latency from inputs, acceptable in many MAC applications.
+6. Keep comments and clean code for maintainability.
+
+This pipeline approach trades one cycle latency for improved PPA, a common and effective hardware optimization technique.

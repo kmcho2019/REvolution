@@ -1,0 +1,15 @@
+Refactor the design to use a register array to hold the grid state as a 2D array instead of flattening to a vector inside combinational logic. Perform the neighbor count and next state calculation entirely in a combinational always_comb block with nested loops and index wrapping via bitmasking. This simplifies logic grouping and allows for clear stepwise updates. Then, update the registered grid state synchronously on the clock edge with synchronous load.
+
+The output `q` is assigned by flattening the registered 2D grid array in a continuous assignment, separating combinational output logic from the sequential state.
+
+This approach reduces the amount of continuous combinational assignment logic clutter and consolidates next state logic into one always_comb block. It also uses procedural indexing, which some synthesis tools optimize better. It makes the design style more procedural but still fully parallel and synthesizable.
+
+Key points:
+
+- Use `reg [N-1:0] grid [N-1:0];` to hold the current state.
+- Compute `next_grid` in an always_comb block with loops.
+- Use bit masking `(idx & 4'hF)` for wrapping indices.
+- On clock edge: if load is high, load input data vector into `grid` array; else update grid to `next_grid`.
+- Assign output `q` by flattening `grid` array with a generate block and continuous assignment.
+
+This restructuring keeps the same functionality and performance while grouping the combinational logic in a single always block, improving code organization and possibly enhancing synthesis friendliness depending on the toolchain.

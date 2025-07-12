@@ -1,0 +1,7 @@
+To design the finite state machine (FSM) for receiving bytes in the given serial communication protocol, we can break down the process into several states:
+1. **Idle**: The initial state where the FSM waits for a start bit (0) to begin receiving a byte.
+2. **Start Received**: After detecting the start bit, the FSM transitions to this state to start collecting the data bits.
+3. **Data Collection**: The FSM collects 8 data bits. Since the least significant bit is sent first, the data bits need to be shifted into a register accordingly.
+4. **Stop Bit Verification**: After collecting all 8 data bits, the FSM waits for the stop bit (1). If it's not a 1, the FSM remains in this state until a 1 is detected, indicating the end of the transmission or an error.
+5. **Done**: Once the stop bit is correctly verified as 1, the FSM asserts the done signal, indicating a complete byte has been received and outputs the byte.
+We'll implement these states in Verilog, using an enum to define the states for better readability. The FSM will operate based on the current state and input, advancing through the states as conditions are met.

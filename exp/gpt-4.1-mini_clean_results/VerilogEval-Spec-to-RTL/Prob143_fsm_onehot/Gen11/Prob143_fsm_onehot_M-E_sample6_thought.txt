@@ -1,0 +1,11 @@
+This solution leverages a vectorized approach to compute next_state by iterating over all possible states (0 to 9) and directly expressing the transitions as conditionals inside a generate-for construct. Instead of individually writing out each next_state bit combinational assignment, the design uses a loop-based combinational block that accumulates next states based on current active states and input in a procedural style (combinational always block with a next_state reg). The outputs are then derived by detecting whether any of the states contributing to out1 or out2 are active in the computed next_state, reflecting output dependability on the upcoming state rather than the current state. This approach emphasizes scalability if the FSM were larger and provides clean, compact logic by leveraging for-loops and case statements inside a combinational always block.
+
+Key architectural differences:  
+- Use of a combinational always block with an intermediate reg for next_state that aggregates contributions from all active states, making the transitions explicit in a compact loop.  
+- Outputs depend on the computed next_state rather than current state, which can be more intuitive in some designs (outputs reflect the next state).  
+- Use of parameterized state indices and masks for clarity and easy maintainability.  
+- Allows multiple concurrent active states in current state, all their transitions accumulate in next_state.  
+- Entirely combinational and synthesizable.  
+- Clean separation of transition logic in the loop and output assignments afterward.
+
+This method is suitable for FSMs where the state space or transitions might be programmatically described or generated, improving code maintainability and clarity.

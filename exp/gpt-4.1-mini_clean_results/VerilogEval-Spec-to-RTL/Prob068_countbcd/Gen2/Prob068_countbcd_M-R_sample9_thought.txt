@@ -1,0 +1,11 @@
+To fix the enable signal timing issue while keeping the same counting logic, I will make the 'ena' output purely combinational signals derived directly from the carry conditions that occur in the current clock cycle. This means 'ena' will immediately indicate when a digit should increment based on the rollover of the previous digit without registering the enable signals.
+
+The approach:
+- Use registers only for the BCD digit values (ones, tens, hundreds, thousands).
+- Compute the next digit values and carry conditions combinationally.
+- Generate the enable signals combinationally based on these carry signals for tens, hundreds, and thousands digits.
+- Update the digit registers synchronously on the clock edge.
+- Output 'ena' directly from the combinational carries, avoiding any clock-edge delay.
+- Implement synchronous active-high reset clearing all digits.
+
+This preserves synchronous counting but gives 'ena' signals that directly correspond to enables for the current incrementing cycle, aligning with expected simulation results and design intent.

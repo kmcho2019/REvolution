@@ -1,0 +1,35 @@
+Refactor the implementation by clearly mapping each mux_in[i] to the corresponding logic function derived from the K-map for ab = i (00, 01, 11, 10 respectively). Since the problem states the 4-to-1 multiplexer selects among mux_in[3:0] based on {a,b}, we must arrange mux_in with indices corresponding exactly to ab values: mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, and mux_in[3] for ab=10.
+
+For each mux_in[i], implement the function of c,d as per the K-map rows for that ab value, only using 2-to-1 multiplexers and constants (no other gates).
+
+Implement all logic in a purely combinational way using mux2 modules instantiated as needed. Use the minimal number of 2-to-1 multiplexers to construct each function by factoring the expressions properly.
+
+Do not include inputs 'a' and 'b' inside the TopModule since they only select the external 4-to-1 mux inputs (mux_in), so we remove them from TopModule inputs.
+
+Summary of each mux_in[i] from the K-map:
+
+- ab=00 (mux_in[0]):
+  cd: 00=0, 01=1, 11=1, 10=1
+  function: F0 = d + c d' = d + c (~d)
+  Simplify: F0 = d + c (~d)
+  Using mux2: F0 = mux2(c, d, 1) [Because if c=0 => d, if c=1 => 1]
+
+- ab=01 (mux_in[1]):
+  cd: 00=0, 01=0, 11=0, 10=0
+  function: 0
+
+- ab=11 (mux_in[2]):
+  cd: 00=0, 01=0, 11=1, 10=0
+  function: c & d
+
+- ab=10 (mux_in[3]):
+  cd: 00=1, 01=0, 11=1, 10=1
+  function: c + ~d & ~c (i.e. c + (~c & ~d)) = c + ~(c + d) simplified as "c or (~c and ~d)"
+
+Implement NOT of c and d by mux2 with constant inputs (in0=1, in1=0).
+
+Construct the AND and OR functions strictly via mux2 modules without any other gates.
+
+Assign mux_in bits accordingly, ordered so that mux_in[0] = function for ab=00, mux_in[1] = function for ab=01, etc.
+
+This approach cleanly separates the concerns and matches the problem statement exactly with minimal mux2 usage.

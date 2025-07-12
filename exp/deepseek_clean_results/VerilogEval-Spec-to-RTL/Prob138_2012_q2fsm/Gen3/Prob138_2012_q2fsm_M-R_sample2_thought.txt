@@ -1,0 +1,12 @@
+I'll refactor the solution to use a more traditional FSM implementation with:
+1. Binary state encoding (3 bits for 6 states) instead of one-hot to reduce area
+2. Combinational next-state logic using case statements instead of ROM
+3. Separate combinational blocks for next-state and output logic
+4. Maintain synchronous reset and positive-edge triggered state transitions
+5. Output z derived directly from state (E and F states output 1)
+
+This approach should:
+- Reduce area by using fewer flip-flops (3 vs 6)
+- Eliminate the large ROM structure
+- Potentially improve timing by simplifying the next-state logic
+- Keep the same functionality and interface

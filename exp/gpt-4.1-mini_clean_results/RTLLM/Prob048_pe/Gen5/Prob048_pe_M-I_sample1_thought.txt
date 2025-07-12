@@ -1,0 +1,9 @@
+To improve PPA (performance, power, area), I will:
+
+1. Extend the accumulator register to 64 bits to avoid data truncation and overflow from multiplication accumulation, improving correctness and result range.
+2. Register the product output to break the long combinational path from a * b to c update, effectively pipelining the MAC operation. This can improve the max clock frequency (timing).
+3. Use synchronous reset only on the clock's rising edge to simplify timing.
+4. Provide the lower 32 bits of the 64-bit accumulator as output `c` to keep interface as specified.
+5. This pipelined approach will increase latency by one cycle but enable higher clock frequency and reduce critical path delays.
+
+This balances correctness (no overflow truncation), timing (pipelining), and interface requirements. Power and area are slightly increased due to 64-bit register and pipeline register, but gain timing and correctness overall.

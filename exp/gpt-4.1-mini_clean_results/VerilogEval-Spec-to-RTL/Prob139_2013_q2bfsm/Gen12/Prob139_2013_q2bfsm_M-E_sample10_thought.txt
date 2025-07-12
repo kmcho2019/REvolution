@@ -1,0 +1,21 @@
+Use a layered FSM approach with three main phases:
+
+1. **Initialization and f pulse phase:**  
+   On synchronous active-low reset, stay in RESET state (outputs zero).  
+   When resetn is released (high), move to a state that outputs f=1 for exactly one cycle, then to pattern detection.
+
+2. **Pattern detection phase (detect x sequence 1,0,1 in successive clocks):**  
+   Implement a small FSM that tracks the progress of matching the sequence `1 -> 0 -> 1`.  
+   If at any point the sequence is broken, restart detection.  
+   On successful detection, output g=1 for exactly one clock cycle (a g pulse), then move to y monitoring.
+
+3. **Y monitoring phase:**  
+   While maintaining g=1, check if y is 1 within 2 clock cycles.  
+   If y=1 detected within two clocks, remain in a permanent g=1 state.  
+   Else after two clocks, move to permanent g=0 state.  
+   
+Outputs f and g are assigned based only on the current state, ensuring pulse signals are exactly one clock cycle long.  
+The FSM state encoding is compact, and transitions are clearly separated by function.  
+All registers are updated on the positive clock edge with synchronous active-low reset.
+
+This layered approach clarifies behavior, reduces states, and matches the problem timing requirements exactly.

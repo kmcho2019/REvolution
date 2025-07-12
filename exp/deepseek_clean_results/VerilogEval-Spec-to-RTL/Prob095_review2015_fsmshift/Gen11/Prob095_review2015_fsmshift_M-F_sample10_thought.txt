@@ -1,0 +1,13 @@
+Revised design approach:
+1. Correct counter implementation: Use a 2-bit counter that counts 0-3 (4 cycles) after reset
+2. Precise output control: shift_ena should be high only during these 4 cycles
+3. Reset handling: Immediately assert shift_ena on reset and maintain for 4 cycles
+4. Synchronous behavior: All state changes on positive clock edge
+5. Clear state machine: Counter stops at 3 and shift_ena goes low until next reset
+
+Key fixes:
+- Counter now properly counts 4 cycles (0-3)
+- shift_ena is high only when counter < 4 (0-3)
+- Reset synchronously initializes counter to 0
+- After 4 cycles, shift_ena stays low until next reset
+- Clean separation of counter and output logic

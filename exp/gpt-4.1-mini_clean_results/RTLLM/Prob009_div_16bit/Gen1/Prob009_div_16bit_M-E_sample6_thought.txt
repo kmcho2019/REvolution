@@ -1,0 +1,16 @@
+To implement the 16-bit by 8-bit division combinationally as specified, we follow a non-restoring approach reflecting the problem description closely. The key steps are:
+
+- Use registers a_reg and b_reg to latch inputs A and B on any change.
+- Start with remainder zero (width 8 bits matching divisor).
+- Extract the top 8 bits of the dividend initially as the current 'partial dividend'.
+- For each of the 16 iterations, do:
+  - Compare the partial dividend (which is remainder concatenated with the next dividend bit) with divisor.
+  - If partial dividend >= divisor, set the current quotient bit to 1, and subtract divisor from partial dividend to get the new remainder.
+  - Else, quotient bit is 0, and remainder is partial dividend.
+- Shift partial dividend left by 1 and bring down the next dividend bit (except for the last iteration).
+- Accumulate quotient bits from MSB to LSB.
+- Output the 16-bit quotient and 16-bit remainder (the remainder zero-extended to 16 bits).
+
+This approach aligns with the problem statement of extracting and comparing the high bits of the dividend with divisor, setting quotient bits, and concatenating the remainder with the next dividend bit. Using a 16-bit wide 'partial_dividend' register that holds remainder concatenated with the next dividend bit allows straightforward comparison and subtraction.
+
+The code implements the above combinational division in a loop inside an always block triggered by A or B changes, ensuring the module is fully combinational with no clock dependency.

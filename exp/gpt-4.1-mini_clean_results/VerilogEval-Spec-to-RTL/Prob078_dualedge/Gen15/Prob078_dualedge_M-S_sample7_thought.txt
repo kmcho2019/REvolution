@@ -1,0 +1,5 @@
+Simplify the dual-edge triggered flip-flop by replacing the transparent latch mux with a simple combinational 2-to-1 mux controlled by the clock level. This eliminates the latch, reduces complexity, and still selects the correct flip-flop output based on clock level to emulate dual-edge triggering.
+
+Keep two flip-flops, one triggered on the positive edge and the other on the negative edge of the clock, both sampling the same data. The output 'q' is chosen by a combinational mux controlled directly by the clock level: when clk=1 output is from posedge FF, when clk=0 output is from negedge FF.
+
+This approach is fully synthesizable, FPGA-friendly, uses no latches, has minimal logic, and avoids illegal sensitivity lists.

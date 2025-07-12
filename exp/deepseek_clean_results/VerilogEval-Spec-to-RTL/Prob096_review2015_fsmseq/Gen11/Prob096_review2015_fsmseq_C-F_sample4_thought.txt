@@ -1,0 +1,26 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Combine the shift register approach from both examples but simplify the comparison logic
+   - Use a single 4-bit comparison when the shift register is full (like Example 2) rather than checking partial patterns (Example 1)
+   - This reduces logic depth and improves timing (better WNS)
+
+2. Power Optimization:
+   - Adopt the explicit shift register enable from Example 2 (!found condition)
+   - Keep the simple output assignment (start_shifting = found) from Example 2
+   - This minimizes unnecessary toggling after detection
+
+3. Area Optimization:
+   - Use the minimal register set (4-bit shift + 1-bit found) from Example 2
+   - Maintain the compact comparison logic from Example 2
+   - This keeps area low while improving other metrics
+
+4. Functional Clarity:
+   - Make the pattern detection explicit with a single 4-bit comparison
+   - Keep the simple state representation (just found flag)
+   - This makes the design easier to verify and maintain
+
+Key Improvements:
+- Single-cycle pattern detection when shift register is full
+- Explicit shift register gating when pattern is found
+- Clean output assignment without additional conditions
+- Maintains all original functionality while optimizing PPA

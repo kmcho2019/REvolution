@@ -1,0 +1,10 @@
+Fuse the clear separation and synchronous toggling logic from Example 1 with the continuous free-running counter idea from Example 2 to optimize clarity, timing, and power. 
+
+Strategy:
+- Use a free-running 8-bit counter that increments each clock cycle.
+- When the counter reaches freq-1 (terminal count), reset it and toggle wave_out.
+- Handle freq=0 case by holding count and wave_out steady, avoiding toggling and counter increments (power saving).
+- This approach merges the sequential toggling logic (reduces combinational delay on wave_out) with a free-running counter style (simplifies logic).
+- Keep two always blocks for clarity: one for count, one for wave_out toggling, both synchronous with clk and reset.
+- Use a wire for terminal count condition, precomputing freq-1 for simpler comparison.
+- This yields a well-structured, easy-to-understand design with minimal switching, controlled toggling, good timing, and power efficiency.

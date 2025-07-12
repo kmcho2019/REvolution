@@ -1,0 +1,7 @@
+The original code correctly infers a D latch using a combinational always block with blocking assignments. However, synthesis tools like Yosys sometimes have trouble mapping the inferred latch to a known standard cell (e.g., DLH_X1), causing synthesis errors.
+
+To improve synthesis compatibility, I will rewrite the latch using non-blocking assignments inside an always block that is sensitive to `ena` and `d`. This style is also commonly recognized by synthesis tools and often generates the expected latch primitive. Non-blocking assignments make the timing intentions clearer and sometimes improve tool inference.
+
+Additionally, I will keep the explicit sensitivity list on `ena` and `d` for correct latch behavior. I will also add an initial value to `q` for simulation friendliness (though synthesis ignores it).
+
+This approach should maintain functionality and improve synthesis success across tools, potentially improving power and area by avoiding unexpected inferred logic or unsupported primitives.

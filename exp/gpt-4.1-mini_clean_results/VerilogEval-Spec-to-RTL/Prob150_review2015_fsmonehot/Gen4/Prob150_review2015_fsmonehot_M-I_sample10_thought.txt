@@ -1,0 +1,22 @@
+The existing solution correctly implements the state transition and output logic as a Moore FSM with one-hot encoding, and the outputs are straightforward and minimal.
+
+To improve PPA (performance, power, area):
+- Simplify next-state logic expressions by factoring common terms to reduce gate count and levels.
+- Combine conditions that lead to the same next state to avoid repeated logic.
+- Reduce the number of intermediate signals to minimize logic duplication.
+- Use wire declarations selectively only for inputs to improve clarity.
+- Ensure the outputs depend solely on current state (Moore), no redundant logic for outputs.
+- Keep only requested next state signals as outputs; others are implicitly defined and do not need explicit signals.
+
+This refactoring yields slightly simpler, more compact expressions, which can reduce gate count and critical path delays, thus improving PPA while maintaining correctness.
+
+The core approach is the same, but next-state logic is factored better:
+- S_next: aggregate all cases that go to S next.
+- S1_next: only from S and d=1.
+- B3_next: only from B2.
+- Count_next: from B3 or Count & ~done_counting.
+- Wait_next: from Count & done_counting or Wait & ~ack.
+
+Also, shift_ena is asserted in B0-B3 states (bits 4 to 7). Done and counting outputs directly from Wait and Count states.
+
+This should provide a more optimized, clean solution that matches the original behavior exactly.

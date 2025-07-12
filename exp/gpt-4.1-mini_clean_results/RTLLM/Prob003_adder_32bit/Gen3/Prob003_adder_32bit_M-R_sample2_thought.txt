@@ -1,0 +1,20 @@
+Refactoring explanation:
+I will maintain the core hierarchical CLA architecture: two 16-bit CLA blocks composing the 32-bit adder. However, the internal carry computation inside the 16-bit CLA will be restructured to explicitly generate the carry-lookahead signals (generate and propagate) at multiple levels for clearer hierarchical carry computation. Instead of a simple carry chain with a generate loop, I'll calculate carries using grouped generate and propagate signals at 4-bit granularity within the 16-bit block to demonstrate a small hierarchy internally, improving readability and showing a more structured approach. This will break the internal carry computation into stages:
+
+- First, per-bit generate and propagate signals.
+- Then group propagate and generate signals for 4-bit slices.
+- Compute carries into each 4-bit slice by applying CLA logic on group G and P.
+- Use these carries to compute bit-level carries within each 4-bit slice.
+- Finally, compute sums and block-level P_block and G_block signals accordingly.
+
+The top-level 32-bit module will remain structurally similar but will directly connect the two 16-bit blocks with clean carry and block propagate/generate signals, preserving the same interface.
+
+This refactoring:
+
+- Uses assign statements everywhere (no always blocks).
+- Avoids iterative carry loops, instead uses parallel logic expressions at multiple levels.
+- Makes the hierarchy and carry computation in the 16-bit block more explicit and clear.
+- Keeps 1-based indexing on external ports and zero-based internally.
+- Provides clear comments to help understand the multi-level CLA.
+
+This also aids future scalability by showing how a recursive or multi-level CLA is structured within a block.

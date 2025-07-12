@@ -1,0 +1,11 @@
+Fuse the clarity and efficiency of the one-hot decoded gating approach with the minimal logic depth and area advantage of a structured multiplexer implemented via a case statement. Use a simple combinational always block with a case statement on 'c' to select the output q directly, which provides the simplest and fastest hardware implementation, minimizing gate count and delay.
+
+Additionally, to reduce power from switching on unused inputs, implement a 2-level gating approach: use one-hot signals to gate inputs only if they are selected, as in previous examples, but select outputs via the case statement to keep logic minimal. However, since the case statement inherently only activates one output at a time, gating inputs further inside the case statement is unnecessary.
+
+Therefore, the best fusion is a clean and concise combinational case statement selecting q among inputs a, b, d, e, or constant 4'hF, matching the waveform behavior. This approach combines clarity, area efficiency, and timing performance, while the inherent mutual exclusivity of case selection naturally limits switching power and logic usage.
+
+This solution:
+- Minimizes logic depth (single-level mux)
+- Reduces area (small mux instead of large OR tree)
+- Limits power consumption (only one input drives output)
+- Is easy to verify and maintain

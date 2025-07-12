@@ -1,0 +1,11 @@
+To implement the perpetual calendar module, we need to design a digital circuit that can count seconds, minutes, and hours based on a clock signal and reset signal. The circuit should be able to handle wrapping around of seconds and minutes when they reach their maximum values. The hours should also wrap around when they reach 23.
+
+The always blocks in Verilog will be used to describe the behavior of the seconds, minutes, and hours counters. Each always block will be triggered on the positive edge of the clock signal or the positive edge of the reset signal.
+
+For the seconds counter, we will check if the reset signal is active and reset the seconds value to 0. If the seconds value is 59, we will wrap it around to 0. Otherwise, we will increment the seconds value by 1.
+
+For the minutes counter, we will also check if the reset signal is active and reset the minutes value to 0. If both the minutes and seconds values are 59, we will wrap the minutes value around to 0. If the seconds value is 59, we will increment the minutes value by 1.
+
+For the hours counter, we will check if the reset signal is active and reset the hours value to 0. If the hours, minutes, and seconds values are all at their maximum (23, 59, and 59 respectively), we will wrap the hours value around to 0. If the minutes and seconds values are both 59, we will increment the hours value by 1.
+
+The output ports Hours, Mins, and Secs will be assigned the values of the hours, minutes, and seconds counters respectively.

@@ -1,0 +1,12 @@
+To fix the syntax errors and improve clarity and synthesis-friendliness, I will refactor the module to use purely combinational continuous assignments rather than an always block. This avoids illegal wire declarations inside procedural blocks.
+
+Key changes:
+- Declare intermediate signals as wires outside procedural blocks.
+- Extract sign bits using continuous assign.
+- Compare absolute values by zero-extending operands to unsigned for magnitude comparison.
+- Use a combinational conditional operator to perform addition or subtraction depending on sign bits.
+- After the arithmetic operation, force zero result's sign bit to zero.
+- Assign the final result directly to the output `c` as a wire (no reg needed).
+- Keep the parameters for fractional and total bit widths.
+
+This approach cleanly implements the described logic with proper Verilog style and no syntax errors. The design remains parameterized, synthesizable, and maintains correct fixed-point signed addition behavior.

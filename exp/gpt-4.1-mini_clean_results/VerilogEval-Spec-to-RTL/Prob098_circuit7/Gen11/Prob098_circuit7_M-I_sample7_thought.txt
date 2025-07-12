@@ -1,0 +1,5 @@
+The original design implements q as the stored negation of input 'a' on the rising edge of clk. Given the waveform, q toggles as q = ~a sampled at posedge clk. The code uses an explicit inverter and a separate DFF module, which is modular but introduces a small combinational delay for the inverter.
+
+To optimize for Power, Performance, and Area (PPA), we can integrate the inversion directly into the data input of the flip-flop, eliminating the intermediate wire and the explicit inverter. This reduces area and power slightly by removing the separate inverter gate and wiring. Performance-wise, this reduces combinational logic before the flip-flop input, potentially improving timing slightly.
+
+Hence, the improved design directly drives the flip-flop input as ~a without an intermediate wire or module instantiation, using an always block inside TopModule. This reduces area and power by removing the extra module and inverter. The functionality remains the same.

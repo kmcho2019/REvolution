@@ -1,0 +1,8 @@
+To improve synthesis compatibility and avoid potential issues with the continuous assignment and initial block, the mux logic should be incorporated directly inside the always block. This means that on the positive clock edge, Q is assigned either r_in or q_in based on L without a separate wire for the mux output. Additionally, the initial block should be removed because synthesis tools typically do not support it and it can cause warnings or synthesis mismatches. This preserves correct behavior while improving synthesis friendliness.
+
+The updated design:
+- Removes the initial block
+- Implements the mux logic directly in the always block
+- Keeps the interface and synchronous behavior unchanged
+
+This ensures the module synthesizes cleanly, matches functional requirements, and avoids simulation/synthesis mismatches.

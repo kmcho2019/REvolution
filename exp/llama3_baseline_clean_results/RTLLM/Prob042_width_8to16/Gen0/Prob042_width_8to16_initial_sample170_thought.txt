@@ -1,0 +1,6 @@
+To design the width conversion circuit, we'll use a Finite State Machine (FSM) with two main states: IDLE and WAIT_FOR_SECOND_DATA. 
+In the IDLE state, we wait for the first valid data. When the first valid data arrives, we move to the WAIT_FOR_SECOND_DATA state and store the first data in a temporary register (data_lock).
+In the WAIT_FOR_SECOND_DATA state, we wait for the second valid data. When the second valid data arrives, we concatenate the stored first data with the second data to form the 16-bit output data and set the valid_out signal to 1.
+We use two registers: data_lock to store the first 8-bit data and data_out to store the concatenated 16-bit data.
+The valid_out signal is set to 1 when the data_out is updated with valid data.
+On reset, the data_out register and the valid_out signal are cleared to 0.

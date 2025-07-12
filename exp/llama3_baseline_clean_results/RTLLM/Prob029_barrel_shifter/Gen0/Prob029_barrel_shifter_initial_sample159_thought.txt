@@ -1,0 +1,9 @@
+To implement the barrel shifter module, we will create a hierarchical design. The top module will be `barrel_shifter`, and it will instantiate multiple instances of a submodule `mux2X1` to achieve the desired shifting functionality. 
+
+The `mux2X1` submodule will have three ports: two 8-bit data inputs (`a` and `b`) and a 1-bit select signal (`sel`). Based on the value of `sel`, it will output either the value of `a` or `b`. 
+
+In the `barrel_shifter` module, we will use the `mux2X1` instances in a staged manner to achieve the shifting by 1, 2, or 4 positions as controlled by the `ctrl` signal. 
+
+First, we shift the input by 4 positions based on `ctrl[2]`, then by 2 positions based on `ctrl[1]`, and finally by 1 position based on `ctrl[0]`. Each stage uses the output of the previous stage or the original input, depending on the control signal.
+
+The overall architecture involves instantiating and connecting multiple `mux2X1` instances to perform the bit-level shifting in stages, as dictated by the control signals.

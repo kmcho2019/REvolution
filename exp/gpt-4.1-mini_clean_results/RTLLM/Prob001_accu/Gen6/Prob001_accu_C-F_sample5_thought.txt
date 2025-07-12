@@ -1,0 +1,13 @@
+Fusion strategy for a superior accu module:
+
+1. Use a synchronous active-low reset for deterministic reset behavior.
+2. Use a combinational wire for next accumulator value (`acc_next`) instead of a blocking assignment in sequential logic, improving synthesis and timing clarity.
+3. Update accumulator and count only when `valid_in` is high, reducing switching activity and dynamic power.
+4. Assert `valid_out` for exactly one clock cycle immediately when the 4th valid input is accumulated.
+5. Reset accumulator and count simultaneously on the same cycle as output generation to prepare for the next accumulation round.
+6. Use non-blocking assignments consistently for clean and synthesizable sequential logic.
+7. Keep registers minimal: 10-bit accumulator for sum, 2-bit count for tracking four inputs.
+8. Default `valid_out` to 0 each cycle to generate a clean one-cycle pulse.
+9. Avoid redundant registers and additions to reduce critical path and area.
+
+This design balances clarity, efficiency, and clean timing, achieving correct functionality with low area and power while maintaining good timing margins.

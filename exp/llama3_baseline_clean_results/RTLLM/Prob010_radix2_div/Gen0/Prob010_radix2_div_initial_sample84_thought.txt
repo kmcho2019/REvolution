@@ -1,0 +1,9 @@
+To design the radix-2 divider, we first need to understand the basic principle of radix-2 division, which involves repeated subtraction and shifting. The division process starts with the most significant bit of the dividend and proceeds to the least significant bit. 
+
+The module has to handle both signed and unsigned division, which involves managing the sign of the dividend and divisor correctly. 
+
+The inputs are synchronized with the clock signal, and the reset signal is used to initialize the module. When a valid operation request is present (indicated by opn_valid), the module saves the inputs and starts the division process. 
+
+The division process involves a series of subtractions and shifts. In each step, we check if the current value in the shift register (SR) is greater than or equal to the divisor. If it is, we subtract the divisor, set the corresponding bit in the quotient, and shift the SR to the left to prepare for the next subtraction. If not, we simply shift the SR to the left without setting the quotient bit. 
+
+After the division is complete, the result (quotient and remainder) is updated in the SR, and the res_valid signal is set high to indicate that the result is ready.

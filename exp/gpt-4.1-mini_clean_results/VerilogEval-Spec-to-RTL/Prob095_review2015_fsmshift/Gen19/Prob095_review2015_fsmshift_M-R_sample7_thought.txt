@@ -1,0 +1,9 @@
+Refactor the design by using a simple 2-state FSM to control shift_ena instead of directly counting down with a counter register. The FSM has two states: IDLE and SHIFT_ENABLE. On synchronous reset, transition to SHIFT_ENABLE state and assert shift_ena. While in SHIFT_ENABLE, count 4 clock cycles using a separate cycle counter; once 4 cycles have elapsed, transition back to IDLE and deassert shift_ena. This separates control flow (FSM state) from counting cycles and makes the design more explicit.
+
+This approach uses an explicit FSM state register and a small cycle counter. Both registers are updated synchronously on the clock edge. shift_ena is asserted when the FSM is in SHIFT_ENABLE state. This differs structurally from the original by separating state and counting, improving clarity and modularity while meeting the same timing requirements.
+
+Also, initialize cycle counter to zero on reset and start counting up to 4 when in SHIFT_ENABLE. After 4 cycles, return to IDLE.
+
+This eliminates off-by-one errors, since the count starts at zero immediately after reset and increments to 4 while shift_ena is high.
+
+Finally, using enumerated states improves readability.

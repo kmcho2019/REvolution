@@ -1,0 +1,17 @@
+To approach this problem with a novel architectural idea, let's consider the Lemming's behavior as a set of hierarchical finite state machines (FSMs), where the top-level FSM manages the overall state (walking, falling, digging) and separate sub-FSMs handle the walking direction and the digging activity. This hierarchical approach can simplify the combinational logic and potentially reduce the number of states needed to model the Lemming's behavior.
+
+1. **Top-Level FSM (TLFSM):** This FSM will manage the Lemming's primary states: walking, falling, and digging. It will transition between these states based on the inputs `ground` and `dig`.
+
+2. **Walking Direction Sub-FSM (WDSFM):** This sub-FSM will handle the walking direction, switching between left and right based on the `bump_left` and `bump_right` inputs. It will only be active when the TLFSM is in the walking state.
+
+3. **Digging Sub-FSM (DSFM):** This sub-FSM will manage the digging activity. It will be active when the TLFSM is in the digging state and will transition out of digging when the `ground` input becomes 0.
+
+By structuring the design in this hierarchical manner, we can modularize the logic, potentially reducing complexity and improving maintainability. This approach also allows for easier extension or modification of the Lemming's behavior in the future.
+
+Furthermore, to optimize for Power, Performance, and Area (PPA), we will:
+
+- Use clock gating to disable sub-FSMs when not in use.
+- Optimize the state encodings for minimal transitions and area usage.
+- Simplify the combinational logic where possible to reduce power consumption and improve timing.
+
+This hierarchical FSM approach, combined with careful optimization techniques, should yield an efficient and scalable design.

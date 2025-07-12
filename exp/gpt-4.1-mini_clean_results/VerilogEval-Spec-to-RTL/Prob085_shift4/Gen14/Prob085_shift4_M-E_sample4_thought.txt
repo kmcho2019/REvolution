@@ -1,0 +1,5 @@
+I will implement the 4-bit shift register using a single always block triggered on the positive edge of the clock and asynchronous positive edge reset, but rather than using an explicit next state combinational variable, I'll embed the priority and behavior directly inside the sequential logic using if-else conditions.
+
+The asynchronous reset clears the register immediately when asserted. On the clock edge, if reset is not active, the shift register will check load first; if load is asserted, it loads the new data. If load is not asserted but ena is, it performs a right shift with a zero inserted on the MSB. Otherwise, it holds its previous value.
+
+This approach removes the combinational next-state logic variable, making the logic compact and straightforward. The shift operation is done inline, and priority between load and ena is maintained directly with sequential if-else statements inside the always block. This design trades a little readability for simplicity and minimal inference logic.

@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Remove clock gating (derived clock) to eliminate timing violations
+   - Use synchronous enable signal instead for better timing closure
+   - This will improve WNS by removing the gated clock path
+
+2. Power Optimization:
+   - Maintain synchronous enable for power savings
+   - Remove unnecessary intermediate wire to reduce switching activity
+
+3. Area Optimization:
+   - Implement shift operation directly in always block
+   - Eliminate separate combinational logic for more compact implementation
+   - This should reduce area by removing intermediate logic
+
+4. Functional Enhancement:
+   - Keep same core functionality but with cleaner implementation
+   - Maintain 8-bit right shift with new input in MSB
+   - Initialization remains implicit through reset or power-up

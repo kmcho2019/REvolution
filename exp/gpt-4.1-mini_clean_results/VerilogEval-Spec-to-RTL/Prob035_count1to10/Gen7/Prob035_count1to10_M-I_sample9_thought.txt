@@ -1,0 +1,9 @@
+To optimize the decade counter for better PPA, I will simplify the next state calculation by replacing the addition with a small case statement that enumerates the next count values explicitly. This avoids an adder, potentially reducing critical path delay and power.
+
+Specifically, instead of calculating next_q as q + 1 and checking wrap_around separately, the next state will be a combinational case statement that moves from 1 to 10 and wraps back to 1 after 10. This eliminates the 4-bit adder and the wrap_around signal.
+
+The synchronous reset remains as is, resetting q to 1 on the rising edge of clk when reset is asserted.
+
+This approach trades a small increase in combinational logic (case statement) for the removal of the adder, reducing switching and possibly area while keeping the design clean and easy to synthesize.
+
+Overall, enumerated next-state logic may improve timing (lower critical path delay), reduce dynamic power from the adder, and keep area minimal since it's just a 10-case lookup on a 4-bit register.

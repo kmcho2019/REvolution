@@ -1,0 +1,17 @@
+To improve the given solution, we will first correct the existing issues and then optimize it for better PPA (Power, Performance, Area) based on its metrics.
+
+The main issue with the current solution is the incorrect implementation of the state machine's logic and output equations, which leads to mismatches in the output signals 'p' and 'q'. 
+
+To correct this, we need to re-examine the state machine's logic and output equations to accurately reflect the desired behavior as inferred from the simulation waveforms.
+
+From the simulation waveforms, we can observe the following behavior:
+- 'p' is low when 'clock' is low, regardless of 'a'.
+- 'p' mirrors 'a' when 'clock' is high.
+- 'q' becomes high when 'p' is high during the positive clock phase.
+- 'q' stays high until 'a' is high during the negative clock phase.
+
+Based on this behavior, we can propose a corrected state machine with two states: an IDLE state and an ACTIVE state. The circuit starts in the IDLE state, where 'p' is low and 'q' is low. When the clock goes high, the circuit checks 'a'. If 'a' is high, 'p' follows 'a', and if 'p' is high, 'q' becomes high. When 'a' is high during the negative clock phase, 'q' stays high until the next positive clock phase.
+
+To optimize the solution for better PPA, we will aim to reduce the number of logic gates and flip-flops required to implement the state machine.
+
+The optimized code will use a simpler state machine with a reduced number of states and transitions, while still accurately capturing the desired behavior.

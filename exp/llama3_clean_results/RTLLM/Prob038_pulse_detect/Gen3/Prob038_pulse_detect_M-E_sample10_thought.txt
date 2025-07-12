@@ -1,0 +1,7 @@
+To detect pulses in the input signal data_in, we can use a different approach based on a counter-based mechanism. The idea is to count the number of consecutive clock cycles where data_in is high and then check if data_in falls after this count. If it does, we indicate the presence of a pulse by setting data_out to 1.
+
+The counter will be used to track the duration of the high pulse in data_in. When data_in rises, we start counting, and when data_in falls, we check if the count is greater than 1 (indicating at least two consecutive high cycles, followed by a low cycle). If this condition is met, we set data_out to 1, indicating a pulse.
+
+This approach simplifies the state machine logic and reduces the number of states required, potentially improving area efficiency and reducing the complexity of the combinational logic.
+
+Additionally, we will implement this using a Gray code counter to minimize the switching activity and reduce power consumption. The Gray code counter ensures that only one bit changes between consecutive states, reducing the number of transitions and the associated power consumption.

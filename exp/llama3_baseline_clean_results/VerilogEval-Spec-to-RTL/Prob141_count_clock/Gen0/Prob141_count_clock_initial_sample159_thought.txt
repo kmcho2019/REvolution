@@ -1,0 +1,11 @@
+To implement the 12-hour clock with am/pm indicator, we can use a set of counters for hours, minutes, and seconds. We'll use two BCD digits each for hours, minutes, and seconds. The clock will be clocked by a fast-running clk, with a pulse on ena whenever the clock should increment (once per second). We'll also include a reset mechanism to reset the clock to "12:00 AM" when the reset signal is asserted.
+
+Our approach will be to:
+
+- Initialize hours, minutes, and seconds to their respective reset values (12:00:00 AM) when the reset signal is asserted.
+- Increment the seconds counter when ena is asserted and reset is not asserted.
+- When the seconds counter reaches 60, reset it to 0 and increment the minutes counter.
+- When the minutes counter reaches 60, reset it to 0 and increment the hours counter.
+- When the hours counter reaches 12 (and it's PM), reset it to 1 and toggle the PM indicator.
+
+We'll use a finite state machine (FSM) approach to implement the counters and the logic to handle the reset, enable, and increment operations.

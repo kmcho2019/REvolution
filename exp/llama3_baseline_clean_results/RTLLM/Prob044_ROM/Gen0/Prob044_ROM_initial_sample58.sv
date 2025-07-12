@@ -1,0 +1,29 @@
+module ROM(
+    input [7:0] addr,
+    output reg [15:0] dout
+);
+
+reg [15:0] mem [0:255];
+
+initial begin
+    mem[0] = 16'hA0A0;
+    mem[1] = 16'hB1B1;
+    mem[2] = 16'hC2C2;
+    mem[3] = 16'hD3D3;
+    // Other locations can be initialized as needed
+    for (int i = 4; i < 256; i++) begin
+        mem[i] = 16'h0000;
+    end
+end
+
+always @(*) begin
+    case (addr)
+        0: dout = mem[0];
+        1: dout = mem[1];
+        2: dout = mem[2];
+        3: dout = mem[3];
+        default: dout = mem[addr];
+    endcase
+end
+
+endmodule

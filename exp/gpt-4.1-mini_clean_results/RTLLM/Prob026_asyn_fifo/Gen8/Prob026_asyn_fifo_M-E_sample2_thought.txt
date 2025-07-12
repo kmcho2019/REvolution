@@ -1,0 +1,15 @@
+Implement the asynchronous FIFO by splitting functionality into clearly defined submodules:
+
+- Use a dual-port RAM submodule with independent write and read clocks and enables for data storage.
+- Maintain write and read pointers in binary form for easy arithmetic and convert them to Gray code only for synchronization between clock domains.
+- Implement two-stage synchronizers for the opposite domain pointers.
+- For full and empty detection:
+  - Empty when synchronized write pointer equals the read pointer in read clock domain.
+  - Full when the write pointer's Gray code is one step ahead of the synchronized read pointer Gray code in the write clock domain, verified by comparing the Gray codes with the most significant bits inverted and lower bits equal.
+- Use a separate small combinational block to convert binary to Gray and Gray to binary.
+- Separate write and read pointer control submodules for clarity and modularity.
+- Keep addressing RAM with binary pointers (lower bits) for simplicity.
+- Data output is registered on the read clock with valid enable.
+- The design supports parameterizable WIDTH and DEPTH.
+
+This clean modular approach aids readability and is synthesizable, easy to debug, and follows standard asynchronous FIFO design best practices.

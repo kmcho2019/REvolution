@@ -1,0 +1,13 @@
+To fix the implementation, we need to:
+1. Correct the S1_next logic to properly handle transitions from both S and S1 states
+2. Ensure Count_next properly represents the transition from B3 state
+3. Fix Wait_next to accurately reflect the transition from Count state when done_counting is asserted
+
+Key corrections:
+- S1_next should be active when:
+  * Current state is S and d=1 (transition to S1)
+  * Current state is S1 and d=1 (transition to S11)
+- Count_next should simply be active when current state is B3 (since it always transitions to Count)
+- Wait_next should be active when current state is Count and done_counting=1
+
+The output logic remains correct as is.

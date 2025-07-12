@@ -1,0 +1,9 @@
+To properly implement a 3.5x fractional frequency divider:
+1. Use a 3-bit counter to count 7 cycles (0-6) as the base period
+2. Generate two intermediate clocks:
+   - clk_div1: High for first 4 cycles (0-3), low for next 3 (4-6)
+   - clk_div2: Same pattern but phase-shifted by half a cycle using negative edge triggering
+3. Combine these clocks with OR logic to create the final output
+4. Reset initializes all signals synchronously
+5. The half-cycle phase shift is achieved by sampling the counter value on both clock edges
+This approach properly implements the double-edge clocking technique and creates the required fractional division with balanced duty cycle.

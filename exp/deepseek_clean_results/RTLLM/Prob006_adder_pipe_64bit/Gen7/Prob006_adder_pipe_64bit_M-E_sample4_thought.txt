@@ -1,0 +1,15 @@
+Novel Architectural Approach: Carry-Select Adder with Pipelining
+1. Divide the 64-bit addition into 4 stages of 16 bits each for better throughput
+2. Implement carry-select logic to compute both possible sums (with carry=0 and carry=1) in parallel
+3. Use registered multiplexers to select the correct sum based on actual carry propagation
+4. Pipeline both the sum computation and carry selection paths
+5. Implement a 4-stage enable signal pipeline to match the data path latency
+6. Optimize register usage by sharing common input registers across stages
+7. Include bypass logic for when i_en is low to prevent unnecessary toggling
+
+Key Advantages:
+- Faster than ripple-carry due to parallel carry computation
+- Balanced 4-stage pipeline (16 bits per stage)
+- Predictable 4-cycle latency
+- Lower power consumption when disabled
+- Better timing closure with registered outputs

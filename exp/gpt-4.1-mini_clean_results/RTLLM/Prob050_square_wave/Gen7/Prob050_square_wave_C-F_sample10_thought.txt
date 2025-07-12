@@ -1,0 +1,11 @@
+Fuse the clean threshold calculation and toggle request logic of Example 1 with the power-saving clock enable gating and simplified counting approach of Example 2.
+
+- Use a combinational wire for threshold = (freq - 1) for clarity and to reduce register usage.
+- Implement toggle_req as a combinational condition (count == threshold && freq != 0), removing the dedicated toggle_req register from Example 1 to save area and reduce pipeline stages.
+- Use an 8-bit up-counter counting from 0 to threshold, resetting on toggle; this matches Example 1’s counting direction, which is more intuitive and aligns with the frequency input.
+- Include clock enable gating as in Example 2: only count and toggle when freq > 1, avoiding toggling or counting when freq is 0 or 1, which keeps wave_out steady and reduces dynamic switching.
+- Implement synchronous active-high reset for robustness, which was not in Example 2 but adds reliability.
+- Remove redundant assignments and keep the toggle of wave_out only when toggle_req is asserted.
+- This fusion yields a minimal, power-efficient, and clear design with improved timing by eliminating extra registers and logic stages, while maintaining robustness with reset and stable output for invalid frequencies.
+
+This solution combines clear thresholding and counter increment with gated operation to reduce power and area without sacrificing readability or functionality.

@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. **Accurate Cycle Counting**:
+   - Fix the counting logic to ensure exact (delay+1)*1000 cycles
+   - Use a 14-bit counter (since max cycles = 16*1000 = 16000) to track total cycles
+   - Eliminate separate fine/coarse counters to prevent synchronization issues
+
+2. **Pattern Detection Timing**:
+   - Maintain shift register approach but ensure proper synchronization
+   - Only detect pattern on complete 4-bit sequence
+
+3. **State Machine Refinement**:
+   - Add explicit WAIT_ACK state for clean handshake protocol
+   - Simplify state transitions for better timing
+
+4. **Output Generation**:
+   - Calculate count output as (total_remaining/1000) for accurate display
+   - Ensure outputs change only on clock edges
+
+5. **Reset Handling**:
+   - Clear all registers properly on reset
+   - Initialize outputs to known states

@@ -1,0 +1,10 @@
+I will implement a simpler FSM with four states: SEARCH, LOAD_DELAY, COUNT, and DONE.
+
+- In SEARCH, shift in each incoming bit to a 4-bit shift register and check for the pattern 1101.
+- In LOAD_DELAY, shift in the 4-bit delay value MSB first using a counter until 4 bits are loaded.
+- In COUNT, count exactly (delay+1)*1000 clock cycles using a micro-counter (0-999) and a step counter (delay+1 down to 0). The output `count` shows the current step (delay down to 0) stable during each 1000 cycle block.
+- In DONE, assert done=1 and wait for ack=1 before returning to SEARCH.
+
+All counters and state transitions happen on the clock's rising edge with synchronous reset.
+
+This approach minimizes registers and state tracking while meeting all requirements.

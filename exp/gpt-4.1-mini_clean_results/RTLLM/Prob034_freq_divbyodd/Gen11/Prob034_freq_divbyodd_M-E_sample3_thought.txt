@@ -1,0 +1,11 @@
+Use a single counter that counts from 0 to NUM_DIV-1 on the rising edge of the input clock. The divided clock output toggles at two distinct counts: one at the middle count (half of NUM_DIV, rounded down) and another at the end of the counting cycle (NUM_DIV-1).
+
+Because NUM_DIV is odd, toggling the output at these two points creates a waveform with a period equal to NUM_DIV input clock cycles, and with a 50% duty cycle approximation.
+
+This method requires only one counter and one output register, making the design simple and avoiding glitches caused by dual toggles on different clock edges.
+
+Include a synchronous active-low reset to initialize counter and output.
+
+Add a compile-time assertion to ensure NUM_DIV is odd.
+
+This approach produces a clean, glitch-free divided clock for any odd NUM_DIV parameter.

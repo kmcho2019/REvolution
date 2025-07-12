@@ -1,0 +1,11 @@
+Refactor the shift register by implementing it directly inside the ShiftReg module as a synchronous, active-low resettable shift register using a single always block with a shift register vector. This eliminates the separate DFF module and generate loop, simplifying the hierarchy while maintaining the same functionality.
+
+Specifically:
+
+- Use a reg [WIDTH-1:0] shift_reg vector updated on the positive clock edge.
+- On resetn low, synchronously clear the entire shift register.
+- Otherwise, shift in the input bit at LSB and shift existing bits towards MSB.
+- Output the MSB bit as the output.
+- The TopModule simply instantiates this ShiftReg with WIDTH=4.
+
+This approach reduces module instantiation overhead and concentrates the design, still using synchronous active-low reset and non-blocking assignments for proper sequential behavior.

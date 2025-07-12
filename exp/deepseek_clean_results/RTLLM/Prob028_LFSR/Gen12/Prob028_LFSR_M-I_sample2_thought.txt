@@ -1,0 +1,21 @@
+**Improved 4-bit LFSR with Optimized Implementation:**
+
+1. **Correctness Verification**: The original LFSR module was functionally correct but had testbench issues. We'll focus on the module itself since the testbench wasn't part of the original specification.
+
+2. **Optimization Strategy**:
+   - Maintain the same core functionality (4-bit LFSR with XOR of bits 3 and 2, inverted feedback)
+   - Simplify the feedback calculation by combining operations
+   - Use non-blocking assignments for all sequential logic
+   - Ensure clean reset behavior (synchronous reset to 4'b0000)
+   - Optimize for minimal gate count and power efficiency
+
+3. **Key Improvements**:
+   - Combined XOR and inversion into a single operation (XNOR)
+   - Maintained synchronous design practices
+   - Reduced logic operations by using XNOR instead of separate XOR and NOT
+   - Kept the same interface for compatibility
+
+4. **PPA Benefits**:
+   - Reduced gate count (XNOR instead of XOR+NOT)
+   - Same clock speed (critical path unchanged)
+   - Lower dynamic power due to simpler feedback logic

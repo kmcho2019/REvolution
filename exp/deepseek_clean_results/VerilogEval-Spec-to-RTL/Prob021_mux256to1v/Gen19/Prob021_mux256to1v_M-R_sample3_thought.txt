@@ -1,0 +1,11 @@
+The original solution uses an always block with a for-loop to implement the multiplexer. We can optimize this by:
+1. Using a direct part-select with the sel input as the index, which is more concise and likely to synthesize more efficiently
+2. Switching to a continuous assignment (assign) instead of procedural assignment (always block)
+3. Removing the unnecessary default assignment since all cases are covered
+4. Using the indexed part-select operator (+:) which is perfect for this use case
+
+This approach will:
+- Reduce code complexity
+- Likely improve timing by creating a simpler multiplexer structure
+- Reduce power by eliminating unnecessary comparisons
+- Potentially reduce area through simpler synthesis

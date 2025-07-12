@@ -1,0 +1,5 @@
+To refactor the provided Verilog code for the TopModule, we can simplify the structure by removing the unnecessary use of `always` blocks for combinational logic and instead utilize the `assign` statement for direct continuous assignment. This change maintains the same functionality but with a more straightforward and synthesizable approach.
+
+The key change involves replacing the `always @(*)` block with an `assign` statement to directly drive the `anyedge` output based on the XOR operation between `curr_in` and `prev_in`. Additionally, we maintain the sequential logic within the `always @(posedge clk)` block to update the `prev_in` and `curr_in` registers, as this is necessary for capturing the input's previous state.
+
+This refactoring aims to improve readability and maintainability while ensuring that the module's behavior remains unchanged. The use of `assign` for combinational logic is a more conventional and efficient way to express the intended functionality in Verilog.

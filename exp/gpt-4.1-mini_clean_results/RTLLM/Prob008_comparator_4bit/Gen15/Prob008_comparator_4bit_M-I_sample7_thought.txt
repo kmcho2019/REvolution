@@ -1,0 +1,20 @@
+The original design already uses an efficient borrow chain and balanced equality logic. To optimize for better PPA (power, performance, area), I propose the following improvements:
+
+1. Remove the redundant vector assignment for the propagate signals `p` and directly use the equality signals `eq_bit` because the propagation depends on bit equality, so `p` is essentially `eq_bit`.
+
+2. Flatten the balanced AND tree into a direct reduction AND (`&eq_bit`) to reduce logic area and simplify synthesis, as for 4 bits the difference in glitches and delay is minimal.
+
+3. Replace the explicit borrow chain with a ripple borrow subtraction logic using bitwise operations only, keeping the same logic but with less intermediate wires.
+
+4. Use continuous assignments without generate blocks for per-bit equality since it's only 4 bits, improving tool optimization opportunities.
+
+5. Combine the borrow logic into a small function for clarity and better synthesis, reducing redundant wires.
+
+These changes reduce signal count and simplify the logic without sacrificing clarity or correctness. The borrow chain remains explicit but simplified, and equality checking uses a direct AND reduction. This should reduce area slightly and simplify timing paths with minimal impact on delay.
+
+Outputs remain mutually exclusive: 
+- A_less from final borrow,
+- A_equal from equality,
+- A_greater as complement of (less or equal).
+
+Overall, this approach yields slightly smaller area and potential power savings while maintaining performance and clarity.

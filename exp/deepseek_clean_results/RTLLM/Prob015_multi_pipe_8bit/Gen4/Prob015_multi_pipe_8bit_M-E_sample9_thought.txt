@@ -1,0 +1,15 @@
+Novel Architecture: Radix-4 Booth Encoded Pipelined Multiplier
+1. Booth Encoding: Use radix-4 Booth encoding to reduce the number of partial products from 8 to 4, significantly reducing adder stages.
+2. Three-Stage Pipeline:
+   - Stage 1: Input registration and Booth encoding
+   - Stage 2: Partial product generation and compression
+   - Stage 3: Final addition and output
+3. Efficient Compression: Use 4:2 compressors for partial product reduction instead of simple adders for better timing.
+4. Enable Propagation: Carefully pipeline the enable signal to match the data flow.
+5. Output Control: Only update output when valid data is available through the pipeline.
+
+Key Advantages:
+- Fewer partial products (4 vs 8) reduces adder stages
+- 4:2 compressors provide better timing than ripple-carry adders
+- Balanced pipeline stages for maximum clock frequency
+- Power-efficient due to reduced switching activity

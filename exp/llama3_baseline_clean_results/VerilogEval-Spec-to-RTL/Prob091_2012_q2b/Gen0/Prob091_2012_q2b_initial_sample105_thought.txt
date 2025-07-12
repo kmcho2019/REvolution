@@ -1,0 +1,15 @@
+To implement the state output logic for the given finite-state machine, we need to determine the next state for each current state and input combination. We will use the one-hot encoding provided to simplify the logic. For each state, we will determine the conditions under which we transition to the states corresponding to y[1] and y[3]. Specifically, Y1 will be set if we are transitioning to state B (000010) or D (001000), and Y3 will be set if we are transitioning to state D (001000).
+
+We can break down the transitions as follows:
+- A (000001) transitions to B (000010) on input 1 and stays in A on input 0.
+- B (000010) transitions to C (000100) on input 1 and goes to D (001000) on input 0.
+- C (000100) transitions to E (010000) on input 1 and goes to D (001000) on input 0.
+- D (001000) transitions to F (100000) on input 1 and goes back to A (000001) on input 0.
+- E (010000) stays in E on input 1 and goes to D (001000) on input 0.
+- F (100000) transitions to C (000100) on input 1 and goes to D (001000) on input 0.
+
+Based on these transitions, we can determine the logic for Y1 and Y3:
+- Y1 is set if we are in A and the input is 1 (transitioning to B) or if we are in B and the input is 0 (transitioning to D), or if we are in any state where the next state is B or D.
+- Y3 is set if we are in any state where the next state is D.
+
+By inspecting the transitions, we can derive the logic equations for Y1 and Y3 using the one-hot encoding.

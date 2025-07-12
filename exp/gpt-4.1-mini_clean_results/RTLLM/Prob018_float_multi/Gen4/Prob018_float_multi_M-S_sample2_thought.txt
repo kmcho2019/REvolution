@@ -1,0 +1,17 @@
+Implement a 6-stage sequential float multiplier controlled by a 3-bit counter:
+- Cycle 0: Extract sign, exponent, mantissa; detect special cases.
+- Cycle 1: Normalize subnormal inputs by left-shifting mantissas and adjusting exponents.
+- Cycle 2: Handle special cases (NaN, Inf, zero). For normal inputs, compute exponent sum minus bias and multiply mantissas.
+- Cycle 3: Normalize the 48-bit product mantissa to ensure the leading 1 is at bit 47, adjust exponent accordingly, and extract rounding bits.
+- Cycle 4: Perform round-to-nearest-even on mantissa with guard, round, and sticky bits, and handle mantissa overflow.
+- Cycle 5: Assemble the final IEEE-754 output, handling overflow (to Inf), underflow (to subnormal or zero), and special cases.
+
+Key simplifications:
+- Use blocking assignments within combinational steps inside always @(posedge clk) with clear sequential step ordering.
+- Normalize mantissas and exponent in one step to avoid multiple shifts.
+- Use explicit variables for rounding bits calculation based on shifted mantissa.
+- Use only signed arithmetic for exponent calculation and shifts.
+- Handle special cases early and bypass complex logic.
+- Keep mantissas at 24 bits including implicit leading 1 for normals.
+- Use clearly sequenced steps for clean state transitions and predictable timing.
+This approach reduces complexity while preserving full IEEE-754 multiplication semantics.

@@ -1,0 +1,9 @@
+To optimize the existing 512-bit Rule 90 design for better power and area efficiency without sacrificing performance, I will introduce an enable signal to the registers inside each 32-bit block. This enable will be active only when `load` is asserted or when the next state differs from the current state, reducing unnecessary toggling and thus dynamic power consumption.
+
+This minor modification can significantly reduce switching when the cellular automaton reaches a stable or periodic pattern, or when the state is being held constant.
+
+Additionally, I will simplify the boundary signal logic by merging the left and right boundary assignments into a single generate loop, reducing wiring overhead and improving readability.
+
+The main logic remains the same: each block computes the next state as XOR of left and right neighbors, with zero boundary conditions at array edges. The load input asynchronously loads the entire 512-bit state.
+
+This approach maintains the modular 32-bit block structure for clarity and manageable combinational depth, while improving power by clock gating the register writes effectively.

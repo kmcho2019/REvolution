@@ -1,0 +1,14 @@
+The outputs p and q represent a 2-bit state updated synchronously on the clock's rising edge. From the waveform, initially p and q are unknown, then at the first rising clock edge they start from 0. The state updates on each rising edge based only on current p, q, and input a.
+
+The state transitions are straightforward:
+
+- On reset (initial condition), p=0, q=0.
+- On each posedge clock, p and q update according to these rules:
+  - p <= a & ~q | p & (a | q)
+  - q <= p | q & ~a
+
+This logic can be derived to match the waveform behavior and keeps the design simple.
+
+We implement a synchronous reset by initializing p and q to 0 at the first posedge clock (when they are unknown).
+
+This approach uses only one always block, minimal logic, and no complex case statements.

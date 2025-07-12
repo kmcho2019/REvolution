@@ -1,0 +1,7 @@
+To fix the bit order to correctly capture the LSB first, shift the data register left and place the new bit at bit 0 (LSB) on each received bit. This way, the first bit received is stored at data_reg[0], the second at data_reg[1], and so forth, matching the LSB-first serial input order.
+
+For the done signal timing, assert done only for one cycle exactly when the stop bit is verified as correct (in STOP_BIT state and in == 1). Since done is synchronous and reset to zero at each clock, this behavior is correct and sufficient.
+
+The rest of the FSM structure remains mostly unchanged. By ensuring correct bit ordering and verifying that done is asserted for one cycle on successful reception, the design should meet the specification and likely eliminate the done mismatches.
+
+This approach maintains simplicity and clarity, with minimal changes to the original FSM and no added complexity.

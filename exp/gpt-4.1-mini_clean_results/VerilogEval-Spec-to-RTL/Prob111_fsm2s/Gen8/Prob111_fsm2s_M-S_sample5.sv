@@ -1,0 +1,23 @@
+module TopModule (
+    input  clk,
+    input  reset,
+    input  j,
+    input  k,
+    output out
+);
+
+    localparam OFF = 1'b0, ON = 1'b1;
+    reg state;
+
+    // Sequential logic with synchronous reset and next state logic combined
+    always @(posedge clk) begin
+        if (reset)
+            state <= OFF;
+        else
+            state <= (state == OFF) ? (j ? ON : OFF) : (k ? OFF : ON);
+    end
+
+    // Moore output depends only on state
+    assign out = (state == ON);
+
+endmodule

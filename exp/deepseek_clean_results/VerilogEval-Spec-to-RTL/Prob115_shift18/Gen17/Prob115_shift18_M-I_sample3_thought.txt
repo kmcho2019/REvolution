@@ -1,0 +1,27 @@
+Improvement Strategy:
+1. **Critical Path Optimization**:
+   - Replace nested if-else with case statement for more balanced logic
+   - Pre-compute all shift options in parallel and select with a single mux
+   - Move sign extension calculation to only when needed (right shifts)
+
+2. **Power Optimization**:
+   - Add explicit enable condition to shift computation block
+   - Use clock gating for register updates
+   - Minimize signal toggling when not shifting
+
+3. **Area Optimization**:
+   - Share common logic between shift operations
+   - Use parameterized shift amounts for better resource sharing
+   - Optimize multiplexer structure
+
+4. **Timing Closure**:
+   - Balance left and right shift paths
+   - Simplify control logic with direct case decoding
+   - Reduce fanout on critical signals
+
+Key Improvements:
+- More balanced shift logic using case statement
+- Reduced combinational logic depth
+- Lower power consumption through better gating
+- Cleaner control flow with explicit shift cases
+- Better resource sharing between shift amounts

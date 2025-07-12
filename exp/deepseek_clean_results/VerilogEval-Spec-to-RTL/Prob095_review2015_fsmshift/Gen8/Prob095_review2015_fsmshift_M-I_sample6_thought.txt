@@ -1,0 +1,13 @@
+To properly implement the module based on the feedback:
+1. Use a 2-bit counter (values 0-3) since we only need to count 4 cycles (0-3)
+2. shift_ena should be high only when counter is between 0-3 (inclusive)
+3. Reset should synchronously initialize the counter to 0
+4. Counter should increment every cycle until it reaches 3, then hold
+5. shift_ena should not be affected by reset directly (only through counter)
+6. After 4 cycles (when counter reaches 3), shift_ena stays low until next reset
+
+Key improvements:
+- Remove reset from shift_ena assignment
+- Correct counter comparison to include cycle 3
+- Simplified counter logic
+- Clear state transition with proper reset handling

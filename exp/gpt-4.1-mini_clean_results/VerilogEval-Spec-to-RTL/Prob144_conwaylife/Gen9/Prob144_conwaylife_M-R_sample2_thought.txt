@@ -1,0 +1,5 @@
+Refactor by separating the synchronous state register update and combinational next-state logic more explicitly. Use a dedicated reg array for state storage and a wire array for next state, but instead of generating localparams inside nested generate loops, calculate neighbor indices using modular arithmetic in separate helper functions for clarity and to avoid repetitive code. 
+
+Replace the use of nested generate loops with one loop generating an array of 8 neighbors per cell and summing via a small adder function. Then combine the sum and apply the rules in a separate always_comb block, while the register update remains synchronous. Use packed arrays for easier slicing and indexing.
+
+This approach enhances readability by modularizing the neighbor sum computation and uses blocking assignments in combinational logic for clarity. The code remains fully combinational for next state and synchronous for update, improving maintainability while preserving the exact toroidal neighbor logic and functionality.

@@ -1,0 +1,10 @@
+The root cause of the mismatches is that the GHR update on prediction shifts in the current combinational PHT prediction bit (`predict_counter[1]`) rather than the latched predicted bit (`predict_taken_reg`) output from the prior cycle. This can cause divergence between the predictor output and the actual internal history, leading to incorrect predictions and history outputs.
+
+To fix this, I will modify the GHR update logic to shift in the latched predicted bit (`predict_taken_reg`), which is stable and corresponds exactly to the prediction output at that cycle. This ensures the GHR updates align precisely with the prediction outputs, maintaining consistency.
+
+All other aspects remain the same: 
+- Prediction outputs (`predict_taken` and `predict_history`) are latched on `predict_valid`.
+- Training updates PHT using `train_pc` XOR `train_history` on `train_valid`.
+- If a mispredicted training occurs, GHR is restored to `train_history`, taking precedence over prediction updates.
+
+This fix ensures the predictor outputs and internal state evolve consistently and satisfies the timing and functional requirements described.

@@ -1,0 +1,11 @@
+I will implement the 4-bit LFSR entirely within a single always_ff block using SystemVerilog constructs to modernize the design, without using an explicit next-state function. 
+
+Key ideas:
+1. Use active-high synchronous reset to initialize the LFSR state to 4'b1111 (all ones) to avoid the all-zero lock-up state.
+2. Calculate feedback as the inverted XOR of bits out[3] and out[2], matching the original request.
+3. On each clock's rising edge (if not in reset), shift the register left by one bit and insert the feedback at LSB.
+4. Output is registered state directly.
+5. The entire logic is contained in one block for simplicity.
+6. Add a simple testbench that clocks the LFSR, asserts reset initially, then observes outputs, displaying them to confirm behavior.
+
+This approach provides a clear, concise, and synchronous design with minimal structure and matches the original feedback inversion specification.

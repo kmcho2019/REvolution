@@ -1,5 +1,0 @@
-The main issue in the code lies in the way the next state of the cells is updated based on the Rule 110 logic. The case statement intended to implement Rule 110 seems correct at first glance, but the operators `<=` used for assigning values in the case statement are non-blocking, leading to issues with the sequential updates of cell states. Since the cell states are dependent on their immediate neighbors, using non-blocking assignments causes incorrect updates as every cell's new state is influenced by the updated state of its neighboring cells in the same clock cycle.
-
-To comply with the design intent of Rule 110, the state updates for each cell should be executed simultaneously or in a synchronous manner. However, due to the non-blocking assignments used in the code, the updates are carried out in a non-synchronous manner, resulting in incorrect outputs and numerous mismatches in the simulation.
-
-Therefore, to address this issue and ensure proper Rule 110 implementation, the code needs modification in the way the cell states are updated to ensure synchronous updates for all cells in the system.

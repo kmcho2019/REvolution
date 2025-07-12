@@ -1,0 +1,13 @@
+Instead of directly writing the output logic by inspection on the transitions, I will create intermediate signals representing whether the current state is in the set of states that cause Y1 and Y3 to be asserted. Using these intermediate signals can make the code easier to read and more maintainable. 
+
+From the FSM:
+
+- Y1 (next y[1]) is only set when transitioning from A (y[0]) to B (y[1]) on w=1, so: Y1 = y[0] & w
+
+- Y3 (next y[3]) is set when transitioning to D from states B, C, E, F on w=0:
+
+  Y3 = (~w) & (y[1] | y[2] | y[4] | y[5])
+
+I will write intermediate wires named from_states_for_Y1 and from_states_for_Y3 to hold these combinations.
+
+This architecture improves readability and can be easily extended or changed in the future.

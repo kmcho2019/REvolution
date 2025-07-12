@@ -1,0 +1,12 @@
+The main issue is the timing of valid_out and data_out: they must be asserted in the clock cycle *after* the second valid input arrives, not in the same cycle.
+
+To fix this, I will:
+- Use a 2-state FSM: IDLE (waiting for first valid input) and WAIT (waiting for second valid input).
+- On first valid_in in IDLE, latch the data_in into data_lock, move to WAIT, but do not assert valid_out.
+- On second valid_in in WAIT, latch the concatenated 16-bit output ({data_lock, data_in}) into a separate output register and assert valid_out in the *next* clock cycle.
+- To generate valid_out and data_out one cycle later, add an extra register stage valid_out_reg and data_out_reg that hold the output signals.
+- Implement this by updating data_out_reg and valid_out_reg at posedge clk after transitioning to IDLE from WAIT (i.e., on the cycle after second data arrival).
+- Keep FSM and output registers separate to improve synthesis friendliness and clarity.
+- Clear output valid_out_reg and data_out_reg on reset and when no valid output is generated.
+
+This ensures valid_out and data_out are delayed by one clock cycle after the second input arrives, meeting the specification and improving synthesis results.

@@ -1,0 +1,18 @@
+I will refactor the fixed-point subtractor module to explicitly handle the sign bits and absolute values of the inputs to follow the detailed signed subtraction logic given in the prompt. 
+
+Instead of relying solely on two's complement signed subtraction, I will:
+- Extract the sign bits of inputs `a` and `b`.
+- Compute absolute values of `a` and `b`.
+- When signs are the same, perform subtraction of absolute values and assign the sign accordingly.
+- When signs differ, perform addition of absolute values and assign sign based on magnitude comparison.
+- Handle zero explicitly by setting the sign bit to 0.
+- Use combinational logic with intermediate wires, no `always` block or internal reg.
+- Maintain parameterization and fixed precision.
+
+This approach gives clear visibility of how signs and magnitudes influence the result, and aligns exactly with the problem statement's rules for fixed-point subtraction.
+
+The output `c` is assembled from the computed sign and magnitude with the correct fixed-point format preserved.
+
+This method uses unsigned arithmetic for magnitude operations and sign logic to compose the final two's complement result.
+
+This code is purely combinational and synthesizable.

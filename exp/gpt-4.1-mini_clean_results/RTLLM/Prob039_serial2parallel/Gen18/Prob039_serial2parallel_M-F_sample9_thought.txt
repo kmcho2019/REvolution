@@ -1,0 +1,15 @@
+The original code logic is mostly correct, shifting bits left and inserting new serial bits at LSB to have the first received bit at MSB after 8 shifts. The 4-bit counter counts valid inputs and triggers output and valid signal when 8 bits are collected.
+
+The main fix is to ensure the counter and shifting logic handle the count correctly and dout_valid is asserted exactly when 8 bits are received. To improve clarity and correctness:
+
+- Use a counter counting from 0 to 7 (8 counts total).
+- Shift and increment counter only when din_valid is high.
+- When counter reaches 7 (meaning this is the 8th bit), latch the final data into dout_parallel, assert dout_valid for one cycle, then reset counter and shift register for next sequence.
+- Set dout_valid low by default each clock.
+- On reset, clear all registers.
+
+This ensures that dout_valid is asserted exactly once every 8 valid serial bits, and the bits are in the correct order (MSB first).
+
+Additionally, it's helpful to clarify signal names (using bit_count) and reset the shift register after outputting to avoid leftover data.
+
+This design matches the problem's requirements and should avoid simulation timeouts if stimulus is correctly provided.

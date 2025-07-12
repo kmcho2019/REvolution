@@ -1,0 +1,19 @@
+Here's a novel approach using a priority-encoded state transition scheme:
+
+1. Key Idea:
+   - Instead of pure one-hot, implement a priority-based state transition system
+   - Each state transition is evaluated in a specific order of precedence
+   - This reduces logic complexity by eliminating redundant checks
+
+2. Implementation Strategy:
+   - Use a cascaded conditional approach where higher priority states block lower ones
+   - Implement Y1 (next state A) and Y3 (next state C) directly from current state and input
+   - Leverage the observation that:
+     * Y1 is active only when coming from D or F with w=1
+     * Y3 is active only when coming from B with w=0 or from F with w=0
+
+3. Benefits:
+   - More efficient logic implementation by reducing the number of comparisons
+   - Clear precedence in state transitions
+   - Easier to debug and modify transition priorities
+   - Reduced gate count compared to traditional one-hot implementations

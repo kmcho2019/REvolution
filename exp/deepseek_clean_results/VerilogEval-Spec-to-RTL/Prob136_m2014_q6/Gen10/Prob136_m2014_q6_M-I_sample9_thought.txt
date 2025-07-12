@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. **Gray code state encoding**: This reduces switching activity between adjacent states, improving power efficiency and potentially timing by minimizing simultaneous bit toggles.
+
+2. **One-hot encoding alternative**: While it uses more flip-flops, one-hot can simplify decoding logic and improve timing in some cases (though for 6 states, Gray code is likely better).
+
+3. **Output register**: Adding a flip-flop for the output z to break any critical paths from state transitions to output.
+
+4. **Default case handling**: Explicitly handle unused states for better synthesis optimization.
+
+5. **State encoding optimization**: Carefully choose Gray codes to minimize transitions between frequently visited states.
+
+The Gray code implementation will use these encodings:
+A: 000, B: 001, C: 011, D: 010, E: 110, F: 100
+This ensures only one bit changes between adjacent states in the state diagram.

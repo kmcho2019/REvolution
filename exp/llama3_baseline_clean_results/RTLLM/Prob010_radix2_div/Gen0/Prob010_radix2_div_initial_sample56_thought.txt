@@ -1,0 +1,7 @@
+To design the radix2_div module, we will implement the following steps:
+1. Create a register to store the dividend and divisor when opn_valid is high and res_valid is low.
+2. Initialize the shift register SR with the absolute value of the dividend shifted left by one bit and set NEG_DIVISOR to the negated absolute value of the divisor.
+3. Use a counter cnt to track the number of division steps. When cnt reaches 8, the division is complete.
+4. During each division step, compute the subtraction of NEG_DIVISOR from the shift register SR and update SR based on the carry-out.
+5. Manage the res_valid signal based on the reset signal, the counter, and whether the result has been consumed.
+We will use Verilog's always block to describe the combinational logic and sequential behavior of the module.

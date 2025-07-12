@@ -1,0 +1,8 @@
+Use a Mealy FSM approach that combines pattern detection and control signals generation with a minimal state count.  
+Implement a 4-bit shift register to track the input pattern continuously, so pattern detection is done by simple comparison rather than state sequencing, simplifying state transitions.  
+Control states are then limited to: IDLE (waiting for pattern), SHIFT (shifting in 4 bits), COUNT (waiting for counting done), and DONE (waiting for ack).  
+Shift enable is asserted only during the SHIFT state.  
+Synchronous active-high reset initializes the FSM to IDLE and clears the shift counter.  
+Use a 3-bit shift counter for the SHIFT state to count exactly 4 shifts.  
+This architecture decouples pattern detection from state transitions, reducing FSM complexity and potentially improving timing and power.  
+Outputs are assigned combinationally from states for glitch avoidance and simplicity.

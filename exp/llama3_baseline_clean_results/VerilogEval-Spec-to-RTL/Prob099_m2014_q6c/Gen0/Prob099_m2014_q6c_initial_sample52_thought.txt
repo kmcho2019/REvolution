@@ -1,0 +1,9 @@
+To implement the next-state logic for signals Y1 and Y3 corresponding to y[0] and y[2] is not directly requested, however Y1 and Y3 are,  we can derive the next-state logic for Y2 and Y4 corresponding to y[1] and y[3] by analyzing the state machine transitions. 
+First, we identify the conditions under which the next state will have y[1] (Y2) and y[3] (Y4) set to 1. 
+For Y2 (y[1]), this happens when the current state is A and w is 1 (since A(1) -> A, and A's encoding is 000001), or when the current state is C and w is 0 (since C(0) -> E, but the transition to state B is also dependent on w being 0, and B's encoding is 000010). 
+For Y4 (y[3]), this happens when the current state is D and w is 0 (since D(0) -> F, and F's encoding is 100000), or when the current state is E and w is 1 (since E(1) -> D, and D's encoding is 001000). 
+Given these conditions, we can express the next-state logic for Y2 and Y4 using Boolean equations.
+Then, since Y1 and Y3 are the signals of interest, we also need to derive their next-state logic.
+Y1 will be set when the next state is A or B is not possible as per given one-hot encoding, however it can be derived from state F.
+Y3 will be set when the next state is D.
+Based on the provided state machine and one-hot encoding, we can derive the Boolean equations for Y1, Y2, Y3, and Y4, and then implement them in Verilog.

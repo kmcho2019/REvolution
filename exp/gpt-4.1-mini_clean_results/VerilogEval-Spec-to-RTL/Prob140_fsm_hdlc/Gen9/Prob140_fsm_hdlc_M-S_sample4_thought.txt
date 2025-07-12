@@ -1,0 +1,15 @@
+We can simplify the design by removing the explicit next_state register and next-state logic variable, using a single 3-bit register that directly counts consecutive ones with saturation at 7.
+
+On each clock:
+- If reset is asserted, clear count to 0.
+- Else if input is 1 and count < 7, increment count; if count is already 7, keep it at 7 (saturate).
+- Else if input is 0, reset count to 0.
+
+Outputs depend only on the previous count value (since outputs are Moore-type and registered):
+- disc is asserted when count was 5 and input now 0 (detected on this cycle).
+- flag is asserted when count was 6 and input now 0.
+- err is asserted when count reaches 7 after increment.
+
+This eliminates the combinational next_state logic and next_state register, reducing complexity and logic depth. The outputs are still registered and depend on the current count and current input synchronously.
+
+This implementation keeps synchronous reset and single clock edge triggering for all sequential logic.

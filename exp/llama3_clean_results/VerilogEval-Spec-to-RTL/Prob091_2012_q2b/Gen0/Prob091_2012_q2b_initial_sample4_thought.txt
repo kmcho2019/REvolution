@@ -1,0 +1,7 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the state transitions and the one-hot encoding used. The state assignment is y[5:0] = 000001(A), 000010(B), 000100(C), 001000(D), 010000(E), 100000(F). We need to derive the logic for Y1 and Y3, which are the inputs to the state flip-flops y[1] and y[3] respectively. 
+
+For Y1, which corresponds to state B, we need to consider when the FSM is in states that can transition to B or are already in B. Since B can be reached from A when w is 0, and it stays in B when w is 0, we look for the conditions that lead to state B. B is represented by y[1], so Y1 should be 1 when the FSM is in A and w is 0, or when it is already in B and w is 0. Given the one-hot encoding, A is 000001 and B is 000010.
+
+For Y3, which corresponds to state D, similar logic applies. D can be reached from B when w is 0, from C when w is 0, from E when w is 0, and from itself when w is 1. So, Y3 should be 1 under these conditions. D is represented by y[3], so we look for transitions leading to D.
+
+Given the one-hot encoding, we can implement Y1 and Y3 by considering the current state (represented by y[5:0]) and the input w.

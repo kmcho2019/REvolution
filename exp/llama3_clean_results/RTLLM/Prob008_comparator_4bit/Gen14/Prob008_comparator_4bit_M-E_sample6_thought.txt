@@ -1,0 +1,7 @@
+A novel architectural idea for implementing the 4-bit comparator module could involve using a combination of subtractors and a priority encoder. The subtractor will perform the subtraction operation A - B, and based on the result and the borrow bit, we can determine if A is greater than, equal to, or less than B. 
+
+The key insight here is to leverage the properties of digital subtraction to simplify the comparison logic. By examining the result of the subtraction and the borrow bit, we can infer the relationship between A and B. If there's no borrow and the result is non-zero, A is greater than B. If there's a borrow, A is less than B. If there's no borrow and the result is zero, A is equal to B.
+
+To implement this, we'll use a 4-bit subtractor that also generates a borrow bit. We'll then use this information to set the A_greater, A_equal, and A_less outputs accordingly. This approach allows for a more streamlined comparison logic that directly leverages the properties of digital arithmetic operations.
+
+Furthermore, to ensure the outputs are mutually exclusive, we'll use a priority encoder-like logic that asserts the most significant condition first (A_greater, then A_equal, then A_less), ensuring that only one output is high at any given time.

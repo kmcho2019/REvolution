@@ -1,0 +1,5 @@
+I will implement the Mealy FSM using a shift register to track the last 5 input bits and detect the sequence "10011" continuously. The FSM itself will be implicitly represented by the shift register content, and MATCH will be asserted combinationally whenever the 5-bit shift register matches the target pattern. This approach simplifies the FSM design by replacing explicit states with a sliding window over the input stream.
+
+To support continuous input and loop detection, the shift register updates every clock cycle with the newest input bit, and MATCH is asserted when the shifted bits equal the pattern.
+
+A synchronous reset clears the shift register and MATCH output. This approach provides a simple, easily extensible, and efficient hardware implementation of the sequence detector with Mealy behavior (MATCH asserted at the clock where last bit input matches the sequence).

@@ -1,0 +1,19 @@
+Simplification Strategy:
+1. K-map Analysis:
+   - Observe that the output is 1 in most cases (10 out of 16)
+   - Instead of implementing all 1s, implement the 6 cases where output is 0 and invert
+   - This reduces the number of terms needed
+
+2. Optimized Boolean Expression:
+   - Identify the 0 positions in K-map and express them directly:
+     - (!a & !b & c & d) - top-left corner
+     - (a & b & !c) - middle of top and bottom
+     - (a & c & !d) - right side
+     - (!a & b & !c & d) - middle-left
+   - Combine these with OR and invert the result
+
+3. Benefits:
+   - Maintains exact functionality
+   - Uses minimal number of terms (4)
+   - Clear and straightforward implementation
+   - Efficient use of De Morgan's laws

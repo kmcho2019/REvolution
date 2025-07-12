@@ -1,0 +1,7 @@
+Simplify the design by reducing intermediate signals and consolidating bump logic directly into next_state computation. Keep the state encoding and FSM structure but remove separate bump signal wires, using direct expressions instead. Use one always block for next state/direction/fall_timer to improve readability. Keep the Moore outputs as simple expressions from the current state and direction.
+
+Also, in the falling state, increment the fall_timer with saturation at 31, else reset to zero, but do it succinctly. This reduces code lines and complexity while preserving exact FSM behavior and output correctness.
+
+Maintain asynchronous reset and positive-edge clocking as required.
+
+Overall, this simplification yields clearer and more compact code with no functionality loss.

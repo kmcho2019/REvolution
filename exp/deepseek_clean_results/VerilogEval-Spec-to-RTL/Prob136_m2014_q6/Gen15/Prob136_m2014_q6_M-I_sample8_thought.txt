@@ -1,0 +1,24 @@
+To improve the solution, I'll focus on optimizing for better PPA (Power, Performance, Area) metrics while maintaining correct functionality:
+
+1. **Timing Optimization**:
+   - The negative WNS (-0.18ns) indicates timing violations. I'll restructure the state transition logic to reduce combinational path delays.
+   - Implement a registered output to break the critical path.
+
+2. **Power Optimization**:
+   - Add clock gating for the state register when inputs are stable.
+   - Maintain Gray coding to minimize switching activity.
+
+3. **Area Optimization**:
+   - Simplify state transition logic by identifying common patterns.
+   - Use one-hot encoding might be better for this small state machine (6 states).
+
+4. **Implementation Strategy**:
+   - Switch to one-hot encoding (better for small FSMs in FPGAs)
+   - Register the output to improve timing
+   - Add clock gating control
+   - Optimize state transition logic with priority encoding
+
+Key improvements expected:
+- Better timing closure (positive WNS)
+- Reduced power through clock gating
+- Potentially smaller area with one-hot encoding

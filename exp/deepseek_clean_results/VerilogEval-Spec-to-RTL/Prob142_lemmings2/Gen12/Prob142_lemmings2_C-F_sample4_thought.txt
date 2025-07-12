@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. State Encoding: Combine the compact 2-state representation from Example 1 with the efficient 2-bit register approach from Example 2, using bit[1] for state (WALK/FALL) and bit[0] for direction.
+
+2. Transition Logic:
+   - Adopt the clean bump handling from Example 1 (direction toggle only during WALK state)
+   - Implement the simplified falling detection from Example 2 (!ground)
+   - Maintain direction persistence during FALL state from both examples
+
+3. Output Logic:
+   - Use the simple combinatorial output generation from Example 1
+   - Keep the clear separation of walk_left/walk_right conditions
+   - Directly output state for aaah as in both examples
+
+4. Reset Handling:
+   - Maintain simple asynchronous reset initializing to walk left
+
+5. Optimizations:
+   - Combine the efficient next state logic from Example 2
+   - Minimize logic depth by separating state and direction conditions
+   - Reduce power by only evaluating bumps during WALK state
+
+Key Improvements:
+- More efficient state encoding than Example 1
+- Cleaner transition logic than Example 2
+- Optimal output generation
+- Better power efficiency by avoiding unnecessary bump evaluation
+- Maintained all functional requirements

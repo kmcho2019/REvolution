@@ -1,0 +1,24 @@
+Novel Architecture Idea:
+1. State Machine Approach:
+   - Implement the clock as a finite state machine with states representing each time component
+   - Use separate state machines for seconds, minutes, and hours that communicate via rollover signals
+   - This reduces combinatorial logic depth compared to nested if-else structures
+
+2. Parallel BCD Counters:
+   - Implement BCD counters using parallel arithmetic units for tens and ones digits
+   - Use lookahead carry logic to minimize critical path
+   - Special handling for 12-hour rollover to simplify hour counter
+
+3. Optimized PM Logic:
+   - Track AM/PM state separately with dedicated toggle logic
+   - Only update PM state when hour counter reaches 11->12 transition
+
+4. Synchronous Reset Handling:
+   - Unified reset handling with priority encoding
+   - Reset values directly assigned in state registers
+
+Key Benefits:
+- Reduced critical path through parallel state machines
+- Simplified hour counter with special 12-hour handling
+- Optimized PM toggle logic with minimal transitions
+- Clear separation of concerns between time components

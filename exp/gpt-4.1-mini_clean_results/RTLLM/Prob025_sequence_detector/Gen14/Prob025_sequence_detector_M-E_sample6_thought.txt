@@ -1,0 +1,7 @@
+To create a different architectural approach, I will design the sequence detector as a Mealy FSM instead of the previous Moore FSM. In a Mealy FSM, the output depends on both the current state and the input, which allows the detector to assert `sequence_detected` immediately when the last input bit arrives, without waiting for the next clock cycle. This potentially reduces latency.
+
+Additionally, I will encode the FSM states using one-hot encoding (5 bits for 5 states: IDLE, S1, S2, S3, S4) to simplify the next-state logic and facilitate easier synthesis optimizations.
+
+The state transitions will detect the sequence "1001" with possible overlaps, and the output `sequence_detected` will be combinational and set high only on the cycle when the sequence completes. The reset will be synchronous active low (reset_n), and I will use non-blocking assignments inside a clocked always block for state updates.
+
+This design differs in state encoding, output logic (Mealy vs Moore), and output timing (output asserted combinationally instead of registered).

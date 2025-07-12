@@ -1,0 +1,15 @@
+To correctly implement the Karnaugh map with the given interface (x[3:0]):
+1. Map the K-map inputs correctly:
+   - x[3]x[2] for rows (as x[3]x[4] in K-map was likely a typo)
+   - x[1]x[0] for columns (as x[1]x[2] in K-map)
+
+2. Analyze the K-map patterns:
+   - f=1 when:
+     * x[3] is high and x[1] is low (covers top-right 1's)
+     * x[3] is low, x[2] is high, and x[0] is high (covers middle 1's)
+     * x[2] is high and x[1] is high (covers bottom-left 1's)
+
+3. The simplified expression is:
+   f = (x[3] & ~x[1]) | (~x[3] & x[2] & x[0]) | (x[2] & x[1])
+
+This covers all required 1's while optimally using don't-cares.

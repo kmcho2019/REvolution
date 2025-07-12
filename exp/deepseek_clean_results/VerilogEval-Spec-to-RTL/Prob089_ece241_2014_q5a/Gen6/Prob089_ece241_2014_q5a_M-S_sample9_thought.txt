@@ -1,0 +1,13 @@
+Simplified design approach:
+1. Remove explicit state variable - use output register 'z' to implicitly track state
+2. Single always block for both state and output logic
+3. Direct assignment for output based on current state (COPY or INVERT)
+4. State transitions determined by current output value (z) and input (x)
+5. Maintain same functionality: copies bits until first '1' is seen, then inverts all subsequent bits
+
+Key simplifications:
+- Eliminates separate state register
+- Combines state and output logic
+- Reduces register count
+- Maintains same Moore machine behavior
+- Keeps same reset behavior

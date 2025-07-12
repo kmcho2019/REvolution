@@ -1,0 +1,10 @@
+The original implementation has a width mismatch between the 1-bit selector and 8-bit inputs. Here's a novel approach using a hierarchical design:
+
+1. Create a basic 1-bit 2-to-1 mux as a separate module
+2. Instantiate 8 copies of this mux to handle each bit of the 8-bit inputs
+3. Use generate-for to efficiently create the bitwise muxes
+4. This approach:
+   - Clearly separates the mux functionality
+   - Scales easily to any bus width
+   - Makes the design more modular and readable
+   - Explicitly shows the bitwise operation

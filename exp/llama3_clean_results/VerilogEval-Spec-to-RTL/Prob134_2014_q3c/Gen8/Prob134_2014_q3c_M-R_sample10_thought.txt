@@ -1,0 +1,9 @@
+To refactor the provided code, we can simplify the state machine implementation by using a more structured approach with a focus on minimizing the use of procedural blocks (always) for combinational logic. Instead of using an always @(*) block for determining the next state and output z, we can use continuous assignments with conditional statements to achieve the same logic. This approach not only simplifies the code but also makes it more concise and potentially easier to optimize for synthesis tools.
+
+We will maintain the use of an always @(posedge clk) block for the sequential logic to update the current state but use continuous assignments for the combinational logic. This separation is beneficial for readability and can be advantageous for synthesis, as it clearly delineates the sequential and combinational parts of the design.
+
+The next state (nextState) and output z will be determined using conditional statements within assign statements. This allows for a more declarative style of coding, where the focus is on specifying what the circuit should do rather than how it should do it, potentially leading to better optimization opportunities.
+
+For the output Y0, we will directly assign it from the next state, ensuring that it reflects the correct bit of the next state without needing an additional always block or complex logic.
+
+This refactored approach aims to maintain the core functionality of the original state machine while presenting a more streamlined and potentially synthesizable implementation.

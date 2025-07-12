@@ -1,0 +1,29 @@
+Use a Moore FSM with explicit phases and separate small counters to simplify timing control:
+
+1. **State A (Reset state):**  
+   Remain here while resetn is low. Outputs f=0, g=0.
+
+2. **State B (F pulse):**  
+   Upon release of resetn (high), move here and output f=1 for exactly one cycle, then move to pattern detection.
+
+3. **Pattern detection states:**  
+   Implement a simple 3-step pattern detector with 4 states to track detection of sequence 1,0,1 on input x over consecutive clock cycles:  
+   - Wait for first '1'  
+   - Then wait for '0'  
+   - Then wait for '1' again  
+   If pattern is matched, move to g pulse state. If mismatch, restart from waiting for first '1'.
+
+4. **State G pulse:**  
+   Output g=1 for exactly one cycle to signal pattern detected, then move to y-monitoring.
+
+5. **Y-monitoring states:**  
+   Use a 2-bit counter to count up to 2 cycles checking if y=1 while g=1 is maintained.  
+   - If y=1 within 2 cycles, transition to permanent g=1 state.  
+   - Else, after 2 cycles, move to permanent g=0 state.
+
+6. **Permanent states:**  
+   Hold g at either 1 or 0 permanently (until reset).
+
+Using explicit counters for y-monitoring simplifies logic and ensures precise timing. Outputs f and g are driven solely by state, ensuring pulse length correctness.
+
+This approach partitions the problem clearly and leverages Moore FSM principles with counters for timing, improving readability and correctness.

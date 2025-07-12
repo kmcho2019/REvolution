@@ -1,0 +1,5 @@
+Since the inputs and outputs are already in two's complement fixed-point format, the subtraction can be performed directly as a signed subtraction. This inherently handles both same-sign and different-sign cases correctly, including proper sign and magnitude results. After subtraction, explicitly set the sign bit to 0 if the result is zero to handle the zero sign bit requirement.
+
+This approach drastically simplifies the implementation by avoiding manual magnitude and sign extraction and reconstruction, leverages built-in two's complement arithmetic, and is fully synthesizable and efficient. The parameters Q and N define precision but don't affect the subtraction logic itself.
+
+The output is computed combinationally, and zero result sign adjustment is done via conditional logic.

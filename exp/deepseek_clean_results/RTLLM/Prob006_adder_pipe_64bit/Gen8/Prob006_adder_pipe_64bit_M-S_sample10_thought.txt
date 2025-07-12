@@ -1,0 +1,15 @@
+Simplified design approach:
+1. Use single-stage pipeline for 64-bit addition (no chunking needed)
+2. Remove intermediate pipeline registers since full addition can complete in one cycle
+3. Maintain input/output registers for proper synchronization
+4. Keep same interface with 65-bit result (64-bit sum + carry)
+5. Simplify enable signal propagation - single register delay
+6. Reduce area by eliminating unnecessary pipeline stages
+7. Maintain same latency (1 cycle) with simpler implementation
+
+Key simplifications:
+- Single cycle addition instead of pipelined
+- Fewer registers (only input/output synchronization)
+- Same timing behavior (result valid one cycle after input)
+- Simpler carry handling (direct full addition)
+- Maintain identical interface and functionality

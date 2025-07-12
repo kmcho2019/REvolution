@@ -1,0 +1,12 @@
+To improve PPA (performance, power, and area), I will make the outputs rise and down registered signals rather than combinational. This aligns exactly with the specification where rise and down are asserted at the next clock cycle after the edge is detected and then deasserted until the next edge. Registering these outputs avoids glitches, makes timing cleaner, and allows the outputs to hold their value for a full clock cycle. 
+
+This approach uses:
+- One register for previous input 'a' (a_prev)
+- Two registers for outputs rise_reg and down_reg
+- The edge detection logic as combinational inside the always block to update outputs synchronously
+
+This also enables better optimization in synthesis tools and might reduce dynamic power by controlling output transitions explicitly.
+
+I keep the asynchronous active-low reset for known initialization. The outputs will assert for exactly one clock cycle on the clock after an edge is detected, matching the requirement of outputs being set on the next clock.
+
+Hence, the code is optimized for timing and power, clean, and follows best design practices with registered outputs.

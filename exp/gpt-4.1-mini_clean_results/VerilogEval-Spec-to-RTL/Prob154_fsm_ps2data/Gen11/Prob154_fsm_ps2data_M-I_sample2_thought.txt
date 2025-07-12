@@ -1,0 +1,10 @@
+To optimize the existing design for better power, performance, and area (PPA), I will apply the following improvements:
+
+- Implement clock gating on the byte registers by using explicit load enable signals to prevent unnecessary toggling, reducing dynamic power.
+- Register the done signal separately, updating it only one cycle when the third byte arrives, and hold it low otherwise, minimizing glitch and toggle.
+- Keep the state machine binary encoded for minimal flip-flops but separate the outputs done and out_bytes update from state transitions to reduce logic on the critical path.
+- Use non-blocking assignments consistently and synchronous reset only.
+- Simplify and clarify the next-state logic and datapath control signals to aid synthesis tools in optimization.
+- Overall, focus on minimizing toggling, separating control signals, and clear FSM structure to enhance timing and power efficiency.
+
+These changes maintain full compliance with the specification and the waveform example while improving PPA.

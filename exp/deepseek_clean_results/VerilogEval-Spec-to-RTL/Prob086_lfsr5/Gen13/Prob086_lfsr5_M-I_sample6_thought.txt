@@ -1,0 +1,12 @@
+To optimize the LFSR implementation while maintaining functionality:
+1. Keep the same tap positions (bits 5 and 3) for maximal-length sequence
+2. Optimize power by reducing switching activity:
+   - Remove redundant reset logic (only need to set LSB to 1)
+   - Simplify the reset to only affect q[0]
+3. Improve timing by:
+   - Breaking the XOR operation into a separate step for better pipelining
+   - Using a temporary register for the XOR result
+4. Reduce area by:
+   - Simplifying the reset logic
+   - Using more efficient bit concatenation
+5. Maintain the same sequence generation while improving PPA metrics

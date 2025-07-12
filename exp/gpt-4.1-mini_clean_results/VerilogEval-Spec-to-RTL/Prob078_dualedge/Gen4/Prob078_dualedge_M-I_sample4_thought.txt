@@ -1,0 +1,9 @@
+To optimize the dual-edge triggered flip-flop for better PPA without changing its fundamental approach, I will:
+
+1. Replace the continuous assign mux controlled by clk with a registered mux output to reduce glitching and improve timing (thus potentially improving WNS and power).
+2. Use a simple clock domain crossing style synchronizer that updates the output q on every clock edge, reducing glitches due to direct combinational muxing on clk.
+3. Keep the positive- and negative-edge triggered flip-flops as is for modularity and clarity.
+4. Add a small state machine or logic to select the correct q output on clock edges, effectively registering the mux output to avoid glitches and reduce power.
+5. This approach should reduce dynamic switching of the mux output and improve timing closure at the cost of a minor latency (output q updates right after edge, not combinationally).
+
+This provides improved glitch immunity, potentially lowering power and improving timing without increasing area significantly.

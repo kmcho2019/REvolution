@@ -1,0 +1,7 @@
+To improve PPA (Performance, Power, Area), especially performance and power, hierarchical muxing can be used to reduce critical path delay and switching activity. Instead of one large 256-to-1 mux, implement two levels of smaller muxes: first 16 muxes of 16-to-1 (4-bit wide), then a 16-to-1 mux selecting among those outputs. This reduces the depth of logic per path. We can split the 8-bit selector into two parts: upper 4 bits select which 16-to-1 block, lower 4 bits select which 4-bit segment inside that block.
+
+This approach trades a bit more code for improved timing by limiting fan-in at each mux stage, reduces power by localizing switching, and can reduce area by leveraging smaller muxes. The overall latency becomes the latency of two smaller multiplexers in series, instead of one large wide mux.
+
+In Verilog, we can implement the first stage by extracting 16 4-bit segments indexed by sel[3:0] inside each 64-bit block (16*4=64 bits). The second stage mux selects among the outputs of those 16 muxes using sel[7:4].
+
+This hierarchical method enhances timing and potentially power, with modest impact on area.

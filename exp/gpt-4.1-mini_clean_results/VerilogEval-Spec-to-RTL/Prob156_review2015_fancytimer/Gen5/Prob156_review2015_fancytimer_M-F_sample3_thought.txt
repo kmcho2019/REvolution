@@ -1,0 +1,10 @@
+The main issue is that reg variables were declared inside the always @(posedge clk) procedural block, which is illegal in Verilog. To fix this, all reg declarations must be at module scope. The combinational logic for computing the count output, which depends on cycle_countdown and delay_reg, should be separated into a separate always @(*) block using module-level wires or regs.
+
+I will:
+- Remove the illegal internal reg declarations inside the sequential always block.
+- Declare all necessary regs/wires at module scope.
+- Implement the count output logic in a dedicated combinational always block after the sequential logic.
+- Keep the rest of the logic and state machine unchanged, as the logic seems sound.
+- This ensures proper synthesis and simulation with no syntax errors.
+
+This clean separation of sequential state updates and combinational output calculation respects Verilog syntax and will fix the compilation errors.

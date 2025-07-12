@@ -1,0 +1,12 @@
+To optimize the priority encoder for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Performance:** Replace the ternary operator chain with a parallel case statement to reduce critical path delay. The case statement will evaluate all possibilities simultaneously rather than sequentially.
+
+2. **Power:** Add an early check for the all-zero case to prevent unnecessary computations. Also, use a case statement which typically synthesizes to more efficient logic than nested ternary operators.
+
+3. **Area:** Simplify the rightmost 1-bit isolation by using a more direct bitwise operation (x & -x) if supported, though in Verilog we'll stick with the original method since it's well-supported. The case statement should also synthesize to more compact logic.
+
+The improved design will:
+- First check for all-zero input (most common case in many applications)
+- Use a parallel case statement for position encoding
+- Maintain the same functionality but with better PPA characteristics

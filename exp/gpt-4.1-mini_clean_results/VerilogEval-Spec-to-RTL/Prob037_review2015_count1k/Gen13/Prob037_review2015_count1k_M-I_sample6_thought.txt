@@ -1,0 +1,18 @@
+To optimize the PPA (performance, power, area), implement a binary counter that counts from 0 up to 999 by exploiting the natural binary wrap-around of a 10-bit counter modulo 1024. Instead of explicitly comparing q to 999, use a combinational adjustment to reset the counter to 0 after 999 by detecting the next count would be 1000 and resetting synchronously. This reduces comparator complexity by using a smaller comparator or partial detection logic to save area and delay.
+
+Alternatively, implement the counting with a 10-bit counter that increments each cycle, but when reaching 999, on next increment reset it to zero. We can use a combinational expression to detect q == 999, then increment or reset accordingly.
+
+To minimize toggle power, the counter naturally toggles bits, but we can simplify logic to reduce glitches.
+
+Overall, to optimize:
+- Use a single always_ff block with synchronous reset.
+- Use an internal comparator that only checks q == 999.
+- Use a ternary operator for next state logic inside the always block to reduce logic depth.
+- Use a localparam for MAX_COUNT.
+This approach balances simplicity and optimization without complex BCD or divide circuits.
+
+If targeting better frequency, minimizing comparator complexity helps, so implement the comparator as a direct equality check with constant.
+
+This keeps the design synthesizable and clean with minimal logic, slight improvement over original code by using a single nonblocking assignment with ternary operator for next value.
+
+This optimization can slightly reduce critical path by merging increment and comparator logic.

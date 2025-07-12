@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. **State Encoding**: Switch to one-hot encoding for the FSM to reduce fan-out and improve timing performance.
+2. **Counter Optimization**: Use a 3-bit down counter but optimize its usage to reduce area.
+3. **Power Reduction**: 
+   - Gate the shift register updates with an enable signal (only during RECEIVE state)
+   - Hold 'done' signal until next start bit to reduce toggling
+4. **Area Reduction**: 
+   - Remove the ERROR state and handle missing stop bits in the STOP state itself
+   - Simplify state transitions
+5. **Timing Improvement**:
+   - Break long combinatorial paths by registering intermediate signals
+   - Simplify the stop bit detection logic
+
+These changes should improve timing (reduce WNS), reduce power consumption, and potentially decrease area while maintaining correct functionality.

@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. For Y1: Both examples correctly implement Y1 = y[0] & w, which is optimal for the transition from A to B when w=1. This implementation is already minimal and efficient.
+
+2. For Y3:
+   - Example 1 uses a factored form (~w & (y[1] | y[2] | y[4] | y[5])) which reduces gate count by sharing the ~w operation.
+   - Example 2 shows the explicit but less efficient form with multiple AND-OR operations.
+   - We'll adopt Example 1's factored form for Y3 as it's more efficient in terms of both area and power.
+
+3. Additional Optimization:
+   - Since we're using one-hot encoding (only one y[i] is active at any time), we can simplify the OR operation to just a wire OR of the relevant bits.
+   - This maintains correctness while being conceptually cleaner and potentially more efficient in implementation.
+
+The fused solution combines the optimal Y1 implementation with the more efficient factored form for Y3, while leveraging one-hot encoding properties.

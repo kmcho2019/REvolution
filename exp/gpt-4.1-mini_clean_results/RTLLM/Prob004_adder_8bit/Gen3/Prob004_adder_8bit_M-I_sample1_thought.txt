@@ -1,0 +1,13 @@
+The original design uses implicit addition with ripple carry implemented via addition operators, which synthesis maps to ripple carry adders efficiently, but the critical path and switching power remain due to carry propagation through all bits.
+
+To improve power and area slightly without changing the ripple-carry architecture fundamentally, we can explicitly instantiate a reusable full adder module for each bit, which may help synthesis tools optimize gate-level sharing better. Also, by explicitly controlling logic with bitwise XOR/AND/OR, we avoid '+' operator and make the carry and sum logic explicit and transparent, potentially reducing gate-level switching activity.
+
+The design still uses ripple carry, so timing is unchanged, but power and area may improve marginally due to explicit gate-level logic instead of arithmetic operators. This approach also improves code clarity regarding carry and sum computation per bit.
+
+Hence, the improvement strategy is:
+- Define a separate full adder module with explicit logic.
+- Instantiate 8 full adders in series.
+- Chain the carries.
+- Keep the entire design combinational.
+
+This explicit approach allows better control over logic synthesis, potentially reducing area and power while maintaining correctness and the ripple-carry architecture.

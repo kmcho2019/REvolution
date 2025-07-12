@@ -1,0 +1,7 @@
+To design a 4-bit wide Last-In-First-Out (LIFO) buffer that can hold up to 4 entries and supports push and pop operations, we will create a module named LIFObuffer. This module will use a stack memory array (stack_mem) to store the data and a stack pointer (SP) to track the current position in the stack. 
+We will implement the LIFObuffer module with the specified input and output ports. The module will handle reset, read, and write operations based on the RW and EN signals. 
+It will update the EMPTY and FULL flags according to the stack pointer status, indicating whether the buffer is empty or full. 
+On the rising edge of the clock (Clk), if the enable (EN) signal is high, the module will check the reset (Rst) signal. If Rst is high, the stack is cleared, and the stack pointer is set to 4 (indicating an empty buffer). 
+If Rst is low, the module will check if the buffer is full or empty and perform the corresponding operation based on the RW signal. 
+If RW is low (write operation) and the buffer is not full, data from dataIn is pushed onto the stack, and the stack pointer is decremented. 
+If RW is high (read operation) and the buffer is not empty, data is popped from the stack into dataOut, the corresponding stack memory is cleared, and the stack pointer is incremented.

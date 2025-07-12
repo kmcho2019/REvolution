@@ -1,0 +1,11 @@
+To simplify the Rule 110 implementation while maintaining functionality, we can make the following optimizations:
+
+1. **Simpler Boolean Expression**: The Rule 110 truth table can be expressed as: next state = right XOR (center OR (left AND right)). This reduces the logic to just 3 operations per bit.
+
+2. **Efficient Boundary Handling**: Instead of using separate muxes for left and right boundaries, we'll extend the q register virtually with zeros on both ends, simplifying the neighbor selection logic.
+
+3. **Direct Combinational Logic**: Implement the simplified Boolean expression directly in the always block, eliminating the need for a separate generate block and next_q wire.
+
+4. **Reduced Logic Depth**: The new expression has fewer operations, which should improve timing and reduce power consumption.
+
+This approach maintains the exact Rule 110 behavior while being more efficient in terms of logic complexity and resource usage.

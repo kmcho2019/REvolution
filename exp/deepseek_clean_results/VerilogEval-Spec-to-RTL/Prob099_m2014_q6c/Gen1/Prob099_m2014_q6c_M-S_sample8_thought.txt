@@ -1,0 +1,18 @@
+To simplify the next-state logic for Y2 (y[1]) and Y4 (y[3]), we can observe that:
+
+For Y2 (next state y[1]):
+1. Only occurs when transitioning from A (y[0]=1) to B (y[1]=1) with w=0
+2. No other transitions set y[1] in the next state
+
+For Y4 (next state y[3]):
+1. Occurs when:
+   - From B (y[1]=1) with w=1
+   - From C (y[2]=1) with w=1 
+   - From D (y[3]=1) with w=1
+   - From E (y[4]=1) with w=1
+   - From F (y[5]=1) with w=1
+2. This can be simplified to: any non-A state (y[1] to y[5]) with w=1
+
+The simplified logic equations are:
+Y2 = y[0] & ~w  // Only A->B transition
+Y4 = (|y[5:1]) & w  // Any non-A state with w=1

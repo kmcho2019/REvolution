@@ -1,0 +1,25 @@
+Optimized Dual-Edge Triggered Flip-Flop Fusion Strategy:
+
+1. Core Architecture:
+   - Retain the dual flip-flop approach (positive/negative edge) as it's the most reliable FPGA implementation
+   - Use non-blocking assignments for clean synchronous behavior
+
+2. Output Selection Optimization:
+   - Implement the efficient clock-based mux (clk ? q_pos : q_neg) which provides minimal combinational logic
+   - This creates the shortest possible path from flip-flops to output
+
+3. Naming and Structure:
+   - Adopt clear, descriptive naming (pos_ff/neg_ff) for better readability
+   - Group sequential blocks separately from combinational logic
+   - Add concise comments to explain the dual-edge emulation strategy
+
+4. Power/Area Considerations:
+   - Maintain minimal logic structure (2 FFs + 1 mux) for optimal PPA
+   - Ensure the design remains fully portable across FPGA architectures
+   - The mux selection is glitch-free due to synchronous updates
+
+Key Advantages:
+- Combines the most efficient elements from both examples
+- Clear and maintainable code structure
+- Optimal performance with minimal hardware
+- Fully synthesizable with predictable timing

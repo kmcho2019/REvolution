@@ -1,0 +1,20 @@
+Improvement Strategy:
+
+1. Timing Optimization:
+   - Register the MATCH output to break the combinatorial path and improve timing closure
+   - Use explicit state encoding to avoid sharing codes between states, preventing potential glitches
+
+2. Power Optimization:
+   - Implement clock gating for state registers when the state doesn't change
+   - Add an enable signal for the output register to reduce unnecessary toggles
+
+3. Area Optimization:
+   - Maintain binary encoding but ensure each state has unique encoding
+   - Simplify output logic by moving it into the sequential block
+
+Key Changes:
+- Add output register for MATCH
+- Unique state encoding (3 bits for 5 states)
+- Clock gating for state transitions
+- Registered output with enable
+- Clear separation of state transition and output logic

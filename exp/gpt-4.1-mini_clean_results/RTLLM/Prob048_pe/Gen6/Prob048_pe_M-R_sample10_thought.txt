@@ -1,0 +1,15 @@
+To refactor the MAC_PE design with the same core functionality, I will move from a purely synchronous register update inside an always block to a design that uses a dedicated accumulator register updated via an explicit enable signal, while separating the multiplication using a combinational assignment.
+
+This involves:
+
+1. Implementing an enable signal for accumulation (which is always enabled here), to make it easier to extend for controlled accumulation in the future.
+
+2. Using a separate always block for the accumulator register update triggered by clk and rst, but updating the accumulator only when enabled.
+
+3. Using a wire for the product assigned combinationally from inputs.
+
+4. Outputting the lower 32 bits of the 64-bit accumulator as before.
+
+This structure adds modularity and clarity, potentially easing extensions like controlled accumulation or gating. The multiplication remains combinational, accumulator update synchronous with clk and synchronous reset.
+
+The fundamental difference is explicitly showing the enable signal and separating product computation clearly, which can help in debugging and future enhancements without changing behavior.

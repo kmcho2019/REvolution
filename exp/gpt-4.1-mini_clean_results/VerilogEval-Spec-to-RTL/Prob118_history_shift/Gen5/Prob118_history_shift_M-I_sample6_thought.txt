@@ -1,0 +1,10 @@
+The original design is correct and already includes an update enable to reduce unnecessary toggling in the history register. To further optimize for PPA, especially targeting power and timing, we can:
+
+1. Further reduce toggling by registering the inputs predict_taken and train_taken before use. This minimizes glitches caused by direct combinational use of inputs that might change asynchronously relative to the clock.
+2. Instead of concatenating and shifting explicitly in combinational logic, we can implement the history as a shift register with a controlled load and shift, potentially simplifying synthesis.
+3. Use a single mux for next state selection controlled by misprediction and prediction signals, but arrange logic so that the shift operation and load are simple and not both performed combinationally.
+4. Keep update_enable gating the state update to avoid toggling when no meaningful update is happening.
+5. Preserve asynchronous reset as requested.
+6. These refinements reduce glitching inside combinational logic and may improve critical path and power consumption.
+
+Overall, this improves timing and power by minimizing combinational switching and glitches feeding the register input while keeping functionality intact.

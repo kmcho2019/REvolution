@@ -1,0 +1,13 @@
+Refactor the float_multi module by splitting the logic into a 3-stage pipeline controlled by the counter (3-bit) to meet the user initial instruction about `counter` usage and internal regs. This refactor uses sequential stages synchronized with clk and rst instead of a fully combinational approach.
+
+Pipeline stages:
+
+1. Cycle 0 (counter=0): Extract inputs fields, detect special cases, prepare mantissas and exponents, sign calculation.
+2. Cycle 1 (counter=1): Perform mantissa multiplication, exponent addition with bias adjustment, normalization shift decision.
+3. Cycle 2 (counter=2): Perform rounding and final adjustment, handle overflow/underflow, generate final IEEE754 output.
+
+This structure uses the `counter` register to sequence operations across clock cycles, reducing combinational path in each cycle and making timing easier to manage. Internal signals are declared as regs and updated synchronously. The output `z` is updated at the end of stage 2. Special case handling and rounding logic are distributed in the pipeline accordingly.
+
+This approach complies with the originally requested interface and internal signals, clarifies internal control flow, and explicitly uses the `counter` state machine. It also makes the design easier to extend for more stages or deeper pipelining.
+
+Comments are added for clarity.

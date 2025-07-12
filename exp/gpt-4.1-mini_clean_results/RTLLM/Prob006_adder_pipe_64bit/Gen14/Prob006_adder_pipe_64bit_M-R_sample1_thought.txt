@@ -1,0 +1,10 @@
+The original design is sound architecturally but has syntax errors because it declares `wire` variables inside an always block, which is illegal in Verilog. To fix this, I will:
+
+1. Separate the combinational logic for the addition in each stage from the sequential pipeline registers.
+2. Declare combinational wires for operand segments and sum-with-carry outside the always block.
+3. Use an always block only for registering pipeline registers (operands, carry, enable, partial sums).
+4. Implement the pipeline as an array of registers and combinational adders to maintain 8-stage pipelining.
+5. Use generate blocks and indexing for clarity.
+6. Assemble the final result from registered partial sums and carry in the output register stage.
+
+This refactoring cleanly separates combinational and sequential logic, fixes illegal procedural wire declarations, and retains the 8-stage pipeline and carry ripple approach. The output enable signal is pipelined in sync with the partial sums and carry chain.

@@ -1,0 +1,15 @@
+To implement the next-state signals Y1 and Y3 for the given state machine with one-hot encoding, we'll analyze the state transitions that affect these specific bits:
+
+For Y1 (next state y[0]):
+1. From state A (y[0]=1) and input w=1, stay in A (y[0]=1)
+2. From state D (y[3]=1) and input w=1, transition to A (y[0]=1)
+
+For Y3 (next state y[2]):
+1. From state B (y[1]=1) and input w=0, transition to C (y[2]=1)
+2. From state F (y[5]=1) and input w=0, transition to C (y[2]=1)
+
+The logic equations become:
+Y1 = (y[0] & w) | (y[3] & w)
+Y3 = (y[1] & ~w) | (y[5] & ~w)
+
+This maintains the same approach of using direct combinatorial logic based on the current state and input, but now correctly implements the requested outputs.

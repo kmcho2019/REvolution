@@ -1,0 +1,7 @@
+The original solution is functionally correct and cleanly separates next state and output logic. To optimize power and area further, we can replace the function-based combinational logic with direct case statements inside a single always_comb block. This reduces synthesis overhead and potentially yields more optimized logic by enabling synthesis tools to optimize case statements better than function calls. 
+
+Additionally, since only 5 states are valid, we can encode the next state logic explicitly for only these states and assign default next states for invalid ones, thereby simplifying decoding. The output z can be derived directly from the present state via a simple condition. This approach avoids function call overhead and redundant logic and will likely synthesize to fewer LUTs and consume less power, improving PPA.
+
+No clocked logic is needed since state is externally provided; we will keep outputs purely combinational.
+
+In summary, we replace the two functions with a single combinational always block that sets next_state and z using case statements, then assign Y0 and z outputs accordingly.

@@ -1,0 +1,13 @@
+Fuse the compact state-counter approach of Example 2 with the clear Moore FSM state encoding and combinational next-state logic style of Example 1 for better readability and modularity.
+
+Use a 4-bit state to represent the count of consecutive ones (0 to 6), plus three output states for discarding, flag, and error detection (SD, SF, SE). This keeps the state machine small yet explicit.
+
+Implement next-state logic as a combinational case on {state, in} to explicitly control transitions, simplifying synthesis and making the FSM behavior easy to verify and modify.
+
+Outputs are purely Moore: depend only on current state, asserted for one cycle after detection, matching specification.
+
+Synchronous reset sets state to zero count state.
+
+This fusion keeps simple counting and detection logic but adopts a well-structured FSM with explicit states and next-state transitions, enhancing clarity and allowing for straightforward extensions or modifications.
+
+This solution aims to keep area and power low (due to small state space and simple logic), maintain clean timing with combinational next-state logic, and keep outputs strictly Moore-type, improving design clarity and timing predictability.

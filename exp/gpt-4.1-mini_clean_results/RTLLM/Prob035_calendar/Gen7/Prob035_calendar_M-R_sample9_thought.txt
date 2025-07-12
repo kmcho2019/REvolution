@@ -1,0 +1,7 @@
+Refactor the calendar module by separating the logic into combinational next-state calculations and a single sequential always block to update the registers. This approach creates a clean separation between state update logic and register assignment, enhancing readability and testability. 
+
+Use three separate wires (next_Hours, next_Mins, next_Secs) to hold the computed next values based on current values and the rollover conditions. Then, update all registers synchronously on the clock edge or reset.
+
+This restructuring maintains the same counting and rollover behavior but is easier to extend and verify, and can help synthesis tools optimize combinational logic paths more effectively.
+
+Keep Hours as 5 bits and Mins/Secs as 6 bits, as required.

@@ -1,0 +1,32 @@
+To fix the issues in the original solution, I'll implement these improvements:
+
+1. **Initial Pulse Timing**:
+   - Add an IDLE state after reset to ensure we wait one cycle before pulsing f
+   - Only transition to PULSE_F state after the first clock edge post-reset
+
+2. **Accurate Sequence Detection**:
+   - Implement proper 3-cycle sequence detection by:
+     * Waiting for full 3 cycles of x input
+     * Only checking the sequence when we have 3 valid samples
+     * Using a counter to track sequence progress
+
+3. **Final State Behavior**:
+   - Explicitly maintain g output in FINAL state
+   - Ensure no further state changes occur until reset
+
+4. **Timeout Counting**:
+   - Precisely implement 2-cycle timeout using a 1-bit counter
+   - Clear timeout counter when y=1 is detected
+
+5. **Output Control**:
+   - Make output assignments more explicit in each state
+   - Ensure outputs only change on state transitions
+   - Remove default output assignments to prevent glitches
+
+The improved FSM will have these states:
+- RESET: Initial reset state
+- IDLE: Waits one cycle after reset
+- PULSE_F: Generates one-cycle f pulse
+- MONITOR_X: Detects 1-0-1 sequence
+- CHECK_Y: Monitors y for 2 cycles
+- FINAL: Maintains final g output

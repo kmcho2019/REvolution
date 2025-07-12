@@ -1,0 +1,9 @@
+Refactor the TopModule to explicitly instantiate a 2:1 multiplexer using a continuous assignment outside of the always block, and separately implement the D flip-flop with an always block that captures the mux output on the clock edge. This separation makes the mux function explicit and clearly models the datapath: first select between r_in and q_in using the mux, then clock the result into the flip-flop.
+
+This approach improves modular clarity by separating combinational logic (mux) from sequential logic (flip-flop). It also aligns well with the problem statement that the submodule includes both a flip-flop and a 2:1 mux.
+
+The interface and behavior remain identical, but the structural style is cleaner and easier to understand and verify.
+
+The output Q is driven by the flip-flop register.
+
+No change in functionality: if L=1, load r_in; else load q_in.

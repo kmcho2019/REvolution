@@ -1,0 +1,26 @@
+The key improvements needed are:
+
+1. Separate pattern detection from shift counting:
+   - Use a dedicated 4-bit shift register for pattern detection (1101)
+   - Use a separate 2-bit counter for tracking shift cycles
+
+2. Clear state machine transitions:
+   - IDLE: Wait for pattern match
+   - SHIFT: Enable shifting for exactly 4 cycles
+   - COUNT: Wait for done_counting
+   - DONE: Wait for ack
+
+3. Proper reset handling:
+   - Clear all registers on reset
+   - Return to IDLE state
+
+4. Output generation:
+   - Pure combinational logic based on current state
+   - No glitches or undefined outputs
+
+The improved version will:
+- Correctly detect the 1101 pattern
+- Precisely count 4 shift cycles
+- Maintain clean state transitions
+- Generate correct outputs
+- Be fully synchronous

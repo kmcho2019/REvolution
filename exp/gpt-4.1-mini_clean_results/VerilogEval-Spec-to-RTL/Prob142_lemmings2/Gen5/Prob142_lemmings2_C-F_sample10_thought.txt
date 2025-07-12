@@ -1,0 +1,10 @@
+Fuse the clarity and modularity of Example 1’s explicit state machine with the compactness and efficiency of Example 2’s 2-bit encoding by implementing a Moore FSM with a 2-bit state register and a combinational next_state signal.
+
+- Use the 2-bit state as in Example 2, encoding:
+  bit1 = falling (1) or walking (0)
+  bit0 = direction (0=left, 1=right)
+- Implement a combinational next_state logic that considers bumps and ground inputs, preserving the walking direction during fall.
+- Update the entire state in one non-blocking assignment from next_state on clock or async reset.
+- This preserves Example 2’s minimal register count and output decoding, while adopting Example 1’s explicit next-state combinational logic style for better synthesis and clear state transition handling.
+- Ensure that bump inputs affect direction only when walking and ground present, and that the FSM ignores bumps while falling.
+- This fusion aims for minimal state bits, clear and robust combinational logic, single-register update for improved power and area, and straightforward Moore outputs for timing efficiency.

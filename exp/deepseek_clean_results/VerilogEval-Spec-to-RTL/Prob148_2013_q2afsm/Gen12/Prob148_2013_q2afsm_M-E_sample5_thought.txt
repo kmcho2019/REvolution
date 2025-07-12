@@ -1,0 +1,13 @@
+Here's a novel approach using a priority encoder combined with state tracking:
+
+1. Instead of traditional state encoding, we'll use a "grant tracking" register that remembers which device currently holds the grant
+2. Implement a priority encoder that evaluates requests only when in idle state (A)
+3. Use a single always block for both state transitions and output generation
+4. The grant outputs are simply the registered grant tracking bits
+5. This approach minimizes state transitions and simplifies the priority logic by separating the request evaluation from grant maintenance
+
+Key advantages:
+- Reduced state space (only tracking current grant)
+- Clear separation between priority evaluation and grant maintenance
+- Simplified output logic
+- Efficient use of registers

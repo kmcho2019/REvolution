@@ -1,0 +1,12 @@
+I'll refactor the code to use continuous assignments (assign statements) instead of the always block for state transitions. This approach:
+
+1. Eliminates the procedural block, making the code more dataflow-oriented
+2. Expresses each next_state bit as a direct function of current state and input
+3. Maintains the same one-hot encoding and parallel processing benefits
+4. Makes the state transition logic more explicit and potentially easier to optimize during synthesis
+
+The key changes are:
+- Replace the always block with individual assign statements for each next_state bit
+- Keep the common S0 transition term for optimization
+- Maintain the same output logic structure
+- Preserve the parallel processing of all state bits

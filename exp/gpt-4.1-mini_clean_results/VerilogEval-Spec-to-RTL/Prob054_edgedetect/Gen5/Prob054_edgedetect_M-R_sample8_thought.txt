@@ -1,0 +1,11 @@
+The original design uses a single always block with non-blocking assignments to register the previous input and the positive edge detection output. To refactor, we can split this into a two-stage approach: first, register the input vector; second, compute the edge detection output combinationally from the registered previous input and current input, and then register this output in a separate always block.
+
+This structure:
+- Uses a pipeline style with two always blocks.
+- Captures the previous input in a register on the rising edge of clk.
+- Uses a combinational assign statement to detect edges from `prev_in` and current `in`.
+- Registers the detected edges in another always block.
+  
+This separates combinational detection logic from sequential registers and demonstrates a different coding style without changing the core function or timing of the design. The output pulse still appears one clock cycle after a 0->1 transition.
+
+The separation can help in debugging and timing optimization since the combinational edge logic is isolated from the sequential logic.

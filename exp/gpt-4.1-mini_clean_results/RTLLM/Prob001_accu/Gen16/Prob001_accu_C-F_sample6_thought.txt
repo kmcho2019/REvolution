@@ -1,0 +1,7 @@
+Fuse the best ideas of Example 1 and Example 2 by using a single always block with synchronous reset and non-blocking assignments, ensuring that accumulator and count registers only update when valid_in is high (power saving). To avoid adding data_in twice in the same cycle (which can increase critical path delay), accumulate the first three valid inputs progressively, and on the 4th input cycle output the sum of accumulator plus data_in and reset the accumulator and count.
+
+Also, keep valid_out low by default each cycle to guarantee a clean one-cycle pulse. This approach reduces switching activity on registers during idle cycles and minimizes combinational delay on the critical path since the addition of data_in occurs only once per output event.
+
+This fusion strategy combines simplicity, minimal area, reduced power consumption, and improved timing by controlling register updates with an enable and by carefully scheduling additions. The accumulator width remains 10 bits to safely contain the sum of four 8-bit inputs, and the 2-bit count ensures minimal counter size. The valid_out signal is a clean one-clock-cycle pulse triggered only when four inputs have been accumulated.
+
+Overall, the design optimizes power and timing without adding complexity, yielding an elegant, efficient, and robust accumulator module.

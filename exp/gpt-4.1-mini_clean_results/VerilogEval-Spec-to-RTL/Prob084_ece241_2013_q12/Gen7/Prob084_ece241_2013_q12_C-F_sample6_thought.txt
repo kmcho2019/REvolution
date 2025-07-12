@@ -1,0 +1,5 @@
+To fuse the best ideas from both examples, I will implement the shift register as a single 8-bit vector `reg [7:0] Q` for clarity, scalability, and better synthesis optimization. This approach reduces code verbosity and helps synthesis tools generate efficient muxes and flip-flop arrays. For shifting, I will use a concatenation assignment to shift in the MSB (S) to Q[0], shifting existing bits toward Q[7], triggered on the positive clock edge and gated by `enable`. 
+
+For output Z, I will use a single indexed vector read `Q[{A,B,C}]`, which implements a natural 8-to-1 multiplexer controlled by the 3-bit address formed from inputs A, B, and C. This avoids explicit case statements or nested ternaries, yielding simpler combinational logic and potentially better timing and area.
+
+This design fully encapsulates the 8-bit shift register and random-access read via a clean vectorized mux approach. It also improves power by using synchronous enable without unnecessary complex logic and avoids unnecessary combinational comparisons for selection. The overall solution is concise, synthesizable, and easy to verify.

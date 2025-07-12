@@ -1,0 +1,15 @@
+The previous solution uses a 3-bit shift register and comparator, which works perfectly but can be simplified further. We can achieve the same functionality with just 2 flip-flops and some combinational logic:
+
+1. Track the previous two values of data_in (prev1 and prev0)
+2. A pulse is detected when:
+   - Current data_in is 0 (third cycle)
+   - Previous value (prev0) was 1 (second cycle)
+   - Value before that (prev1) was 0 (first cycle)
+3. This reduces the hardware from a 3-bit register + comparator to just 2 flip-flops + simple AND logic
+4. Maintain the same reset behavior and single-cycle output
+
+Benefits:
+- Fewer flip-flops (2 vs 3)
+- Simpler comparison logic (direct AND vs 3-bit equality)
+- Same timing characteristics
+- Identical functionality

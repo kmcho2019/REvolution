@@ -1,0 +1,18 @@
+To fix the design and meet the timing and functional requirements:
+
+- Separate the next state combinational logic from the sequential (clocked) state updates to follow a clean FSM coding style.
+
+- Implement a combinational always block that computes the next_state based on the current state and inputs (valid_in).
+
+- Use a clocked always block for state update, data storage (data_lock), and output data registers (data_out_reg and valid_out_reg).
+
+- To satisfy the requirement that valid_out and data_out are generated one cycle after receiving the second valid input:
+  - Upon receiving the second valid input, update a "next" output register (data_out_reg and valid_out_reg) which will be reflected on the outputs in the next clock cycle.
+
+- Initialize all registers properly on reset, including next_state, to avoid starting in an unknown state.
+
+- Maintain data_lock to store the first incoming 8-bit data.
+
+- valid_out and data_out are registered outputs driven by valid_out_reg and data_out_reg.
+
+This approach fixes the FSM implementation and ensures correct timing of valid_out and data_out signals according to the specification.

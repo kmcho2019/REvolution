@@ -1,0 +1,22 @@
+The refactored solution maintains the parallel decision structure but improves correctness with these key changes:
+
+1. **Reset Handling**: Now directly controls outputs during reset using ternary operators in the assign statements.
+
+2. **Precise Output Logic**:
+   - fr0: Active when not all sensors are on (s != 3'b111)
+   - fr1: Active only when below s[1] (s[1:0] == 2'b00 or 2'b01)
+   - fr2: Active only when below s[0] (s == 3'b000)
+
+3. **Accurate Transition Tracking**:
+   - Uses prev_level register to store the previous water level state
+   - Compares current and previous levels to determine direction
+
+4. **Supplemental Flow Logic**:
+   - dfr activates when current level > previous level (rising)
+   - Maintains activation for one cycle after rise detection
+
+The structure now uses:
+- Combinational assignments for all outputs
+- Minimal state tracking (just prev_level)
+- Clear reset behavior
+- Precise level comparison for flow control

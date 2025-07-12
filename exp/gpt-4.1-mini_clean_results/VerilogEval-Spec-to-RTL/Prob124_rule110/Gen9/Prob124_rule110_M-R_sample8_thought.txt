@@ -1,0 +1,12 @@
+Refactor the design to separate the combinational next-state logic and the sequential state update more explicitly by using a registered intermediate state variable for the next state and computing next_q entirely in a combinational always @* block instead of a generate-for with continuous assignments. This approach will use an explicit for-loop inside a combinational always block to compute the next state, still using the zero-padded extended vector for uniform neighbor access, but relying on indexed signals rather than generate variables. 
+
+Then update q synchronously on the clock in a separate always @(posedge clk) block. This change demonstrates an alternative style with a clear separation of combinational and sequential logic blocks, which may improve readability for some designers and ease debugging or modifications. The overall functionality and boundary assumptions remain identical, as does the boolean logic for Rule 110.
+
+Key differences:
+- Use a combinational always block with a for-loop to compute next_q.
+- Use an intermediate extended signal q_ext for boundary padding.
+- Use an explicit reg next_q instead of wire next_q.
+- Use non-blocking assignment in sequential block.
+- Keep load synchronous and immediate.
+
+This refactoring preserves functionality but reorganizes code structure for stylistic clarity and possible simulation or debugging convenience.

@@ -1,0 +1,9 @@
+Both solutions derive the same minimal Boolean expression: f = (~x3 & x2) | (x3 & x1). Example 1 uses a concise single-line assign with a ternary-like expression and basic logic operators, which is minimal and clean. Example 2 breaks down the expression into named intermediate signals, improving readability and making explicit the logic structure, which can aid debugging or future expansions.
+
+A superior fusion combines the clarity of named intermediate signals (like in Example 2) with the minimal and straightforward logic expression from Example 1. We avoid redundant inversions by only inverting x3 (since ~x2 was unnecessary), keeping the gate count minimal. This approach is both easy to understand and maintains optimal PPA (performance, power, area).
+
+Thus, the fused implementation explicitly declares not_x3, uses it in two AND gates, and ORs the results for f, matching the truth table and keeping logic minimal and readable.
+
+This structure aids both human understanding and synthesis tools, providing a clean, minimal, and clear RTL.
+
+Final expression: f = (~x3 & x2) | (x3 & x1)

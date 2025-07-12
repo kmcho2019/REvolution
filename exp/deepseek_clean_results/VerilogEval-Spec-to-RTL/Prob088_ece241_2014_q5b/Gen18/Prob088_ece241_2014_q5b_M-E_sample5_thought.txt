@@ -1,0 +1,22 @@
+Novel Architecture Idea:
+1. State Encoding Innovation:
+   - Instead of traditional one-hot or binary encoding, use a "state flag" approach where a single bit represents the state (0=A, 1=B)
+   - This reduces flip-flop count while maintaining simple transition logic
+
+2. Output Logic Optimization:
+   - Implement z as x XOR state, which directly captures the required behavior
+   - This eliminates the need for a mux in the output path, reducing critical path delay
+
+3. Reset Strategy:
+   - Maintain asynchronous reset but simplify the reset condition to a single bit assignment
+   - This reduces the reset logic complexity
+
+4. Transition Logic:
+   - Use a single combinational expression for state transition that combines both state and input
+   - The transition occurs when in state A and x=1, otherwise maintain current state
+
+Key Advantages:
+1. Reduced area (only 1 flip-flop needed)
+2. Faster output path (single XOR gate)
+3. Simpler state transition logic
+4. Maintains all functional requirements while optimizing PPA

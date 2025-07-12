@@ -1,0 +1,5 @@
+To implement the data width conversion circuit, we will use a finite state machine (FSM) to track the status of the input data and generate the output accordingly. The FSM will have two main states: an idle state and a data_lock state. In the idle state, the circuit waits for the first valid input data. When the first valid data is received, it is stored in a temporary register (data_lock) and the FSM transitions to the data_lock state. In this state, the circuit waits for the second valid input data. Once the second valid data is received, the FSM concatenates the stored data_lock and the new data_in to form the 16-bit output data_out and sets valid_out to high. The circuit then resets to the idle state, waiting for the next pair of input data.
+
+The data_out register is triggered on the positive edge of the clock signal (posedge clk) or the negative edge of the reset signal (negedge rst_n). On reset, indicated by !rst_n, the data_out register and the internal registers are cleared to 0.
+
+We will use two internal registers, data_lock and flag, to store the first valid data and the status of the FSM, respectively.

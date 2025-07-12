@@ -1,0 +1,5 @@
+Optimize the FSM by switching from one-hot encoding to binary encoding to reduce flip-flop count and dynamic power. Use a 2-bit state register instead of 4 FFs, cutting state FFs from 4 to 2. Generate the done signal combinationally for a one-cycle pulse to eliminate unnecessary register toggling.
+
+Add an enable signal to shift register and bit counter to reduce toggling outside RECEIVE state. Only shift and count bits when in RECEIVE. Avoid resetting shift_reg and bit_count in multiple states unnecessarily—reset only on reset or IDLE state. This reduces unnecessary toggling and saves power.
+
+Overall, these changes reduce area and power, keep timing similar or improve it by reducing state decoding complexity, and preserve functionality and synchronous reset behavior.

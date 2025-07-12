@@ -1,0 +1,12 @@
+Fusion strategy to create a superior solution:
+
+1. Use a single always block with synchronous active-low reset for simplicity and timing clarity.
+2. Compute the next accumulator value in a combinational wire (`acc_next`) to offload addition from sequential logic, improving timing.
+3. Update accumulator and count only when `valid_in` is high to reduce unnecessary toggling and save power.
+4. On the 4th valid input, output the sum (`acc_next`), pulse `valid_out` for one cycle, and reset the accumulator and count immediately to prepare for the next batch, reducing switching.
+5. Default `valid_out` to 0 each cycle to ensure a one-cycle pulse without extra gating.
+6. Keep the accumulator and counter width minimal but sufficient: accumulator is 10 bits to hold sums up to 4 * 255 = 1020.
+7. Use non-blocking assignments consistently inside sequential logic to ensure proper synchronous operation.
+8. Keep code clean and minimal for good readability and small area footprint.
+
+This fusion leverages the timing and power optimizations of the second example and the simplicity and clarity of the first example, producing a clean, power-efficient, and timing-friendly design.

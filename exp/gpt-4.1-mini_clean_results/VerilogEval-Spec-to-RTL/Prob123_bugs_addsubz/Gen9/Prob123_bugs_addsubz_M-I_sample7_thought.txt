@@ -1,0 +1,15 @@
+The current design correctly implements the adder-subtractor with an explicit carry chain and a zero flag, but it uses a ripple-carry approach which limits performance, and the carry signals consume some area and power.
+
+To optimize for PPA:
+
+- Performance: Implement a carry-lookahead adder (CLA) instead of ripple carry to reduce worst-case carry propagation delay, improving timing.
+
+- Power and Area: Simplify the design by replacing the explicit carry chain and generate loop with a more compact logic using Verilog's built-in addition operator on conditionally inverted B. Modern synthesis tools efficiently map this to optimized hardware, usually using carry chains or DSP blocks, reducing area and power.
+
+- Maintain zero flag computation via reduction NOR (~|out) for clean zero detection.
+
+Thus, the improved design uses the classic two's complement approach for subtraction (conditional inversion + carry-in) and a single '+' operator for better optimization by synthesis tools. This typically leads to smaller, faster, and lower power implementations on ASICs and FPGAs.
+
+Also, fix the original bug by properly assigning the zero flag for all cases (including non-zero output) using reduction NOR, not just for zero.
+
+In summary, the improved code simplifies logic, leverages synthesis optimizations, and preserves correctness with better PPA trade-offs.

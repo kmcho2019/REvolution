@@ -1,0 +1,14 @@
+To optimize the PPA metrics, I'll implement a more direct solution by:
+1. Analyzing the Karnaugh map to derive a minimized Boolean expression
+2. Aggressively using don't-care conditions to simplify the logic
+3. Implementing the logic with minimal gates and no intermediate wires
+4. Combining cases where possible to reduce area
+
+The optimized logic can be expressed as:
+out = (~c & ~d & (a | b)) | (c & ~(a & ~b)) | (d & c)
+
+This combines:
+- cd=00 case: output 1 when a or b is true (ab=10 or 11)
+- cd=1x cases: output 0 only when ab=01 (a&~b), else 1
+- cd=01 case: always 0 (merged into the general case)
+This implementation uses fewer gates and eliminates intermediate variables.

@@ -1,0 +1,19 @@
+The feedback indicates timing mismatches between the pipeline stages and testbench expectations. Here's the improved approach:
+
+1. Pipeline Alignment:
+   - Reduce pipeline stages from 3 to 2 to match expected latency
+   - Combine partial product generation and first addition into stage 1
+   - Make final addition stage 2
+
+2. Input Handling:
+   - Remove unnecessary input extension registers
+   - Perform zero extension combinatorially to maintain timing
+
+3. Reset Synchronization:
+   - Maintain consistent reset behavior across all stages
+   - Ensure all registers clear properly on reset
+
+4. Optimization:
+   - Keep registered partial products for better timing
+   - Maintain clean separation between pipeline stages
+   - Ensure output is available after 2 clock cycles

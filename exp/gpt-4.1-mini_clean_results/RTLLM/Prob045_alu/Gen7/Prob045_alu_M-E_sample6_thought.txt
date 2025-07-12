@@ -1,0 +1,7 @@
+Implement a combinational 32-bit MIPS ALU that selects the operation based on the 6-bit control input `aluc`. To differentiate from the example, the design uses a multi-step approach inside the combinational block: first precompute basic operations (add, subtract, bitwise ops, shifts) with wires and variables to avoid repetitive calculations. The addition and subtraction are computed with 33-bit width to capture carry/borrow and overflow. Overflow detection uses explicit logic based on sign bits of inputs and outputs.
+
+The shifts are implemented using variable shift amounts from either `a[4:0]` or the immediate shift amount as per opcode. Instead of a case statement, the design uses if-else branches to clearly separate arithmetic, logic, shifts, and special instructions (LUI, SLT, SLTU), improving clarity. The `flag` output is only driven for SLT and SLTU instructions, otherwise driven to 0 to avoid high-impedance which is synthesis-unfriendly.
+
+All output flags (`zero`, `carry`, `negative`, `overflow`, `flag`) are assigned combinationally outside the main combinational block for immediate updates with the result `r`. The `negative` flag is the MSB of `r`. The `zero` flag is high when result is zero. This modular approach ensures clean separation of logic and eases extensibility.
+
+This approach aims for readability and clarity, with precomputation of results and explicit flag assignments, and avoids driving outputs to high-impedance, suitable for synthesis and easy debugging.

@@ -1,0 +1,7 @@
+Replace the SystemVerilog enum type with simple `localparam` constants for states (Verilog-2001 style). This ensures compatibility with Verilog-only tools and removes the need for explicit casting. Use a single reg variable to hold the current state and next state as a `reg [2:0]`.
+
+The FSM structure and logic remain unchanged. This maintains clarity and correctness while ensuring successful synthesis and simulation.
+
+This style also avoids enum overhead and can be marginally more area and performance friendly on some tools since it's pure Verilog and simpler for synthesis.
+
+Additionally, keep the Moore FSM output logic separated and use synchronous reset logic as before.

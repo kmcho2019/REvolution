@@ -1,0 +1,11 @@
+To refactor the LFSR implementation while maintaining the same functionality:
+1. Instead of using an always block with individual bit assignments, we'll use a continuous assignment (assign) for the next state logic
+2. The feedback logic remains the same: taps at positions 5 and 3 (bits 4 and 2)
+3. We'll use a wire for the next state and a register for the current state
+4. The synchronous reset still initializes to 5'b00001
+5. This approach separates the combinational logic from sequential elements, which can sometimes help with synthesis optimization
+
+Key changes:
+- Combinational next-state logic moved to assign statements
+- Sequential elements kept in always block
+- Clear separation between combinational and sequential logic

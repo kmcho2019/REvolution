@@ -1,0 +1,13 @@
+Improvement strategy:
+1. Fix pattern detection timing: Ensure we only check for 1101 after exactly 4 bits are shifted in
+2. Correct shift counter: Make shift_ena assert for exactly 4 cycles (count 0-3)
+3. Simplify state machine: Remove redundant bit counter and use shift register directly
+4. Clearer state transitions: Ensure each state transition happens exactly when required
+5. Proper output timing: Align outputs precisely with state machine behavior
+
+Key changes:
+- Remove separate bit counter, use shift register fill status
+- Fix shift counter to count 4 cycles properly
+- Ensure pattern check only happens when shift register is full
+- Make state transitions more explicit
+- Maintain outputs only during required states

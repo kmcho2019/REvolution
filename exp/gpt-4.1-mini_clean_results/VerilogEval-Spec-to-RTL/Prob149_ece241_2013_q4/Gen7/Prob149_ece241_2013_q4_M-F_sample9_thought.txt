@@ -1,0 +1,21 @@
+The main issue is the handling of the previous water level (`prev_level`) and the detection of changes in the water level to correctly control the supplemental flow valve (`dfr`). The original code updates `prev_level` only when `sensor_level` changes, but it does so simultaneously with updating `curr_level`. This can cause `prev_level` to lag incorrectly if multiple sensor changes happen in a single clock cycle or if sensor inputs glitch.
+
+To fix this:
+
+1. Use a register to store the `prev_level` *before* updating the current level so that `prev_level` always reflects the level immediately prior to the most recent stable change.
+
+2. Detect when `curr_level` has actually changed from its previous state by comparing it to its registered previous state. Only update `prev_level` when a stable change in `curr_level` is detected.
+
+3. Implement a simple 2-flip-flop synchronizer stage for the sensor inputs to reduce glitches and metastability in the asynchronous sensor signals.
+
+4. Initialize outputs to the reset state (max flow) synchronously by assigning outputs combinationally from registers that are reset to the proper state.
+
+5. Make sure all signals and variables use strictly Verilog-2001 compatible constructs, and avoid SystemVerilog features.
+
+6. Drive outputs combinationally from registered `curr_level` and `prev_level` values.
+
+This approach ensures `dfr` is asserted only on a *rising* water level event—when `curr_level` increases compared to `prev_level` at the moment `curr_level` changes. Synchronizing sensor inputs helps to avoid false triggers caused by glitches. Proper synchronous reset initialization guarantees outputs start in the correct state.
+
+The rest of the nominal flow rate logic stays unchanged.
+
+Overall, this ensures stable, glitch-free detection of water level changes and correct supplemental flow valve control.

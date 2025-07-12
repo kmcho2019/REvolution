@@ -1,0 +1,12 @@
+After carefully re-analyzing the waveform, here's the corrected behavior:
+1. State transition occurs when:
+   - a is 1 and b is 1 (toggles state)
+   - a is 0 and b is 0 (sets state to 1)
+2. Output q is:
+   - 1 when (state is 1 AND b is 0) OR (state is 0 AND b is 1)
+   - 0 otherwise
+This matches all waveform cases:
+- At 75ns: a=0,b=0 sets state=1
+- At 95ns: a=1,b=1 toggles state from 0 to 1
+- q follows XOR(b,state) pattern (opposite of previous XNOR)
+Initial state is 0.

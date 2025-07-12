@@ -1,0 +1,7 @@
+To improve power and potentially timing without altering functionality, we can add a clock enable (ce) signal to the state register so it only updates when the state is expected to change—i.e., when load is asserted or the next state differs from the current state. This reduces unnecessary toggling of the flip-flops, lowering dynamic power. 
+
+The logic compares next_q and state_q; if they differ, we update the register; otherwise, we hold the current state. This also effectively gates the clock enable internally, allowing the register to avoid redundant writes.
+
+This simple clock enable addition is low-overhead, maintains synchronous reset/loads, and can significantly reduce switching activity during stable periods, benefiting power and possibly improving timing by reducing unnecessary register toggling.
+
+All other structural and functional aspects remain unchanged.

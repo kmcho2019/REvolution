@@ -1,0 +1,8 @@
+The key fix is to align the module's output port names with the problem specification exactly: the outputs must be named Y2 and Y4, corresponding to the next-state signals for y[1] and y[3] respectively. The previous code incorrectly used Y1 and Y3 instead, which causes port mismatches with the testbench and verification environment.
+
+I will rename outputs to Y2 and Y4 and assign them properly based on the derived next-state logic from the one-hot encoding and state transitions.
+
+- Y2 corresponds to next-state bit y[1] (state B), and from transitions, it is active when current state is A and input w=0, so Y2 = y[0] & ~w.
+- Y4 corresponds to next-state bit y[3] (state D), which is active when w=1 and current state is any of B, C, D, E, or F. So, Y4 = w & (y[1] | y[2] | y[3] | y[4] | y[5]).
+
+This aligns with the specification, fixes interface mismatch errors, and keeps the logic correct.

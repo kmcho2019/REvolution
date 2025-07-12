@@ -1,0 +1,36 @@
+The module tracks the water level based on the 3-bit input s representing sensors s[2:0].
+Each sensor asserts when the water is above that sensor's level.
+From the problem statement:
+- When all three sensors are asserted (s==3'b111), water level is above s[2], flow rate zero (all outputs deasserted).
+- When none asserted (s==3'b000), water level below s[0], all fr signals asserted.
+- Between levels are intermediate sensor patterns:
+  - s==3'b011 (s[0], s[1] asserted): between s[2] and s[1], nominal flow fr0.
+  - s==3'b001 (only s[0]): between s[1] and s[0], nominal flow fr0 and fr1.
+For the dfr (Supplemental flow valve), it is asserted if the previous water level was lower than the current water level.
+
+Approach:
+- Define discrete water levels as an enumerated type or integers for comparison:
+  0 = Below s[0]       (s==000)
+  1 = Between s[1],s[0] (s==001)
+  2 = Between s[2],s[1] (s==011)
+  3 = Above s[2]         (s==111)
+
+- On each clock edge:
+  - Sample s, decode it into current_level.
+  - Compare current_level with previous_level to set dfr (assert if current_level > previous_level).
+  - Set fr signals according to the current_level's nominal flow:
+    - 3: no fr signals asserted
+    - 2: fr0
+    - 1: fr0 and fr1
+    - 0: fr0, fr1, fr2
+- On reset:
+  - Set state to below s[0], i.e. current_level=0 (lowest level), with all fr signals asserted and dfr asserted to reflect "low for a long time".
+Note: dfr is only asserted if water level has risen. Since reset sets it to the lowest level, dfr will be asserted only when water level climbs.
+This requires storage of previous_level in a register to compare on each clock.
+
+Implementation:
+- synchronous reset
+- registers previous_level and current_level (2-bit)
+- combinational logic to decode s to level
+- combinational logic to drive fr signals per current_level
+- dfr driven from comparing current_level to previous_level

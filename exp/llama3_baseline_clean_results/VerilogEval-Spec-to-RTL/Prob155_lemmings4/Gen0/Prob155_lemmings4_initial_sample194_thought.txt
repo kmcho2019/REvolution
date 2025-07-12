@@ -1,0 +1,14 @@
+To implement this behavior, we can define a finite state machine (FSM) with the following states:
+- WALK_LEFT: the Lemming is walking left
+- WALK_RIGHT: the Lemming is walking right
+- FALL: the Lemming is falling
+- DIG: the Lemming is digging
+- SPLATTER: the Lemming has splattered and cannot move anymore
+
+The FSM will transition between these states based on the input signals.
+For example, when the Lemming hits an obstacle on the left, it will transition from WALK_LEFT to WALK_RIGHT.
+When the ground disappears, the Lemming will transition from WALK_LEFT or WALK_RIGHT to FALL.
+When the Lemming is told to dig and it is walking on ground, it will transition from WALK_LEFT or WALK_RIGHT to DIG.
+When the Lemming falls for more than 20 clock cycles and hits the ground, it will transition from FALL to SPLATTER.
+
+We can use a counter to keep track of how long the Lemming has been falling.

@@ -1,0 +1,5 @@
+The existing code can be improved by using a state machine to manage the outputs. The state machine can have two states: "normal" and "emergency". In the "normal" state, the `keep_driving` output is determined by the `arrived` and `gas_tank_empty` inputs. In the "emergency" state, the `shut_off_computer` output is set to 1, and the `keep_driving` output is set to 0. The state machine transitions from "normal" to "emergency" when the `cpu_overheated` input is 1.
+
+This approach provides a clear and structured way to manage the outputs, and it allows for easy addition of new states or transitions if needed. It also improves code readability and maintainability.
+
+To implement this idea, we can use an enum to define the states, and a variable to store the current state. We can then use a combinational logic to determine the next state based on the current state and the inputs. Finally, we can use a case statement to determine the outputs based on the current state.

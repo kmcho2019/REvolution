@@ -1,0 +1,11 @@
+Fuse the best aspects of both examples to create a clear, efficient, and synthesis-friendly decade counter:
+
+1. Use explicit bitwise detection of decimal 10 (`q == 4'b1010`) as a simple wire with minimal gates (`q[3] & ~q[2] & q[1] & ~q[0]`) to keep combinational logic minimal and fast.
+2. Keep combinational next-state logic separate and simple, generating `next_q` based on the current count and synchronous reset signal for clarity.
+3. Implement synchronous reset as active high inside the combinational logic for `next_q`, so the sequential block only updates the register from `next_q`. This unifies reset and count logic in one place, simplifying timing and synthesis.
+4. Use non-blocking assignments only in the sequential block triggered by the clock to update `q`.
+5. Avoid extra clock enables or complex gating, favoring simplicity and stable timing.
+6. The final design updates the counter from 1 up to 10 inclusive, wrapping after 10 back to 1, and resets synchronously to 1.
+7. This fusion merges the clean separation and clarity of combinational/ sequential logic from Example 1 with the minimal detection logic and synchronous reset approach to achieve minimal combinational overhead, good PPA, and easy maintainability.
+
+This approach yields a readable, low-area, low-power decade counter suitable for synthesis and timing optimization.

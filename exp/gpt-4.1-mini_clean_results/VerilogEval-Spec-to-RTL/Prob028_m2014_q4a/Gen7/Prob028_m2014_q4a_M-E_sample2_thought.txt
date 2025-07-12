@@ -1,0 +1,13 @@
+To create a synthesis-friendly D latch without relying on self-holding behavior or combinational always blocks that confuse tools, we can use a simple asynchronous reset style latch implementation by exploiting a transparent level-sensitive latch using a pair of non-blocking assignments.
+
+Specifically:
+
+1. Implement the latch with a clocked always block triggered by ena (level-sensitive) and d.
+2. Use a temporary register to hold the intermediate value of d when ena is high.
+3. When ena is low, keep the output stable by assigning q <= q (explicitly holding the value).
+4. Use non-blocking assignments to better guide synthesis tools.
+5. Keep q declared as reg output.
+
+This approach explicitly models the latch behavior without relying on self-holding logic implicitly. It uses non-blocking assignments with an else branch that explicitly holds the value, improving synthesis compatibility across tools by unambiguously defining latch behavior.
+
+This differs from the previous approach by including an explicit else branch and using non-blocking assignments inside a level-sensitive latch inference always block, which should be accepted by most synthesis tools and avoid mapping to unknown cells.

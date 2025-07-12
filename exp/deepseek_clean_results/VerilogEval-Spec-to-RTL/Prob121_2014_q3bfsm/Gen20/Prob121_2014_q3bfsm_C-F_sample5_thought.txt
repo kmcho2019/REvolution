@@ -1,0 +1,30 @@
+Fusion strategy for optimal PPA (Power, Performance, Area):
+
+1. State Encoding: Use binary encoding (3 bits) for minimal area while maintaining parameterized states for readability, combining the best of both examples.
+
+2. State Transition Logic: 
+   - Single always block (from Example 1) for sequential logic to reduce area
+   - Clear case structure (from Example 2) for better readability and synthesis
+   - Remove default case since all states are explicitly covered (PPA optimization)
+
+3. Output Logic:
+   - Keep combinational (from both examples) for simplicity
+   - Optimize to check only the two states that produce z=1 (S3 and S4)
+   - Use OR operation for minimal logic
+
+4. Reset Handling:
+   - Maintain synchronous reset (both examples) for consistent timing
+   - Reset to S0 (000) as specified
+
+5. Power Optimization:
+   - Binary encoding reduces switching power compared to one-hot
+   - No unnecessary default case reduces power consumption
+
+6. Timing Optimization:
+   - Direct state transitions in a single always block
+   - Minimal output logic reduces combinational path delay
+
+7. Area Optimization:
+   - Binary encoding uses minimum flip-flops (3 bits for 5 states)
+   - No redundant logic (removed default case)
+   - Minimal output logic gates

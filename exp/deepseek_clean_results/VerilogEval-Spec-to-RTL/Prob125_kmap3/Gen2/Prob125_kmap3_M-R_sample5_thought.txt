@@ -1,0 +1,14 @@
+To correctly implement the Karnaugh map, we need to carefully analyze the truth table while strategically using the don't-care (d) conditions to simplify the logic. The output pattern shows:
+
+1. When c=0:
+   - Output is 0 when ab=00 or 01
+   - Output is 1 when ab=10 or 11
+   - Don't-care when cd=0001 (we'll treat as 0)
+
+2. When c=1:
+   - Output is 0 only when ab=00
+   - Output is 1 for all other ab combinations
+   - Don't-cares when cd=0110 and cd=0111 (we'll treat as 1)
+
+This can be expressed as: out = (c & (a | b)) | (~c & a & b)
+We can further optimize by observing that when c=1, output is 1 unless ab=00, and when c=0, output is 1 only when ab=11. The don't-cares allow us to simplify this to: out = (c & (a | b)) | (~c & a & b)

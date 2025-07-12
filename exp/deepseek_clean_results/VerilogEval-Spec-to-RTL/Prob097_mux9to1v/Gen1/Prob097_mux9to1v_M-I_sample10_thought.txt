@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. **Power Optimization**:
+   - Use a hierarchical multiplexer structure (two levels: first 3-to-1, then 3-to-1) to reduce switching activity and fan-out
+   - Implement the default case (16'hFFFF) using a simple OR reduction of the select lines for unused cases, avoiding full mux routing
+
+2. **Area Optimization**:
+   - The hierarchical approach will reduce the overall mux size and complexity
+   - The default case logic will be simplified to just detect sel >= 9
+
+3. **Performance**:
+   - The hierarchical structure will reduce the critical path compared to a single large 9-to-1 mux
+   - The simplified default case logic will be faster than routing through the mux
+
+The improved design will maintain the same functionality while achieving better PPA metrics.

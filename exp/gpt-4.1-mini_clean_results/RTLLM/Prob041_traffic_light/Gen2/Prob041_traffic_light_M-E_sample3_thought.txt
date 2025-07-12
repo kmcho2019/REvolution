@@ -1,0 +1,23 @@
+I will implement a Moore FSM traffic light controller with four states including an explicit idle state as per the problem statement. The states are: idle, s1_red, s2_yellow, s3_green.
+
+- In the idle state, all lights are off; the controller transitions immediately to s1_red.
+- In s1_red, red light is on for 10 clock cycles.
+- In s2_yellow, yellow light is on for 5 clock cycles.
+- In s3_green, green light is on for 60 clock cycles, but if the pedestrian button is pressed and remaining green time > 10, shorten remaining green time to 10.
+
+The design maintains:
+
+- A state register for current state.
+- An 8-bit counter `cnt` counting down for the current state's duration.
+- Output registers red, yellow, green updated on state change.
+- A register to keep the previous values of red/yellow/green to determine the exact time to reload counter on state change.
+- The FSM transitions when cnt reaches 0.
+- The pedestrian pass_request logic applies only during s3_green and will adjust cnt down to 10 if cnt>10.
+
+This approach keeps output signals stable within each state, aligns exactly with problem timing, and explicitly includes idle state. It also uses non-blocking assignments and clear, simple combinational next_state logic for clarity.
+
+Outputs are assigned synchronously based on current state, and the clock output carries the current count value.
+
+The pedestrian button shortening logic is done inside the sequential block to ensure timing correctness.
+
+This completely different structure ensures clarity and precise timing per the problem description.

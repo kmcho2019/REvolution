@@ -1,0 +1,11 @@
+Simplify the FSM by using only three states: IDLE, RECEIVE, and WAIT_STOP. Combine CHECK_STOP functionality into RECEIVE by checking the stop bit immediately after receiving 8 data bits. Use a simple 2-bit state encoding with one-hot style to keep logic minimal.
+
+Shift the received bits directly into the least significant bit position using left shift for clarity (MSB ends up at bit 7), but since LSB-first is needed, shift right inserting new bits on MSB side is fine. Keep done as a registered signal asserted one cycle after successful byte reception.
+
+Avoid the separate CHECK_STOP state by adding stop bit validation within RECEIVE, transitioning directly to either IDLE on success or WAIT_STOP on error. This reduces the state machine complexity from four states to three.
+
+Use synchronous reset and all non-blocking assignments. Reset bit count and shift register at IDLE and WAIT_STOP states only.
+
+This simpler FSM still correctly detects a start bit (0), receives 8 bits LSB first, checks for stop bit (1), and asserts done for one clock cycle only if the byte was correctly received. It also waits in WAIT_STOP until a stop bit is found if an error occurs.
+
+Overall, this approach maintains full functionality with fewer states and simpler transitions.

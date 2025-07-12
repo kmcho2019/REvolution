@@ -1,0 +1,14 @@
+The original implementation is already minimal and efficient for the given simple combinational logic. The outputs heater, aircon, and fan are computed with minimum logic, and signals are clearly separated for readability and possible synthesis optimization. 
+
+However, a potential minor improvement can be to remove intermediate signals and combine the logic expressions directly to possibly reduce the number of nets the synthesis tool must track, which can sometimes yield a slightly smaller netlist and power, especially for very small logic functions.
+
+Additionally, by implementing the logic in a continuous assignment with minimal intermediate signals and no redundant logic, we reduce net count and may help slightly with area and power.
+
+Thus, the optimization strategy:
+- Remove intermediate wires heater_on and aircon_on.
+- Compute outputs directly in combinational assignments.
+- Use minimized expressions directly.
+
+This keeps the design purely combinational, minimal, and may further improve area/power marginally by letting synthesis infer minimal logic.
+
+The core functionality remains unchanged, and the change is a small structural refactor to potentially reduce net overhead and thus improve PPA slightly.

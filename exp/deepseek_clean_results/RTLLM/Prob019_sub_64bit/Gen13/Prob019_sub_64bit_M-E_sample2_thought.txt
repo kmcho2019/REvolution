@@ -1,0 +1,21 @@
+Novel Architecture: Hybrid Carry-Select with Conditional Sum
+1. **Hierarchical Subtraction**:
+   - Split the 64-bit operation into 8x 8-bit segments
+   - Each segment computes both possible results (with carry-in 0 and 1)
+   - Final carry chain selects correct results in parallel
+
+2. **Conditional Sum Optimization**:
+   - Each 8-bit block generates sum for both carry scenarios
+   - Carry propagation only needed between blocks (reduces critical path)
+   - Mux trees select final results based on actual carries
+
+3. **Early Overflow Detection**:
+   - Monitor MSB segment's carry behavior
+   - Combine with sign bit analysis for precise overflow
+   - Uses carry look-ahead principles for early flag generation
+
+Key Advantages:
+- Faster than pure carry-lookahead for wide adders
+- Balanced pipeline stages for better timing
+- Lower power than ripple-carry alternatives
+- Scalable to even wider bit-widths

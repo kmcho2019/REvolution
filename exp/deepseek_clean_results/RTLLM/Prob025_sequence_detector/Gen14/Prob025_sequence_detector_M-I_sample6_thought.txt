@@ -1,0 +1,21 @@
+To optimize the sequence detector for better PPA (Power, Performance, Area) metrics while maintaining functionality, I propose these improvements:
+
+1. Timing Optimization:
+   - Pipeline the detection logic by adding a register stage for the output
+   - This will improve clock frequency capability by breaking the critical path
+
+2. Power Optimization:
+   - Add an enable signal to freeze the shift register when not needed
+   - This reduces unnecessary switching activity
+
+3. Area Optimization:
+   - Maintain the efficient shift register approach
+   - Keep the simple combinational logic for pattern matching
+   - The area is already minimal at 25 um^2
+
+Key improvements:
+- Pipelined output improves timing (reported WNS of -0.13ns)
+- Enable signal reduces dynamic power
+- Maintains the same small area footprint
+- Still detects sequences in 4 cycles (with 1 cycle output latency)
+- Fully synchronous design for better timing closure

@@ -1,0 +1,11 @@
+To optimize the 16-bit adder for better performance and potentially power without significantly increasing area, I will improve the 8-bit adder's carry look-ahead logic by implementing a hierarchical carry look-ahead scheme.
+
+Specifically, instead of calculating the carry for each bit sequentially (which forms a linear chain), I will compute group propagate and generate signals for 4-bit subgroups within the 8-bit adder. Then, calculate carries to each 4-bit boundary in parallel, reducing the carry chain length from 7 to 1 for these group calculations. This decreases carry delay and improves the critical path.
+
+The overall approach divides the 8-bit adder into two 4-bit blocks, each with local propagate/generate signals and sums. Then use a higher-level carry look-ahead logic to compute carries between these blocks quickly.
+
+The 16-bit adder instantiates two such enhanced 8-bit adders. This hierarchical structure lowers carry propagation delay and can reduce switching activity in the carry chain, potentially lowering power without significantly increasing area.
+
+I will also use generate blocks to compact repetitive assign statements for cleanliness.
+
+This improves performance by reducing carry propagation stages, slightly reduces dynamic power by limiting carry toggling, and maintains area close to the original.

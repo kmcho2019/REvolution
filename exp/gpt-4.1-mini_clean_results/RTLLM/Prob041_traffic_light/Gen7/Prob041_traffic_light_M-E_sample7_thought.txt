@@ -1,0 +1,7 @@
+Implement a Moore state machine controlling the traffic lights with four states: idle, red, yellow, and green. Use an 8-bit countdown timer loaded with the state's duration at entry. The FSM will start at idle, immediately transition to red state, then cycle through green, yellow, and back to red.
+
+To handle the pedestrian button's request, monitor the green state countdown. If the pedestrian button is pressed and the timer is greater than 10, shorten the green duration by loading the timer with 10 at the next clock cycle (only once per green phase). Use a dedicated flag to avoid repeatedly shortening the green time.
+
+Use a single always block to update the timer and state synchronously, and another always block to generate outputs from the current state. The count is output for monitoring purposes.
+
+This architecture is simple, uses clear timing, and applies the pedestrian request logic on the timer counter itself, ensuring clean control and minimal combinational logic. The reset initializes the FSM at idle and the count to zero.

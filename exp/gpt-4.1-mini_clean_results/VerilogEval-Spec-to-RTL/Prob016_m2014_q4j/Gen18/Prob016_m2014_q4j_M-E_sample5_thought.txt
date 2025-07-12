@@ -1,0 +1,16 @@
+Implement a 4-bit adder using a hierarchical carry-select approach to achieve faster carry resolution compared to ripple-carry and simpler carry-lookahead logic. The main idea is:
+
+- Divide the 4-bit addition into two parts: lower 2 bits and upper 2 bits.
+- Compute the sum and carry-out for the lower 2 bits using a ripple-carry adder.
+- For the upper 2 bits, precompute two possible sums and carry-outs assuming carry-in = 0 and carry-in = 1.
+- Select the correct upper sum and carry-out based on the actual carry-out from the lower 2 bits.
+- Combine lower sum, selected upper sum, and the final carry-out as the 5-bit sum output.
+
+Advantages:
+- Carry-select reduces the carry propagation delay compared to pure ripple-carry over 4 bits.
+- The modular approach uses small ripple-carry blocks to simplify logic.
+- No complex generate/propagate signals, leading to straightforward combinational logic.
+- The design is easily scalable by adjusting the size of the carry-select blocks.
+- Only necessary logic is used; no redundant carry calculations or unused outputs.
+
+This approach balances between area, power, and speed in a neat modular style.

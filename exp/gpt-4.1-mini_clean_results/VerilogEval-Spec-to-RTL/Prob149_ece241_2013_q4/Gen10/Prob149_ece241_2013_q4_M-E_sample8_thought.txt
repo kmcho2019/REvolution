@@ -1,0 +1,16 @@
+Implement a state machine that explicitly tracks the water level as one of four discrete states representing below s[0], between s[0] and s[1], between s[1] and s[2], and above s[2]. On each clock, decode the sensor input to the new level state and compare it with the previous state.
+
+Maintain a register that stores the previous water level *at the moment the sensor state changes* (i.e., when the water level state transitions). This allows detecting whether the level rose or fell.
+
+Outputs are driven based on the current water level state as per the provided mapping:
+
+- Above s[2]: no valves open (fr0=fr1=fr2=0)
+- Between s[2] and s[1]: fr0=1 only
+- Between s[1] and s[0]: fr0=fr1=1
+- Below s[0]: fr0=fr1=fr2=1
+
+The supplemental flow valve (dfr) is enabled if the water level rose compared to the previous stored level at the last change.
+
+Synchronous reset sets the state to below s[0], opens all flow valves (max flow), and initializes previous level tracking accordingly.
+
+This approach ensures precise level change detection, clean separation of states, and consistent output logic directly derived from state, avoiding glitches or ambiguous transitions.

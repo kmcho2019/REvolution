@@ -1,0 +1,17 @@
+To improve the given design, I will address these key points:
+
+1. **Toggle timing**: Instead of toggling the divided clocks at `NUM_DIV-1`, toggle them at `(NUM_DIV-1)/2`, which splits the count evenly for odd division, ensuring the output clock period is correctly divided by the odd number.
+
+2. **Reset synchronization**: Change asynchronous reset (negedge rst_n) to synchronous active low reset to avoid glitches and ensure deterministic initialization.
+
+3. **Output clock generation**: OR-ing `clk_div1` and `clk_div2` signals is correct because each toggles at half-period offsets, generating a near 50% duty cycle output for odd divisors.
+
+4. **Counters counting**: Counters count from 0 up to `NUM_DIV-1` to generate correct toggling edges.
+
+5. **Parameter checks**: Keep the compile-time check for odd NUM_DIV.
+
+6. **Code style and comments**: Add clear comments and define localparams for half period and maximum count to clarify logic.
+
+This results in a clean, glitch-free, and functionally correct odd frequency divider.
+
+The output frequency is clk / NUM_DIV, with good duty cycle symmetry.

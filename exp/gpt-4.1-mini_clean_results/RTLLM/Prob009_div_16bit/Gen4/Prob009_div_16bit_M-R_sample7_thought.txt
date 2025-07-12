@@ -1,0 +1,17 @@
+Refactor the combinational division logic to a single always block triggered by inputs A and B, removing the redundant input latching block.
+
+Use a wider remainder register of 16 bits to hold the intermediate remainder and make sure to extract the top divisor-width bits from the shifted remainder during each iteration.
+
+At each iteration, shift the remainder left by 1 and bring in the next dividend bit from A (starting from MSB). Compare the top 8 bits of the remainder (i.e., remainder[15:8]) with divisor B:
+
+- If remainder[15:8] >= B, subtract B shifted into remainder's upper bits and set the quotient bit.
+
+- Else, keep quotient bit zero.
+
+This matches the requirement to extract the highest bits matching divisor width and repeat the process for all bits.
+
+After all 16 iterations, the lower 8 bits of remainder contain the remainder (aligned to 8 bits), which is zero-extended to 16 bits for output.
+
+This method follows the problem's approach, removes unnecessary register assignments, and cleanly implements division combinationally using a single always block without clocking.
+
+No input registers are needed, so inputs are used directly.

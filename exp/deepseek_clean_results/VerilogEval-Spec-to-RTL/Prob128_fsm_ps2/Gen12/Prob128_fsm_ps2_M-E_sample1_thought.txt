@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Instead of using a counter-based FSM, implement a 24-bit shift register to capture potential message sequences
+2. Continuously shift in new bytes while checking for valid message patterns
+3. Use pattern matching to detect when the first byte of each 3-byte group has in[3]=1
+4. This approach allows for parallel checking of all possible message alignments
+5. Done is asserted when a complete valid 3-byte message is detected at any alignment
+
+Advantages:
+- Can potentially detect messages faster than sequential approaches
+- More tolerant to intermediate byte corruption
+- Easier to extend for longer message patterns
+- No explicit state machine needed

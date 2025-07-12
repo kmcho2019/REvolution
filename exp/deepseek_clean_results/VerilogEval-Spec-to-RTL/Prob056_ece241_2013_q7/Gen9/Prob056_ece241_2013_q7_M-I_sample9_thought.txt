@@ -1,0 +1,18 @@
+To improve the PPA metrics, particularly focusing on the timing violation (negative WNS), I'll implement the following optimizations:
+
+1. Simplify the logic expression to reduce the critical path:
+   - The current expression uses three AND-OR terms which creates multiple logic levels
+   - We can rewrite it using XOR operations which are more efficient in hardware
+   - The new expression will be: Q_next = (j & ~Q) | (~k & Q)
+
+2. This new expression:
+   - Matches the JK flip-flop truth table exactly
+   - Reduces the number of logic operations
+   - Uses only two terms instead of three
+   - Should result in better timing due to fewer logic levels
+
+3. The improvement should:
+   - Reduce the critical path delay (improving WNS)
+   - Maintain the same functionality
+   - Potentially reduce area slightly by using fewer gates
+   - Keep power consumption low

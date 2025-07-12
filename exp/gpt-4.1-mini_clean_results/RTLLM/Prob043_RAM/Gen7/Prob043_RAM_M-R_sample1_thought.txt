@@ -1,0 +1,13 @@
+Refactoring Idea:
+
+We keep the core functionality unchanged: synchronous write and gated read. However, to demonstrate a different structure:
+
+1. Use a single always block triggered on the clock for both read and write operations.
+2. Implement registered read output instead of combinational read to improve timing stability and output predictability.
+3. Use a synchronous reset to clear the read_data output register only, without resetting the entire RAM contents.
+4. Initialize RAM via an initial block as before.
+5. Read enable gates the loading of the output register; when inactive, output register clears to zero.
+
+This structure simplifies timing by registering read data, providing one clock cycle latency on read but stabilizing the output, which can be beneficial in many designs.
+
+Note: The RAM contents are not cleared on reset to avoid complex reset logic on RAM.

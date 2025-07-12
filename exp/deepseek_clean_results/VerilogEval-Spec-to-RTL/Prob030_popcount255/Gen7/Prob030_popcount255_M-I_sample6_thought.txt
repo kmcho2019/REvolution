@@ -1,0 +1,12 @@
+To optimize the population count circuit for better PPA (Power, Performance, Area), we'll implement these improvements:
+1. Use a balanced binary adder tree structure to reduce critical path delay
+2. Optimize partial counters to use minimum required bit-width (3 bits for 8-bit chunks)
+3. Eliminate the partial_counts array by directly accumulating in a tree structure
+4. Use proper bit-widths throughout to minimize area
+5. Structure the design to allow better synthesis optimization
+
+The new implementation will:
+- Split input into 8-bit chunks (31 full chunks + 1 partial)
+- Count 1s in each chunk using 3-bit counters
+- Sum results using 4-level binary adder tree
+- Maintain same functionality with better PPA characteristics

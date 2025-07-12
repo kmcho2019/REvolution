@@ -1,0 +1,38 @@
+To implement the required logic for out_sop and out_pos, first convert inputs (a,b,c,d) into a 4-bit number with 'a' as the most significant bit and 'd' as the least significant bit. Then implement:
+
+1. out_sop is logic-1 when input is 2, 7, or 15, else 0.
+2. out_pos is minimal product-of-sums expression for the same function.
+
+Instead of directly writing SOP or POS from minterms or maxterms, we take a structural approach:
+
+- Use a 4-bit vector combining inputs as: {a,b,c,d}
+- Compare input number against each of the desired output=1 values (2,7,15) using equality comparators.
+- OR the equality signals for out_sop.
+
+For out_pos:
+
+- Express the function as a product of sums by analyzing the zeros and don't-cares.
+
+However, since 3,8,11,12 never occur (don't-cares), the function is only specified on the rest of inputs.
+
+We'll implement out_pos using the minimal POS expression derived from Karnaugh map with don't-cares considered.
+
+Alternatively, since the function is '1' only at 2,7,15 and '0' at the given zeros, and the rest are don't-cares, the minimal POS can be realized by factoring the terms to yield fewer literals.
+
+To showcase a novel architecture:
+
+- Build an equality checker module that takes input vector and constant value and outputs 1 if equal.
+- Use this module for each '1' condition and OR the outputs for out_sop.
+- For out_pos, build a custom logic directly implementing the minimized POS expression derived below.
+
+Minimal POS expression (with don't-cares) can be derived as:
+
+From the problem's zeros (0,1,4,5,6,9,10,13,14) and don't-cares (3,8,11,12), the minimal POS is:
+
+out_pos = (a + b + c + d) & (a + b + ~c + d) & (a + ~b + c + d) & (~a + b + c + d)
+
+This can be simplified further by sharing literals.
+
+Alternatively, realize out_pos structurally by NAND/NOR gates corresponding to the product of sums.
+
+This modular approach enhances clarity and reusability.

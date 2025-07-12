@@ -1,0 +1,17 @@
+To design the 16-bit divider module, we will use two always blocks in Verilog. The first always block will update the values of two registers, a_reg and b_reg, with the values of A and B, respectively. The second always block will perform the division operation. It will extract the higher bits of the dividend, compare them with the divisor, and update the quotient and remainder accordingly. This process will be repeated until all dividend bits are processed.
+
+The division process involves the following steps:
+- Extract the higher bits of the dividend, matching the bit width of the divisor.
+- Compare these bits with the divisor: if the dividend bits are greater, set the quotient to 1, otherwise set it to 0, and use the difference as the remainder.
+- Concatenate the remainder with the highest remaining 1-bit of the dividend.
+- Repeat the process until all dividend bits are processed.
+
+The result of the division will be stored in the 'result' output port, and the remainder will be stored in the 'odd' output port.
+
+Here's the step-by-step breakdown of the division process:
+1. Initialize quotient to 0 and remainder to the dividend.
+2. While there are still bits left to process in the dividend:
+   - Compare the higher bits of the remainder (matching the bit width of the divisor) with the divisor.
+   - If the higher bits of the remainder are greater than or equal to the divisor, subtract the divisor from these higher bits and set the corresponding bit in the quotient to 1.
+   - Shift the remainder left by 1 bit and fill the new bit with the next bit from the dividend.
+3. After processing all bits, the quotient will be stored in the 'result' output port, and the remainder will be stored in the 'odd' output port.

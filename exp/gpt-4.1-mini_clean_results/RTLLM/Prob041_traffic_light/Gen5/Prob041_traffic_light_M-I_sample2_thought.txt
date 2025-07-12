@@ -1,0 +1,10 @@
+To optimize the provided solution for better power, performance, and area (PPA), I will implement clock enable gating to prevent unnecessary state and timer register updates when the timer is not changing (e.g., when timer is zero and state transition is about to happen). Also, I will separate the state transition logic and timer decrement logic for clearer synthesis optimization. The shortened_flag logic will be updated only once per green phase and use a load-enable style update to minimize toggling.
+
+In addition, output signals will be registered to avoid glitches and reduce switching power on outputs. This approach will improve timing predictability and power efficiency while maintaining the same functionality.
+
+Key improvements:
+- Add clock enable gating for state/timer registers.
+- Register outputs red, yellow, green for glitch-free stable outputs.
+- Separate combinational logic blocks cleanly.
+- Use local parameters and minimize combinational dependencies.
+- Maintain shortened_flag only during green phase, cleared on other states.

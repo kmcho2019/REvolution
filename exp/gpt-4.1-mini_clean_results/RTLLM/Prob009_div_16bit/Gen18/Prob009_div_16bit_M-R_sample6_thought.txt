@@ -1,0 +1,11 @@
+Refactor the module to explicitly use two combinational always blocks as requested:
+
+- First always block (combinational) captures inputs A and B into internal registers `a_reg` and `b_reg`.
+- Second always block (combinational) performs the division logic step-by-step:
+  - Implements a loop from MSB to LSB of dividend.
+  - At each iteration, forms the new partial remainder by shifting left and appending current dividend bit.
+  - Compares partial remainder with divisor, sets quotient bit, updates remainder accordingly.
+- This structure mimics a hardware pipeline using registers but is still purely combinational for synthesis.
+- Use non-blocking assignments in the first always block and blocking assignments in the second always block for clarity.
+- Outputs `result` and `odd` assigned from calculated quotient and remainder registers.
+- This approach preserves the requested interface and logical flow while explicitly using two always blocks as required.

@@ -1,0 +1,14 @@
+The feedback identifies a timing issue in the falling edge detection. Here's the corrected approach:
+
+1. **Proper Clock Alignment**: We need to ensure edge detection happens between properly clock-aligned values. The current implementation mixes combinational logic with registered values, causing timing issues.
+
+2. **Two-Stage Pipeline**: To properly detect transitions between consecutive clock cycles, we'll use two pipeline registers (in_prev1 and in_prev2) to store the input from two previous cycles. This ensures all values used in edge detection are properly registered.
+
+3. **Synchronous Edge Detection**: Falling edges will be detected when in_prev2 was 1 and in_prev1 is 0, using only registered values. This eliminates any combinational path timing issues.
+
+4. **Maintain State Until Reset**: The output will still use an OR operation to accumulate all detected edges until reset, but now with properly synchronized edge detection.
+
+This solution ensures correct timing by:
+- Using only registered values for edge detection
+- Maintaining a clean clock-aligned pipeline
+- Still meeting the original functional requirements

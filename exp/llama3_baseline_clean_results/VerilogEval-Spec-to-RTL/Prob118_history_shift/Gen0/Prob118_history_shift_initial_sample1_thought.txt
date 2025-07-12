@@ -1,0 +1,9 @@
+The TopModule will implement a 32-bit global history shift register. It will have two main operations: updating the branch history when a branch prediction is made, and rolling back the state when a branch misprediction occurs. The module will have an internal 32-bit register to store the current branch history. 
+
+When a branch prediction is made (predict_valid = 1), the module will shift in the predict_taken value from the LSB side of the register, effectively updating the branch history for the predicted branch. 
+
+When a branch misprediction occurs (train_mispredicted = 1), the module will load the branch history register with the history after the completion of the mispredicted branch, which is the train_history concatenated with the actual result of the branch (train_taken). 
+
+In case of both a prediction and a misprediction occurring at the same time, the misprediction will take precedence, as the pipeline flush will also flush out the branch that is currently making a prediction. 
+
+The module will also have an asynchronous reset (areset) that resets the history register to zero when asserted.

@@ -1,0 +1,7 @@
+To simplify the design, we can remove the explicit combinational falling edge signal and directly compute the falling edge inside the sequential always block. By updating `prev_in` and `out` registers together on the clock edge, we reduce the need for an extra wire.
+
+The output `out` can be updated by OR-ing its current value with the detected falling edges on each clock cycle, ensuring the output latches the event until reset.
+
+Synchronous reset clears both `prev_in` and `out` registers to a known state.
+
+This simplification keeps the same functionality but reduces code lines and removes an explicit combinational wire.

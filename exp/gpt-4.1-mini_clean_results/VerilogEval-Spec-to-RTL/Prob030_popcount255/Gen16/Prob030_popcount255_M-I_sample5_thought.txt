@@ -1,0 +1,17 @@
+To improve PPA metrics over the recursive binary tree approach, I will implement a flat, balanced adder tree using fixed-size groups. Since the input width (255 bits) is fixed and known, I can partition the input into 16 groups of 16 bits each plus one extra 15-bit group (since 16*16=256, but we have 255 bits), and compute the population count for each group with small 16-bit popcount units that are fully unrolled. Then, sum all partial counts in a balanced adder tree.
+
+This strategy reduces the number of hierarchical module instantiations and simplifies addition stages by grouping, improving area and power due to less overhead in recursive splitting.
+
+16-bit popcount blocks can be implemented using a fast parallel technique (e.g., the standard parallel popcount with a tree of adders). After computing each 16-bit block popcount (5 bits wide), the partial sums are combined in a 5-level adder tree to produce the final 8-bit output.
+
+No recursion is used; all structures are explicitly defined for clarity and synthesis optimization.
+
+This fixed-size, hierarchical approach is more amenable to synthesis tool optimization, reduces the number of adders and wiring, shortens critical paths, and reduces switching by localizing counting in small blocks.
+
+Because 255 bits don’t fit evenly into 16-bit blocks, the last block is only 15 bits; its popcount output width is 4 bits (ceil(log2(16))=5 but max count for 15 bits is 15 which fits in 4 bits, so output width is 4 bits).
+
+The summation of sixteen 5-bit values plus one 4-bit value (for the last block) will be done with a balanced tree of adders leading to an 8-bit output count.
+
+This solution balances modularity, efficiency, and clarity for better PPA.
+
+No always blocks needed; only combinational logic.

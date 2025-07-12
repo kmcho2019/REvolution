@@ -1,0 +1,17 @@
+Based on the provided feedback and analysis, it appears that there are a few potential issues with the current implementation of the TopModule. 
+
+Firstly, the asynchronous reset 'areset' is active-high, which is unusual and might be causing issues. However, this alone would not cause the mismatches seen in the simulation log.
+
+Secondly, the 'train_pending' signal is set to 1 when 'train_valid' is high and then reset to 0 when 'train_valid' is low. This means that the PHT will only be updated once per cycle, even if 'train_valid' is high for multiple cycles.
+
+Thirdly, the PHT update logic seems to be correct, but the 'predict_taken' and 'predict_history' signals are updated based on the current state of the PHT and the global history. If the PHT is not being updated correctly, this could cause the predictor to produce incorrect results.
+
+Lastly, the 'next_global_history' signal is updated based on the current state of the PHT and the global history, but it does not take into account the 'train_taken' signal. This could potentially cause issues if the predictor is not properly recovering from mispredictions.
+
+To fix these issues, we need to modify the code to properly handle the asynchronous reset, ensure that the PHT is updated correctly, and take into account the 'train_taken' signal when updating the 'next_global_history' signal. 
+
+We can achieve this by changing the reset to active-low, removing the 'train_pending' signal and updating the PHT directly when 'train_valid' is high, and modifying the 'next_global_history' signal to take into account the 'train_taken' signal.
+
+Additionally, we need to ensure that the predictor is properly recovering from mispredictions. This can be achieved by updating the 'next_global_history' signal to the correct value when a misprediction occurs.
+
+By addressing these issues, we can ensure that the branch predictor functions correctly, providing accurate predictions and updates to the global history and PHT.

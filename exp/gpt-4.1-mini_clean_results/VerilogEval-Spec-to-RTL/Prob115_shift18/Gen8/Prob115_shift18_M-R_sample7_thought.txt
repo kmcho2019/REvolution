@@ -1,0 +1,9 @@
+Refactor the module to use a fully combinational next-state logic and an always block only for register update. The shift computation is done in a separate combinational block with an intermediate wire "next_q" that captures the load or shifted value depending on control inputs. This clarifies the data flow and separates combinational and sequential logic more explicitly.
+
+Use a single always block triggered on clk to update q with next_q, which simplifies the always block to just a register update without nested conditionals. 
+
+Maintain the same shift logic but replace multiple small mux stages with a single case statement selecting the shifted value based on amount, which improves readability and helps synthesis tools optimize the mux tree.
+
+Keep the arithmetic right shift implemented by sign extension concatenation, but consolidate shift operations into a case statement using the amount signal directly, avoiding separate direction and shift-by-8 signals to reduce overhead.
+
+This restructuring improves code clarity, eases verification, and can help synthesis tools optimize mux and shift logic by using a single case statement and clear separation of combinational and sequential parts.

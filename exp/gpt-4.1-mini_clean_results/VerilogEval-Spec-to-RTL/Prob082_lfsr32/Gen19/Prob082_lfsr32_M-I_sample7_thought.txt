@@ -1,0 +1,11 @@
+The existing implementation is clean and straightforward but to improve timing (WNS and TNS), I will optimize the LFSR update logic by precomputing the feedback bit and using combinational logic to compute the next state before registering it. This approach reduces the critical path to a single XOR and shift without conditional branching in the sequential block, making it easier for synthesis tools to optimize.
+
+Specifically:
+- Calculate the feedback bit as q[0].
+- Compute the next state combinationally: next_q = (q >> 1) ^ (feedback ? TAP_MASK : 0).
+- Register next_q on the positive clock edge.
+- Maintain synchronous active-high reset.
+  
+This combinational precomputation reduces logic depth inside the sequential block, possibly improving timing and power by removing branching and enabling better XOR-tree optimization. The overall structure remains simple and area should remain similar or slightly improved due to clearer logic expression.
+
+The taps and reset behavior remain unchanged to preserve functionality.

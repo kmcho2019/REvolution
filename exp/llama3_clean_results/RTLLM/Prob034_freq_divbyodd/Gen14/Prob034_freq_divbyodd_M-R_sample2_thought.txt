@@ -1,0 +1,9 @@
+To refactor the given code, we need to address the issues mentioned in the feedback. First, we should restructure the logic for toggling the clock dividers `clk_div1` and `clk_div2`. Instead of using `if (cnt1 == (NUM_DIV / 2))`, we should check if `cnt1` has reached half of `NUM_DIV - 1` since `cnt1` counts from 0 to `NUM_DIV - 1`.
+
+We will also use separate counters for rising and falling edges, but instead of using `if (clk)` and `if (~clk)` inside the always block, we will use two separate always blocks, one for the positive edge and one for the negative edge.
+
+To simplify the code, we can use `assign` statements for some of the logic, such as the final divided clock output `clk_div`.
+
+Additionally, we will remove the unnecessary condition `if (NUM_DIV % 2 == 1)`, as the parameter `NUM_DIV` is already defined to be an odd number.
+
+By using these approaches, we can create a cleaner, more efficient, and correct implementation of the frequency divider.

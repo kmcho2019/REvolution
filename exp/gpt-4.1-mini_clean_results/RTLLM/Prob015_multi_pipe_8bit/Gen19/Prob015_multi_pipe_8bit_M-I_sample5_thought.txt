@@ -1,0 +1,11 @@
+To optimize the previous two-stage pipeline multiplier for better performance, power, and area, we can break the large combinational addition of all eight partial products into a multi-stage pipelined adder tree. This reduces the critical path by distributing additions across multiple pipeline stages, allowing higher clock frequencies (improving timing). It also reduces switching activity per stage (saving power) and can lower adder complexity (reducing area). 
+
+Concretely:
+- Stage 1: Register inputs and mul_en_in.
+- Stage 2: Generate partial products and register them.
+- Stage 3: Perform first level of partial product pairwise additions, register sums.
+- Stage 4: Final additions to compute product, register product and output enable.
+
+The output enable signal is propagated through the pipeline registers to maintain valid signal timing. If mul_en_in is low, input registers hold their value and no new multiplication starts. The output product is gated by mul_en_out.
+
+This 4-stage pipeline reduces combinational delay per cycle and power by clock gating stages implicitly through enable signals. Overall latency increases from 2 to 4 cycles, but throughput improves and critical path shrinks significantly.

@@ -1,0 +1,9 @@
+The original solution implements q as the inverted 'a' sampled at the positive clock edge (q <= ~a). This matches the waveform perfectly. To improve PPA, we can note that the design logic is a single inverted input passed through a flip-flop. The inversion can be integrated inside the flip-flop data input expression directly, eliminating the separate inverter wire. This simplifies the netlist slightly and reduces the combinational path to a single inverter inside the flip-flop. 
+
+For power, since q toggles whenever a toggles (inverted), and considering the original waveforms, clock gating or data enable is unnecessary as data changes every cycle in some cases. However, removing the explicit inverter net can marginally reduce switching power.
+
+For area, no additional logic added means no area overhead.
+
+For performance, integrating inversion directly in the d input reduces net capacitance and wire delay.
+
+Hence, the optimization is to combine inversion expression directly at the DFF input without an extra inverter net. This keeps behavior identical but can reduce area and power slightly.

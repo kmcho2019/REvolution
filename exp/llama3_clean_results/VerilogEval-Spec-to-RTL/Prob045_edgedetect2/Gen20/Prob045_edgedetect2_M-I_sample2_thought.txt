@@ -1,0 +1,15 @@
+To improve the existing solution, we will focus on optimizing it for better Power, Performance, and Area (PPA) metrics based on the provided metrics. Given that the design is already quite efficient, our strategy involves fine-tuning the sequential logic and the edge detection mechanism to minimize unnecessary switching activity and optimize the use of hardware resources.
+
+First, we will maintain the use of two 8-bit registers for the current and previous states, as this provides clarity and modularity to the design. The explicit initialization of these registers ensures predictable behavior from the start.
+
+For the edge detection mechanism, the XOR operation (`^`) between the current and previous states is optimal for detecting any edge (rising or falling) and will be retained. This operation is both simple and efficient, making it suitable for digital design.
+
+To optimize performance, we will ensure that the sequential logic updates and the XOR operation are properly pipelined. This involves updating the previous state and the current state in the same always block, which helps in minimizing the critical path and potentially improving the effective clock period.
+
+For power optimization, we will aim to minimize unnecessary switching activity. Given that the output's switching activity is inherently tied to the input's behavior in edge detection, significant power reductions might be challenging without compromising functionality. However, we will ensure that the internal state updates are done in a way that minimizes switching activity.
+
+In terms of area optimization, the current implementation is already minimalistic. We will avoid introducing unnecessary logic that could increase the area usage.
+
+Given the PPA metrics, our main focus will be on improving the effective clock period and reducing power consumption while maintaining or improving the area efficiency. This will involve careful examination of the synthesis report to identify potential bottlenecks and areas for improvement.
+
+The improved solution will build upon the existing design, refining it for better performance, power efficiency, and area usage. By doing so, we aim to achieve a better PPA score while maintaining the functionality of detecting any edge in an 8-bit input vector.

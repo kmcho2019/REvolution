@@ -1,0 +1,18 @@
+The simplified implementation maintains the core Radix-4 Booth algorithm while reducing complexity:
+
+1. **Reduced State Machine**: 
+   - Eliminate explicit INIT state by combining with reset initialization
+   - Use simple counter-based completion instead of state machine
+
+2. **Simplified Booth Encoding**:
+   - Direct arithmetic implementation instead of case statement
+   - Remove prev_lsb tracking since we process 2 bits at a time
+
+3. **Optimized Registers**:
+   - Use minimum required bit widths (9-bit for sign extension)
+   - Reduce counter to 2 bits (only need 0-4 counts)
+
+4. **Streamlined Operation**:
+   - Single always block for cleaner implementation
+   - Direct assignment of ready signal based on counter
+   - Simplified shift operations

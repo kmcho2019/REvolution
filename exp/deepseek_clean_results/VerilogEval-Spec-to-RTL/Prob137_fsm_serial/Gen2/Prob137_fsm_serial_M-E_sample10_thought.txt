@@ -1,0 +1,7 @@
+Instead of using separate states for receiving and stop bit verification, we can combine these functions into a continuous shift operation with built-in validation. The key innovations are:
+1. Use an 11-bit shift register to capture the entire frame (start + 8 data + stop bits)
+2. Implement parallel checking of start and stop bits while shifting
+3. Use a counter to track valid shifts only when in frame
+4. Generate 'done' when the full frame is received with correct start/stop bits
+
+This approach reduces state transitions and combines error checking with data collection, potentially improving timing and power efficiency.

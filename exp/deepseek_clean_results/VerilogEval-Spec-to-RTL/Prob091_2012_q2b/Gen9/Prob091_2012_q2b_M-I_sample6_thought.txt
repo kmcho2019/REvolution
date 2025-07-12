@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. **Power Optimization**: The current Y3 logic (~w & ~y[0] & ~y[3]) has three inversion operations which contribute to dynamic power. We can reduce this by:
+   - Using positive logic where possible
+   - Sharing common subexpressions between Y1 and Y3
+
+2. **Area Optimization**: 
+   - The current implementation uses separate gates for each term
+   - We can leverage the one-hot property to simplify logic
+   - Combine terms that naturally occur together in the state transitions
+
+3. **Logic Simplification**:
+   - Y1 only needs y[0] & w (already optimal)
+   - Y3 can be expressed as transitions into state D (y[3]), which occurs when:
+     * In state B (y[1]) and w=0
+     * In state C (y[2]) and w=0
+     * In state E (y[4]) and w=0
+     * In state F (y[5]) and w=0
+   - This results in fewer total operations while maintaining correctness
+
+4. **PPA Benefits**:
+   - Reduced gate count → lower area
+   - Fewer inversions → lower power
+   - Same logic depth → maintained performance
+   - Still maintains one-hot safety

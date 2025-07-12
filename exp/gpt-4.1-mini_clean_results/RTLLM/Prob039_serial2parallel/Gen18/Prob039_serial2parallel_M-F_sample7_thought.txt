@@ -1,0 +1,21 @@
+To fix the timing mismatch between the shift register update and output assignment, we should decouple the logic that updates the shift register from the logic that sets the output signals. Specifically, the shift register should be updated first on every valid input. Then, the output parallel data (`dout_parallel`) should be assigned from the updated shift register only on the cycle when the last (8th) serial bit is received.
+
+Because non-blocking assignments update registers after the always block finishes, we cannot reliably use the updated `shift_reg` value immediately in the same clock cycle. Instead, we use the counter `cnt` to detect when the 8th bit arrives (when `cnt == 7`), and on that cycle, we assign `dout_parallel` from the *new* shift register value (which can be formed by the shifted version). However, to avoid duplicated code and inconsistency, we should first update `shift_reg` with the new bit, then assign `dout_parallel` from the updated `shift_reg` value in the *next* cycle. But the requirement is to assert `dout_valid` immediately when the 8th bit arrives.
+
+Hence, the best practical approach is:
+
+1. Update the shift register by shifting in the new bit at MSB every `din_valid` cycle.
+
+2. Use the counter to track the number of bits received.
+
+3. When `cnt` is 7 (meaning the 8th bit is just received), assign `dout_parallel` to the *new* shift register value formed by shifting in the current bit (identical to the shift operation we perform for `shift_reg`), and assert `dout_valid` for one cycle.
+
+4. Reset counter to 0 at this point to prepare for the next 8-bit word.
+
+This avoids reading `shift_reg` before it updates, ensures `dout_parallel` reflects all 8 bits in the correct MSB-first order, and guarantees `dout_valid` is asserted for exactly one cycle.
+
+Additionally, `dout_valid` is cleared every cycle by default to avoid extended assertion.
+
+This design aligns with synchronous logic best practices, uses only non-blocking assignments, and matches the required functionality.
+
+The synchronous active-low reset initializes all registers to zero to ensure a known starting state.

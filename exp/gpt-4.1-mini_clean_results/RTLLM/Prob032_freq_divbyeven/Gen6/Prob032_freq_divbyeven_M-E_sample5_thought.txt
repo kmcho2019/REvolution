@@ -1,0 +1,16 @@
+To implement an even-frequency divider in a new architectural style, I will use a modulo counter that counts from 0 up to NUM_DIV - 1 and directly derive the output clock from the MSB (most significant bit) of this counter.
+
+Since NUM_DIV is even, dividing the input frequency by NUM_DIV can be achieved by counting through NUM_DIV clock cycles and toggling the output every NUM_DIV/2 cycles, which means the MSB of a counter that counts modulo NUM_DIV toggles at exactly half the period.
+
+Therefore, by using a binary counter that counts 0 to NUM_DIV-1, and setting clk_div as the MSB bit of this counter, I obtain the desired frequency division without explicit toggling or manual toggling logic.
+
+This approach simplifies logic, reduces flip-flops required, and inherently guarantees a 50% duty cycle output clock.
+
+The design features:
+- A parameterizable NUM_DIV (even number).
+- A synchronous active-low reset.
+- A counter of sufficient width to count 0 to NUM_DIV-1.
+- clk_div output assigned as the MSB of the counter.
+- Compile-time check ensures NUM_DIV is even.
+
+This architecture is efficient, clean, and uses the natural binary counting scheme to generate the divided clock.

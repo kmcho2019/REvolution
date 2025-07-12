@@ -1,0 +1,20 @@
+After carefully analyzing the waveform patterns and the issues in the previous implementation, here's the corrected approach:
+
+1. Key Behavioral Observations:
+   - p copies 'a' only at rising clock edges when q=0
+   - q becomes 1 only after p has been 1 for one full clock cycle (seen at both edges)
+   - q resets to 0 when 'a' is high during a falling clock edge
+   - p stays 0 when q=1
+   - Initial state has both p and q at 0
+
+2. Corrected Implementation Strategy:
+   - Use a state machine with two states: IDLE (q=0) and ACTIVE (q=1)
+   - Track previous p value to detect full-cycle condition
+   - Implement synchronous behavior for p updates
+   - Implement asynchronous reset for q when a=1 at falling edge
+   - Maintain clean separation of synchronous and asynchronous behaviors
+
+3. State Management:
+   - p updates synchronously on rising clock edge
+   - q updates based on previous p state and reset condition
+   - Reset condition occurs specifically at falling edge with a=1

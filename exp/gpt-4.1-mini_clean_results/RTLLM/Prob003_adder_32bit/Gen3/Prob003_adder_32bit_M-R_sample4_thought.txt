@@ -1,0 +1,5 @@
+Refactor the 16-bit CLA module to explicitly compute group generate and propagate signals using a hierarchical approach with intermediate group signals for faster carry computation. Instead of looping carry assignments, compute carries using group propagate/generate signals for every 4 bits to reduce carry propagation delay inside the 16-bit block. Use `assign` statements rather than generate loops for carry and sum assignments for clarity and explicitness.
+
+At the top-level 32-bit adder, keep the same structure of two 16-bit CLA instances but add an explicit expression for the carry-in to the upper block as the block generate plus block propagate times carry-in (here carry-in = 0). Use `[32:1]` indexing as requested.
+
+This approach enhances readability by unrolling carry computations with explicit intermediate group signals rather than looping, and showcases hierarchical carry lookahead within the 16-bit block.

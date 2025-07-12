@@ -1,0 +1,11 @@
+To solve this problem, we need to define a finite state machine with several states that model the behavior of the Lemming. The states will be: 
+- WALK_LEFT: walking left
+- WALK_RIGHT: walking right
+- FALL: falling
+- DIG_LEFT: digging while moving left
+- DIG_RIGHT: digging while moving right
+We also need to handle the transitions between these states based on the input signals.
+
+The state machine should start in the WALK_LEFT state after an asynchronous reset. When the Lemming is walking, it should switch direction if it is bumped on either side. If the ground disappears, the Lemming should start falling. If the Lemming is told to dig while walking on the ground, it should start digging in its current direction. If the Lemming is falling or digging and the ground reappears, it should resume walking in its original direction. If the Lemming is digging and the ground disappears, it should start falling.
+
+We will use a Moore state machine, where the outputs are determined solely by the current state.

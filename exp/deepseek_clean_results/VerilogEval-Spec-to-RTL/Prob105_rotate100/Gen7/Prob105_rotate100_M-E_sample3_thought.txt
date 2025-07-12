@@ -1,0 +1,10 @@
+Novel Architecture Idea: Barrel Rotator with Pre-decoded Control
+1. Instead of using multiplexers for rotation selection, implement a barrel rotator structure that can perform both left and right rotations in a single operation
+2. Pre-decode the control signals to generate rotation amount and direction
+3. Use a single large multiplexer stage that selects between:
+   - Load value (data)
+   - Left rotation (concatenate LSB to MSB-1)
+   - Right rotation (concatenate MSB to LSB+1)
+   - Current value (hold)
+4. This approach reduces the logic depth compared to cascaded multiplexers and may improve timing
+5. The control logic is simplified to direct selection of rotation paths

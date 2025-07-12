@@ -1,0 +1,5 @@
+Refactor the 8-bit carry lookahead adder to compute the carry signals using a generate loop and assign statements with prefix computations rather than explicit stepwise carry assignments. This approach leverages bitwise operations and parallel prefix carry calculations in a combinational way, avoiding the sequential assignment of carries. It uses the carry lookahead formula c[i+1] = g[i] + p[i]*c[i] recursively computed by a generate-for loop with intermediate carry vectors, which will be stored in a vector.
+
+Instead of multiple assign statements for each carry bit, we use a generate block to build the carry signals in a scalable way, and then sum bits are computed by XORing propagate with carry-in bits. The overflow detection logic remains the same (XOR of carry-in and carry-out of the MSB).
+
+This refactoring improves code readability and scalability without changing the core algorithm or performance characteristics.

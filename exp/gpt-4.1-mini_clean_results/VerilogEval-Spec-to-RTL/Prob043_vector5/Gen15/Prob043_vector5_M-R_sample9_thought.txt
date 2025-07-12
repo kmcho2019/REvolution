@@ -1,0 +1,5 @@
+Refactor the design to use a 2D array of the input bits and a generate loop to create the output vector. This approach explicitly computes the XNOR of all input pairs using a nested for-loop with generate constructs to avoid redundant manual assignments, improving scalability and readability.
+
+The output bits are mapped in row-major order, with the outer loop iterating over the first input index and the inner loop iterating over the second input index. The bit position is calculated as `bit_pos = 5*(4 - i) + (4 - j)` to preserve the original bit mapping from 24 down to 0, matching the example indexing.
+
+No internal registers or always blocks are needed; purely combinational assign statements inside generate loops create the entire output vector succinctly.

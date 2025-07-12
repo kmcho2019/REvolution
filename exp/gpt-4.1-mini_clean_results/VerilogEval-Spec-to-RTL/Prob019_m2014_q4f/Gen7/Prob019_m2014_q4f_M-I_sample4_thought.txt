@@ -1,0 +1,11 @@
+Given that the current implementation is already a minimal and optimal representation of an AND gate with a bubble on the in2 input (using assign out = in1 & ~in2;), it is unlikely to significantly improve PPA by altering the logic or gate structure at the RTL level. 
+
+However, one potential micro-optimization is to instantiate the primitive gates directly, explicitly showing the inverter on in2 followed by an AND gate. This could guide synthesis tools more precisely, possibly allowing better control over buffering and gate sizing, potentially reducing power or delay in some flows. 
+
+Still, given the extremely simple logic and negligible timing constraints, the impact will be minimal and area might increase slightly due to explicit gate instantiations.
+
+Overall, the improvement strategy is to use primitive gate instantiations (INV and AND) instead of behavioral assignment to provide more structural clarity and potential incremental synthesis benefits, though the gains will be marginal.
+
+If a specific synthesis flow favors explicit gate instantiation, this approach might marginally benefit PPA. Otherwise, keep the previous behavioral code.
+
+Below is the improved version using gate-level primitives.

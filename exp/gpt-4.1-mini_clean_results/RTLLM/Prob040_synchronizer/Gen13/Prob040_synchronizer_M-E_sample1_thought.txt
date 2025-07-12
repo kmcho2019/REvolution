@@ -1,0 +1,18 @@
+To provide a novel architectural approach, I will implement a multi-bit MUX-based synchronizer that uses explicit staging and a multiplexer to select the synchronized data output, improving clarity in data selection logic.
+
+Key points of this new design:
+
+1. clk_a domain:
+   - Sample and hold data_in into data_reg only when data_en is asserted.
+   - Sample and hold data_en into en_data_reg (1-bit register).
+   
+2. clk_b domain:
+   - Synchronize en_data_reg through two flip-flops (en_sync_stage1, en_sync_stage2) to safely transfer enable signal to clk_b domain.
+   - Use these synchronized enables to control a multiplexer that selects between the previous output dataout (latched in a register) and the newly synchronized data from clk_a domain.
+   - Specifically, when the enable signal is asserted (en_sync_stage2), output updated data_reg; else hold the previous output.
+   
+3. Since data_en is asserted for at least 3 clk_b cycles and data changes are at least 10 cycles apart, this double-stage enable sync with a mux ensures data stability and glitch-free dataout update.
+
+4. Asynchronous resets (arstn and brstn) are used as specified with active-low signals.
+
+This MUX-based approach clearly separates the data update logic and maintains data stability across clock domains with explicit control and data registers.

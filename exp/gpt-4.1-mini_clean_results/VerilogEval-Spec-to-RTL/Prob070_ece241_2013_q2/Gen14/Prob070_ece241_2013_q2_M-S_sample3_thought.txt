@@ -1,0 +1,38 @@
+Represent inputs as a 4-bit number W = {a,b,c,d} with a as MSB and d as LSB.
+
+Function f=1 for decimal values 2, 7, 15; f=0 for 0,1,4,5,6,9,10,13,14; and don't-cares for 3,8,11,12.
+
+Since only three minterms define f=1, the SOP is very simple:
+
+- Minterms for f=1: 2 (0010), 7 (0111), 15 (1111)
+
+For SOP: directly sum minterms as
+  f = m2 + m7 + m15
+
+This expands to:
+  (a'b'cd') + (a'bc d) + (a b c d)
+
+But this is complex; further minimization yields:
+  f = (c & d) | (~a & ~b & c & ~d)
+
+This is simple and minimal.
+
+For POS, express f as product of sums covering zeros:
+
+Zeros are at 0,1,4,5,6,9,10,13,14.
+
+Including don't-cares allows minimal POS as:
+
+  f = (a + b + ~c + d) & (a + ~b + ~c + ~d) & (~a + b + c + d)
+
+This minimal POS matches the SOP function exactly.
+
+However, to simplify further and reduce complexity, we can implement the SOP only and generate POS by De Morgan dual of SOP:
+
+Given f = (c & d) + (~a & ~b & c & ~d),
+
+POS can be expressed by factoring the complement f' and using De Morgan's law, but for simplification and clarity, keep both expressions as above since the POS is minimal and consistent.
+
+Implement both with continuous assign statements.
+
+This design is minimal, clear, and functional.

@@ -1,0 +1,7 @@
+To implement the TopModule with the given interface, we can follow these steps:
+1. Define the internal signals and registers: We need a 7-bit global branch history register, a 128-entry table of two-bit saturating counters (Pattern History Table), and internal wires to store the current state of the predictor.
+2. Implement the prediction logic: When predict_valid is high, we calculate the index into the Pattern History Table by hashing the current pc and global branch history using XOR. We then use this index to access the corresponding saturating counter in the Pattern History Table and produce the predicted branch direction.
+3. Implement the training logic: When train_valid is high, we update the Pattern History Table based on the actual branch outcome and whether the branch was a misprediction. If the branch was a misprediction, we also recover the branch history register to the state immediately after the mispredicting branch completes execution.
+4. Update the global branch history register: When predict_valid is high, we update the global branch history register at the next positive clock edge based on the predicted branch direction. If train_valid is high and the branch was a misprediction, we recover the branch history register to the state immediately after the mispredicting branch completes execution.
+
+We will use Verilog's non-blocking assignment to update the registers at the next positive clock edge.

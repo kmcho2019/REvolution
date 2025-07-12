@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. Pipeline the 24x24 multiplier into 2 stages to improve timing (wns violation)
+2. Reduce exponent width from 10 to 9 bits since we only need overflow detection
+3. Combine NaN/infinity detection logic to reduce area
+4. Register intermediate results in the critical path (exponent calculation)
+5. Optimize rounding logic to reduce switching activity
+6. Use one-hot state encoding for faster state transitions
+7. Add clock gating for the rounding logic when not needed
+8. Reduce product register width from 49 to 48 bits
+
+Key Optimizations:
+- Split multiplier into partial product generation (stage 1) and final addition (stage 2)
+- Simplified exponent handling with proper overflow detection
+- Combined special case detection with priority encoding
+- Registered intermediate results in critical paths
+- Reduced register sizes where possible

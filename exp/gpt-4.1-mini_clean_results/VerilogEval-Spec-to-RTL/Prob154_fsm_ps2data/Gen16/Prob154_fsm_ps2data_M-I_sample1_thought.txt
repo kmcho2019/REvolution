@@ -1,0 +1,10 @@
+To optimize power and timing further, the improved design will:
+
+- Use one-hot encoding for FSM states to reduce combinational logic delay on next_state decoding.
+- Introduce a clock enable signal for the out_bytes register, updating it only when a valid byte is loaded, thereby reducing toggling and power.
+- Drive 'done' as a combinational signal derived directly from the state transition condition instead of registering it, avoiding unnecessary flip-flop toggling.
+- Store each byte in a dedicated 8-bit register instead of shifting a 24-bit register. Concatenate them at output to reduce wide shift delay and routing complexity.
+- Implement synchronous active-high reset as required.
+- Keep the overall FSM and datapath simple and clean for better synthesis results.
+
+This approach reduces switching activity, simplifies sequential logic, and improves timing by minimizing wide shift operations and registered outputs that toggle unnecessarily.

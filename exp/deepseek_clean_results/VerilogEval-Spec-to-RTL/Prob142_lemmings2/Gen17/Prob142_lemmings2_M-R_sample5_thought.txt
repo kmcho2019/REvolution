@@ -1,0 +1,14 @@
+Refactored Design Approach:
+1. State Representation: Use one-hot encoding for states (LEFT, RIGHT, FALL_LEFT, FALL_RIGHT) to make transitions more explicit
+2. Transition Logic: Move all state transitions to combinational logic using assign statements
+3. Output Logic: Directly assign outputs based on current state
+4. Next State Logic: Use continuous assignments to calculate next state
+5. State Register: Keep sequential element only for state storage
+6. Reset Handling: Maintain async reset to walk left
+
+Key Changes:
+- One-hot state encoding makes state transitions more readable
+- Combinational logic moved to assign statements
+- Explicit fall states (FALL_LEFT/FALL_RIGHT) preserve direction during falls
+- Eliminates separate direction register by encoding direction in state
+- More verbose but potentially more maintainable structure

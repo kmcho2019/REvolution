@@ -1,0 +1,14 @@
+The original design uses four 16-bit carry-lookahead adders chained sequentially, which while faster than ripple carry, still has a linear carry chain of four stages for a 64-bit adder, which can be improved. 
+
+Improvement Strategy:
+- Implement a hierarchical 64-bit CLA based on grouping the bits into four 16-bit blocks, but instead of chaining the carry-outs linearly, implement a two-level carry-lookahead structure:
+  1. Compute 16-bit propagate and generate signals per block.
+  2. Use a top-level 4-bit CLA to compute the carries between blocks.
+  3. This reduces the carry chain depth from 4 stages to a logarithmic depth of 2 stages.
+- This method reduces the critical path delay and can improve timing (better WNS and TNS).
+- The area increase is minimal since the extra 4-bit CLA is small.
+- Power may slightly increase but likely improved due to reduced toggle on carry chain.
+- Maintain the same overflow detection logic.
+- This approach balances the complexity by hierarchical CLA to further speed up the subtraction.
+
+I will implement the 16-bit CLA blocks to output block propagate and generate signals, then use a small 4-bit CLA to compute carry-ins for each block, and feed these carry-ins into the 16-bit blocks to compute sums. Finally, detect overflow as before.

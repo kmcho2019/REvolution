@@ -1,0 +1,12 @@
+To optimize the given HDLC framing FSM for better PPA while maintaining clarity and correctness, I will:
+
+1. Use a binary-encoded 3-bit state that represents the count of consecutive ones (0 to 6).
+2. Introduce explicit output signals (disc, flag, err) registered and asserted for exactly one cycle after the corresponding input condition.
+3. Implement outputs and next-state logic separately for a clean Moore FSM with reduced combinational complexity.
+4. Replace the three special output states (SD, SF, SE) by output signals triggered in the next cycle when conditions are met, avoiding extra states.
+5. This reduces state bits from 4 to 3, simplifying state register and combinational logic, reducing area and switching.
+6. Using a simple synchronous reset and outputs registered on the clock edge ensures glitch-free, one-cycle pulse outputs.
+7. Overall, the FSM counts consecutive ones 0–6; detects disc (after 5 ones followed by 0), flag (6 ones followed by 0), and err (7 or more ones).
+8. Outputs are asserted for one cycle in the cycle after detecting the condition, as per specification.
+
+This approach reduces state bits and complexity, improves timing by simplifying next-state logic, decreases area, and likely reduces power by fewer state bits and no extra output states. It keeps the FSM Moore style with all outputs driven by state (and condition) but registered to provide required timing.

@@ -1,0 +1,5 @@
+To implement a 12-hour clock module, we will design separate counters for hours, minutes, and seconds. Each counter will be an 8-bit BCD counter, with the most significant bits being unused. The seconds counter will increment once per second when enabled, the minutes counter will increment when the seconds counter overflows (i.e., when seconds equals 59), and the hours counter will increment when the minutes counter overflows (i.e., when minutes equals 59). We will use the `ena` signal as an enable for the seconds counter and derive the necessary logic to handle overflows and resets.
+
+To handle AM/PM, we'll check the value of the hours counter and assert `pm` if the hours are in the range 12-11 (since BCD 12 is represented as 0001_0010, but we use 12 for 12 PM, thus hours value 12 is for PM, hours value 0 and 1 are for AM).
+
+The reset logic will reset the counters to their initial values when asserted high. Since the reset is synchronous, it will only be considered on the positive edge of the clock.

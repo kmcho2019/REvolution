@@ -1,0 +1,7 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the transitions and the corresponding next states based on the current state and the input w. Since a one-hot code is used for state assignment, each bit of y[5:0] represents a unique state. By analyzing the transitions, we can derive the logic for Y1 and Y3, which are the inputs to the state flip-flops y[1] and y[3], respectively.
+
+For Y1 (input of state flip-flop y[1]), it is high when the next state is B (000010) because in the one-hot encoding, y[1] represents state B. By inspecting the transitions, we can see that B can be reached from A when w is 1 or from D when w is 0.
+
+For Y3 (input of state flip-flop y[3]), it is high when the next state is D (001000) because in the one-hot encoding, y[3] represents state D. D can be reached from B when w is 0, from C when w is 0, or from E when w is 0, or from F when w is 0, or from D when w is 0 and the current state is D itself (though not directly stated, it's implied by the absence of any other transition from D with w=0).
+
+Given the one-hot encoding and the transition diagram, we can implement Y1 and Y3 by considering the conditions under which each next state (B for Y1 and D for Y3) can be reached.

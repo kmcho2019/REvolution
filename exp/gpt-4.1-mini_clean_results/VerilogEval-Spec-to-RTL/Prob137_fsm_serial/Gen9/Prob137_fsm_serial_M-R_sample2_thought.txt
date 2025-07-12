@@ -1,0 +1,9 @@
+Refactor the FSM to use a Moore machine style with a separate combinational always block for output logic only, keeping done as a registered output but generated purely from the current state instead of next state. Also, replace the enumerated typedef with parameterized localparams for better compatibility with plain Verilog tools. Use a single always_ff block for sequential state and data registers, and explicitly separate next-state logic into another combinational always block to clarify timing and logic separation.
+
+Implement the bit shifting so that the LSB comes in at the LSB side (shift left, inserting bit at bit 0), which better matches the LSB-first serial protocol convention and improves code readability.
+
+Reduce redundant resets of bit_count and shift_reg by only resetting them upon entering IDLE from other states or on reset, avoiding unnecessary toggling in other states to improve power efficiency.
+
+The done output is asserted for one cycle in the CHECK_STOP state when the stop bit is correct. This done signal depends solely on the current state and stop bit input, simplifying output logic.
+
+This refactoring provides a classic FSM structure (state/next_state, output combinational, sequential registers), better readability, cleaner output generation, and power-optimized data registers update.

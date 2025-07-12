@@ -1,0 +1,11 @@
+To improve the solution and correctly implement the frequency divider that divides the input clock frequency by an odd number, we need to address the issues mentioned in the feedback. 
+
+First, we must ensure that the counters are incremented at the correct clock edges. Since we need to track both rising and falling edges separately, we will use two separate counters, one for each edge, and increment them accordingly.
+
+Second, we need to correctly determine the threshold for toggling the divided clock signals `clk_div1` and `clk_div2`. Since `NUM_DIV` is odd, we will calculate the midpoint by integer division, which will truncate the result, giving us the nearest whole number below the midpoint.
+
+Lastly, we will maintain the logic of OR-ing `clk_div1` and `clk_div2` to produce `clk_div`, as this ensures the divided clock signal is high for both positive and negative edges of the input clock.
+
+For optimization, we will consider using a single counter that toggles at every clock edge (both rising and falling) and then checks if it has reached the midpoint to toggle the divided clock signals. This approach could reduce the area consumption by minimizing the number of counters and logic required.
+
+To further improve PPA, we will focus on reducing unnecessary logic and ensuring that the counters and dividers are implemented in a way that minimizes power consumption while maintaining performance.

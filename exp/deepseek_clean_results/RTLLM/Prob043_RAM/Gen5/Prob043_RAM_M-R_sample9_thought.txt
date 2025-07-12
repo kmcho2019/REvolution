@@ -1,0 +1,14 @@
+Refactoring approach:
+1. Maintain same functionality but optimize structure
+2. Use continuous assignments for read path to make it fully combinational
+3. Separate reset and write operations into distinct always blocks for clarity
+4. Use parameterized width/depth consistently throughout
+5. Remove redundant initial block since reset handles initialization
+6. Keep write operation synchronous for data integrity
+7. Simplify read output to maintain last value when not enabled (reduces switching)
+
+Key improvements:
+- Clear separation of combinational vs sequential logic
+- More efficient power usage by not forcing zeros on read_data when not enabled
+- Simplified initialization path
+- Better timing separation between reset and write operations

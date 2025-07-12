@@ -1,0 +1,23 @@
+The issue likely stems from duplicating the shift operation both in the shift register and again when assigning dout_parallel, which can cause timing confusion, and from dout_valid being asserted only when the shift and count update happen together.
+
+To fix this:
+
+1. Shift the incoming bit into shift_reg only when din_valid is high.
+
+2. Increment the counter cnt only when din_valid is high.
+
+3. When the counter reaches 7 (meaning 8 bits have been collected), assign dout_parallel directly from shift_reg (which now holds all 8 bits including the latest one shifted in) and assert dout_valid for one clock cycle.
+
+4. Reset cnt to zero right after outputting the parallel data to prepare for the next 8 bits.
+
+5. Clear dout_valid to zero at all other times to produce a single-cycle pulse.
+
+This approach avoids duplicating the shift logic in dout_parallel, ensuring a stable output, and cleanly separates counter and shift logic for clarity and synthesis friendliness.
+
+We keep the shifting order as {din_serial, shift_reg[7:1]} so that the first serial bit received goes to MSB as required.
+
+The output dout_valid pulse will be one clock cycle when 8 bits are collected.
+
+Also, the asynchronous reset clears all registers as required.
+
+This should address simulation issues and meet the specification.

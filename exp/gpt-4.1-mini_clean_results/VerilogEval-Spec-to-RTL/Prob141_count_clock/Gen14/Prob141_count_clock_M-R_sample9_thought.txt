@@ -1,0 +1,7 @@
+Refactor the design by using separate binary counters for seconds and minutes with modular arithmetic and combinational BCD conversion for outputs. This reduces the nested if-else logic and shortens the critical path inside the clocked always block.  
+Implement the hour counter also as a binary 1-12 counter with simple increment and wrap-around logic, toggling pm on the 11→12 transition.  
+Use synchronous reset with highest priority, then increment on enable pulses.  
+Convert binary seconds, minutes, and hours to BCD outputs via combinational functions for cleaner and more modular code.  
+This approach simplifies sequential logic, reduces combinational depth inside the clocked block, potentially improving timing and power by limiting complex nested conditions.  
+The design uses minimal flip-flops (only binary counters) and shifts conversion complexity to combinational logic which is lighter and more parallelizable in hardware.  
+Overall, the refactoring improves timing and readability while maintaining all functional requirements.

@@ -1,0 +1,19 @@
+To fix the issues identified in the feedback, we need to make the following improvements:
+
+1. Pattern Detection: Ensure we only detect the exact 1101 sequence by properly shifting in bits and checking the pattern only when we have 4 valid bits.
+
+2. Shift Counting: Maintain a separate counter for the SHIFT state that accurately counts exactly 4 cycles and resets properly.
+
+3. State Transitions: Ensure state transitions occur precisely when required:
+   - Move to SHIFT immediately after pattern detection
+   - Move to COUNT exactly after 4 shift cycles
+   - Move to DONE only when done_counting is high
+   - Return to IDLE only when ack is received
+
+4. Output Timing: Keep output assertions strictly tied to their respective states with proper timing.
+
+The key changes will be:
+- More careful pattern detection timing
+- Precise shift cycle counting
+- Strict state transition conditions
+- Clear output assignments

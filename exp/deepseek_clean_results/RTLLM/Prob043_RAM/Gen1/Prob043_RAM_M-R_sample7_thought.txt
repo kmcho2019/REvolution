@@ -1,0 +1,12 @@
+Refactored design with these key changes:
+1. Separated reset logic into a dedicated always block for cleaner timing
+2. Used continuous assignment for read_data output when read_en is active
+3. Removed the else clause that clears read_data when not reading
+4. Simplified the write operation block by removing reset condition
+5. Added clock gating suggestion in comments for power optimization
+
+The new structure:
+- Dedicated reset block initializes memory
+- Cleaner write operation block without reset
+- Read operation uses assign for output muxing
+- Maintains same functionality but with better timing potential

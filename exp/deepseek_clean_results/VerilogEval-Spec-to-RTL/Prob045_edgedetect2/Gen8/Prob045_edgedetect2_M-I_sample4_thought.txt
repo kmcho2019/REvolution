@@ -1,0 +1,19 @@
+The original solution is functionally correct but shows a slight timing violation (negative WNS). To improve PPA:
+
+1. Timing Improvement:
+   - Pipeline the XOR operation by adding an extra register stage to break the critical path
+   - This will improve timing at the cost of 1 additional cycle latency
+
+2. Power Optimization:
+   - Add clock gating to disable edge detection when not needed
+   - Use an enable signal to control the clock to sequential elements
+
+3. Area Consideration:
+   - The additional register will slightly increase area but improve timing
+   - The clock gating logic will add minimal area overhead
+
+The improved design will:
+- Maintain the same edge detection functionality
+- Add 1 cycle latency but improve timing closure
+- Reduce power consumption when edge detection is not needed
+- Keep area increase minimal

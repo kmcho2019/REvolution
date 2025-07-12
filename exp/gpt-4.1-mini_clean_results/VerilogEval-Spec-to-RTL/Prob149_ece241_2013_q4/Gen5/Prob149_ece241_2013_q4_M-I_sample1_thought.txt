@@ -1,0 +1,31 @@
+The key problem is incomplete and rigid decoding of sensor patterns, ignoring valid intermediate patterns that may appear in practice, and also the simplistic previous-level update logic that only updates when sensor pattern changes, possibly missing multi-cycle transitions or transient states.
+
+**Improvement strategy:**
+
+1. **Comprehensive sensor decoding:**
+   Instead of decoding only exact sensor patterns (111, 011, 001, 000), decode the water level based on which sensors are asserted:
+   - If s[2] = 1 → ABOVE
+   - Else if s[1] = 1 → BETWEEN s[2] and s[1]
+   - Else if s[0] = 1 → BETWEEN s[1] and s[0]
+   - Else → BELOW
+
+   This method naturally accommodates any combination or glitch in sensor inputs, reflecting the actual water level more reliably.
+
+2. **Reliable previous level update:**
+   Update `prev_level` only when `curr_level` changes, i.e., on transitions, but also make sure to update `prev_level` before changing `curr_level` to hold the level *before* the last sensor change. This was already done, but now with better decoding, transitions are correctly detected.
+
+3. **Outputs:**
+   Use the decoded `curr_level` to produce nominal valves:
+   - ABOVE (3) → none asserted
+   - BETWEEN s[2] and s[1] (2) → fr0 only
+   - BETWEEN s[1] and s[0] (1) → fr0, fr1
+   - BELOW (0) → fr0, fr1, fr2
+
+   Supplemental flow valve `dfr` asserted if `curr_level > prev_level`.
+
+4. **Reset:**
+   On synchronous reset, force curr_level and prev_level to BELOW and all valves asserted.
+
+This approach is simpler, covers all sensor patterns robustly, and keeps valve outputs logically consistent. It addresses the large number of mismatches in the previous design for `fr2` and `dfr`. It is also efficient, using only simple combinational decoding logic and minimal sequential state.
+
+The code below implements these improvements.

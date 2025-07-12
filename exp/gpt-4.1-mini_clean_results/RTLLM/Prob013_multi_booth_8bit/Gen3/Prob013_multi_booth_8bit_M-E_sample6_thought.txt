@@ -1,0 +1,15 @@
+Implement a radix-4 Booth multiplier using a fully synchronous FSM design with separate states for initialization, iterative calculation, and completion.
+
+- Use two 17-bit signed registers for the extended multiplicand and product accumulator.
+- The product register will hold both partial product and the extended multiplier bits, enabling combined arithmetic shifts.
+- The multiplier and an appended zero bit form the lower part of the product register.
+- At each step, extract the lower 3 bits of the product register to determine the Booth encoding.
+- Based on the Booth encoding, calculate the partial product (0, ±M, or ±2M).
+- Add the partial product to the upper part of the product register.
+- Perform an arithmetic right shift by 2 bits on the entire product register.
+- Repeat this process 4 times (for 8 bits, radix-4 requires 4 cycles).
+- After 4 iterations, the product register contains the final product.
+- Set the ready signal high to indicate completion.
+- On reset, load multiplicand and multiplier into the product register and reset all counters and states.
+
+This approach ensures a clean, synthesizable design without illegal procedural declarations. It uses a single always block triggered by clock and reset, avoids internal variable declarations inside procedural blocks, and properly synchronizes state transitions and calculations.

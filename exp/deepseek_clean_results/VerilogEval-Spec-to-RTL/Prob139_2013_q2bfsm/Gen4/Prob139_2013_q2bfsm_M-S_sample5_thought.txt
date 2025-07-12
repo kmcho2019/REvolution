@@ -1,0 +1,13 @@
+To simplify the FSM while maintaining functionality, I'll make these key changes:
+1. Reduce the number of states by combining sequence detection states
+2. Use a shift register for the 1-0-1 sequence detection instead of separate states
+3. Simplify the timeout logic by using a 2-bit counter
+4. Make the output logic more straightforward by tracking the final g condition
+5. Remove unnecessary registers and combine logic where possible
+
+The simplified state machine will have these states:
+- A: Initial/reset state
+- B: Pulse f=1 for one cycle
+- C: Monitoring x for 1-0-1 sequence
+- D: Monitoring y with timeout (g=1)
+- E: Final state (permanent g output)

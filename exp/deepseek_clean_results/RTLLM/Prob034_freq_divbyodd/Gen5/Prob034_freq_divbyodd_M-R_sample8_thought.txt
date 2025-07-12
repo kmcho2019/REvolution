@@ -1,0 +1,23 @@
+Refactored approach using combinational logic and simplified state management:
+
+1. **Single Counter System**: Use one counter that increments on both clock edges (double-rate counting) to simplify state management. This eliminates the need for two separate counters.
+
+2. **Edge Detection**: Track both rising and falling edges implicitly through the double-rate counting. The counter effectively runs at 2x the input clock frequency.
+
+3. **Toggle Logic**: 
+   - Toggle the output clock when counter reaches NUM_DIV (full period) or NUM_DIV/2 (half period)
+   - Uses bitwise operations for efficient threshold comparison
+
+4. **Reset Handling**: 
+   - Clear counter and output synchronously
+   - Maintain same reset behavior as original
+
+5. **Output Generation**:
+   - Direct register output instead of OR-combination
+   - Simplified logic path with clear state transitions
+
+Key improvements:
+- Eliminates phase alignment issues by using single counter
+- Reduces logic complexity by handling both edges in one structure
+- Maintains same functionality with cleaner implementation
+- More efficient resource utilization

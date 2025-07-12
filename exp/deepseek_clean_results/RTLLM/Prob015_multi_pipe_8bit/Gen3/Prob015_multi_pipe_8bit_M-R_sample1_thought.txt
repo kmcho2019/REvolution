@@ -1,0 +1,19 @@
+The refactored design maintains the 4-stage pipelined Wallace tree multiplier concept but improves implementation with these key changes:
+
+1. **Simplified Pipeline Control**: 
+   - Uses a shift register for enable signals that perfectly matches the 4-stage pipeline
+   - Clear separation between pipeline stages with registered outputs
+
+2. **Explicit Partial Product Generation**:
+   - Generates all 8 partial products explicitly with proper shifting
+   - Uses assign statements for combinational logic where possible
+
+3. **Optimized Wallace Tree**:
+   - Each compression stage clearly reduces terms (8->6->4->2)
+   - Final addition handled in last stage with proper carry handling
+
+4. **Synchronous Output**:
+   - Output register updates only when pipeline is complete
+   - Clean reset handling for all pipeline stages
+
+The new structure makes the data flow more visible and ensures proper timing between stages while maintaining the same computational approach.

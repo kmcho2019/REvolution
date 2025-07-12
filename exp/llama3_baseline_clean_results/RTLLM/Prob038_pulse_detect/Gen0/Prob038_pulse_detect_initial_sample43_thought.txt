@@ -1,0 +1,10 @@
+To implement the pulse detection module, we need to design a finite state machine (FSM) that tracks the sequence of the input signal data_in. The FSM should have at least three states to track the transition from 0 to 1 and back to 0, indicating a pulse. The states can be defined as follows: 
+- STATE_IDLE: Initial state, waiting for the first 1 in the pulse sequence.
+- STATE_RISING: State after detecting the first 1.
+- STATE_FALLING: State after detecting the transition from 1 to 0, indicating the end of a pulse.
+
+We use these states to control the output data_out. When the FSM is in the STATE_FALLING state, it indicates the end of a pulse, and we set data_out to 1. In all other states, data_out should be 0.
+
+We implement this logic inside an always block, which is sensitive to the positive edge of the clock signal clk and the negative edge of the reset signal rst_n. On reset, we initialize the state to STATE_IDLE and set data_out to 0.
+
+The sequence detection logic checks the current state and the value of data_in to determine the next state and the value of data_out. This ensures that data_out is 1 only at the end of a pulse and 0 otherwise.

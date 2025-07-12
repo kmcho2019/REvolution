@@ -1,0 +1,15 @@
+Implement a single global history register `ghr` that tracks actual outcomes and maintains the committed history state. For prediction, generate the index by XORing the input `predict_pc` with the current `ghr` value.
+
+To handle the timing alignment and ensure the prediction outputs correspond to the history used for the prediction, latch the prediction's GHR value and taken prediction output into registers at the clock edge following `predict_valid`. These latched outputs form the stable output signals, delaying one cycle but ensuring consistent prediction history.
+
+For training, when `train_valid` is asserted, update the PHT entry indexed by XOR of `train_pc` and `train_history` with the actual outcome using saturating counters. If `train_mispredicted` is asserted, restore the global history `ghr` to the `train_history` value (which represents the GHR after that branch) to recover from misprediction.
+
+If training and prediction occur in the same cycle, training has priority on the GHR update, i.e., apply the training update first; then if prediction valid in same cycle (and no misprediction), shift in the predicted bit.
+
+Initialization on reset sets all PHT entries to weakly not taken and clears the global history register.
+
+This design provides:
+
+- Predict outputs delayed by one cycle, matched with latched history values used for prediction.
+- Single committed GHR state with recovery on misprediction.
+- Simple and clear timing, easy to maintain.

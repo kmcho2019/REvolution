@@ -1,0 +1,15 @@
+The existing solution correctly derives the mux_in signals as functions of c and d to be selected by {a,b} externally in the 4-to-1 mux. To refactor while keeping the same core logic, I will:
+
+- Remove the mux2 submodule and replace all 2-to-1 muxes with conditional operators (?:) directly in continuous assignments. This reduces module overhead and clarifies the combinational logic.
+
+- Compute not_d similarly using assign and the conditional operator.
+
+- Provide clear comments on each mux_in bit corresponding to the Karnaugh map column ab and their logic conditions.
+
+- Retain the usage of only mux-like constructs in the sense of conditional assignments (since no gates are allowed), which matches the behavior of multiplexers.
+
+This refactoring makes the code simpler, easier to understand, and potentially eliminates any subtle issues with mux2 module usage or connections, while strictly implementing the same logic as before.
+
+Note: This change assumes "using as few multiplexers as possible" allows using conditional assignments since they are syntactic representations of multiplexers in Verilog. The problem states no other logic gates allowed, but conditional operator is an expression that compiles down to muxes, so it complies with the problem intent.
+
+This also clarifies that the TopModule only computes the inputs mux_in[3:0] to the external 4-to-1 mux indexed by {a,b}, which select among these four signals.

@@ -1,0 +1,7 @@
+To simplify the solution while maintaining functionality, I'll focus on these optimizations:
+
+1. Remove parameterized states since the binary encoding is straightforward and the states are only used internally
+2. Combine the state transition and output logic into a single always block for sequential logic
+3. Simplify output logic by recognizing that z=1 only when state is 3'b100 or 3'b011 (which can be detected by checking bits [2] or [1:0]==3)
+4. Eliminate the separate next_state register since we can directly assign to state in the sequential block
+5. Remove default case since all 3-bit states are covered in the specification

@@ -1,0 +1,24 @@
+The Lemming's behavior can be modeled using a finite state machine with three states: walking left, walking right, and falling. The state machine will transition between these states based on the input signals. We will use a Moore state machine, where the output is a function of the current state only.
+
+We will define an enumeration of the states and use a variable to keep track of the current state. The state machine will have the following states:
+- WALKING_LEFT: The Lemming is walking to the left.
+- WALKING_RIGHT: The Lemming is walking to the right.
+- FALLING: The Lemming is falling.
+
+We will also use a separate variable to keep track of the direction the Lemming was walking before it started falling or digging, so that it can resume walking in the same direction when it hits the ground again.
+
+The state machine will transition between states based on the input signals as follows:
+- If the ground disappears (ground=0), the Lemming will start falling.
+- If the ground reappears (ground=1) while the Lemming is falling, it will resume walking in the same direction as before the fall.
+- If the Lemming is bumped on the left (bump_left=1), it will start walking to the right.
+- If the Lemming is bumped on the right (bump_right=1), it will start walking to the left.
+- If the Lemming is told to dig (dig=1) and it is currently walking on the ground, it will start digging.
+- If the Lemming is digging and it reaches the other side (ground=0), it will start falling.
+- If the Lemming is falling, being bumped has no effect, and being told to dig is ignored.
+- If the Lemming is walking and it is told to dig, it will start digging, but only if it is currently walking on the ground.
+
+The outputs will be determined by the current state:
+- walk_left: 1 if the Lemming is walking to the left, 0 otherwise.
+- walk_right: 1 if the Lemming is walking to the right, 0 otherwise.
+- aaah: 1 if the Lemming is falling, 0 otherwise.
+- digging: 1 if the Lemming is digging, 0 otherwise.

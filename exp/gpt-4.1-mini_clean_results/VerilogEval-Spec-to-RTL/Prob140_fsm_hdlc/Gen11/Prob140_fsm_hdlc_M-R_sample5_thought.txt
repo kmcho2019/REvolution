@@ -1,0 +1,5 @@
+Refactor the FSM by eliminating the explicit next_state register and using purely combinational assign statements for next_state calculation and output signals. Keep the state register as before. This means:
+- Use a registered `state` for counting consecutive ones.
+- Use combinational logic with `assign` statements for `next_state`, `disc_w`, `flag_w`, and `err_w`.
+- Sequential logic block only updates `state` and registered outputs on clock edge.
+This structure clarifies the separation of combinational next-state and output logic from sequential state updating, making the design more declarative and possibly easing formal verification and synthesis interpretation without changing functionality.

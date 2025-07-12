@@ -1,0 +1,13 @@
+Implement a multi-bit MUX-based synchronizer by leveraging a handshake-like approach with an additional pulse detection in the clk_b domain. Instead of synchronizing the entire data_en signal as a level, synchronize its rising edge to create a load pulse for dataout update.
+
+In clk_a domain, latch data_in into data_reg whenever data_en is high.
+
+In clk_b domain, use two-stage synchronizer registers to synchronize data_en from clk_a domain and detect its rising edge (pulse). This pulse triggers a MUX to select data_reg or hold the previous output.
+
+This method avoids gating en_data_reg directly; instead, it creates a clean pulse to update dataout only when new data is ready.
+
+Also, dataout update is controlled by this pulse, ensuring minimal toggling and clear timing.
+
+All resets are asynchronously active low and applied appropriately.
+
+This approach increases robustness and clarity in the synchronization process and clearly controls output updates with a pulse-driven enable, while still obeying the timing requirements.

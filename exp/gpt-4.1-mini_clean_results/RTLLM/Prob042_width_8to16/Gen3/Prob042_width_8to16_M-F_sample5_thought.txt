@@ -1,0 +1,14 @@
+To address the feedback and meet the requirement that `valid_out` and `data_out` signals are generated in the *next clock cycle* after receiving two valid 8-bit inputs, the design must introduce a pipeline stage. 
+
+The current code generates output data and asserts `valid_out` in the same cycle as the second input arrives, which violates the requirement and causes synthesis and functional mismatches.
+
+The fix involves:
+
+- Storing the first 8-bit input along with setting a `data_lock_en` flag when the first valid input arrives.
+- When the second valid input arrives, concatenate the stored first input and new input *in a temporary register*, but do **not** update `data_out` or assert `valid_out` immediately.
+- Use an additional register stage (`output_valid` and `output_data`) to store the concatenated data and valid flag, which will be assigned to `data_out` and `valid_out` in the next clock cycle.
+- `valid_out` is asserted for exactly one clock cycle, held stable during that cycle.
+- `data_lock_en` is cleared right after the second input is received, to prepare for the next pair of inputs.
+- On reset, clear all registers and flags.
+
+This approach ensures timing compliance, clean handshaking, and stable output signals that are valid one cycle after two inputs arrive, matching the problem's explicit requirement.

@@ -1,0 +1,20 @@
+This solution implements a two-level hierarchical multiplexer with priority encoding for optimized area and power:
+
+1. **Hierarchical Structure**:
+   - First level: Group inputs into 3 sets of 3 inputs each (a-c, d-f, g-i)
+   - Second level: Select between the 3 intermediate results or default value
+   - Reduces fan-in at each level compared to a flat 9:1 mux
+
+2. **Priority Encoding**:
+   - Use sel[3] as the most significant bit to quickly detect invalid cases (sel >= 9)
+   - This allows early termination without full comparison
+
+3. **Optimized Default Handling**:
+   - Default value (16'hFFFF) is handled at the top level
+   - Avoids propagating default logic through the entire mux structure
+
+4. **Benefits**:
+   - Better timing due to reduced fan-in at each level
+   - Lower power consumption from early invalid case detection
+   - Potentially smaller area due to hierarchical structure
+   - Clean separation of valid/invalid cases

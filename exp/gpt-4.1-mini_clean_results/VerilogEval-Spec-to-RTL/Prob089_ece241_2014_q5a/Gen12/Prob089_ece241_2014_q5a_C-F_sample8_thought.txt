@@ -1,0 +1,10 @@
+Fuse the structured and clear state transition logic of Example 1 with the minimalistic and elegant XOR-based output from Example 2 for optimal clarity, performance, and minimal logic depth:
+
+- Use a 1-bit state that represents whether inversion is active (0 = copy bits until first '1', 1 = invert subsequent bits).
+- Sample the input x into a register (x_reg) to stabilize the input and maintain Moore machine output behavior.
+- Implement asynchronous reset to initialize state and input register to 0.
+- Use nonblocking assignments for all sequential logic to avoid glitches and ensure clean timing.
+- Update state in a separate always block triggered by clock and async reset, with direct assignments based on sampled x_reg.
+- Generate output combinationally by XOR-ing x_reg and state, yielding the exact 2's complement bit per cycle in a Moore manner.
+- The output depends only on registered state and input, preserving Moore FSM output style with minimal combinational logic.
+- This fusion keeps performance high (minimal combinational delay), power low (single-bit state, minimal toggling), and area small (only two registers and a simple XOR gate).

@@ -1,0 +1,23 @@
+Corrected design approach:
+
+1. Truth table analysis:
+   - Output 1 cases: 2 (0010), 7 (0111), 15 (1111)
+   - Output 0 cases: 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), 14 (1110)
+   - Don't-cares: 3 (0011), 8 (1000), 11 (1011), 12 (1100)
+
+2. For out_sop (Sum of Products):
+   - Directly implement the minterms for 2,7,15
+   - No need to use don't-cares since we have exact minterms
+   - Expression: (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+3. For out_pos (Product of Sums):
+   - Create maxterms for all 0-output cases
+   - Use don't-cares to simplify where possible
+   - Group terms to minimize literals
+   - Final expression: (a | b | c | d) & (a | b | ~c | d) & (a | ~b | c | ~d) & (~a | b | c | d) & (~a | b | ~c | ~d) & (~a | ~b | c | d) & (~a | ~b | ~c | d)
+
+4. Key improvements:
+   - Direct implementation of required truth table
+   - Proper handling of all specified cases
+   - Clear separation between 1-output and 0-output cases
+   - No incorrect coverage of don't-care conditions

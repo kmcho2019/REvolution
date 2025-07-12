@@ -1,0 +1,20 @@
+The corrected design needs to properly implement the water level control system with accurate state tracking and output generation. Here's the improved approach:
+
+1. State Tracking:
+   - Maintain current and previous sensor states to detect level transitions
+   - Use registered signals to store previous sensor values for transition detection
+
+2. Output Logic:
+   - fr2: active only when all sensors are off (below s[0])
+   - fr1: active when between s[1] and s[0] or below s[0]
+   - fr0: active when between s[2] and s[1], between s[1] and s[0], or below s[0]
+   - dfr: active when transitioning from lower to higher levels (previous state had fewer sensors active)
+
+3. Transition Detection:
+   - Compare current and previous sensor states to determine if water level is rising
+   - Only activate dfr when level is rising and not at maximum level
+
+4. Reset Behavior:
+   - Initialize all outputs to 1 (maximum flow)
+   - Clear previous state registers
+   - Maintain synchronous operation

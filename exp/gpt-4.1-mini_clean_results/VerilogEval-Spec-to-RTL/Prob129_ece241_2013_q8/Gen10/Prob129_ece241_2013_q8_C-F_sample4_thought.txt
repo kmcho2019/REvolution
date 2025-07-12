@@ -1,0 +1,30 @@
+I will fuse the best ideas from both examples to create a clear, efficient, and minimal FSM design.
+
+From Example 1:
+- The combined next_state and output logic in a single always block reduces logic depth and gate count, benefiting timing and power.
+- Use typedef enum for strong typing and readability.
+
+From Example 2:
+- Explicit default assignments and separated sequential and combinational logic improve clarity and safety.
+- Use localparam for state encoding if typedef is not preferred (but typedef is clearer here).
+- Clear separation of reset logic and synchronous state update.
+
+Fusion strategy:
+- Use typedef enum for clean state encoding.
+- Combine next_state and output generation in a single combinational block to minimize combinational levels and gates.
+- Use non-blocking assignments for state register with asynchronous negative edge reset.
+- Provide explicit default assignments to avoid latches.
+- Style consistent blocking assignments in combinational logic and non-blocking in sequential.
+- Keep the Mealy FSM output logic integrated for efficient output response.
+- Keep minimal 3-state design for area and simplicity.
+
+This approach achieves minimal area, clear code readability, reduced logic depth (better timing), and minimal power by fewer logic transitions.
+
+The module implements:
+- 3 states tracking partial "101" pattern.
+- Next state and output combined logic.
+- Asynchronous negative edge reset on state register.
+- Mealy output z asserted only when "101" is detected.
+- Overlapping sequences recognized.
+
+This yields a superior, clean, and synthesizable design with balanced PPA.

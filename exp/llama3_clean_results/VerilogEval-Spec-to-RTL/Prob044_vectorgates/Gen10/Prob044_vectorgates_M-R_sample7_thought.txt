@@ -1,0 +1,7 @@
+The goal of this refactoring is to improve the performance, power consumption, and area usage of the given Verilog design. We will eliminate the need for separate modules for bitwise-OR and logical-OR operations by directly implementing these operations within the TopModule. This approach reduces the number of module instantiations and their associated overhead, potentially leading to area savings and reduced power consumption.
+
+By directly performing the bitwise-OR operation and the logical-OR operation within the TopModule, we minimize the number of logic levels and simplify the overall design. The bitwise-OR operation is straightforward and does not require any optimization. For the logical-OR operation, we can utilize the fact that a non-zero vector in Verilog is considered true, and thus, we can use the '||' operator directly on the vectors to check if either of them is non-zero.
+
+Additionally, we will keep the direct calculation of the out_not vector within the TopModule by concatenating the inverted inputs, which was an efficient approach in the original design. This method eliminates the need for temporary wires for the inverted values and maintains a compact design.
+
+Overall, the refactored design aims to achieve the same functionality with improved performance, power efficiency, and area usage by simplifying the module structure and minimizing the number of module instantiations.

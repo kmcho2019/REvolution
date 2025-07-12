@@ -1,0 +1,7 @@
+To implement the finite state machine for detecting message boundaries in the input byte stream, we can design a novel architectural solution that utilizes a shift register to store the incoming bytes and a separate control unit to manage the state transitions. The control unit can be implemented using a simple counter to keep track of the number of bytes received.
+
+The shift register will be 24 bits wide to store the 3-byte message. When a byte with in[3]=1 is received, it is shifted into the shift register, and the counter is incremented. Once the counter reaches 3, the done signal is asserted, indicating that a complete message has been received. The out_bytes output is simply a reflection of the current state of the shift register.
+
+This approach simplifies the combinational logic required for the state machine and reduces the number of registers needed to store the state information. Additionally, the use of a shift register allows for efficient storage and retrieval of the message bytes.
+
+To further optimize the design, we can consider using a clock enable signal to gate the clock to the shift register and counter when not needed, reducing power consumption. We can also use a reset signal to reset the counter and shift register to their initial states when the design is reset.

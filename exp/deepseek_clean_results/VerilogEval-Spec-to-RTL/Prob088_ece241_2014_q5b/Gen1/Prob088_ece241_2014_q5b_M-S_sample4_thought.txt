@@ -1,0 +1,9 @@
+To simplify the Mealy FSM implementation while maintaining functionality:
+1. Recognize that state B is a "sticky" state - once entered, we never leave it
+2. Therefore, we only need to track whether we're in state B (1) or not (0)
+3. Use a single state register (state_B) instead of two one-hot registers
+4. Simplify next state logic: state_B becomes 1 if either already in B or if in A and x=1
+5. Simplify output logic: z is x when in A, ~x when in B
+6. Maintain asynchronous reset to initialize to state A (state_B=0)
+
+This reduces the state machine to a single flip-flop while preserving identical behavior.

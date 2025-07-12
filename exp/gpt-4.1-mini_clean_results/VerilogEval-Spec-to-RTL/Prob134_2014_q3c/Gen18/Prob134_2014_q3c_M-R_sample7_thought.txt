@@ -1,0 +1,11 @@
+Refactor the module by replacing the one-hot decoded signals (which use equality checks) with a direct combinational logic expression for each next state bit and output z, derived from the present state bits and input x. This approach avoids explicit comparators and uses Boolean expressions minimizing logic depth and area.
+
+Specifically:
+- Express next state bits ns2, ns1, ns0 directly as functions of y[2], y[1], y[0], and x using derived logic expressions from the FSM table.
+- Similarly, output z is expressed directly as a Boolean function of y bits.
+- Use continuous assign statements for all outputs without intermediate one-hot signals.
+- This approach reduces the number of signals, eliminates explicit equality checks, and may improve power and area by minimizing gate count and switching activity.
+
+The FSM behavior remains unchanged, and the outputs Y0 and z retain the original definitions.
+
+This refactoring enhances synthesis optimization potential and simplifies the code structure.

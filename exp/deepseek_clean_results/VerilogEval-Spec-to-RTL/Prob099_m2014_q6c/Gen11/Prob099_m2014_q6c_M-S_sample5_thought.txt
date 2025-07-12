@@ -1,0 +1,11 @@
+1. The original problem requires outputs Y1 and Y3, not Y2 and Y4 as in the example.
+2. From the state machine description and one-hot encoding (y[5:0] = A,B,C,D,E,F):
+   - Y1 (next state y[0]) is active when:
+     * In state A and w=1 (stays in A)
+     * In state D and w=1 (goes to A)
+   - Y3 (next state y[2]) is active when:
+     * In state B and w=0 (goes to C)
+3. Simplified logic:
+   - Y1 = (y[0] & w) | (y[3] & w)
+   - Y3 = y[1] & ~w
+4. The module interface must match the specified outputs Y1 and Y3.

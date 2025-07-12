@@ -1,0 +1,38 @@
+The original design correctly implements a radix-2 divider for signed and unsigned 8-bit operands. However, it can be improved and corrected as follows:
+
+1. Correct initialization and use of NEG_DIVISOR: 
+   - Avoid double assignment within the same clock edge.
+   - Compute negated divisor properly once before starting count.
+
+2. Fix SR width and handling:
+   - For an 8-bit division, the shift register should be 17 bits wide to hold dividend shifted left by 8 bits plus room for quotient bits.
+   - But per the problem statement, the SR is simplified as 9 bits (dividend_abs shifted left by 1 bit).
+   - Ensure consistent bit widths for subtraction and shifting.
+
+3. Fix subtraction and quotient bit determination logic:
+   - In the provided code, subtraction is done by addition with two's complement (NEG_DIVISOR).
+   - But the width of operands during subtraction should be consistent.
+   - Use a separate wider subtraction register.
+
+4. Correct the subtraction result bit interpretation to determine the quotient bit correctly.
+
+5. Fix asynchronous reset usage and synchronous operation for better timing.
+
+6. Properly handle division by zero: output zero quotient and remainder and set res_valid.
+
+7. Improve readability by adding comments and separating combinational and sequential logic where appropriate.
+
+8. Clear res_valid when new operation starts, not only on opn_valid when res_valid is high.
+
+9. Overall, the design will:
+   - On opn_valid (and not busy), latch inputs and sign info.
+   - Initialize SR to dividend_abs shifted left by 1 bit.
+   - NEG_DIVISOR = two's complement of divisor_abs (9 bits).
+   - Iterate 8 times:
+     - Subtract divisor_abs from the upper bits of SR.
+     - If no borrow, set quotient bit to 1 and update SR with subtraction result.
+     - Else, leave SR upper bits as is, shift left quotient bit 0.
+   - After 8 cycles, adjust quotient and remainder signs if signed division.
+   - Provide res_valid and output concatenation of remainder (upper 8 bits) and quotient (lower 8 bits).
+
+This corrected and optimized approach improves clarity, correctness, and robustness of the radix-2 divider.

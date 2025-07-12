@@ -1,0 +1,22 @@
+To properly implement the odd frequency divider, I'll make these key improvements:
+
+1. Dual Counter Architecture:
+   - Maintain separate counters for rising (cnt1) and falling (cnt2) edges as originally specified
+   - Each counter counts up to NUM_DIV-1
+
+2. Dual Clock Generation:
+   - Create clk_div1 (positive edge triggered) and clk_div2 (negative edge triggered)
+   - Toggle each when their respective counters reach (NUM_DIV-1)/2
+
+3. Combined Output:
+   - Use continuous assignment to OR the two divided clocks
+   - This ensures proper 50% duty cycle by combining both edge contributions
+
+4. Reset Handling:
+   - Synchronous reset for clean initialization
+   - Clear both counters and clock dividers on reset
+
+The refactored version strictly follows the original problem specification while improving clarity through:
+- Separate always blocks for each edge domain
+- Clean continuous assignment for final output
+- Explicit parameter handling

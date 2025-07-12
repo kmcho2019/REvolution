@@ -1,0 +1,10 @@
+To implement a frequency divider that divides the input clock frequency by fractional values, we will utilize the double-edge clocking technique. This technique allows us to achieve half-integer division while adjusting for duty cycle imbalance. 
+
+Our approach involves the following steps:
+1. Define the parameters for the fractional division. In this case, we're targeting a 3.5x division, which means we need to divide the clock into portions that when combined, effectively divide the original clock frequency by 3.5.
+2. Implement a counter that cycles through a specific number of clock cycles. For a 3.5x division, we cycle through 7 clock cycles, where the division effectively happens over two different cycle counts: 4 and 3 clock cycles, to mimic the fractional division.
+3. Generate two intermediate clock signals based on these cycle counts. One signal will be generated for the 4-cycle period, and another for the 3-cycle period.
+4. To ensure a smooth output and to achieve the fractional division, we will apply phase shifting to these intermediate clocks. One clock will be phase-shifted by half a cycle forward, and the other by half a cycle backward.
+5. Finally, we will logically OR these two phase-shifted clocks to produce the final fractional divided clock output. This ensures that the output clock has a uniform period, effectively dividing the input clock frequency by the desired fractional value.
+
+This approach allows for a flexible and accurate method of achieving fractional frequency division using Verilog, making it suitable for a wide range of applications requiring non-integer clock division.

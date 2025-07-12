@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Adopt the efficient terminal count check (q[3] & q[1]) from both examples for fast comparison
+   - Maintain single always block structure for clean timing paths
+   - Keep synchronous reset with direct assignment for minimal delay
+
+2. Power Optimization:
+   - Use the compact implementation style to minimize switching activity
+   - Keep the synchronous reset to avoid unnecessary transitions
+   - Maintain simple increment logic to reduce dynamic power
+
+3. Area Optimization:
+   - Combine all logic into a single always block to reduce redundant registers
+   - Use direct bit pattern assignments for reset/wrap conditions
+   - Eliminate intermediate variables for minimal gate count
+
+Key Improvements:
+- Single always block with clear priority (reset > wrap > increment)
+- Optimized terminal count detection using bitwise operation
+- Direct pattern assignments for reset and wrap conditions
+- Minimal combinational logic for best PPA tradeoff
+- Maintains all functional requirements (1-10 counting, sync reset)

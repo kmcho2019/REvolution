@@ -1,0 +1,5 @@
+Use a simple 3-bit down-counter that loads 4 on synchronous reset and counts down each clock cycle. Assert shift_ena whenever the counter is non-zero. When the counter reaches zero, shift_ena is deasserted and remains low indefinitely until the next reset.
+
+This approach guarantees exactly 4 clock cycles of shift_ena asserted starting immediately after reset is released (since reset is synchronous). The counter value zero means shift_ena is low; any non-zero value means shift_ena is high. The counting occurs only when not in reset.
+
+This is clean, minimal, and synthesizes to minimal logic without extra state machine complexity.

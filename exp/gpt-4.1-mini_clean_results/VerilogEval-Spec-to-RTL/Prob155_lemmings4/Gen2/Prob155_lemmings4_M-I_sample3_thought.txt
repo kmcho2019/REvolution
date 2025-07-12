@@ -1,0 +1,18 @@
+The original solution is conceptually sound and implements the FSM correctly but has critical syntax issues due to multiple conflicting declarations of the mode state registers and next-state signals. To fix and improve:
+
+1. Clean up the signal declarations:
+   - Declare `mode_curr` and `mode_next` only once as 2-bit regs.
+   - Declare `dir` and `dir_next` as single-bit regs.
+   - Declare `fall_count` and `fall_count_next` as 5-bit regs.
+
+2. Maintain separate current and next signals for clarity.
+
+3. Implement the asynchronous active-high reset properly.
+
+4. Keep the Moore outputs combinational and derived solely from current state.
+
+5. Optimize by removing any redundant assignments and ensure proper default values to avoid inferred latches.
+
+6. Add comments for clarity.
+
+This makes the code synthesizable, clean, and easy to maintain, with proper FSM structure and timing.

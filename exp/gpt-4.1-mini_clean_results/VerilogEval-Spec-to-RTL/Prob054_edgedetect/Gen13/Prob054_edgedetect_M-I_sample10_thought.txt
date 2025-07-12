@@ -1,0 +1,17 @@
+The current design is already clean, clear, and functionally correct. To optimize for power without compromising timing or clarity, I will add clock enable logic to avoid unnecessary register toggling when the input doesn't change, thereby reducing dynamic power.
+
+Specifically:
+- Only update prev_in when the input vector changes, reducing switching in prev_in registers.
+- Similarly, only update pedge when the edge_detect signal is non-zero, reducing unnecessary toggling.
+
+This clock gating approach reduces switching activity and power but does not add combinational delay in the critical path since clock enables are simple gating signals and synthesis tools handle them efficiently.
+
+The logic remains fully synchronous, preserving timing robustness and output correctness (one-cycle delayed pulse). There is no added pipeline stage, so no performance loss is expected.
+
+Area overhead is minimal because the additional logic is small (comparators and enable signals). Overall, this improves power while maintaining clarity and timing.
+
+The main steps:
+1) Compare current in and prev_in to generate an enable for prev_in register.
+2) Use edge_detect to generate an enable for pedge register.
+
+This solution better balances power without impacting performance or area significantly.

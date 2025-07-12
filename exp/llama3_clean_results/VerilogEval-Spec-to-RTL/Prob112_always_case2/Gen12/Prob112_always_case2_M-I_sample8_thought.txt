@@ -1,0 +1,13 @@
+To improve the solution, we need to revise the logic to prioritize the most significant bit that is high in the input vector. This can be achieved by checking the bits from the most significant to the least significant and assigning the corresponding position to the output as soon as the first '1' bit is encountered.
+
+For a 4-bit priority encoder, we can encode the positions as follows:
+- MSB (in[3]) to 2'b00 (4th position),
+- second MSB (in[2]) to 2'b11 (3rd position),
+- second LSB (in[1]) to 2'b10 (2nd position),
+- LSB (in[0]) to 2'b01 (1st position).
+
+We can use a case statement to directly map the position of the first '1' bit in the input vector `in` to the output `pos`. However, we need to handle cases where multiple bits are high and where no input bits are high.
+
+A more efficient approach is to use a simple conditional logic structure to check the bits from the most significant to the least significant and assign the corresponding position to the output `pos`.
+
+To optimize the design for PPA, we can reduce the complexity of the logic by minimizing the number of conditional statements and using simple bitwise operations.

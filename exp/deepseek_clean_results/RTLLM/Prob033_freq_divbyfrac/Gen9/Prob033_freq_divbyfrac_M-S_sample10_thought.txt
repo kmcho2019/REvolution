@@ -1,0 +1,12 @@
+Simplified design approach for 3.5x fractional clock divider:
+1. Use single counter with standard posedge clocking for reliability
+2. Implement straightforward 7-state counter (0-6) for 3.5x division
+3. Generate two phase-shifted clocks:
+   - Primary clock (0° phase) based on counter value
+   - Complementary clock (180° phase) using negedge-triggered flip-flop
+4. Combine phases with simple OR operation
+5. Key simplifications:
+   - Removes complex bidirectional counter logic
+   - Uses standard single-edge triggered flops
+   - Maintains same division ratio and duty cycle
+   - Easier to synthesize and verify

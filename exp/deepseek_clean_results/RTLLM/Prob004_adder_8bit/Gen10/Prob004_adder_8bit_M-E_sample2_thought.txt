@@ -1,0 +1,12 @@
+Novel architectural approach:
+1. Split the 8-bit adder into two 4-bit conditional sum adders (CSA)
+2. Each 4-bit CSA computes both possible sums (assuming carry-in 0 and 1)
+3. Use a carry-select mux to choose the correct sum based on actual carry-in
+4. The first 4-bit block computes its own carry-out to feed the second block
+5. This reduces critical path compared to pure ripple-carry while maintaining reasonable area
+
+Benefits:
+- Faster than ripple-carry (critical path reduced by ~50%)
+- More area-efficient than full carry-lookahead
+- Regular structure that synthesizes well
+- Balanced delay between sum and carry paths

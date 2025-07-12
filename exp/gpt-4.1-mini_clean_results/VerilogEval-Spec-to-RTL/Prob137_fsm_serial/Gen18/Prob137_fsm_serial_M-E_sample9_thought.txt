@@ -1,0 +1,13 @@
+Design a simple serial receiver FSM that samples bits on the clock edge assuming oversampling is handled externally or data is stable at clock. Use a one-hot encoded FSM with five states for clarity: IDLE, START, DATA_BITS (with a data bit counter), STOP, and ERROR_RECOVERY.
+
+In IDLE, wait for a falling edge indicating a start bit (transition from 1 to 0). Then move to START state to confirm start bit is still 0, providing some robustness. Next transition to DATA_BITS state, where on each clock edge shift in the incoming bit into a shift register, incrementing a bit counter from 0 to 7.
+
+After receiving 8 bits, transition to STOP state and check if the stop bit is 1. If yes, assert done for one clock cycle; if no, transition to ERROR_RECOVERY state, where the FSM waits for a stop bit (line=1) before returning to IDLE.
+
+Use synchronous reset to IDLE. Implement done as a one-clock pulse synchronous signal asserted only on successful stop bit detection. Shift the data right (LSB first) by concatenating the new bit as the MSB to shift_reg shifted right by one, reflecting the first received bit going into bit 0.
+
+This approach uses explicit edge detection on start bit, a separate confirm start state, and one-hot encoding for clarity and easier debugging. The error recovery state waits explicitly for stop bit to resync without resetting registers unnecessarily.
+
+Use non-blocking assignments for all sequential logic. The done pulse is generated only at the STOP state when stop bit is valid. The shift register holds data but is not output here since output wasn't requested.
+
+This design differs in state encoding, start bit confirmation, and explicit error recovery state with clearer flow.

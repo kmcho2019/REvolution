@@ -1,0 +1,22 @@
+Here's a novel state machine-based approach that differs from the shift register solution:
+
+1. State Machine Design:
+   - Use a 3-state FSM to track the pulse progression
+   - States: IDLE (waiting for first 0), GOT_0 (received first 0), GOT_1 (received the 1)
+   - Transitions occur based on data_in at each clock edge
+
+2. Output Generation:
+   - Output is only high when we transition from GOT_1 back to IDLE (completing 0->1->0)
+   - This ensures output is exactly 1 cycle per valid pulse
+
+3. Advantages:
+   - More explicit state tracking than shift register
+   - Easier to modify for different pulse patterns
+   - Clear state transitions that match the problem description
+   - Lower power since only state transitions consume energy
+
+4. Reset Handling:
+   - Full reset brings FSM back to IDLE state
+   - Output is guaranteed low during reset
+
+This approach provides better visibility into the detection process and is more maintainable for future modifications.

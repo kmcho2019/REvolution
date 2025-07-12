@@ -1,0 +1,9 @@
+To optimize the priority encoder for better performance and power, prioritize checking the most significant bit first since higher index bits correspond to higher priority in a typical priority encoder (also aligns with the example in the prompt). This change can reduce toggling in many realistic input patterns where higher bits dominate, thus potentially lowering dynamic power. 
+
+Additionally, replace nested ternaries with a more explicit priority encoder style using bitwise checks combined with a small conditional block. This can lead to better optimization by synthesis tools by clarifying the intent of a priority encoder, possibly improving timing and area due to simpler mux structures.
+
+If inputs are sparse or higher bits are usually dominant, this ordering helps minimize switching activity on lower priority logic, improving power.
+
+Finally, ensure the zero input case outputs zero.
+
+The new priority is MSB first: check in[3], then in[2], in[1], and then in[0].

@@ -1,0 +1,10 @@
+The design requires a 32-bit shift register to maintain branch history. The key aspects are:
+1. Asynchronous reset (areset) sets history to 0
+2. On misprediction (train_mispredicted), load history with {train_history, train_taken}
+3. On prediction (predict_valid), shift in predict_taken (unless misprediction occurs)
+4. Output current history at predict_history
+
+Priority handling:
+- Reset has highest priority
+- Misprediction takes precedence over normal prediction
+- Normal prediction happens only if no misprediction

@@ -1,0 +1,32 @@
+Use a state machine with four states corresponding directly to water levels:
+- L3: Above s[2] (all sensors asserted)
+- L2: Between s[2] and s[1] (s[2]=0, s[1]=1)
+- L1: Between s[1] and s[0] (s[1]=0, s[0]=1)
+- L0: Below s[0] (no sensors asserted)
+
+Any other sensor input pattern is treated as the closest valid lower level (choose by priority of sensor bits).
+
+At each clock cycle, decode the water level from sensors and update the state accordingly.
+
+Keep track of the previous water level state in a register.
+
+For outputs:
+- Nominal flow valves (fr0, fr1, fr2) asserted depending on current state per the table:
+  - L3: none asserted
+  - L2: fr0
+  - L1: fr0, fr1
+  - L0: fr0, fr1, fr2
+
+- Supplemental flow valve (dfr) is asserted if current water level > previous water level, indicating rising water.
+
+On synchronous reset, set state and previous level to L0 (lowest level) and assert all flow valves (fr0, fr1, fr2, dfr) to open maximum flow.
+
+This approach ensures:
+- Clear state abstraction
+- Easy previous-level comparison
+- Direct mapping from state to outputs
+- Handling of all sensor inputs robustly by mapping invalid patterns downward
+
+The synchronous reset sets a known starting state that corresponds to no sensors asserted and all valves opened.
+
+This state-machine approach simplifies logic, avoids pitfalls of decoding functions and previous sensor value timing, and matches the spec precisely.

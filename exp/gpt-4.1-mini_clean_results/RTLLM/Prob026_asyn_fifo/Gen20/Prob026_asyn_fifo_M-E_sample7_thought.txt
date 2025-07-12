@@ -1,0 +1,22 @@
+Design a modular asynchronous FIFO with parameterizable width and depth, using Gray-coded read and write pointers and a dual-port RAM submodule. 
+
+Novel architectural ideas:
+- Use separate binary and Gray pointer registers for read and write.
+- Use Gray pointer synchronization employing two-stage flip-flop synchronizers for pointer crossing clock domains.
+- Use separate read and write enable signals gating RAM access.
+- Implement pointer arithmetic and Gray code conversions as functions for clarity.
+- Calculate empty and full conditions strictly from Gray pointers according to the specified rules:
+  - Empty when Gray read pointer equals Gray write pointer.
+  - Full when the write pointer is one position ahead of read pointer, with the two MSBs inverted and the rest bits equal.
+- Use localparam for pointer widths.
+- Organize code into five parts as requested: 
+  1) dual-port RAM submodule, 
+  2) write controller (write pointer generation and write enable), 
+  3) read controller (read pointer generation and read enable), 
+  4) read pointer synchronizer (to write clock domain), 
+  5) write pointer synchronizer (to read clock domain).
+- For conversion from Gray to binary address, convert Gray pointers to binary, then use the lowest bits for RAM addressing.
+- Register empty and full flags synchronized to respective clock domains.
+- Register read data output.
+
+This approach isolates domains clearly, ensures asynchronous crossing of pointers, and cleanly manages pointer conversions and control signals.

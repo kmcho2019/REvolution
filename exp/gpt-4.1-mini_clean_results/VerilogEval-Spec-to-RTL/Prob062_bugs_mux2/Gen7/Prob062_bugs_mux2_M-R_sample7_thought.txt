@@ -1,0 +1,7 @@
+The issue arises because the inputs `a` and `b` are 8-bit vectors but the output `out` is a single bit. The original buggy code tries to compute a 1-bit output by bitwise AND and OR operations on multi-bit operands, which is incorrect.
+
+To fix this without changing the output width, we need to define clearly which bit from the inputs `a` or `b` is selected as the output bit. A common approach is to select one bit position (e.g., bit 0) from `a` or `b` based on `sel`. This satisfies the 1-bit output requirement and aligns with a 2-to-1 mux selecting a single bit.
+
+To refactor, instead of using the original bitwise expression with multiple bit vectors, we implement the mux with a conditional (ternary) operator on the selected bit of `a` and `b`. We keep the output a single bit, and avoid bitwise operations on full vectors with scalar outputs.
+
+This approach is clear, synthesizable, and matches the interface requirements. Using a continuous `assign` statement makes the design simple and combinational.

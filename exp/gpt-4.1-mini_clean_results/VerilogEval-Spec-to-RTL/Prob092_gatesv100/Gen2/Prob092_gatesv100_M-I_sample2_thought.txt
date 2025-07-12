@@ -1,0 +1,17 @@
+The original design is already clean and combinational with minimal logic depth, which is optimal for performance. To improve power and area slightly, we can remove the explicit single-bit assignments for out_both[99] and out_any[0] by incorporating them into a single vector assignment using concatenation, reducing the number of separate assignments.
+
+Also, for out_any, the original code uses in[99:1] | in[98:0], which is correct, but combining this and the zero bit into one continuous assignment using a concatenation may help synthesis tools optimize logic better.
+
+For out_both, similarly, using a concatenation that pads the MSB zero at the end is cleaner.
+
+These changes do not affect logic but improve code compactness, potentially resulting in slightly better PPA (especially area and power) due to better synthesis inference of vectors.
+
+No other logical changes are needed as the original design matches the specs perfectly.
+
+Hence, the improvement strategy is to:
+
+- Use concatenation for the zero bits of out_both and out_any to eliminate separate assignments.
+
+- Keep out_different as is, since it's already optimized.
+
+This approach maintains correctness, keeps performance optimal, and potentially yields slight power and area gains.

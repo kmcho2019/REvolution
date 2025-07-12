@@ -1,0 +1,35 @@
+The original solution is functionally correct but can be improved in terms of clarity and resource usage.
+
+Improvement strategy:
+1. **Shift register representation:**  
+   The original code uses a 17-bit shift register `SR` to hold remainder and quotient, mixing bits for subtraction and quotient updates in a somewhat complex way. We can clarify by separating remainder and quotient registers explicitly, simplifying the logic and making synthesis easier.
+
+2. **Subtraction and trial remainder:**  
+   Instead of reconstructing a 9-bit remainder with sign extension inside a combinational assign, maintain an explicit remainder register with one extra bit for sign (9 bits). This simplifies combinational subtraction and decision logic.
+
+3. **Division loop:**  
+   Use a clear iterative process:  
+   - Left shift (remainder:quotient concatenation) by 1 bit (shift quotient left and push-in MSB of remainder).  
+   - Subtract divisor from remainder trial.  
+   - If subtraction >= 0: remainder = subtraction result, quotient LSB = 1; else quotient LSB = 0.
+
+4. **Division by zero:**  
+   Keep handling division by zero as special case to immediately go to DONE.
+
+5. **Sign corrections:**  
+   Final quotient and remainder sign corrections remain the same.
+
+6. **Control signals:**  
+   Use a small FSM with states IDLE, DIVIDE, DONE as before.
+
+7. **Resource and timing optimization:**  
+   - By separating remainder and quotient registers, logic is more straightforward.  
+   - Less complex combinational logic in the clocked always block.  
+   - Clear separation can improve synthesis results and easier timing closure.
+
+8. **Correct opn_valid & res_valid handshake:**  
+   Result valid remains until acknowledged by opn_valid going low.
+
+In summary, this improved version uses separate remainder (9-bit) and quotient (8-bit) registers, clearly separates combinational subtraction and decision, making the design more readable and potentially more efficient in synthesis.
+
+---

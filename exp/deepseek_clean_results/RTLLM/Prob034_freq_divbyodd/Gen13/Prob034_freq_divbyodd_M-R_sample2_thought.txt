@@ -1,0 +1,15 @@
+Refactored approach maintaining the dual-counter concept:
+1. Use two separate counters (pos_cnt and neg_cnt) for positive and negative edges
+2. Generate two intermediate clocks (pos_clk and neg_clk) toggled at (N-1)/2 counts
+3. Combine the intermediate clocks using OR operation for final output
+4. Simplify counter logic by using direct comparison without full counter rollover
+5. Implement synchronous reset for both counters
+6. Use blocking assignments for cleaner combinatorial logic
+7. Maintain parameter validation for odd division requirement
+
+Key improvements:
+- Clear separation of positive/negative edge logic
+- Simplified counter comparison logic
+- Proper implementation of OR-combined outputs
+- More conventional synchronous design style
+- Maintains precise 50% duty cycle

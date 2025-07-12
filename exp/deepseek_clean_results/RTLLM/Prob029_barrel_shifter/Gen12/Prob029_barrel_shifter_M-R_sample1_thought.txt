@@ -1,0 +1,17 @@
+Here's a refactored version that maintains the same functionality but uses a different structural approach:
+
+1. Instead of using intermediate wires and sequential selection, we'll use a single continuous assignment with nested conditional operators
+2. The shift operations will still be performed in parallel, but the selection logic will be flattened
+3. Key changes:
+   - Eliminate intermediate level wires
+   - Express the entire shift selection as one compound conditional expression
+   - Use direct bit manipulation in the conditional branches
+4. Benefits:
+   - More compact representation
+   - All shift possibilities are still computed in parallel
+   - Selection happens in a single step rather than cascaded stages
+   - May result in different synthesis patterns while maintaining identical functionality
+5. The logical flow remains:
+   - First consider 4-bit shift if ctrl[2] is set
+   - Then consider additional 2-bit shift if ctrl[1] is set
+   - Finally consider additional 1-bit shift if ctrl[0] is set

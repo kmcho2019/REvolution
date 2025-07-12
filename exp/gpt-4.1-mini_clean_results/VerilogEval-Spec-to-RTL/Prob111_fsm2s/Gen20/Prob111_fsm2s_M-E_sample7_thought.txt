@@ -1,0 +1,11 @@
+To implement the Moore FSM distinctly from the previous solution, I will explicitly encode the two states as separate parameters and maintain a dedicated state register. This approach improves readability and is more scalable for larger FSMs.
+
+The two states, OFF and ON, are encoded as 1-bit values (0 and 1 respectively). On each clock rising edge, with synchronous active-high reset, the FSM transitions according to the input and current state:
+
+- If reset, go to OFF (state 0)
+- If in OFF state (0) and j=1, transition to ON (1), else remain OFF
+- If in ON state (1) and k=1, transition to OFF (0), else remain ON
+
+The output 'out' is purely combinational and reflects the current state (0 for OFF, 1 for ON), consistent with Moore FSM principles.
+
+This separation of state and output simplifies state debugging and extensions, improves code clarity, and does not sacrifice hardware efficiency significantly since only one state bit and a simple output assignment are needed.

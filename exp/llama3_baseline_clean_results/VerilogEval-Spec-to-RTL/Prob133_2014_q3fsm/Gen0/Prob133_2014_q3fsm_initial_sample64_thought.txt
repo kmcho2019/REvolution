@@ -1,0 +1,7 @@
+To implement the finite state machine (FSM) described, we can break down the design into the following steps:
+1. Define the states: We need at least two states, A and B, as per the description. However, to keep track of the condition in state B (counting the number of times w = 1 in three consecutive cycles), we need additional states or a counter. Given the constraint to use as few states as possible, we can utilize a counter within state B instead of adding more states.
+2. State transitions: The FSM starts in state A. It stays in A as long as s = 0 and moves to B when s = 1. Once in B, it does not transition back to A based on s but instead focuses on the w input.
+3. Counter logic in state B: Implement a counter that counts the number of clock cycles where w = 1 over a three-cycle window. This can be achieved with a simple counter that resets every three cycles.
+4. Output logic: Based on the count, if exactly two cycles have w = 1, then set z = 1 in the following cycle. Otherwise, z = 0.
+
+Given these considerations, we can implement the FSM with two main states (A and B) and utilize a counter within state B to track the w input over three cycles.

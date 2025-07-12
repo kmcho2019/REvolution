@@ -1,0 +1,12 @@
+Fuse the simplicity and synthesis-friendliness of using Verilog's built-in addition operator with explicit overflow detection based on carry into and carry out of the MSB for clarity and correctness. 
+To detect overflow, extend inputs a and b to 9 bits by sign-extending the MSB (to preserve 2's complement sign), then perform a 9-bit addition. 
+The lower 8 bits of the result form s, and overflow can be detected by XOR'ing the carry into the 8th bit (bit 7) and the carry out of the 8th bit (bit 8). 
+This approach leverages built-in addition for efficient synthesis and timing, while providing explicit overflow detection by inspecting the carries around the MSB, combining performance, simplicity, and correctness.
+
+Key points:
+- Use sign extension of inputs to 9 bits to catch the carry into the MSB in the 9th bit.
+- Use a single addition operation for clarity and synthesis optimization.
+- Derive overflow from the carry bits around MSB to handle signed overflow detection accurately.
+- The design balances readability, efficiency, and minimal manual gate-level carry logic.
+
+This fusion surpasses previous solutions by reducing manual carry tracking, relying on arithmetic operator optimizations by synthesis tools, and still providing explicit, well-understood overflow detection logic.

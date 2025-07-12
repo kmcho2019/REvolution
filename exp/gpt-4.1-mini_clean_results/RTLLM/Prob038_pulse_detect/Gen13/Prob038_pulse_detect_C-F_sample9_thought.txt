@@ -1,0 +1,11 @@
+Fuse the strengths of both solutions by implementing a minimalistic FSM with just two states to track the pulse: waiting for the rising edge (0->1), and waiting for the falling edge (1->0). Use a single-bit state to reduce area and complexity.
+
+Leverage the shift register idea from Example 1 to track recent inputs efficiently but combine it with FSM-like output generation as in Example 2 to have a clean, synchronous output pulse. The key insight is that the pulse occurs when a 0->1->0 pattern is detected over three cycles. Tracking two previous samples (a 2-bit shift register) is sufficient and logic for output can be derived combinationally.
+
+To improve timing and glitch robustness, register data_out synchronously (not purely combinational), so data_out asserts 1 only at the end of the pulse cycle and returns to 0 immediately after.
+
+Reset asynchronously clears shift register and output.
+
+This fusion keeps the minimal register usage and short critical path of Example 1, adds the FSM clarity and registered output from Example 2 for better timing stability, and reduces power by avoiding unnecessary complex state machines or large registers.
+
+Result: A clean, efficient pulse detector asserting data_out exactly once per detected pulse on the falling edge of data_in after a rising edge, matching the 0->1->0 pattern.

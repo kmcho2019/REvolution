@@ -1,0 +1,7 @@
+Simplify the FSM by reducing the number of states used for pattern detection, replacing the four explicit search states with a simple 4-bit shift register to detect the pattern 1101 serially. This removes the need for separate pattern matching states, minimizing FSM state encoding to just the main control states: IDLE (searching), SHIFT, COUNT, and DONE.
+
+Use a 2-bit counter for the 4-bit shifting duration. Pattern detection logic is purely combinational and separate from the FSM state, reducing FSM complexity.
+
+Outputs are driven directly from the FSM state. Synchronous reset clears both the FSM state and the shift counter.
+
+This approach simplifies the FSM to four states and offloads pattern detection to a shift register, reducing combinational next_state logic complexity and the total number of registers, while keeping the required functionality intact.

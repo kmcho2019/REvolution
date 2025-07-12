@@ -1,0 +1,9 @@
+To address the feedback and fix the clock generator module:
+
+- Use a single initial block to both initialize `clk` to 0 and then toggle it forever. This prevents potential race conditions or simulation ordering issues from multiple initial blocks.
+- Calculate the half period delay precisely as `PERIOD/2` in integer form. Since the delay is in simulation time units, using integer division `PERIOD/2` is sufficient and consistent for a square wave period.
+- Start toggling the clock after a half period delay, ensuring the clock waveform timing is consistent and the initial state holds exactly for half a period before toggling.
+- Use a blocking assignment (`=`) inside the initial block to initialize `clk`, and non-blocking (`<=`) is unnecessary here since no clock edge sensitivity exists.
+- This approach will create a clean, glitch-free, periodic clock waveform compatible with typical testbenches and simulations.
+
+This solution should eliminate timing glitches and multiple initial block ordering issues causing simulation failures.

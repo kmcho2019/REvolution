@@ -1,0 +1,16 @@
+Implement the function as a two-level logic but instead of directly combining product terms, use a hierarchical approach by first computing two intermediate functions based on c, and then merging them.
+
+1. Split the function into two cases controlled by c:
+   - When c = 0: From the K-map, the outputs depend on a and b.
+   - When c = 1: Outputs depend mainly on a and b again but in a different pattern.
+
+2. Define two intermediate signals f0 and f1 for c=0 and c=1 cases respectively:
+   - f0 = function of a,b when c=0
+   - f1 = function of a,b when c=1
+
+3. Use a mux controlled by c to select between f0 and f1:
+   out = c ? f1 : f0
+
+4. Since d is don't care, assign it to zero internally for simplicity but do not use it in logic.
+
+This hierarchical approach enhances clarity, modularity, and may improve synthesis optimization since the logic is cleanly partitioned by c. It avoids redundant product terms and is easy to debug.

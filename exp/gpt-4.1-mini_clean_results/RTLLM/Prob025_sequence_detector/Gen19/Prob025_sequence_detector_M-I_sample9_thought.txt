@@ -1,0 +1,20 @@
+To improve PPA (performance, power, area) from the provided solution, I will apply the following refinements:
+
+1. **One-Hot State Encoding:**  
+   Using one-hot encoding reduces combinational logic complexity in next-state decoding, typically improving timing (lower worst negative slack) at the cost of a few more flip-flops. Since the FSM only has 5 states, this is an area-efficient option.
+
+2. **Asynchronous Active-Low Reset:**  
+   Changing reset to asynchronous active-low improves reset latency and initialization timing, potentially reducing overall clock timing constraints and making it easier to meet setup times.
+
+3. **Output registered (Moore FSM) with explicit output register:**  
+   Registering `sequence_detected` output reduces glitches and timing issues, stabilizing the output at the cost of one clock cycle latency, which is acceptable for this detector.
+
+4. **Next-State Logic Simplification:**  
+   One-hot encoding allows next state logic to be implemented with minimal and simple logic gates, reducing combinational path depth.
+
+5. **Use non-blocking assignments consistently in sequential always blocks.**
+
+6. **Keep the same interface and synchronous data input sampling.**
+
+These changes will improve timing by reducing logic depth in the critical path, lower power by reducing toggling in combinational logic, and area impact is minimal because only a few flip-flops more are added (one-hot for 5 states uses 5 bits vs 3 bits binary).  
+Overall, this trades slightly higher area for better timing and power efficiency, likely improving WNS, lowering power and keeping area acceptable.

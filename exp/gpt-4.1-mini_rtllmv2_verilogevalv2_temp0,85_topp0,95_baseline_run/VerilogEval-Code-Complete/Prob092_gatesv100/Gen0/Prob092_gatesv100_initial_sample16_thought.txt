@@ -1,9 +1,0 @@
-For out_both: For bits 0 to 98, each bit out_both[i] = in[i] & in[i+1]. Since out_both[99] is not needed, the output width is 99 bits (indices 0 to 98).
-
-For out_any: For bits 1 to 99, each bit out_any[i] = in[i] | in[i-1]. Since out_any[0] is not needed, the output width is 99 bits (indices 1 to 99).
-
-For out_different: For all bits 0 to 99, compare each in[i] with its left neighbor. The left neighbor of in[0] is in[99] due to wrap-around. So out_different[i] = in[i] ^ in[(i+1)%100]. Because the neighbor to the left is the next index modulo 100, but per the problem, neighbor to the left of bit i is in[i+1] modulo 100 since bit 99's neighbor to the left is bit 0.
-
-Note: The problem states neighbor to the left, so in[99]'s neighbor to the left is in[0], so out_different[99] = in[99] ^ in[0], and in general out_different[i] = in[i] ^ in[(i+1)%100].
-
-We'll implement these assignments using continuous assignment statements.

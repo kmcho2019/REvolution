@@ -1,0 +1,16 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the state transitions and how they are encoded in the one-hot code. Since the module TopModule needs to generate the input signals for the state flip-flops y[1] and y[3], we have to examine the state transition table to determine when y[1] and y[3] should be asserted.
+
+Given the one-hot encoding y[5:0] = 000001(A), 000010(B), 000100(C), 001000(D), 010000(E), 100000(F), we can see that:
+- y[1] corresponds to state B (000010).
+- y[3] corresponds to state D (001000).
+
+To implement the logic for Y1 (input to y[1]) and Y3 (input to y[3]), we must identify the conditions under which states B and D are entered.
+
+For state B (y[1]):
+- The state machine moves from A to B when w = 1. Thus, Y1 should be 1 when the current state is A and w = 1.
+- Additionally, we should consider any other transitions that might lead to state B being active in the next state.
+
+For state D (y[3]):
+- The state machine moves from B to D when w = 0, from C to D when w = 0, from E to D when w = 0, and from D to A when w = 0 and then from A to any other state is not directly relevant but A to B transition when w=1 could indirectly lead to D through B if w then becomes 0. Thus, Y3 should be 1 when the current state is B and w = 0, or when the current state is C and w = 0, or when the current state is E and w = 0, or when the current state is D and w = 0.
+
+Given the above analysis, we can derive the logic equations for Y1 and Y3.

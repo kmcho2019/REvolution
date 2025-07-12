@@ -1,0 +1,22 @@
+To fuse the best ideas from both examples, I will keep the clear and maintainable 4-digit BCD ripple-carry counter approach that uses separate 4-bit registers for each digit and synchronous reset, as it is simple and synthesizable.
+
+From both, the enable signals correctly indicate when each upper digit should increment (i.e., when the lower digit is 9), which I will keep as combinational signals.
+
+To improve over the nested if-else carry chain potentially limiting timing, I will flatten the increment and carry logic using intermediate carry signals, performing increments in parallel within the always block, reducing combinational depth.
+
+The idea is:
+- Increment ones digit every clock cycle.
+- Detect carry from ones (if ones == 9), then increment tens.
+- Similarly, detect carry from tens, then increment hundreds, and so on.
+- This carry chaining is done with intermediate signals, allowing parallel updates and minimizing the critical path of nested conditionals.
+- Keep non-blocking assignments to ensure correct sequential behavior.
+
+This approach preserves the correctness and simplicity of both examples but reduces the combinational chain delay and makes the code more readable and efficient.
+
+The ena signals remain combinational, signaling when the corresponding digit should increment.
+
+Thus, the final design has:
+- Four 4-bit registers for digits.
+- Combinational enable signals based on digit values.
+- Flattened increment logic using carry signals.
+- Synchronous reset.

@@ -1,0 +1,8 @@
+To improve PPA (power, performance, area) while maintaining clarity and correctness, replace the function-based next state logic with a direct combinational case statement inside an always_comb block to reduce logic depth and simplify synthesis. Also, encode the output z more efficiently using a bitmask rather than multiple equality checks.
+
+Specifically:
+- Use an always_comb block with a case statement to directly assign next_state, which synthesis tools generally optimize better than a function call.
+- For output z, since only states 3 and 4 produce '1', compare y[2:0] against a small 5-bit bitmask to generate z combinationally; this reduces logic from multiple equality comparisons.
+- Retain Y0 as next_state[0] directly.
+- The FSM uses no internal registers since y is input present state, matching problem specification.
+This approach reduces combinational logic levels and logic gate counts, potentially lowering delay and power consumption, and slightly reducing area by simplifying output logic.

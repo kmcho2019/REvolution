@@ -1,0 +1,23 @@
+To fix the design, implement the FSM with clean, well-timed state transitions and correctly synchronize all registers:
+
+- Keep pattern detection fully within IDLE by shifting in serial data every cycle and checking for the pattern 1101.
+
+- Remove the MATCH state, as it is redundant; transition directly from IDLE to READ_DELAY when pattern is detected.
+
+- In READ_DELAY, shift in 4 delay bits MSB first by shifting delay_reg left and inserting the new bit at LSB; count bits received precisely.
+
+- On finishing READ_DELAY (after 4 bits received), move to COUNT state. Initialize `block_count` = delay_reg + 1 and reset `cycle_counter` at this transition, within the synchronous FSM update block.
+
+- During COUNT, increment `cycle_counter` each cycle up to 999; when hitting 999, reset it to 0 and decrement `block_count` if non-zero.
+
+- Output `count` as current block_count (lower 4 bits), representing remaining blocks of 1000 cycles.
+
+- When `block_count` and `cycle_counter` indicate counting is complete, move to DONE state.
+
+- DONE asserts done=1 and waits for ack=1, then returns to IDLE.
+
+- Ensure all registers are updated synchronously on clock with non-blocking assignments, avoiding race conditions.
+
+- Remove any unnecessary states and extra signals.
+
+This clean FSM and controlled register updates ensure correct timing and outputs, resolving previous issues with block_count initialization and count output, producing correct timer behavior as specified.

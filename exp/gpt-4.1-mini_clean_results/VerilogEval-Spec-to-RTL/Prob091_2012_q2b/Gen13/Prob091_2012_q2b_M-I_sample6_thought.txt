@@ -1,0 +1,17 @@
+The current design is functionally correct and relatively minimal. To improve PPA, particularly power and area, we can slightly simplify the logic expressions to minimize gate usage and switching activity:
+
+- For Y1, the current logic is y[0] & w, which is already minimal.
+
+- For Y3, the current expression is (~w) & ~(y[0] | y[3]), which uses a NOR gate on y[0] and y[3].
+
+To reduce gate count and possibly switching:
+
+- Replace ~(y[0] | y[3]) with ~y[0] & ~y[3] (De Morgan's law), so Y3 = (~w) & ~y[0] & ~y[3].
+
+This expands the NOR into three ANDs and NOTs but removes the NOR gate, possibly simplifying gate types and improving static power due to fewer transitions on the NOR output.
+
+Additionally, we can avoid creating an intermediate wire for w_n and directly apply negations in assigns to reduce signal toggling.
+
+This approach slightly increases the number of AND gates but uses only simple gates (AND/NOT) instead of NOR, potentially reducing glitching and power in practice.
+
+We keep the modular structure for clarity and future expandability.

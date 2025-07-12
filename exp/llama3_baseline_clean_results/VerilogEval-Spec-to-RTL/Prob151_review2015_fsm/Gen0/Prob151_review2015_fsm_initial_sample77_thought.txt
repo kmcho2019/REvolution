@@ -1,0 +1,7 @@
+The finite-state machine can be designed with five states: IDLE, PATTERN_MATCH, SHIFT, COUNTING, and DONE. 
+- In the IDLE state, the machine checks for the pattern 1101 on the data input. 
+- When the pattern is detected, it moves to the PATTERN_MATCH state and asserts shift_ena for exactly 4 clock cycles. 
+- After that, it moves to the COUNTING state, asserts counting, and waits for done_counting to be high. 
+- Once done_counting is high, it moves to the DONE state, asserts done, and waits for ack to be high. 
+- After ack is high, it resets to the IDLE state. 
+A counter can be used to count the number of clock cycles while shift_ena is high.

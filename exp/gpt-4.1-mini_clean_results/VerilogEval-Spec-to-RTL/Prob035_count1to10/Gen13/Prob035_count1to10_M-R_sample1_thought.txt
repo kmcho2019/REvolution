@@ -1,0 +1,5 @@
+I will refactor the decade counter to separate the combinational next-state logic from the sequential logic. The counter register q will be updated on the positive edge of clk or reset synchronously, while the next value of q is computed in a combinational always block. This separation improves code clarity and can help with easier modifications or formal verification.
+
+The reset logic remains synchronous and active high, setting q to 1. The counter increments by 1 on each clock, and resets to 1 when reaching 10 (decimal). The detection for 10 will use the same bitwise pattern `(q[3] & ~q[2] & q[1] & ~q[0])`.
+
+This structure also aligns with common design practices of separating sequential and combinational logic.

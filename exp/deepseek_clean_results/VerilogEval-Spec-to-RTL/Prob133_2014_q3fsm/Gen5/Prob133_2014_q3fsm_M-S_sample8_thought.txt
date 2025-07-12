@@ -1,0 +1,15 @@
+To simplify the FSM implementation while maintaining functionality:
+1. Eliminate the separate evaluation_flag register by directly using cycle_count
+2. Combine w_history and cycle_count tracking into a single 3-bit shift register
+3. Use simple equality comparison for detecting exactly two 1's (011, 101, 110)
+4. Remove unnecessary intermediate registers
+5. Maintain Moore machine style with explicit state encoding
+6. Keep the same state behavior (A and B states)
+7. Output z is set exactly one cycle after window completion
+
+Key simplifications:
+- Remove evaluation_flag register
+- Replace $countones with direct pattern matching
+- Combine w_history and cycle_count into single shift register
+- Simplify output logic
+- Maintain same reset behavior

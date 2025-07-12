@@ -1,0 +1,9 @@
+To implement the TopModule, we need to consider the water level and the previous level to determine the flow rate. We can achieve this by using a combination of combinational logic and a state machine to track the previous level. The state machine will have four states corresponding to the four water levels: above s[2], between s[2] and s[1], between s[1] and s[0], and below s[0]. The state machine will transition between these states based on the sensor inputs and the previous state. The flow rate will be determined by the current state and the previous state.
+
+The module will have a synchronous reset that resets the state machine to the state equivalent to the water level being below s[0] for a long time. This means that all four outputs (fr2, fr1, fr0, and dfr) will be asserted when the reset is active.
+
+We will use the following logic:
+- When the water level is above s[2], the output flow rate should be zero, so all outputs will be deasserted.
+- When the water level is below s[0], the flow rate should be at maximum, so all outputs will be asserted.
+- When the water level is between the upper and lower sensors, the flow rate will be determined by the water level and the previous level.
+- The Supplemental flow valve (dfr) will be opened when the sensor change indicates that the previous level was lower than the current level.

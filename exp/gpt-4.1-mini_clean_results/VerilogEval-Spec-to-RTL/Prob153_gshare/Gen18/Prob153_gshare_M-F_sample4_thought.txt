@@ -1,0 +1,8 @@
+The previous code incorrectly declared and assigned a wire inside a sequential always block, which is illegal in Verilog. To fix this, move all combinational calculations like the train_index computation outside the always block to the top-level or compute them as variables inside the always block (using reg or temporary variables). 
+
+In this fix:
+- Declare train_index as a wire outside the always block, assigned as train_pc ^ train_history (combinational).
+- Use train_index inside the always block to update the PHT entry.
+- Keep the rest of the logic unchanged to preserve the intended design.
+
+This corrects the syntax error and preserves the intended functionality of the gshare predictor with separate fetch_ghr and train_ghr registers, correct update order, and priority for training updates.

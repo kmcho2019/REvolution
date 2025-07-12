@@ -1,0 +1,16 @@
+To create a 3.5x frequency divider using double-edge clocking, we'll use a modulo-7 counter since 3.5 = 7/2. The counter increments every clock cycle and resets after reaching 6. 
+
+We generate two signals:
+- A slow clock with a period of 7 input clocks, where the high phase lasts 4 clocks and the low phase lasts 3 clocks.
+- A phase-shifted version of this clock delayed by half a clock period, implemented by triggering it on the negative edge of the input clock.
+
+By OR-ing these two signals, the output effectively toggles every half clock to average out the fractional division and produce a smoother, more uniform 3.5x division with balanced duty cycle.
+
+The design includes:
+- A synchronous reset (active low).
+- A counter incrementing on positive clock edges.
+- Generation of main divided clock on positive edges.
+- Generation of phase-shifted clock on negative edges.
+- Final output is the OR of these two clocks.
+
+This implementation achieves fractional frequency division with a good duty cycle using double-edge clocking.

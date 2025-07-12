@@ -1,0 +1,11 @@
+To address the issues identified in the feedback, we need to revisit the state machine implementation and correct the transition conditions. The main areas of focus are:
+
+1. Handling the `bump_left` and `bump_right` signals correctly: When a Lemming is bumped on both sides at the same time, it should still switch directions. We can achieve this by checking the values of `bump_left` and `bump_right` separately and updating the `next_state` accordingly.
+
+2. Updating the `last_walking_direction` variable: When the Lemming falls, we need to store its original walking direction in the `last_walking_direction` variable. This will allow the Lemming to resume walking in the same direction when the ground reappears.
+
+3. Correctly handling the `DIGGING` state: When the ground disappears while the Lemming is digging, it should transition to the `FALLING` state and then continue walking in the original direction once the ground reappears.
+
+4. Ensuring that being bumped while falling or digging does not affect the walking direction: We should ignore the `bump_left` and `bump_right` signals when the Lemming is in the `FALLING` or `DIGGING` states.
+
+By addressing these issues, we can create a corrected state machine implementation that accurately models the behavior of the Lemming.

@@ -1,0 +1,12 @@
+Instead of implementing the barrel shifter as three cascaded stages each controlled by one bit of `ctrl` using multiplexers, I will use a different approach: perform the rotation by constructing the output bits directly with combinational logic using bitwise concatenations and shifts.
+
+The idea is to:
+- Interpret the 3-bit `ctrl` as an integer amount (0 to 7) of positions to rotate right.
+- Perform the rotation in a single combinational assignment by concatenating parts of the input: output = {in[rotation amount-1:0], in[7:rotation amount]}.
+- Since Verilog does not allow variable part-select widths in constant indices, I will implement this with a combinational function that returns the rotated value based on the `ctrl`.
+
+This method eliminates the need for multiplexers and stage-by-stage shifting, and is more straightforward. It also results in more concise, readable, and efficient synthesis.
+
+To realize this, I will write a function `rotate_right` that takes the 8-bit input and the 3-bit shift amount, and returns the rotated 8-bit value. The module output is simply assigned to the function output.
+
+This also provides a flexible, easily modifiable design that can be expanded for wider buses or different rotation directions by changing only the function logic.

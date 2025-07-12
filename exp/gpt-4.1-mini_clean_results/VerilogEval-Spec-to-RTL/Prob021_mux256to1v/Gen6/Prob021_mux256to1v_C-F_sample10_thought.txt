@@ -1,0 +1,14 @@
+Fuse the clarity and direct indexing from Example 1 with the hierarchical approach of Example 2, but simplify the code by using a 2D packed array for the 256 4-bit words, as in Example 1. Then implement a two-level mux hierarchy purely via continuous assignments to keep the combinational logic structured and easier to optimize.
+
+Specifically:
+- Represent the input as a packed array of 256 elements of 4 bits each.
+- Use the upper 6 bits of sel to select a 16-bit block (4 consecutive 4-bit words).
+- Then use the lower 2 bits of sel to select one 4-bit word from that block.
+
+This enables a balanced two-level multiplexer structure:
+- First select one 16-bit block out of 64.
+- Then select one 4-bit word inside that block.
+
+Use continuous assignments and array slicing to avoid verbose case statements and to help synthesis infer efficient mux trees. This combines the efficient indexing and hierarchical muxing, potentially improving performance by reducing mux fan-in, and may reduce area and power by structuring muxes into smaller parts.
+
+Also, removing the intermediate reg and always block, instead use combinational continuous assignments for clarity and synthesis friendliness.

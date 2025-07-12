@@ -1,0 +1,10 @@
+Combine the clear, well-structured direct encoding of Rule 110 from Example 1 with the succinct boolean formula from Example 2 for next-state calculation, replacing the LUT-based lookup with a simple combinational expression. Use generate loops without a function for neighbor access to avoid synthesis ambiguities, explicitly handling boundary conditions as zero.
+
+This fusion reduces logic complexity per cell by using a minimal boolean formula for Rule 110, improving synthesis optimization potential and timing. It also preserves clarity and parallelism for correctness and speed. We keep synchronous load logic for reinitialization.
+
+In summary, the design:
+- Holds q as a 512-bit register updated on clk.
+- Loads from data when load is high.
+- Updates each cell combinationally by next = (~left & center) | (center ^ right) using neighbors (with boundaries zero).
+- Implements explicit boundary handling without functions for synthesis friendliness.
+- Uses generate loops for scalable parallel combinational logic.

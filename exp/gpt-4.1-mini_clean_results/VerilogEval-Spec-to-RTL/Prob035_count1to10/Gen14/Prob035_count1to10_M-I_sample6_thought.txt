@@ -1,0 +1,13 @@
+To improve PPA, focus on reducing the critical path delay caused by the four-gate logic detecting decimal 10 and the increment operation on the same path. Strategy:
+
+1. Replace the combinational 4-bit equality check (q == 10) with a simple comparator by using a single comparison operator instead of multiple bitwise gates. Modern synthesis tools efficiently infer equality comparison, reducing logic levels.
+
+2. Keep the synchronous reset and separation of combinational and sequential logic as before to maintain clarity and reliable synthesis.
+
+3. This reduces combinational complexity and critical path delay from multi-gate bitwise detection, potentially improving timing (wns) and power due to simpler logic.
+
+4. The area impact should be minimal or slightly reduced because the synthesis tool can better optimize a single comparator than multiple AND/NOT gates.
+
+No change to counting logic or reset behavior to keep correctness intact.
+
+This approach targets a simpler combinational expression and benefits from synthesis optimizations, improving performance without increasing area or power.

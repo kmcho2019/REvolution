@@ -1,0 +1,21 @@
+Novel Architectural Idea: Pipelined Johnson Counter with State Prediction
+
+1. Core Innovation:
+   - Implement a two-stage pipelined architecture to break the long combinational path of the 64-bit shift operation
+   - Add a state prediction unit that anticipates the next MSB value one cycle early
+
+2. Performance Benefits:
+   - The critical path is reduced by splitting the 64-bit shift into two 32-bit operations
+   - State prediction eliminates the dependency on Q[0] in the critical path
+
+3. Power Optimization:
+   - The pipeline registers can be clock-gated during steady-state operation
+   - Only the prediction logic needs to evaluate every cycle
+
+4. Area Consideration:
+   - Additional pipeline registers increase area but enable higher clock speeds
+   - The prediction logic is minimal (just 1 flip-flop)
+
+5. Functionality:
+   - Maintains identical Johnson counter behavior
+   - Adds one cycle latency but enables much higher clock frequencies

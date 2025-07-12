@@ -1,0 +1,11 @@
+Fix the FSM to correctly handle the LSB-first data bits by shifting incoming bits into the LSB of the shift register, shifting existing bits to the right. This means the shift operation should be `shift_reg <= {shift_reg[6:0], in}` instead of shifting the input bit into MSB.
+
+Also, generate the `done` signal synchronously in the clocked always block to assert it exactly one clock cycle when a correct stop bit is detected in the CHECK_STOP state. Avoid combinational assignment of done depending on input directly to prevent glitches.
+
+Ensure that bit_count increments only during RECEIVE, and that shift_reg and bit_count reset appropriately in IDLE or WAIT_STOP.
+
+Maintain the WAIT_STOP state behavior to wait for a stop bit if the stop bit is missing, ensuring the FSM only returns to IDLE when the line is idle (logic 1).
+
+This ensures that when a valid frame (start bit=0, 8 data bits LSB first, stop bit=1) is received, done pulses high for exactly one clock cycle, aligned with the clock edge, and the FSM is robust against framing errors.
+
+Keep one-hot encoding and synchronous reset unchanged for clarity and performance.

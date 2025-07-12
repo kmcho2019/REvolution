@@ -1,0 +1,20 @@
+Improvement Strategy:
+
+1. Timing Optimization:
+   - Register the MATCH output to break the critical path from state transitions to output
+   - Use distinct state encodings to avoid decoding glitches (2'b00 shared between IDLE and GOT1001)
+
+2. Power Optimization:
+   - Add clock gating for state transitions that don't change (IDLE state when IN=0)
+   - Use explicit state encoding rather than parameters for better synthesis control
+
+3. Area Optimization:
+   - Keep binary encoding but ensure no shared states
+   - Simplify output logic by making it purely sequential
+
+Key Changes:
+- Added registered output
+- Modified state encoding to be unique
+- Added clock gating condition
+- Simplified state transition logic
+- Maintained same functionality with better PPA

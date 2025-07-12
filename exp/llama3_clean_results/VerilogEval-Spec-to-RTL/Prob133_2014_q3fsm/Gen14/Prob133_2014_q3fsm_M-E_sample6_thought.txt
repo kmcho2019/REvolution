@@ -1,0 +1,5 @@
+To solve this problem, we can use a finite state machine with a novel approach. The FSM will have two main states: STATE_A and STATE_B. In STATE_A, it waits for 's' to be high, and when 's' is high, it transitions to STATE_B. In STATE_B, it starts a 3-clock cycle counter and checks the value of 'w' in each of these cycles. It uses a separate counter to keep track of the number of times 'w' is high during these 3 cycles. After the 3-clock cycle, it sets the output 'z' based on the count of 'w' being high. If 'w' was high exactly twice, it sets 'z' to 1; otherwise, it sets 'z' to 0. 
+
+The novelty in this approach is to use a counter for the clock cycles and another counter for the 'w' values. This allows us to easily track the number of clock cycles and the number of times 'w' is high during those cycles. We will use a single always block to handle the sequential logic, making the code more readable and easier to understand.
+
+The state machine will be designed to handle the case when 's' becomes 0 after the FSM has transitioned to STATE_B, and it will also handle the reset condition properly.

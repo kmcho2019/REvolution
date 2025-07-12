@@ -1,0 +1,6 @@
+Implement a Mealy FSM that detects the sequence 1,0,0,1,1 on input IN with overlapping detection.  
+The FSM states represent how many bits of the sequence have been matched. On each clock edge, the FSM updates its state based on the current input and previous state.  
+The MATCH output is asserted combinationally based on the current state and input to indicate the detection of the full sequence on the last input bit (which must be '1').  
+The design cleanly separates the combinational next_state logic and output logic from the sequential state update logic to ensure synthesis-friendly and unambiguous behavior.  
+State transitions support looping back to intermediate states to allow continuous and overlapping sequence detection, e.g., for input sequences like 1 0 0 1 1 0 0 1 1, MATCH is asserted on the 5th and 9th inputs.  
+The reset asynchronously initializes the FSM state and MATCH output to zero.

@@ -1,0 +1,9 @@
+To implement the TopModule, we need to create a module that has two main components: a branch prediction interface and a branch training interface. The branch prediction interface uses the current program counter (pc) and the global branch history register to make a prediction. The branch training interface updates the pattern history table (PHT) based on the actual branch outcome and the misprediction status.
+
+The branch prediction interface should hash the pc and global branch history register using XOR to generate a 7-bit index, which is used to access the PHT. The PHT is a 128-entry table of two-bit saturating counters. The prediction is made based on the value of the counter at the indexed location.
+
+The branch training interface updates the PHT based on the actual branch outcome and the misprediction status. If the branch is a misprediction, the PHT is updated to increase the likelihood of predicting the correct branch direction next time. Additionally, if the branch is a misprediction, the global branch history register is recovered to the state immediately after the mispredicting branch completes execution.
+
+The module should also handle the case where training and prediction of the same PHT entry happen at the same time. In this case, the prediction should see the PHT state before training, and the training should modify the PHT at the next positive clock edge.
+
+The module should be implemented using Verilog, with all sequential logic triggered on the positive edge of the clock.

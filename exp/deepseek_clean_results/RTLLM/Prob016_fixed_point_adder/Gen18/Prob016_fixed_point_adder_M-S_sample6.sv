@@ -1,0 +1,13 @@
+module fixed_point_adder #(
+    parameter Q = 8,  // Number of fractional bits (unused but kept for interface)
+    parameter N = 16  // Total number of bits
+) (
+    input wire [N-1:0] a,
+    input wire [N-1:0] b,
+    output wire [N-1:0] c
+);
+
+    // Simple fixed-point addition (wraps around naturally)
+    assign c = a + b;
+
+endmodule

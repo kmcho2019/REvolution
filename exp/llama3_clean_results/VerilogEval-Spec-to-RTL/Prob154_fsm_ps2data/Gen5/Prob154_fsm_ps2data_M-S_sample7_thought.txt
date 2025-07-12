@@ -1,0 +1,10 @@
+To simplify the existing solution, we can maintain the same finite state machine (FSM) structure but reduce the complexity of the combinational logic. The main idea is to keep track of the byte count and use it to determine when to capture the input bytes and when to assert the 'done' signal.
+
+We will use a 2-bit register `byte_count` to keep track of the current state. The states will be defined as follows: 
+- State 0 (00): Idle state, waiting for the input byte with in[3]=1.
+- State 1 (01): First byte captured, waiting for the second byte.
+- State 2 (10): Second byte captured, waiting for the third byte.
+
+We will also use a 24-bit register `out_bytes` to store the captured message bytes. The 'done' signal will be asserted when all three bytes have been captured.
+
+By using a simple state machine and reducing the complexity of the combinational logic, we can achieve the same functionality as the original solution while improving the overall design simplicity and potentially reducing the power, performance, and area (PPA) metrics.

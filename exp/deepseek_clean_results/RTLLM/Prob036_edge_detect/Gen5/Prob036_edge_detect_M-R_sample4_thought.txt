@@ -1,0 +1,9 @@
+I'll refactor the edge detector using a different approach while maintaining the same functionality. Instead of using a registered previous value and combinational logic, I'll implement the edge detection using a single always block with synchronous outputs. This approach:
+
+1. Combines the storage of previous value and edge detection in one always block
+2. Makes the outputs registered (pipelined) which can help with timing
+3. Still maintains minimal logic for good PPA
+4. Explicitly handles reset for better initialization
+5. The outputs will be synchronous pulses exactly one clock cycle wide
+
+The tradeoff is slightly more flip-flops (for the outputs) but potentially better timing characteristics since the outputs are registered.

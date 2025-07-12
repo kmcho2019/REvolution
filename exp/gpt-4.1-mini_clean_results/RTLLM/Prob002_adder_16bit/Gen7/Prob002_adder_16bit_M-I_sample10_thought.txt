@@ -1,0 +1,18 @@
+The original design uses two 8-bit carry-lookahead adder (CLA) blocks cascaded with a ripple carry between them. This ripple carry between blocks limits the overall speed, as the carry out from the lower 8-bit block must propagate before the upper 8-bit block sum is computed.
+
+To improve PPA, I will implement a hierarchical carry-lookahead for the full 16-bit adder by:
+1. Using the same 8-bit CLA module for modularity.
+2. Adding top-level carry lookahead logic to compute the carry into the upper 8-bit block without waiting for the full ripple.
+3. Specifically, I will compute the 8-bit block propagate and generate signals from each 8-bit CLA, then apply carry lookahead to quickly generate the carry between the two 8-bit blocks.
+4. This reduces carry chain length from 8 bits to 1 block carry, significantly improving timing.
+5. Power will remain low because carry logic is implemented by simple combinational gates, and area slightly increases but is acceptable given performance gains.
+
+Thus, the 16-bit adder is constructed from two 8-bit CLA blocks plus a small carry lookahead layer on the block level, achieving better timing while retaining modularity.
+
+I will:
+- Modify the 8-bit CLA to output propagate and generate signals for the block.
+- Implement block-level carry lookahead at the 16-bit adder top.
+- Compute carry into upper 8-bit block using those block propagate/generate.
+- This way, carry input to upper 8-bit block is computed in parallel with the lower sum generation, improving critical path.
+
+This approach preserves reusability of the 8-bit CLA, gains timing by parallel carry computation, and maintains a clean modular structure.

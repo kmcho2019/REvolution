@@ -1,0 +1,15 @@
+Fuse the strengths of both designs by implementing a 64-bit subtractor using a multi-level hierarchical carry-lookahead structure to improve performance and reduce carry propagation delay compared to a simple ripple or single-level CLA. The subtractor computes A - B as A + (~B + 1).
+
+Key improvements:
+- Partition the 64-bit adder into 4 blocks of 16 bits each.
+- Each 16-bit block is a CLA with internal carry lookahead.
+- A higher-level 4-bit carry-lookahead handles block-level carry between the four 16-bit blocks.
+- This hierarchical CLA reduces fan-out and carry propagation delay, improving timing and power.
+- Maintain modularity by implementing separate modules for 16-bit CLA and 4-bit CLA for block-level carry.
+- Overflow detection is done using the classical signed subtraction overflow condition checking the sign bits of A, B, and result.
+
+This fusion offers:
+- Faster carry resolution than ripple borrow or flat 64-bit CLA.
+- Lower power due to reduced glitching and shorter carry chains.
+- Good modularity and clean structure.
+- Minimal additional area overhead compared to flat CLA.

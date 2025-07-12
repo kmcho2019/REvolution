@@ -1,0 +1,10 @@
+To implement the TopModule, we can design a finite state machine (FSM) with four states: 
+1. IDLE: waiting for the first byte of a message (in[3] = 1)
+2. BYTE1: received the first byte, waiting for the second byte
+3. BYTE2: received the second byte, waiting for the third byte
+4. DONE: received the third byte, signal done in the next cycle
+
+We will use a counter to keep track of the current state and reset the counter when the reset signal is high. 
+When in[3] = 1, we transition from IDLE to BYTE1. 
+We then transition from BYTE1 to BYTE2 and from BYTE2 to BYTE3 (which immediately goes to DONE) after receiving the next two bytes.
+In the DONE state, we assert the done signal and transition back to IDLE in the next cycle.

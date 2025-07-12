@@ -1,0 +1,23 @@
+The original design intends to implement a pipelined 64-bit ripple carry adder divided into 4 stages of 16 bits each, where each stage adds its slice of operands along with the carry-in from the previous stage. The design registers inputs, carries, sums, and the enable signals to realize pipelining.
+
+The critical issue lies in the final result assembly logic and multiple drivers to the `result` and `o_en` signals, causing simulation mismatches and functional failures. The code tries to build the `result` concatenation inside a sequential always block with multiple assignments, which is not synthesizable or correct.
+
+Improvement strategy:
+
+1. **Single driver for `result` and `o_en`:** Assign `result` and `o_en` only once in a clocked always block. Use a combinational block to prepare the concatenated sum + carry output as a temporary variable.
+
+2. **Proper assembly of the `result`:** Concatenate all sum slices and the final carry-out in the correct order into a single vector. Use a generate loop to assemble sums from least significant stage (index 0) to most significant (index STAGES-1). Since summation in the code is stored from stage 0 (LSB slice) upwards, we should assemble the output starting from sum_s[STAGES-1] (MSB slice) down to sum_s[0], followed by carry_out[STAGES-1] as the MSB of the result.
+
+3. **Synchronize enable signals and carry signals properly:** The enable pipeline (`en_pipeline`) shifts in `i_en` each clock to track when outputs are valid. The carry_in is initialized at zero for each new addition (when `i_en` is asserted). Carries and sums are updated only when the pipeline stages are enabled to avoid invalid computations.
+
+4. **Simplify carry and enable registers:** Keep arrays of carry signals and enables at the stage level and propagate them appropriately each clock.
+
+5. **Parameterize data widths and pipeline stages for scalability** (already present).
+
+6. **Use explicit non-blocking assignments consistently in sequential blocks.**
+
+7. **Avoid combinational loops or multiply driven signals.**
+
+With these corrections, the module will provide a clean, synthesizable, and correctly pipelined 64-bit ripple carry adder with output valid signal.
+
+Below is the improved code with detailed comments.

@@ -1,0 +1,7 @@
+The current implementation uses a generate block with intermediate wires, which is clean but may not be the most area-efficient. We can optimize further by:
+1. Eliminating the intermediate array entirely
+2. Using a single direct calculation of the output index
+3. Leveraging bit-slicing with a calculated offset
+4. Using a single continuous assignment for better synthesis optimization
+
+The key insight is that we can compute the exact bit position in one step using the sel input, rather than splitting it into two levels. This reduces the hardware needed for intermediate storage and muxing.

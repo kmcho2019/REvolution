@@ -1,0 +1,11 @@
+Here's a novel approach using a finite state machine (FSM) with two states:
+1. IDLE: Waiting for the first valid input
+2. COLLECT: Actively collecting bits until 8 are received
+
+Key features:
+- Uses a 3-bit counter (instead of 4-bit) since we only need to count to 7 (0-7 is 8 cycles)
+- State machine ensures clean transitions between idle and collection phases
+- Explicit counter makes the bit collection process clear and verifiable
+- Output register shifts in new bits only during valid cycles
+- Valid signal pulses for exactly one clock cycle after full collection
+- Reset puts everything in known state

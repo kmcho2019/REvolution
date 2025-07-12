@@ -1,0 +1,7 @@
+To implement this FSM, we'll need:
+1. Two main states: A (reset state) and B (counting state)
+2. A 2-bit counter to track how many cycles we've been in state B (since we need to examine exactly 3 cycles)
+3. A 2-bit accumulator to count how many times w=1 occurs during these 3 cycles
+4. Output logic that sets z=1 when we've seen exactly two w=1 in the previous 3 cycles
+
+The FSM transitions from A to B when s=1. In state B, it counts cycles and accumulates w values. After 3 cycles, it evaluates the count and sets z accordingly, then resets the counters for the next 3-cycle window.

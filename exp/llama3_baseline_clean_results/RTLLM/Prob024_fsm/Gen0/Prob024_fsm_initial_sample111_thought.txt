@@ -1,0 +1,12 @@
+To implement a Mealy FSM detection circuit in Verilog, we first need to identify the states of the FSM based on the input sequence. The sequence to be detected is 10011. We can represent the detection process through a series of states (S0 to S5), where each state corresponds to the detection of a bit in the sequence.
+
+- S0: Initial state, no bits matched.
+- S1: First '1' detected.
+- S2: '0' detected after '1'.
+- S3: Second '0' detected after the first '0'.
+- S4: '1' detected after two '0's.
+- S5: Final '1' detected, sequence matched.
+
+The MATCH output will be '1' only when we are in the S5 state and the current input is '1', indicating the end of the sequence. We will use a case statement to define the next state based on the current state and input. We'll also include a reset condition to initialize the FSM to S0 when RST is active.
+
+The module will be designed to operate synchronously with the CLK signal, meaning state transitions and output updates occur on the positive edge of the clock.

@@ -1,0 +1,9 @@
+Implement the FSM using three distinct one-hot encoded states for clarity and easy state transitions: WALK_LEFT, WALK_RIGHT, and FALL (which implicitly remembers the walking direction before falling). Maintain the walking direction in a separate 1-bit register that only updates when walking and bumped. The FALL state keeps track of the falling condition, and direction is restored when ground reappears. 
+
+The advantage of this approach:
+- One-hot encoding simplifies combinational next-state logic and potentially improves timing.
+- Separating direction from state decouples direction handling from falling, making the logic more modular and readable.
+- The Moore outputs derive directly from state and direction signals.
+- Asynchronous reset initializes to WALK_LEFT and direction=0.
+
+This structure offers an alternative architectural view distinct from the packed two-bit state FSM, trading a bit more register bits for very explicit state naming and direction management.

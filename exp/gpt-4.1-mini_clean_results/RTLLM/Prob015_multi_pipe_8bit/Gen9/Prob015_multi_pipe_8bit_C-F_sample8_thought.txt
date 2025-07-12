@@ -1,0 +1,16 @@
+Fuse the simplicity and minimal pipeline depth of Example 1 with the balanced pipelining and power gating strategy of Example 2 to achieve a superior 3-stage pipelined unsigned 8-bit multiplier design:
+
+Fusion Strategy:
+- Use a 4-bit enable shift register to track data validity through the pipeline stages, enabling clean control of pipeline registers and output enable.
+- Register inputs only when mul_en_in is active, reducing switching and ensuring valid input capture.
+- Generate all 8 partial products combinationally in parallel using conditional shifts as both examples do.
+- Split the summation of partial products into two balanced pipeline stages to reduce the critical path and improve clock frequency:
+  - Stage 1: Register two partial sums, each summing four partial products, gated by mul_en_pipe[1].
+  - Stage 2: Register the final product summing the two stage-1 sums, gated by mul_en_pipe[2].
+- The final output enable is the MSB of mul_en_pipe, indicating when mul_out_reg holds valid data.
+- Assign mul_out as mul_out_reg when mul_en_out is asserted; otherwise, output zero.
+- Use synchronous active-low reset to initialize all registers.
+- Use non-blocking assignments and gated register updates to reduce power.
+- This fusion achieves balanced pipeline stages, reducing large combinational additions per cycle compared to Example 1's single large addition and reduces the number of stages and complexity compared to Example 2's longer pipeline.
+
+The result is a clean, efficient, moderate-latency, pipelined 8-bit multiplier with improved timing and power profile relative to each example alone.

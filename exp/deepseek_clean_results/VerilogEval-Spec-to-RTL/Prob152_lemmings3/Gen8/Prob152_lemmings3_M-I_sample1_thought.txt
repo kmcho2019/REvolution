@@ -1,0 +1,22 @@
+To optimize the Lemming state machine for better PPA metrics while maintaining functionality:
+
+1. State Encoding Optimization:
+   - Merge direction into state encoding to eliminate separate dir register
+   - Use 4 states (WALK_LEFT, WALK_RIGHT, FALL, DIG) encoded in 2 bits
+   - This saves one flip-flop while maintaining clear state separation
+
+2. Clock Gating:
+   - Only update state when necessary (input changes that affect current state)
+   - This reduces power consumption by minimizing unnecessary transitions
+
+3. Output Logic Simplification:
+   - Directly derive outputs from state bits without additional logic
+   - Eliminate redundant comparisons in output assignments
+
+4. Priority Handling:
+   - Maintain strict fall > dig > bump priority in state transitions
+   - Simplify transition conditions by leveraging merged state encoding
+
+5. Asynchronous Reset:
+   - Keep simple reset to WALK_LEFT state
+   - Ensure clean initialization with minimal hardware overhead

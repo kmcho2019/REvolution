@@ -1,0 +1,15 @@
+Refactor the multiplier to implement a simple FSM with explicit states: IDLE, LOAD, SHIFT, and DONE to clearly separate each phase of operation. This makes the control flow clearer and easier to maintain.
+
+Key points of the refactoring:
+1. Use a state register to represent the current operation phase.
+2. On `start` in IDLE state, move to LOAD state, where operands are loaded.
+3. Then transition to SHIFT state, where shift-and-add steps occur with a 4-bit counter `count` (0 to 15).
+4. When done shifting (count == 15), go to DONE state and assert `done` for one clock cycle.
+5. From DONE, return to IDLE waiting for next `start`.
+6. Registers `areg`, `breg`, and `acc` hold multiplicand, multiplier (shifted), and accumulator respectively.
+7. In SHIFT state, at each cycle, if LSB of `areg` is 1, add `breg` to accumulator, then shift `areg` right and `breg` left.
+8. The output `yout` continuously assigned from accumulator.
+9. Use synchronous reset (`rst_n`) to reset state and registers.
+10. This FSM approach separates control logic and data path cleanly and avoids mixing counters and flags in one variable.
+
+This improves readability, debuggability, and matches typical FSM-based multiplier design, while still adhering to the shift-and-add algorithm and interface.

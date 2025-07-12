@@ -1,0 +1,5 @@
+Refactor the clock generator by using a free-running counter driven by an internal time unit instead of an always block with delays. We create a simple process that toggles the clock whenever a counter reaches half the PERIOD, implementing a modulo counter. This approach aligns with synthesizable style and allows explicit control over the toggling interval without using `#` delays.
+
+To keep the clock toggling at intervals of PERIOD/2 time units, we use an internal register that counts clock cycles or simulation time units. When the count reaches HALF_PERIOD, the clock toggles and the counter resets.
+
+This method removes `always` with delays and uses a self-contained counter-based toggling logic, improving clarity and structure while maintaining the same functionality.

@@ -1,0 +1,5 @@
+Combine both examples by using a clean 2-bit binary FSM with three explicit states (WAIT_SYNC, BYTE2, BYTE3), and apply load-enable signals to the byte registers, updating them only when required to reduce unnecessary toggling and power. Update done and out_bytes exclusively on the cycle the third byte is received to limit switching and maintain output stability otherwise. Use synchronous active-high reset and non-blocking assignments for clarity and reliable timing. Keep next-state logic combinational and minimal for performance.
+
+Additionally, explicitly gate done and out_bytes registers so they update only when done is asserted, preventing unnecessary toggling. This fusion keeps minimal area and optimal timing while improving power efficiency by reducing register toggling. The output concatenation matches the spec with byte1 at bits [23:16], byte2 at [15:8], and byte3 at [7:0]. Done is asserted for exactly one cycle on receipt of the third byte.
+
+Overall, this solution balances clarity, performance, power, and area, providing a robust and efficient FSM that precisely meets the functional and timing requirements.

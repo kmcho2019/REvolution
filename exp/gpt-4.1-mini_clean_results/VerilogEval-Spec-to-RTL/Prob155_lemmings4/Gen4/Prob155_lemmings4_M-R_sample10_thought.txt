@@ -1,0 +1,9 @@
+Refactor the FSM by encoding both the state and direction into a single state register with four states: WALK_LEFT, WALK_RIGHT, FALL_LEFT, FALL_RIGHT, plus additional DIG and SPLAT states each carrying direction implicitly. This combines direction and state, simplifying output logic and some transitions.
+
+Use a separate fall counter for tracking fall duration as before. Implement the asynchronous reset and sequential logic in one always block. Next-state logic is split into combinational logic with case statements directly on current state, using combinational assignments rather than a big always @(*) block.
+
+Prioritize transitions explicitly: fall > dig > bump. Use the direction encoded within states to easily switch directions by moving between left and right states.
+
+Outputs are assigned purely from state values, maintaining Moore style. This reduces the number of signals, possibly simplifying synthesis and verification, while preserving behavior and clarity.
+
+This structural refactor keeps the same FSM function but changes the representation and control flow to reduce separate signals and slightly alter state logic for clarity.

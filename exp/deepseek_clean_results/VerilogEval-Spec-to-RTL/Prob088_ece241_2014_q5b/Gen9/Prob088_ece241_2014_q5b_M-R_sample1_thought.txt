@@ -1,0 +1,12 @@
+Refactoring Approach:
+1. Maintain the same Mealy FSM behavior but implement using continuous assignments instead of procedural blocks
+2. Use a single state register (state_B) since state_A can be inferred as ~state_B
+3. Simplify the state transition logic by recognizing that state_B becomes 1 when x=1 in state_A and stays 1 forever
+4. Directly compute the output z using combinational logic based on current state and input
+5. Keep asynchronous reset functionality but implement with continuous assignments
+
+Key Changes:
+- Eliminated separate state_A register since it's always the complement of state_B
+- Replaced always block with continuous assignments for state transitions
+- Simplified output logic by directly using state_B and input x
+- Reduced register count by half while maintaining same functionality

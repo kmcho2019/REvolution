@@ -1,0 +1,7 @@
+To fuse the best ideas from both examples, we should use a single 8-bit register to store the previous input vector, thus consolidating storage into one vector register as in Example 2, which improves area and power efficiency. Then, we perform a bitwise XOR between the current input and the stored previous input vector to detect edges on all bits in parallel, outputting the edge detection result one cycle after the input changes as required.
+
+This approach combines Example 1's modularity and clarity on the detection logic (XOR of current and previous bit) with Example 2's resource consolidation and vectorized operation for improved PPA metrics.
+
+By using a single always block with one 8-bit register for previous input storage, we reduce flip-flop count and switching power. The bitwise XOR output is purely combinational and minimal in logic depth, offering good performance. This maintains functional correctness and simplicity while improving area and power by removing per-bit submodules or multi-bit shift register arrays.
+
+Hence, the design uses one 8-bit register to hold previous inputs and outputs the XOR of current and previous inputs to indicate edges detected on the prior cycle.

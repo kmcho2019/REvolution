@@ -1,0 +1,13 @@
+The original solution instantiates two pairs of identical A and B modules with the same inputs, resulting in redundant logic that increases area and power without functional benefit. Since both pairs receive identical inputs and produce the same outputs, we can optimize by instantiating only one A module and one B module, then reusing their outputs to implement the top-level logic. This avoids duplicating combinational logic, reducing area and power consumption.
+
+Further, since modules A and B are purely combinational and simple boolean functions, implementing them as continuous assignments with wire outputs will yield cleaner, more synthesis-friendly code and potentially better optimization.
+
+By sharing single instances of A and B outputs, then performing the OR and AND operations on these shared outputs, followed by the XOR, we maintain the original top-level logic function while minimizing redundant hardware.
+
+This restructuring reduces gate count and switching activity, improving area and power metrics, and can also reduce critical path delay by minimizing the number of instantiated gates.
+
+Summary of improvements:
+- Instantiate a single A and single B module.
+- Use their outputs twice logically (instead of duplicating modules).
+- Implement A and B with continuous assign for cleaner combinational logic.
+- Retain the original top-level structure of OR, AND, XOR gates for clarity.

@@ -1,0 +1,10 @@
+To solve this problem, we can implement a finite state machine (FSM) that has the following states: idle, start, data, and stop. 
+- The idle state will be the initial state where the FSM waits for a start bit (0) to be received.
+- Once a start bit is detected, the FSM moves to the data state, where it collects 8 data bits.
+- After collecting the 8 data bits, the FSM moves to the stop state, where it checks if a stop bit (1) is received.
+- If a stop bit is received in the stop state, the FSM returns to the idle state and asserts the done signal, indicating that a byte has been correctly received.
+- If a stop bit is not received when expected, the FSM will remain in the data state until it finds a stop bit, at which point it returns to the idle state without asserting the done signal.
+- The FSM also needs to handle the case where the input is not a valid byte (i.e., no start or stop bit).
+The FSM can be implemented using a Moore machine, where the output depends only on the current state.
+We will use an enum to define the states and a case statement to handle the state transitions.
+The module will also have a counter to keep track of the number of data bits received.

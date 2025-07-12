@@ -1,0 +1,31 @@
+Instead of using row/column decoding with Gray code remapping, a simpler and more direct approach is to implement the logic function from the Karnaugh map by directly coding the minterms (input patterns) that produce output 1, and treating don't-care entries as convenient (here, we use 0).
+
+Given the inputs as a 4-bit vector x[3:0], but the problem defines bits as x[1], x[2], x[3], x[4], we map accordingly:
+
+Let's define:
+- x[1] = x[0] (LSB)
+- x[2] = x[1]
+- x[3] = x[2]
+- x[4] = x[3] (MSB)
+
+The Karnaugh map's rows are labeled by x[3]x[4] → (x[2], x[3])
+The columns are labeled by x[1]x[2] → (x[0], x[1]), but in Gray code order (00,01,11,10)
+
+We can list all 16 possible input combinations, check for each combination if the cell in the K-map is 1 or 0/don't-care.
+
+To avoid Gray code confusion, decode the column index in Gray code by translating (x[0], x[1]) binary input to K-map column index:
+
+Gray code order: 00→0, 01→1, 11→2, 10→3
+Binary input for col bits (x[0], x[1]) can be converted to Gray order index as: col_gray = x[1] ^ x[0], x[0]
+
+But to avoid this, we just write all minterms explicitly in terms of x[3:0] bits, where each minterm corresponds to one combination.
+
+From Karnaugh map entries with output 1:
+
+- For each '1' cell, write the corresponding combination of x[1], x[2], x[3], x[4] bits.
+
+Then convert to boolean expression by OR'ing all minterms corresponding to output=1.
+
+This explicit minterm OR approach is clear, easy to verify, and avoids Gray code column remapping at runtime.
+
+This approach leads to a clean, straightforward combinational expression.

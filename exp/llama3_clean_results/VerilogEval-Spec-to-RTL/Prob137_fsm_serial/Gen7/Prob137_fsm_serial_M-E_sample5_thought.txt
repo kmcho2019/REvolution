@@ -1,0 +1,7 @@
+One novel approach to solving this problem is to design a finite state machine that utilizes a 2-bit state register to track the current state of the protocol. The FSM will have four distinct states: IDLE, START_BIT, RECEIVE_BITS, and STOP_BIT. The IDLE state will wait for the start bit, the START_BIT state will verify the start bit, the RECEIVE_BITS state will collect the incoming data bits, and the STOP_BIT state will verify the stop bit.
+
+To simplify the design, we can use a single 8-bit register to store the incoming data bits. We can also use a single 3-bit counter to track the number of bits received. The FSM will use the counter to determine when to transition from the RECEIVE_BITS state to the STOP_BIT state.
+
+The new design will also include a synchronous reset signal to reset the FSM to the IDLE state. The reset signal will also reset the data register, the counter, and the state register.
+
+To improve the functionality, we can use a separate output signal, `done`, to indicate when a complete byte has been received.

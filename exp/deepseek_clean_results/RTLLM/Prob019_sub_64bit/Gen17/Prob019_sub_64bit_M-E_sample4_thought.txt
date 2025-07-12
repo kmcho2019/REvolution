@@ -1,0 +1,16 @@
+Novel Architectural Idea: Carry-Select Subtracter with Early Overflow Prediction
+
+1. **Hierarchical Subtraction**:
+   - Divide the 64-bit operation into 8-bit segments (8 segments total)
+   - Implement carry-select architecture where each segment computes both possible results (with carry=0 and carry=1)
+   - Select correct result based on actual carry-in from previous segment
+
+2. **Early Overflow Prediction**:
+   - Compute potential overflow conditions in parallel with subtraction
+   - Use sign extension properties to predict overflow without waiting for full result
+   - Special handling for most significant segment to detect final overflow
+
+3. **Optimized Implementation**:
+   - Segment-based design enables better timing closure
+   - Early overflow detection reduces critical path
+   - Balanced pipeline-like structure for improved performance

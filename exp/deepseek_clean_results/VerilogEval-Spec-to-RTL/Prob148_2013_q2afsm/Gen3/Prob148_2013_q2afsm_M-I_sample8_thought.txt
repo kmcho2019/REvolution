@@ -1,0 +1,16 @@
+To optimize the FSM for better PPA metrics, I'll implement these improvements:
+
+1. Performance: Use parallel case statements with explicit priority encoding to reduce the critical path in state A transitions. This will help with timing by making the priority logic more direct.
+
+2. Power: 
+   - Implement Gray coding for state transitions to minimize bit toggles between states
+   - Register the output signals to reduce unnecessary switching when grants remain stable
+
+3. Area:
+   - Combine output logic into a single always block with case statements
+   - Remove redundant default case since all states are explicitly covered
+
+The Gray coding will use the following state assignments:
+A: 00, B: 01, C: 11, D: 10 - ensuring only one bit changes between adjacent states.
+
+These changes should improve power consumption while maintaining or improving timing performance.

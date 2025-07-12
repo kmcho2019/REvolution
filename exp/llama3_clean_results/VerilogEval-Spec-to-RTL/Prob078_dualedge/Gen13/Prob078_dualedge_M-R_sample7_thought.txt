@@ -1,0 +1,7 @@
+The existing design utilizes two single-edge triggered flip-flops and a multiplexer to functionally behave like a dual-edge triggered flip-flop. To refactor this code while maintaining the core idea, we can simplify the logic by directly assigning the output based on the clock edge and the current state of the flip-flops. 
+
+One approach to refactoring is to use a single always block that captures both the positive and negative edges of the clock, and then use conditional statements to update the output based on the current edge. However, as noted, using an `always @(posedge clk or negedge clk)` is not a standard or accepted practice in Verilog for synthesis. 
+
+Instead, we can maintain the use of two separate always blocks for the positive and negative edges but refactor the output assignment logic to reduce unnecessary hardware. The key insight is recognizing that the output `q` needs to reflect the value of `d` at the last edge (either rising or falling) of the clock. This can be achieved by updating `q` directly within the always blocks, eliminating the need for separate registers for `pos_edge_q` and `neg_edge_q` and the subsequent multiplexer logic.
+
+This refactoring aims to simplify the design, potentially reducing the area and power consumption, while ensuring the functionality of a dual-edge triggered flip-flop is maintained.

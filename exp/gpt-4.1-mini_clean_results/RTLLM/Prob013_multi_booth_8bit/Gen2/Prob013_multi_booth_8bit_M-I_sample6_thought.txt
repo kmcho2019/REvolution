@@ -1,0 +1,20 @@
+The provided solution mixes SystemVerilog features and multiple always blocks driving the same registers, which is illegal in Verilog and causes syntax errors. Also, the design can be simplified and made more synchronous and robust by:
+
+- Using pure Verilog constructs only (no typedef, logic, or SystemVerilog enums).
+- Implementing a simple FSM with defined states as parameters.
+- Using a single clocked always block to update all registers to avoid multiple drivers.
+- Explicitly performing radix-4 Booth encoding by examining overlapping 3-bit groups of the multiplier (plus appended bits) to determine partial products.
+- Implementing a cycle counter to perform the 8 radix-4 steps (since 8 bits means 4 groups of 2 bits, but in radix-4, we use 3 bits overlapping windows and process 2 bits at a time, the counter will count 4 steps; to keep it consistent with original spec, we will count 8 steps but process 2 bits per step, which can be simplified).
+- Sign-extending inputs to 17 bits to accommodate partial sums.
+- The product is built from the combined accumulator and multiplier registers.
+- Setting the ready signal when multiplication is done.
+- Resetting registers and internal states properly on reset.
+- Avoiding complex and conflicting combinational/sequential logic interactions.
+
+This approach is clean, synthesizable in pure Verilog, and respects the user's original interface and operational description with a correct radix-4 Booth multiplier behavior.
+
+Note: The user description describes checking multiplier[ctr] and shifting the multiplicand, but radix-4 Booth encodes using 3 bits at a time for overlapping windows and uses shifts by 2 bits. This implementation aligns radix-4 Booth's standard approach for clarity.
+
+The counter runs 4 iterations (one per two multiplier bits), but since the user wants a 16-bit product and 8-bit inputs, we can process 4 steps of 2 bits each. For clarity, we implement a 4-cycle processing radix-4 steps, aligning with standard radix-4 Booth multiplication.
+
+We output the final product and assert `rdy` when done.

@@ -1,0 +1,7 @@
+To improve the existing frequency divider code, we will revisit the original design intent and incorporate elements that were missing or simplified in the provided solution. The main strategy will involve:
+1. Reintroducing the concept of two counters (cnt1 and cnt2) to track the rising and falling edges of the clock, allowing for more precise control over the divided clock output for odd divisors.
+2. Implementing two separate clock dividers (clk_div1 and clk_div2) that toggle when the respective counters reach half of the odd divisor value (NUM_DIV), to correctly account for both positive and negative edges of the clock.
+3. Deriving the final divided clock output (clk_div) by logically OR-ing clk_div1 and clk_div2, ensuring that both clock edges are properly handled.
+4. Ensuring the counters and clock divider outputs are properly reset using the active low reset signal (rst_n).
+
+By incorporating these design elements, we aim to create a frequency divider that accurately divides the input clock frequency by odd numbers, while also optimizing for better Power, Performance, and Area (PPA) metrics.

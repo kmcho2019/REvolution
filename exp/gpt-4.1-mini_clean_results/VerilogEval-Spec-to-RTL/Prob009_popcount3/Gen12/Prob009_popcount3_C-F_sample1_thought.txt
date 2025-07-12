@@ -1,0 +1,14 @@
+To fuse the strengths of both examples, we aim for a design that is minimal, clear, and potentially more optimal for synthesis.
+
+From Example 1, the combinational logic explicitly encoding parity and majority bits potentially yields better gate-level optimization and lower power, as it avoids general-purpose adders and uses simple XOR/AND/OR gates directly mapping to population count bits.
+
+From Example 2, the continuous assignment style emphasizes clarity and simplicity by avoiding registers and always blocks, improving readability and synthesis friendliness.
+
+The fusion strategy:
+- Keep the combinational continuous assignment style from Example 2 (no reg, no always block).
+- Implement the output bits explicitly using simple gate-level boolean expressions from Example 1 (parity and majority).
+- This leads to a clean, purely combinational, continuously assigned output vector encoding the population count with minimal logic.
+- For output port, bundle the two bits into a 2-bit vector `out` for clear interface.
+- This approach combines gate-level minimalism (Example 1) and code clarity / simplicity (Example 2).
+
+Result: A concise, readable, minimal logic implementation with potential for optimal power and area from explicit boolean gates and good synthesis friendliness.

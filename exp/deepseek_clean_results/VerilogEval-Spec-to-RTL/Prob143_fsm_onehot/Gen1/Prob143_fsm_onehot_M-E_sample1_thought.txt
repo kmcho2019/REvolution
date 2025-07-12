@@ -1,0 +1,11 @@
+Here's a novel approach using a more structural implementation:
+
+1. Instead of pre-computing all next states, we'll use a priority encoder to identify the highest priority active state (since multiple states can be active). This gives us a deterministic transition path when multiple states are active.
+
+2. We'll then use a 4-to-16 decoder to convert the encoded state into individual state signals, which will drive the transition logic.
+
+3. The transition logic will be implemented using multiplexers that select the appropriate next state based on both the current state and input.
+
+4. For outputs, we'll use simple combinational logic that checks for the specific states (S7, S8, S9) where outputs should be non-zero.
+
+This approach is more scalable and handles multiple active states by prioritizing them, while still maintaining correct one-hot encoding in the output.

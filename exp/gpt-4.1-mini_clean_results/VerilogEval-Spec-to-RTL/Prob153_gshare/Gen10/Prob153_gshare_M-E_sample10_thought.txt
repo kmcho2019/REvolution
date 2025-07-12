@@ -1,0 +1,23 @@
+To ensure clear separation of prediction and training updates and avoid ambiguity or race conditions on the global history register, I propose to use a two-stage approach for global history management:
+
+1. Maintain three 7-bit registers:
+   - `ghr_committed`: The global history known at the start of the cycle, used to produce predictions (stable during the entire cycle).
+   - `ghr_updated`: The global history after speculative prediction update, updated at clock edge if prediction occurs (but only if no misprediction recovery).
+   - `ghr_recovered`: The global history recovered from training if a mispredicted branch is trained.
+
+2. On each cycle's clock edge:
+   - If training with misprediction occurs, commit the recovered history (`ghr_recovered`) to `ghr_committed`.
+   - Else if prediction occurs (and no misprediction training), update the `ghr_committed` by shifting in the predicted direction.
+   - Else keep the same `ghr_committed`.
+
+3. During combinational prediction logic within the cycle, always use the `ghr_committed` to produce predictions and output `predict_history`, ensuring outputs reflect the stable global history used for indexing PHT.
+
+4. Update the PHT entries on the positive clock edge only when training is valid, so prediction always reads the old PHT state during the cycle.
+
+5. This explicit state separation cleanly handles the priority of training recovery over prediction updates, avoids off-by-one errors in global history speculation, and guarantees prediction outputs reflect the exact history used.
+
+6. Initialize PHT entries to weakly not taken (01).
+
+This approach effectively serializes the global history updates and resolves timing issues. It also makes the logic easier to understand and verify.
+
+Note: Since only one training and one prediction operation per cycle are possible, this design handles priorities straightforwardly.

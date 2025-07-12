@@ -1,0 +1,7 @@
+To implement the gshare branch predictor, we will create a module with the specified interface. The module will have two main components: a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. The 7-bit pc and 7-bit global history will be hashed using xor to create a 7-bit index for accessing the table.
+
+When a prediction is requested, the module will use the current pc and global history to index into the table, retrieve the corresponding saturating counter value, and use it to make a prediction. The global history register will be updated at the next positive clock edge based on the predicted branch direction.
+
+When training is requested, the module will use the provided pc and global history to index into the table and update the corresponding saturating counter value based on the actual branch outcome. If the branch was mispredicted, the global history register will be recovered to the state immediately after the mispredicting branch completes execution.
+
+The module will also handle the case where training and prediction occur in the same cycle, giving precedence to training.

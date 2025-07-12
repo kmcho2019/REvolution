@@ -1,0 +1,14 @@
+Implement a true Radix-4 Booth multiplier for 8-bit inputs that processes two bits of the multiplier per cycle, thus completing the multiplication in 4 cycles instead of 16. 
+
+Key ideas:
+- Use a 17-bit register to hold the concatenated multiplier with an extra LSB bit zero appended for Booth recoding (b_extended = {b, 1'b0}).
+- Use a 16-bit signed multiplicand register.
+- At each cycle, look at 3 bits (current booth slice) from b_extended to determine the Booth encoded operation: multiply multiplicand by 0, ±1, or ±2, then add or subtract this from an accumulator.
+- Accumulator is 32-bit signed to hold intermediate product shifts.
+- Shift the accumulator right by 2 bits after each addition to prepare for next cycle.
+- Use a 3-bit counter to count 4 cycles (since radix-4 processes 2 bits per cycle).
+- When done (counter=4), output the lower 16 bits of the accumulator as the product and set ready.
+- On reset, initialize all registers and load inputs appropriately.
+- This design reduces cycles and complexity compared to processing one bit at a time, properly implementing radix-4 Booth multiplication.
+
+The code below fully implements this Radix-4 Booth multiplier architecture synchronously with clk and reset.

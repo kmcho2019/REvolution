@@ -1,0 +1,12 @@
+The original solution uses a modular style with a separate combinational NextStateInput module and explicitly computes Y1 and Y3 signals for next-state flip-flops of y[1] and y[3].
+
+Improvement Strategy:
+1. Flatten the design to a single module since the FSM is small, avoiding module overhead and potential synthesis complexity.
+2. Introduce a common wire for the OR of states relevant to Y3, reducing repeated OR operations and potentially improving area and power.
+3. Simplify logic expressions by leveraging the one-hot encoding explicitly:
+   - Y1 = y[0] & w (single AND)
+   - Y3 = ~w & (y[1] | y[2] | y[4] | y[5]) (common OR gate combined with w)
+4. Use wire assignment for intermediate signals to help synthesis tool optimize further.
+5. This maintains zero timing slacks, minimal gate depth, and can slightly reduce area and power by sharing OR terms.
+
+Overall, the changes aim for minimal structural modifications, improving power and area slightly without affecting performance or readability.

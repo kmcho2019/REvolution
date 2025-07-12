@@ -1,0 +1,5 @@
+Refactor the design by removing the explicit state machine and using only a 4-bit counter to track how many bits have been received. Use a shift register that shifts left on every valid input, inserting the new serial bit at the LSB so that after 8 bits, the first received bit will be in the MSB position as required. When the counter reaches 7 (meaning 8 bits received counting from 0), assert dout_valid for one cycle and output the collected parallel data.
+
+This approach simplifies the control logic by leveraging the counter as the single data reception state indicator, eliminating the explicit state variable. Non-blocking assignments ensure synchronous design. The output valid is generated combinationally based on the counter and din_valid signals to give a pulse precisely when the 8th bit arrives.
+
+This refactor keeps the original bit ordering intact while simplifying the logic and making the code easier to understand and maintain.

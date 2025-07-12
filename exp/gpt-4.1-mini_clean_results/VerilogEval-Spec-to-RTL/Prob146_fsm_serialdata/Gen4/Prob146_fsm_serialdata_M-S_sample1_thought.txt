@@ -1,0 +1,11 @@
+Simplify the FSM by using a single always block for state, counter, and data shift updates. Keep the four states but avoid separate next_state logic by computing next state and outputs in the same clocked block, reducing code complexity.
+
+Shift in bits LSB first by assigning data_shift as {in, data_shift[7:1]} during RECEIVE. Count data bits with a 3-bit counter.
+
+Assert done for one cycle when a valid stop bit is detected, outputting the received byte.
+
+If the stop bit is wrong, remain in a WAIT_STOP state until a stop bit (logic 1) is seen to resynchronize.
+
+Use synchronous active-high reset to initialize all registers.
+
+This approach reduces combinational logic and separates FSM logic, making the design straightforward and easier to understand while retaining all functionality.

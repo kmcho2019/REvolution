@@ -1,0 +1,19 @@
+Both examples implement edge detection by storing the previous state of input 'a' and using combinational logic to detect edges, producing 1-clock-cycle pulses for rising and falling edges synchronized with the clock.
+
+The key strengths of both:
+- Minimal area and power using just one register to store previous 'a'.
+- Simple and clear combinational logic for rise and down outputs.
+- Synchronous and glitch-free edge pulses on the clock cycle after the edge.
+
+The fusion strategy:
+- Keep the simple and minimal architecture with a single register for previous 'a'.
+- Use nonblocking assignments and asynchronous active-low reset to ensure robust initialization.
+- Add explicit output registers for 'rise' and 'down' signals that latch the edge detection result for one clock cycle.
+  This better matches the specification: "rise or down will be set to 1 on the next clock when the corresponding edge appears, and then return to 0 until the corresponding edge appears again."
+- By registering outputs explicitly, the outputs become fully synchronous signals (not combinational wires).
+- This slightly increases area by adding two flip-flops but improves timing robustness and clarity of output timing.
+- Use a one-clock-cycle pulse scheme: set outputs to 1 when edges are detected, then clear at next clock cycle.
+- This output-registering approach avoids potential glitches if the combinational logic changes mid-cycle.
+- The design remains low power and low area due to minimal extra logic.
+
+Overall, this fusion yields a robust, synchronous, one-clock-cycle pulse edge detection circuit suitable for synchronous downstream logic.

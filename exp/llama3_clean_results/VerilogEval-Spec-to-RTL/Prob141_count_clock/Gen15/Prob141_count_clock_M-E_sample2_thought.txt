@@ -1,0 +1,7 @@
+To address the issues in the previous design, we will adopt a novel architectural approach that simplifies the counter logic and ensures correct handling of the 12-hour format, including the AM/PM indicator. 
+
+The new idea involves using a single, unified counter module that keeps track of seconds. This module will increment the seconds counter on each enable pulse and will handle the wrapping around from 59 seconds to 0 seconds, from 59 minutes to 0 minutes, and from 12 hours to 1 hour, while also toggling the AM/PM indicator when the hour wraps around from 12 to 1.
+
+To convert the binary seconds, minutes, and hours into BCD for output, we will use a straightforward calculation within the TopModule, ensuring that the hours are correctly represented in 12-hour format with AM/PM indication.
+
+This approach simplifies the design by reducing the number of modules and directly handling the 12-hour clock logic within a single counter, making it easier to manage and debug.

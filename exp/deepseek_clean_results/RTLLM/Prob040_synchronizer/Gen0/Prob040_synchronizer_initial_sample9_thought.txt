@@ -1,0 +1,16 @@
+The design involves synchronizing data from clock domain A (clk_a) to clock domain B (clk_b) using a MUX-based approach with enable signals. Here's the conceptual breakdown:
+
+1. Clock Domain A (clk_a):
+   - Register the input data (data_in) when data_en is high
+   - Register the enable signal (data_en) for stability
+
+2. Clock Domain B (clk_b):
+   - Double-flop the registered enable signal from domain A for metastability protection
+   - Use the synchronized enable signal to gate the data output
+   - The output only updates when the synchronized enable is active
+
+Key points:
+- Separate resets for each clock domain
+- Data is only captured when data_en is stable for sufficient time
+- The two-stage enable synchronization ensures safe domain crossing
+- Output maintains its value when not enabled

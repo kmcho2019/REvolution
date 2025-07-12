@@ -1,0 +1,9 @@
+To implement the TopModule, we'll need to handle three different operations on the 100-bit input vector:
+
+1. For out_both: We'll check each bit (except the MSB) with its left neighbor. The MSB (in[99]) will always output 0 since it has no left neighbor.
+
+2. For out_any: We'll check each bit (except the LSB) with its right neighbor. The LSB (in[0]) will always output 0 since it has no right neighbor.
+
+3. For out_different: We'll XOR each bit with its left neighbor, treating the vector as circular (so in[99] is compared with in[0]).
+
+We'll use bitwise operations and concatenation to efficiently implement these checks.

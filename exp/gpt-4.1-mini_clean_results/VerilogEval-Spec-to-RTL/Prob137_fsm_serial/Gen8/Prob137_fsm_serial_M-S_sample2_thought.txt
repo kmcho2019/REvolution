@@ -1,0 +1,3 @@
+Use a 3-state FSM: IDLE (wait for start bit 0), RECEIVE (count 8 bits received), and STOP (check stop bit). If stop bit is wrong, stay in STOP until line returns to 1 before going back to IDLE. Use a single 3-bit counter for counting received bits. Shift bits in directly into data_reg with LSB first by shifting right and inserting new bit at MSB. done is asserted for one cycle on correct stop bit detection.
+
+This approach eliminates the separate ERROR state by folding error handling into STOP state, reducing FSM complexity while maintaining all functionality. done is cleared every cycle and only pulsed high for one cycle after a valid stop bit. All logic is synchronous to clk with synchronous reset.

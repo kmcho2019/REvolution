@@ -1,0 +1,7 @@
+Implement the multiplier with a classic shift-and-accumulate approach but using separate registers for multiplicand, multiplier, and product accumulator. The multiplier shifts right each cycle, checking its LSB: if 1, add the multiplicand shifted appropriately to the accumulator. The shift count increments each clock cycle to track progress. Control logic drives the operation, resetting and starting as requested, and flags done when 16 iterations complete.
+
+This design keeps the multiplier in a 16-bit register that shifts right every cycle, the multiplicand fixed in a 16-bit register, and the product accumulator as a 32-bit register accumulating partial sums. This makes the datapath and control very explicit and simple to understand.
+
+The done signal is synchronous and asserted once after completing the 16 cycles. On reset or when start is de-asserted, all registers and counters reset.
+
+This approach emphasizes clarity and simplicity by avoiding packing multiplier bits into product register and removing complex shifts and adds inside a single register, instead cleanly separating registers and operations.

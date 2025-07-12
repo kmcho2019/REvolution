@@ -1,0 +1,9 @@
+To improve PPA, reduce the critical path delay caused by concatenating and multiplexing the entire 100-bit vector each cycle. Implement rotation using a barrel shifter style by splitting the 100-bit vector into segments and doing rotation in stages with fewer combinational levels. This approach reduces the large wide multiplexer from a single 100-bit concatenation into smaller muxes and wires, minimizing logic depth and improving timing.
+
+Also, optimize power by gating the combinational logic that calculates next_q so it only activates when load or ena indicates a state change (load=1 or ena=2'b01 or 2'b10). This reduces unnecessary toggling in the combinational logic when rotation is disabled.
+
+Area impact is minimal since no large additional storage is added; the logic is just rearranged for better timing and power.
+
+The synchronous load remains the highest priority, so when load=1, load data. Else if ena==rotate right or left, perform rotation. Else hold the value.
+
+This approach preserves the original functionality but with a more efficient and optimized combinational next-state logic.

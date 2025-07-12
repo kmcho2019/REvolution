@@ -1,0 +1,13 @@
+module clkgenerator #(parameter integer PERIOD = 10) (
+    output reg clk
+);
+
+initial begin
+    clk = 0;
+end
+
+always #(PERIOD / 2.0) begin
+    clk = ~clk;
+end
+
+endmodule

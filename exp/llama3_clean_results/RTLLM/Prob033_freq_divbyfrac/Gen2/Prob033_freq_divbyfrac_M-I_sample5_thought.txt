@@ -1,0 +1,17 @@
+The goal is to improve the existing frequency divider module to correctly produce a fractional divided clock output. We will revisit the counter logic, intermediate clock generation, and phase-shifting to ensure accurate fractional frequency division.
+
+First, we will simplify the counter logic to accurately track the 7 clock cycles required for 3.5x division. We will use a single counter to cycle through the 7 clock cycles and generate the intermediate divided clocks based on the counter value.
+
+Next, we will implement the phase-shifting logic using a more accurate approach. Instead of using a simple logical OR to combine the two intermediate clocks, we will use a more sophisticated method to phase-shift the clocks by half a clock period. This will involve using a separate counter to track the phase of the clocks and generate the final fractional divided clock output accordingly.
+
+To optimize the design for better PPA metrics, we will focus on minimizing the power consumption and area usage. We will use clock gating and clock enable signals to reduce power consumption, and we will minimize the area usage by using more efficient clock generation techniques.
+
+The key parameters for this design remain the same:
+- MUL2_DIV_CLK: The number of clock cycles to divide the input clock frequency. For 3.5x division, MUL2_DIV_CLK = 7.
+- DIV_CLK_HALF_PERIOD: The half-period of the divided clock, used for phase-shifting.
+
+We will use the following approach to generate the intermediate divided clocks:
+- When the counter is between 0 and 3 (4 cycles), generate the first intermediate clock.
+- When the counter is between 4 and 6 (3 cycles), generate the second intermediate clock.
+
+We will then phase-shift these clocks by half a clock period to produce the final fractional divided clock output.

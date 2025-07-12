@@ -1,0 +1,7 @@
+Optimize the 9-to-1 multiplexer by avoiding a large case statement and instead using a small array of inputs indexed by sel. Since sel ranges from 0 to 8 for valid inputs, and 9 to 15 selects all ones, we can define a 9-element input array and assign out based on whether sel < 9 or not. This will reduce logic complexity and improve synthesis friendliness.
+
+Specifically:
+- Store inputs a to i into an array.
+- Check if sel is less than 9. If yes, output the corresponding element; otherwise, output 16'hFFFF.
+- Use a combinational continuous assignment with a conditional operator to minimize logic depth and improve timing.
+- This approach reduces the number of multiplexers needed and enables the synthesis tool to optimize better.

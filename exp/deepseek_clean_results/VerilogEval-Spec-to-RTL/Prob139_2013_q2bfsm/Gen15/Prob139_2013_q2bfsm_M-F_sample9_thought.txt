@@ -1,0 +1,31 @@
+To fix the FSM based on the feedback, I'll implement these improvements:
+
+1. **Precise Timing for y Monitoring**:
+   - In state F, g should be 1 for exactly two cycles while monitoring y
+   - Use a proper 2-cycle counter (0-1) to track the monitoring period
+   - Transition to permanent states (G/H) after exactly two cycles
+
+2. **Correct Output Timing**:
+   - g should pulse high for one cycle after detecting 1-0-1 sequence
+   - Then remain high for two cycles while monitoring y
+   - Finally become permanently high/low based on y observation
+
+3. **State Machine Refinement**:
+   - Add explicit states for each phase of operation
+   - Clear separation between temporary and permanent output states
+   - Ensure proper state transitions with correct conditions
+
+4. **Sequence Detection**:
+   - Maintain the existing 3-state sequence detection (C-E)
+   - Ensure it properly handles overlapping sequences
+
+The improved state machine will have these states:
+- A: Reset state (f=0, g=0)
+- B: Initial pulse (f=1, g=0)
+- C: Monitoring x for first 1
+- D: Monitoring x for 0 after first 1
+- E: Monitoring x for second 1
+- F: First cycle of y monitoring (g=1)
+- F1: Second cycle of y monitoring (g=1)
+- G: Permanent g=1
+- H: Permanent g=0

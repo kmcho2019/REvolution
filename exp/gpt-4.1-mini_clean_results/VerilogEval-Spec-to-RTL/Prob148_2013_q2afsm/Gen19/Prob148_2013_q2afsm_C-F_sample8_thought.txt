@@ -1,0 +1,16 @@
+Fuse the strengths of both examples by adopting one-hot encoding with an explicit idle state encoded distinctly (4 states needing 2 bits minimal, but we keep one-hot with 3 bits and use the zero vector for idle) to keep output logic trivial and maintain simplicity. 
+
+Enhance clarity by explicitly defining symbolic state constants for better readability and maintenance. Use synchronous active-low reset to idle (A). 
+
+Refine output logic to a continuous assignment (instead of always block) for concise and optimized hardware inference.
+
+The next-state logic prioritizes requests clearly and handles default (illegal) states safely.
+
+This fusion keeps the minimal state flip-flops and simple combinational logic of one-hot coding with explicit constants and a clean output assignment, combining readability, synthesis friendliness, and straightforward output mapping, aiming for clarity and maintainability without sacrificing performance.
+
+Summary of approach:
+- State encoding: 3 bits, one-hot for B, C, D; 000 is idle A
+- State constants defined with parameters
+- Synchronous active-low reset to idle
+- Next-state logic with priority and hold grant states while request persists
+- Output g directly assigned from state bits with a continuous assign

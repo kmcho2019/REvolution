@@ -1,0 +1,13 @@
+Implement the 16-bit division by 8-bit divisor as a fully combinational, unrolled subtraction algorithm using two always blocks as requested.
+
+- First always block: latch inputs A and B into registers `a_reg` and `b_reg` for stable input capture, purely combinational (sensitive to inputs).
+- Second always block: perform division in a combinational loop with an explicit iterative approach using local variables and shifting.
+- At each iteration, extract the top 8 bits of the current remainder+dividend window, compare with divisor.
+  - If greater or equal, subtract divisor, set quotient bit to 1; else quotient bit = 0.
+- Shift the remainder left by 1 and bring down next dividend bit to continue the division step by step.
+- The quotient and remainder are built incrementally inside the always block using registers.
+- This design matches the problem's requirement to use two always blocks and implements the division logic explicitly rather than wire arrays.
+- The remainder will be 8-bit, but stored in 16-bit output, with upper bits zero-padded.
+- The design works fully combinationally, outputs are updated when inputs change.
+
+This approach is clear, structurally adheres to the two always blocks directive, and shows an alternative to generate-for and wire arrays by using procedural code for combinational logic.

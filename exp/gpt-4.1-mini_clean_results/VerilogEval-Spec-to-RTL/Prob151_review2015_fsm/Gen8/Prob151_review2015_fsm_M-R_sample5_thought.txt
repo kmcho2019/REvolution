@@ -1,0 +1,7 @@
+Refactor the FSM to integrate pattern detection into the IDLE state itself rather than continuously shifting the pattern register regardless of state. Use a dedicated 4-bit shift register that only shifts when in IDLE to detect the pattern 1101. Once detected, clear the shift register to avoid false retriggers.
+
+Implement the FSM as a one-hot encoded state machine for clarity and robustness, with states: IDLE (detect pattern), SHIFT (shift in 4 bits), COUNT (wait for done_counting), DONE (wait for ack). Use a 2-bit counter for shift cycles during SHIFT state.
+
+Drive outputs as combinational signals directly from state bits to maintain Moore outputs.
+
+This structure ensures pattern detection only occurs in IDLE, shift counting is precise with clear resets, and the FSM cleanly sequences through states without overlap or ambiguous transitions.

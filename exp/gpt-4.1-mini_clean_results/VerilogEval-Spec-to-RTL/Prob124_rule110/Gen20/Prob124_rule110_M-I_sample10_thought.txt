@@ -1,0 +1,22 @@
+To optimize the existing design for better PPA:
+
+1. **Timing improvement:** 
+   - Reduce the combinational logic delay by splitting each 32-bit block into 4 smaller blocks of 8 bits each (total 64 blocks). This reduces logic depth and shortens the critical path.
+   - With smaller blocks, neighbor bit logic becomes simpler and the fanout decreases, improving timing.
+
+2. **Power reduction:** 
+   - Add a clock enable (clk_en) signal to each block's register stage that only clocks when either `load` is active or the next state differs from the current state (thus avoiding unnecessary toggling).
+   - This fine-grained gating reduces dynamic power by preventing register toggling when no state change occurs.
+
+3. **Area considerations:**
+   - Area will increase slightly due to more blocks and comparators for clk_en, but the tradeoff is justified by improved timing and power.
+   - The simple comparator (next_q != q) per 8-bit block is small overhead.
+
+4. **Maintain boundary zero bits:**
+   - Handle boundary conditions cleanly, with zero bits at array ends.
+
+5. **Code clarity and modularity:** 
+   - Use generate loops and localparams for clean scaling.
+   - Keep the simple combinational logic expression for Rule 110.
+
+This approach balances PPA by trading off a moderate increase in area for meaningful timing and power gains.

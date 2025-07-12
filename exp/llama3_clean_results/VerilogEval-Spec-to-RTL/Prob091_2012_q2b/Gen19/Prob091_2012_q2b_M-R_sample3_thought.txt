@@ -1,0 +1,5 @@
+To refactor the given code, we'll focus on simplifying the logic and reducing the number of modules, while maintaining the same functionality. The core idea is to directly implement the state machine's next-state logic using Verilog's `assign` statement for combinational logic, instead of breaking it down into separate modules for each state. This approach can lead to a more straightforward and efficient implementation.
+
+The state machine's transitions are already defined in a one-hot encoding, which simplifies the implementation. For `Y1` (state B), we need to set it when the current state is A (`y[0]`) and the input `w` is 1. For `Y3` (state D), it should be set when the current state is B, C, E, or F (`y[1]`, `y[2]`, `y[4]`, or `y[5]`) and `w` is 0.
+
+By directly implementing these conditions using `assign` statements within a single module, we can achieve the same functionality with potentially fewer resources, depending on how the synthesis tool optimizes the logic.

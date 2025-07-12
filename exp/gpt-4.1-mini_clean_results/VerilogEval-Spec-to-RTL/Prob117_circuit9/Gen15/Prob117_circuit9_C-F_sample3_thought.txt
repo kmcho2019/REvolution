@@ -1,0 +1,5 @@
+Combine the clarity and separation of combinational and sequential logic from both examples while optimizing next state calculation by replacing the large case statement with arithmetic operations. Since q cycles through a 7-state sequence (4→5→6→0→1→2→3→4) when a=0, and resets to 4 when a=1, we can implement next_q as a conditional arithmetic modulo-7 increment with a base offset. This reduces combinational complexity, likely improves performance, and reduces area by avoiding large case statements.
+
+Specifically, if a=1, next_q=4. Otherwise, next_q = (q + 1) modulo 7, where modulo 7 covers states {0..6}, but our sequence starts at 4, so the arithmetic wraps naturally.
+
+This approach simplifies the logic and is easier to synthesize efficiently. The registered output q updates on clk edge, maintaining synchronous design and matching the waveform behavior exactly.

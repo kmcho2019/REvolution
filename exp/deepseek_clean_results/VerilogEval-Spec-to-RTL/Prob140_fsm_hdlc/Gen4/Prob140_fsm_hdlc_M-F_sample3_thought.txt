@@ -1,0 +1,23 @@
+Here's the corrected approach based on the feedback:
+
+1. Fixing the 'disc' output:
+   - Should only assert when seeing exactly 5 consecutive 1s followed by 0 (0111110)
+   - Change disc_next to be (state == S_5) && !in (next input is 0)
+
+2. Maintaining correct 'err' behavior:
+   - Keep S_ERR state for 7+ consecutive 1s
+   - err_next should be high when in S_ERR state
+   - Ensure it's properly registered to appear one cycle after detection
+
+3. Preserving correct 'flag' behavior:
+   - Keep existing correct implementation (state == S_6 && !in)
+
+4. Output timing:
+   - All outputs remain registered to appear one cycle after detection
+   - Maintain Moore machine properties
+
+Key changes:
+- Correct disc output to match exact pattern requirement
+- Verify err output timing matches requirements
+- Keep working flag detection
+- Ensure all outputs are properly synchronized

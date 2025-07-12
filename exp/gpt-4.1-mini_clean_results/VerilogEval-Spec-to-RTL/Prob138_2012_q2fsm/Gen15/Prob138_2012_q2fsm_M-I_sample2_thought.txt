@@ -1,0 +1,11 @@
+To improve performance (lower clock period and improve worst negative slack), I will remove the conditional state update enable that compares next_state and state before updating. This removes the comparator in the sequential path, simplifying the clock-to-Q timing path.
+
+Though this might slightly increase power due to more frequent register toggling, the simpler flip-flop input logic and faster clock-to-Q outweigh it in high-frequency designs.
+
+I will keep the synchronous reset as required and maintain separate always blocks for next-state logic and state register.
+
+The output `z` will still be a simple continuous assignment, which is optimal for speed and power.
+
+State encoding and the state transitions remain unchanged for clarity and minimal area.
+
+This change trades a small increase in dynamic power for improved timing and slightly simplified logic, improving overall PPA metrics based on feedback.

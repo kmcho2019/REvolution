@@ -1,0 +1,11 @@
+To optimize the design for better PPA metrics, we'll implement these improvements:
+1. **Timing Optimization**: Replace the ripple-carry adder with a carry-save adder structure to break the critical path. We'll accumulate in two separate registers (sum and carry) and combine them only when needed.
+2. **Power Optimization**: Add input gating to prevent unnecessary accumulator updates when valid_in is low.
+3. **Area Optimization**: Use a 1-bit counter instead of 2-bit since we only need to detect the 4th input (count mod 4).
+4. **Register Optimization**: Make the accumulator 10-bit only at final output stage, using 8-bit registers during accumulation.
+
+The improved design will:
+- Maintain the same functionality
+- Reduce critical path delay
+- Lower power consumption
+- Decrease area usage

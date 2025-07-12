@@ -1,0 +1,19 @@
+To correctly implement an odd frequency divider, we maintain two counters, cnt1 and cnt2, that count modulo NUM_DIV, but instead of toggling clk_div1 and clk_div2 exactly at HALF_DIV, we toggle them when counters wrap around (i.e., reach NUM_DIV - 1), and separately assert toggles at the counts that correspond to half periods.
+
+Specifically, since NUM_DIV is odd, the divided clock period is NUM_DIV input clock cycles, and the high and low phases must be balanced as best as possible between edges.
+
+We define toggle points:
+
+- For rising edge (clk_div1), toggle clk_div1 at count == (NUM_DIV - 1)/2 and at count == NUM_DIV - 1.
+
+- For falling edge (clk_div2), do the same on the falling edge.
+
+This way, toggling occurs twice per NUM_DIV cycles, spaced roughly equally, producing a ~50% duty cycle output when clk_div1 and clk_div2 are combined.
+
+Moreover, counters count from 0 to NUM_DIV - 1 and reset to 0 after NUM_DIV - 1. Toggles occur exactly at the toggle counts on each edge.
+
+Also, synchronous reset (or asynchronous reset properly synchronized) is used to avoid glitches.
+
+Finally, the output clk_div is the OR of clk_div1 and clk_div2, effectively generating the divided clock by interleaving toggles from both edges.
+
+This approach ensures stable, glitch-free output with correct frequency division for odd divisors.

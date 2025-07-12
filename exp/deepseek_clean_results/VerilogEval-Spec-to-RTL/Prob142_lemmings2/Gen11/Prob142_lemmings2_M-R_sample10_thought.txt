@@ -1,0 +1,22 @@
+Refactoring Strategy:
+1. State Representation: Keep the same 2-state (WALK/FALL) with direction bit, but encode as a 2-bit state register for clearer readability.
+
+2. Transition Logic:
+   - Separate the state and direction updates into distinct always blocks for better modularity
+   - Use explicit state names with parameters for better code readability
+   - Simplify the bump detection logic using a single XOR operation
+
+3. Output Logic:
+   - Convert to registered outputs (still Moore style) to potentially improve timing
+   - Use case statement for state decoding for clearer output generation
+
+4. Optimization:
+   - Maintain same functionality but with more structured code
+   - Keep asynchronous reset behavior
+   - Ensure all outputs are properly registered
+
+Key Changes:
+- More explicit state encoding
+- Separated state and direction logic
+- Registered outputs for better timing
+- Cleaner code structure while maintaining same functionality

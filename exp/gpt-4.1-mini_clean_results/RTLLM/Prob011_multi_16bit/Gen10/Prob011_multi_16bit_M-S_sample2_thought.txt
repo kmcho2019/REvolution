@@ -1,0 +1,7 @@
+Simplify the multiplier design by directly shifting the multiplier register (breg) right and accumulating the multiplicand (ain) shifted by the current bit position when the multiplier's LSB is 1. This eliminates the need to shift both multiplicand and multiplier and reduces the complexity of managing two registers with shifting in opposite directions.
+
+Use a 5-bit counter to track the bit position. On start, load registers and reset accumulator. On each clock, if the multiplier bit is 1, add the multiplicand shifted by current bit index to the accumulator. Shift the multiplier right by one bit each cycle to process the next bit.
+
+Manage the done flag to assert when all 16 bits have been processed. Reset all registers on rst_n or when start is inactive.
+
+This approach keeps control logic and data path straightforward, minimizing registers and shift operations while preserving the shift-and-accumulate multiplication algorithm and adhering to the interface and timing requirements.

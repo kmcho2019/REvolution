@@ -1,0 +1,13 @@
+To implement the finite-state machine (FSM) for the timer controller, we need to define the following states:
+1. IDLE: Waiting for the start pattern (1101)
+2. SHIFT: Shifting in 4 bits for duration (shift_ena asserted)
+3. COUNT: Waiting for counters to finish (counting asserted)
+4. DONE: Timer expired (done asserted), waiting for ack
+
+The FSM transitions:
+- IDLE -> SHIFT when 1101 pattern is detected
+- SHIFT -> COUNT after 4 clock cycles
+- COUNT -> DONE when done_counting is high
+- DONE -> IDLE when ack is received
+
+The pattern detection requires tracking the last 4 bits received.

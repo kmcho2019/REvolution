@@ -1,0 +1,27 @@
+Novel Barrel Shifter Architecture:
+1. **Pre-compute Sign Extension**:
+   - Calculate sign bits only once for right shifts to reduce redundant logic
+   - Store extended sign bits in a separate register to avoid recomputation
+
+2. **Staged Shift Computation**:
+   - Break shift operations into two stages (direction selection + amount selection)
+   - This reduces critical path by avoiding deep multiplexer trees
+
+3. **Conditional Computation**:
+   - Only compute needed shift operations when enabled
+   - Gate unused shift paths to save power
+
+4. **Optimized Right Shift**:
+   - Implement arithmetic right shift using concatenation with pre-computed sign bits
+   - Share sign extension logic between 1-bit and 8-bit right shifts
+
+5. **Efficient Left Shift**:
+   - Implement left shifts using simple bit selection and zero padding
+   - Combine 1-bit and 8-bit left shifts using common logic
+
+Key Innovations:
+- Sign bit pre-computation reduces right shift latency
+- Staged computation flattens critical path
+- Conditional activation saves power
+- Shared logic reduces area
+- Clear priority handling maintains functionality

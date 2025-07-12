@@ -1,0 +1,9 @@
+Refactor the original design by removing the bit_full_adder instantiations used solely for generate/propagate signals and compute these signals directly with simple assign statements inside the 8-bit CLA module. This reduces module overhead and redundant logic instantiations.
+
+Carry lookahead computations remain hierarchical, but p and g signals are calculated with direct XOR and AND gates rather than through a full adder module.
+
+Sum bits are computed similarly as p XOR carry-in, and all carry signals are derived explicitly via assign statements.
+
+The top-level module remains the same, directly instantiating the cla_8bit module.
+
+This approach preserves the original carry lookahead logic and modularity while simplifying the code structure, improving clarity and potentially reducing area and power due to fewer module instantiations and unused outputs.

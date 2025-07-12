@@ -1,0 +1,10 @@
+Refactor the radix-2 divider to a two-process design: a synchronous always block for state, counters, registers update, and an asynchronous combinational block for next state and next data values.  
+Avoid declaring temporary variables inside procedural blocks; instead, keep all variables at module scope.  
+Perform sign correction of quotient and remainder in a separate combinational block outside the sequential always block to avoid illegal reg declarations inside procedural code.  
+Structure the division shift register as a 17-bit value holding remainder and quotient bits.  
+Use an enumerated state machine with three states: IDLE, CALC, DONE.  
+Start division when opn_valid and divisor != 0. Latch inputs and absolute values, initialize SR with dividend shifted left one bit (remainder bits zeroed).  
+In CALC state, perform up to 8 iterations of subtraction and shift, updating SR and counter.  
+In DONE state, assert res_valid and provide the signed-corrected quotient and remainder as output.  
+The output result is continuously assigned from the corrected values.  
+This approach keeps the design clean, maintains synchronous design practices, and separates concerns clearly.

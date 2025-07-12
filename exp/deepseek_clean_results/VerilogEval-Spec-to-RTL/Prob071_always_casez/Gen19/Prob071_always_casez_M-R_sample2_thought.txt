@@ -1,0 +1,11 @@
+The refactored solution will maintain the same priority encoding logic but implement it using a casez statement within an always block for better readability and potentially improved synthesis results. Here's the thought process:
+
+1. Use casez for priority encoding as it's a natural fit for this problem
+2. The casez will check bits from LSB to MSB (0 to 7)
+3. Each case item will match a specific bit pattern where one bit is 1 and others are don't-cares (z)
+4. The default case handles the all-zeros input case
+5. This approach:
+   - Makes the priority order explicit and easy to understand
+   - May result in better synthesis optimization as casez is a well-understood pattern
+   - Potentially reduces logic depth compared to nested ternary operators
+   - Maintains the same functionality as the original solution

@@ -1,0 +1,7 @@
+To refactor the given code while maintaining its core functionality, we can integrate the logic of the `StateBNext` and `StateDNext` modules directly into the `TopModule`. This approach simplifies the design by reducing the number of modules and directly assigning the output values `Y1` and `Y3` based on the inputs `y` and `w`. 
+
+The logic for `Y1` remains straightforward, directly dependent on the current state `y[0]` and the input `w`. For `Y3`, the logic involves a combination of several states (`y[1]`, `y[2]`, `y[4]`, `y[5]`) when `w` is 0. This can be efficiently implemented using combinational logic directly within the `TopModule`.
+
+By integrating the logic, we eliminate the need for separate modules for each state's next value calculation, which can potentially reduce the area and improve the design's performance by minimizing the number of module instantiations. The critical path in the design remains the same, as the logic operations are directly performed on the inputs to produce the outputs.
+
+Additionally, we maintain the one-hot encoding state assignment, which is crucial for the correct functioning of the finite-state machine. This refactoring does not change the state machine's behavior but presents a more consolidated implementation.

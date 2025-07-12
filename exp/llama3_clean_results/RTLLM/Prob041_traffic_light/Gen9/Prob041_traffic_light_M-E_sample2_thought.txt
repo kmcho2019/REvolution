@@ -1,0 +1,11 @@
+To implement a more efficient and novel traffic light controller, we can utilize a finite state machine (FSM) with a hybrid approach that combines the benefits of both Mealy and Moore machines. The FSM will have four states: idle, red, yellow, and green. The idle state will be used to initialize the system, and the other states will represent the different colors of the traffic light.
+
+The counter logic will be simplified by using a single counter that increments on every clock cycle. The state transitions will be based on the counter value and the pass_request signal. When the pass_request signal is active and the traffic light is green, the counter will be reset to 10, effectively shortening the green time.
+
+To improve the PPA metrics, we will use a clock gating technique to reduce power consumption. The clock signal will be gated for the counter logic when the system is in the idle state or when the counter is not being used.
+
+Additionally, we will use a more efficient encoding scheme for the states, such as one-hot encoding, to reduce the number of flip-flops required.
+
+The output signals will be generated using a combination of the current state and the counter value. The red signal will be active when the system is in the red state, the yellow signal will be active when the system is in the yellow state, and the green signal will be active when the system is in the green state and the counter value is greater than 0.
+
+Overall, this novel architectural idea combines the benefits of both Mealy and Moore machines, simplifies the counter logic, and uses clock gating and efficient encoding schemes to improve the PPA metrics.

@@ -1,0 +1,15 @@
+To improve the original FSM solution's PPA (timing, power, area), we keep its functionality intact but optimize the data shift logic and done signal handling.
+
+1. Correct the data shift operation to shift right and insert the incoming LSB bit at bit 7, since the serial protocol sends LSB first. This makes data assembly clearer and potentially more optimized by synthesis tools.
+
+2. Use non-blocking assignments consistently to avoid combinational read-after-write hazards inside the sequential block.
+
+3. Modify the done signal to assert high for only one cycle immediately when a valid stop bit is detected, and hold out_byte stable only then, otherwise out_byte is don't-care. This reduces toggling on done and out_byte.
+
+4. Keep the FSM simple with 4 states encoded in 2 bits to minimize area and critical path.
+
+5. Reset all signals synchronously on reset.
+
+6. Also, separate done generation slightly by updating done after out_byte update to avoid glitches.
+
+These changes reduce toggle rate on outputs and simplify data shifting, improving timing and power while preserving correctness and readability.

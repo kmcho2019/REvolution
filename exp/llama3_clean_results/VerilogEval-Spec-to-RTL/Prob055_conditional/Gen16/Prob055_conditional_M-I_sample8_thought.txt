@@ -1,0 +1,10 @@
+To improve the existing solution for better PPA (Power, Performance, Area) metrics, we need to focus on the areas that can be optimized without compromising the functionality. The current design has a good performance but could be optimized for power and area. 
+
+The strategy for improvement involves:
+1. **Reducing Power Consumption**: One way to reduce power consumption is to minimize the switching activity within the circuit. Since the inputs are 8-bit wide, comparing them directly might lead to significant switching activity. However, given the current implementation, which uses simple comparison and selection, the room for improvement in this area is limited. Still, we can consider using a more power-efficient comparison method if available.
+
+2. **Optimizing Area**: The area can be optimized by reducing the number of logic gates required for the implementation. The current design uses two instances of the MinFinder module. Instead of using a hierarchical approach with multiple module instances, we can implement the minimum finding logic directly within the TopModule. This approach eliminates the need for intermediate wires and module instances, potentially reducing the area consumption.
+
+3. **Maintaining Performance**: While optimizing for power and area, it's crucial to ensure that the performance (timing) of the circuit is not adversely affected. The current design has minimal delay due to its simplicity, so any optimization should aim to keep the delay as low as possible.
+
+Given these considerations, the improved solution will focus on a direct implementation within the TopModule, reducing the hierarchy and potentially minimizing the number of logic gates required.

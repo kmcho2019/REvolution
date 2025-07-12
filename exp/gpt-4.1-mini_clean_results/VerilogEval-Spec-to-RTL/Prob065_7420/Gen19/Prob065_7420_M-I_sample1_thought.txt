@@ -1,0 +1,9 @@
+To optimize the 7420 implementation for better PPA while maintaining the same functionality, I will remove the explicit nand4 module and directly instantiate the two 4-input NAND gates using Verilog's built-in primitives (nand). This reduces module overhead and may allow synthesis tools to better map the logic onto optimized NAND cells, potentially improving area and power.
+
+Additionally, implementing each 4-input NAND gate as two cascaded 2-input NAND gates can help synthesis tools better optimize gate sizing and reduce parasitic capacitances, potentially improving timing and power consumption. The 4-input NAND can be implemented as nand2_1 = nand(a,b), nand2_2 = nand(c,d), and finally nand2_3 = nand(nand2_1, nand2_2) giving the 4-input NAND function.
+
+This approach is structurally explicit, simple, and friendly for synthesis and PPA optimization, especially in standard cell based flows, while ensuring the exact 4-input NAND behavior required for the 7420 chip.
+
+Hence, I will implement two instances of this 4-input NAND using 2-input nand gates directly inside TopModule, removing the extra nand4 module.
+
+This change reduces hierarchy, may improve power and area by allowing better gate-level optimization, and can slightly improve timing by controlling gate fan-in and depth explicitly.

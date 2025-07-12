@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the hour_reg increment logic by registering the terminal count signals
+   - Precompute the combined (sec_max && min_max) condition to reduce combinatorial path
+
+2. Power Optimization:
+   - Register terminal count signals to reduce dynamic power from recomputation
+   - Remove unnecessary zero-extension by making Hours output 5 bits (0-23 fits in 5 bits)
+
+3. Area Optimization:
+   - Maintain separate always blocks for clarity but optimize bit widths
+   - Keep hour_reg as 5 bits (already optimal)
+   - Remove zero-extension logic since we'll use 5-bit Hours output
+
+Key Changes:
+1. Added registered terminal count signals
+2. Precomputed combined rollover condition
+3. Changed Hours output to 5 bits
+4. Maintained synchronous reset for better timing
+5. Kept clear separation of counter logic

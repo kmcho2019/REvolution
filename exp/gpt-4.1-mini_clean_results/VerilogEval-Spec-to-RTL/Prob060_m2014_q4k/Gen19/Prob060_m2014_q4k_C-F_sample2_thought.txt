@@ -1,0 +1,11 @@
+Fuse the modular DFF_SR submodule with synchronous active-low reset from Example 1 and the straightforward, easy-to-follow generate loop shift register chain from Example 2, but simplify the top-level interface by embedding the shift register logic directly inside TopModule without an intermediate ShiftReg module. This reduces hierarchy overhead and module instantiations for slightly better area and easier reading.
+
+Key points in the fusion:
+- Use a dedicated DFF_SR module with synchronous active-low reset, which clearly expresses the reset behavior.
+- Instantiate 4 such DFF_SR flops in a generate loop within TopModule for clean, scalable shift register implementation.
+- Connect each flop's input to the previous flop’s output, forming the shift chain with the first flop loading 'in'.
+- Provide synchronous reset inside the flip-flops, keeping timing predictable and straightforward.
+- Assign the output 'out' directly from the last flop’s Q output.
+- This fusion keeps modularity, explicit reset behavior, scalability, and clarity, while eliminating an extra wrapper module, leading to improved area and simpler instantiation.
+
+Overall, the resulting design has clear reset semantics, is easy to maintain and understand, is concise without unnecessary hierarchy, and is synthesis-friendly.

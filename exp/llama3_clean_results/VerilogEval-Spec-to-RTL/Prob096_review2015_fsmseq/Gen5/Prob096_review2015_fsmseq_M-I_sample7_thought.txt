@@ -1,0 +1,11 @@
+To improve the existing solution, we need to address the issue with the `seq_found` signal and ensure that once it is set to 1, it remains 1 until the `reset` signal is asserted. This can be achieved by explicitly handling the case when `seq_found` is 1 and `reset` is 0, ensuring that `seq_found` remains 1 in this condition. Additionally, to optimize the design for better PPA, we should focus on minimizing switching activity and logic complexity.
+
+One way to achieve this is by removing the explicit reset of `seq_found` when the correct sequence is detected. Instead, we should let `seq_found` remain high once it is set, until `reset` is asserted. This simplifies the logic and reduces the number of transitions in the signals.
+
+Furthermore, we can optimize the design for better PPA by minimizing the number of logic gates and reducing the complexity of the combinational logic. This can be achieved by removing unnecessary signal assignments and ensuring proper synchronization and reset behavior.
+
+In terms of performance, the current design is relatively simple and should not have any significant performance issues. However, to further improve performance, we could consider using a more efficient state encoding or minimizing the number of signal assignments.
+
+To optimize power consumption, we can minimize switching activity by avoiding unnecessary transitions in the signals. This can be achieved by ensuring that the logic for handling `seq_found` and `start_shifting` is correctly implemented and minimizing unnecessary transitions.
+
+Finally, to optimize area, we can consider using more efficient logic structures or reducing the number of flip-flops required for the FSM implementation. However, in this case, the design is already relatively simple, and further optimization may not be necessary.

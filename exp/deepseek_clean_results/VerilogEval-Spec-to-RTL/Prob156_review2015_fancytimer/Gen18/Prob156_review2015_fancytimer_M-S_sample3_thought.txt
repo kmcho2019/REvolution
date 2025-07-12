@@ -1,0 +1,15 @@
+Here's a simplified approach that maintains all required functionality while reducing complexity:
+
+1. **Single Shift Register**: Use one 4-bit shift register for both pattern detection and delay capture, reusing it after pattern match.
+
+2. **Direct Counting**: Instead of pre-computing values, directly implement the (delay+1)*1000 counting using two counters:
+   - A main counter for the total cycles (0 to (delay+1)*1000-1)
+   - A phase counter (0-999) to track each 1000-cycle block
+
+3. **Simpler State Machine**: Reduce to 4 clear states (IDLE, CAPTURE, COUNT, DONE) with straightforward transitions.
+
+4. **Count Calculation**: Derive the count output directly from the main counter by dividing by 1000, eliminating complex pre-computation.
+
+5. **Synchronous Reset**: All registers reset synchronously on reset signal.
+
+This approach maintains precise timing while reducing logic complexity and potential error sources from the original solution.

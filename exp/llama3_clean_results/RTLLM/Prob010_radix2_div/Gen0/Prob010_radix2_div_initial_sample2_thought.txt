@@ -1,0 +1,8 @@
+To implement a simplified radix-2 divider, we need to follow the provided specifications. The design involves several key components: 
+1. Control logic to manage the division process, including a counter and a flag (start_cnt) to track the division progress.
+2. Arithmetic logic for calculating the remainder and quotient, including subtraction and a multiplexer for selecting the next state of the shift register (SR) based on the carry-out of the subtraction.
+3. Management of the result validity (res_valid) based on the reset signal, the counter, and the consumption of the result.
+
+The division process involves initializing SR with the absolute value of the dividend shifted left by one bit, setting NEG_DIVISOR to the negated absolute value of the divisor, and then iteratively updating SR by shifting it left and inserting the carry-out of the subtraction between SR and NEG_DIVISOR. The process completes after 8 iterations (when cnt reaches 8), at which point the final remainder and quotient are in SR and the lower part of SR, respectively.
+
+For the result, the upper 8 bits of the output will contain the remainder, and the lower 8 bits will contain the quotient. The sign of the operation affects how the inputs are processed and how the final result is interpreted but does not alter the basic division logic.

@@ -1,0 +1,9 @@
+To improve PPA, particularly area and power, I'll reduce recursive module instantiations which cause overhead and potentially deep logic levels. Instead of recursively instantiating the popcount module, I will implement a balanced adder tree explicitly inside the TopModule using generate loops and fixed-size chunk summations. This approach avoids recursive module overhead and is more synthesis-friendly.
+
+Concretely:
+- Partition the 255-bit input into 8-bit chunks (except last, 255 % 8 = 7 bits).
+- Use a small fixed popcount module or inline logic for each 8-bit chunk to count ones efficiently, e.g., via addition trees or a combinational logic popcount.
+- Sum the partial counts from chunks in balanced stages to keep logic depth low.
+- The final result is 8 bits as required.
+
+This eliminates recursive instantiation overhead, uses fixed-width simple adders, and balances the tree, improving timing and reducing power/area by avoiding redundant logic and synthesis complexity.

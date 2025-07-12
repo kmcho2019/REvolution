@@ -1,0 +1,7 @@
+The original implementation is functionally correct and well-structured, detecting the "10011" sequence with overlapping support. However, per the feedback, we can improve it by using non-blocking assignments consistently in the combinational logic to avoid potential simulation mismatches and make the code style more standard. Additionally, clarifying the Mealy output behavior by directly deriving MATCH from the present state and input will improve readability and synthesis friendliness.
+
+We will keep the state encoding and transitions as is, since they efficiently support overlapping detection. MATCH will be assigned combinationally in the always_comb block, reflecting Mealy FSM behavior: MATCH = 1 when the sequence "10011" is detected at the current input. This avoids registering MATCH separately and asserts it combinationally based on the current state and input.
+
+Reset will clear the current_state and MATCH to 0 synchronously. We replace typedef enum logic with parameter constants for maximum compatibility with all synthesis tools.
+
+Overall, this will make the FSM cleaner, with a clear Mealy output, and maintain the same functionality and efficiency.

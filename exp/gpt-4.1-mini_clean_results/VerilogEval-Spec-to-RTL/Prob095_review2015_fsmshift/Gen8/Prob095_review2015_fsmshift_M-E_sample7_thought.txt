@@ -1,0 +1,9 @@
+To fulfill the requirement to assert shift_ena for exactly 4 clock cycles immediately after a synchronous active-high reset and then keep it low forever, I will implement a simple FSM with two states: IDLE and ENABLE.
+
+- When reset is asserted (synchronously), the FSM will transition to the ENABLE state and load a 2-bit counter with 4.
+- While in the ENABLE state, the counter decrements on each clock cycle.
+- shift_ena is asserted when in ENABLE state.
+- When the counter reaches zero, FSM transitions back to IDLE and shift_ena is deasserted.
+- In IDLE state, shift_ena remains low until the next reset.
+
+This FSM approach provides explicit control over the enable period and state transitions, making the timing of shift_ena assertion clear and easy to verify. The 2-bit counter is sufficient for counting down 4 cycles (from 3 down to 0, using zero-based counting), which simplifies the design and avoids off-by-one errors. Reset is synchronous and handled in the state machine logic as specified.

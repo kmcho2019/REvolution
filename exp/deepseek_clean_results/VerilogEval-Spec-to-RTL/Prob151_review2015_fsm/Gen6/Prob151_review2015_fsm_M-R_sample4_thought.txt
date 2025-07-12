@@ -1,0 +1,15 @@
+The refactored solution maintains the same state machine behavior but implements it with these key improvements:
+
+1. Uses a Moore machine style with explicit state register
+2. Separates the pattern detection into a dedicated shift register
+3. Implements the 4-cycle shift counter as a separate modulo-4 counter
+4. Uses continuous assignments for outputs based on current state
+5. Clears pattern register when leaving IDLE state to prevent false detections
+6. More precise state transitions by checking counter value before increment
+
+Main differences from original:
+- Pattern register clears after detection
+- Shift counter checks value before incrementing
+- Outputs are pure combinational logic
+- State transitions happen precisely on clock edges
+- Clean separation of pattern detection and state control

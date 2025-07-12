@@ -1,0 +1,21 @@
+Novel Architecture Idea:
+1. Hierarchical State Grouping:
+   - Group states into functional categories (Start, Shift, Count, Wait)
+   - Use intermediate group signals to simplify next-state logic
+   - This reduces fan-out and creates cleaner timing paths
+
+2. Output Pipelining:
+   - Pre-compute outputs for next cycle based on next-state
+   - This allows output registers if needed for timing
+   - Reduces combinational paths in output logic
+
+3. Optimized One-Hot Encoding:
+   - Use a modified one-hot with priority encoding for common transitions
+   - Implement state transitions using priority muxing
+   - This reduces the number of parallel comparisons needed
+
+Key Benefits:
+- Reduced combinational logic depth
+- Better timing closure potential
+- Clearer separation of state machine phases
+- Easier to pipeline if needed

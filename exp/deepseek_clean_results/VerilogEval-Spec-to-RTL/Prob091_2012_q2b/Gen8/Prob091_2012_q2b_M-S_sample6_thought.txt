@@ -1,0 +1,13 @@
+To simplify the solution further, we can observe that:
+
+1. For Y1 (next state for y[1]):
+   - Only needs to be active when transitioning from state A (y[0]) with w=1
+   - This is already minimal as a simple AND operation
+
+2. For Y3 (next state for y[3]):
+   - Instead of checking "not A and not D", we can directly use the one-hot property:
+     - Y3 should be active when in states B, C, E, or F AND w=0
+     - Since these states correspond to y[1], y[2], y[4], y[5], we can OR these bits
+   - This reduces the logic to a single OR of relevant state bits followed by AND with ~w
+
+This approach eliminates the need for NOT operations on y[0] and y[3], using direct OR of active state bits instead.

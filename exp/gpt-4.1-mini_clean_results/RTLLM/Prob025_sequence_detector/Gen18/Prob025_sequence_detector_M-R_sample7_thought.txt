@@ -1,0 +1,15 @@
+To refactor the sequence detector with the same functionality, I will implement a binary-encoded FSM instead of one-hot encoding. This reduces the number of state bits from 5 to 3, potentially reducing area and power at the expense of slightly more complex next-state logic.
+
+I will:
+
+1. Use enumerated states with binary encoding for clarity.
+2. Use a synchronous active-low reset as before.
+3. Implement next_state logic using continuous assignment (`assign`) instead of combinational `always` block.
+4. Compute the output sequence_detected combinationally based on the current state (asserted when in the final detection state).
+5. Register the state synchronously on the clock edge.
+6. Keep output assertion as a one-cycle pulse when in the detection state.
+7. Use non-blocking assignments for registers to maintain good synthesis style.
+
+This approach differs structurally by separating next_state calculation outside an always block, and using a binary FSM encoding, which can be more area- and power-efficient. It simplifies output logic by using combinational output directly derived from state bits.
+
+The refactored design is functionally equivalent, detects "1001" with overlapping detection, and uses a slightly different coding style leveraging `assign` for next_state logic.

@@ -1,0 +1,35 @@
+Analyze the Karnaugh map and fully leverage the don't-care conditions (d) to simplify the boolean expression. The original expression can be minimized by carefully grouping 1's and don’t-cares to reduce the number of terms and literals.
+
+From the K-map:
+- Rows (cd): 00, 01, 11, 10
+- Columns (ab): 01, 00, 10, 11
+
+Considering d as either 0 or 1 to simplify, the minimal SOP can be:
+
+out = c & a | c & ~b | a & ~c
+
+But term (c & a) is covered by (a & ~c) and (c & ~b), making it redundant.
+
+Instead, an even simpler form is:
+
+out = (c & ~b) | (a & (~c | b))
+
+By Boolean algebra:
+
+(a & (~c | b)) = a & ~c | a & b
+
+So out = (c & ~b) | (a & ~c) | (a & b)
+
+But (a & b) combined with (c & ~b) and (a & ~c) can be further simplified by factoring terms.
+
+Alternatively, consider the minimal SOP covering all 1's and don't-cares:
+
+out = (a & ~c) | (c & ~b) | (a & b)
+
+This requires three terms but fewer literals overall.
+
+Implement this as continuous assignment without intermediate wires for minimal area and power.
+
+Ignore input d as it’s don't-care.
+
+This minimal expression reduces gates and switching, improving PPA metrics.

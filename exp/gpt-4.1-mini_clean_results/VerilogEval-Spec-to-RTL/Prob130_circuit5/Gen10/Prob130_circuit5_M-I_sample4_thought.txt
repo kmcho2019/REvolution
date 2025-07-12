@@ -1,0 +1,7 @@
+The original implementation uses a 16-bit shift operation to select the output slice, which adds unnecessary logic and switching activity, potentially increasing delay, power, and area.
+
+To optimize for PPA, I will replace the variable shift-and-select logic with a straightforward 4-to-1 mux using a case statement on c[1:0]. This avoids a barrel shifter and reduces switching by only routing the selected 4-bit input to output, improving timing, power, and area.
+
+Functionality remains unchanged: for c<4, select one input among b, e, a, d; else output 0xF.
+
+This explicit mux structure is simpler, synthesizes more efficiently, and is more power-friendly.

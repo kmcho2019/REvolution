@@ -1,0 +1,14 @@
+Here's a novel approach using a single shared counter with phase-aligned outputs:
+1. Use a single 7-bit counter (counts to 99) as the base for all divisions
+2. Generate all outputs from this master counter:
+   - CLK_50: Toggle when LSB changes (effectively divide by 2)
+   - CLK_10: Toggle when counter mod 5 equals 0 (divide by 10)
+   - CLK_1: Toggle when counter equals 49 (divide by 100)
+3. This ensures all outputs are perfectly phase-aligned and reduces counter logic
+4. Reset synchronously initializes all outputs and counters
+
+Benefits:
+- Single counter reduces area
+- Phase alignment between outputs
+- Simplified control logic
+- Better power efficiency from shared counting logic

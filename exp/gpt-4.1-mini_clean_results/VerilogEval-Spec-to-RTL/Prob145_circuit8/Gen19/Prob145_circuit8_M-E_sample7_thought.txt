@@ -1,0 +1,15 @@
+Analyzing the waveform suggests that the outputs p and q form a two-bit sequential state whose updates are sensitive to both clock edges and input `a`, but the earlier approach of a simple shift register with p = a & q and q = p does not reproduce the waveform.
+
+Notably, q remains at zero initially, then after certain clock cycles it switches and holds steady, while p toggles based on both clock and input a at specific moments, with p becoming 1 only when a is high on the clock's rising edge and otherwise staying 0 or holding previous values.
+
+A different approach is to separate updates for p and q on different clock edges. Specifically, update q on the falling edge and p on the rising edge, making p depend on `a` and the stored q from the last falling edge, and q depend on the current p at the falling edge.
+
+This dual-edge triggered state machine mimics the staggered updates shown in the waveform, where q changes only at falling clock edges, and p updates at rising edges based on input `a` and q.
+
+We implement two flip-flops: one for p updated at rising edge with input a & q, and another for q updated at falling edge with input p.
+
+This explains the delayed response of q and p to `a` and clock transitions and closely matches the waveform transitions.
+
+No explicit reset is given; the outputs start unknown and update sequentially with clock edges.
+
+This dual-edge sensitivity is rare for synthesis but acceptable for modeling waveform behavior and simulation validation.

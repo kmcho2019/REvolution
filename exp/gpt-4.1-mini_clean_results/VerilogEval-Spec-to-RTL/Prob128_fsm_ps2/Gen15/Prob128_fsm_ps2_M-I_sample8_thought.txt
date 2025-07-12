@@ -1,0 +1,6 @@
+Simplify the FSM by removing the explicit enable gating signal to reduce combinational logic depth and improve timing. Use a straightforward 2-bit counter that always updates synchronously each cycle based on clear conditions:
+- If reset, clear the count and done.
+- If waiting for start byte (count == 0), set count=1 when in[3]=1, else hold count=0.
+- If inside a message (count != 0), increment count each cycle.
+- When count reaches 3 (third byte received), assert done in that cycle and reset count to 0.
+This approach reduces logic levels, potentially improves timing, and minimizes power by avoiding unnecessary gating logic. The done signal is asserted for one cycle immediately after the third byte, as required. All signals are synchronous with a clean active-high reset.

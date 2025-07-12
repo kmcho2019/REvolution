@@ -1,0 +1,9 @@
+Implement a 32-bit multiplying accumulator with a wider internal accumulator register (64 bits) to fully capture the product result and accumulated sum without overflow or saturation logic. This design avoids losing upper bits by accumulating the full 64-bit multiplication result, enabling precise accumulation of large sums.
+
+The output port `c` provides the lower 32 bits of the accumulator, showing the least significant part of the accumulated value. 
+
+This architecture eliminates the need for overflow detection or saturation logic, simplifying the addition and improving performance. The internal 64-bit accumulator register stores the sum of all products exactly. Reset is synchronous and active-high for predictable timing. 
+
+Multiplication and addition are done within an always block at the clock edge, using non-blocking assignments for proper RTL style. The output `c` is a wire assigned from the lower 32 bits of the 64-bit accumulator.
+
+This design suits applications where full precision accumulation is needed, and truncation at output is acceptable. It trades off area (due to 64-bit register) for correctness and simplicity, improving critical path timing by avoiding saturation logic.

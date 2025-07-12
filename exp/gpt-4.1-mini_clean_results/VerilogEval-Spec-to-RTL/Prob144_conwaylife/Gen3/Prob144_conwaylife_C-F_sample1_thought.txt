@@ -1,0 +1,12 @@
+Fuse the strengths of both designs by using bit-masking for wraparound to eliminate expensive division/modulo operations (from Example 1) and flatten the nested row/column indices into a single loop (from Example 2) to improve clarity and synthesis friendliness.
+
+Specifically:
+- Use a single `for` loop over all 256 cells to simplify indexing.
+- Calculate row and column from the index using bit-slicing instead of division/modulo (row = idx[7:4], col = idx[3:0]) for efficient hardware.
+- Wrap neighbor indices using 4-bit masking to implement toroidal wraparound efficiently.
+- Compute neighbor sums using an unrolled local loop with explicit indexing to avoid function call overhead in combinational logic.
+- Apply the given rules directly and store the next state in a reg.
+- Implement synchronous load and update logic.
+- This approach minimizes complex combinational math, avoids costly div/mod and function calls inside loops, and provides a clean, scalable, and synthesis-friendly implementation.
+
+This fusion leverages efficient addressing, simplified indexing, and clear logic to improve timing and area without sacrificing functional correctness.

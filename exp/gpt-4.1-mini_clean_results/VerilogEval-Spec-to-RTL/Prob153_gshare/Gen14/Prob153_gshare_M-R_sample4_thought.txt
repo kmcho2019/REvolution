@@ -1,0 +1,10 @@
+Refactor the module to produce prediction outputs purely combinationally, directly reflecting the current GHR and PHT state when `predict_valid` is high, without registering these outputs. Maintain a separate register to hold the GHR and update it on clock edges with proper priority between training misprediction recovery, training update, and prediction update. The PHT updates are also performed on the clock edge, ensuring predictions read the PHT before the update.
+
+Key design points:
+- The combinational outputs (`predict_taken` and `predict_history`) immediately reflect the prediction result and current GHR when `predict_valid` is asserted; otherwise, outputs hold previous outputs via registers.
+- Use a small register stage for output hold (to provide stable output when `predict_valid` is low).
+- Sequential logic on clock edge updates PHT and GHR with the correct priority and timing.
+- Separate combinational prediction logic from sequential state updates to avoid off-by-one timing issues.
+- On asynchronous reset, initialize GHR, PHT entries, and output registers properly.
+
+This refactoring clearly separates combinational and sequential logic, respects timing requirements, and avoids output mismatches by never updating outputs simultaneously with GHR and PHT updates.

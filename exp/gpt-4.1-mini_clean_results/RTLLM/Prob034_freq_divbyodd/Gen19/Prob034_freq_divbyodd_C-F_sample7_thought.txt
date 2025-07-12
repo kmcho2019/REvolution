@@ -1,0 +1,11 @@
+To create a superior odd-frequency divider, I will combine the strengths of both examples as follows:
+
+- Use a single counter clocked on the positive edge counting modulo NUM_DIV.
+- Implement clk_div1 toggling on posedge clk, and clk_div2 toggling on negedge clk, each toggling precisely at the halfway count (HALF_DIV) and zero count, to maintain a 50% duty cycle with minimal glitch.
+- Unlike Example 2, which sets/clears clk_div1/clk_div2, use toggling logic from Example 1 for a balanced, symmetric waveform, but synchronize toggling on negedge clk using a delayed version of the counter.
+- Retain asynchronous active-low reset for all registers.
+- Keep a minimal counter width with $clog2.
+- Include compile-time oddness check for NUM_DIV.
+- The combination keeps logic symmetric for both edges, improving the duty cycle and reducing glitches versus set/reset approach.
+- Synchronizing the counter value into negedge domain via a delayed register ensures timing stability and reduces metastability risk.
+- Overall, this fusion balances glitch avoidance, duty cycle accuracy, and timing simplicity, while optimizing toggling activity and area.

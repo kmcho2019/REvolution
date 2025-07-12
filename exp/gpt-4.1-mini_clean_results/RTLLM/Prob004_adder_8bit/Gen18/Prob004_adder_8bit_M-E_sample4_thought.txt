@@ -1,0 +1,10 @@
+I will implement the 8-bit adder by explicitly instantiating eight full adder modules without using generate blocks. However, instead of a simple ripple carry where each adder depends on the previous carry, I will use a hierarchical approach combining pairs of bits into 2-bit adders (using two full adders) that produce partial carry signals, then combine those into 4-bit groups, and finally combine the carry outputs to form the final carry-out. This approach mimics a simple carry look-ahead style by precomputing carries at group levels using combinational logic. This hierarchical carry computation reduces the longest carry propagation path compared to simple ripple carry and is still fully combinational.
+
+To implement this:
+- Define a single-bit full adder module.
+- Instantiate 8 full adders in pairs to form four 2-bit groups.
+- Compute group generate and propagate signals for each 2-bit group.
+- Combine propagate/generate signals of pairs of 2-bit groups to get carry-in for the next 2-bit groups.
+- Finally compute the carry-out from the last bit.
+
+This design improves performance by reducing carry chain length, while staying structural and explicit without generate loops.

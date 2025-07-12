@@ -1,0 +1,5 @@
+The existing code implements a 32-bit global history shift register with support for rolling back state in response to a pipeline flush caused by a branch misprediction. To refactor this code with a different structure, we can utilize a combination of `assign` statements for combinational logic and an `always` block for sequential logic, focusing on making the update logic for the history register more explicit and potentially reducing the complexity of the conditional statements.
+
+One approach is to define the next state of the history register based on the current state and the inputs, using `assign` statements to compute the next state. This can make the logic easier to understand and potentially optimize by the synthesis tool. The `always` block will then be responsible for updating the current state of the history register based on the computed next state, under the control of the clock and reset signals.
+
+This refactoring aims to maintain the same functionality while potentially improving code readability and synthesis efficiency.

@@ -1,0 +1,12 @@
+Here's a novel approach using a state machine with hysteresis behavior:
+1. The output q remains stable until a specific pattern is detected on input 'a'
+2. We'll implement a 2-bit state register to track previous inputs
+3. q transitions to 1 only when we see two consecutive 0s on 'a' at clock edges
+4. q transitions to 0 only when we see two consecutive 1s on 'a' at clock edges
+5. This provides noise immunity by requiring two consistent samples before changing output
+
+The state machine will have these transitions:
+- State 00: Last two 'a' were 00 → q=1
+- State 01: Last two 'a' were 01 → keep current q
+- State 10: Last two 'a' were 10 → keep current q
+- State 11: Last two 'a' were 11 → q=0

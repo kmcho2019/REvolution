@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Timing Optimization: The negative slack suggests we need to reduce the critical path. The current next_state_B logic uses a 2-input OR and AND gate. We can simplify this to a single MUX operation, which typically has better timing characteristics.
+
+2. Power Optimization: Currently, state_B updates every cycle when x changes. We can add an enable condition to only update when necessary (when x changes from previous cycle). This reduces unnecessary toggles.
+
+3. Area Optimization: The current implementation is already minimal, but we can ensure the MUX-based approach doesn't increase area while improving timing.
+
+Key Changes:
+- Replace next_state_B logic with a MUX
+- Add x tracking to enable state updates only when needed
+- Maintain one-hot encoding simplicity

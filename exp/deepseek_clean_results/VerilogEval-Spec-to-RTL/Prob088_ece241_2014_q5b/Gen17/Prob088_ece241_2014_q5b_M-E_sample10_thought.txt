@@ -1,0 +1,21 @@
+Novel Architectural Idea:
+1. **State Encoding Optimization**:
+   - Instead of traditional one-hot, use a "dual-phase" encoding where state_A is represented by Q=0 and state_B by Q=1
+   - This reduces the flip-flop count from 2 to 1 while maintaining clear state distinction
+
+2. **Transition Logic**:
+   - Implement state transitions using a single D flip-flop with optimized logic:
+     - Stay in A (Q=0) when x=0
+     - Transition to B (Q=1) when x=1 in A
+     - Stay in B (Q=1) regardless of x
+
+3. **Output Generation**:
+   - Create a combinational output that XORs the current state with input x
+   - This elegantly implements the required output behavior with minimal gates
+
+Key Advantages:
+- 50% reduction in state registers (1 instead of 2)
+- Simplified transition logic using basic gates
+- Output logic reduced to a single XOR operation
+- Maintains correct Mealy machine behavior
+- Asynchronous reset preserved

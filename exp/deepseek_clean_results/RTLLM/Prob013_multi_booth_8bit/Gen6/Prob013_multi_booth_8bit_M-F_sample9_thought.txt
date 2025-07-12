@@ -1,0 +1,28 @@
+To fix the Radix-4 Booth multiplier implementation, I'll make these key improvements:
+
+1. Correct Radix-4 Booth Encoding:
+   - Properly handle all 8 possible encoding cases (including ±1×, ±2×)
+   - Maintain sign extension during right shifts of multiplier
+   - Use 4 iterations (not 3) for 8-bit multiplication (8/2=4)
+
+2. State Machine Fixes:
+   - Initialize 'prev_lsb' properly on reset
+   - Transition to DONE after exactly 4 iterations
+   - Clear intermediate registers on reset
+
+3. Arithmetic Corrections:
+   - Proper sign extension for negative multiplicands
+   - Correct partial product accumulation
+   - Maintain sign bit during multiplier shifting
+
+4. Timing and Control:
+   - Ensure ready signal only asserts after valid computation
+   - Properly sequence state transitions
+   - Register outputs for better timing
+
+The main changes from previous version:
+- Correct iteration count (4 instead of 3)
+- Proper Radix-4 Booth encoding logic
+- Fixed multiplier shifting with sign extension
+- Improved state machine control flow
+- Better handling of negative numbers

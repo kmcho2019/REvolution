@@ -1,0 +1,13 @@
+Fuse the minimalistic bit-level full adder design with explicit propagate and generate signals from Example 1, and the hierarchical, modular 4-bit CLA blocks from Example 2 to create a fast, area-efficient 8-bit adder:
+
+1. Implement a bit_full_adder module that outputs sum, propagate, and generate signals with minimal logic.
+2. Implement a 4-bit CLA module that instantiates four bit_full_adders (using generate loop for conciseness) and computes all carry signals via carry lookahead logic, producing sum and block carry out.
+3. The top-level 8-bit adder instantiates two 4-bit CLA blocks, connecting the carry out of the lower block to the carry in of the upper block.
+4. This structure balances clarity, modularity, and performance:
+   - Minimalistic bit full adders reduce area and power.
+   - 4-bit CLA blocks reduce carry propagation delay.
+   - Using generate loops inside the 4-bit CLA reduces code size and eases scaling.
+5. Keep the design fully combinational with no redundant carry outputs from bit_full_adder, relying only on propagate/generate.
+6. The resulting design should improve PPA by reducing critical path (hierarchical CLA) while minimizing gate count and power consumption through simple bit-level modules.
+
+This fusion provides a clean, modular, and efficient combinational 8-bit adder.

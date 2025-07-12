@@ -1,0 +1,12 @@
+The original design implements a purely combinational 8-bit multiplier using a balanced adder tree summing partial products. While the balanced tree reduces addition depth, the large fan-in 16-bit adders and parallel generation of all partial products increase power and area and result in a long critical path.
+
+To improve PPA, I propose a sequential shift-and-add multiplier with a single adder and shift register:
+- Use a clocked, iterative approach that processes one multiplier bit per cycle.
+- Keep the multiplicand in a register shifted left logically.
+- Maintain an accumulator (product register) updated only when the current multiplier bit is 1.
+- Use a small state machine to iterate through all 8 bits of multiplier.
+- This trades latency for significant area and power savings, as only one adder and shifting logic is active at a time.
+- It reduces the critical path to one 16-bit addition per cycle, enabling potentially higher clock frequencies or lower power usage.
+- Output the product after all bits processed and provide a 'done' signal to indicate completion (optional).
+
+This design is efficient for FPGA or ASIC where throughput is not a primary constraint but resource usage and power are critical.

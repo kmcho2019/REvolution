@@ -1,0 +1,9 @@
+To implement the Mealy finite-state machine as a 2's complementer using a novel architectural idea, we can leverage the concept of a ring counter to encode the states and transition between them based on the input 'x'. However, given the simplicity of the state machine (only two states), we can implement it in a way that directly leverages the properties of the 2's complementer without explicitly using a ring counter. 
+
+A novel approach is to think of the state machine as a toggle mechanism that changes its output based on the input 'x'. When 'x' is 1, the output 'z' should be the inverse of the previous state (or the previous 'z' value), effectively behaving like a toggle or a 2's complementer in the context of binary digits. 
+
+This architectural idea focuses on the output 'z' being dependent on the current input 'x' and the previous state of 'z', essentially creating a feedback loop where 'z' influences its next state based on 'x'. This design approach simplifies the state transition logic and directly addresses the requirement of the Mealy machine to output 'z' based on both 'x' and the current state.
+
+Given the asynchronous active-high reset, the system resets into state A (which we can denote by 'z' being 0), indicating that when 'x' is 0, 'z' remains 0, and when 'x' is 1, 'z' becomes 1, transitioning into state B. The system then behaves based on the 2's complement logic from that point on.
+
+The key here is to recognize the pattern of behavior as a form of toggling or complementing based on the input 'x', allowing for a straightforward implementation that does not necessarily require a traditional state machine encoding but rather a logic that captures the essence of the required behavior.

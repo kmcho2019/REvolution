@@ -1,0 +1,9 @@
+To address the issues identified in the previous design, we need to correct the pattern detection mechanism, ensure the shifting sub-FSM accurately asserts 'shift_ena' for 4 clock cycles, and properly manage the counting and done states based on the 'done_counting' and 'ack' signals.
+
+First, the pattern detection sub-FSM should be designed to correctly identify the sequence '1101'. This can be achieved by using a combination of states to track the sequence of bits received.
+
+Next, the shifting mechanism should be modified to assert 'shift_ena' for exactly 4 clock cycles after the pattern is detected. This involves correctly updating the shift counter and managing the state transitions to ensure 'shift_ena' is asserted for the correct duration.
+
+Finally, the counting and done notification sub-FSMs should be corrected to ensure the 'counting' output is asserted after the shifting is complete and the 'done' output is asserted after the counting is finished, pending the 'ack' signal.
+
+By addressing these issues and carefully managing the state transitions and output assertions, the finite-state machine can be corrected to operate as specified, accurately detecting the pattern, shifting in the duration, waiting for the counters to finish, and notifying the user before resetting to look for the next occurrence of the start sequence.

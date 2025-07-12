@@ -1,0 +1,11 @@
+The compilation failure is due to a parameter name mismatch between the module and the testbench: the module uses parameters named WIDTH and STAGES, while the testbench references DATA_WIDTH and STG_WIDTH. To fix this, rename the parameters in the module to match the testbench naming conventions (DATA_WIDTH and STG_WIDTH). This alignment resolves elaboration failures without affecting the core pipeline design.
+
+Also, improve the final result concatenation to be generic for any number of stages, by building the sum concatenation inside a generate block with a temporary variable or using a function.
+
+Ensure the code fully adheres to the original specification:
+- 64-bit adder (parameter DATA_WIDTH=64)
+- 4 pipeline stages (parameter STG_WIDTH=16)
+- Proper pipeline carry and enable registers
+- Synchronized outputs with o_en asserted when output is valid
+
+This fixes the parameter name mismatch and enhances output concatenation flexibility.

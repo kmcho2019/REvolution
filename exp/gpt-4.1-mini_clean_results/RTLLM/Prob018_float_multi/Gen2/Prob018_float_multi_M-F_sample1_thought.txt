@@ -1,0 +1,36 @@
+The original design mostly follows the multi-cycle IEEE-754 single-precision floating-point multiplier structure, but it has key problems affecting correctness:
+
+1. **Exponent Handling and Overflow/Underflow Checks:**
+   - Fix exponent calculations by using registers consistently for exponent sum and bias addition.
+   - Do not declare integers inside always blocks for synthesis; instead, keep biased exponent as reg and perform comparisons on them.
+   - Ensure proper signed arithmetic for exponent calculations and check biased exponent range correctly.
+
+2. **Rounding and Mantissa Overflow:**
+   - Perform rounding and detect mantissa overflow carefully.
+   - If rounding causes mantissa to overflow (e.g., from 0xFFFFFF + 1 -> 0x1000000), shift mantissa right by one and increment exponent accordingly.
+   - Update mantissa and exponent registers correctly without multiple assignments in a single cycle.
+
+3. **Special Cases and Sign Handling:**
+   - Assign sign bits before using them to form output for special cases, ensure sign bit respects inputs for NaN and Inf.
+   - Use the computed `z_sign` consistently in all cases.
+
+4. **FSM Operation and Re-triggering:**
+   - Allow the FSM counter to wrap from final state back to zero to accept new inputs after completing one multiply.
+   - This supports continuous operation and aligns with testbench expectations.
+
+5. **Sticky Bit Calculation:**
+   - Use sticky bit as OR of all bits right of the round bit in the normalized product.
+   - Implement sticky bit calculation explicitly.
+
+6. **Separation of Combinational and Sequential Logic:**
+   - Use combinational wires for mantissa multiplication and exponent sum.
+   - Registers are updated only at clock edge.
+
+7. **General Improvements:**
+   - Initialize all internal registers on reset properly.
+   - Use non-blocking assignments consistently.
+   - Avoid multiple assignments to the same register in one cycle.
+
+With these fixes, the module will produce correct IEEE-754 single precision multiplication results, including proper rounding, special case handling, and continuous processing of inputs.
+
+The code below implements this corrected design with clear cycle-by-cycle steps.

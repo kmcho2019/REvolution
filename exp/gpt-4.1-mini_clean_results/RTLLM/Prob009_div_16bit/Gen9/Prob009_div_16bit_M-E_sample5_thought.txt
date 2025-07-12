@@ -1,0 +1,11 @@
+Implement a combinational division by emulating a shift-subtract algorithm using a sequential process inside a single always block without explicitly storing inputs in separate registers. Use a temporary dividend register that shifts left and conditionally subtracts the divisor whenever the high bits are greater or equal to the divisor, which mimics manual division by examining the partial dividend's high bits.
+
+To align with the requirement to use two always blocks, use one always block to latch inputs into internal registers, and a second always block that directly implements a non-restoring-like combinational division process, but instead of iterating bit-by-bit from MSB to LSB, repeatedly extract the upper bits matching divisor width (8 bits) of the current partial dividend in the temporary register, subtract divisor if possible, set the appropriate quotient bit, then shift left to bring in the next dividend bit.
+
+The quotient is constructed in a top-down manner, starting from the most significant bit to the least. The remainder is the last partial dividend left after all bits are processed.
+
+This approach uses bit slicing and comparisons instead of a direct loop shifting remainder and appending bits. It simulates the user-specified algorithm directly: extract high bits of the dividend, compare with divisor, update quotient bit, use difference as remainder concatenated with next dividend bit, and repeat.
+
+This design uses blocking assignments to model combinational behavior properly and keeps the code synthesis friendly. The remainder is extended to 16 bits on output by placing the last remainder in its least significant bits.
+
+This design is fully combinational, maintains two always blocks for input latching and division calculation as requested, but uses a novel approach simulating the algorithm more literally with bit slicing and concatenation.

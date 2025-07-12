@@ -1,0 +1,16 @@
+The previous solution is functionally correct and straightforward, but it assigns to the entire 8-bit vector `out` in one statement, which caused issues in some toolchains that do not support such assignments.
+
+To overcome this, we can implement the ring counter by explicitly manipulating each bit individually inside the always block, avoiding direct full-vector assignments. This involves using a temporary 8-bit register to hold the next state, setting only one bit high each cycle.
+
+Alternatively, since only one bit is high at a time and it moves cyclically from LSB to MSB and back, we can implement a binary counter (3 bits) as a pointer/index and decode it to a one-hot output. This approach uses a smaller register for state and a combinational decoder for output, which is efficient in hardware (better PPA) and avoids slicing/concatenation or full vector assignments inside sequential blocks.
+
+The approach:
+
+- Maintain a 3-bit index (0 to 7).
+- On reset, index = 0.
+- On each clock rising edge, index = index + 1 (wraps from 7 to 0 naturally).
+- Output is 8-bit one-hot with the bit at 'index' set to 1.
+
+This avoids any issues with vector assignments and creates a clean, scalable design.
+
+This method also improves clarity, scalability (e.g., can be extended to N bits easily), and synthesis quality.

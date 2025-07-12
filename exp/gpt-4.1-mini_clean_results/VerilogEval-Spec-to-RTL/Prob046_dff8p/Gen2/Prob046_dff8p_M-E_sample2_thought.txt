@@ -1,0 +1,9 @@
+Implement the 8-bit register with negative edge-triggered flip-flops and synchronous reset by instantiating eight individual DFF modules, each with its own negative edge-triggered always block and synchronous reset logic. This modular approach clarifies the per-bit flip-flop behavior and isolates each flip-flop, improving readability and potentially facilitating bitwise modifications or reuse.
+
+Each flip-flop loads the corresponding bit of input d on negedge clk if reset is low; otherwise, it synchronously resets to the corresponding bit of the 0x34 constant.
+
+The TopModule aggregates these eight flip-flops and assembles the 8-bit output q by concatenation of individual q bits.
+
+This approach explicitly models each flip-flop separately rather than a vector always block, demonstrating a structural design perspective while fully complying with the specification of negative-edge triggered synchronous reset loading 0x34.
+
+This modularity enhances testability and clarity at the cost of more code lines but no loss of synthesis or functionality correctness.

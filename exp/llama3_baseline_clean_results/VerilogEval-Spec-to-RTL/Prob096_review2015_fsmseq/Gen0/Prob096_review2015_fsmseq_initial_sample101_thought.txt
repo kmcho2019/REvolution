@@ -1,0 +1,10 @@
+To solve this problem, we need to implement a finite-state machine (FSM) that can recognize the sequence 1101 in a stream of input bits. We can define a series of states that the FSM will go through as it encounters each bit in the sequence. The states can be defined as follows:
+- S0: Initial state, expecting the first '1'
+- S1: Found the first '1', expecting the '1' in the second position
+- S2: Found the sequence '11', expecting the '0' in the third position
+- S3: Found the sequence '110', expecting the '1' in the fourth position
+- S4: Found the sequence '1101', set start_shifting to 1
+
+The FSM will transition between these states based on the input bit and the current state. If the FSM reaches state S4, it will set start_shifting to 1. The FSM will remain in this state until reset is asserted.
+
+We will use a parameterized case statement to define the next state based on the current state and input. We will also use a separate logic to handle the reset condition and set the initial state.

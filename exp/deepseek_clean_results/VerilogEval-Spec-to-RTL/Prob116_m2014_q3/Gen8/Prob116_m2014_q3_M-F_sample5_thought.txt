@@ -1,0 +1,17 @@
+To correctly implement the Karnaugh map, we need to:
+
+1. Properly interpret the input mapping:
+   - The K-map rows are x[3]x[4], but since our input is 4-bit (x[3:0]), we'll assume x[4] was a typo and should be x[0]
+   - Therefore, rows = {x[3],x[0]}, columns = {x[1],x[2]}
+
+2. Analyze the K-map to derive correct logic:
+   - Identify all 1s in the map that must be covered
+   - Group adjacent 1s to form minimal product terms
+   - Use don't-cares (d) to maximize grouping when beneficial
+
+3. Derive the minimal sum-of-products expression:
+   - Group 1s in rows 11 and 10 when x[1]x[2] is 00 or 01 → x[3] & ~x[1]
+   - Group 1 in row 01 when x[1]x[2] is 11 → ~x[3] & x[0] & x[1] & x[2]
+   - Group 1s in row 11 when x[1]x[2] is 01 → x[3] & x[0] & ~x[2]
+
+4. Combine these terms with OR operations to get the final output

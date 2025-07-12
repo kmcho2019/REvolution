@@ -1,0 +1,9 @@
+To implement the gshare branch predictor, we need to consider the following components: 
+1. A 7-bit global branch history register to keep track of the branch history.
+2. A 128-entry table of two-bit saturating counters, indexed by a 7-bit value hashed from the 7-bit pc and 7-bit global history.
+3. Prediction logic to generate the predicted branch direction and update the branch history register.
+4. Training logic to update the pattern history table (PHT) based on the actual branch outcome and to recover the branch history register in case of misprediction.
+
+We will use a always_ff block to update the branch history register and the PHT at the positive edge of the clock.
+We will use a combinational logic block to generate the predicted branch direction.
+We will use a priority encoder or a simple if-else statement to ensure that training takes precedence over prediction when both occur in the same cycle.

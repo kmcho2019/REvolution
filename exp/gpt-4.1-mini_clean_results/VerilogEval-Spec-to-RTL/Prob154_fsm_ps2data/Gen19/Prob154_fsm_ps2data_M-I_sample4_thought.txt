@@ -1,0 +1,14 @@
+To improve PPA (timing, power, and area) from the existing design, we'll simplify the datapath by using a shift register approach for out_bytes instead of conditionally updating individual byte segments. This will reduce muxing and switching activity inside the register, improving timing and power.
+
+Specifically:
+
+- Implement a 2-bit FSM with states WAIT_SYNC, BYTE2, BYTE3 as before.
+- When waiting for sync, discard bytes until in[3]=1. When detected, load the first byte as the MSB of a 24-bit shift register.
+- For the next two cycles (BYTE2 and BYTE3), shift in the new byte into out_bytes by shifting left 8 bits and ORing the new byte at the LSB.
+- Assert done high for exactly one cycle immediately after the third byte is received.
+- Use synchronous reset.
+- This shift register method simplifies datapath logic, reduces conditional load signals, and minimizes glitching.
+- done is gated low each cycle except when the third byte is latched.
+- The entire out_bytes register is loaded once per cycle, avoiding multiple partial loads and reducing switching.
+- This should improve timing slack and reduce power by minimizing toggling and mux complexity.
+- FSM remains straightforward for area efficiency.

@@ -1,0 +1,5 @@
+To fix the existing code, we need to modify the counter initialization and the condition for decrementing the counter. Instead of initializing the counter to 4 when the reset signal is high, we should initialize it to 4 on the first clock cycle after the reset signal goes low. This ensures that the shift_ena signal is asserted for exactly 4 clock cycles after the reset.
+
+Additionally, we should introduce a flag to track whether we are currently in the reset sequence or not. This flag will be used to determine whether to decrement the counter or not. We will also add a condition to check if the counter is greater than 0 before asserting the shift_ena signal.
+
+This approach ensures that the shift_ena signal is asserted for 4 clock cycles after the reset and then kept low until the next reset.

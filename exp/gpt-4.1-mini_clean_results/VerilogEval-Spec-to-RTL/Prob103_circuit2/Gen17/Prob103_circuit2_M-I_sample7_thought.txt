@@ -1,0 +1,12 @@
+The original design already implements the even parity function efficiently and concisely using a reduction XOR followed by negation, which is optimal at the RTL level.
+
+However, a slight improvement in clarity and potentially minor synthesis optimization can be gained by using the reduction XNOR operator (~^) directly on the inputs vector. This operator computes the even parity directly and is both functionally equivalent and may map better to some standard cell libraries, potentially improving timing and power marginally.
+
+Hence, replacing `assign q = ~(^ {a, b, c, d});` with `assign q = ~^ {a, b, c, d};` will:
+- Remove an explicit negation step.
+- Simplify synthesis interpretation.
+- Maintain the same minimal logic depth and area.
+
+No other structural changes or added logic is beneficial as the function is inherently minimal in complexity.
+
+Therefore, the improved implementation uses the reduction XNOR operator for cleaner RTL code with identical functionality and possibly marginally better PPA characteristics.

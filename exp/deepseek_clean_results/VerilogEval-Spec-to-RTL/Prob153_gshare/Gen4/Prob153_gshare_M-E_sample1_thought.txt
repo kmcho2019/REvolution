@@ -1,0 +1,15 @@
+Novel Architectural Idea: "Shadow GHR with Delayed PHT Update"
+
+Key Concepts:
+1. Dual GHR System: Maintain two GHRs - one for predictions (predict_ghr) and one for training (train_ghr)
+2. Shadow Update: Training updates go to train_ghr immediately, while predict_ghr follows one cycle later
+3. Delayed PHT Writes: Buffer training requests and apply PHT updates one cycle later to match spec timing
+4. Priority Resolution: Training always takes precedence by updating train_ghr immediately
+5. Misprediction Recovery: train_ghr is restored from train_history on mispredictions
+
+Advantages:
+- Clear separation of prediction and training paths
+- Natural handling of concurrent predict/train operations
+- Guaranteed timing compliance with PHT updates
+- Simplified priority handling through architectural separation
+- Efficient misprediction recovery through dedicated train_ghr

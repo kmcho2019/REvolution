@@ -1,0 +1,30 @@
+Improvement Strategy:
+
+The original solution is functionally correct and properly pipelined with two levels of registers. However, the combinational addition of four 8-bit partial products in one step might create a critical path bottleneck and can be inefficient in terms of power and area.
+
+To optimize for better PPA (performance, power, area):
+
+1. **Balanced Adder Tree:**  
+   Replace the single 4-input adder stage with a balanced two-level adder tree.  
+   - First add pairs of partial products (pp_reg[0]+pp_reg[1] and pp_reg[2]+pp_reg[3]) in one cycle (Stage 2 registers).  
+   - Then add the two sums in the next pipeline stage (Stage 3 registers), producing the final product.
+
+2. **Add an extra pipeline stage:**  
+   This increases latency to 4 cycles but improves maximum clock frequency by reducing combinational path length.
+
+3. **Maintain asynchronous active-low reset (`rst_n`) and non-blocking assignments for sequential logic.**
+
+4. **Keep zero extension of multiplicand as required.**
+
+5. **Parameters and ports remain unchanged.**
+
+This approach splits the addition of partial products across two pipeline stages, reducing the combinational logic between registers and balancing load, thus optimizing timing and potentially reducing power and area due to smaller adders at each stage.
+
+Final pipeline stages summary:  
+- Stage 1: Register all partial products (4 registers)  
+- Stage 2: Register sum of two pairs of partial products (2 registers)  
+- Stage 3: Register sum of the two partial sums and output the final product.
+
+Latency is 4 clock cycles from input to output. The design meets the requirement of two levels of registers storing intermediate values by explicitly separating partial product storage and intermediate sums.
+
+This is a scalable and clean approach for 4-bit pipeline multiplier.

@@ -1,0 +1,6 @@
+The TopModule can be designed as a finite-state machine with several states to control the timer's operation. The states can be defined as follows:
+- IDLE: The initial state where the module waits for the pattern 1101 to start the timer.
+- SHIFT: After detecting the pattern, the module shifts in 4 more bits to determine the duration to delay.
+- COUNT: The module waits for the counters to finish counting.
+- DONE: The module notifies the user and waits for the user to acknowledge the timer.
+We will use a 4-bit shift register to store the incoming data and compare it with the pattern 1101. Once the pattern is detected, the module transitions to the SHIFT state and asserts shift_ena for exactly 4 clock cycles. After that, the module transitions to the COUNT state and asserts counting to indicate it is waiting for the counters. When done_counting is high, the module transitions to the DONE state and asserts done to notify the user. The module waits until ack is 1 before resetting to the IDLE state.

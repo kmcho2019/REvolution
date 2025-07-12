@@ -1,0 +1,15 @@
+The original design is clean and already well-optimized using vector operations and straightforward boundary handling. To improve power and potentially area, we can exploit the fact that the outputs depend only on adjacent bits and reduce switching by using registered outputs with enable signals. However, since the problem demands purely combinational outputs without any clock, adding registers isn't allowed here.
+
+Instead, a subtle optimization is to reduce the number of bits actively toggled by using bitwise operations only on the needed ranges and explicitly zeroing boundary bits to avoid unnecessary toggling.
+
+Another possible micro-optimization is to align the vector slices carefully to avoid unintentional insertion of logic by synthesis tools on unused bits.
+
+Furthermore, since out_both and out_any operate on adjacent bits in opposite directions, we can reuse in shifted versions to minimize gate count, but this is more for synthesis tool optimization than code clarity.
+
+Hence, the final optimization focuses on:
+
+- Retaining all original logic for clarity and correctness.
+- Ensuring boundary bits are explicitly set to zero to prevent any glitch or unnecessary toggling.
+- Adding `wire` declarations for internal shifted signals, making it easier for synthesis tools to optimize.
+
+This approach is marginal in code but can help synthesis tools map logic more efficiently, potentially improving power and area slightly, without sacrificing clarity or functionality.

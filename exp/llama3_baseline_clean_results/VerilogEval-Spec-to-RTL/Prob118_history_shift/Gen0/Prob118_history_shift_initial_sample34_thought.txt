@@ -1,0 +1,6 @@
+To implement the TopModule, we'll use a 32-bit register to store the branch history. 
+We'll update this register on the positive edge of the clock. 
+When a prediction is made (predict_valid = 1), we shift the current history one bit to the left and set the least significant bit to predict_taken. 
+When a misprediction occurs (train_mispredicted = 1), we overwrite the history with the corrected history. 
+If both a prediction and a misprediction occur at the same time, we prioritize the misprediction by checking train_mispredicted first. 
+Finally, we'll implement an asynchronous reset that clears the history when areset is high.

@@ -1,0 +1,18 @@
+Refactored design with these key changes:
+
+1. State Encoding: Changed to one-hot encoding for potentially better timing in some technologies
+2. Output Logic: Moved to combinational always block for explicit case structure
+3. State Transitions: 
+   - Separated into parallel conditions instead of nested ternary
+   - Added default case for robustness
+4. Reset Handling: Kept synchronous active-low but moved to separate initial block
+5. Structure: 
+   - Used separate always blocks for state transitions and outputs
+   - Maintained same priority order (r0 > r1 > r2)
+
+Benefits:
+- One-hot encoding may improve timing in FPGA implementations
+- More explicit output logic via case statement
+- Parallel transition conditions are easier to read and modify
+- Default case makes the design more robust against undefined states
+- Maintains same functionality while improving readability

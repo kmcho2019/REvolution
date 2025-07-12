@@ -1,0 +1,10 @@
+The best approach combines modular clarity, vectorized storage, and synchronous output registering to enhance timing, power, and area efficiency. From Example 1, modular and per-bit clarity is good but incurs overhead with multiple registers. Example 2 uses vector registers but outputs combinational XOR asynchronously, risking timing and glitch issues. 
+
+Fusion strategy:
+
+- Use vector registers to store previous and current inputs (as in Example 2) for area and power efficiency by compact register packing.
+- Compute the edge detection result synchronously by registering the XOR output, thus removing combinational output paths and improving timing and glitch power (from Example 1's registered outputs but vectorized).
+- Implement the design in a single always block to simplify and optimize the synthesis, and use one-bit XOR vector operation for edge detection.
+- This fusion yields a simple, compact, clean, and efficient design that outputs the anyedge signal exactly one clock cycle after the input changes, with minimal combinational logic on outputs, improving robustness and timing.
+
+Overall, this design stores the previous input in a single vector register, computes edge detection by XORing with current input, then registers the result to produce anyedge synchronized with clk, maintaining a one-cycle delay after input transitions.

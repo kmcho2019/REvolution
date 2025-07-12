@@ -1,0 +1,13 @@
+To improve the original design's performance and area metrics while retaining modularity and clarity:
+
+1. Replace the two 4-bit CLA blocks with a single 8-bit carry lookahead adder module (cla_8bit) that uses propagate/generate signals and hierarchical carry computation. This eliminates the intermediate carry signal between lower and upper halves and reduces inter-block routing and logic overhead.
+
+2. Internally, the cla_8bit module will instantiate 8 bit_full_adder modules (for p/g signals) and compute all carries in parallel using carry lookahead logic.
+
+3. Use a hierarchical carry lookahead logic by grouping bits into two 4-bit groups, then compute group propagate/generate signals and finally all carries at once, which reduces critical path compared to simple ripple carry or two cascaded 4-bit CLAs.
+
+4. Keep the bit_full_adder module to maintain modular clarity, but avoid unused sum outputs inside cla_8bit (compute sums only once carries are known).
+
+5. The top-level adder_8bit module will instantiate the cla_8bit directly.
+
+This approach improves timing by faster carry computation, reduces area by cutting interconnect and redundant logic, and preserves power efficiency via fewer intermediate signals. The fully combinational structure remains easy to understand and synthesizable.

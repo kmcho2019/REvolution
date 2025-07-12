@@ -1,0 +1,11 @@
+The new architectural idea for the LIFO buffer is to implement it using a circular buffer with two pointers: a write pointer (WP) and a read pointer (RP). The WP points to the next location where data will be written, and the RP points to the next location from which data will be read. 
+
+This design utilizes a 4-element array to store the data, and the WP and RP are used to keep track of the current position in the buffer. When the buffer is full and a new write operation is requested, the oldest data is overwritten. 
+
+The EMPTY and FULL flags are updated based on the difference between the WP and RP. If the WP is equal to the RP, the buffer is empty. If the WP is one position ahead of the RP (considering the circular nature of the buffer), the buffer is full.
+
+To handle the reset condition, both pointers are reset to the same position, and the buffer is cleared. 
+
+For the push operation, data is written to the location pointed to by the WP, and then the WP is incremented. For the pop operation, data is read from the location pointed to by the RP, and then the RP is incremented. 
+
+This design ensures that the LIFO buffer operates correctly, and the EMPTY and FULL flags are accurately updated.

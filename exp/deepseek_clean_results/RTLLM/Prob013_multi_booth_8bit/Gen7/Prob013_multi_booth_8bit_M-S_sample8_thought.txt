@@ -1,0 +1,22 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Core Algorithm Implementation:
+   - Use 4 iterations (not 16) since Radix-4 processes 2 bits per cycle
+   - Maintain 16-bit internal registers for proper sign extension
+   - Simple 2-bit counter tracks iterations (0-3)
+
+2. Efficient Booth Encoding:
+   - Examine 3 bits of multiplier (current + previous) for proper encoding
+   - Handle all 8 cases of Radix-4 Booth encoding
+   - Combine arithmetic operations in single step
+
+3. Streamlined Control:
+   - Single always block for synchronous operations
+   - Ready signal activates after 4 iterations
+   - Reset initializes all registers properly
+
+Key Improvements:
+- Correct Radix-4 implementation (4 iterations for 8 bits)
+- Proper 3-bit Booth encoding
+- Consistent shift operations (2 bits per cycle)
+- Simplified control with minimal state

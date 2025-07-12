@@ -1,0 +1,16 @@
+Correct implementation of odd frequency divider with 50% duty cycle:
+1. Use two counters (cnt1 and cnt2) to track rising and falling edges separately
+2. Each counter counts up to NUM_DIV-1 (half period)
+3. Generate two intermediate clocks (clk_div1 and clk_div2) from each counter
+4. Toggle clk_div1 on rising edges when cnt1 reaches (NUM_DIV-1)/2
+5. Toggle clk_div2 on falling edges when cnt2 reaches (NUM_DIV-1)/2
+6. Combine both intermediate clocks with OR operation for final output
+7. Reset initializes counters to 0 and clocks to 0
+8. Parameter validation ensures NUM_DIV is odd
+
+Key improvements:
+- Strict adherence to problem requirements
+- Guaranteed 50% duty cycle output
+- Clear separation of rising/falling edge logic
+- Proper reset behavior
+- Parameter validation

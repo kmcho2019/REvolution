@@ -1,0 +1,9 @@
+Refactored design approach:
+1. Replace state machine with pipelined structure using explicit pipeline registers
+2. Move combinational logic to continuous assignments where possible
+3. Separate special case handling into dedicated pre-processing stage
+4. Use explicit pipeline stages for: input processing, multiplication, normalization, rounding, and output generation
+5. Optimize exponent calculation by pre-computing bias adjustment
+6. Simplify rounding logic by combining guard and sticky bits earlier
+7. Reduce register sizes where possible (product mantissa only needs 24 bits after normalization)
+8. Use wire declarations for intermediate values to improve readability

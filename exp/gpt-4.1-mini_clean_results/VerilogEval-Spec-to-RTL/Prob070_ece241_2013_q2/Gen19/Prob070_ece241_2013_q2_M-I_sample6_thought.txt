@@ -1,0 +1,51 @@
+The previous solution had a logic mismatch because the SOP and POS expressions didn't correctly cover the minterms for inputs 2 (0010), 7 (0111), and 15 (1111).
+
+Let's carefully analyze the inputs and outputs and derive the correct expressions.
+
+Inputs as 4-bit number ABCD = {a,b,c,d} (a=MSB, d=LSB):
+
+Output=1 for decimal 2, 7, 15:
+- 2:  0 0 1 0  => a=0, b=0, c=1, d=0
+- 7:  0 1 1 1  => a=0, b=1, c=1, d=1
+- 15: 1 1 1 1  => a=1, b=1, c=1, d=1
+
+Output=0 for 0,1,4,5,6,9,10,13,14
+Don't cares: 3,8,11,12 (these can be used for minimization)
+
+Let's write the minterms (1s):
+
+m2 = 0 0 1 0 = ~a & ~b & c & ~d  
+m7 = 0 1 1 1 = ~a & b & c & d  
+m15= 1 1 1 1 = a & b & c & d  
+
+Don’t care minterms: 3(0011),8(1000),11(1011),12(1100)
+
+From the minterms and don't cares, we can perform K-map grouping:
+
+Group1: m7 and m15 share b=1,c=1,d=1, a varies => b & c & d
+Group2: m2 alone => ~a & ~b & c & ~d
+
+Therefore:
+
+SOP minimal expression: (b & c & d) | (~a & ~b & c & ~d)
+
+For POS minimal form, from zeros and don't cares:
+
+Zero minterms are: 0,1,4,5,6,9,10,13,14  
+Don’t cares: 3,8,11,12  
+On POS, zeros and don't cares can be grouped.
+
+From POS grouping (after analyzing K-map), minimal POS is:
+
+(a + b + ~c + ~d) & (~a + b + ~c + d) & (a + ~b + ~c + d)
+
+To confirm correctness:
+
+- SOP covers exactly 2,7,15, with two product terms.
+- POS has three sum terms.
+
+This should fix the previous mismatch issues.
+
+Implement these expressions with proper complement and OR/AND operators. Use continuous assignment.
+
+This approach ensures both outputs represent the same function, one as SOP and the other as POS, correctly matching the problem specification.

@@ -1,0 +1,27 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Basic Implementation:
+   - Remove unnecessary pipeline stages and clock gating
+   - Use straightforward sequential logic
+   - Maintain essential Booth algorithm steps
+
+2. Key Components:
+   - 16-bit registers for multiplicand and product
+   - 8-bit register for multiplier
+   - 5-bit counter (0-15) to track steps
+   - Last bit register for Booth encoding
+
+3. Operation Flow:
+   - On reset: Initialize registers with sign-extended inputs
+   - Each clock cycle:
+     - Examine 2 bits + previous bit for Booth encoding
+     - Add appropriate partial product
+     - Shift multiplicand left by 2 (Radix-4)
+     - Shift multiplier right by 2
+     - Increment counter
+   - Set ready signal when counter reaches 16
+
+4. Simplifications:
+   - Single always block for synchronous logic
+   - Direct arithmetic operations without intermediate registers
+   - Clear state machine with counter-based control

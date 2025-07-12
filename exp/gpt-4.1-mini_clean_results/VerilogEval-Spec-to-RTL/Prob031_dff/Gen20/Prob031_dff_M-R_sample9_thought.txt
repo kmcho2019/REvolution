@@ -1,0 +1,7 @@
+To refactor the original design while keeping the same core functionality of a positive-edge triggered D flip-flop, I will eliminate the separate DFF module and implement the flip-flop directly inside TopModule. This flattens the hierarchy, which can slightly reduce area and overhead in synthesis.
+
+Furthermore, instead of explicitly using synthesis attributes to preserve the register (which can negatively affect power and area), I will rely on standard RTL constructs only, enabling synthesis tools to optimize freely.
+
+Since a D flip-flop inherently requires sequential logic, an `assign` statement cannot implement it; thus, I will retain an always block triggered on the positive edge of clk. However, I will demonstrate using an explicit reg declaration for q inside the module and drive the output port q by continuous assignment from that register. This separates the internal register and the output port explicitly, which some designers prefer for clarity.
+
+The code is minimal, clean, and synthesis-friendly, without preservation attributes that inhibit optimization. This approach balances clarity, hierarchy flattening, and allowing power/area optimization by synthesis tools.

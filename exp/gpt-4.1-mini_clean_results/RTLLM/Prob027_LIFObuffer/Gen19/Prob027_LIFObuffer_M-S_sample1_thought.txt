@@ -1,0 +1,8 @@
+Simplify by using a single synchronous always block with non-blocking assignments for clarity and standard practice;  
+Use SP counting from 0 (empty) up to 4 (full), so push increments SP and writes data at stack_mem[SP], pop reads from stack_mem[SP-1] and decrements SP;  
+Update EMPTY when SP==0, FULL when SP==4;  
+On reset, clear SP and stack_mem; on EN:  
+- If RW=0 (write) and not full, push data and increment SP;  
+- If RW=1 (read) and not empty, pop data from top and decrement SP;  
+Avoid clearing popped stack_mem locations to save power;  
+This pointer scheme and logic simplifies addressing and arithmetic and reduces index computations and conditional complexity.

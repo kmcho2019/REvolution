@@ -1,0 +1,7 @@
+To implement the module TopModule, we'll design a finite state machine (FSM) that goes through the following states:
+- IDLE: This is the initial state where we keep discarding input bytes until we find one with in[3]=1.
+- BYTE1: Once we've found the first byte of a message (in[3]=1), we move to this state and start counting the bytes.
+- BYTE2: After receiving the first byte, we move to this state and wait for the second byte of the message.
+- BYTE3: After receiving the second byte, we move to this state and wait for the third byte of the message.
+- DONE: Once we've received the third byte, we signal 'done' in this state.
+We'll use a 2-bit state variable to represent these states (IDLE = 2'b00, BYTE1 = 2'b01, BYTE2 = 2'b10, BYTE3 = 2'b11, DONE = 2'b00 with done signal asserted).

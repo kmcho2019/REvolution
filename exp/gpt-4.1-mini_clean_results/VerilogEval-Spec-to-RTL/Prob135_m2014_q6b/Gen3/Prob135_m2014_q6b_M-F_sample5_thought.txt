@@ -1,0 +1,16 @@
+The initial code did not fully cover all states for the next y[1] bit logic and missed explicit handling of state D and its transitions. To fix this, we explicitly enumerate all six states (A to F) and their next y[1] output values based on current state y and input w according to the FSM's transition table.
+
+From the FSM:
+
+- A(000): next y[1] = 0 (both inputs)
+- B(001): next y[1] = 1 (both inputs)
+- C(010): next y[1] = w (0->E y1=0, 1->D y1=1)
+- D(011): next y[1] = 0 (both inputs)
+- E(100): next y[1] = w (0->E y1=0,1->D y1=1)
+- F(101): next y[1] = 1 (both inputs)
+
+We implement this logic with a combinational case statement on y to produce next_y1 as per above. This covers all states explicitly and avoids missing states or incomplete expressions.
+
+The output Y1 remains y[1], the current state's middle bit.
+
+This approach ensures accurate next_y1 implementation for the FSM transitions.

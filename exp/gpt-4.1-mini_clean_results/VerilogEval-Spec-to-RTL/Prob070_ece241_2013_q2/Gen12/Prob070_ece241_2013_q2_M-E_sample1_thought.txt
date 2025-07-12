@@ -1,0 +1,11 @@
+I will solve the problem by explicitly encoding the input 4-bit vector as a single 4-bit bus, then creating a small ROM-style lookup table implemented with a case statement.
+
+- Since only certain input codes have defined outputs (1 for 2, 7, 15; 0 for specified zeros; others are don't cares), I will implement the function by decoding the 4-bit number and outputting 1 or 0 accordingly.
+- This removes ambiguity in minterm or POS minimization and ensures correctness.
+- For out_sop, I will implement the logic using combinational case statements to assign 1 or 0 directly.
+- For out_pos, I will generate the POS form by noting that out_pos = ~out_sop, so I can simply assign out_pos = ~out_sop in code.
+- This guarantees exact complementary outputs without manual minimization errors.
+- This approach also inherently respects the don't-care inputs (3,8,11,12) as they are simply mapped to output 0 by default.
+- This architecture is straightforward, highly readable, and functionally correct.
+
+Thus, the solution avoids explicit SOP/POS algebraic expressions and relies on a lookup-based design, which is often used for irregular, sparse combinational functions.

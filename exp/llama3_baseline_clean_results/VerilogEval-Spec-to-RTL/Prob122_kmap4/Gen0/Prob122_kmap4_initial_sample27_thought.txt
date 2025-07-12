@@ -1,0 +1,8 @@
+To implement the given Karnaugh map in the TopModule, we will use a combination of logical operators. The Karnaugh map can be minimized into the following expression: 
+out = (~c & ~d & a & ~b) | (~c & ~d & ~a & b) | (c & ~d & ~a & ~b) | (c & ~d & a & b) | (~c & d & ~a & ~b) | (~c & d & a & b) | (c & d & ~a & ~b) | (c & d & a & b).
+However, we can simplify the expression further by combining the terms and removing any duplicate or redundant terms.
+Simplifying the above expression, we get:
+out = (a & b & ~c & d) | (~a & b & c & ~d) | (a & ~b & ~c & d) | (~a & ~b & c & d) | (a & b & c & d) | (~a & ~b & c & ~d) | (~a & b & ~c & ~d) | (a & ~b & c & ~d).
+Further simplification gives:
+out = (~c & d & (a ^ b)) | (c & (~d & (~a ^ b) | d & (a ^ b))).
+This can be implemented using Verilog logical operators and bitwise XOR.

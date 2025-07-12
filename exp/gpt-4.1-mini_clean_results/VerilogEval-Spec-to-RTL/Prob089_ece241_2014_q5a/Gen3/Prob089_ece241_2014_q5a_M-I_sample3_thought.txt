@@ -1,0 +1,24 @@
+To optimize the original design for better PPA:
+
+1. Separate combinational next-state and output logic from sequential logic.
+   - Compute next_state and output combinationally.
+   - Register state and update output at clock edge.
+   This allows the output to be a simple register driven by combinational logic, reducing output latency and simplifying timing.
+
+2. Implement output as combinational logic based on current state and input. 
+   - This aligns better with Moore FSM definition since output depends only on state.
+   - Here, output depends on input and state, but we keep it combinational to minimize clock-to-output delay.
+
+3. Use asynchronous reset only for state flip-flop; output can be updated in sequential block.
+4. Minimize logic expressions and registers to reduce area and power.
+5. Ensure no redundant registers or logic.
+
+This approach improves timing by allowing output logic to be combinational and next state logic to be separated from state register, helping synthesis tools optimize paths.
+
+The output register is still retained to meet the specification that output changes synchronously with clock.
+
+We keep output registered for stable timing and synchronization.
+
+The reset sets state and output to zero; when reset is deasserted, FSM starts processing input bits.
+
+This optimized structure yields a cleaner, more PPA-friendly design.

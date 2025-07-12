@@ -1,0 +1,11 @@
+I will implement the decade counter by using a simple 4-bit register that counts from 1 to 10, but instead of directly checking the count with combinational logic, I will use a binary-coded counter with a synchronous reset and a conditional increment. When the counter reaches 10, the next value will wrap back to 1.
+
+Specifically:
+- Use a synchronous always block to implement the counter with reset and counting logic in one block.
+- On each positive clock edge, if reset is asserted, set count to 1.
+- Otherwise, check if the count is 10 (decimal); if so, reset to 1, else increment by 1.
+- Use a simple equality comparison (q == 4'd10) for clarity and easy synthesis.
+- Avoid additional combinational logic blocks, relying on a single always block for sequential logic.
+- This approach keeps the design minimalistic and straightforward while maintaining clear semantics.
+
+This method is clean, easy to understand, and synthesizes efficiently, with only a single process handling the synchronous behavior and the counter wrap-around. It is different from the previous design that separated combinational and sequential blocks and used bitwise detection for 10.

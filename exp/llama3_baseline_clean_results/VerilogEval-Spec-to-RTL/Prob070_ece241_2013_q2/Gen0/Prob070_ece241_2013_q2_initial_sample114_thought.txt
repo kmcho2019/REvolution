@@ -1,0 +1,25 @@
+To implement the module TopModule, we need to first find the minimum sum-of-products (SOP) and minimum product-of-sums (POS) forms for the given input conditions.
+
+The numbers 2, 7, and 15 correspond to the binary values 0010, 0111, and 1111, respectively. We can use these values to derive the SOP expression.
+
+For SOP, we look for the minterms that correspond to the desired output of 1. These are:
+- For input 2 (0010): $\overline{a} \cdot \overline{c} \cdot b \cdot \overline{d}$
+- For input 7 (0111): $\overline{a} \cdot c \cdot b \cdot d$
+- For input 15 (1111): $a \cdot c \cdot b \cdot d$
+
+Then, we combine these minterms using logical OR to get the SOP expression.
+
+For POS, we look for the maxterms that correspond to the desired output of 0. These are:
+- For input 0 (0000): $(a + b + c + d)$
+- For input 1 (0001): $(a + b + c + \overline{d})$
+- For input 4 (0100): $(a + \overline{b} + c + d)$
+- For input 5 (0101): $(a + \overline{b} + c + \overline{d})$
+- For input 6 (0110): $(a + \overline{b} + \overline{c} + d)$
+- For input 9 (1001): $(\overline{a} + b + c + \overline{d})$
+- For input 10 (1010): $(\overline{a} + b + \overline{c} + d)$
+- For input 13 (1101): $(\overline{a} + \overline{b} + c + \overline{d})$
+- For input 14 (1110): $(\overline{a} + \overline{b} + \overline{c} + d)$
+
+Then, we combine these maxterms using logical AND to get the POS expression.
+
+Finally, we can implement these expressions in Verilog to get the desired outputs out_sop and out_pos.

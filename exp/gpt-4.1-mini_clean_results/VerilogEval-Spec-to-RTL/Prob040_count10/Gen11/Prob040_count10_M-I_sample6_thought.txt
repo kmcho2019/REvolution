@@ -1,0 +1,7 @@
+To optimize the decade counter for better PPA, I will merge the next-state calculation directly into the sequential always block to eliminate the separate combinational always block. This can slightly reduce logic and path delay by removing the intermediate register 'next_q' and combinational logic. Instead of using an equality check to 9 and addition, I will use a compact ternary operation inside the sequential block to increment the count modulo 10.
+
+This approach simplifies the logic, potentially reducing critical path delay (better timing) and area (less logic). Also, I will keep non-blocking assignments and synchronous reset for best practice. The counter encoding remains binary, which is minimal in area and power for this scale.
+
+Although one-hot or Gray encoding could reduce switching activity (power), it typically increases area for 10 states. Thus, the binary count modulo 10 remains a good balance.
+
+Overall, the single always block approach may yield slight improvements in timing and area by simplifying the logic chain.

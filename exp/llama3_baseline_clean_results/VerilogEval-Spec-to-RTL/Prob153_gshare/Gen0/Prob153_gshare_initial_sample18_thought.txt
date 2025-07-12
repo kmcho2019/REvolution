@@ -1,0 +1,9 @@
+To implement the TopModule with the given interface, we can break down the design into several components:
+1. Global Branch History Register: This is a 7-bit register that stores the history of the branches. It is updated when a branch prediction is requested and when training for a mispredicted branch is done.
+2. Pattern History Table (PHT): This is a 128-entry table of two-bit saturating counters. The index of the PHT is calculated by hashing the 7-bit pc and 7-bit global history using xor. The PHT is used to make branch direction predictions and is updated when training for a branch is done.
+3. Prediction Logic: This logic is used to make branch direction predictions based on the PHT. It takes the 7-bit pc and the current state of the global branch history register as inputs and produces the predicted branch direction and the updated state of the global branch history register.
+4. Training Logic: This logic is used to update the PHT and recover the global branch history register when training for a mispredicted branch is done.
+
+The design should also handle the case when training for a misprediction and a prediction for a different instruction occur in the same cycle. In this case, training takes precedence and the global branch history register is updated accordingly.
+
+The design should also handle the case when training and prediction of the same PHT entry happen at the same time. In this case, the prediction sees the PHT state before training because training only modifies the PHT at the next positive clock edge.

@@ -1,0 +1,9 @@
+To implement the serial 2's complementer Moore state machine, we will use a finite state machine (FSM) with two states: an idle state and an accumulation state. The idle state will be the initial state and will transition to the accumulation state when the reset signal is released. In the accumulation state, we will accumulate the input bits in a register. When the reset signal is asserted, we will transition back to the idle state and reset the register. The 2's complement will be calculated by inverting the accumulated bits and adding 1 when the reset signal is asserted.
+
+We can use a shift register to accumulate the input bits. The shift register will be implemented as a vector of bits, where each bit will be shifted to the left on each clock cycle. The output of the machine will be the least significant bit of the accumulated value, inverted if we are in the process of calculating the 2's complement.
+
+To detect when to stop accumulating input bits, we will use the reset signal. When the reset signal is asserted, we will stop accumulating input bits and start calculating the 2's complement.
+
+To implement the addition of 1 to the accumulated value, we can use a simple increment circuit that adds 1 to the accumulated value when the reset signal is asserted.
+
+To determine whether the output should be inverted, we can use a flag that is set when the reset signal is released and reset when the reset signal is asserted.

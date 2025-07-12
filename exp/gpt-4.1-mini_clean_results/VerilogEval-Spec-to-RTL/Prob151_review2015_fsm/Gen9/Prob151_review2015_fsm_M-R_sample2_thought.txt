@@ -1,0 +1,9 @@
+Refactor the FSM to use classic Verilog constructs without SystemVerilog-specific features such as typedef enums, logic types, or always_ff/always_comb blocks.
+
+- Use simple `reg` and `wire` types to maximize compatibility.
+- Represent states as localparams with binary encoding.
+- Use a single always block triggered on the rising edge of clk for synchronous state and shift_count updates with synchronous active-high reset.
+- Use a combinational always block for next_state logic.
+- Drive outputs with continuous assignments based on current state, avoiding comparisons of enum types.
+- Keep shift_count increment within the synchronous block only when in SHIFT state.
+- This approach maintains the original FSM behavior but uses a more traditional Verilog style that is broadly compatible with most tools.

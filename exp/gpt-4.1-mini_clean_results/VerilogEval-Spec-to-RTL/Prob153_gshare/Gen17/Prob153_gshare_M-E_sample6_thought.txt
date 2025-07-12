@@ -1,0 +1,16 @@
+Implement a non-pipelined gshare predictor with fully combinational prediction outputs that directly reflect the current inputs and internal state before any sequential updates. To handle simultaneous prediction and training with conflicting GHR updates, use an internal "working" GHR register that updates only at the clock edge, while prediction reads the stable GHR and PHT state combinationally.
+
+Key points:
+
+1. The GHR register (`ghr`) holds the global history updated on clock edge.
+2. Prediction outputs (`predict_taken` and `predict_history`) are computed combinationally using the current `ghr` and `predict_pc` inputs, without waiting for any sequential pipeline stage.
+3. At clock edge, update the GHR and PHT based on training and prediction inputs, with training misprediction recovery taking priority.
+4. To handle GHR update conflicts:
+   - If training misprediction occurs, restore GHR to `train_history`.
+   - Else if prediction is valid, update GHR with predicted outcome bit.
+5. The PHT is a 128-entry array of 2-bit saturating counters, updated synchronously on training.
+6. Because prediction outputs are purely combinational, they reflect the predictor’s belief for the current inputs immediately.
+7. This design avoids pipeline delays and precisely matches spec timing: the output is valid in the same cycle as the input request.
+8. This approach separates combinational prediction from sequential updates clearly, providing zero-latency prediction outputs and correct prioritization for state updates.
+
+This design is simple, clean, and aligns with the timing requirements, avoiding mismatch issues from pipelining or delayed outputs.

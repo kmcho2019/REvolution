@@ -1,0 +1,19 @@
+Implement a small FSM with three states: IDLE, ENABLE, DONE.
+
+- On synchronous reset, go to ENABLE state and start a 4-cycle enable period.
+
+- During ENABLE state, assert shift_ena and count clock cycles with a 2-bit counter.
+
+- After counting 4 cycles, transition to DONE state where shift_ena is deasserted.
+
+- In DONE state, remain until the proper bit pattern is detected via a dedicated input signal (pattern_detected), then return to ENABLE to enable shift_ena for 4 cycles again.
+
+This approach cleanly separates the enable timing control via an explicit FSM, making it easy to trigger shift_ena exactly for 4 cycles either on reset or on pattern detection.
+
+A 2-bit cycle counter suffices to count from 0 to 3 (4 cycles), with FSM state tracking the mode.
+
+Add an input signal pattern_detected for external pattern detection.
+
+Reset is synchronous active high, so FSM and counters update at clock positive edge.
+
+This provides a modular, scalable, and clear solution.

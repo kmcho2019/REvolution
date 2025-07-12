@@ -1,0 +1,14 @@
+Analyzing the waveform carefully, it appears that 'p' is simply the registered version of input 'a' sampled on the rising edge of the clock. That is, at each positive clock edge, 'p' takes the value of 'a' at that moment.
+
+The output 'q' behaves like a level-triggered latch or register updated on the falling edge of the clock, which holds the previous value of 'p' but updates it only on falling edges. This means that 'q' is a delayed version of 'p', capturing 'p' at each falling clock edge.
+
+Therefore, a clean way to implement this behavior is:
+
+- On the positive edge of clock: register input 'a' into 'p'.
+- On the negative edge of clock: register current value of 'p' into 'q'.
+
+Initialize 'p' and 'q' with 'x' to match the initial unknown values.
+
+This simple two-flip-flop design, one clocked on posedge for 'p' and one on negedge for 'q', directly matches the waveform and respects the timing of outputs.
+
+This approach is also simple and avoids intermediate internal registers.

@@ -1,0 +1,8 @@
+To implement the TopModule, we can design a finite-state machine that checks the input data stream bit by bit, transitioning through states as it matches the sequence 1101. We'll define the states as follows:
+- S_IDLE: Initial state, waiting for the first '1'
+- S_GOT_11: State after receiving the first '1' and then another '1'
+- S_GOT_110: State after receiving the sequence '110'
+- S_GOT_1101: State after receiving the full sequence '1101'
+Once we reach S_GOT_1101, we'll set start_shifting to 1 and keep it there until reset is asserted.
+
+We'll use a 2-bit state variable to encode these four states (00 for S_IDLE, 01 for S_GOT_11, 10 for S_GOT_110, and 11 for S_GOT_1101).

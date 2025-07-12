@@ -1,0 +1,7 @@
+I will implement the Mealy FSM detector using a binary-encoded state machine with explicit numeric states representing the matched prefix lengths of "10011." The FSM will track the current matched prefix length (0 to 5), where 5 indicates a full match.
+
+Instead of one-hot encoding, I will use a 3-bit binary state variable to reduce area and power. The next state is computed based on the current state and input using a function that tries to extend the match or fallback to the longest proper prefix which is also a suffix (like KMP algorithm fallback). This allows overlapping sequences to be detected continuously.
+
+MATCH will be asserted combinationally when the next state reaches 5 (full sequence matched) on the current input, implementing a Mealy output. The synchronous reset will clear the state.
+
+This architecture balances area (fewer flip-flops), power (lower toggle count), and still provides efficient overlap detection with a clean and simple next state logic. It relies on the prefix function concept for pattern matching, making it robust and extensible.

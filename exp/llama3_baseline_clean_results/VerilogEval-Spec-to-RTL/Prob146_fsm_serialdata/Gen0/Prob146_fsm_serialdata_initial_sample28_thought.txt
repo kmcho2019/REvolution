@@ -1,0 +1,10 @@
+To design the finite state machine (FSM) for receiving bytes from a serial stream, we need to identify the key states involved in the process: Idle, Start, Receive, and Error. 
+
+- The FSM starts in the Idle state, where it waits for the start bit (0) to arrive.
+- Once a start bit is detected, it transitions to the Start state.
+- Then, it transitions to the Receive state, where it collects 8 data bits (from least significant bit to most significant bit) and stores them in out_byte.
+- After receiving all 8 bits, it checks for the stop bit (1) in the next cycle. If the stop bit is correct, it asserts done and goes back to the Idle state.
+- If the stop bit is incorrect, it transitions to the Error state, where it waits for a stop bit (1) to be received before going back to the Idle state.
+- The FSM also has an active-high synchronous reset that resets it to the Idle state when asserted.
+
+We will use a counter to keep track of the number of data bits received and a register to store the received data byte.

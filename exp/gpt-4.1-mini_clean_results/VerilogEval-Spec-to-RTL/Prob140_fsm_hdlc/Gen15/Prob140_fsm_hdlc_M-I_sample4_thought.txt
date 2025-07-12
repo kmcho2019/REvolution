@@ -1,0 +1,7 @@
+To improve the existing solution for better PPA (performance, power, and area), I will separate the counter update from the output logic to reduce combinational delay on the critical path. Outputs will be registered based solely on the stable counter state from the previous cycle. This avoids complex logic in the output stage and improves timing by allowing the counter to settle before outputs are generated.
+
+Additionally, I'll use a single always_ff block with synchronous reset and register all outputs, making the design fully synchronous and easy to pipeline or optimize further by synthesis tools.
+
+Power will benefit from simpler combinational paths, and area is slightly optimized by direct output encoding without extra intermediate variables.
+
+This approach aligns well with Moore FSM principles, asserting outputs one clock cycle after detection conditions.

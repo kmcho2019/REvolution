@@ -1,0 +1,15 @@
+I will fuse the two examples by keeping the clear combinational next-state logic with priority on misprediction over prediction from Example 1, along with the power optimization of only updating the history register when the new state differs (update_enable) to reduce switching, also from Example 1.
+
+From Example 2, I adopt the straightforward asynchronous reset and use a single always block for sequential logic, avoiding separate always blocks for combinational enable logic to minimize complexity.
+
+To improve upon both, I will combine the combinational logic for next_history and update_enable into one always block to reduce duplicated logic and potentially lower critical path.
+
+This fusion prioritizes:
+- Clear separation of combinational and sequential logic,
+- Minimizing unnecessary register toggling by only updating history when it changes,
+- Simple asynchronous reset on the register,
+- Minimal combinational logic duplication to reduce area and delay.
+
+The predict_history output is directly assigned from the internal history register, making the design modular and easily understandable.
+
+This approach maintains correctness, clarity, and improved power efficiency, while balancing performance and area concerns.

@@ -1,0 +1,17 @@
+To fix the 8-bit multiplier, we need to address the core issues in the shift-and-add implementation:
+
+1. Bit Position Handling: The original code adds the multiplicand directly without proper bit alignment. We need to left-shift the multiplicand before adding to maintain correct bit positions.
+
+2. Accumulator Width: The multiplicand needs to be extended to 16 bits before shifting to prevent loss of bits during left shifts.
+
+3. Multiplier Bit Checking: Instead of shifting the multiplier right, we'll use a bit-select approach to check each bit position directly.
+
+4. Non-blocking Assignments: While not the main issue, we'll use non-blocking assignments for better simulation behavior.
+
+The corrected approach:
+1. Initialize a 16-bit product register to zero
+2. Extend multiplicand to 16 bits
+3. For each bit in multiplier:
+   - If bit is set, add the shifted multiplicand to product
+   - Shift multiplicand left by 1 bit for next iteration
+4. Output the final accumulated product

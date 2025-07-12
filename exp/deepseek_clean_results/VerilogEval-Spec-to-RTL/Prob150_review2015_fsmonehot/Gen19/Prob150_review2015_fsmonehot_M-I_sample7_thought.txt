@@ -1,0 +1,19 @@
+To optimize the PPA metrics further, I'll implement these improvements:
+
+1. Timing Optimization:
+   - Simplify the Count_next logic by separating the two conditions into parallel paths
+   - Remove redundant evaluation in Wait_next by only considering the transition condition
+
+2. Power Optimization:
+   - Make shift_ena purely combinatorial from state bits without intermediate wire
+   - Optimize Wait_next to only evaluate when leaving Wait state (ack=1)
+
+3. Area Optimization:
+   - Remove the in_shift_group wire since shift_ena can be derived directly
+   - Simplify state bit usage in output logic
+
+Key changes:
+- Directly use state bits for shift_ena output
+- Optimize Wait_next to only evaluate transition condition
+- Simplify Count_next logic structure
+- Maintain one-hot properties while reducing logic complexity

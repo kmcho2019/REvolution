@@ -1,0 +1,23 @@
+After carefully analyzing the waveform and feedback, here's the corrected understanding:
+
+1. Output p behavior:
+   - p is high only when 'a' is high during the clock's high phase (synchronous with clock)
+   - This suggests p should be a registered version of (a & clock)
+
+2. Output q behavior:
+   - q is set on the next cycle after p was high (delayed version of p)
+   - q is cleared asynchronously when 'a' is high during clock low phase
+   - q remains set once p has been high until cleared
+
+Key changes:
+1. For p: Register (a & clock) at positive edge
+2. For q:
+   - Use a flip-flop to store p's previous state
+   - Asynchronous clear when (a & ~clock) is high
+   - Otherwise, q gets the delayed p value
+
+Implementation approach:
+1. Register p as (a & clock) at posedge
+2. Create a delayed version of p for q
+3. Add asynchronous clear for q when (a & ~clock)
+4. Ensure proper timing relationships

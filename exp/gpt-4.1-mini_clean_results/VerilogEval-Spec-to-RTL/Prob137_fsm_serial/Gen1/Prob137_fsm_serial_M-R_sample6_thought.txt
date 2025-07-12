@@ -1,0 +1,13 @@
+Refactor the FSM to sample the input bits precisely at clock edges corresponding to each bit position by explicitly using a bit counter from 0 to 9 representing the start bit (0), data bits (1-8), and stop bit (9). Use one synchronous always block for state, bit count, and done signal updates to avoid conflicting assignments.
+
+- IDLE state waits for a start bit (in == 0).
+- When start bit detected, move to RECEIVING state, start bit_count at 0.
+- On each clock cycle in RECEIVING, increment bit_count to sample bits in order:
+  - bit_count 0: start bit (already detected)
+  - bit_count 1-8: data bits (can be shifted or ignored as no output needed)
+  - bit_count 9: stop bit; if stop bit is correct (in == 1), assert done for one cycle and return to IDLE.
+    If stop bit incorrect (in != 1), move to WAIT_STOP state.
+- WAIT_STOP state waits until line is idle (in == 1), then return to IDLE.
+- All signals updated synchronously inside one always block with non-blocking assignments to ensure clean timing.
+- done is asserted high for one full clock cycle immediately after a valid stop bit is detected.
+- reset synchronously sets FSM to IDLE and clears counters and done.

@@ -1,0 +1,17 @@
+To implement the Lemmings' behavior as a Moore state machine, we'll identify the necessary states and transitions based on the given conditions. The states can be represented as follows:
+- State 1: Walking Left (WL)
+- State 2: Walking Right (WR)
+- State 3: Falling (F)
+- State 4: Digging (D)
+
+Transitions between these states will be based on the input signals: bump_left, bump_right, ground, and dig.
+
+- When ground = 0, the Lemming will fall (transition from WL or WR to F).
+- When ground = 1 and the Lemming is falling, it resumes walking in the same direction it was before falling.
+- When dig = 1 and ground = 1, the Lemming starts digging (transition from WL or WR to D).
+- While digging, the Lemming continues until it reaches the other side (ground = 0), at which point it falls (transition from D to F).
+- Being bumped on the left or right side causes the Lemming to switch walking directions (transition from WL to WR or from WR to WL), unless it's falling or digging.
+
+The outputs walk_left, walk_right, aaah, and digging will be determined based on the current state.
+
+We will use areset to asynchronously reset the machine to the walking left state.

@@ -1,0 +1,19 @@
+A novel approach is to use a simple 2-state FSM with a 2-bit cycle counter inside state B that counts from 0 to 2 for the three sampling cycles of w. Instead of encoding each sample cycle as a separate state, the state B runs with an internal counter representing the sample number.
+
+During these three cycles, we accumulate the count of w=1 samples in a 2-bit counter. After the third cycle (when the counter reaches 2), we update the output `z` to 1 if exactly two samples had w=1, otherwise 0, and then start a new counting window.
+
+We set `z` to 1 only in the cycle immediately following the third sample; during sampling cycles `z` is 0.
+
+We use synchronous reset active high.
+
+This design uses minimal states (2 states: A and B), a counter to track sampling progress, and a register to accumulate w counts. It cleanly separates the sampling and output assertion cycles, improving clarity and potentially reducing hardware.
+
+Summary:
+- State A: wait for s=1 to enter sampling (state B).
+- State B: run sample_count from 0 to 2, accumulate w=1 counts.
+- When sample_count == 2 (third sample), update z accordingly in the next clock cycle.
+- Output z is only asserted for one cycle after sampling window ends, then cleared.
+- After output cycle, start a new sampling window immediately.
+- If reset, go to A with z=0.
+
+This approach is scalable and avoids complex state transitions, with all logic driven by a synchronous clock and reset.

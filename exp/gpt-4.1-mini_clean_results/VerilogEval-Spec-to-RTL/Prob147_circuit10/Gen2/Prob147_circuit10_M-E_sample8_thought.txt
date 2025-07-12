@@ -1,0 +1,24 @@
+From the waveform, the sequential circuit has one bit of state updated on the positive clock edge. Outputs are `state` (the stored bit) and `q`. The behavior can be interpreted as a finite state machine with one bit of memory.
+
+Analyzing the waveform transitions:
+
+- At clock edges, the next `state` depends on inputs `a`, `b`, and current `state`.
+- When `a=1` and `b=1`, `state` toggles.
+- When `a=1` and `b=0`, `state` resets to 0.
+- When `a=0` and `b=1`, `state` sets to 1.
+- When `a=0` and `b=0`, `state` holds.
+
+This confirms a 4-condition next state logic with priority.
+
+Output `q` appears to be combinational and closely follows the next state value (not the current state), i.e., `q = next_state`. This is verified by observing `q` changes occur at the same clock edges as state updates, but `q` updates immediately reflecting the computed next state rather than the current state.
+
+Thus, a clean implementation is:
+
+- Compute next_state as per the input conditions and current state.
+- On positive clock edge, update state to next_state.
+- Output `state` is the registered state.
+- Output `q` is combinational and equals next_state.
+
+This architectural approach decouples output `q` from the stored state and makes it a lookahead signal of the next state.
+
+This model matches all observed waveform transitions and outputs.

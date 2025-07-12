@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of using a counter, employ a 3-byte shift register to track the last 3 received bytes
+2. Parallel Boundary Check: Continuously check all 3 positions in the shift register for valid message boundaries
+3. Early Detection: Allows immediate detection of message boundaries without waiting for full message reception
+4. Fault Tolerance: Can potentially recover from corrupted streams by finding the next valid boundary
+5. Power Optimization: Only activates boundary check logic when new data arrives
+
+Key Advantages:
+- More robust against stream errors (can skip corrupted bytes)
+- Parallel checking enables immediate boundary detection
+- No explicit state machine needed
+- Naturally handles back-to-back messages

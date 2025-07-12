@@ -1,0 +1,9 @@
+The original solution cleanly instantiates a separate DFF module inside TopModule, providing good modularity and clarity. However, since the design is minimal—a single flip-flop without resets or other logic—this modularization adds an unnecessary instantiation layer and minor overhead. 
+
+To optimize for power, performance, and area (PPA), I will inline the flip-flop logic directly inside TopModule. This removes the module instantiation overhead, reducing area slightly and potentially simplifying timing for synthesis tools. The use of non-blocking assignment on the positive clock edge remains, as it is the correct style for sequential logic.
+
+This approach keeps the design minimal and straightforward, fully satisfying the problem specification with fewer lines of code, no unnecessary module boundaries, and equivalent functionality. As a single flip-flop, this is effectively the minimal implementation.
+
+No resets or enables are added, adhering strictly to the original interface.
+
+In summary: inline the DFF in TopModule to improve area and power marginally while maintaining clean, synthesizable, and minimal sequential logic.

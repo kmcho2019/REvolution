@@ -1,0 +1,5 @@
+Instead of directly using XNOR gates to compare bits, this design uses a bitwise XOR of inputs A and B to detect any differences between them. If any bit differs, the XOR will output a '1' for that bit. By OR-reducing the XOR result, we check if any bit is different. The output z is then the inverted OR result: z = 1 when no differences exist (A equals B), and 0 otherwise.
+
+This approach uses XOR and OR gates with an inverter, differing structurally from the previous XNOR-AND scheme. It exploits the equivalence: (A == B) <=> ~(A ^ B). The logic is minimal and can be synthesized efficiently. This alternative form might help in certain synthesis flows or technology libraries where XOR and OR gates are more optimized or balanced than multiple XNORs.
+
+Functionally, it satisfies the requirement: z=1 if A equals B, else z=0, using a novel gate arrangement.

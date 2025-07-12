@@ -1,0 +1,26 @@
+Improved Solution: Proper 3-Cycle Sequence Detection
+
+1. Core Concept:
+   - Implement a proper state machine to track the exact 3-cycle sequence (0->1->0)
+   - Three states: IDLE (waiting for first 0), GOT_0 (got first 0), GOT_1 (got rising edge)
+   - Only transition between states when seeing the exact required pattern
+
+2. Advantages:
+   - Correctly detects only the exact 010 sequence
+   - Clear state transitions with no false positives
+   - Output precisely matches specification (high only on third cycle)
+
+3. Implementation Details:
+   - 2-bit state register to track three states
+   - State transitions only occur on exact pattern matches
+   - Output asserted only when complete sequence is detected
+
+4. Edge Cases Handling:
+   - Resets properly to IDLE state
+   - Doesn't detect partial sequences
+   - Handles back-to-back pulses correctly
+
+5. Performance:
+   - Minimal state tracking (2 bits)
+   - Clean synchronous design
+   - Low power with gated output

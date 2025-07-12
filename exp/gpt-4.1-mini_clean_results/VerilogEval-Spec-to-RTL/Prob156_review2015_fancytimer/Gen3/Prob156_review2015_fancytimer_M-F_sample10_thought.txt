@@ -1,0 +1,29 @@
+The key fix is to align the counting logic exactly with the problem statement that requires timing of (delay+1)*1000 cycles and count output stable during each 1000-cycle segment.
+
+To fix this:
+
+- Keep pattern detection in SEARCH by shifting pattern_shift on each clock and transition when pattern_shift==1101 at next clock.
+
+- For loading delay bits MSB first, use a 4-bit counter `load_bit_count` counting 0 to 3 (four bits total), shift delay_reg left and shift in `data`. Transition to COUNT when all 4 bits have been loaded.
+
+- In COUNT:
+  - Initialize `remaining_delay` to delay_reg (loaded 4 bits).
+  - Use a 10-bit `cycle_count_1000` to count from 0 to 999 per segment.
+  - Output `count` as the current `remaining_delay`.
+  - When `cycle_count_1000` reaches 999 (meaning 1000 cycles completed), if remaining_delay>0 then decrement `remaining_delay` by 1 and reset cycle_count_1000.
+  - When `remaining_delay` is zero and cycle_count_1000 == 999, finish counting and move to DONE.
+
+- This way, for delay = D, the FSM counts (D+1)*1000 cycles exactly:
+  - starting at count = D for 1000 cycles,
+  - then D-1 for 1000 cycles,
+  - ... down to 0 for last 1000 cycles.
+
+- Outputs `counting` and `done` asserted in COUNT and DONE states respectively.
+
+- In DONE, output `done=1` and wait for `ack` before returning to SEARCH.
+
+- Reset all registers synchronously on `reset`.
+
+This fixes the off-by-one errors in counting and delay loading and matches expected simulation timings exactly.
+
+The main code structure stays similar but with corrected counters, bit count, and state transitions carefully synchronized.

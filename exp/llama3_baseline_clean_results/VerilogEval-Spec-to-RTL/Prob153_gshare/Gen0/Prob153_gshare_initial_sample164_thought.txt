@@ -1,0 +1,11 @@
+To implement the gshare branch predictor, we will use the following steps:
+1. Create a 128-entry table of two-bit saturating counters to store the branch prediction history.
+2. Use the 7-bit global branch history register and the 7-bit pc to calculate the index of the table using XOR.
+3. When a branch prediction is requested, use the calculated index to access the table and get the predicted branch direction.
+4. Update the global branch history register based on the predicted branch direction.
+5. When a training request is received, update the table entry corresponding to the calculated index based on the actual branch outcome and whether the branch was a misprediction.
+6. If the branch being trained is mispredicted, recover the branch history register to the state immediately after the mispredicting branch completes execution.
+7. Handle the case when training and prediction of the same PHT entry happen at the same time, ensuring that the prediction sees the PHT state before training.
+8. Implement the asynchronous active-high reset to reset the predictor.
+
+The design will use two main components: a branch history register and a pattern history table (PHT). The branch history register will be updated based on the predicted branch direction and will be used to calculate the index of the PHT. The PHT will be updated based on the actual branch outcome and whether the branch was a misprediction.

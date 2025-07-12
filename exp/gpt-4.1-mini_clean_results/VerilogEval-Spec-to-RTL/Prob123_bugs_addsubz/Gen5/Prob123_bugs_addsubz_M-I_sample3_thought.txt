@@ -1,0 +1,13 @@
+The original solution correctly implements the add-sub operation and zero flag using a ripple carry adder with bitwise inversion of B based on do_sub. While correct and clean, the ripple carry chain introduces unnecessary intermediate carry wires and generates carry signals for all bits even though only the final output and zero flag are used.
+
+To optimize for PPA (power, performance, area), I will:
+
+- Replace the per-bit ripple carry adder with a single built-in addition operation of (a + b_xor + do_sub), where b_xor = b ^ {8{do_sub}}. This synthesis-friendly approach efficiently utilizes the FPGA/ASIC adder resources, minimizing logic and eliminating explicit carry wires, reducing area and power.
+- Use a single addition expression with concatenated inputs, which will enable synthesis tools to optimize carry chains better.
+- Compute zero flag using a reduction NOR operator (~|out), ensuring minimal logic.
+- Use blocking assignments in the combinational always block for better synthesis and readability.
+- Make the outputs combinational logic using reg types in always @(*) block, preserving behavior.
+  
+This simplification reduces wires and logic, resulting in less area and power, and potentially improved timing due to optimized adder usage by synthesis. The zero flag computation remains the same and efficient.
+
+Overall, this leads to better PPA without sacrificing correctness or readability.

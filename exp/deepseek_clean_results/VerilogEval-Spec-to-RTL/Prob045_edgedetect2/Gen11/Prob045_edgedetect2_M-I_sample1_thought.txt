@@ -1,0 +1,8 @@
+The original solution is already optimal for basic functionality, but we can improve power efficiency by adding clock gating when inputs are stable. Here's the optimization strategy:
+
+1. Maintain the core edge detection logic (XOR with previous value)
+2. Add a stability detector that checks if all bits remain unchanged
+3. Gate the clock for the prev_in registers when inputs are stable
+4. This reduces dynamic power by preventing unnecessary clock toggles
+
+The improvement comes with minimal area overhead (just a comparator and AND gate) while maintaining the same timing characteristics. The clock gating will significantly reduce power when inputs are stable for multiple cycles.

@@ -1,0 +1,21 @@
+The given waveforms indicate a sequential circuit where output p is high only when input a is high and clock is high. Output q is high when a has been high at least once after the last clock high period and remains high until a is high again during a clock low period or until clock is high.
+
+To implement this, we need to track two states: one for output p and one for output q. The state of p can be updated directly based on the current values of a and clock. For q, we need to remember whether a has been high after the last clock high, which can be done using a register.
+
+Here's a high-level approach:
+
+1. Use a register (e.g., reg_p) to store the value of output p.
+2. Use another register (e.g., reg_q) to store the value of output q.
+3. On the positive edge of clock, update reg_p based on a.
+4. On the negative edge of clock, if a is high, set reg_q to 1.
+5. If clock is high and a is high, set reg_p to 1.
+6. If clock is low and a was previously high (as indicated by reg_q), keep reg_q at 1 until a becomes high again during a clock low period or until clock becomes high.
+
+However, upon closer inspection, the logic seems to be more related to detecting specific patterns or conditions of a and clock. For a more precise implementation, it appears that output q goes high after a has been high during a low clock period and stays high until a is high again during a high clock period. Thus, the precise logic involves tracking the state of a during both high and low clock periods to determine the outputs p and q accurately.
+
+Upon a detailed analysis, we notice that the output q can be determined using a simple state machine or conditional logic based on the current and past values of a and clock. Since the description evolved into recognizing q's dependency on a during clock low periods and its relation to p during clock high periods, we refine our approach:
+
+- Output p is directly influenced by the current state of a and clock (both being high).
+- Output q is influenced by a being high during a low clock period and remains high until a is high during a high clock period.
+
+Given the dependency of q on the history of a during low clock periods and its reset condition, we implement the logic using sequential elements (registers or flip-flops) to remember the state of a and its impact on q across clock cycles.

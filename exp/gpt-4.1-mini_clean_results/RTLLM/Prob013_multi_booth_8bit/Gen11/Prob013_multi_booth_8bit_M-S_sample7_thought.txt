@@ -1,0 +1,10 @@
+To simplify the 8-bit Radix-4 Booth multiplier while maintaining functionality, I will:
+- Use straightforward signed 16-bit multiplicand and signed 17-bit multiplier (with appended zero bit).
+- Perform 8 iterations (processing 2 multiplier bits per cycle).
+- Implement Booth encoding combinationally inside the clocked block without a separate function.
+- Use a 32-bit signed product register accumulating partial sums.
+- Shift and accumulate partial products each cycle according to Booth encoding.
+- Use a simple 4-bit counter for iteration control.
+- Generate ready signal when multiplication completes.
+- Avoid FSM states for simplicity, relying only on reset and counter for flow.
+This yields clean and clear code with fewer abstractions but the same correct Radix-4 Booth multiplication.

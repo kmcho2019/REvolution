@@ -1,0 +1,7 @@
+Implement the serial byte receiver FSM with a three-state design: IDLE (waiting for start bit), RECEIVE (sampling 8 data bits), and WAIT_STOP (verifying the stop bit). Instead of shifting bits, accumulate the bit count only, as the output "done" does not require outputting the byte. When in RECEIVE state, increment bit count each clock, and only check the stop bit after all 8 bits are received.
+
+In WAIT_STOP state, if the stop bit (logic 1) is detected, assert done high for one clock and return to IDLE. If not, stay in WAIT_STOP until a stop bit arrives, then go to IDLE. Use a minimal state encoding with 2 bits and remove the data register as storing the data is unnecessary for this specification.
+
+The reset is synchronous and active-high. All logic is on positive edge clk. Done is asserted for exactly one cycle when a byte is successfully received.
+
+This approach simplifies the design by eliminating the data shift register, focusing on detecting the start, counting bits, and confirming stop bit presence, making the FSM lighter and more efficient.

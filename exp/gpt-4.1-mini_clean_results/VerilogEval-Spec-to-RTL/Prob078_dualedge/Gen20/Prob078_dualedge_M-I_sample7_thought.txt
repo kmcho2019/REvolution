@@ -1,0 +1,9 @@
+To optimize the dual-edge triggered flip-flop for better power and area efficiency while maintaining correctness, I will:
+
+- Replace the transparent latch with a simple combinational 2:1 mux using the clock signal. This reduces the latch transparency duration, thus minimizing switching activity and power.
+- Use blocking assignments in the mux to avoid unnecessary register inference and reduce complexity.
+- Keep the dual FF instantiation for posedge and negedge to maintain functional behavior.
+- This approach slightly improves power by reducing the latch transparency window and area by removing the latch element.
+- It may slightly impact timing since the mux output is purely combinational, but for typical FPGA designs, this is acceptable.
+
+This balances simplicity, power, and area better than a transparent latch and remains synthesizable and FPGA friendly.

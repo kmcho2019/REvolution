@@ -1,0 +1,15 @@
+To simplify the fractional frequency divider by 3.5, use a single counter counting modulo 7 clock cycles.
+
+Generate clk_intA as high for 4 cycles and low for 3 cycles.
+
+Create clk_intB by delaying clk_intA by one clock cycle (sample clk_intA on the next rising edge). This effectively shifts clk_intA by one input clock period, which approximates a half cycle shift when combined with both edges.
+
+Finally, OR clk_intA and clk_intB to fill in the gaps and generate a smoother fractional clock output with an overall divide-by-3.5 behavior.
+
+This approach avoids using negedge clk, simplifying the design and maintaining all logic synchronous to clk, ensuring better timing and avoiding metastability.
+
+The half-cycle phase shift is approximated by shifting clk_intA by one clock period and relying on the OR to produce the fractional divide.
+
+Reset logic initializes everything to zero to avoid glitches.
+
+This solution provides a clean, simple fractional frequency divider that can be easily synthesized and simulated.

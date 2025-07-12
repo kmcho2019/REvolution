@@ -1,0 +1,20 @@
+Fuse the succinct and low-complexity saturating counter update and synchronous output generation of Example 1 with the clear separation of combinational next-state logic and output signals from Example 2.
+
+Key points:
+- Use a 3-bit saturating counter for consecutive ones counting from 0 to 7.
+- Implement combinational logic to derive the next counter and next outputs (disc, flag, err) for better readability, easier synthesis optimization, and timing.
+- Register counter and outputs synchronously with a synchronous active-high reset.
+- Use saturating increment to simplify counter update.
+- Minimize combinational logic by evaluating output signals only once per cycle, with no duplicated logic.
+- Assert Moore-type outputs (disc, flag, err) with one cycle delay, triggered by the previous cycle's state and current input.
+- Add clock enable for the counter update to reduce toggling when saturated at 7 and input remains 1.
+- This design merges clarity, minimal logic, and power-aware counting to improve PPA.
+
+This fusion yields:
+- Clear modular logic for next state and outputs.
+- Minimal switching on counter saturating at 7 by clock gating update.
+- Moore outputs synchronous, one cycle delayed, glitch-free.
+- Simple arithmetic increment saturating at 7.
+- Easily understood FSM encoded as a saturating counter.
+
+Overall, this is a compact, efficient, readable, and power-conscious design superior to each example alone.

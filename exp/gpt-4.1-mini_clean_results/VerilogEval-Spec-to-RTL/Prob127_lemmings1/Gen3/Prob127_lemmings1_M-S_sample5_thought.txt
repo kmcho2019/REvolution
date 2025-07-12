@@ -1,0 +1,5 @@
+To simplify the design while preserving correct functionality, I will remove the two-stage synchronizers on bump inputs and directly use bump_left and bump_right signals in the FSM next-state logic. This assumes bump inputs are synchronous or stable at the clock edge; if they are asynchronous, external synchronization should be handled outside this module or by the environment.
+
+The FSM has two states: walking left (0) and walking right (1). On areset (asynchronous, positive edge), state resets to walk left. On each positive clock edge, if bump_left or bump_right is asserted, the state toggles. If both bumps occur simultaneously, toggling still happens, as required.
+
+This approach reduces complexity by not adding synchronizers, making the design minimal and easy to understand while meeting the problem requirements exactly.

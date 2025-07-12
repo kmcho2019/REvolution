@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. State Reduction: Combine ERROR state functionality into IDLE since both wait for start bit (0). This reduces state encoding to 2 bits (3 states).
+2. Bit Counting: Use a simple 3-bit counter for tracking received bits, resetting at each new byte.
+3. Shift Register: Maintain efficient right-shift for LSB-first reception.
+4. Done Signal: Generate only when valid stop bit (1) is detected.
+5. Reset Handling: Clear all registers synchronously on reset.
+6. Next State Logic: Simplify by removing ERROR state transitions and combining conditions.
+
+Key Simplifications:
+- Removed explicit ERROR state (merged with IDLE)
+- Simplified state transition logic
+- Maintained minimal register usage
+- Kept efficient shift operation
+- Preserved correct timing for done signal

@@ -1,0 +1,14 @@
+Novel Architecture: Circular Buffer with Bit Pointer
+1. Instead of shifting bits, maintain data in a fixed register and use a rotating pointer to select the output bit
+2. Implement a 2-bit pointer that cycles through 0-3 to select bits [3:0] in order
+3. Load new data when pointer wraps around (value 3)
+4. Generate valid_out one cycle early when pointer is at 2 (anticipatory signaling)
+5. Use binary counter for simpler logic compared to gray code
+6. Output selection uses direct bit selection from register based on pointer value
+
+Key Advantages:
+- Eliminates shift operations, reducing switching activity
+- Pointer arithmetic is simpler than shift logic
+- Anticipatory valid signal improves timing margin
+- Fixed register reduces power consumption
+- Clear separation between data storage and control logic

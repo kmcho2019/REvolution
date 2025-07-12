@@ -1,0 +1,16 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Performance: Use Gray coding for state encoding to minimize bit transitions between states, reducing switching power and potentially improving timing.
+
+2. Power: Remove the default case since we can guarantee no undefined states will occur (only 5 valid states), eliminating unnecessary transitions.
+
+3. Area: Keep binary encoding (3 bits) as it's more area-efficient than one-hot for 5 states, and the logic complexity is manageable.
+
+4. Output: Keep z as combinational since registering it would add latency without significant benefit in this small FSM.
+
+The state encoding will be modified to Gray code:
+000 -> S0
+001 -> S1
+011 -> S2
+010 -> S3
+110 -> S4

@@ -1,0 +1,14 @@
+Here's a novel approach using a state machine and separate digit counters:
+
+1. Implement each BCD digit as an independent 4-bit counter with enable
+2. Use a state machine to control the counting sequence:
+   - IDLE: Wait for counting condition
+   - COUNT_ONES: Count ones digit and generate enable for tens
+   - COUNT_TENS: Count tens digit and generate enable for hundreds
+   - COUNT_HUNDREDS: Count hundreds digit and generate enable for thousands
+   - COUNT_THOUSANDS: Count thousands digit
+3. Each state transition occurs on clock edges, ensuring proper synchronization
+4. The enable signals are registered outputs of the state machine
+5. Reset clears all counters and returns to IDLE state
+
+This approach provides better timing control and avoids the race conditions of the cascaded design.

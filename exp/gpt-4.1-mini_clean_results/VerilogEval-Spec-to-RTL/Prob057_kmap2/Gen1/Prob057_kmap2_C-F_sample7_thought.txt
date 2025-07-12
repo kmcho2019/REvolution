@@ -1,0 +1,50 @@
+From both examples, the direct sum-of-minterms implementation correctly maps the K-map, but both lack optimization, impacting PPA.
+
+The fusion strategy is:
+- Use the minterm enumeration correctness from Example 2 as it carefully decodes minterms based on variable order.
+- Extract common factors from the minterms to simplify and reduce gate count.
+- Factor by noticing recurring literals or sub-expressions to minimize the number of AND and OR gates.
+- Leverage grouping in K-map to reduce literal count per product term.
+  
+By analyzing the minterms:
+- Group minterms with shared literals such as:
+  - (~c & ~d & ~a) covers m0 and m1
+  - (~c & ~d & a) covers m2
+  - (~c & d & a) and (~c & d & ~a) cover m6 and m4
+  - (c & ~d & ~a) covers m8 and m9
+  - (c & d & a) covers m14 and m15
+  - (c & d & ~a & b) is m13
+
+Common factors are (~c & ~d), (~c & d), (c & ~d), (c & d)
+
+Thus, the function can be expressed as:
+
+out = 
+  (~c & ~d & (~a)) |        // covers m0, m1
+  (~c & ~d & a & ~b) |      // covers m2
+  (~c & d & (~a & ~b | a & ~b)) | // covers m4,m6
+  (c & ~d & ~a) |           // covers m8,m9
+  (c & d & a) |             // covers m14,m15
+  (c & d & ~a & b)          // m13
+
+Further factor:
+
+- (~c & ~d) & ((~a) | (a & ~b)) = (~c & ~d) & (~a | (a & ~b)) = (~c & ~d) & (~a | ~b)
+
+- (~c & d) & (~a & ~b | a & ~b) = (~c & d & ~b) & (~a | a) = (~c & d & ~b)
+
+- (c & d & a) | (c & d & ~a & b) = c & d & (a | (~a & b)) = c & d & (a | b)
+
+Putting together:
+
+out =
+    (~c & ~d & (~a | ~b)) |
+    (~c & d & ~b) |
+    (c & ~d & ~a) |
+    (c & d & (a | b))
+
+This is a compact minimal SOP expression.
+
+This expression reduces gate count and levels compared to sum-of-minterms.
+
+I will implement this final expression in Verilog.

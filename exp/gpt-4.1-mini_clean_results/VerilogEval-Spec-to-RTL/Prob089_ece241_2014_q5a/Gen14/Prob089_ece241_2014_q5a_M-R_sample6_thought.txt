@@ -1,0 +1,12 @@
+Refactor the Moore FSM by separating the state register update and input sampling into two distinct always blocks to clarify timing paths and avoid data dependencies within a single always block. Use a combinational always block to compute the next state from the current state and registered input. The output is generated purely from the registered state and input. 
+
+Specifically:
+- Use a separate register `x_reg` sampled every clock cycle asynchronously reset.
+- Use a registered state `state` updated on clock or reset.
+- Compute next state combinationally using `state` and `x_reg`.
+- Implement output logic as a pure combinational function of registered `state` and `x_reg`.
+- Use nonblocking assignments consistently.
+
+This structure improves clarity by cleanly separating input sampling, next state logic, and state updates while maintaining the Moore FSM's functionality and timing behavior. It may also enhance timing by isolating registers and logic.
+
+No extra registers or signals are added beyond those necessary for correct FSM operation.

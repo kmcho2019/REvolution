@@ -1,0 +1,16 @@
+Simplification Strategy:
+1. State Reduction: Merge STOP and WAIT states into a single DONE state that handles both valid and invalid stop bits
+2. Bit Counting: Use simpler comparison (bit_count == 7) instead of 3'b111
+3. Data Handling: Keep efficient LSB-first shifting but remove redundant register updates
+4. Done Logic: Generate done signal directly from state machine without extra register
+5. Reset: Maintain synchronous reset but simplify initialization
+6. Optimizations:
+   - Combine state and data handling in single always block
+   - Remove next_state logic by using single always block
+   - Simplify state transitions with direct assignments
+
+Key Improvements:
+- Reduced from 4 to 3 states (IDLE, RECEIVE, DONE)
+- Eliminated separate next_state logic
+- Simplified bit count comparison
+- Removed done register

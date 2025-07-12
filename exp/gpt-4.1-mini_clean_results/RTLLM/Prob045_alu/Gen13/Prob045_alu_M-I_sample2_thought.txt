@@ -1,0 +1,13 @@
+To optimize the given ALU design for better power, area, and potentially timing, I will reduce unnecessary toggling and logic computations for the flags (carry, overflow, flag) by calculating them only when relevant operations are selected. This avoids assigning these signals on every clock cycle and simplifies the combinational logic.
+
+Specifically:
+- Compute carry and overflow only for ADD, ADDU, SUB, and SUBU.
+- Compute flag only for SLT and SLTU.
+- Drive flag to high impedance ('z') for other operations to match the problem statement.
+- For the LUI operation, correct the output by shifting `b` 16 bits left rather than concatenating part of `a`, which better reflects MIPS semantics (lui loads an immediate into upper 16 bits).
+- For shifts with fixed shift amounts (SLL, SRL, SRA), use `shamt` extracted from `b` since usually `shamt` comes from instruction field or `b` (this aligns with the problem statement where shifts use the value of `a` or `a[4:0]` properly).
+- Use separate wires for signed and unsigned interpretations to clarify sign-aware operations.
+- Avoid driving outputs to 'z' except for the flag, where it is specifically required.
+- Maintain clean, straightforward combinational logic in a single always_comb block.
+
+This approach decreases switching by gating the flag, carry, and overflow logic, and corrects LUI semantics, improving area and power without sacrificing functionality or clarity.

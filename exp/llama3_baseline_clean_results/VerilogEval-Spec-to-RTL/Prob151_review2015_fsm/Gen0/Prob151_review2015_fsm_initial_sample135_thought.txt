@@ -1,0 +1,11 @@
+To implement the finite-state machine that controls the timer, we need to identify the different states the machine can be in and the transitions between these states based on the given inputs and requirements. 
+
+1. **Idle State**: The initial state where the machine waits for the pattern '1101' to be detected on the 'data' input. 
+2. **Pattern Detection**: Once the pattern is detected, the machine shifts in 4 more bits to determine the duration.
+3. **Counting State**: After the bits are shifted in, the machine asserts 'counting' and waits for 'done_counting' to be high.
+4. **Notify State**: Upon 'done_counting' being high, the machine asserts 'done' to notify the user.
+5. **Ack Wait State**: The machine then waits for the user to acknowledge with 'ack' being high before resetting back to the idle state.
+
+The transitions between these states are triggered by specific inputs such as the detection of the pattern, the completion of shifting in the bits, the done_counting signal, and the ack signal.
+
+The state machine also needs to handle the 'reset' input, which immediately resets it to the idle state.

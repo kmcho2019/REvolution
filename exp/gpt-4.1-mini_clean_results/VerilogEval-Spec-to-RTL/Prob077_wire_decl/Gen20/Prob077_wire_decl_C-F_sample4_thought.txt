@@ -1,0 +1,10 @@
+Combine the clear modular structure and explicit intermediate wires for the AND and OR gates from Example 1 with the efficiency and simplicity of using built-in gate primitives for all gates, including the inverter, to reduce module overhead. This approach maintains clear, single-driven wires feeding multiple inputs, preserves readability and modularity with explicit named wires for the two AND gates, and uses straightforward built-in gates (`and`, `or`, `not`) instead of user-defined modules, enabling synthesis tools to better optimize area and power.
+
+Specifically:
+
+- Declare two intermediate wires for the AND outputs (`and_ab`, `and_cd`).
+- Use built-in `and` gate primitives for the AND gates.
+- Use a built-in `or` gate primitive for the OR gate driving `out`.
+- Use a built-in `not` gate primitive for the inverter driving `out_n`.
+- This design avoids unnecessary submodule overhead while keeping a fully structural, gate-level description that is synthesis friendly.
+- All wires are driven by exactly one gate output, and `out` wire drives the inverter input and the module output.

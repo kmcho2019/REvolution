@@ -1,0 +1,20 @@
+To implement the next-state logic for y[1], we first need to identify the conditions under which y[1] will be 1 in the next state. 
+From the state machine diagram, we can see that y[1] will be 1 in the next state when the current state is A (y = 000) and w = 0, 
+or when the current state is D (y = 100 or y = 101) and w = 0, or when the current state is E (y = 110 or y = 111) and w = 1. 
+However, since the state codes are y = 000, 001, ..., 101 for states A, B, ..., F, respectively, 
+state E and F will be coded as y = 110 and y = 111 but they are not in the original state machine. 
+We only care about the state machine with the given state codes, so we focus on A, B, C, D, E, F with codes 000, 001, 010, 100, 101, 011. 
+For y[1] to be 1, we have the following next state possibilities: 
+- Current state is A (000) and w = 0, next state is B (001) but y[1] = 0, 
+- Current state is A (000) and w = 1, next state is A (000) but y[1] = 0, 
+- Current state is B (001) and w = 0, next state is C (010) but y[1] = 1, 
+- Current state is B (001) and w = 1, next state is D (100) and y[1] = 1, 
+- Current state is C (010) and w = 0, next state is E (101) but y[1] = 0 (actually coded as 101), 
+- Current state is C (010) and w = 1, next state is D (100) and y[1] = 1, 
+- Current state is D (100) and w = 0, next state is F (011) and y[1] = 0, 
+- Current state is D (100) and w = 1, next state is A (000) and y[1] = 0, 
+- Current state is E (101) and w = 0, next state is E (101) and y[1] = 0 (actually coded as 101), 
+- Current state is E (101) and w = 1, next state is D (100) and y[1] = 1, 
+- Current state is F (011) and w = 0, next state is C (010) and y[1] = 1, 
+- Current state is F (011) and w = 1, next state is D (100) and y[1] = 1. 
+So we can implement the next-state logic for y[1] as follows:

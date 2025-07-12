@@ -1,0 +1,11 @@
+To simplify the given finite state machine (FSM) implementation, we can adopt a more straightforward approach without using sub-state machines. This can be achieved by using a single state machine that handles all the required transitions and logic.
+
+We will define states to handle the reset condition, initial state transition, sequence detection for `x`, waiting for `y`, and setting or clearing `g` based on the `y` input within the time limit.
+
+The FSM will start in the reset state and transition to the initial state when the reset is de-asserted. In the initial state, it will set `f` to 1 for one clock cycle and then transition to the sequence detection state.
+
+In the sequence detection state, the FSM will monitor the `x` input and check for the sequence `1, 0, 1`. Once this sequence is detected, it will transition to the waiting state.
+
+In the waiting state, the FSM will use a counter to wait for `y` to become 1 within at most two clock cycles. If `y` becomes 1 within the time limit, the FSM will set `g` to 1 permanently. If `y` does not become 1 within the time limit, the FSM will set `g` to 0 permanently.
+
+By using a single state machine, we can simplify the implementation and reduce the number of states and variables required.

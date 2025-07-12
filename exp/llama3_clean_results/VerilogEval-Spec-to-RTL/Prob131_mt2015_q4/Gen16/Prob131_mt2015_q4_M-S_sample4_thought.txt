@@ -1,0 +1,15 @@
+To simplify the given solution, we can first analyze the logic implemented by ModuleA and ModuleB. ModuleA implements the function `z = (x^y) & x`, while ModuleB's behavior is described by the provided simulation waveform. 
+
+By examining the simulation waveform for ModuleB, we can infer that it produces an output of `1` when both inputs `x` and `y` are either both `0` or both `1`, and an output of `0` otherwise. This can be expressed as `z = (x & y) | (!x & !y)`, which is equivalent to `z = x === y` (where `===` denotes equality).
+
+Given this understanding, we can simplify the logic for the top-level module. Instead of using two instances of ModuleA and two instances of ModuleB, followed by OR, AND, and XOR operations, we can directly calculate the output `z` based on the simplified expressions for ModuleA and ModuleB.
+
+The output of the first OR gate can be expressed as `(x^y) & x | (x === y)`, and the output of the second AND gate can be expressed as `((x^y) & x) & (x === y)`. 
+
+However, noticing that `(x === y)` is equivalent to `!(x^y)`, we can further simplify the logic. The XOR operation between the OR and AND gate outputs can be reduced to a simpler form by applying the properties of Boolean algebra.
+
+Upon closer inspection, we realize that the expression can be simplified to `z = (x^y) & x | (x === y) ^ ((x^y) & x & (x === y))`. Since `(x === y)` is equivalent to `!(x^y)`, the expression `(x^y) & x & (x === y)` will always be `0`, because `(x^y)` and `(x === y)` cannot be true at the same time.
+
+Thus, the final simplified expression for `z` becomes `z = (x^y) & x | (x === y) ^ 0`, which further simplifies to `z = (x^y) & x | (x === y)`.
+
+This simplified logic can be directly implemented in the top-level module, reducing complexity and maintaining functionality.

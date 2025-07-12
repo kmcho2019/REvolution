@@ -1,7 +1,0 @@
-We need to compare all pairs of the 5 input bits including self-comparisons, resulting in 25 outputs. The output bit is 1 if the two compared bits are equal. The problem suggests an example like out[24] = ~a ^ a; which is essentially the XNOR operation (since ~a ^ a = ~(a ^ a) = 1).
-
-So for each pair (x,y), out[i] = ~(x ^ y), which is the XNOR of x and y.
-
-We'll order the outputs as a 5x5 matrix flattened to 25 bits, with index mapping as: for i,j in {0..4}, out[24 - (i*5 + j)] = x_i XNOR x_j, where x_0=a, x_1=b, ..., x_4=e. This matches the example given where out[24] corresponds to a compared with a, out[23] corresponds to a compared with b, etc.
-
-We'll implement this by listing all comparisons explicitly.

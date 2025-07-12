@@ -1,0 +1,13 @@
+To simplify the solution, we'll directly implement the minimal sum-of-products (SOP) form from the Karnaugh map without intermediate decoding. The K-map shows that the output is 1 in most cases except for specific combinations. We can identify these exceptions and invert them to get the output.
+
+Key simplifications:
+1. Remove redundant one-hot decoding of inputs
+2. Directly implement the minimal logic expression
+3. Focus only on the cases where output is 0 (from K-map) and invert them
+4. Use a single assign statement with the minimal logic
+
+The cases where output is 0 are:
+- c&d & ~a&~b (cd=11, ab=00)
+- ~c&d & (~a&b | a&b) (cd=01, ab=01 or 11)
+- c&~d & (a&b | a&~b) (cd=10, ab=11 or 10)
+- ~c&~d & a&b (cd=00, ab=11)

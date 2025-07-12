@@ -1,0 +1,26 @@
+To improve PPA (performance, power, area), the main bottleneck is the fully combinational neighbor counting and state update for all 256 cells in one cycle, which creates a large critical path and high switching activity.
+
+Improvement strategy:
+1. Pipeline the design by splitting the combinational logic into two stages:
+   - Stage 1: Compute neighbor sums for all cells (a simpler operation).
+   - Stage 2 (next clock cycle): Use neighbor sums and current state to compute next state.
+   
+   This halves the combinational logic depth per cycle and improves timing.
+
+2. Register neighbor sums after stage 1 to reduce fanout and long combinational paths.
+
+3. Maintain the load functionality as synchronous, loading initial state immediately.
+
+4. Flatten 2D arrays only for input/output but keep internal arrays for clarity.
+
+5. This approach doubles latency by one cycle (which is acceptable here) but improves max frequency and reduces switching power due to shorter critical paths and potentially lower glitching.
+
+Overall, the pipeline breaks the big combinational logic into smaller pieces, improves timing (better WNS), reduces power due to shorter paths and fewer glitches, and possibly reduces area by enabling better synthesis optimizations.
+
+This approach preserves functional correctness and the toroidal wraparound.
+
+No clock gating or selective evaluation is added, as the spec doesn't require it.
+
+Note: The pipeline latency means output q is always one cycle delayed from input when load=0, but since load directly updates q, user can control initial loading timing.
+
+The improved design uses the same wraparound logic and summation method but splits state update into two clock cycles.

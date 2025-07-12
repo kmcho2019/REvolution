@@ -1,0 +1,10 @@
+To solve this problem, we can implement a finite state machine (FSM) with the following states:
+- IDLE: Wait for the start bit (0) on the input line.
+- START: Verify that a start bit was received and move to the next state.
+- DATA: Receive the 8 data bits, keeping track of the current bit index.
+- STOP: Verify that a stop bit (1) was received after the 8 data bits.
+- ERROR: If the stop bit is not received, wait for the line to go high (stop bit) before returning to the IDLE state.
+
+The FSM will output a 'done' signal when a byte has been successfully received (i.e., when the stop bit is verified).
+
+We will use two counters: one for the state machine's current state and another to keep track of the current bit index during the data reception phase.

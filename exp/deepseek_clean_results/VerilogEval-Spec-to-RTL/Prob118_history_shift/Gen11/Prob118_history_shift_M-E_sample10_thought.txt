@@ -1,0 +1,23 @@
+Innovative Pipeline Architecture with Speculative History Tracking:
+
+1. Dual-Register Approach:
+   - Maintain two history registers: committed_history (stable) and speculative_history (in-flight)
+   - committed_history reflects known-good state
+   - speculative_history tracks predicted branches not yet verified
+
+2. Parallel Update Logic:
+   - Prediction updates only affect speculative_history
+   - Misprediction correction updates both registers atomically
+   - This allows prediction and training to operate in parallel when not conflicting
+
+3. Key Advantages:
+   - Reduced critical path: prediction updates don't wait for training validation
+   - Better power efficiency: committed_history only updates on mispredictions
+   - Clean separation of concerns between speculative and committed state
+
+4. Operation:
+   - Reset clears both registers
+   - Predictions shift into speculative_history
+   - Mispredictions update both registers with corrected history
+   - Output always shows speculative_history (most recent predictions)
+   - Committed_history serves as rollback point

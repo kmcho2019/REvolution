@@ -1,0 +1,12 @@
+To implement a dual-edge triggered flip-flop without using unsupported sensitivity lists, I will create a circuit that uses only positive edge-triggered flip-flops and additional logic to emulate the negative edge sampling.
+
+The key idea is:
+
+- Use a main positive edge-triggered flip-flop to sample the input data on the rising edge.
+- Use a second positive edge-triggered flip-flop clocked by an inverted version of the clock (generated through a clock-enable style signal, not an actual inverted clock) to capture the input as it changes just after the falling edge.
+- Generate a pulse or enable signal for this second flip-flop by detecting the falling edge internally via a small clock domain crossing structure, avoiding explicit inverted clock routing.
+- Combine the outputs of these two FFs with a latch or small multiplexer timed by the clock level, ensuring that the output updates at both clock edges but the design uses only positive edge FFs with enable signals.
+
+This approach avoids using negedge clock in always blocks and avoids explicit negative clock edges by leveraging clock enables derived from the clock and its delayed version. This makes the design synthesis-friendly, FPGA-compatible, and glitch-reduced by using well-known clock domain crossing techniques.
+
+Overall, this technique trades additional logic (an enable generator) for full dual-edge behavior using only positive edge-triggered flip-flops and standard synchronous design methods.

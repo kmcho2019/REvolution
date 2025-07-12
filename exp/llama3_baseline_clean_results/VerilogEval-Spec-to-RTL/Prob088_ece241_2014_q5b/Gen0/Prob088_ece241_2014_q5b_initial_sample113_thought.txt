@@ -1,0 +1,13 @@
+To implement the given Mealy finite-state machine, we first need to identify the states and their corresponding transitions based on the input x. Since we are using one-hot encoding, each state will be represented by a unique binary vector where only one bit is '1' (hence the term "one-hot"). 
+
+In this case, we have two states: A and B. We can represent state A as '01 and state B as '10 in one-hot encoding. However, for a two-state machine, it's more common to use '1 and '0 or '01 and '10, but we'll stick to a standard one-hot approach with '01 for A and '10 for B, even though it's slightly unconventional for just two states. A more conventional one-hot for two states would be '1 for A and '10 for B, but to maintain clarity with the given encoding, we proceed with '01 for A and '10 for B.
+
+The state transitions are as follows:
+- From state A (represented as '01), if x = 0, stay in A, and if x = 1, go to B.
+- From state B (represented as '10), regardless of x, stay in B.
+
+The output z is determined by the current state and input x. For A, z = x, and for B, z is always the opposite of x in a way that once in B, z stays 1 until the reset.
+
+Given that resets are asynchronous and active-high, we need to ensure that the state machine resets to state A ('01) whenever areset is high, regardless of the clock.
+
+Since all sequential logic is triggered on the positive edge of the clock, we will use a non-blocking assignment in an always @(posedge clk) block to update the state.

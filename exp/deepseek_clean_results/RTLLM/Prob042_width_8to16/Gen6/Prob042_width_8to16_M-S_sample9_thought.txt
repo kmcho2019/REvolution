@@ -1,0 +1,16 @@
+Here's a simplified version that maintains all functionality while reducing complexity:
+
+1. Remove the explicit state flag (has_first_byte) and use data_lock itself as implicit state
+   - If data_lock is empty (0), we're waiting for first byte
+   - If data_lock has value, we're waiting for second byte
+2. Simplify reset logic by combining all resets into single block
+3. Remove default assignment of valid_out since it's only set in one condition
+4. Use non-blocking assignments consistently
+5. Make the state transitions more explicit and clear
+
+Key improvements:
+- Fewer signals (removed has_first_byte)
+- Clearer state representation
+- More straightforward control flow
+- Maintains same timing and functionality
+- Easier to understand and verify

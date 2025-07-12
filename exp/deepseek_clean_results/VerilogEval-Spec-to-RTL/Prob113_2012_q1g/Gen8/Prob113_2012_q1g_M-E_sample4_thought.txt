@@ -1,0 +1,12 @@
+Here's a novel approach using a multiplexer-based implementation with priority encoding:
+
+1. Instead of decoding the inputs, we'll treat the problem as a 4-input truth table and implement it using a 16:1 multiplexer.
+2. However, to make it more efficient, we'll observe that many output values are the same (0s and 1s repeat in patterns).
+3. We can implement this using a priority encoder that checks for specific input patterns where f=1, and defaults to 0 otherwise.
+4. The priority encoder will check for the following cases where f=1:
+   - 0000, 0010 (when x[3:2]=00)
+   - 1100, 1101, 1111 (when x[3:2]=11)
+   - 1000, 1001, 1010 (when x[3:2]=10)
+5. This approach is efficient because it directly implements the K-map patterns without complex Boolean minimization.
+
+The advantage is that it's straightforward to verify against the K-map and easy to modify if the truth table changes.

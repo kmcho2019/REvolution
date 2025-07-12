@@ -1,0 +1,19 @@
+To improve PPA (timing, power, and area), we focus on reducing combinational logic depth and signal toggling:
+
+1. **Separate next state and next direction logic**: This allows simpler, more direct logic and might help synthesis tools optimize better.
+
+2. **Use explicit one-hot state encoding**: One-hot FSM encoding typically improves timing by simplifying next-state logic, at a modest area cost which is negligible here due to very few states.
+
+3. **Replace packed state/direction register with separate registers**: This reduces muxing complexity on updates and makes direction and state update logic clearer and easier to optimize.
+
+4. **Simplify bump logic with a single combined bump signal**: Treat bump_left or bump_right high as "bump," so no complex conditional logic inside state transitions.
+
+5. **Use synchronous reset instead of async reset**: If asynchronous reset is not a strict requirement, synchronous resets reduce glitching and timing complexity. But since spec requires async posedge reset, keep it but isolate reset logic for better timing.
+
+6. **Use nonblocking assignments in all sequential always blocks and blocking assignments in combinational blocks**.
+
+7. **Use simple ternary operators for fall_count saturation and increment**.
+
+8. **Add comments and clean coding style for clarity**.
+
+Overall, these changes improve timing by simplifying and decoupling control signals, reduce power by minimizing toggles on unrelated signals, and slightly increase area due to one-hot encoding but likely better timing slack.

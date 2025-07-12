@@ -1,0 +1,18 @@
+Novel approach using parallel edge detectors with individual sticky flags:
+
+1. **Parallel Processing**: Instead of a single register for previous input, implement 32 independent edge detectors (one per bit) with their own sticky flags. This provides better isolation between bits.
+
+2. **Dual-Register Edge Detection**: For each bit, use two registers to store the past two states (prev1 and prev2) to ensure robust edge detection. This helps avoid metastability issues and provides cleaner edge detection.
+
+3. **Individual Sticky Flags**: Each bit has its own sticky flag that gets set on falling edge detection and only clears on reset. This ensures perfect isolation between bits.
+
+4. **Efficient Implementation**: Despite having more registers, the design remains efficient because:
+   - Each bit's logic is simple and identical
+   - No complex combinational paths between bits
+   - Clear synchronous reset behavior
+
+Key advantages:
+- More reliable edge detection with two-stage history
+- Perfect bit-to-bit isolation
+- Clear and maintainable structure
+- Easier to debug and verify

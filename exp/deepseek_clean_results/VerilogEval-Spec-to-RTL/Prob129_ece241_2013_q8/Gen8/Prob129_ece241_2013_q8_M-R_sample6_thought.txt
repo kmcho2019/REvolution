@@ -1,0 +1,10 @@
+The current implementation uses a shift register approach with an always block for sequential logic. We can refactor this to:
+1. Use explicit state encoding with named states for better readability
+2. Implement the state transitions with a case statement
+3. Make the output purely combinational based on current state and input
+4. Still maintain the 3-state requirement and overlapping sequence detection
+
+This approach makes the state machine behavior more explicit while maintaining the same functionality. The states will be:
+- IDLE: Initial state, no relevant bits seen
+- GOT1: Saw '1' (first bit of sequence)
+- GOT10: Saw '10' (first two bits of sequence)

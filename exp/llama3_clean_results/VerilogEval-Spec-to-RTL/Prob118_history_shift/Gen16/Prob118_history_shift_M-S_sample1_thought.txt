@@ -1,0 +1,8 @@
+To simplify the given Verilog code for the 32-bit global history shift register, we aim to minimize the logic while maintaining the core functionality. The key idea is to directly update the `history` register within the `always` block based on the current inputs, eliminating the need for the combinational logic block that determines `next_history`. This approach reduces the overall complexity by avoiding the explicit definition of the next state and directly implementing the state transition logic within the sequential logic block.
+
+The simplified design focuses on directly updating the `history` register based on the priority of the inputs: 
+1. If `areset` is high, reset `history` to 0.
+2. If `train_mispredicted` is high, load `history` with `train_history` concatenated with `train_taken`.
+3. If `predict_valid` is high (and there's no misprediction), shift `history` one bit to the left and append `predict_taken` to the least significant bit.
+
+This direct approach simplifies the code and potentially improves readability and maintainability by reducing the number of signals and logic paths.

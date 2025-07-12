@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove redundant intermediate signals by directly computing outputs from input comparisons
+2. Leverage Verilog's built-in comparison operators for cleaner code
+3. Eliminate separate bitwise operations since we can determine all conditions from the final comparison
+4. Maintain mutual exclusivity by structuring output assignments appropriately
+5. Reduce gate count by using simpler logical expressions
+
+Key changes:
+- Directly use A > B and A < B comparisons instead of bitwise operations
+- Compute A_equal first since it's simplest
+- Derive other outputs from A_equal to ensure mutual exclusivity
+- Remove all intermediate wires that don't contribute to output clarity

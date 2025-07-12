@@ -1,0 +1,23 @@
+The existing solution is already minimal and correct, using simple combinational logic derived directly from the FSM and one-hot encoding. The main outputs are:
+
+- Y1 = y[0] & w (next input for y[1])
+- Y3 = ~w & ~(y[0] | y[3]) (next input for y[3])
+
+This uses minimal gates and low fan-in, which is good for power and area.
+
+For further optimization:
+
+1. Use De Morgan's theorem on Y3:
+   Y3 = ~w & ~(y[0] | y[3]) = ~w & (~y[0] & ~y[3])
+   Which is equivalent to:
+   Y3 = ~w & ~y[0] & ~y[3]
+
+   Writing Y3 as an AND of three signals may slightly reduce gate complexity or gate fan-in by enabling direct NAND-NAND style synthesis.
+
+2. Inline the inversion of w to avoid an intermediate wire, reducing signal toggling and slight area reduction.
+
+3. Combine the logic expressions into single assign statements without intermediate wires to minimize net count.
+
+4. Retain modularity by keeping NextStateInput module.
+
+These small changes may reduce switching and area slightly without affecting performance or correctness.

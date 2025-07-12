@@ -1,0 +1,15 @@
+The goal is to implement the K-map function using one 4-to-1 multiplexer selected by inputs a,b and inputs c,d. The TopModule must generate the 4 inputs (mux_in[3:0]) of the 4-to-1 mux for selector values ab=00,01,11,10 as given by the K-map rows indexed by c,d.
+
+Since the problem states to use only one 4-to-1 mux with selectors a,b, and as many 2-to-1 muxes as needed (no other gates), we will:
+
+- Keep inputs a,b,c,d in the TopModule.
+- For each value of ab, mux_in[x] must be a function of c,d only (no a,b).
+- Implement each mux_in[x] solely using cascaded 2-to-1 muxes built with conditional operators (?:), which represent 2-to-1 muxes. This satisfies the problem constraints, as conditional operator models a mux without logic gates.
+- No explicit logic gates or inversion; inversion done by muxing 1/0 inputs.
+- The code is a straightforward combinational logic assigning mux_in[3:0] expressions.
+
+This way, mux_in[0] is the output when ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, and mux_in[3] for ab=10, each implementing the function in the K-map row corresponding to c,d.
+
+The module includes inputs a,b,c,d and outputs mux_in[3:0], with no other logic gates.
+
+This approach is minimal and clear, fully matches the K-map, and satisfies the problem constraints.

@@ -1,0 +1,9 @@
+To fix the code, we need to correct the formation of the output bytes in the 'RECEIVING' state. Specifically, when the counter is 2'b10, we should assign 'out_bytes_reg' as '{in, out_bytes_reg[15:8], out_bytes_reg[7:0]}' to correctly form the 24-bit output.
+
+We also need to remove the unnecessary clearing of the 'done_reg' every clock cycle when it is high. Instead, we should clear it only when the FSM transitions back to the 'IDLE' state.
+
+Additionally, we can optimize the code by using the 'state' variable itself to keep track of the current state and the number of bytes received, instead of using a separate 'counter' variable.
+
+We will use a 24-bit register 'out_bytes_reg' to store the received bytes, where the most significant 8 bits will store the first byte, the middle 8 bits will store the second byte, and the least significant 8 bits will store the third byte.
+
+To handle the reset signal, we will reset the FSM to the 'IDLE' state, clear the output, and reset the 'done' signal.

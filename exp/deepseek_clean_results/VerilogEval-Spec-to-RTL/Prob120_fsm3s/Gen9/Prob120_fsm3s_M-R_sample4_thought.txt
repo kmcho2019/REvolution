@@ -1,0 +1,9 @@
+I'll refactor the solution by implementing the state machine using a single always block for both state transitions and output logic (Mealy-Moore hybrid style). This approach:
+1. Combines sequential and combinational logic in one always block for potentially better synthesis optimization
+2. Uses direct state assignment in the case statement instead of separate next_state logic
+3. Maintains the same binary state encoding (A=00, B=01, C=10, D=11)
+4. Keeps the synchronous reset functionality
+5. Simplifies the output logic by making it directly dependent on the current state
+6. Removes the intermediate next_state variable since we can update state directly
+
+This refactoring reduces the number of always blocks while maintaining the same functionality, which might lead to better synthesis results in some tools.

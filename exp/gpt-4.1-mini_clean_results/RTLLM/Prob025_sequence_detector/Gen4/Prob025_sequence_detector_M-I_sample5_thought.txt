@@ -1,0 +1,28 @@
+The given Mealy FSM solution is functionally correct and uses an efficient state encoding with only 3 bits for four states, which is good for area. However, the state naming suggests a 4-bit sequence detection, but only four states are defined (IDLE, S1, S2, S3) whereas the request mentioned S4 state. The code implicitly uses S3 as the final detection state with detection output combinationally asserted.
+
+To clarify and slightly improve:
+
+- Use a full 4-state FSM matching the sequence length: IDLE, S1, S2, S3, S4, with S4 as the detection state.
+- Use one-hot encoding or a minimal 3-bit encoding (current 3 bits suffice).
+- Implement synchronous active-low reset as required.
+- Keep Mealy FSM style for faster detection.
+- Avoid using blocking assignments in sequential always block.
+- Reset signal behavior is synchronous active low as requested.
+- Improve code readability by explicitly defining state encodings for all five states.
+- Correct the port naming to match the user's requested reset_n.
+- Provide comments for clarity.
+
+This approach provides a clear FSM with proper reset behavior, improved code clarity, and a more explicit state transition that directly matches the problem statement (with S4 as the final detection state). This small restructuring will not add overhead but improves maintainability and clarity, which can help synthesis tools optimize better.
+
+The output sequence_detected is asserted combinationally during the transition to S4 state, consistent with Mealy FSM style.
+
+Note: The example uses synchronous active low reset; the user stated "When reset is high, the state machine returns to IDLE," which implies reset is active high. We'll follow the user's original statement literally and implement a synchronous active high reset.
+
+Hence, modify the reset accordingly (active high synchronous reset).
+
+Summary of improvements:
+
+- Use synchronous active-high reset (as per user statement).
+- Explicitly define all five states.
+- Use Mealy FSM style with combinational detection output.
+- Add comments.

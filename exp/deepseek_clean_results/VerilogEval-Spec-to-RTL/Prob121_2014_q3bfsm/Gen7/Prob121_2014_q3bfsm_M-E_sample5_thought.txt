@@ -1,0 +1,19 @@
+Here's a novel approach using a shift register-based state machine implementation:
+
+1. Key Idea:
+   - Instead of traditional state encoding, use a shift register where each bit represents a state
+   - Only one bit is '1' at any time (one-hot encoding)
+   - Next state is determined by shifting the '1' based on input x
+   - Output z is simply the OR of the states where z should be 1
+
+2. Advantages:
+   - Eliminates complex next-state logic with simple shift operations
+   - Output logic becomes trivial (just OR of relevant state bits)
+   - Potentially better timing as there's no state decoding
+   - Clear physical meaning for each state bit
+
+3. Implementation:
+   - 5-bit shift register for 5 states
+   - Special shift patterns for each state based on x
+   - Synchronous reset initializes to first state (00001)
+   - Output z is active for states 3 and 4 (bits [3] and [4])

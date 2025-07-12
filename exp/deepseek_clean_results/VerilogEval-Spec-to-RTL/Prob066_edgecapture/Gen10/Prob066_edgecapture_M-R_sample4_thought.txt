@@ -1,0 +1,17 @@
+Here's a refactored solution that maintains the same core functionality but uses a different structural approach:
+
+1. Instead of using a single always block for both state update and output logic, we'll separate them:
+   - One always block for sequential elements (registering previous input)
+   - Continuous assignments for combinational logic (edge detection)
+
+2. Key changes:
+   - Use `assign` for the combinational falling edge detection
+   - Keep the output register in a separate always block
+   - The output register will OR its current value with new falling edge detections
+   - Reset will clear both the output register and previous input register
+
+3. Benefits:
+   - Clear separation of combinational and sequential logic
+   - More modular design
+   - Same functionality but potentially better for synthesis/timing analysis
+   - Still maintains the requirement of latching transitions until reset

@@ -1,0 +1,25 @@
+A novel approach is to implement the function f using a small ROM look-up table. Since the input is 4 bits (16 combinations), and the output is 1 bit, we can store the function values in a 16-bit constant vector indexed by the input vector. This eliminates complex combinational logic and maps directly to a LUT structure in hardware, which often leads to minimal delay and area in modern FPGAs or ASIC standard cells. This approach also makes the design easily extendable and clear. The ROM values are directly derived from the Karnaugh map rows flattened in binary order from 0 to 15.
+
+We flatten the Karnaugh map rows as follows (x3x2x1x0):
+
+- Address: x[3:0]
+- Value at address (f):
+
+0 (0000): 1  
+1 (0001): 0  
+2 (0010): 1  
+3 (0011): 0  
+4 (0100): 0  
+5 (0101): 0  
+6 (0110): 0  
+7 (0111): 0  
+8 (1000): 1  
+9 (1001): 1  
+10(1010): 0  
+11(1011): 1  
+12(1100): 1  
+13(1101): 1  
+14(1110): 0  
+15(1111): 0
+
+We then store this as a 16-bit vector and assign output f = rom[x].

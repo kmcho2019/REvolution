@@ -1,0 +1,13 @@
+The current implementation is functionally correct but can be optimized for power efficiency by adding clock gating when neither load (L) nor shift (E) operations are active. This prevents unnecessary clock toggles of the Q register when no operation is being performed.
+
+Improvement strategy:
+1. Add clock gating logic to disable the clock when both L and E are low
+2. Maintain the same functionality and priority (load over shift)
+3. Keep non-blocking assignments for proper synchronous behavior
+4. The gating logic will reduce dynamic power consumption during idle periods
+
+The optimized version will:
+- Have identical functional behavior
+- Reduce power consumption during idle states
+- Maintain the same timing characteristics
+- Add minimal area overhead for the clock gating logic

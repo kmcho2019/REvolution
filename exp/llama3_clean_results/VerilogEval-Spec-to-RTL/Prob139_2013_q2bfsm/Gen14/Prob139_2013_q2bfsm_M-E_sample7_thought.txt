@@ -1,0 +1,7 @@
+A novel approach to solve this problem is to use a hierarchical state machine design, where the main state machine controls the overall state transitions, and a separate sub-state machine is used to detect the sequence of 'x' and handle the 'y' input timeout. This approach involves defining two main states: 'RESET' and 'RUNNING'. The 'RESET' state represents the reset state where the FSM stays until the reset is de-asserted. The 'RUNNING' state is further divided into sub-states: 'INIT', 'X_DETECT', and 'Y_WAIT'.
+
+In the 'INIT' sub-state, the FSM sets 'f' high for one clock cycle after the reset is de-asserted. The 'X_DETECT' sub-state is responsible for detecting the 'x' sequence (1, 0, 1), and the 'Y_WAIT' sub-state handles the 'y' input and its timeout.
+
+The sub-state machine uses a combination of counters and flags to detect the 'x' sequence and handle the 'y' input timeout. Once the 'x' sequence is detected, the FSM transitions to the 'Y_WAIT' sub-state and sets 'g' high. In the 'Y_WAIT' sub-state, a counter is used to wait for 'y' to become high within two clock cycles. If 'y' becomes high, the FSM maintains 'g' high permanently. If 'y' does not become high within two clock cycles, the FSM sets 'g' low permanently.
+
+This approach simplifies the state machine logic and reduces the number of states required, making it easier to implement and verify.

@@ -1,0 +1,20 @@
+To simplify the IEEE-754 single-precision floating-point multiplier while maintaining correct functionality, I will use a single always block synchronous to clk and rst, processing the multiplication in a small finite state machine with a simple cycle counter. This will reduce pipeline complexity and registers.
+
+Key simplifications:
+
+1. Use a 3-cycle operation controlled by a counter:
+   - Cycle 0: Extract sign, exponent, mantissa, and special flags.
+   - Cycle 1: Multiply mantissas, add exponents, adjust exponent bias, and normalize if needed.
+   - Cycle 2: Perform rounding, handle overflow/underflow, special cases, and output the final result.
+
+2. Use straightforward combinational logic within cycles rather than elaborate pipelining.
+
+3. Keep internal exponent widths to 10 bits to safely hold sums and overflow info.
+
+4. Handle special cases explicitly at the output stage (cycle 2).
+
+5. Implement rounding to nearest even with guard, round, and sticky bits.
+
+6. Keep only necessary intermediate registers, use non-blocking assignments in sequential blocks.
+
+This approach trades latency (3 cycles per multiplication) for significantly simpler control and code, easier verification, and smaller register footprint while keeping IEEE-754 compliance including special case handling and rounding.

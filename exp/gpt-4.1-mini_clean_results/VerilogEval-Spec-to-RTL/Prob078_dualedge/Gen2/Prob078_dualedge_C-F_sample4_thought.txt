@@ -1,0 +1,18 @@
+Both examples rely on two flip-flops triggered on opposite clock edges and a mux controlled by the clock to emulate dual-edge triggering. The main strength of these approaches is their simplicity and legality in synthesis. However, directly muxing between the outputs with the clock as a combinational select can cause glitches and timing issues because the clock is asynchronous relative to the flip-flops' data outputs.
+
+To improve upon these, I propose:
+- Using two flip-flops as before: one triggered on posedge, one on negedge.
+- Instead of directly muxing combinationally using the clock, register the mux output on one edge of the clock to remove glitches and create a stable output.
+- To keep the output updating on both edges, generate an internal clock enable pulse that toggles on each edge, and use this to latch the muxed output in a registered stage.
+- This way, we use the two edge-triggered flip-flops to sample the data on both edges, then a stable registered output updated every half clock cycle. It reduces glitches and improves timing and power by registering the final output.
+- The output register uses the posedge clock and a clock enable that toggles every half cycle (generated from the negedge flip-flop output).
+  
+This fused design keeps legality, improves glitch avoidance, and enhances timing robustness by registering the mux output.
+
+Summary of fusion strategy:
+- Sample input on posedge and negedge into q_pos and q_neg.
+- Use clk as mux select to choose between q_pos and q_neg outputs (combinational).
+- Register this muxed output on posedge clk using a clock enable that toggles every edge, derived from the negedge clock flip-flop.
+- This creates a glitch-free, stable output updating on both clock edges.
+
+This solution remains synthesizable, efficient, and robust.

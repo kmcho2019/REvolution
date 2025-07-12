@@ -1,0 +1,23 @@
+A different approach is to build the FSM with well-separated phases and explicit registers for pattern detection and counters, strictly scoped to states that need them, and ensuring outputs are fully registered and stable:
+
+1. **Synchronous active-low reset handling:**
+   On each clock, if resetn=0, FSM goes to state A with outputs cleared. When resetn=1, the FSM moves to the next state on the next clock.
+
+2. **Output f pulse after reset de-asserted:**
+   After resetn is released, FSM enters a dedicated state that drives f=1 for exactly one clock cycle. Outputs f and g are registered signals updated synchronously.
+
+3. **Pattern detection of x=1,0,1:**
+   Use a 3-bit shift register to track the recent 3 bits of x, updated each clock only in the MONITOR_X state. When the last three bits are 3'b101, transition to monitoring y.
+
+4. **Y monitoring with two-cycle window:**
+   Use a 2-bit cycle counter in G_ON_MONITOR_Y state, counting how many cycles have passed since entering that state. If y==1 occurs any time during these two cycles, set g=1 permanently (G_ON_PERM). If y==1 is not seen after 2 cycles, set g=0 permanently (G_OFF_PERM).
+
+5. **Outputs f and g are registered separately and assigned according to state and flags. This cleanly separates output timing from combinational logic, avoiding glitches.**
+
+6. **State encoding as simple enum with localparams.**
+
+7. **All state transitions and counters updated on the positive clock edge.**
+
+This shift-register based pattern detection is simpler and guarantees pattern recognition with no complex pattern_step logic, and the two-cycle y-monitor uses a counter that counts from zero on entry, making it exact.
+
+This design is structurally different from the prior pattern-step FSM and focuses on explicit shift-register pattern detection and tightly scoped counters, simplifying logic and improving timing correctness.

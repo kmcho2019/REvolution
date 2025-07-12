@@ -1,0 +1,14 @@
+Fuse the clear and robust explicit state encoding, named parameters, and default next state assignment from Example 1 with the fully enumerated case statement next-state logic and concise sequential logic of Example 2. This fusion provides:
+
+- Named localparams for state encoding to improve readability and maintainability.
+- A single always block for combinational next-state logic using a case statement with a default next_state = state to prevent latches.
+- Explicit separation of walking and falling logic that cleanly ignores bumps during falling.
+- Preserves direction through falling and resumes walking accordingly.
+- Bumps cause direction changes only while walking and only when ground is present.
+- Asynchronous active-high reset sets the FSM to WALK_LEFT.
+- Moore outputs decoded directly from state bits.
+- Minimal logic and clean FSM style for optimal PPA.
+- Avoids redundant conditions by handling bump-left and bump-right symmetrically and with minimal checks.
+- The case statement makes the logic explicit and friendly for synthesis and verification.
+
+Overall, the design maximizes clarity, synthesis friendliness, and efficiency by combining explicit state naming and clear next-state logic with minimal and well-structured code.

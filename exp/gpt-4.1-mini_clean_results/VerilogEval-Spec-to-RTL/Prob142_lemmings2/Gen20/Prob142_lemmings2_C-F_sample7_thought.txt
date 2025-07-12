@@ -1,0 +1,13 @@
+Fuse the clarity and explicit FSM style from Example 1 with the minimal register count and straightforward next-state update from Example 2 by encoding direction and falling as separate bits but using combinational next-state signals before clocked updates. Use a Moore FSM approach with explicit next-state logic that:
+
+- Updates the falling flag first based on ground input.
+- Updates direction only when walking and bumped on at least one side.
+- Treats simultaneous bumps as direction toggle.
+- Ignores bumps during falling.
+- Implements asynchronous active-high reset to walk left and not falling.
+- Decodes outputs directly from current state bits.
+- Uses non-blocking assignments for proper sequential logic.
+- Employs clean, flat combinational logic to aid synthesis and timing.
+- Minimizes redundant bump checks by combining conditions logically.
+- Separates the combinational next-state logic in one always block and sequential state update in another for clarity and potential synthesis optimization.
+This design merges robust FSM reasoning with minimal registers and simple, optimized logic for best PPA and maintainability.

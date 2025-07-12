@@ -1,0 +1,7 @@
+The finite state machine (FSM) will have four states: idle, byte1, byte2, and done. 
+In the idle state, the FSM will discard bytes until it sees one with in[3]=1. 
+When such a byte is received, it will transition to the byte1 state and store this byte as the first byte of the message. 
+In the byte1 state, it will wait for the next byte and store it as the second byte of the message, then transition to the byte2 state. 
+In the byte2 state, it will wait for the next byte and store it as the third byte of the message, then transition to the done state and assert the done signal. 
+The FSM will stay in the done state for one cycle, then transition back to the idle state. 
+The FSM will also have a reset state that will reset all the registers and the state back to idle when the reset signal is asserted.

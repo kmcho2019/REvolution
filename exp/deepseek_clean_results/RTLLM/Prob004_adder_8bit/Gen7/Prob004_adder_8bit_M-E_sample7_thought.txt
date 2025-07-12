@@ -1,0 +1,12 @@
+Novel hybrid adder architecture:
+1. Split the 8-bit addition into two 4-bit sections (lower and upper nibbles)
+2. Implement the lower 4 bits using ripple-carry for area efficiency
+3. Implement the upper 4 bits using carry-select for better timing
+4. Use a multiplexer to select between the two possible upper sums based on the carry-out from the lower section
+5. This provides better critical path delay than pure ripple-carry while using less area than full carry-select
+
+Key advantages:
+- Critical path reduced from 8 full adders to 4 (lower ripple + mux delay)
+- Only requires duplicate logic for upper 4 bits (better area than full 8-bit carry-select)
+- Maintains combinational nature with no clock requirements
+- Naturally balanced pipeline stages if later converted to sequential logic

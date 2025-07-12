@@ -1,0 +1,12 @@
+I'll refactor the solution to use a casez statement within an always block, which is often more readable and maintainable for priority encoders. This approach:
+
+1. Uses casez to handle don't-care bits in the matching
+2. Implements the priority encoding by listing cases from highest to lowest priority
+3. Maintains the same functionality but with clearer intent
+4. May synthesize more efficiently in some tools as casez is a recognized pattern for priority encoders
+5. Includes a default case to handle the all-zeros input
+
+The refactored version will:
+- Use casez to match patterns where specific bits are 1 (others don't care)
+- List cases from LSB to MSB to implement priority
+- Default to 0 if no matches found

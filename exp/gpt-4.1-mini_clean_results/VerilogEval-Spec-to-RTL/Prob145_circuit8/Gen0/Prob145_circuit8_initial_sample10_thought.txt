@@ -1,0 +1,23 @@
+From the waveform, it appears that p and q are outputs from a sequential circuit with some form of state behavior.
+
+Key observations:
+- p is updated only on the clock high (1) edges and depends on input 'a'.
+- When clock is 1 and 'a' is 1, p becomes 1.
+- After several clock cycles, at time 115ns (clock=0), p=1 and q=1, which suggests q is a delayed or latched version of p.
+- q updates on the falling edge of the clock or when clock is 0, taking the value of p from the previous clock high period.
+- When clock is low, q follows p from the previous clock high phase; when clock goes high, p can toggle based on 'a', q holds value until next clock low period.
+- At times when clock is low, p is stable (either 0 or 1), q reflects the last p stored during clock high period.
+- This behavior suggests a two-state register where p is updated on the rising edge of clock based on input 'a', and q is updated on falling edge or when clock is low based on current p.
+
+Therefore, a design with two registers p_reg and q_reg:
+- p_reg updated on posedge clock: p_reg <= a OR p_reg (accumulates 1's when 'a' is 1)
+- q_reg updated on negedge clock: q_reg <= p_reg
+Outputs p and q reflect p_reg and q_reg respectively.
+
+This matches the waveform:
+- p sets to 1 when 'a' is 1 on clock high,
+- q updates to p's previous state on clock low,
+- and retains its state until next update.
+
+We will implement this with two always blocks, one posedge clock for p_reg and one negedge clock for q_reg.
+Initial values can be zero.

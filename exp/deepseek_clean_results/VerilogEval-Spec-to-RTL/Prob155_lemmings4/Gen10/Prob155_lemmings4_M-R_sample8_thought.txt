@@ -1,0 +1,33 @@
+Refactored Lemming State Machine Design:
+
+1. Unified State Encoding:
+   - Combine movement and action states into a single 3-bit state register
+   - Explicit state encoding for better readability and debugging
+   - Eliminates parallel state machines for simpler transitions
+
+2. Continuous Assignment Logic:
+   - Replace always blocks with assign statements where possible
+   - Next state logic implemented as combinational functions
+   - More transparent signal flow
+
+3. Optimized Priority Handling:
+   - Single priority decoder with nested conditions
+   - Explicit fall > dig > bump priority built into state equations
+   - Clear separation of state transition conditions
+
+4. Simplified Counter:
+   - Fall counter implemented as standalone register
+   - Reset logic integrated with state transitions
+   - More straightforward comparison logic
+
+5. Direct Output Mapping:
+   - Outputs derived directly from state bits
+   - No intermediate conditional assignments
+   - More efficient implementation
+
+Key Improvements:
+- Single always block for sequential logic
+- All combinational logic moved to assign statements
+- Clearer state transition conditions
+- More compact implementation
+- Same behavior as original specification

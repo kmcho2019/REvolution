@@ -1,0 +1,14 @@
+Refactored design with these key changes:
+1. Replaced the sequential always block with continuous assignments using D flip-flop primitive
+2. Simplified the next_state logic by recognizing it's equivalent to an OR of two conditions:
+   - When both inputs are high (a & b) sets the state
+   - When state is maintained unless both inputs are low (~a & ~b clears it)
+3. Kept the same output logic (XOR with state) but expressed more clearly
+4. Used wire declarations explicitly for better readability
+5. Maintained identical functionality while making the structure more modular
+
+The refactoring achieves the same behavior with:
+- Clear separation of combinational and sequential logic
+- More explicit flip-flop implementation
+- Same state transitions and output behavior
+- Potentially better synthesis results due to simpler structure

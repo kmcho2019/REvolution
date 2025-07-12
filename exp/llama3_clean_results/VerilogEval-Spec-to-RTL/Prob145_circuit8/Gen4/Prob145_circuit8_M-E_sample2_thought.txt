@@ -1,0 +1,7 @@
+The problem can be approached by re-examining the simulation waveforms and identifying a pattern that relates the input 'a' with the outputs 'p' and 'q'. One novel architectural idea is to use a single D flip-flop to store the state of 'p' and derive 'q' using a simple combinational logic that depends on 'p' and 'a'. This approach simplifies the design and reduces the number of flip-flops required.
+
+The key insight is to recognize that 'p' follows 'a' during the high clock phase, and 'q' remains set after 'p' has been set until 'a' is high during the low clock phase. This can be achieved by using a D flip-flop for 'p' and a combinational logic for 'q' that ensures 'q' remains high after 'p' has been set until the reset condition is met.
+
+To implement this idea, we can use a single always block that captures the positive edge of the clock and updates 'p' based on 'a'. For 'q', we can use a simple combinational logic that sets 'q' to 'p' when the clock is high and resets 'q' when 'a' is high during the low clock phase.
+
+This approach minimizes the number of flip-flops and logic gates, making it more efficient in terms of power, performance, and area (PPA) metrics.

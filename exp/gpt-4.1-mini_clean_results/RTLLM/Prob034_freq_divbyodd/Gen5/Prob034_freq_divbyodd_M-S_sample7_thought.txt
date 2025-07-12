@@ -1,0 +1,5 @@
+Simplify the design by using a single counter that counts from 0 to NUM_DIV-1 on the positive clock edge. Toggle the output clock `clk_div` only once when the counter reaches the halfway point (i.e., (NUM_DIV-1)/2), so the output clock frequency is divided by the odd number NUM_DIV.
+
+This approach uses a single always block triggered on posedge clk and active low reset. The counter increments every clock cycle and resets to zero after reaching NUM_DIV-1. The `clk_div` toggles only once per full count cycle, ensuring a clean and glitch-free odd frequency division with a near 50% duty cycle.
+
+This reduces complexity and avoids issues related to using two separate counters and OR-ing two signals triggered on opposite clock edges.

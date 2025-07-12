@@ -1,0 +1,3 @@
+The original approach of rotating the bits using concatenation with slices causes issues on certain synthesis tools that do not support such assignments. To avoid this, implement the rotation by explicitly checking the MSB bit. If it is 0, simply shift left by one bit. If MSB is 1, then shift left and set the LSB to 1 (wrapping the bit around). This avoids the use of concatenation with slices and uses simple bitwise and conditional operations, improving tool compatibility while maintaining the cyclic one-hot behavior.
+
+This also retains simplicity, ensures only one bit is set at a time, and matches the original design intent, while being fully synthesizable.

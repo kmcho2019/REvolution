@@ -1,0 +1,9 @@
+To fix the issues mentioned in the feedback, we need to make several adjustments to the Verilog code:
+
+1.  **Remove the condition for transitioning back to state A**: Since the FSM should remain in state B and continue checking 'w' regardless of 's', we remove the condition `if(~s)` that transitions the FSM back to state A. This ensures the FSM remains in state B until it is reset.
+2.  **Initialize `cycle_count` to 0**: We should initialize `cycle_count` to 0 instead of 1 when transitioning from state A to state B. This ensures accurate counting of the three cycles.
+3.  **Remove unnecessary reset of `z`**: The logic that resets `z` to 0 in the middle of the three-cycle count when 's' is low should be removed. The output 'z' should only be set based on the count of 'w' within the specified cycles.
+4.  **Set `z` correctly**: After the three cycles, if `w_count` equals 2, 'z' should be set to 1; otherwise, it should be set to 0. After setting 'z', we should reset it in the next clock cycle to ensure it reflects the current state of 'w' in the following cycles.
+5.  **Simplify the code**: The reset logic and the main FSM logic can be simplified and made more readable by using clear and descriptive variable names and comments.
+
+By addressing these issues, we can create a more accurate and efficient FSM that meets the problem's requirements.

@@ -1,0 +1,13 @@
+To correctly implement the specification, we need to:
+1. Use a 3-bit counter to properly count 4 cycles (values 0-3)
+2. Assert shift_ena immediately after reset (cycle 0 counts as first cycle)
+3. Keep shift_ena high for exactly 4 cycles (cycles 0-3)
+4. Maintain shift_ena low after 4 cycles until next reset
+5. Stop counting after reaching 3 to save power
+
+Improvements over original solution:
+- Correct counter width (3 bits) to properly count 4 cycles
+- Immediate assertion on reset (cycle 0 counts)
+- Proper terminal count detection
+- Counter stops after reaching terminal count
+- Simple comparison for shift_ena generation

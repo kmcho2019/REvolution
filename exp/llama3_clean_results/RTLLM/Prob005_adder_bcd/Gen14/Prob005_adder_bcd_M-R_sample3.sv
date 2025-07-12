@@ -1,0 +1,29 @@
+module adder_bcd(
+    input [3:0] A,
+    input [3:0] B,
+    input Cin,
+    output [3:0] Sum,
+    output Cout
+);
+    wire [4:0] bin_sum;
+    
+    // Perform binary addition
+    assign bin_sum = A + B + Cin;
+    
+    // Generate carry-out and correct sum if necessary
+    assign Cout = (bin_sum > 9);
+    assign Sum = (bin_sum > 9) ? (bin_sum[3:0] + 4'd6) : bin_sum[3:0];
+    
+    // Alternative implementation using always block for better readability
+    // always @(A, B, Cin) begin
+    //     bin_sum = A + B + Cin;
+    //     if (bin_sum > 9) begin
+    //         Cout = 1'b1;
+    //         Sum = bin_sum[3:0] + 4'd6;
+    //     end else begin
+    //         Cout = 1'b0;
+    //         Sum = bin_sum[3:0];
+    //     end
+    // end
+    
+endmodule

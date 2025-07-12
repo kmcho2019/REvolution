@@ -1,0 +1,123 @@
+The problem requires outputs that are high for inputs 2, 7, and 15; low for 0,1,4,5,6,9,10,13,14; and inputs 3,8,11,12 never occur (don't-cares). The inputs correspond to 4-bit vectors: {a,b,c,d} with 'a' as MSB.
+
+Let's first convert decimal numbers into 4-bit vectors (a,b,c,d):
+
+-  0 = 0000
+-  1 = 0001
+-  2 = 0010  <-- output=1
+-  3 = 0011  (don't care)
+-  4 = 0100
+-  5 = 0101
+-  6 = 0110
+-  7 = 0111  <-- output=1
+-  8 = 1000  (don't care)
+-  9 = 1001
+- 10 = 1010
+- 11 = 1011  (don't care)
+- 12 = 1100  (don't care)
+- 13 = 1101
+- 14 = 1110
+- 15 = 1111  <-- output=1
+
+Using don't-cares for 3,8,11,12 helps reduce complexity.
+
+**Step 1: Write minterms for outputs = 1 (On-set)**
+- m2  =  0010 = ~a & ~b & c & ~d
+- m7  =  0111 = ~a & b & c & d
+- m15 = 1111 = a & b & c & d
+
+**Step 2: Write minterms for outputs = 0 (Off-set)**
+- m0 = 0000, m1=0001, m4=0100, m5=0101, m6=0110,
+- m9=1001, m10=1010, m13=1101, m14=1110
+
+**Step 3: Assign don't-cares (d)**
+- m3=0011, m8=1000, m11=1011, m12=1100
+
+---
+
+**Using Karnaugh Map (K-map) with inputs (a,b,c,d) to find minimal SOP and POS:**
+
+Row labels: ab = 00, 01, 11, 10 (Gray code order for a,b)
+Column labels: cd = 00,01,11,10 (Gray code order for c,d)
+
+Fill cells with 1,0,d accordingly:
+
+| ab\cd | 00(0) | 01(1) | 11(3) | 10(2) |
+|--------|-------|-------|-------|-------|
+| 00(0)  | 0 (m0) | 0(m1)| d(m3) |1(m2)  |
+| 01(1)  |0(m4)   |0(m5)  |1(m7)  |0(m6)  |
+| 11(3)  | d(m12) |0(m13) |1(m15) |0(m14) |
+| 10(2)  | d(m8)  |0(m9)  | d(m11) |0(m10) |
+
+---
+
+**Minimal SOP derivation:**
+
+Looking at the '1's and don't cares, group them:
+
+1. Group m7(0111) and m15(1111) -> b & c & d (since b=1,c=1,d=1), with a as don't care for m7 and m15
+2. m2(0010) is alone at (00,10)
+3. Check if m2 can be combined with don't-cares:
+
+- m3 (0011) is don't care and differs only in d=1
+- So group m2 and m3 over d => ~a & ~b & c
+
+This covers m2 and don't care m3 together.
+
+Thus the minimal SOP expression:
+
+out_sop = (b & c & d) | (~a & ~b & c)
+
+Note: m15 is included in b&c&d term since when b=1,c=1,d=1 covers both 7 and 15 with different 'a'.
+
+---
+
+**Minimal POS derivation:**
+
+Output is zero for inputs listed above, so build maxterms for zeros and use don't-cares to simplify.
+
+From zeros:
+
+m0(0000): a=0,b=0,c=0,d=0 => maxterm: (a + b + c + d)
+
+m1(0001): 0,0,0,1 => (a + b + c + ~d)
+
+m4(0100):0,1,0,0 => (a + ~b + c + d)
+
+m5(0101):0,1,0,1 => (a + ~b + c + ~d)
+
+m6(0110):0,1,1,0 => (a + ~b + ~c + d)
+
+m9(1001):1,0,0,1 => (~a + b + c + ~d)
+
+m10(1010):1,0,1,0 => (~a + b + ~c + d)
+
+m13(1101):1,1,0,1 => (~a + ~b + c + ~d)
+
+m14(1110):1,1,1,0 => (~a + ~b + ~c + d)
+
+Don't-cares can be used to simplify and remove redundant maxterms.
+
+After minimization (via consensus or K-map of zeros), minimal POS expression is:
+
+out_pos = (a + b + c + d) & (a + ~b + c + ~d) & (~a + b + ~c + d)
+
+This expression covers all zeros while excluding ones and uses don't-cares to remove extra clauses.
+
+---
+
+**Summary:**
+
+- Minimal SOP: out_sop = (b & c & d) | (~a & ~b & c)
+- Minimal POS: out_pos = (a + b + c + d) & (a + ~b + c + ~d) & (~a + b + ~c + d)
+
+This solution avoids term1 = b & c (too broad) in the original failed code and fixes the POS terms accordingly.
+
+---
+
+**Final Implementation Details:**
+
+- Use ~ operator in Verilog for negation.
+- Provide clear comments mapping to each term.
+
+This satisfies the requirements and should match the expected outputs for the specified inputs.

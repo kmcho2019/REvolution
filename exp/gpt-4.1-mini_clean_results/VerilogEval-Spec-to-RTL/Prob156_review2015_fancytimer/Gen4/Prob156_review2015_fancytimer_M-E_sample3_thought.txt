@@ -1,0 +1,23 @@
+I will implement a simple finite state machine with these four states:
+
+1. IDLE: scanning serial input bit-by-bit for the pattern 1101. A 4-bit shift register holds the last 4 bits; once pattern detected, transition to DELAY_LOAD.
+2. DELAY_LOAD: shift in exactly 4 bits from the data input, MSB first, to load delay value. Keep a 4-bit counter to track bits loaded.
+3. COUNTING: the timer counts down delay+1 steps, each step lasting 1000 clock cycles.
+    - Use a 10-bit micro_counter for counting 0 to 999 cycles.
+    - Use a 4-bit step_counter for the remaining delay steps, initialized as delay_reg + 1.
+    - The count output shows the current step from delay down to 0, stable throughout each 1000-cycle interval.
+    - When step_counter reaches zero and micro_counter finishes last cycle, transition to DONE.
+4. DONE: assert done=1 and wait for ack input=1 to acknowledge; then go back to IDLE and resume pattern detection.
+
+All registers and counters update synchronously on clk rising edge; reset is synchronous.
+
+The data input is ignored except when in IDLE or DELAY_LOAD states.
+
+This modular FSM ensures clear timing and simple logic, making sure the count output aligns precisely with the 1000-cycle timing granularity. The done and counting outputs behave as required.
+
+Outputs:
+- count: current step remaining (delay down to 0) during counting; don't care otherwise.
+- counting: high during COUNTING state.
+- done: high during DONE state.
+
+This approach cleanly separates pattern detection, delay load, counting, and done acknowledgment phases.

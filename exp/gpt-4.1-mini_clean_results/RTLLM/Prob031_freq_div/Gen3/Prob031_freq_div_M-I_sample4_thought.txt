@@ -1,0 +1,10 @@
+To optimize the existing frequency divider for better power and area efficiency without changing functionality:
+
+1. Combine the three counters and output registers into a single always block to share clock and reset logic, reducing control logic overhead.
+2. Use synchronous reset only, since asynchronous resets may increase switching and complicate timing.
+3. Change counters to minimal bit widths to save area.
+4. For CLK_50, instead of toggling every clock cycle, use a 1-bit counter approach for clarity.
+5. Add clock enable signals for counters that only increment when needed, reducing unnecessary toggling.
+6. Remove unnecessary else branches to optimize synthesis.
+
+These refinements reduce flip-flop usage slightly and ensure fewer toggles, reducing dynamic power, while maintaining clear, synthesizable RTL.

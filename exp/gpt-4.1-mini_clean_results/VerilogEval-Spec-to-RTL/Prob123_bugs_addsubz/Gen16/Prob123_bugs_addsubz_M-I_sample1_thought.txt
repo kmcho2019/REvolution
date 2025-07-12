@@ -1,0 +1,12 @@
+The original solution uses a manual ripple carry adder with explicit carry propagation for an 8-bit adder-subtractor, ensuring correctness and clarity. However, this leads to a linear carry chain, which can increase delay (wns) and power due to toggling carries.
+
+To optimize for better PPA (performance, power, area), we can:
+
+- Use the built-in Verilog '+' operator with conditional XOR to perform addition/subtraction in a single cycle, letting the synthesis tool infer an efficient adder implementation (e.g., carry lookahead or carry select), reducing critical path delay and potentially power.
+- Use a single always @(*) block for output assignments and zero flag.
+- Compute the zero flag with reduction NOR (~|out) for accuracy.
+- This removes the explicit carry wires and generate blocks, reducing code complexity and area.
+- This approach allows the synthesis tool to optimize the adder for speed and power, improving PPA metrics without sacrificing correctness.
+- The zero flag assignment bug from the original code is fixed by explicitly assigning it in all cases.
+
+This approach leverages behavioral description to achieve better synthesis optimization and overall PPA improvement.

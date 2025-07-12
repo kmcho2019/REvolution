@@ -1,0 +1,13 @@
+To fuse the best ideas from both examples, I will adopt the simplicity and minimalism of Example 2 by using a single registered signal to store the previous state of 'a', thereby keeping area and power low and timing clean. However, to meet the requirement that rise and down outputs are registered and held high for exactly one clock cycle synchronized with 'clk' (as in Example 1), I will register these outputs instead of driving them combinationally.
+
+This approach ensures glitch-free, clean one-cycle pulses aligned with the clock, improving signal stability and timing predictability. By registering rise and down, we avoid any glitches or asynchronous assertions of outputs and better conform to the spec, which states the outputs "will be set to 1 on the next clock when the corresponding edge appears, and then return to 0."
+
+The design will use a single flip-flop for the previous input 'a_d' and two flip-flops for rise and down signals, updated synchronously each clock cycle. This adds minimal overhead but gains clearer timing and output behavior.
+
+Thus:
+- Register previous input a_d.
+- Detect edges by comparing 'a' and 'a_d'.
+- Register rise and down outputs, set high for one cycle when the edge is detected, else low.
+- Use nonblocking assignments in sequential blocks for synthesis clarity and avoid combinational outputs for rise/down.
+
+This fusion maintains low area and power and meets output timing requirements precisely.

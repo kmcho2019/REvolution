@@ -1,0 +1,39 @@
+Analyzing the waveform more carefully, the key observations are:
+
+- The state register updates only on the positive clock edge.
+- At the first positive edge where a=0 and b=0, state becomes 0 (likely initialized to 0).
+- When b=1 and a=0, state seems to be set to 1 on the next clock (e.g., at 45ns).
+- When a=1 and b=1, state resets to 0 at the next clock (e.g., at 65ns).
+- When a=1 and b=0, the state toggles or goes low depending on current state.
+- The output q appears to match the *previous* state of the flip-flop (state before clock edge), but delayed by one clock cycle and affected by inputs.
+
+Summarizing the next_state logic:
+
+- next_state = (state & ~(a & b)) | (~state & b & ~a)
+
+  This means:
+  - If state=1 and a&b=1 => next_state=0 (reset)
+  - If state=0 and b=1 and a=0 => next_state=1 (set)
+  - Else next_state holds or becomes 0
+
+Checking the waveform, this matches transitions well.
+
+For output q, it is equal to the state prior to the clock edge (i.e., current state), delayed by one cycle, affected also by input a:
+
+- q = state & ~a | ~state & a & b
+
+This corresponds to the waveform where:
+
+- When state=1 and a=0, q=1
+- When state=0 and a=1 and b=1, q=1
+- Else q=0
+
+Thus q depends combinationally on current state and inputs, as above.
+
+We will implement:
+
+- state register updated at posedge clk with next_state computed combinationally
+- output q combinational from current state and inputs
+- initialize state to 0
+
+This better fits the waveform and is a simple 1-bit memory design with combinational next_state and output.

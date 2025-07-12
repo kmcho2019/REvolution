@@ -1,0 +1,16 @@
+To fix the FSM implementation, I'll address each issue from the feedback:
+
+1. **F Pulse Timing**: Ensure f=1 for exactly one cycle after reset deassertion by properly sequencing the RESET and F_PULSE states.
+
+2. **Sequence Detection**: Maintain a proper 3-bit shift register for x inputs and only check for 1-0-1 pattern when we have enough samples.
+
+3. **y Monitoring**: Use a dedicated 2-bit counter to track the two-cycle window for y input after g is set to 1.
+
+4. **Final State**: Explicitly maintain output values in the FINAL state until reset.
+
+Key improvements:
+- Proper state sequencing for f pulse
+- Correct 1-0-1 pattern detection
+- Separate counter for y monitoring
+- Clear output maintenance in FINAL state
+- All transitions happen on clock edges

@@ -1,0 +1,17 @@
+To optimize for better PPA, I will focus on simplifying the combinational logic expression for the Rule 110 next state to reduce gate count and critical path delay. The original formula is:
+
+  next = (~left & center) | (center ^ right)
+
+We can rewrite this as:
+
+  next = center & (~left | right) | (~center & right)
+
+However, after Karnaugh map analysis, the minimal sum-of-products form of Rule 110 is:
+
+  next = (center & ~left) | (center & ~right) | (~center & right)
+
+Implementing this simplified form reduces gate count and potentially critical path, helping timing and area. Also, I will use a generate-for loop with a single always_comb block to compute all next_state bits together, reducing logic duplication overhead. 
+
+The padding will remain as before for boundary conditions. The synchronous logic stays unchanged.
+
+This should reduce logic complexity and delay, slightly improving PPA without changing functionality.

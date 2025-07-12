@@ -1,0 +1,9 @@
+To refactor the Galois LFSR implementation without changing its core behavior, I will separate the combinational feedback calculation from the sequential logic. Instead of computing `next_q` inside the always block, I will use a combinational function or wire that calculates the next LFSR state based on the current state and the feedback bit. This approach improves clarity by cleanly distinguishing between combinational and sequential parts.
+
+Specifically:
+- Use a continuous assignment (`assign`) to compute `next_q` combinationally from `q`.
+- Implement the feedback XOR into the tapped bits by explicit bitwise logic in a separate combinational block or function.
+- Use a synchronous always block only for the state register update on the clock edge and synchronous reset.
+- This structure improves readability and might help synthesis tools optimize feedback logic better.
+
+This refactoring keeps the same functionality with taps at positions 32, 22, 2, and 1 (bits 31, 21, 1, 0), resets to 32'h1 synchronously, and shifts right each clock cycle with proper feedback XOR.

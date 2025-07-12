@@ -1,0 +1,12 @@
+To simplify the priority encoder while maintaining functionality, we can use a casez statement which is more readable and naturally expresses priority encoding. The approach is:
+
+1. Use casez to match patterns with 'don't care' bits (z)
+2. List cases in priority order from LSB to MSB
+3. Each case checks if a specific bit is 1 (with lower bits as don't cares)
+4. Default case handles the all-zeros input
+5. This approach is:
+   - More readable than nested ternary operators
+   - Still maintains correct priority encoding
+   - Likely to synthesize efficiently
+   - Explicitly shows the priority order
+   - Handles all cases in a single construct

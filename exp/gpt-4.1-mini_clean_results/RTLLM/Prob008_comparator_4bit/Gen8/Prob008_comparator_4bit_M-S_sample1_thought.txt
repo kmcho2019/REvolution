@@ -1,0 +1,9 @@
+To simplify the design, use a direct combinational subtraction approach: calculate (A - B) and inspect the MSB (borrow) and zero result to determine the outputs.
+
+- Perform A - B as an unsigned subtraction.
+- If the result is zero, A_equal is 1.
+- If the subtraction does not borrow (no negative result) and result is non-zero, then A > B.
+- If the subtraction results in a borrow (indicated by a carry/borrow bit or by comparing A and B directly), then A < B.
+- This avoids explicit borrow generate/propagate logic and reduces the circuit to simple combinational subtractor and zero-check.
+- Outputs remain mutually exclusive.
+This method simplifies the logic and code, keeping functionality intact and easily synthesizable.

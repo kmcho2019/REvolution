@@ -1,0 +1,7 @@
+To fix the issue with the enumeration values for the state machine, we can increase the bit width of the enumeration logic to accommodate all the states. Since we have six unique states (RESET, INIT, SEQ_DET, WAIT_Y, G_SET, and G_CLEAR), we need at least three bits to represent them (2^3 = 8, which is greater than the number of states we have).
+
+We will change the bit width of the main state machine, sequence detection sub-state machine, and waiting sub-state machine to [2:0], which can represent eight unique values (0 to 7). This will provide enough space for all our states without causing any overflows or conflicts.
+
+Additionally, we will update the sequence detection sub-state machine and waiting sub-state machine to also use the same bit width to maintain consistency throughout the design.
+
+By making these changes, we ensure that our state machine can properly transition between all the required states without any issues related to enumeration value conflicts or overflows.

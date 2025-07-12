@@ -1,0 +1,27 @@
+Fix the shifting directions and bit insertion to correctly handle MSB-first data input:
+
+- For pattern detection (SEARCH): shift in new data bit into the LSB, shifting previous bits to the left (pattern_shift = {pattern_shift[2:0], data}) stores oldest bit at MSB and newest bit at LSB. But since input is MSB-first, the newest bit should go to MSB; so instead, shift right and insert data at MSB: pattern_shift = {data, pattern_shift[3:1]}.
+
+- Similarly, for delay load bits (DELAY_LOAD): shift right and insert data at MSB to load delay MSB-first.
+
+Fix counting logic to count the correct total clock cycles:
+
+- Initialize tick_counter to delay + 1.
+
+- Use cycle_counter from 0 to 999, on reaching 999 increment tick count.
+
+- Decrement tick_counter at cycle_counter == 999 only if tick_counter > 0.
+
+- When tick_counter reaches zero at end of the last 1000-cycle interval, transition to DONE.
+
+Adjust outputs so count = tick_counter - 1 during counting (if tick_counter > 0), else 0.
+
+Also, do not reset registers like cycle_counter or tick_counter in states other than their initialization states to avoid unwanted resets.
+
+Maintain stable outputs and registers properly across states.
+
+Ensure synchronous reset clears state and key registers.
+
+Implement state machine transition properly with stable next state conditions.
+
+This approach fixes the off-by-one errors, respects the MSB-first serial data order, and gives correct timer durations and outputs as specified.

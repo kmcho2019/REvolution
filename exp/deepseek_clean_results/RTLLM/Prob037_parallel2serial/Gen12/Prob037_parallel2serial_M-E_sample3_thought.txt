@@ -1,0 +1,13 @@
+Novel Architecture: Circular Buffer with Predictive Valid
+1. Instead of shifting, maintain data in a circular buffer and use a pointer to select the current bit
+2. Implement a "pre-valid" signal that goes high one cycle before actual data is valid, allowing downstream systems to prepare
+3. Use a down-counter instead of up-counter for simpler terminal count detection
+4. Implement bit selection through a 4:1 mux controlled by the counter, eliminating shift operations
+5. Add pipeline register for the output to improve timing
+
+Key Advantages:
+- No shifting operations reduce dynamic power
+- Predictive valid signal improves system timing margins
+- Down-counter simplifies wrap-around logic
+- Mux-based selection is more timing-friendly than shift operations
+- Output register improves clock-to-out timing

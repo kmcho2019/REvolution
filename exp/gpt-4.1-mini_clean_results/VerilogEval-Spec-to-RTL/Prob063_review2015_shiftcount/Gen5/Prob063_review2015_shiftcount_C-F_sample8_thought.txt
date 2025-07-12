@@ -1,0 +1,13 @@
+Fuse the two example solutions by combining their strengths: use the concise combinational next-state muxing from Example 1 for clear and optimization-friendly logic, but fix the shift direction to truly shift in data most-significant-bit first as the problem states. This means shifting the register right by one and inserting the new data at the MSB (bit 3), not at LSB.
+
+Implement decrement as q - 1 as before, since for 4 bits the subtractor is simple and synthesis tools can optimize well. The priority mux ensures that if shift_ena is asserted, shifting happens; else if count_ena is asserted, decrement happens; else hold.
+
+This approach keeps the clocked always block minimal with a single assignment, facilitates efficient synthesis with clear combinational inputs, and correctly respects the shift direction specification.
+
+No reset is added per the problem statement. The code is clean and ready for synthesis with good PPA characteristics.
+
+Fusion strategy summary:
+- Adopt Example 1's mux-based next_q assignment for clarity and better optimization.
+- Correct the shift operation to shift right by one, inserting data at MSB for "most-significant-bit first".
+- Retain decrement logic as q - 1.
+- Use a simple clocked always block for assignment.

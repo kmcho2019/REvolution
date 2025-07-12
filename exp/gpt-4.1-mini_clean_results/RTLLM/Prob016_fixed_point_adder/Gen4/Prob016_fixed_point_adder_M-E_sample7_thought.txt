@@ -1,0 +1,13 @@
+Implement the fixed-point adder using a unified signed addition approach by interpreting both inputs as signed fixed-point numbers, performing a signed addition directly, and then saturating the output if overflow occurs. This design leverages the two's complement signed arithmetic nature of fixed-point numbers, avoiding separate absolute value and sign manipulation.
+
+Key points:
+- Treat inputs as signed N-bit fixed-point numbers.
+- Perform a signed addition producing N+1 bits (to detect overflow).
+- Detect overflow by checking if the sign of the result differs from the signs of operands in case they had the same sign.
+- Saturate the output to the max/min representable fixed-point number on overflow.
+- If operands have opposite signs, overflow is impossible, and the sum fits within range.
+- The fractional bits (Q) are implicitly handled by the fixed-point representation without extra scaling.
+- Store the final result in a register `res` updated combinationally, reflecting the sum with saturation.
+- Output the saturated result.
+
+This method simplifies sign and magnitude handling, uses a straightforward arithmetic operation, and efficiently manages overflow via saturation.

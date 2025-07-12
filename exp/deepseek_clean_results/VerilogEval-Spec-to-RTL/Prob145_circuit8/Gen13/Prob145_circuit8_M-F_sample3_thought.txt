@@ -1,0 +1,20 @@
+After carefully analyzing the feedback and re-examining the waveform, here's the corrected approach:
+
+1. Key observations from waveform:
+   - p updates on rising clock edges (when clock goes high)
+   - q updates on falling clock edges (when clock goes low)
+   - p takes the value of 'a' when clock rises
+   - q takes the value of p when clock falls, but only if 'a' is 1
+   - Both p and q clear to 0 when 'a' is 0 during a falling edge
+
+2. Implementation strategy:
+   - Use separate always blocks for rising and falling edge behaviors
+   - Make p purely synchronous to rising edge
+   - Make q synchronous to falling edge with conditional update
+   - Implement clear functionality for both outputs when 'a' is 0 on falling edge
+
+3. Key fixes from feedback:
+   - Remove combinational always block in favor of proper edge-triggered blocks
+   - Eliminate prev_clock tracking which was causing issues
+   - Properly implement the conditional behavior for q updates
+   - Maintain correct sequencing between p and q updates

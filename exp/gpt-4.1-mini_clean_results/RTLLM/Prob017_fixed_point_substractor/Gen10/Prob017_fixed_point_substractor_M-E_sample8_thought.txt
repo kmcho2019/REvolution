@@ -1,0 +1,26 @@
+To provide a novel architectural approach that ensures synthesis friendliness and avoids complex function usage or sign-magnitude conversions, I'll implement the fixed-point subtraction purely using two's complement arithmetic but explicitly handle sign and magnitude extraction with straightforward bitwise and arithmetic operations.
+
+Key idea:
+
+- Inputs are in two's complement fixed-point format (N bits, Q fractional).
+- Use the sign bit (MSB) to identify the sign.
+- Compute absolute values using simple two's complement inversion for negatives.
+- Use combinational logic inside a single always @* block.
+- For same sign inputs:
+    - Subtract magnitudes.
+    - Result sign is the sign of inputs.
+    - If magnitude difference is negative (i.e., mag_b > mag_a), flip sign and swap magnitude difference.
+- For different sign inputs:
+    - Add magnitudes.
+    - Result sign depends on which operand has larger magnitude.
+- At the end, if magnitude is zero, force sign bit to 0.
+- Compose the final two's complement output from sign and magnitude without function calls, using simple logic.
+- Use intermediate variables for clarity.
+- Avoid any concatenation or slicing inside functions; only local variables within the always block.
+- Output assigned from a reg 'res' updated combinationally.
+
+This design is simple, uses only basic arithmetic and bitwise operations, and the logic is explicit and straightforward for synthesis. It avoids subtle function and slicing issues and does not rely on sign-magnitude functions. The architecture ensures precision since it operates on the full N-bit fixed-point numbers and uses consistent treatment of sign and magnitude.
+
+The design also explicitly covers the zero-result sign bit setting, as requested.
+
+The module will be parameterized by N and Q, and the testbench will check corner cases including zero, same signs, and different signs.

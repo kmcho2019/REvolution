@@ -1,0 +1,12 @@
+To optimize the original fully unrolled solution for better power and area, I will exploit the symmetry in pairwise comparisons: out[i,j] = out[j,i]. This means only 15 unique comparisons are needed (including the diagonal), and the other 10 outputs can be wired directly from these.
+
+The approach is:
+- Group the five inputs into an array for easier indexing.
+- Compute the 15 unique XNOR values for all pairs where row <= col (upper triangle including diagonal).
+- Assign these computed values directly to the corresponding outputs.
+- For symmetric outputs (row > col), directly assign from the corresponding symmetric output bit to avoid duplicate XNOR computations.
+- Use generate loops to automate mapping and reduce code verbosity.
+- This reuses logic, reducing the total gate count from 25 XNORs to 15 XNORs and 10 wire assignments, lowering power and area while keeping zero timing overhead.
+- The output bit index mapping is consistent with the original specification, i.e. out[24] = (a,a), down to out[0] = (e,e), arranged row-wise.
+
+This optimization reduces redundant XNOR operations while maintaining the exact output mapping and functionality.

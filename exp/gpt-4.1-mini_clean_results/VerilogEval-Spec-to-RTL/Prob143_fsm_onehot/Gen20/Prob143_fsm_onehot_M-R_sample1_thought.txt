@@ -1,0 +1,13 @@
+The original design uses a set of parallel continuous assignments to compute next_state bits by combining the current one-hot state bits and input in a direct OR fashion, which is clear and efficient.
+
+To refactor with a different structure while preserving the same core functionality, I will express the next_state and output logic inside combinational always blocks with reg-type outputs assigned inside. This approach makes the transition logic more explicit and resembles a "combinational process" style rather than purely continuous assignments.
+
+This style is sometimes preferred for readability when the logic grows more complex or when targeting certain synthesis or linting tools. Also, by grouping the next_state signals into a single always block, the logic can be seen as a single combinational function, potentially making modifications or extensions easier.
+
+The outputs remain combinationally derived but will be computed inside the same always block for consistency.
+
+Thus, the refactoring transforms the continuous assignments into a combinational always @(*) block with reg outputs.
+
+This alternate structure showcases a different common Verilog idiom for combinational FSM logic and can aid verification/debugging tools and synthesis optimizers that prefer explicit combinational blocks.
+
+Note: since next_state and outputs are assigned in an always @(*) block, they must be declared as reg type.

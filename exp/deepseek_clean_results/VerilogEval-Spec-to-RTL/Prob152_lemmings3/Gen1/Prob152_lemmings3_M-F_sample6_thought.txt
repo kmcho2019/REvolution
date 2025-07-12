@@ -1,0 +1,12 @@
+To fix the issues identified in the feedback, we need to:
+1. Strictly enforce the priority order: fall > dig > direction switching
+2. Ensure outputs are only active in their intended states (walk_left only in WALK_LEFT, etc.)
+3. Completely ignore bump signals during falling or digging states
+4. Maintain proper state transitions with clear precedence rules
+
+The corrected state machine will:
+- First check for falling condition (ground=0) in walking states
+- Then check for dig command only if not falling
+- Finally check for bumps only if neither falling nor digging
+- Keep separate outputs for each state without overlap
+- Maintain proper state transitions during falling and digging

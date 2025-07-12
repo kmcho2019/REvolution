@@ -1,0 +1,17 @@
+I will refactor the design by separating the combinational and sequential logic more explicitly. The prediction outputs will be purely combinational from the current GHR and PHT, accessed as a read port. The GHR and PHT update will be in a single always block on the positive clock edge with asynchronous reset.
+
+Key refinements:
+- Declare all variables outside procedural blocks to avoid synthesis/simulation issues.
+- Compute predict_index and train_index wires combinationally upfront.
+- Use a combinational always_comb block (or continuous assignment) to read the PHT state for prediction.
+- On clock edge, update PHT only if train_valid, using train_index and train_taken.
+- On clock edge, update GHR as follows:
+  - If train_valid & train_mispredicted: restore GHR from train_history.
+  - Else if predict_valid: shift in the predicted taken bit from previous combinational prediction.
+- Output predict_taken and predict_history are driven combinationally as soon as predict_valid is asserted, reflecting the current GHR and PHT state (before any update at the clock edge).
+- Initialize the PHT and GHR on reset to known states.
+- Keep saturating counter increment and decrement as functions outside procedural blocks.
+
+This structure clarifies data flow, maintains priority rules and timing relationships, and avoids internal variable declarations inside procedural blocks. It respects the specification that prediction sees pre-update PHT state and that training updates happen after prediction outputs are generated.
+
+The continuous assignments and simple synchronous update form should also ease synthesis and simulation consistency.

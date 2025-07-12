@@ -1,0 +1,12 @@
+Fuse Example 1's robustness and error recovery with Example 2's clean FSM and clock-enable style updates to minimize toggling:
+
+- Use a 4-state FSM (IDLE, RECEIVE, STOP, WAIT_STOP) for clarity and better timing.
+- Implement a 3-bit bit_count counting data bits 0..7 during RECEIVE state.
+- Shift data bits LSB first using `data_shift <= {in, data_shift[7:1]}` on RECEIVE state clock enable.
+- Assert `done` for exactly one cycle when a valid stop bit is detected in STOP state.
+- On bad stop bit, enter WAIT_STOP state until line returns high (stop bit seen) to resynchronize.
+- Initialize/reset all registers synchronously.
+- Keep `done` cleared by default to reduce toggling.
+- Maintain small FSM encoding (2 bits) and minimal registers.
+- Ensure all state transitions and data updates are in clocked always blocks to improve timing.
+- This approach balances clarity, robustness, low power (via clock enable style register updates), and timing.

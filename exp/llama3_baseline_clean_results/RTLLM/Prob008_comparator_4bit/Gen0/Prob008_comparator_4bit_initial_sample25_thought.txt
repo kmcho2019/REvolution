@@ -1,0 +1,12 @@
+The design idea is to create a 4-bit comparator module that uses combinational logic to compare two binary numbers A and B. The comparison logic will perform a subtraction operation (A - B) and analyze the result to determine whether A is greater than, equal to, or less than B. The module will have three output ports: A_greater, A_equal, and A_less, which are mutually exclusive, ensuring only one of them is high at any given time.
+
+To implement the comparator, we will:
+
+1. Perform a bit-level subtraction of B from A, which will generate a result and a borrow signal.
+2. If a borrow occurs during the subtraction, we will set A_less to 1, indicating that A is less than B.
+3. If no borrow occurs and the result of the subtraction is non-zero, we will set A_greater to 1, indicating that A is greater than B.
+4. If the result of the subtraction is zero, we will set A_equal to 1, indicating that A is equal to B.
+
+The comparator will use a hierarchical approach, comparing the most significant bits (MSBs) first and then working down to the least significant bits (LSBs).
+
+We will use Verilog's built-in arithmetic operators to perform the subtraction and generate the borrow signal.

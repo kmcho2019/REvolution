@@ -1,0 +1,9 @@
+To optimize the original design for better PPA (Power, Performance, Area), I will use vector and concatenation operations to reduce the number of explicit assignments and potentially enable better synthesis optimizations. 
+
+- For out_both: Instead of assigning bits individually, shift the input vector left by 1 and AND with original input for bits [2:0]; out_both[3] remains 0.
+- For out_any: Shift the input vector right by 1 and OR with original input for bits [3:1]; out_any[0] remains 0.
+- For out_different: Using vector concatenation to implement wrap-around XOR compactly.
+
+This approach reduces explicit indexing, minimizes number of gates, and results in smaller routing complexity. Assigning fixed zero bits explicitly as constants avoids generating logic unnecessarily.
+
+This should lead to a modest improvement in area and power, and potentially improve performance by reducing logic depth and fanout.

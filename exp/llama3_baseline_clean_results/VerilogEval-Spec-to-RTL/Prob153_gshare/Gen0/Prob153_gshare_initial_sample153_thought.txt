@@ -1,0 +1,11 @@
+To implement the TopModule with the specified interface, we need to follow these steps:
+1. Create a 7-bit global branch history register and a 128-entry table of two-bit saturating counters.
+2. When a prediction is requested, use the current pc and global branch history to generate an index into the table.
+3. Use the value at this index to make a prediction (predict_taken).
+4. Update the global branch history register at the next positive clock edge for the predicted branch.
+5. When training is requested, use the provided pc and branch history to generate an index into the table.
+6. Update the table entry at this index based on the actual branch outcome and whether it was a misprediction.
+7. If the branch being trained is a misprediction, recover the global branch history register to the state immediately after the mispredicting branch completes execution.
+8. Handle cases where training and prediction occur in the same cycle, giving precedence to training.
+
+We will use Verilog's reg and wire types to implement the registers and wires, and always blocks to describe the combinational and sequential logic.

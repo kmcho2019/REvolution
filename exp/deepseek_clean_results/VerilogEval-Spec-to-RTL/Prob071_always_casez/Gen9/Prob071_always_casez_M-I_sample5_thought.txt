@@ -1,0 +1,17 @@
+To optimize the priority encoder for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Parallel Evaluation**: Use a casez statement instead of nested ternary operators to evaluate all bits in parallel, reducing logic depth and improving timing.
+
+2. **Priority Encoding**: The casez statement naturally implements priority encoding by evaluating cases in order, matching our requirement for LSB-first priority.
+
+3. **Default Case**: Explicitly handle the all-zeros case to avoid latch inference and ensure clean synthesis.
+
+4. **Power Optimization**: The casez structure allows synthesis tools to better optimize power by eliminating unnecessary logic evaluations.
+
+5. **Area Reduction**: This approach typically synthesizes to more compact logic compared to nested conditionals, as it can share common sub-expressions.
+
+The improved implementation will:
+- Check all 8 bits in priority order (bit 0 to bit 7)
+- Use '?' wildcards in casez to match any higher bits
+- Default to 0 when no bits are set
+- Result in a flatter logic structure with better timing characteristics

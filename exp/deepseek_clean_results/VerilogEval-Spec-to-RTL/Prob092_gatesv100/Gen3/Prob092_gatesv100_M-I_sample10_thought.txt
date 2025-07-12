@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. Maintain the efficient vector operations for out_both and out_any as they are already optimal
+2. Optimize out_different implementation by:
+   - Using a more direct wrap-around approach without bit concatenation
+   - Potentially reducing the critical path by rearranging operations
+3. Consider register retiming opportunities if this module is part of a pipeline
+4. Explore if any outputs can share intermediate computations (though unlikely for this simple case)
+5. Ensure all operations map efficiently to standard cells
+
+Key Optimizations:
+- Simplify out_different logic by using a single XOR with rotated vector
+- Maintain all parallel bitwise operations for maximum throughput
+- Keep the same edge case handling for out_both and out_any
+- The new implementation should have slightly better timing and area due to more efficient wrap-around logic

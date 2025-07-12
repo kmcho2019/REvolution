@@ -1,0 +1,27 @@
+Use a one-hot style state encoding with three states to explicitly capture the behaviors:
+
+- WALK_LEFT: walking left state
+- WALK_RIGHT: walking right state
+- FALLING: falling state (direction stored in a separate flip-flop)
+
+Store the walking direction in a separate reg so it persists through falling.
+
+State transitions are:
+
+- If areset: go to WALK_LEFT and set direction=left.
+
+- When in WALK_LEFT or WALK_RIGHT:
+  - If ground lost: go to FALLING (keep direction)
+  - Else if bumped (left or right), switch direction and corresponding walk state.
+  
+- When in FALLING:
+  - Ignore bump signals
+  - When ground returns: go back to walking state according to stored direction.
+  
+This separates control of direction (in its own reg) from main FSM state, making logic modular and clear.
+
+Outputs are Moore outputs based on current FSM state and stored direction.
+
+This design trades one-hot for an explicit direction register, enabling simple combinational next state logic and output logic, with a straightforward asynchronous reset.
+
+It also simplifies bump logic by handling it only in walking states, completely ignoring bumps while falling.

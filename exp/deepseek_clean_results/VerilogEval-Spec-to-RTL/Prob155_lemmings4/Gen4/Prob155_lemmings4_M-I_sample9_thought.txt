@@ -1,0 +1,27 @@
+Improved Lemming State Machine Design:
+
+1. State Separation:
+   - Use distinct states: WALK_LEFT, WALK_RIGHT, DIG_LEFT, DIG_RIGHT, FALL, SPLAT
+   - This eliminates direction flags and makes state transitions clearer
+
+2. Proper Priority Implementation:
+   - Explicit fall condition check first (ground=0)
+   - Then dig condition (dig=1 and ground=1)
+   - Finally direction change (bump signals)
+
+3. Accurate Fall Counter:
+   - Separate counter logic that only increments in FALL state
+   - Clear counter when leaving FALL state
+   - Proper splatter condition (counter >20 when ground returns)
+
+4. Clean Output Logic:
+   - Direct mapping from states to outputs
+   - SPLAT state zeros all outputs
+   - No complex conditional expressions
+
+Key Improvements:
+- Clear state separation for better readability and correctness
+- Proper handling of all priority conditions
+- Accurate fall duration tracking
+- Simplified output logic
+- Maintains all specified functionality

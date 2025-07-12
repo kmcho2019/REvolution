@@ -1,0 +1,13 @@
+The expression for Y1 can be simplified by distributing terms to reduce the number of logic operations. Starting from the original expression:
+
+Y1 = (y[0] & ~y[1]) | (~y[0] & w & (y[1] | y[2]))
+
+We can rewrite (y[1] | y[2]) as a single signal to reduce complexity. Since y[1] and y[2] are separate bits, keeping them as is is simplest. The expression is already minimal in terms of gate usage and does not include redundant terms. 
+
+However, we can reorder the terms for readability and slightly simplify by factoring common signals:
+
+Y1 = (~y[0] & w & (y[1] | y[2])) | (y[0] & ~y[1])
+
+This form emphasizes the two distinct conditions for next_y1 and makes implementation straightforward with minimal gates.
+
+This is as simple as possible without changing functionality, achieving minimal complexity and straightforward synthesis.

@@ -1,0 +1,5 @@
+Simplify the shift logic by directly implementing the selected shift operation inside the sequential always block rather than using a separate function that computes all shifts in parallel. Use case or if-else statements inside the clocked block to perform only the needed shift, reducing combinational logic and muxing.
+
+Since the shift amounts and directions are fixed and small (shift left or right by 1 or 8 bits), implement the shifts with simple concatenations and sign extensions inline. This reduces redundant parallel calculations and makes the design more straightforward, while maintaining synchronous load and enable functionality.
+
+This approach decreases combinational complexity and switching power by avoiding unnecessary computation of unused shifts.

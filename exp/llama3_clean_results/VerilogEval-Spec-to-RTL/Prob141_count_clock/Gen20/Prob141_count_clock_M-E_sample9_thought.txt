@@ -1,0 +1,13 @@
+To design a novel architectural idea for the 12-hour clock with AM/PM indicator, we can utilize a modular approach focusing on separate counters for seconds, minutes, and hours. Each counter will have its own wrapping logic to handle the transition from 59 to 0 for seconds and minutes, and from 12 to 1 for hours, including the AM/PM switch.
+
+The key components will be:
+- `SecondsCounter`: Increments every second and wraps around from 59 to 0, generating a pulse to increment the minutes counter.
+- `MinutesCounter`: Increments every minute and wraps around from 59 to 0, generating a pulse to increment the hours counter.
+- `HoursCounter`: Increments every hour and wraps around from 12 to 1, handling the AM/PM switch.
+- `BCDConverter`: Converts the binary counts from the counters to BCD format for output.
+
+This modular design allows for easier management of the clock's functionality, as each component has a specific, well-defined task. The use of separate counters and a BCD converter simplifies the logic and improves code readability.
+
+To further enhance the design, we can implement an enable mechanism that allows the clock to run or stop, providing more control over the clock's operation. This can be achieved through the `ena` signal, which controls the incrementing of the counters.
+
+The novel aspect of this approach lies in the modular separation of counter logic and the explicit handling of wrapping and AM/PM switching through dedicated components. This modularity not only simplifies the design but also makes it easier to test, verify, and potentially expand the functionality of the clock.

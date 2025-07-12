@@ -1,0 +1,7 @@
+To improve the design for better power and timing without sacrificing correctness, I will add an explicit clock enable to the clk_a domain registers so that data_reg and en_data_reg only update when data_en transitions high or remains high, reducing unnecessary toggling. Specifically, en_data_reg will track data_en stable status without toggling unnecessarily.
+
+In clk_b domain, I will separate the enable signal synchronization from the output register update, so dataout updates only when a stable synchronized enable signal asserts, avoiding conditional assignments inside the always block. This clarifies timing paths and helps synthesis optimize clock gating or enable signals.
+
+Additionally, I will properly synchronize the asynchronous resets to reduce metastability risks on reset deassertion edges. Implementing simple synchronizers for resets or using synchronous resets could improve robustness. However, as the problem mandates asynchronous active-low resets, I keep them but use non-blocking assignments carefully to maintain stable reset release.
+
+Overall, this improves power by reducing toggle rates on data_reg and en_data_reg, aids timing by removing conditional updates on dataout, and keeps area minimal with no extra flop count. The design remains clean, robust, and fully satisfies the spec.

@@ -1,0 +1,5 @@
+Refactor the counter design to explicitly separate the combinational next-state logic and the sequential state update logic. Use a 4-bit register `out` for the count and a combinational always block to compute the next count value based on `valid_count` and the terminal count condition (using `out == 4'd11` for clarity and simpler logic). Then, on each rising clock edge, update `out` with the next count or reset it if `rst_n` is low.
+
+This structure clearly distinguishes between next state calculation and state update, which can improve readability and synthesis results. The terminal count detection uses a straightforward equality comparison instead of bitwise operations, potentially reducing gate count and power. Holding the output when `valid_count` is low is done by assigning next state to current state.
+
+This approach is fully synthesizable, clean, and meets the requirements of pause and reset functionality.

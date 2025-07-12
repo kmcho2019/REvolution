@@ -1,0 +1,14 @@
+To refactor the existing code, we will separate the combinational logic into distinct blocks using assign statements instead of always blocks. The main idea is to keep the state machine approach but simplify the logic and improve readability.
+
+We will introduce three signals, `level_above_high`, `level_above_middle`, and `level_above_low`, which will indicate whether the water level is above the highest, middle, or lowest sensor, respectively. These signals will be used to determine the output signals (`fr2`, `fr1`, `fr0`) and the supplemental flow rate signal (`dfr`).
+
+The refactored code will have the following structure:
+- Combinational logic to determine the `level_above_high`, `level_above_middle`, and `level_above_low` signals.
+- Combinational logic to determine the output signals (`fr2`, `fr1`, `fr0`) based on the `level_above_high`, `level_above_middle`, and `level_above_low` signals.
+- Sequential logic to update the previous sensor state at each clock cycle.
+- Combinational logic to determine the supplemental flow rate signal (`dfr`) based on the previous sensor state and the current sensor state.
+
+The main benefits of this refactoring are:
+- Improved readability and maintainability of the code.
+- Simplified logic for determining the output signals.
+- Easier debugging and testing of the design.

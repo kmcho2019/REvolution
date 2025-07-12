@@ -1,0 +1,7 @@
+I will implement the 4-bit comparator by cascading individual 1-bit comparators starting from the most significant bit (MSB) to the least significant bit (LSB). Each bit-level comparator compares the corresponding bits of A and B and produces local signals indicating if A is greater, equal, or less at that bit. The overall comparator resolves the final output by checking these bit-level results in priority order: the MSB's comparison result decides if different; if equal, the next bit decides, and so forth down to LSB.
+
+This approach uses explicit bit-level comparison signals and a priority chain, avoiding subtraction or borrow logic. It is purely combinational and clear in terms of control flow, as each bit-level comparator outputs three mutually exclusive signals that feed into the overall outputs by priority logic.
+
+Outputs are mutually exclusive since for the first bit where A and B differ, that bit's greater/less signal dominates. If all bits are equal, then A_equal is asserted.
+
+This design demonstrates modular decomposition and an alternative way to do multi-bit comparison without carry/borrow chains.

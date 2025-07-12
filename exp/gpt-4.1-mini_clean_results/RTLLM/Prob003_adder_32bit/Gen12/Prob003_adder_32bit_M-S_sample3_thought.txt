@@ -1,0 +1,7 @@
+Simplify the 32-bit CLA by continuing to use two 16-bit CLA blocks, but implement each 16-bit CLA block as a pure ripple carry adder using simple generate loops for carry propagation. This eliminates the carry-lookahead logic within the 16-bit block itself, reducing complexity and code size at the cost of longer carry chains internally but still structurally clear.
+
+At the top 32-bit level, directly chain the carry-out of the lower 16-bit block as carry-in to the upper 16-bit block.
+
+Maintain the specified [32:1] input/output indexing by simple bit mapping.
+
+This approach keeps the overall design functional and hierarchical but greatly reduces logic complexity in each block, making the code simpler and easier to understand while maintaining correctness.

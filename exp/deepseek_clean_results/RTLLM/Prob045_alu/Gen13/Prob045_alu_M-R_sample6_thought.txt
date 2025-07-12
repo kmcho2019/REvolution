@@ -1,0 +1,21 @@
+The refactored ALU design maintains the same functionality but uses continuous assignments (`assign`) instead of procedural blocks (`always`). Key changes:
+
+1. Parallel Execution with Assignments:
+   - All operations are computed in parallel using continuous assignments
+   - Results are selected via a single large multiplexer
+
+2. Optimized Flag Generation:
+   - Flags are generated directly from the selected operation result
+   - Arithmetic flags (carry/overflow) are computed only when needed
+
+3. Simplified Structure:
+   - Removes procedural blocks in favor of pure combinational logic
+   - Uses ternary operators for compact result selection
+   - Maintains the same operation classification scheme
+
+4. Power/Area Benefits:
+   - Eliminates inferred registers from procedural blocks
+   - More straightforward synthesis to standard cells
+   - Clearer data flow for synthesis optimizations
+
+The design remains fully combinational with identical functionality but expresses the logic more directly through continuous assignments.

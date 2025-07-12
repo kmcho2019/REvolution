@@ -1,0 +1,15 @@
+Here's a novel approach that leverages the observation that the K-map outputs can be expressed as combinations of c and d with specific conditions:
+
+1. For ab=00 (mux_in[0]): Output is 1 when (c=0 and d=1) or (c=1 and d=1) or (c=1 and d=0)
+   - This simplifies to c | d except when c=0 and d=0
+   - We can implement this with a 2-to-1 mux selecting between d (when c=1) and 0 (when c=0)
+
+2. For ab=01 (mux_in[1]): Always 0 (hardwired)
+
+3. For ab=11 (mux_in[2]): Output is c AND d (direct implementation)
+
+4. For ab=10 (mux_in[3]): Output is 1 when (c=0 and d=0) or (c=1 and d=0) or (c=1 and d=1)
+   - This can be implemented as ~d | c using a single OR operation
+   - But since we can only use 2-to-1 muxes, we'll implement it as a mux selecting between 1 (when d=0) and c (when d=1)
+
+This approach uses exactly two 2-to-1 multiplexers (for mux_in[0] and mux_in[3]) plus the required 4-to-1 mux, and correctly implements all K-map cases.

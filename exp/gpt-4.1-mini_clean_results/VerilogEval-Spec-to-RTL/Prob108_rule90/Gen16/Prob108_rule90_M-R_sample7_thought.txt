@@ -1,0 +1,13 @@
+Refactor the design to use a single 512-bit register to hold the entire state instead of eight 64-bit blocks. Compute the next state combinationally using bitwise operations and explicit boundary zero padding, then update the register synchronously on the clock edge with nonblocking assignment.
+
+Specifically:
+- Use a 512-bit register `state` to hold current cells.
+- At each clock, if `load` is asserted, load `data` into `state`.
+- Otherwise, calculate the next state as `next_state = (state << 1) ^ (state >> 1)`, with zero-padding on left and right boundaries to implement the zero neighbor condition.
+- Assign the output `q` directly from `state`.
+
+This removes hierarchical blocks, simplifies neighbor calculation with vector shifts and XORs, and centralizes state management. The combinational logic is simpler and synthesizes efficiently.
+
+Using bitwise shift operators and vector XOR will be clearer, potentially faster, and reduce code size while preserving the original function and timing semantics.
+
+This approach remains fully synchronous with a single always block, ensuring stable, nonblocking state updates.

@@ -1,0 +1,9 @@
+To simplify the FSM detection circuit, I will use a binary encoded FSM with 6 states representing how much of the "10011" pattern has been matched so far. This reduces the number of flip-flops from 6 (one-hot) to 3 (binary encoding), simplifying the design and reducing area.
+
+The Mealy output MATCH is asserted combinationally when the next input completes the pattern; i.e., at the transition that reaches the final state. MATCH is registered synchronously with the clock to avoid glitches.
+
+The next-state logic will consider overlap by carefully choosing transitions based on the pattern prefix to ensure continuous detection.
+
+Synchronous reset initializes the FSM to state 0.
+
+This simplified binary FSM reduces complexity and area while maintaining full functionality.

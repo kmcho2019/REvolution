@@ -1,0 +1,8 @@
+A novel approach is to view the input vector as a circular shift register and leverage the rotate-left and rotate-right operations for neighbor extraction. We can generate shifted versions of the input to get left and right neighbors, then apply bitwise operations to compute the outputs simultaneously using vector-wide operations. For boundary bits, we explicitly override those bits after the bulk vectorized operation. This method emphasizes the use of rotation operators and single vector operations for clarity and uniformity.
+
+Specifically:
+- For out_both, we rotate the input left by 1 to get the left neighbor and AND it with the original input; then clear out_both[99].
+- For out_any, we rotate the input right by 1 to get the right neighbor and OR it with the original input; then clear out_any[0].
+- For out_different, since the problem wants each bit XORed with the neighbor to the left with wrap-around, we reuse the rotate-left by 1 input and XOR with original input.
+
+This approach avoids partial slicing and handles wrap-around consistently, using clean rotate operators and uniform operations.

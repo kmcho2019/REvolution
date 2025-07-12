@@ -1,0 +1,15 @@
+To fix the initialization issue and improve clarity, I will remove the `initialized` flag and the `initial` block entirely, since the problem does not specify a reset input and initial state is typically undefined or zero at power-up.
+
+The core behavior remains the same:
+- On each rising clock edge,
+  - if `shift_ena` is asserted, shift the register right by one bit, loading `data` into MSB.
+  - else if `count_ena` is asserted, decrement the 4-bit value with wrap-around.
+  - else retain the current value.
+
+This time, I will implement the logic by computing the next value combinationally in a `wire` named `next_q` and then register it synchronously in one always block. This separates combinational next-state logic from sequential update, making the code cleaner and the behavior easier to analyze.
+
+Since no reset is given, the register `q` will power up to an undefined or zero value depending on synthesis. This is acceptable as per the problem statement.
+
+The priority of shift over count is preserved but arbitrary when both are high (as allowed).
+
+This structure avoids any non-synthesizable `initial` or reset-like logic, ensuring robust hardware implementation consistent with the problem specification.

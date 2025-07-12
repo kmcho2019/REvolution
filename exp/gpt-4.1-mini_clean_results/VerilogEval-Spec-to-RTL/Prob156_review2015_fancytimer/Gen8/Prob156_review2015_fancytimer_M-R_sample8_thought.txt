@@ -1,0 +1,11 @@
+Refactor the design to use a clearly defined Moore FSM with explicit state registers and single always block for state progression and outputs.  
+Use a separate shift register for pattern detection that resets on entering PATTERN_SEARCH, ensuring no leftover bits.  
+Collect delay bits MSB-first by shifting delay_reg left and inserting data at LSB each clock during DELAY_LOAD, with a bit counter for exactly 4 bits.  
+Initialize the tick_counter with (delay+1) on COUNT state entry and use a 10-bit cycle_counter for counting 1000 clock cycles intervals precisely.  
+On every clock, increment cycle_counter; when it reaches 999, decrement tick_counter and update count to show remaining intervals (tick_counter-1).  
+When tick_counter reaches zero and 1000 cycles have elapsed, move to WAIT_ACK and assert done.  
+In WAIT_ACK, wait for ack to return to PATTERN_SEARCH and clear pattern_shift and delay_bits_received to avoid pattern false positives.  
+counting is high only during COUNT; done is high only during WAIT_ACK; count shows remaining intervals during COUNT and is X (don't care) otherwise.  
+Make all resets synchronous and synchronous state transitions clean.  
+This structure removes confusing multiple always blocks, using one clocked always block for all sequential elements and combinational next state logic separately, making timing explicit and easier to verify.  
+This precise timing avoids off-by-one errors and aligns outputs perfectly with the problem specification.

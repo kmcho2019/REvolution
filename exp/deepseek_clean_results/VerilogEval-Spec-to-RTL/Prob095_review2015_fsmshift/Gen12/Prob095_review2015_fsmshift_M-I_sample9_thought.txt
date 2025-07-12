@@ -1,0 +1,13 @@
+Improved solution strategy:
+1. Correct the cycle counting to ensure exactly 4 cycles of shift_ena after reset
+2. Use a 2-bit counter (since we only need to count 0-3) to save area
+3. Make shift_ena high when counter is valid (0-3) and not done
+4. Set done flag after exactly 4 cycles (when counter reaches 3)
+5. Ensure shift_ena goes low immediately when done is set
+6. Reset both counter and done flag synchronously on reset
+
+Key improvements:
+- Fixed cycle counting to exactly 4 cycles (0-3 inclusive)
+- Reduced counter size from 3-bit to 2-bit for better PPA
+- Clear state machine logic with explicit counting and done condition
+- Maintains all required functionality with minimal hardware

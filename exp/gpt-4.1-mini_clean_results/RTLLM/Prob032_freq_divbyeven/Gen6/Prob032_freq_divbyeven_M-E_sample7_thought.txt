@@ -1,0 +1,13 @@
+To provide a novel architectural approach, I will implement the frequency divider by counting the full NUM_DIV cycles instead of toggling at half the count. The output clock (clk_div) will be toggled every NUM_DIV/2 input clock cycles, producing a clock frequency divided by NUM_DIV with a 50% duty cycle.
+
+The key difference is to use a counter that counts from 0 to NUM_DIV-1, toggling clk_div when reaching NUM_DIV/2 - 1 and NUM_DIV - 1. This approach avoids reliance on partial counts and ensures a steady 50% duty cycle by toggling clk_div at two evenly spaced counter values.
+
+The counter increments on every rising clock edge. When the counter reaches the maximum (NUM_DIV-1), it resets to zero, and clk_div toggles on both the midpoint (NUM_DIV/2 -1) and at the full period (NUM_DIV-1).
+
+This method ensures clk_div changes state twice per full cycle of the input clock counts, giving a clean, stable divided clock output with even division factor.
+
+The module name will be exactly `freq_diveven` as requested, and the counter width remains 4 bits, which supports division factors up to 16.
+
+Asynchronous active-low reset sets counter and clk_div to zero to ensure a known startup state.
+
+This implementation inherently enforces even NUM_DIV values because toggling occurs at NUM_DIV/2 -1, which must be integer, and the testbench is assumed to respect the even constraint.

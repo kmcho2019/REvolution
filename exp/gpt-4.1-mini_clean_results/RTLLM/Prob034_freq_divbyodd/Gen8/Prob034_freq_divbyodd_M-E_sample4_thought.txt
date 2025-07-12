@@ -1,0 +1,11 @@
+To implement a frequency divider by an odd number divisor (NUM_DIV), the key challenge is to produce an output clock with a 50% duty cycle as close as possible and correctly divided frequency, which is difficult with a simple counter when dividing by an odd number.
+
+A proven approach is to split the division into two halves, counting both rising and falling edges of the input clock. We create two counters: one incremented on the rising edge, the other on the falling edge, each counting up to (NUM_DIV - 1).
+
+We toggle two intermediate flip-flops (clk_div1 and clk_div2) at specific counts of these counters to generate two phase-shifted clocks with duty cycles close to 50%. The final output clock is the logical OR of these two signals, ensuring the output frequency is clk / NUM_DIV with a nearly 50% duty cycle.
+
+Reset initializes counters and output flip-flops. This design avoids complex dual-edge triggered always blocks by instantiating two always blocks, one on posedge clk and one on negedge clk, implementing separate counters and toggles. This clean separation improves timing clarity and matches the original design requirements.
+
+This method leverages the inherent half-clock edge counting to achieve accurate odd frequency division with good duty cycle and phase alignment.
+
+Parameter check ensures NUM_DIV is odd and >=3 to avoid invalid operation.

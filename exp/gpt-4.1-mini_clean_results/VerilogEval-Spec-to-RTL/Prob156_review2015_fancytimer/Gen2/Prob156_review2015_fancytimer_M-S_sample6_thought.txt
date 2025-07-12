@@ -1,0 +1,21 @@
+Implement a simple FSM with four states: SEARCH, READ_DELAY, COUNT, DONE.
+
+- SEARCH: shift in input bits into a 4-bit shift register; detect pattern 1101.
+
+- READ_DELAY: shift in 4 bits MSB first into delay register, one bit per clock. Use a small counter to track bits read.
+
+- COUNT: count (delay+1)*1000 cycles. Maintain a 10-bit cycle counter (0-999) and a 4-bit remaining counter initialized to delay.
+
+  Output `count` as the current remaining value, stable for each 1000 cycle segment.
+
+  When cycle_count hits 999, decrement remaining. When remaining goes from 0 after a 1000-cycle block, transition to DONE.
+
+- DONE: assert done=1, wait for ack=1 to return to SEARCH.
+
+All registers update synchronously on clk positive edge with synchronous reset.
+
+When not counting, count output is don't-care (set to zero for simplicity), counting and done outputs are low except in DONE.
+
+Avoid unnecessary resetting of counters in every state, reset only on reset signal or on state transitions.
+
+This keeps logic straightforward and meets timing and protocol requirements.

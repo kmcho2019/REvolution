@@ -1,0 +1,9 @@
+Refactor the 4-stage shift register to use a single 4-bit register (`reg [3:0] shift_reg`) instead of chaining four separate DFF modules. The shift operation and synchronous active-low reset will be handled inside one always block triggered on the positive clock edge. This approach simplifies the design by consolidating all flip-flops into one vector register, reducing module instantiations and enhancing clarity.
+
+Key points:
+- Use a 4-bit shift register vector.
+- On each clock, if reset is active (resetn=0), clear the entire register synchronously.
+- Else, shift in the input bit.
+- Output is the MSB of the shift register.
+- Maintain synchronous active-low reset behavior.
+- This style is more compact and typical for shift register designs.

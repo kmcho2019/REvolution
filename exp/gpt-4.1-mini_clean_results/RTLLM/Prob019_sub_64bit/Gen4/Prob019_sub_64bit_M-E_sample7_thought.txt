@@ -1,0 +1,17 @@
+I will implement the 64-bit subtractor using a hierarchical block approach by dividing the operands into four 16-bit segments and performing subtraction segment-wise with borrow chaining between them. This "4-stage 16-bit subtractor cascade" approach enables modular design and potential reusability of smaller subtractor blocks.
+
+Each 16-bit subtractor block:
+- Performs subtraction with borrow-in and outputs borrow-out.
+- Is implemented using simple combinational logic using built-in subtraction operator for clarity and efficiency at 16-bit granularity.
+
+The top-level module:
+- Chains the borrow-out from each lower 16-bit block to the borrow-in of the next higher block.
+- Combines the 16-bit results into the final 64-bit result.
+
+Overflow detection:
+- Done at the final 64-bit result level using the sign bits of A, B, and result.
+- The condition remains: overflow occurs if sign_A != sign_B and sign_result != sign_A.
+
+This approach allows clearer segmentation of the subtractor, easier timing management, and a potential tradeoff between ripple borrow delay and modularity. It also uses simple built-in subtraction operations for each segment, leveraging synthesis optimizations.
+
+This design is fundamentally different from the prior carry-lookahead bitwise adder approach and may help in pipelining or partial reuse of the 16-bit subtractor blocks in other designs.

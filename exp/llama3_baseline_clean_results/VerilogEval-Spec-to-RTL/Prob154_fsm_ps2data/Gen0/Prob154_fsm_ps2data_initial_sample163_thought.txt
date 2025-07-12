@@ -1,0 +1,5 @@
+To solve this problem, we need to implement a finite state machine (FSM) that can search for message boundaries in an input byte stream. The FSM will have three states: IDLE, BYTE1, and BYTE2. It will start in the IDLE state and transition to the BYTE1 state when it sees a byte with in[3]=1. It will then transition to the BYTE2 state after receiving the first byte, and finally signal done and transition back to the IDLE state after receiving the third byte.
+
+We will also need to implement a datapath that will output the 24-bit message whenever a packet is received. This can be done using a shift register that shifts in each new byte as it is received, and outputs the 24-bit message when the done signal is asserted.
+
+The FSM and datapath will be implemented using Verilog, with the FSM controlling the datapath and outputting the done signal.

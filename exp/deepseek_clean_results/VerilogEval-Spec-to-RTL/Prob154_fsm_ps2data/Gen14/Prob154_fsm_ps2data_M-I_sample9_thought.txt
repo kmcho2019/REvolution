@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the output assignments by registering out_bytes one cycle later
+   - Move done signal generation to a separate always block to break critical path
+
+2. Power Optimization:
+   - Only update out_bytes when actually storing new bytes (in BYTE1/BYTE2 states)
+   - Use clock gating for the output register when not in use (simulated via conditional updates)
+
+3. Area Optimization:
+   - Maintain binary state encoding (already efficient)
+   - Remove unnecessary intermediate registers
+   - Simplify output logic
+
+Key Changes:
+- Split the FSM and output logic into separate always blocks
+- Delay done signal by one cycle to allow for pipelining
+- Only update out_bytes during relevant state transitions
+- Clear output registers during reset to avoid unnecessary toggling

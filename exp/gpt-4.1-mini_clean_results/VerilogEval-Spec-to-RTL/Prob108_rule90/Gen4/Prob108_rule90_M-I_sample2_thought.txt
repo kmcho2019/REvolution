@@ -1,0 +1,10 @@
+To improve PPA further, especially timing and power, the key insight is to reduce the fanout and logic depth on the large 512-bit vector `q`. The original design creates 512 XOR gates all driven by bits of `q` directly, resulting in wide fanout and large switching.
+
+Improvement strategy:
+1. Register the inputs `q` into two shifted versions representing left and right neighbors, which breaks the large 512-bit dependency into two narrower vectors shifted by one bit. This introduces a simple pipeline stage before XOR, reducing fanout and enabling better optimization.
+2. Compute next_state as XOR of these two registered shifted vectors. This allows next_state XORs to be done on registered inputs, improving timing by shortening combinational logic.
+3. This approach adds a one-cycle latency but is acceptable unless latency is strictly prohibited.
+4. On load, reset the pipeline stages to the loaded data directly, avoiding extra cycles of delay.
+5. The scheme reduces critical path to a single XOR after registered neighbors and reduces switching power by localizing transitions.
+
+This pipelined approach maintains correctness, as the logic still corresponds exactly to Rule 90, and improves timing and power by reducing combinational fanout and long paths.

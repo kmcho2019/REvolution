@@ -1,0 +1,11 @@
+To implement a superior dual-edge triggered flip-flop on FPGA while avoiding illegal sensitivity lists, I will fuse the best ideas from both examples by:
+
+- Maintaining modularity with separate positive-edge and negative-edge triggered flip-flops for clarity and synthesis friendliness.
+- Using a parameterized EdgeFF module with generate blocks to avoid code duplication and enhance reusability.
+- Using a continuous assign for output muxing to ensure synthesis clarity and reduce glitches.
+- Selecting the output based on the clock level, which is a well-known, glitch-minimizing and straightforward technique that leverages stable FF outputs at clock edges.
+- Avoiding generating inverted clocks or complex clock domain synchronizers, keeping the design straightforward and FPGA-friendly.
+- Adding clear comments and using non-blocking assignments in sequential blocks.
+- Avoiding combinational always blocks for muxing to reduce complexity and glitches.
+
+This approach yields a clean, modular, synthesis-friendly design with clear timing characteristics and minimal area overhead, while functionally behaving as a dual-edge triggered flip-flop.

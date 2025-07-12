@@ -1,0 +1,15 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. One-hot counter: Replace the binary counter with a one-hot encoded counter to simplify the comparison logic and reduce critical path delay.
+
+2. Combined shift/counter logic: Use the shift register itself as a counter by observing that after 4 shifts, we need to reload. This eliminates the separate counter register.
+
+3. Power optimization: Use clock gating for the shift register when not actively shifting valid data.
+
+4. Timing optimization: Pre-compute the next shift value in parallel rather than using a sequential shift operation.
+
+The improved design should:
+- Reduce critical path delay by simplifying control logic
+- Lower power consumption by reducing unnecessary switching
+- Maintain or reduce area by eliminating the separate counter
+- Keep the same functionality with valid timing constraints

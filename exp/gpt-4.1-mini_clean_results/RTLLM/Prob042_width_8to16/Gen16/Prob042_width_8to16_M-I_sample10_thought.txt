@@ -1,0 +1,7 @@
+To fix the timing issue where valid_out and data_out must be generated one clock cycle after the second valid_in, I will separate input capture and output generation into two pipeline stages using a simple two-state FSM approach (or flag and delayed flag). 
+
+1. On receiving the first valid input, store it and set a flag.
+2. On receiving the second valid input, store the pair in registers but do not assert valid_out immediately.
+3. Assert valid_out and update data_out in the next clock cycle after the second input arrives by using an output-valid register and output-data register, effectively introducing a one-cycle pipeline delay.
+
+This eliminates combinational feedback and aligns valid_out/data_out timing with the problem statement and typical synthesis-friendly coding style. Additionally, by clock gating valid_out to be asserted only when needed and clearing it otherwise, we reduce glitches and power. The design remains minimal and adds only one extra register for the delayed valid flag and data output staging, improving timing and synthesis robustness.

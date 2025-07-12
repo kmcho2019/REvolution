@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Timing Optimization: The negative WNS (-0.18ns) suggests timing margin is tight. We'll use one-hot encoding which typically has simpler decoding logic and better timing for small FSMs.
+2. Power Optimization: Add clock gating for the state register when 'in' is stable to reduce unnecessary toggles.
+3. Area Consideration: One-hot encoding will increase area slightly but the tradeoff is justified for timing improvement.
+4. Maintainability: Keep the clear state definitions while improving performance.
+
+Key Changes:
+- Switch to one-hot state encoding (A=0001, B=0010, C=0100, D=1000)
+- Add clock gating control
+- Simplify output logic (direct bit check)
+- Maintain asynchronous reset functionality

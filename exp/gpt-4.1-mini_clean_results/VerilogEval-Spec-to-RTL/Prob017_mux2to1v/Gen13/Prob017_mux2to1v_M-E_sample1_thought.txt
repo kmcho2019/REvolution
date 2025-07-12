@@ -1,0 +1,5 @@
+Implement the 100-bit 2:1 multiplexer by splitting the inputs into 10 chunks of 10 bits each and using a generate-for loop to instantiate 10 smaller 10-bit wide muxes in parallel. Each small mux handles a 10-bit slice, selected by the same global sel signal. This hierarchical approach distributes the multiplexing logic, potentially easing routing congestion and timing pressure on very wide muxes, and enabling better modularity and scalability. 
+
+The small mux is designed as a simple 2:1 mux with a parameterized WIDTH=10. Using generate loops avoids manually writing repeated instances and improves code maintainability and readability.
+
+This chunking approach might improve place-and-route results on large bit-width buses by allowing synthesis tools to optimize smaller mux blocks rather than one large wide mux. It also modularizes the design, which can help when debugging or extending the design to other widths.

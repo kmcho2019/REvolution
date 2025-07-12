@@ -1,0 +1,15 @@
+1. Analyzing the waveform more carefully reveals:
+   - p is high only on rising clock edges when a is high (edge-sensitive)
+   - q becomes high one cycle after p was high, but only if a is low at that time
+   - Both outputs are synchronous to clock edges
+
+2. Refactoring approach:
+   - Use edge detection for clock to properly capture p behavior
+   - Implement q as a state that remembers p was high in previous cycle
+   - Use sequential logic for both outputs
+   - Simplify using non-blocking assignments for proper sequential behavior
+
+3. Key changes:
+   - Replace combinational p with edge-triggered version
+   - Make q dependent on both previous p and current a state
+   - Use single always block for cleaner implementation

@@ -1,0 +1,7 @@
+To develop a novel architectural idea for the Mealy FSM detection circuit, we can leverage a shift register approach combined with a comparator to detect the sequence "10011". The main idea is to shift the input bits into a register and then compare the contents of the register with the target sequence. If a match is found, the MATCH signal is asserted. This approach simplifies the state machine by eliminating the need for explicit state transitions based on the input sequence, instead using the shift register to track the sequence directly.
+
+The shift register will be 5 bits wide to accommodate the sequence "10011". On each clock cycle, the input bit is shifted into the register, and the oldest bit is discarded. A comparator checks if the current contents of the shift register match the target sequence. If they match, and the current input is '1' (indicating the end of the sequence), the MATCH signal is set to '1'. Otherwise, it remains '0'.
+
+This approach not only simplifies the logic but also makes the circuit more scalable if longer sequences need to be detected in the future, as it primarily involves increasing the size of the shift register and modifying the comparator logic accordingly.
+
+Furthermore, this design can be easily pipelined or parallelized if higher throughput is required, by adding more shift registers and comparators in parallel, each checking a different portion of the input sequence. This would allow the circuit to process multiple bits of the sequence simultaneously, increasing the overall detection speed.

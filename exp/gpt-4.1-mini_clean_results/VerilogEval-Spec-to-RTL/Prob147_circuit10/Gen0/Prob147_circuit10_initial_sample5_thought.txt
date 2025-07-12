@@ -1,0 +1,56 @@
+By analyzing the waveform table, the circuit has a 1-bit state stored in a flip-flop (output state). On each rising clock edge, the state updates based on the inputs a, b, and the current state. The output q depends combinationally on the current state and inputs.
+
+Looking at the data:
+
+- At 15ns (rising edge), state=0, q=0.
+- At 45ns (rising edge), a=0, b=1, state=0, q=1.
+- At 65ns (rising edge), a=1, b=1, state=0, q=0.
+- At 75ns (rising edge), a=0, b=0, state=1, q=1.
+- At 95ns (rising edge), a=1, b=1, state=1, q=1.
+- At 115ns (rising edge), a=1, b=0, state=1, q=0.
+
+Observing how state changes:
+
+- state updates at rising edge clk as: next_state = q (i.e., state takes on the q value at clock edge).
+- q depends on state, a, b.
+
+Trying to infer q:
+
+From the waveform, q looks like q = (a & ~state) | (b & state)
+
+Check:
+
+- At 45ns: a=0, b=1, state=0 => q = (0 & 1) | (1 & 0) = 0 | 0 = 0 (But q=1 in waveform)
+  So no.
+
+Try q = (a & state) | (b & ~state):
+
+At 45ns: a=0, b=1, state=0 => q = (0 & 0) | (1 & 1) = 1 matches q=1
+
+At 65ns: a=1, b=1, state=0 => q=(1 & 0) | (1 & 1)=1 matches q=0 (no)
+
+Wait no q=0 in waveform. Doesn't match.
+
+Try q = a XOR b XOR state
+
+At 45ns: a=0,b=1,state=0 => 0^1^0=1 match q=1
+
+At 65ns: 1^1^0=0 matches q=0
+
+At 95ns: 1^1^1=1 matches q=1
+
+At 115ns:1^0^1=0 matches q=0
+
+Looks good.
+
+So q = a ^ b ^ state
+
+state <= q on rising clk.
+
+Initial state unknown.
+
+Output q and state.
+
+Implement sequential logic with flip-flop state updated on posedge clk with q = a^b^state.
+
+Output q combinationally, state registered.

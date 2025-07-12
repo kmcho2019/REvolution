@@ -1,0 +1,24 @@
+The original solution had several incorrect mappings in the case statement that didn't match the Karnaugh map. Here's an improved approach:
+
+1. First, let's properly interpret the Karnaugh map structure:
+   - Rows represent x[2]x[3] (top bits)
+   - Columns represent x[0]x[1] (bottom bits)
+   - Each cell shows the output f value
+
+2. We'll implement this by:
+   - Listing all 16 possible input combinations
+   - Setting f=1 only for the exact minterms where the K-map shows 1
+   - Using default for all other cases (f=0)
+   - Including all edge cases explicitly
+
+3. The correct minterms where f=1 are:
+   - 0000 (row 00, col 00)
+   - 0010 (row 00, col 10)
+   - 1100 (row 11, col 00)
+   - 1101 (row 11, col 01)
+   - 1111 (row 11, col 11)
+   - 1000 (row 10, col 00)
+   - 1001 (row 10, col 01)
+   - 1010 (row 10, col 10)
+
+This ensures exact matching with the given Karnaugh map specification.

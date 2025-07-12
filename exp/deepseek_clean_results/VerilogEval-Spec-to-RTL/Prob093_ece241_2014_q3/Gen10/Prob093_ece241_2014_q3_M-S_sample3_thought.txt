@@ -1,0 +1,19 @@
+Simplified approach based on K-map analysis:
+
+1. Analyze each output mux_in[i] separately:
+   - mux_in[0] (ab=00): 0 when cd=00, else 1 → equivalent to (c OR d)
+   - mux_in[1] (ab=01): Always 0 → constant 0
+   - mux_in[2] (ab=11): 0 when cd=00 or 01, else 1 → equivalent to (c AND d)
+   - mux_in[3] (ab=10): 1 when cd=00,10,11; 0 when cd=01 → equivalent to (NOT d) when c=0, else 1
+
+2. Implementation strategy:
+   - mux_in[0]: OR gate (c | d)
+   - mux_in[1]: Hardwired 0
+   - mux_in[2]: AND gate (c & d)
+   - mux_in[3]: 2-to-1 mux selecting between ~d and 1 based on c
+
+3. Key simplifications:
+   - mux_in[2] can be implemented with a simple AND gate instead of OR
+   - Only one 2-to-1 mux needed for mux_in[3]
+   - No other logic gates required
+   - All outputs precisely match K-map requirements

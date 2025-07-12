@@ -1,0 +1,11 @@
+Novel Architecture Idea:
+1. Instead of individual flip-flops or a flat 16-bit register, organize the storage into two 8-bit register files (one per byte)
+2. Create a dedicated ByteRegister module that handles all operations for each byte
+3. Implement the ByteRegister with parallel load capability when enabled
+4. Benefits:
+   - Clear separation of byte-level operations
+   - Potential for better synthesis optimization of byte-wide operations
+   - Easier to extend to wider data paths
+   - More natural mapping to physical memory structures in some technologies
+   - Reduced control logic complexity
+5. The TopModule coordinates the two ByteRegisters and handles the byte enable routing

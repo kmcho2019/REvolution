@@ -1,0 +1,9 @@
+Instead of directly writing the logic for Y1 and Y3, I will implement the FSM transition logic in a concise case statement using the one-hot encoded state input y and input w. For each current state, I explicitly determine the next states and derive Y1 and Y3 accordingly.
+
+Since the states are one-hot encoded as y[0]..y[5], and only one bit is high at a time, I can use a combinational always block with a case statement on y to produce Y1 and Y3.
+
+Y1 corresponds to the input of state B (y[1]), and Y3 corresponds to the input of state D (y[3]). For each possible current state (A-F), depending on w, I set these outputs to 1 if the FSM transitions to B or D respectively, else 0.
+
+This approach provides explicit and readable logic, facilitating easy modifications or extensions. The combinational case approach also directly encodes the FSM transitions, with no intermediate signals needed.
+
+Finally, I instantiate TopModule with this logic.

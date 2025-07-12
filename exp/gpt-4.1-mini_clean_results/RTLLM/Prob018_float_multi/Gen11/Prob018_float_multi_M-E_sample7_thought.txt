@@ -1,0 +1,23 @@
+Implement a multi-cycle IEEE-754 single-precision floating-point multiplier using an FSM controlled by a 3-bit cycle counter. This allows splitting the complex operation into simpler sequential steps, reducing the combinational path per cycle and enabling higher frequency and better timing closure.
+
+Steps per cycle:
+- Cycle 0 (counter=0): On reset, clear all registers. On start, extract sign, exponent, mantissa from inputs, identify special cases (NaN, Inf, zero), prepare mantissas with hidden bit, and start multiplication.
+
+- Cycle 1 (counter=1): Perform 24x24 mantissa multiplication (result 48 bits) and compute preliminary exponent sum (a_exp+b_exp-127). Do not do normalization or rounding yet.
+
+- Cycle 2 (counter=2): Normalize the product (check MSB, shift mantissa if needed, adjust exponent). Extract rounding bits (guard, round, sticky).
+
+- Cycle 3 (counter=3): Apply IEEE-754 round-to-nearest-even logic. Adjust mantissa and exponent if rounding causes overflow.
+
+- Cycle 4 (counter=4): Check for overflow and underflow of exponent, handle special cases for final output (NaN, Inf, zero). Assemble final 32-bit IEEE-754 floating-point result and present on output port.
+
+This approach:
+- Uses synchronous registers for inputs, intermediate values, and output.
+- Simplifies combinational logic per clock cycle.
+- Employs explicit state (counter) for clear operation sequencing.
+- Handles all corner cases: NaN, Infinity, zero inputs, underflow, overflow.
+- Output registered at last step.
+- Maintains requested internal registers: counter, a_mantissa, b_mantissa, z_mantissa, a_exponent, b_exponent, z_exponent, a_sign, b_sign, z_sign, product, guard_bit, round_bit, sticky.
+- Uses non-blocking assignments consistently for synthesis friendliness.
+
+This architecture trades latency (5 cycles per multiplication) for improved timing and modularity.

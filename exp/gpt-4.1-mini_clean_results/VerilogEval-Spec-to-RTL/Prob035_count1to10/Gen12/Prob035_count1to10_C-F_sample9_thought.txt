@@ -1,0 +1,14 @@
+Fuse the clarity and separation of combinational next-state logic from Example 2 with the minimal combinational logic detection from Example 1, but optimize the detection of count == 10 further by using a direct 4-bit equality comparator instead of explicit bitwise AND/NOTs. Modern synthesis tools optimize equality checks efficiently and this can reduce logic depth and improve timing slightly compared to the manual bitwise expression. 
+
+Additionally, implement an enable signal internally that disables counting updates when reset is asserted or when wrapping from 10 to 1, minimizing unnecessary toggling and saving power.
+
+Finally, keep the synchronous active-high reset behavior resetting q to 1, and ensure the counter increments on every clock edge when enabled. This design retains the best readability, uses an explicit next-state logic block, and uses a clear equality condition while potentially simplifying logic for better timing and power.
+
+In summary:
+- Use synchronous reset to 1.
+- Use combinational next-state logic with a direct comparator `(q == 4'd10)`.
+- Implement an enable signal to minimize switching on reset and wrap.
+- On reaching 10, reset to 1.
+- On reset, reset to 1.
+- Otherwise, increment by 1.
+This fusion balances simplicity, readability, and potentially improved PPA metrics.

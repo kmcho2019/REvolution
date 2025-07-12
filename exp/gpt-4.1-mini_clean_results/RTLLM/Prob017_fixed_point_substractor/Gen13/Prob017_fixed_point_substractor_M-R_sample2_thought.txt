@@ -1,0 +1,13 @@
+To refactor the fixed-point subtractor while preserving its functionality, I will replace the always block with continuous assignments and intermediate wires to make the code purely combinational without explicit procedural blocks. 
+
+The main subtraction will be done on signed wires representing inputs. The zero-result check will also be implemented combinationally, by using a conditional operator (ternary) in the assign statement for output `c`. This avoids the use of a reg variable and procedural blocks, making the module purely structural/combinational, which is often preferable for synthesis clarity and easier static analysis.
+
+This approach also clearly separates the signed subtraction from the zero handling logic, making it explicit and concise.
+
+Overall:
+- Use signed wire declarations for internal signals.
+- Use assign statements to perform subtraction and zero-result sign clearing.
+- Remove `always` block and internal reg `res`.
+- Keep parameters and interfaces identical for compatibility.
+
+This yields a clean, synthesizable, and easy-to-understand module using continuous assignments.

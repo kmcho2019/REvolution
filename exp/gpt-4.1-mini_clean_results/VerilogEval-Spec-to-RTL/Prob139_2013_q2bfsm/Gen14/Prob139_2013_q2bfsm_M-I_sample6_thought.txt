@@ -1,0 +1,25 @@
+To correct and improve the FSM implementation, I will refine the timing and control of the pattern detection and y-monitoring, while preserving the synchronous reset and clocked behavior:
+
+1. **Shift Register Update and Pattern Detection:**  
+   Move the pattern detection check into the sequential block to ensure the pattern is detected after updating the shift register. This avoids combinational mismatch where the pattern check looks at stale or partially updated data.
+
+2. **Y Monitoring Counter:**  
+   Initialize the y monitoring counter explicitly on entry to state E to zero, and increment on each clock in E. This avoids counting errors or off-by-one timeouts.
+
+3. **State Transitions and Output Pulses:**  
+   Keep outputs fully registered (Moore outputs), determined solely by the current state to avoid glitches.  
+   For the output `f` pulse one cycle after reset deassertion, ensure the FSM transitions properly from A to B to C, with `f=1` only in B.
+
+4. **Simplify FSM States and Encodings:**  
+   Use parameters or localparams for state encoding for clarity and FPGA synthesis friendliness. Avoid `typedef enum` to ensure maximum tool compatibility.
+
+5. **Synchronous Reset:**  
+   As reset is synchronous active low, all state and registers update on the positive clock edge when `resetn` is high; on `resetn` low, the FSM resets synchronously.
+
+6. **Output `g` logic:**  
+   Ensure that `g=1` in states D (one cycle pulse), E (monitoring), and F (permanent) only; `g=0` in A, B, C, G.
+
+7. **Timing alignment:**  
+   Make sure state transitions occur after data updates, and outputs reflect the current state to ensure proper pulse widths and delays.
+
+This will fix the original FSM’s timing and counting errors while keeping it easy to understand and verify.

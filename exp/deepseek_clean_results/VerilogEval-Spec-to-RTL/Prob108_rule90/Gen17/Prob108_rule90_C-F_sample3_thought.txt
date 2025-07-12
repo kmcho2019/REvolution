@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. Boundary Handling Optimization:
+   - Maintain explicit boundary conditions (left=0 for q[0], right=0 for q[511])
+   - Use concatenation for neighbor selection to reduce logic depth
+   - This provides clear boundary handling while optimizing synthesis
+
+2. State Management:
+   - Use direct register updates (like Example 2) for simplicity
+   - Eliminate redundant registers and clock gating for cleaner design
+   - Keep the simple load/update logic from Example 2
+
+3. Parallel Computation:
+   - Maintain full parallel computation of all 512 cells
+   - Use generate block for structured implementation
+   - Optimize XOR implementation with neighbor selection via concatenation
+
+4. Timing Optimization:
+   - Remove clock gating that was causing timing issues
+   - Use simpler neighbor selection logic to reduce critical path
+   - Keep all computation combinational for maximum speed
+
+Key Improvements:
+1. Simplified neighbor selection using concatenation
+2. Removed unnecessary clock gating
+3. Cleaner state management
+4. Maintained full parallel computation
+5. Optimized boundary handling

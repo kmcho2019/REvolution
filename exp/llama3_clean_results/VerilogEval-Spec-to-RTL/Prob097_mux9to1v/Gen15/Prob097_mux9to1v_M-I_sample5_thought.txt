@@ -1,0 +1,11 @@
+To improve the existing solution, we will focus on optimizing the code for better Power, Performance, and Area (PPA) metrics. Given that the current implementation is functionally correct, our strategy involves analyzing and refining the existing structure to minimize power consumption, reduce area usage, and maintain or improve performance.
+
+One potential area of improvement is in how the unused cases (sel=9 to 15) are handled. Instead of directly comparing `sel` with a value, we can use a case statement to explicitly define the output for each valid `sel` value and then use a default case to handle the unused values. This approach can potentially reduce the switching activity by making the logic more explicit and easier for the synthesis tool to optimize.
+
+Additionally, we can explore if the array assignment can be optimized further. Since the array `inputs` is only used once to select the output based on `sel`, we might consider eliminating the array and directly using the conditional operator or case statement with the input signals. This could potentially reduce area usage by minimizing the number of logic gates required.
+
+For performance, we will ensure that the logic structure remains combinational and does not introduce unnecessary delays. The use of a case statement or conditional operator should not negatively impact performance, as these constructs are commonly optimized by synthesis tools into efficient combinational logic.
+
+Regarding power consumption, minimizing switching activity will be a key focus. By making the logic more explicit and using constructs that synthesis tools can optimize, we aim to reduce unnecessary signal transitions.
+
+Lastly, area optimization will be achieved by ensuring that the logic structure is as simple and straightforward as possible, allowing synthesis tools to effectively minimize the area required for the implementation.

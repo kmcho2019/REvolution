@@ -1,0 +1,23 @@
+Instead of a bit-by-bit restoring division with a 9-bit remainder register, I will implement a novel approach based on a non-restoring division style that processes groups of bits by repeatedly extracting the high bits of the current remainder (aligned with the divisor width), comparing and subtracting if possible, then shifting in the next dividend bit.
+
+Specifically, I will:
+
+1. Use two combinational always blocks as requested: one to latch inputs into internal registers, the other to perform division.
+
+2. Represent the remainder as a 16-bit register initialized with the dividend (to hold both remainder and bits yet to be processed).
+
+3. Iteratively extract the upper 8 bits of the current remainder, compare with the divisor, set the quotient bit accordingly, subtract if possible, then left-shift the remainder by 1 bit concatenating the next dividend bit.
+
+4. Proceed from the highest bit of the dividend (MSB) down to the LSB, building the quotient bits from MSB down.
+
+5. The final quotient is collected bitwise, and the remaining bits in the remainder register (low 8 bits) represent the remainder.
+
+This approach treats the 16-bit dividend as a shift register remainder, and in each iteration the top 8 bits are compared with the divisor, enabling a combinational loop that mimics the long division process but with clearer separation of remainder extraction and shifting.
+
+This method should be synthesizable as combinational logic, uses only blocking assignments, and meets the problem requirement of extracting highest bits, comparing with divisor, setting quotient, and updating remainder accordingly.
+
+Outputs:
+- result: 16-bit quotient,
+- odd: 16-bit remainder, where the upper 8 bits are zero and lower 8 bits hold the final remainder.
+
+This is a clean, novel architectural take inspired by non-restoring division but adapted precisely to the problem's description.

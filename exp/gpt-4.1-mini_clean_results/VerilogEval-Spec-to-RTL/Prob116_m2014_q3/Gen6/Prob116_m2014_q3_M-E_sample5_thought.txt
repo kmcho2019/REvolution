@@ -1,0 +1,33 @@
+To avoid confusion from indexing the Karnaugh map using a LUT, instead implement the function directly with boolean expressions derived from the map.
+
+We know the inputs are 4 bits: x[3], x[2], x[1], x[0]. The Karnaugh map specifies rows as x[3]x[4], but x[4] doesn't exist, so assume rows use x[3] and x[0], and columns use x[1] and x[2].
+
+From the map:
+
+                x[1]x[2]
+  x[3]x[0]   00  01  11  10
+        00 | d | 0 | d | d |
+        01 | 0 | d | 1 | 0 |
+        11 | 1 | 1 | d | d |
+        10 | 1 | 1 | 0 | d |
+
+Assign don't cares (d) as either 0 or 1 to simplify the logic.
+
+Identify minterms for f=1:
+
+- Row 01 (x3=0, x0=1), col 11 (x1=1,x2=1): f=1 → x3'=0, x0=1, x1=1, x2=1
+- Row 11 (x3=1, x0=1), cols 00 and 01 (x1x2=00 or 01): f=1 → x3=1, x0=1, x1=0 or 1, x2=0
+- Row 10 (x3=1, x0=0), cols 00 and 01 (x1x2=00 or 01): f=1 → x3=1, x0=0, x1=0 or 1, x2=0
+
+From the minterms, derive the simplified logic expression. For example:
+
+- f = (x3 & ~x2)                             // from rows 11 and 10, columns 00 and 01 (x2=0)
+     | (~x3 & x0 & x1 & x2)                 // from row 01, col 11
+     | (x3 & x0 & ~x1 & ~x2)                // additional minterm from map for robustness
+     ...
+
+Check the Karnaugh map carefully to find a minimal sum-of-products. The main idea is to write the function as an OR of terms each being an AND of input literals.
+
+Implement the boolean function directly using bitwise logic gates in Verilog, which will be more intuitive, clear, and synthesizable.
+
+This approach avoids LUT indexing errors and clarifies the function behavior.

@@ -1,0 +1,7 @@
+To implement the 100-bit left/right rotator, we need to consider the synchronous load and the rotation enable signals. The module will have a 100-bit register to store the current state of the rotator. 
+
+On every clock cycle, we check if the load signal is high. If it is, we load the data into the register. 
+
+If the load signal is low, we check the ena signal to determine the direction of rotation. If ena is 2'b01, we rotate the register right by one bit. If ena is 2'b10, we rotate the register left by one bit. For ena values 2'b00 and 2'b11, we do not rotate the register.
+
+We use Verilog's concatenation and bit-selecting features to achieve the rotation.

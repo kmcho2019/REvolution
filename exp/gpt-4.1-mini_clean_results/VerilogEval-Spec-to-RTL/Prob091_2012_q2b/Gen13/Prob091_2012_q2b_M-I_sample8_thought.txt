@@ -1,0 +1,11 @@
+To improve the PPA, particularly to reduce power consumption caused by toggling in the OR term used for Y3, I will reorder and regroup the logic to minimize switching activity.
+
+Observing the states in the OR term for Y3: y[1] (B), y[2] (C), y[4] (E), y[5] (F). Looking back at the FSM transitions, states E and F share similar output conditions and might be grouped with some logic restructuring.
+
+I can express Y3 as: Y3 = ~w & (y[1] | y[2] | y[4] | y[5]) = ~w & ( (y[1] | y[2]) | (y[4] | y[5]) )
+
+By creating two intermediate signals for these pairs, the logic synthesis tool may better optimize gate sharing and reduce toggling on the wider OR gate input.
+
+Additionally, the input w's complement (~w) and direct w are used in Y3 and Y1 respectively, so I will create explicit signals for them early to encourage better reuse.
+
+This reorganized modular code structure enables synthesis tools to better optimize logic and possibly gate-share signals, thereby lowering power and potentially area, while maintaining the same minimal logic depth and functionality.

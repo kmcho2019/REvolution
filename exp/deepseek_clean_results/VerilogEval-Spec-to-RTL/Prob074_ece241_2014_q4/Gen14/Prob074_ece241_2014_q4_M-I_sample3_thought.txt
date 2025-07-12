@@ -1,0 +1,16 @@
+The original solution is functionally correct but can be optimized for better Power, Performance, and Area (PPA) metrics. Here's the improvement strategy:
+
+1. Maintain the single 3-bit register approach for compact state storage
+2. Optimize the feedback logic by:
+   - Using direct register bit references instead of intermediate wires
+   - Combining the next state calculation with the register update
+3. Simplify the output logic by using a reduction NOR directly
+4. Remove unnecessary intermediate signals to reduce routing
+5. Ensure all flip-flops are properly initialized to zero
+6. Use blocking assignments for combinational logic to prevent simulation mismatches
+
+Key improvements:
+- Reduced wire routing by eliminating next_state wires
+- More efficient register update in single always block
+- Clearer direct implementation of the feedback paths
+- Maintains same functionality while being more synthesis-friendly

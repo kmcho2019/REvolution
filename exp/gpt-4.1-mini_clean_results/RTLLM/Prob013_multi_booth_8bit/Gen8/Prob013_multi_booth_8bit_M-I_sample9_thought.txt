@@ -1,0 +1,19 @@
+The original solution implements a simple bit-serial multiplier processing one bit per cycle, although the problem requests an 8-bit Radix-4 Booth multiplier.
+
+To optimize and better match Radix-4 Booth multiplication:
+
+- Use Radix-4 Booth encoding which examines two multiplier bits (plus one previous bit) at a time, halving iteration count from 16 to 8 cycles.
+- Sign-extend inputs to 17 bits (to accommodate one extra bit for Booth encoding).
+- Maintain a 17-bit register containing multiplier bits and an appended zero bit at LSB for Booth encoding.
+- Each cycle extracts a 3-bit group from the multiplier for decoding to determine addition/subtraction/shift operations.
+- Instead of shifting multiplicand each cycle, shift partial product (accumulator) accordingly.
+- Use an explicit finite state machine: IDLE, RUNNING, DONE.
+- On reset, load multiplicand and multiplier registers, clear product, set ready low.
+- On start, iterate 8 times performing Radix-4 booth decoding and addition/subtraction.
+- After 8 iterations, output the final product and set ready high.
+- This reduces cycles by half, improving latency and power.
+- Use synchronous reset, registered inputs.
+- Carefully handle signed arithmetic by explicitly declaring registers as signed and sign-extending inputs.
+- Avoid unnecessary shifting of multiplicand register every cycle.
+
+This approach improves timing by reducing cycle count, lowers power due to fewer operations and toggling, and can reduce area slightly due to fewer iterations and smaller counter size.

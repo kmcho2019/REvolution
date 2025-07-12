@@ -1,0 +1,10 @@
+The original design used a submodule to reverse each 10-bit chunk but had a bug in that the bits were not actually reversed inside BitRev10. Also, splitting into chunks and instantiating multiple submodules adds area and power overhead and complicates routing.
+
+To optimize for Power, Performance, and Area (PPA), we can remove the submodule and all intermediate wires, and implement the full 100-bit reversal in a single generate loop. This directly assigns each bit of the output to the corresponding reversed bit of the input. This eliminates extra module instantiations and wiring, minimizing logic levels and switching activity, improving timing and reducing area and power.
+
+This solution is conceptually simple, uses just one continuous assignment, and the synthesizer can optimize the design better. The code is shorter, correct, and easy to maintain.
+
+Thus, the strategy:
+- Remove BitRev10 module.
+- Remove chunking of input.
+- Implement output as bitwise reversal of input directly in a single generate loop.

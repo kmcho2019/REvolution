@@ -1,0 +1,12 @@
+To solve this problem, I will implement a finite state machine (FSM) with the following states:
+- IDLE: The initial state where the FSM waits for a start bit.
+- START: The state where the FSM has detected a start bit and is now waiting for the 8 data bits.
+- DATA: The state where the FSM is receiving the 8 data bits.
+- STOP: The state where the FSM is waiting for a stop bit.
+- RESET: A pseudo-state that is entered when the reset signal is high.
+
+The FSM will transition between these states based on the current state and the input signal `in`. When in the DATA state, the FSM will also shift the received data bits into the `out_byte` register.
+
+When the FSM reaches the STOP state and receives a stop bit (1), it will assert the `done` signal and output the received data byte.
+
+The FSM will use a counter to keep track of the number of data bits received. When this counter reaches 8, the FSM will transition to the STOP state.

@@ -1,0 +1,8 @@
+To implement the finite state machine (FSM) described, we can break down the process into several states:
+1. **IDLE**: Wait for the start bit (0) to begin receiving a byte.
+2. **RECEIVE**: Once the start bit is detected, wait for 8 clock cycles to receive the 8 data bits.
+3. **STOP**: After receiving the 8 data bits, check for the stop bit (1). If it's not present, go back to IDLE to wait for a stop bit before attempting to receive the next byte.
+
+The FSM will use a counter to keep track of the number of bits received during the RECEIVE state. The FSM will also use a shift register to store the incoming data bits. If the stop bit is not correctly received, the FSM will reset its internal state to wait for a stop bit before proceeding.
+
+Given that all sequential logic is triggered on the positive edge of the clock, we can implement the FSM using a combination of always blocks for sequential logic (to handle the state transitions and data storage) and a case statement to determine the next state based on the current state and input conditions.

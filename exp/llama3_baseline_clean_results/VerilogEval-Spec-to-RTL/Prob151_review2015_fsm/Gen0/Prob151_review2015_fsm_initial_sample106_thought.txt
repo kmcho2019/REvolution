@@ -1,0 +1,12 @@
+The state machine can be implemented as a finite-state machine (FSM) with five states: 
+- IDLE: initial state, waiting for the pattern 1101
+- SHIFT: shifting in 4 bits after the pattern is detected
+- COUNT: waiting for the counters to finish counting
+- DONE: notifying the user and waiting for acknowledgement
+- RESET: resetting the state machine
+
+The state machine transitions between these states based on the current state and input signals. 
+In the IDLE state, it checks for the pattern 1101 and transitions to SHIFT when detected. 
+In the SHIFT state, it shifts in 4 bits and then transitions to COUNT. 
+In the COUNT state, it waits for done_counting and then transitions to DONE. 
+In the DONE state, it waits for ack and then transitions back to IDLE.

@@ -1,0 +1,18 @@
+module TopModule (
+    input clk,
+    input L,
+    input q_in,   // next value input when L=0 (combinational feedback)
+    input r_in,   // parallel load input when L=1
+    output reg Q
+);
+
+    initial Q = 1'b0;
+
+    always @(posedge clk) begin
+        if (L)
+            Q <= r_in;
+        else
+            Q <= q_in;
+    end
+
+endmodule

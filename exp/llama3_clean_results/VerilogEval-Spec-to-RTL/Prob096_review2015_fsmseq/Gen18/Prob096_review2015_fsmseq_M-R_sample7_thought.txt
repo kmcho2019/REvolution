@@ -1,0 +1,9 @@
+To refactor the given code, we can simplify the state machine by directly assigning the next state based on the current state and input data, eliminating the need for a case statement. We can also utilize the current state to maintain the `start_shifting` signal once it's set to 1, without requiring an additional state for this condition. 
+
+Another approach is to use a more straightforward state transition logic by maintaining a separate signal for tracking the sequence detection. However, the core idea remains the same: detect the sequence '1101' and set `start_shifting` to 1 once detected, maintaining this value until reset.
+
+In this refactored version, we use the `always_comb` block to define the combinational logic for the next state and `start_shifting`, and then use a single `always_ff` block to update the state and `start_shifting` on the positive edge of the clock. This structure is more modular and easier to understand, and it reduces the complexity of the code.
+
+We also use a binary encoding for the states, where each state is represented by a binary number. This approach makes the code more straightforward and easier to maintain.
+
+The main goal of this refactoring is to simplify the code, reduce unnecessary logic, and potentially improve PPA metrics such as area, power, and timing.

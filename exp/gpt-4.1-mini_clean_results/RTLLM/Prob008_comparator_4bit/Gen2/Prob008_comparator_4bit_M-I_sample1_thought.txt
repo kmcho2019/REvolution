@@ -1,0 +1,18 @@
+The original design uses a ripple borrow subtractor chain with a full subtractor function which is clear and modular but not optimal for area and performance due to the ripple borrow delay and redundant logic for computing diff bits that are only used to check if the difference is zero.
+
+To optimize for area and performance (PPA), we can avoid the explicit subtractor chain altogether. Instead, implement the 4-bit comparator as a hierarchical bitwise magnitude comparator using combinational logic:
+
+- Check bits from MSB to LSB to decide if A > B or A < B immediately.
+- If all bits are equal, then A = B.
+- This removes the ripple borrow chain and the subtraction logic, reducing logic depth and area.
+- Since only comparison outputs are needed, there's no need to compute the difference bits.
+- This approach naturally yields mutually exclusive outputs and short-circuits comparison at the highest differing bit.
+
+Thus, implement a cascade of bit-level comparisons:
+- At bit 3 (MSB): if A[3] > B[3] => A_greater=1, else if A[3] < B[3] => A_less=1
+- else go to bit 2 and repeat
+- Finally, if all bits equal => A_equal=1
+
+This approach improves timing (no ripple borrow), reduces area (no subtraction logic), and reduces power (less switching).
+
+We will implement this using simple logic expressions for each bit and combine results accordingly.

@@ -1,0 +1,20 @@
+I will fuse the best aspects of both example solutions to create a superior sequence detector FSM for detecting "1001":
+
+- Use a 4-state FSM (IDLE, S1, S2, S3) with binary-encoded states as in Example 1 for minimal area and clear state definition.
+- Implement synchronous active-low reset for robust reset behavior consistent with typical design practices.
+- Use an always_comb style `always @(*)` block for the next state logic (as in Example 1) using a clean `case` statement for clarity, better synthesis optimization, and easier timing closure.
+- Implement the output logic (`sequence_detected`) as a registered Moore output, asserted when the current state is S3 and input `data_in` is '1' on the clock edge, exactly when the sequence "1001" completes. This keeps output stable and synchronous.
+- Avoid the nested ternary continuous assignment for next state in Example 2 to improve readability and synthesis results.
+- Maintain consistent naming: input reset is `reset_n` active low synchronous reset, matching the problem description.
+- Use non-blocking assignments in sequential blocks, and keep combinational and sequential logic properly separated.
+- Keep the design minimal and readable, suitable for synthesis and formal verification.
+
+This fusion achieves the low area and timing efficiency of Example 1 with the clean code style of Example 2 and better reset polarity alignment with the problem statement. The output is stable and synchronous with minimal latency.
+
+The final design:
+- 3-bit state encoding (IDLE, S1, S2, S3)
+- Next state combinational logic in an always @(*)
+- State updated on posedge clk with synchronous active-low reset
+- Output asserted when sequence detected, synchronous registered output
+
+This approach balances clarity, synthesis friendliness, and meets all design requirements.

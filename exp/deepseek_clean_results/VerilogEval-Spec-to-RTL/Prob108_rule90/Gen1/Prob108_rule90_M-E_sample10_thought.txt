@@ -1,0 +1,6 @@
+To optimize the Rule 90 implementation, we can use a shift register approach combined with parallel XOR logic. The key ideas are:
+1. Use two 512-bit registers: one for current state and one for next state
+2. Create a 514-bit extended register that includes the boundary conditions (0's)
+3. For each cell, the next state is simply the XOR of bits i and i+2 in the extended register
+4. This eliminates the need for special boundary handling and reduces the combinational logic complexity
+5. The extended register is formed as {1'b0, q, 1'b0} to automatically handle boundaries

@@ -1,0 +1,20 @@
+To refactor this FSM implementation, I'll make the following structural changes while maintaining identical functionality:
+
+1. State Transition Logic:
+   - Replace the sequential always block with combinational assign statements for next state calculation
+   - Use a separate always block just for state register updates
+   - This separates combinational and sequential logic explicitly
+
+2. Output Logic:
+   - Keep the same compact OR-based output logic
+   - Maintain the same state encoding parameters
+
+3. Reset Handling:
+   - Keep synchronous reset but move it to the state register always block
+   - This makes the reset behavior more explicit in the sequential section
+
+Benefits of this approach:
+- Clear separation of combinational and sequential logic
+- Easier timing analysis since next state logic is purely combinational
+- More modular design that could be optimized separately
+- Maintains same state encoding and output behavior

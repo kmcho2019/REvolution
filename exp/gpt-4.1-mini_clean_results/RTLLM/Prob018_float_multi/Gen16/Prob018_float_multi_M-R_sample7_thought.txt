@@ -1,0 +1,16 @@
+Refactor the original 3-stage pipeline design into a more modular structure using an explicit state machine with clearly defined states for each processing step. Instead of encoding pipeline stages via a counter that increments every cycle, define states: IDLE, INPUT_CAPTURE, MULTIPLY, NORMALIZE, OUTPUT. 
+
+Use combinational logic (`assign`) to compute all intermediate signals from registered inputs, reducing the complexity inside sequential blocks. This improves clarity and testability. Registers hold only the current state and operands/partial results per state, and outputs update in the OUTPUT state.
+
+Also, extract special case detection and normalization/rounding logic into separate combinational blocks using functions or localparam definitions to improve readability.
+
+This FSM approach:
+- Makes control flow explicit
+- Uses blocking assignments in combinational always blocks for next-state logic and registered values
+- Keeps sequential always block simple, with only state and registered data updated
+- Maintains IEEE-754 compliance and special case handling
+- Enables easier extension or stall insertion if needed
+
+We preserve all internal signals as registers but update them according to the FSM state rather than a numeric counter increment. This refactoring provides cleaner separation of concerns, improves code readability, and is easier for formal verification or debugging.
+
+The module still uses a synchronous reset and clock, and outputs are only updated in the OUTPUT state.

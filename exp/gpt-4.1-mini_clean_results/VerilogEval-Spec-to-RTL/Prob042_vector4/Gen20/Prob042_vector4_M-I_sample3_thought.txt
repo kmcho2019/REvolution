@@ -1,0 +1,9 @@
+The original implementation is already minimal and optimal in terms of logic, as it directly uses replication and concatenation for sign extension, which synthesizes efficiently and has minimal timing and area impact.
+
+To potentially improve power slightly, especially if the synthesized hardware duplicates the sign bit wiring in many places, we can reduce wiring by first assigning the sign bit replicated vector to an intermediate wire and then concatenating. This could reduce routing complexity and switching activity by sharing the replicated bits.
+
+Also, explicitly declaring the output as a reg or wire does not impact synthesis here, but we keep it as wire with assign.
+
+Overall, the improvement is minor and mostly a style/refactoring approach to possibly help synthesis tools share the replicated sign bit wiring better, marginally improving PPA.
+
+If further optimization is desired, system-level architectural changes or different coding styles (e.g., using signed extensions if the tool supports it) could be explored, but for pure Verilog combinational code, the given approach is optimal.

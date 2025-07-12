@@ -1,0 +1,15 @@
+The feedback indicates the barrel shifter needs to perform cumulative shifts (4+2+1) when multiple control bits are set, rather than selecting just one shift amount. Here's the corrected approach:
+
+1. Implement the barrel shifter as a 3-stage pipeline where each stage conditionally applies its shift amount
+2. Each stage corresponds to one control bit (4, 2, or 1 positions)
+3. The input flows through each stage sequentially
+4. At each stage, if the corresponding control bit is set, the shift is applied to the intermediate result
+5. This ensures shifts are cumulative when multiple control bits are set
+6. The order of stages is important - we process the largest shift (4) first for better hardware efficiency
+7. The final output is the result after all enabled shifts have been applied
+
+Key improvements:
+- Properly handles combinations of shift amounts (e.g., 4+2+1 = 7 positions)
+- Maintains the original specification of shift amounts (1, 2, 4)
+- Still efficient with only 3 stages of conditional shifting
+- Clear correspondence between control bits and shift amounts

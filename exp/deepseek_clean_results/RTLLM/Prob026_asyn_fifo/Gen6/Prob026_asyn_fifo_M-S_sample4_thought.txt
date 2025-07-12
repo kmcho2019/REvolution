@@ -1,0 +1,13 @@
+To simplify the asynchronous FIFO implementation while maintaining functionality, we can:
+1. Remove the separate binary pointer registers and directly work with Gray codes
+2. Simplify the Gray-to-binary conversion by using only the needed bits for addressing
+3. Combine the pointer increment and Gray code generation in one step
+4. Reduce the number of intermediate registers
+5. Keep the essential 2-stage synchronizers for clock domain crossing
+
+Key simplifications:
+- Eliminate separate binary pointers (wptr_bin/rptr_bin)
+- Directly generate Gray codes during increment
+- Simplify address generation by using just the lower bits
+- Maintain robust full/empty detection
+- Keep proper reset handling

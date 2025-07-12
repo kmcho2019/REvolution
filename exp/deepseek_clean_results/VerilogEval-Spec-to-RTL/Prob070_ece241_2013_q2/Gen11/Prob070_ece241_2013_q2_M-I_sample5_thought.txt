@@ -1,0 +1,26 @@
+Improvement Strategy:
+
+1. Re-examine Truth Table:
+   - True cases (output=1): 2 (0010), 7 (0111), 15 (1111)
+   - False cases (output=0): 0 (0000),1 (0001),4 (0100),5 (0101),6 (0110),9 (1001),10 (1010),13 (1101),14 (1110)
+   - Don't-cares: 3,8,11,12
+
+2. SOP Optimization:
+   - Keep original SOP implementation since it correctly covers all true cases
+   - Don't-cares can be used to potentially simplify, but current form is already minimal
+
+3. POS Correction:
+   - Need to properly cover all false cases without affecting true cases
+   - Break down false cases into groups that can be covered by sum terms:
+     * Cases where c=0 (0,1,4,5)
+     * Case 6 (0110)
+     * Case 9 (1001)
+     * Case 10 (1010)
+     * Case 13 (1101)
+     * Case 14 (1110)
+   - Create sum terms for each group and combine with AND
+
+4. Final Implementation:
+   - Keep SOP as is (already correct)
+   - Rewrite POS to properly cover all false cases
+   - Use don't-cares to minimize terms where possible

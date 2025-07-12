@@ -1,0 +1,19 @@
+Analyzing the Karnaugh map, the function f can be expressed more simply by identifying groups of ones directly:
+
+- The row x[3]x[2] = 00 has ones at x[1]x[0] = 00 and 10 → f = ~x3 & ~x2 & (~x1 & ~x0 | x1 & ~x0)
+- The row x[3]x[2] = 10 has ones at 00, 01, and 10 → f = x3 & ~x2 & (~x0 | ~x1)
+- The row x[3]x[2] = 11 has ones at 00, 01, 11 → f = x3 & x2 & (~x0 | x1)
+
+By factoring, a concise minimal expression can be formed:
+
+f = (~x3 & ~x2 & ~x0) | (x3 & ~x2 & ~x0) | (x3 & ~x2 & ~x1) | (x3 & x2 & (~x0 | x1))
+
+Further simplification leads to:
+
+f = (~x0 & (~x3 & ~x2 | x3 & ~x2 | x3 & x2)) | (x3 & x2 & x1) | (x3 & ~x2 & ~x1)
+
+Finally, since (~x3 & ~x2) | (x3 & ~x2) = ~x2, the first term simplifies to ~x0 & ~x2 | x3 & x2 & x1 | x3 & ~x2 & ~x1
+
+This simplifies the logic without increasing gate count or depth.
+
+Implementing this minimal sum-of-products expression reduces complexity and keeps the module readable and efficient.

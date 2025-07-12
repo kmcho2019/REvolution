@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Use one-hot encoding (A:000001, B:000010, C:000100, D:001000, E:010000, F:100000) to simplify state decoding and potentially reduce combinatorial logic.
+
+2. State Transition Logic: Implement using a single always block with case statement for clarity and better synthesis results. This replaces the ternary operator chain.
+
+3. Output Logic: Keep as continuous assignment but now checks specific one-hot bits (E or F states) rather than a single bit.
+
+4. Reset Handling: Maintain synchronous reset but now reset to one-hot A state.
+
+Key Changes:
+- Changed to one-hot encoding for potentially better timing
+- Replaced ternary operators with case statement
+- Modified output logic to check for one-hot states
+- Kept same functional behavior but with different implementation style

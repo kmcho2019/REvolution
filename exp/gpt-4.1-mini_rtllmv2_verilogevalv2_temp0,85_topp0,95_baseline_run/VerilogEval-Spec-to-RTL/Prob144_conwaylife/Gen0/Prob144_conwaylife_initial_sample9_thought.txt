@@ -1,7 +1,0 @@
-The module stores the current 16x16 grid state in a 256-bit register q. On a clock edge, if load is high, q loads the input data directly. Otherwise, q updates by computing the next state of each cell according to the rules of the game.
-
-For each cell, we calculate the number of alive neighbors by summing its eight neighbors, using modular arithmetic to wrap indices around the 16x16 toroidal grid. Then, the next cell state is determined by the rules: 0-1 neighbor -> 0, 2 neighbors -> same state, 3 neighbors -> 1, 4+ neighbors -> 0.
-
-Since the grid is relatively small (16x16), we implement the neighbor counting combinationally by iterating over each cell and summing neighbors using modular arithmetic for wrapping indices. This is done every clock cycle to get the next grid state. The output q represents the current grid state.
-
-The data input is a 256-bit vector, representing rows from 0 to 15, each 16 bits wide, little-endian indexing within each row. The same applies to q output.

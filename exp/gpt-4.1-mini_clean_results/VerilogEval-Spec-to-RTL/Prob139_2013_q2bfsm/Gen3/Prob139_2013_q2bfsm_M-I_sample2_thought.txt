@@ -1,0 +1,16 @@
+To fix the FSM and meet the specification exactly:
+
+- Keep the synchronous active-low reset that forces the FSM to state A.
+- When resetn de-asserts, transition to state F_ONE where output f=1 for exactly one cycle.
+- Then move to a pattern detection sequence: monitor x for the pattern 1,0,1 strictly in three consecutive cycles.
+  - If the pattern is broken at any point, restart pattern detection from the appropriate state to match the pattern from the beginning.
+- Once pattern detected, set g=1 starting from next cycle.
+- In the g=1 state, monitor y for two cycles max:
+  - If y=1 observed anytime during these two cycles, maintain g=1 indefinitely.
+  - If y=1 not seen in 2 cycles, set g=0 permanently (stay in a terminal "g_off" state).
+- Make outputs registered and derived from the current state for correct timing.
+- Use clear states to track pattern progress and y monitoring.
+- Outputs f and g are zero in all states except specified ones to avoid glitches.
+- Use a separate state for the terminal g=0 condition after y monitoring fails.
+- Maintain all state changes and outputs at clock edges.
+- Avoid mixing next_state with output assignments to eliminate off-by-one cycle errors.

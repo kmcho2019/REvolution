@@ -1,0 +1,9 @@
+The current shift register implementation is already quite efficient, but we can make slight improvements:
+
+1. **Output Registering**: Adding a registered output stage will improve timing by breaking the combinational path from shift_reg to z. This is particularly beneficial for high-frequency applications.
+
+2. **State Encoding Optimization**: While the shift register approach is good, we can try a one-hot encoded FSM which might offer better timing in some technologies. However, for just 3 states, the difference will be minimal.
+
+3. **Clock Gating**: We can add simple clock gating when the input 'x' remains stable, though this adds complexity that may not justify the power savings for this small design.
+
+The best improvement would be to register the output while maintaining the shift register approach, as this provides better timing with minimal area overhead.

@@ -1,0 +1,9 @@
+To improve the provided frequency divider module (`freq_divbyfrac`), we need to address the identified functional errors and optimize the design for better power, performance, and area (PPA) metrics.
+
+First, we will correct the logic for generating the intermediate divided clocks (`clk_div_int1` and `clk_div_int2`) to accurately reflect the required uneven clock periods for 3.5x division. This involves ensuring that `clk_div_int1` represents a clock period of 4 cycles and `clk_div_int2` represents a clock period of 3 cycles within the 7-cycle window defined by `MUL2_DIV_CLK`.
+
+Next, we will revisit the logic for generating the final fractional divided clock output (`clk_div`). We aim to correctly implement the double-edge clocking technique to achieve phase-shifting and duty cycle adjustment for a smooth fractional clock output. This might involve reevaluating the conditions under which `clk_div` is set high, potentially incorporating additional signals to track the phase of the divided clocks and ensure uniform periods.
+
+For PPA optimization, we will focus on minimizing the number of flip-flops and combinational logic gates used in the design. Techniques such as pipelining, retiming, and logic minimization can be employed to reduce area and power consumption while maintaining or improving the performance of the frequency divider.
+
+Finally, the improved design will be simulated to verify its correctness and measured for its PPA metrics to ensure that it not only achieves the required functionality but also does so in an efficient manner.

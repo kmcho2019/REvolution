@@ -1,0 +1,7 @@
+To develop a novel architectural idea for the HDLC framing module, we'll focus on a counter-based approach. The idea is to use two counters: one to count consecutive ones and another to track the overall sequence. This approach simplifies the state machine into a more straightforward counter-based logic, potentially reducing the area and improving the power consumption profile.
+
+The key insight is that the sequences of interest (0111110, 01111110, and 01111111...) can be detected by counting consecutive ones and then checking the next bit to determine if it's part of a flag, a bit to be discarded, or an error condition. This simplification allows for a more direct implementation without the need for a complex state machine, potentially leading to better PPA metrics.
+
+The counters will be reset or incremented based on the input bit stream. When a specific count is reached (e.g., five consecutive ones), the next bit determines the action: if it's a zero, it's a bit to be discarded; if it's a one, it could be part of a flag or an error sequence. The error condition is detected if the count exceeds six ones. This approach ensures that the outputs (disc, flag, err) are asserted correctly based on the input sequences.
+
+By leveraging counters instead of a traditional state machine, the design becomes more modular and easier to understand, with a potential for improved performance, area efficiency, and lower power consumption.

@@ -1,0 +1,14 @@
+The original design is already minimal and clean, but we can optimize the next state logic slightly by simplifying the case statement into a priority if-else structure that may be mapped to simpler hardware by synthesis tools, potentially improving power and delay. Also, since bump inputs can both trigger state changes, expressing the next state explicitly as a toggle when either bump input is active might reduce logic complexity.
+
+Specifically, the next state can be expressed as toggling the state if either bump_left or bump_right is 1. This matches the problem statement because:
+- bump_left = 1 => go right (state=1)
+- bump_right = 1 => go left (state=0)
+- both bumps = toggle state
+
+By interpreting bump_left and bump_right as inputs causing toggling on bump signals, we can simplify logic to:
+- If any bump input is 1, next_state = ~state
+- Else, next_state = state
+
+This keeps the behavior identical but reduces case logic to a simple OR and toggle, which will likely improve timing and power. Outputs remain assigned as before.
+
+No other structural changes are needed as asynchronous reset and output logic are optimal already.

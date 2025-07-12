@@ -1,0 +1,12 @@
+Fuse the best aspects of both examples by implementing an 8-bit up-counter that counts from 0 up to (freq - 1), toggling wave_out exactly when count equals freq-1. This matches the specification precisely, avoiding off-by-one errors in frequency control.
+
+Key points of fusion:
+- Use active-low synchronous reset (Example 1) for predictable and industry-standard reset behavior.
+- Gate counting and toggling only when freq is nonzero, holding outputs steady otherwise to save power.
+- Avoid subtraction inside the always block by precomputing freq_minus_one in combinational logic.
+- Use non-blocking assignments consistently for reliable synthesis.
+- Keep logic simple with minimal combinational paths for good timing.
+- Initialize count to zero upon reset and hold it steady when disabled.
+- The output wave toggles at intervals defined by freq, meaning higher freq values slow down the toggling, consistent with the spec.
+
+This fusion yields a clear, low-power, and synthesizable design with excellent timing and area characteristics, precisely fulfilling the problem specification.

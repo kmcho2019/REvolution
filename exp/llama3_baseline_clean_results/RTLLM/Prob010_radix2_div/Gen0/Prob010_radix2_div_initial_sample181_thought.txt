@@ -1,0 +1,13 @@
+To implement the radix-2 divider in Verilog, we need to design a module that follows the specified steps. The module should first detect when a valid operation is requested and the previous result has been consumed. It should then save the inputs, initialize the necessary registers, and begin the division process. The division process involves iteratively subtracting the divisor from the dividend and shifting the result. The quotient and remainder are updated based on the carry-out of each subtraction. The module should handle both signed and unsigned division operations and provide a 16-bit result containing the remainder and quotient. The implementation will require a finite state machine or a counter-based approach to manage the division process.
+
+The main components of the design will be:
+1. A control logic block to manage the operation requests and result validity.
+2. A shift register (SR) to hold the intermediate results.
+3. A counter (cnt) to track the number of division steps.
+4. A flag (start_cnt) to indicate when the division process starts.
+5. A block to compute the subtraction and update the shift register based on the carry-out.
+6. Multiplexers to select the appropriate values for the shift register based on the carry-out and operation type (signed or unsigned).
+
+To implement the division process, we will use a loop that runs for 8 cycles (since we are dealing with 8-bit numbers), shifting the dividend left by one bit at the start, and then iteratively subtracting the divisor, shifting the result, and updating the quotient and remainder based on the carry-out. The final result will be a 16-bit value containing the remainder in the upper 8 bits and the quotient in the lower 8 bits.
+
+We will use Verilog's built-in arithmetic and logical operators to perform the necessary computations and conditional statements to manage the control flow based on the inputs and internal states.

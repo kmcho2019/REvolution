@@ -1,0 +1,23 @@
+Implement a four-state FSM with clear, distinct responsibilities:
+
+1. **SEARCH**: Continuously shift in input bits (MSB first) into a 4-bit shift register to detect the start pattern `1101`. Only upon detection, move to DELAY_LOAD.
+
+2. **DELAY_LOAD**: Shift in the next 4 bits (MSB first) serially to form the 4-bit delay value. After loading 4 bits, compute the total count cycles as `(delay + 1) * 1000`. Store delay and initialize counters.
+
+3. **COUNTING**: Count clock cycles. Use a 10-bit counter to count from 0 to 999 representing each 1000-cycle segment. At each full 1000-cycle segment, decrement the remaining delay count. Output `count` as the current remaining delay segment (starting from delay down to zero). Assert `counting=1` only here.
+
+4. **WAIT_ACK**: Assert `done=1`, clear `counting`, ignore `data`, wait for `ack=1`. When `ack` is asserted, return to SEARCH.
+
+Additional details:
+
+- Use synchronous reset that resets all registers and FSM to SEARCH.
+
+- Make all registers and counters synchronous and positive-edge triggered.
+
+- Pattern detection and delay loading are MSB first: shift left, input bit into LSB.
+
+- The output `count` is valid only during COUNTING; in other states, it holds zero.
+
+- Avoid unknown (x) values for outputs; assign zero or stable values.
+
+This architecture cleanly separates responsibilities, maintains the pattern and delay registers distinctly, and explicitly calculates the total counting cycles, ensuring exact timing requirements.

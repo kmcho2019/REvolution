@@ -1,0 +1,10 @@
+The initial solution is functionally correct, implementing the adder-subtractor with zero flag properly using a ripple carry adder. However, the ripple carry adder introduces linear carry propagation delay, impacting performance (worst negative slack, zero timing margin).
+
+To improve PPA (performance, power, and area), I will:
+- Replace the explicit ripple carry adder with Verilog’s built-in '+' operator, allowing synthesis tools to infer an optimized adder (carry lookahead or carry select) for better timing and area.
+- Simplify the logic by using a single assign for the output 'out' using conditional operator based on do_sub, which synthesis tools can optimize efficiently.
+- For zero flag detection, use a single reduction NOR on the output.
+- Keep all outputs as wires for purely combinational logic.
+- This approach reduces gate count, switching power (fewer explicit carry signals toggling), and improves timing due to more optimized adders inferred by synthesis tools.
+
+Thus, we sacrifice explicit structural clarity for better synthesis optimization, yielding improved PPA overall.

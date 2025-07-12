@@ -1,0 +1,16 @@
+Fusion Strategy:
+1. Use synchronous write operation (from both examples) for robust timing
+2. Implement combinational read with enable (from Example 2) for lower latency
+3. Keep the for-loop reset (from Example 1) but make it synchronous for better timing
+4. Remove forced zero output when read_en is low (unlike both examples) to reduce unnecessary switching
+5. Benefits:
+   - Lower power: No unnecessary output clearing
+   - Better timing: Synchronous reset and write operations
+   - Cleaner design: Clear separation of combinational and sequential logic
+   - More natural behavior: Output maintains last value when not reading
+
+Key Improvements:
+- Synchronous reset clears memory in one cycle (better than Example 2's initial block)
+- Combinational read without forced zeros (better than both examples)
+- Clear separation of read/write paths (like both examples)
+- No unnecessary variables (cleaner than Example 1)

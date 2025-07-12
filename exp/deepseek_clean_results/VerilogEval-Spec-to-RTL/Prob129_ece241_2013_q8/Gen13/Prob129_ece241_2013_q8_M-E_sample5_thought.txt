@@ -1,0 +1,9 @@
+My novel approach uses a compact state encoding scheme with a twist:
+1. Instead of tracking the entire sequence history, we'll use states that represent partial matches
+2. The state encoding directly represents the progress in matching the "101" sequence:
+   - State 0: No match yet or reset
+   - State 1: First '1' detected
+   - State 2: '10' detected (waiting for final '1')
+3. The output z is asserted combinatorially when we're in state 2 and receive a '1'
+4. This approach minimizes state transitions and leverages the Mealy property for immediate output
+5. The state encoding is optimized for minimal logic implementation

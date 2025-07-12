@@ -1,0 +1,15 @@
+To fix the code, we need to address the issues identified in the feedback. Here's a step-by-step approach to improve the design:
+
+1.  **Synchronize Prediction and Training**: We need to ensure that the prediction and training operations are properly synchronized. When both prediction and training occur in the same cycle, training should take precedence, and the branch history register should be updated based on the training inputs.
+
+2.  **Correctly Update Branch History Register**: We need to modify the code to correctly update the branch history register. When training, the register should be updated based on the actual branch outcome. When predicting, the register should be updated based on the predicted branch direction.
+
+3.  **Fix Out-of-bounds Access**: We need to ensure that the index used to access the PHT table is within the valid range. We can use the modulo operator to clamp the index to the valid range.
+
+4.  **Correctly Update PHT Values**: We need to modify the code to correctly update the PHT values. When the branch is taken, the PHT value should be incremented. When the branch is not taken, the PHT value should be decremented, with saturation at 2'b00 and 2'b11.
+
+5.  **Asynchronous Reset**: We need to ensure that the asynchronous reset is handled correctly, immediately resetting the 'predict_taken', 'predict_history', 'history', and PHT when 'areset' is high.
+
+By addressing these issues, we can improve the accuracy and functionality of the gshare branch predictor.
+
+The main changes will be made in the always block where the prediction and training logic is implemented. We will introduce additional logic to handle the case where prediction and training occur simultaneously, and we will correct the updates to the branch history register and the PHT.

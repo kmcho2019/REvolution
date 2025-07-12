@@ -1,0 +1,6 @@
+Fuse the two designs by keeping the clear, clean, combinational next-state logic with localparam-encoded states (from Example 1) and the synchronous reset and output register approach of Example 2 to hold start_shifting once detected.  
+Use a binary-encoded FSM with explicit next-state logic combinationally, which improves clarity and maintainability.  
+Keep start_shifting as a registered output set synchronously on detection and held until reset, which ensures a glitch-free sticky output signal and avoids purely combinational output tied directly to state (which can glitch on state transitions).  
+Update start_shifting inside the clocked process together with the state update, to ensure clean timing and minimal output glitches, but compute the detection event as combinational logic to keep FSM modular.  
+This fusion maintains the performance-friendly next-state combinational block and the robust registered output control, balancing timing, clarity, and glitch avoidance.  
+Use blocking assignments in combinational logic and non-blocking assignments in sequential logic, maintaining good Verilog coding practices.

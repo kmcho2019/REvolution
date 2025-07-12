@@ -1,0 +1,16 @@
+To create a novel approach, I will avoid the direct use of generate loops and vector packing. Instead, I will implement explicit combinational logic for each pairwise equality comparison individually. This approach uses explicit assign statements for each of the 25 outputs, allowing fine-grained control and potential customization of the comparison order.
+
+To maintain clarity and reduce errors in indices, I will define a helper function-like macro that computes equality using the XNOR operator and explicitly assign each output bit in descending order from out[24] down to out[0] corresponding to pairs from (a,a) to (e,e).
+
+This approach demonstrates an explicit, manually-coded style that is straightforward and easy to verify by inspection. Although more verbose, it may be preferred in some design styles or for very small modules where full unrolling is acceptable and offers direct control over logic.
+
+The mapping will be:
+- out[24] = (a == a)
+- out[23] = (a == b)
+- ...
+- out[20] = (a == e)
+- out[19] = (b == a)
+- ...
+- out[0]  = (e == e)
+
+Thus all 25 pairs are covered explicitly.

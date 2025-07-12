@@ -1,0 +1,17 @@
+To optimize the Lemming state machine further based on PPA metrics:
+
+1. Maintain the efficient binary state encoding (WALK/FALL) for timing
+2. Add clock gating for dig_active register to reduce power consumption when dig=0
+3. Combine output logic terms to share common expressions and reduce area
+4. Keep the simple direction flip logic for bumps
+5. Optimize the state transition logic to minimize critical path:
+   - Move ground check outside of nested conditions
+   - Simplify dig_active assignment
+6. Use explicit priority encoding for the condition checks to ensure correct behavior
+7. Maintain asynchronous reset for initialization
+
+Key optimizations:
+- Clock gating for dig_active reduces power
+- Shared output logic reduces area
+- Simplified state transitions improve timing
+- Maintained correct priority order (fall > dig > bump)

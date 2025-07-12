@@ -1,0 +1,12 @@
+Simplified approach:
+1. Use a single state bit to track whether we're in "counting" mode (after first 'a' seen)
+2. p directly follows 'a' when clock is high (no state needed for this)
+3. q becomes 1 one cycle after p was 1, and stays 1 until reset condition
+4. Reset occurs when 'a' is high during clock low (clears both p and q)
+
+Key simplifications:
+- Eliminated explicit state machine states
+- Reduced to simple sequential logic with conditional updates
+- p follows 'a' immediately during clock high
+- q tracks previous p value
+- Reset condition is simple combinational check

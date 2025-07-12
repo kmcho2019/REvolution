@@ -1,0 +1,11 @@
+The key fix is to properly align the toggle events with the counters to ensure that clk_div1 and clk_div2 produce complementary phases resulting in the correct odd frequency division when OR-ed together.
+
+Instead of toggling clk_div1 and clk_div2 exactly when cnt1 or cnt2 == HALF_DIV, toggle these signals when the counters reach the terminal count (NUM_DIV - 1). This ensures each clk_divX toggles once every full count cycle, and by initializing clk_div2 with an initial phase offset (setting it to 1 on reset while clk_div1 is 0), the OR of clk_div1 and clk_div2 produces a clock with frequency divided by NUM_DIV and a near 50% duty cycle.
+
+This approach prevents skew and misalignment caused by toggling at HALF_DIV and ensures that the two dividers run out of phase by HALF_DIV counts, leading to the correct odd division frequency when combined.
+
+Additionally, counters increment and wrap modulo NUM_DIV properly. The reset initializes cnt1 and cnt2 to 0, clk_div1 to 0, and clk_div2 to 1, creating the necessary phase difference.
+
+The rest of the structure remains unchanged, and the compile-time check ensures NUM_DIV is odd.
+
+This fix addresses the timing and phase alignment issues observed in the feedback.

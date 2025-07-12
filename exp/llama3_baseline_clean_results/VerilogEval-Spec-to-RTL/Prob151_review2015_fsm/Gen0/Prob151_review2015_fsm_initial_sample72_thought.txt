@@ -1,0 +1,8 @@
+The finite-state machine (FSM) should have states to detect the pattern 1101, shift in 4 more bits for the duration, wait for the counters to finish, and notify the user. 
+1. The initial state is an idle state where it searches for the pattern 1101.
+2. After detecting the pattern, it transitions to a shift state where it shifts in 4 more bits and then asserts the counting output.
+3. In the counting state, it waits until the counters finish counting (done_counting is high).
+4. After the counters finish, it transitions to a done state where it asserts the done output and waits for the user to acknowledge (ack is high).
+5. Finally, it resets to the idle state.
+We can implement the FSM using a Mealy machine with 5 states: idle, shift, counting, done, and ack_wait.
+We use a counter to keep track of the number of bits shifted during the shift state.

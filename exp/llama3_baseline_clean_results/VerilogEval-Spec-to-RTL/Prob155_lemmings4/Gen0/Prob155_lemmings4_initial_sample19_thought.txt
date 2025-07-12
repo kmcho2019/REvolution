@@ -1,0 +1,22 @@
+To implement the Lemming behavior as a Moore state machine, we need to define the states and transitions based on the given conditions. 
+
+We can start by identifying the main states: 
+- walking_left
+- walking_right
+- falling
+- digging
+- splattered
+
+We also need to consider the transitions between these states based on the input signals (bump_left, bump_right, ground, dig).
+
+When the Lemming is walking, it can switch directions if it hits an obstacle (bump_left or bump_right). If the ground disappears (ground=0), it will fall. If it's told to dig (dig=1) and there is ground (ground=1), it will start digging.
+
+When the Lemming is falling, it will continue to fall until it hits the ground (ground=1) again. If it falls for more than 20 clock cycles before hitting the ground, it will splatter.
+
+When the Lemming is digging, it will continue to dig until it reaches the other side (ground=0). At that point, it will fall and then continue walking in its original direction once it hits the ground again.
+
+We can use a counter to keep track of the number of clock cycles the Lemming has been falling, and check if it has exceeded 20 clock cycles when it hits the ground.
+
+We can use a state variable to keep track of the current state, and use combinational logic to determine the next state based on the current state and input signals.
+
+We can also use a separate variable to keep track of the Lemming's original walking direction before it started falling or digging, so that it can resume walking in the same direction once it hits the ground again.

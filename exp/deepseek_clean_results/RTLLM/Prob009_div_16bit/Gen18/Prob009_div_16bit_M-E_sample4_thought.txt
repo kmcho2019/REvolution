@@ -1,0 +1,17 @@
+Novel Architecture: Bit-Serial Division with Parallel Remainder Update
+1. Concept: Instead of processing all bits in parallel or using a fully cascaded approach, we'll implement a bit-serial division algorithm that updates the remainder in parallel. This reduces area while maintaining reasonable speed.
+2. Key Features:
+   - Processes one quotient bit per clock cycle (though still combinational)
+   - Uses a barrel-shifter approach for remainder updates
+   - Implements a single shared 9-bit subtractor/comparator
+   - Optimized remainder path with early termination detection
+3. Advantages:
+   - Reduced area from shared arithmetic units
+   - Clear data flow through explicit shift-and-subtract steps
+   - Efficient handling of leading zeros
+   - Natural extension to pipelined version if needed
+4. Implementation:
+   - Use a 17-bit working remainder (16+1 for carry)
+   - Implement single subtractor reused for all steps
+   - Generate quotient bits through sequential comparison
+   - Special handling for division by zero

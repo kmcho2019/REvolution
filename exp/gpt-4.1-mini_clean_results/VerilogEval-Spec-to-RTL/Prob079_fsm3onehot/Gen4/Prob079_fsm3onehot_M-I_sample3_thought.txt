@@ -1,0 +1,24 @@
+To optimize the PPA metrics while keeping the one-hot encoding and correctness, we can try to reduce logic complexity by factoring expressions more compactly, removing redundant terms, and reducing fan-in where possible. 
+
+For instance:
+- next_state[1] is currently assigned as in & (state[0] | state[1] | state[3]). Observing the state transition table, state B (state[1]) transitions to itself on input=1, as does state D (state[3]), and state A (state[0]) transitions to B as well. 
+
+Since B and D go to B on input=1 regardless, and A goes to B on input=1, this can be grouped, but the OR of three inputs is unavoidable for next_state[1].
+
+However, we can try to split the terms to reduce fan-in by implementing intermediate wires to factor the logic:
+
+- Define an intermediate wire "to_B" = state[0] | state[1] | state[3].
+- Define an intermediate wire "to_A" = state[0] | state[2].
+- Define an intermediate wire "to_C" = state[1] | state[3].
+
+This makes the expressions clearer and potentially allows synthesis tools to optimize better by sharing logic.
+
+Also, to reduce switching activity and gate count, invert 'in' only once and use it consistently.
+
+Output logic remains a direct assignment of state[3].
+
+This reorganization does not reduce gate count drastically but improves readability and allows EDA tools to optimize logic sharing more efficiently, potentially improving power and timing.
+
+No logic reduction beyond original minimal logic is possible without changing encoding or behavior.
+
+Hence, the improvement strategy is to add intermediate signals to share common terms, improving structural clarity and potential PPA after synthesis.

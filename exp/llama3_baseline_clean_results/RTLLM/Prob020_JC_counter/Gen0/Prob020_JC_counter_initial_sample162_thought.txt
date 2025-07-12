@@ -1,0 +1,5 @@
+To implement a 64-bit Johnson counter, we can create a module that takes a clock signal (clk) and an active-low reset signal (rst_n) as inputs, and outputs the current count value (Q) as a 64-bit register. We will use a synchronous approach, updating the counter value on every rising edge of the clock signal or the falling edge of the reset signal.
+
+We will first check for the reset condition. If the reset signal is low, we set the counter value to 0. Otherwise, we check the least significant bit (Q[0]) of the current counter value. If it is 0, we increment the counter by shifting the current value to the right and appending a 1 at the most significant bit position. If the least significant bit is 1, we decrement the counter by shifting the current value to the right and appending a 0 at the most significant bit position.
+
+This logic can be implemented using a single always block in Verilog, which will be sensitive to the positive edge of the clock signal and the negative edge of the reset signal.

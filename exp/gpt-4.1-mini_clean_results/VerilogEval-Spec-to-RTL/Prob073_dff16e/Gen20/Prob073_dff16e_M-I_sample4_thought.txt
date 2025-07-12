@@ -1,0 +1,5 @@
+To improve the PPA of the original design, split the 16-bit register into two separate 8-bit registers for the upper and lower bytes. Each byte is controlled by its own byteena bit, and is updated independently within the same clock edge but separate always blocks or combined conditional statements. This reduces combinational logic complexity since masking is now done on 8 bits instead of 16 bits at once. Also, this structure reduces logic depth in critical path and eases synthesis optimizations.
+
+The synchronous active-low reset is applied to both bytes simultaneously. This approach also provides better clarity and facilitates potential clock gating if needed later.
+
+Overall, the modification balances register granularity with byte-enable controls, reducing masking complexity and possibly improving timing and power.

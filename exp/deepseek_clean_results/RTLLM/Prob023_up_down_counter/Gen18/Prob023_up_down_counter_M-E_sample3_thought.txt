@@ -1,0 +1,9 @@
+Novel parallel prefix counter design:
+1. Utilize a Kogge-Stone parallel prefix adder structure for fast carry propagation
+2. Implement both increment and decrement operations using the same adder structure
+3. For decrement, use two's complement addition (adding -1)
+4. Generate propagate and generate signals for each bit position
+5. Compute carries in logarithmic depth for better timing
+6. Select between +1 and -1 using the up_down control signal
+7. Maintain synchronous reset functionality
+8. This approach provides O(log n) carry propagation delay compared to O(n) in ripple-carry designs

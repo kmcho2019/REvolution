@@ -1,0 +1,20 @@
+To improve PPA (Timing, Power, Area) of the decade counter, the primary gain can be made by reducing unnecessary toggling in the counter register. The original design updates the counter only when slowena is high, but the comparator and adder are still active combinational logic on every cycle.
+
+One improvement is to gate the counter update with a clock enable based on slowena, so the register toggles only on enabled cycles, which is already done. But we can additionally optimize the combinational logic by re-encoding the decade counter as a one-hot counter to simplify next state decoding and potentially reduce switching and logic complexity.
+
+However, one-hot would use more flip-flops (10 flip-flops) which may increase area. Given the area metric is already low, it might be acceptable.
+
+Alternatively, we can keep the binary counter but optimize the wrap detection logic and next-state logic to use fewer logic gates:
+
+- Instead of comparing with 9, use a small LUT to check for 9 (1001b).
+- Optimize increment by using carry chain logic efficiently (this is inferred by synthesis tools).
+- To reduce power, explicitly gate the counter's clock enable by slowena to prevent toggling in flip-flops when not counting.
+- Since synchronous reset is active-high, no need to change.
+  
+Overall, the earlier code is good, but we can make sure the "wrap" logic is synthesized with minimal gates, and the clock enable is directly used to prevent toggling when slowena=0, which is done by conditional assignment in always block.
+
+To further improve, split the logic for "wrap" as a simple combinational function (check q[3] & ~q[2] & ~q[1] & q[0]) which is equivalent to q==9, so synthesis can optimize well.
+
+Keep the synchronous reset and counting only when slowena is high.
+
+This will help slightly reduce power (less toggling of logic), possibly improve timing by minimizing the comparator logic path, and maintain or slightly reduce area.

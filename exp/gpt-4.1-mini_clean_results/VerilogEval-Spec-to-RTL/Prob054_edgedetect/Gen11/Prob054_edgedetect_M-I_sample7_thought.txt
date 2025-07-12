@@ -1,0 +1,7 @@
+The original design is already minimal and functionally correct. To further optimize for power and timing, we can use clock gating to update the stored previous input and the output only when at least one bit of the input changes from 0 to 1. This avoids unnecessary register toggling and combinational logic evaluation every clock cycle, reducing dynamic power consumption and potentially improving timing by reducing toggling noise.
+
+Concretely, we generate an enable signal that is high only if at least one rising edge (0->1 transition) occurs on any input bit. We then use this enable signal to update the registers, effectively gating their toggling.
+
+This approach adds minimal logic for gating but reduces toggling, which is beneficial for power and timing (negative slack). The area overhead is very small as only a simple OR gate and enable logic are added.
+
+The functional behavior remains unchanged: the output `pedge` is set the cycle after detecting a rising edge on corresponding input bits.

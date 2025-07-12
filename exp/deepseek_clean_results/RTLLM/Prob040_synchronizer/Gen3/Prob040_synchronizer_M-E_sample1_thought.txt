@@ -1,0 +1,13 @@
+This solution implements a small FIFO (depth=2) for clock domain crossing:
+1. When data_en is high in clk_a domain, data is written into the FIFO
+2. The write pointer is synchronized to clk_b domain
+3. The read pointer is synchronized back to clk_a domain
+4. Data is read from FIFO in clk_b domain when valid data is available
+5. The FIFO full/empty conditions prevent data loss/corruption
+
+Key advantages:
+- Naturally handles clock domain crossing with built-in synchronization
+- Provides better throughput when data changes frequently
+- Clear separation between write and read domains
+- More robust against metastability with pointer synchronization
+- Still meets all original requirements including minimum hold times

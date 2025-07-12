@@ -1,0 +1,11 @@
+Fuse the clear and minimal 2-bit state encoding from both examples (A=00, B=01, C=10, D=11) with fully comprehensive priority handling from the first example that explicitly shows priority on requests in state A. Preserve the synchronous active-low reset, separate always blocks for state registers and next-state logic, and combinational output logic.
+
+The first example tightly encodes priority in the next-state logic:
+- In state A, check r[0] first, then r[1], then r[2] to reflect priority.
+The second example also does this but it is important to explicitly handle all requests for clarity.
+
+Output grants are combinationally derived from state, so only the granted device bit is set.
+
+We improve clarity by using consistent nonblocking assignments in sequential always block and blocking in combinational always block, aligning with best coding style. The output is combinational logic, preventing unnecessary flip-flops, preserving minimal latency on outputs.
+
+This fusion yields a clean, minimal, priority-respecting FSM with clear separation of logic and best synthesis-friendly style.

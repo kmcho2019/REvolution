@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples: 
+- Use a 10-bit accumulator and a 2-bit counter to track valid inputs, which correctly matches the input size and the accumulation count.
+- Update the accumulator and counter only when valid_in is high to reduce switching and unnecessary toggling.
+- Reset accumulator and counter only after outputting the 4th data to avoid unnecessary resets.
+- Drive valid_out high for exactly one cycle immediately when 4 valid inputs are accumulated.
+- Use non-blocking assignments for sequential logic and ensure the default valid_out is deasserted each cycle.
+- To further optimize power, gate the accumulator and counter updates using valid_in as an enable, so they only toggle when new valid data arrives.
+- Maintain asynchronous active-low reset for quick initialization.
+- Overall, this design aims at balancing clean logic, minimal switching, correctness, and optimal resource usage without added complexity.
+
+The fusion strategy is primarily:
+- Retain the counter and accumulator approach from both examples.
+- Add explicit gating of accumulator and counter updates using valid_in.
+- Set valid_out only when 4 inputs are accumulated.
+- Use clean non-blocking sequential logic with minimal assignments outside the enabled condition.

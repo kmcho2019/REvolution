@@ -1,0 +1,19 @@
+The key issues in the original implementation are:
+1. Output timing - outputs should be asserted on the cycle AFTER pattern detection
+2. Incorrect disc logic - should trigger on 0 after five 1s, not on sixth 1
+3. Combinatorial outputs instead of registered
+
+Refactoring approach:
+1. Keep the same state machine structure but modify state transitions
+2. Add output registers to ensure proper timing
+3. Modify disc logic to trigger on 0 after STATE_5
+4. Make outputs purely state-based (true Moore machine)
+5. Add intermediate signals for pattern detection
+
+The state machine now:
+- STATE_0 to STATE_5 count consecutive 1s
+- STATE_DISC: entered after five 1s followed by 0
+- STATE_FLAG: entered after six 1s followed by 0
+- STATE_ERR: entered after seven or more 1s
+
+Outputs are registered and asserted for one cycle when entering specific states.

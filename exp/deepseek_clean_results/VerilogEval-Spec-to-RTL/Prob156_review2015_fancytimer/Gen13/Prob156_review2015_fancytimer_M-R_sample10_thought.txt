@@ -1,0 +1,15 @@
+Here's a refactored version with these key changes:
+
+1. **Separate Pattern and Delay Registers**: Instead of reusing the shift register, use dedicated registers for pattern detection (4-bit) and delay capture (4-bit) to avoid timing issues.
+
+2. **Explicit State Encoding**: Use one-hot encoding for the state machine to make transitions clearer and more maintainable.
+
+3. **Counter Logic**: Implement the timing counter with two parts:
+   - A 10-bit sub-cycle counter (counts 0-999)
+   - A 4-bit main counter (counts delay value down every 1000 cycles)
+
+4. **Output Logic**: Use continuous assignments for outputs where possible to separate combinational logic from sequential.
+
+5. **Clean State Transitions**: Each state has explicit conditions for transitions to the next state, with no implicit dependencies.
+
+The functionality remains identical but the structure is more modular and timing is more precise.

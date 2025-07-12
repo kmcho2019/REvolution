@@ -1,0 +1,23 @@
+Revised fractional divider with proper 3.5x division:
+
+1. Fundamental Changes:
+   - Implement true fractional division by generating two precisely timed clocks
+   - Use a 7-state counter (0-6) to track division cycles
+   - Create two independent clock phases with exact timing relationships
+
+2. New Phase Generation:
+   - Phase A: High for 3.5 source clock cycles (states 0-3 + half of state 4)
+   - Phase B: High for 3.5 source clock cycles (states 4-6 + half of state 0)
+   - Phase B is exactly 180° out of phase with Phase A
+
+3. Implementation Strategy:
+   - Generate both phases using posedge and negedge triggers
+   - Use a toggle flip-flop for clean phase transitions
+   - Combine phases with XOR operation for perfect 50% duty cycle
+   - Ensure proper reset initialization for all elements
+
+4. Key Improvements:
+   - Precise phase alignment through dual-edge triggering
+   - Correct duty cycle through proper phase combination
+   - Robust state machine with clear transitions
+   - Clean startup behavior with synchronous reset

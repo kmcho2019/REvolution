@@ -1,0 +1,11 @@
+To achieve correct timing and clean separation between prediction and training, implement dual GHR registers: one "speculative" GHR that tracks the predicted history updated at each prediction, and one "committed" GHR updated only by training, especially for misprediction recovery. Predictions use the committed GHR as it reflects the architecturally correct history prior to speculative updates. Prediction outputs reflect the committed GHR state before any update. On each prediction, the speculative GHR is updated by shifting in the predicted bit; on training, if a misprediction occurs, the committed GHR is recovered from the training history and the speculative GHR is reset accordingly to avoid using discarded speculative states. Training updates the PHT at the clock edge with saturating counters.
+
+This architecture cleanly separates speculative updates from committed state, ensuring:
+- Prediction reads stable committed GHR and PHT state combinationally.
+- Speculative updates enable future predictions to chain correctly without polluting committed state.
+- On mispredict, committed GHR and speculative GHR are recovered to the correct state.
+- Training takes precedence for updates and misprediction recovery.
+- Outputs (predict_taken and predict_history) correspond to committed GHR and prior PHT state.
+- Outputs are registered and held stable until next prediction.
+
+This solves timing conflicts by decoupling speculative prediction history updates from architectural training recovery, better matching pipeline timing constraints and interface expectations.

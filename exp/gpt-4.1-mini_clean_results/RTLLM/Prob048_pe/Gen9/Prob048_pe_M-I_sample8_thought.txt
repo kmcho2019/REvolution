@@ -1,0 +1,17 @@
+To optimize the original design for better PPA (Performance, Power, Area) while maintaining full 64-bit precision of the accumulator:
+
+1. Add an enable input signal (en) to update the accumulator only when needed, reducing unnecessary switching and dynamic power.
+
+2. Pipeline the multiplier stage by registering the inputs and the product to split the critical path and improve maximum clock frequency. This adds one cycle latency but significantly boosts performance.
+
+3. Use synchronous reset only.
+
+4. Keep the 64-bit accumulator to avoid overflow and precision loss.
+
+5. Expose lower 32 bits of accumulator as the output 'c' as per spec.
+
+This approach balances performance improvement via pipelining, reduces dynamic power by updating accumulator selectively, and keeps area reasonable by a single pipeline stage.
+
+If the enable port is not desired by the original spec, it can be omitted and assumed always enabled.
+
+I will provide the code with an enable input, pipelined multiplier, synchronous reset, and 64-bit accumulator.

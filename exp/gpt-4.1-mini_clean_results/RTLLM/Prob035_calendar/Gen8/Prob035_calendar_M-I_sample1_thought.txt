@@ -1,0 +1,7 @@
+To optimize the calendar module for better Power, Performance, and Area (PPA), I will keep the logic within a single always block to maintain clarity and synchronization. However, to reduce the combinational path delay and possibly improve the timing, I will decouple the increments slightly by using an enable signal for minutes and hours increments generated from seconds and minutes respectively. This approach prevents deeply nested conditionals and can help synthesis tools optimize the critical path better.
+
+For power optimization, I will use enable signals so that minutes and hours counters only update when needed, reducing unnecessary switching activity.
+
+For area, I will keep the data widths as per requirements (6-bit outputs for all as requested by the user, despite hours needing only 5 bits) for interface consistency.
+
+Overall, the improved design maintains functional correctness, reduces combinational depth by avoiding nested ifs in increments, and gates updates to minimize toggling, helping improve PPA metrics.

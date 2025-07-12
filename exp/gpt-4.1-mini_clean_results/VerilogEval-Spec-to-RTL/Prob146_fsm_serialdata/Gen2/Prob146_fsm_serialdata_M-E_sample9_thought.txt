@@ -1,0 +1,12 @@
+I will implement the serial receiver FSM using a different approach with explicit one-hot style states for clarity and a simple counter. The FSM states are: IDLE (line idle, waiting for start bit), START (confirming start bit), DATA (receiving 8 bits), STOP (checking stop bit), and RECOVER (waiting for line to return to idle after bad stop).
+
+In this design:
+- On detecting a start bit (0), move to START and sample it again next clock to filter glitches.
+- Then shift data bits LSB first into a shift register during DATA state; a 3-bit counter counts received bits.
+- After 8 bits received, transition to STOP state to check the stop bit (should be 1).
+- If stop bit is valid, output the byte, assert done for one cycle, then go back to IDLE.
+- If stop bit invalid, transition to RECOVER, waiting for line to return to idle (logic 1) before accepting new start bits.
+- The done signal is a pulse asserted one cycle after a successful stop bit.
+- Synchronous reset initializes all state and registers.
+
+This one-hot like explicit FSM with clear states improves readability and helps modular testing. Sampling the start bit twice (START state) helps robustness against noise. The design is straightforward, easy to understand, and ensures correct protocol timing and error recovery.

@@ -1,0 +1,9 @@
+The original design is already minimal and simple, but to further optimize for power, area, and timing, I will implement a one-hot encoded decade counter rather than a binary counter. 
+
+One-hot encoding reduces the combinational complexity of the next-state logic since only one flip-flop is active at a time. This reduces switching activity (lower dynamic power) and can improve timing by shortening combinational paths (one-hot next-state logic is typically simpler than a binary comparator plus increment).
+
+To implement this, I will create a 10-bit register where only one bit is high at a time, representing counts 0 through 9 in sequence. The output q will be derived from decoding the position of the '1' in the one-hot state register.
+
+The synchronous reset will set the initial state to "0000000001", representing count 0.
+
+This approach trades off slightly higher flip-flop count (10 vs 4 bits) for simpler next-state logic and lower switching activity per clock cycle. This can lead to improved PPA metrics on typical ASIC flows.

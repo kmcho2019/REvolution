@@ -1,0 +1,7 @@
+To refactor the existing Verilog code for the Moore state machine that performs 2's complementation, we'll focus on simplifying the logic while maintaining the same functionality. The key idea is to reduce the number of always blocks and directly generate the output based on the state and accumulated input. We'll use a single-bit register to track if the first '1' has been seen and use a combinational logic to generate the output.
+
+We can achieve this by using a `reg` for `first_one_seen` and an `always` block to update its state based on the reset and input `x`. The output `z` can then be generated using a combinational logic (`assign`) statement, which depends on `first_one_seen` and the input `x`.
+
+By doing so, we decouple the sequential logic (state update) from the combinational logic (output generation), which can potentially improve readability and maintainability of the code. Moreover, this approach allows us to explicitly separate the clocked and combinatorial parts of the design, which is a good practice in digital design.
+
+Additionally, we'll ensure that the logic for determining `first_one_seen` and `z` is optimized to reduce unnecessary switching, which can help improve power consumption.

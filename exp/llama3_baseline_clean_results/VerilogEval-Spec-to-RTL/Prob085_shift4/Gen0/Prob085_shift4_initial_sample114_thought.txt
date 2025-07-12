@@ -1,0 +1,11 @@
+To implement the TopModule, we need to consider the functionality of each input signal and how it affects the output q. 
+
+- The areset signal will reset the shift register to zero asynchronously. 
+- The load signal will load the shift register with the data[3:0] synchronously, and has higher priority than the ena signal.
+- The ena signal will shift the contents of the shift register to the right synchronously.
+
+We will use an always block to describe the sequential behavior of the module. Inside the always block, we will first check for the areset condition and reset the shift register to zero if it is asserted. 
+
+Then, we will check for the rising edge of the clock. If the clock has risen, we will check the load and ena signals. If the load signal is asserted, we will load the shift register with the data[3:0]. If the ena signal is asserted and the load signal is not, we will shift the contents of the shift register to the right.
+
+We will assign the final value of the shift register to the output q.

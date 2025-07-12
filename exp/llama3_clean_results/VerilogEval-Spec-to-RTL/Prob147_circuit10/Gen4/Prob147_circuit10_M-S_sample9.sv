@@ -1,0 +1,24 @@
+module TopModule(
+    input  clk,
+    input  a,
+    input  b,
+    output q,
+    output state
+);
+
+reg state_reg; // flip-flop
+assign state = state_reg; // observable output
+
+always @(posedge clk) begin
+    // Update the flip-flop state
+    if (!a && b || state_reg && !b) begin
+        state_reg <= 1'b1;
+    end else begin
+        state_reg <= 1'b0;
+    end
+end
+
+// Combinational logic to generate output q
+assign q = b || (state_reg && a);
+
+endmodule

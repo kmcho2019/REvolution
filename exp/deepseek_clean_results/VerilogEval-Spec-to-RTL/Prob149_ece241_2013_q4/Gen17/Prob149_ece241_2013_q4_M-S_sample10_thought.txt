@@ -1,0 +1,15 @@
+Simplification Strategy:
+
+1. **Remove Unnecessary State Tracking**: Instead of tracking previous level and rising status separately, we can determine dfr directly from current and next level comparison.
+
+2. **Simplify State Encoding**: Use binary encoding that naturally represents water level hierarchy (00=below, 01=low, 10=mid, 11=above).
+
+3. **Combine Output Logic**: Calculate outputs directly from current state without intermediate signals.
+
+4. **Optimize dfr Logic**: Determine supplemental flow (dfr) by comparing next level with current level during transitions.
+
+Key Changes:
+- Eliminate was_rising register
+- Compute dfr directly in combinational logic
+- Maintain simple state encoding
+- Keep output logic minimal and direct

@@ -1,0 +1,19 @@
+To optimize the accumulator module based on the PPA metrics, we'll implement the following improvements:
+
+1. Timing Optimization:
+   - Replace the full comparator (count == 2'b11) with bitwise AND for terminal count detection
+   - Use Gray code for the counter to reduce switching activity
+
+2. Power Optimization:
+   - Add clock gating for the accumulator register when valid_in is low
+   - Use Gray code counter to minimize bit transitions
+
+3. Area Optimization:
+   - Remove the separate data_out register and output directly from accumulator
+   - Simplify the counter logic by using Gray code encoding
+
+Key changes:
+- Gray code counter (00, 01, 11, 10) for minimal transitions
+- Terminal count detection using count[1] & count[0]
+- Direct output from accumulator (removes one register)
+- Clock gating for accumulator updates

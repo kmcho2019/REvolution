@@ -1,0 +1,7 @@
+Fuse the clarity of combinational next-state logic from Example 1 with the clean priority-agnostic update structure of Example 2, but add an explicit clock enable signal to gate the register update only when shift_ena or count_ena is asserted. This reduces unnecessary toggling of the register, improving power without complicating the logic.
+
+Additionally, retain the combinational calculation of the shifted and decremented values separately for clarity and synthesis efficiency. Use a simple priority mux to select the next state, as shift_ena and count_ena are never asserted together per spec, so priority is arbitrary but consistent.
+
+Avoid using initial blocks (better for synthesis and reset handling). Instead, add an asynchronous reset input to initialize q to zero, which is a practical enhancement ensuring safe startup.
+
+This fusion strategy balances clean RTL style, power efficiency (via clock enable), synthesis friendliness, and practical reset support, leading to improved PPA metrics and maintainability.

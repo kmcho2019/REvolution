@@ -1,0 +1,12 @@
+Use a top-down approach that mimics the manual long division process on bits but structured as follows:
+
+- Register inputs A and B in one combinational always block as required, storing in a_reg and b_reg.
+- In the second combinational block, implement a non-restoring-like division by iteratively extracting the top 8 bits from a working dividend (initially a_reg shifted left by 0), comparing them with b_reg (divisor), and deciding each quotient bit.
+- The process is repeated for all 16 bits: at each iteration, take the current 8-bit high segment of the shifted dividend, compare with divisor, set quotient bit accordingly (1 if greater or equal, else 0), subtract divisor if quotient bit = 1, then shift left by 1 to process next bit.
+- Instead of shifting remainder and dividend separately, keep a single variable representing the "remainder concatenated with the next bits" by shifting left and bringing down dividend bits stepwise.
+- This way, the remainder after all bits are processed is the final value remaining in the remainder register.
+- The quotient is built from the decision bits (16 bits).
+- The remainder is stored as the lower 8 bits of the odd output, zero extended to 16 bits.
+- The key novelty is to perform the division strictly by slicing the top 8 bits of the working remainder+dividend at each step (done via shifting and concatenation), rather than the common restoring algorithm approach. This matches the original problem statement more literally: "extract higher bits matching divisor width, compare, set quotient bit, use difference as remainder, concatenate remainder with highest remaining dividend bit, repeat."
+
+This fresh approach respects the problem requirements and the two always block structure.

@@ -1,0 +1,9 @@
+Implement the 256-to-1 4-bit multiplexer using a single combinational always block that directly computes the output by indexing into the input vector using the `sel` signal. 
+
+Since each 4-bit word is consecutively packed, the output is simply `in[sel*4 +: 4]`. This approach uses one arithmetic expression without hierarchical muxes or multiple instantiations.
+
+This results in minimal logic depth and a very compact, synthesizable, and fast multiplexer implementation. It also minimizes area and power because no intermediate wires or hierarchical mux modules are needed. 
+
+This "flat" solution leverages Verilog's indexed part-select and arithmetic operations to achieve the functionality in a straightforward way. It is easy to understand and synthesize efficiently.
+
+This is a good alternative to hierarchical muxes especially when inputs are packed sequentially as here.

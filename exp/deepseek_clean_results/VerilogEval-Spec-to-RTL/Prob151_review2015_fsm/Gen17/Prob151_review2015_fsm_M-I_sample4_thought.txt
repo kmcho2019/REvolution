@@ -1,0 +1,28 @@
+Improvement strategy for the state machine:
+
+1. **Pattern Detection**:
+   - Implement non-overlapping pattern detection (1101)
+   - Clear pattern register only when leaving IDLE state
+   - Reset pattern on system reset
+
+2. **Shift Counter**:
+   - Use dedicated counter for precise 4-cycle shift operation
+   - Reset counter when entering SHIFT state
+   - Clear counter when leaving SHIFT state
+
+3. **State Transitions**:
+   - Immediate transition to SHIFT after pattern detection
+   - Move to COUNTING only after exactly 4 shift cycles
+   - Transition to DONE only when done_counting is high
+   - Return to IDLE only after receiving ack
+
+4. **Output Generation**:
+   - Pure combinational outputs based on current state
+   - Ensure outputs are only active in intended states
+   - Remove any potential glitches in outputs
+
+Key improvements:
+- Robust pattern detection with proper clearing
+- Precise 4-cycle shift operation
+- Correct state sequencing with proper conditions
+- Clean output generation

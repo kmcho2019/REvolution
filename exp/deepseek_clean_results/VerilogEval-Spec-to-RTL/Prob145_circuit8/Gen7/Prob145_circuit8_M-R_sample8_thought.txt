@@ -1,0 +1,16 @@
+After carefully analyzing the waveform behavior, here's a refined implementation approach:
+
+1. p behavior: Should be high only when both clock is high AND input a is high (matches the given solution)
+2. q behavior: More complex - becomes high when:
+   - p was high in the previous clock high phase
+   - Stays high until the next clock low phase where a is low
+3. Key improvements:
+   - Use single always block for sequential logic
+   - Track previous p value during clock high phases
+   - Update q only during clock low phases
+   - Clear state transition logic for q based on waveform observations
+4. Implementation strategy:
+   - p remains combinational (clock & a)
+   - q uses proper state tracking with clock edge detection
+   - No need for dual-edge triggering - just posedge clock
+   - Maintain internal state for previous p value

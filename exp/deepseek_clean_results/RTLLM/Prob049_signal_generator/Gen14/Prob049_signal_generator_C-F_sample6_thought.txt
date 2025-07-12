@@ -1,0 +1,23 @@
+Fusion Strategy:
+
+1. State Machine Optimization:
+   - Use a single-bit state register (0=increment, 1=decrement) for minimal area
+   - Implement clean state transitions at boundaries with zero-cycle latency
+
+2. Boundary Detection:
+   - Use bitwise AND (&wave) for max value detection (31) - more efficient than comparison
+   - Use direct comparison (wave == 0) for zero detection - simpler than bitwise OR reduction
+
+3. Arithmetic Logic:
+   - Use simple +1/-1 operations with boundary checks
+   - Maintain parallel state and wave updates in single always block for clean synthesis
+
+4. Reset Handling:
+   - Clear both state and wave registers synchronously on active-low reset
+
+Key Advantages:
+- Combines the efficient boundary checks from both examples
+- Maintains simple control flow from Example 1
+- Uses compact state encoding from both examples
+- Optimized for both power (minimal switching) and area (minimal logic)
+- Clean timing path with direct arithmetic operations

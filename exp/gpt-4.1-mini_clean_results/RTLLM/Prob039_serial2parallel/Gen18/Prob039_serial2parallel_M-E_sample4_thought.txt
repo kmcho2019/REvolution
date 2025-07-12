@@ -1,0 +1,5 @@
+Use a parallel loading shift register that shifts right on each valid serial input, inserting the new bit into the MSB position, so that the first received bit is always the MSB, matching the MSB-to-LSB requirement directly. Count received bits using a 4-bit counter, incrementing only on valid input.
+
+Once 8 bits are received (counter hits 8), latch the shift register value into dout_parallel and assert dout_valid for exactly one clock cycle. Then reset the counter and shift register for the next frame.
+
+This approach avoids combinational logic on dout_valid by registering it synchronously, ensuring stable timing. Shifting right with MSB input preserves the order naturally. Using synchronous reset and non-blocking assignments provides clean, robust design suitable for hardware synthesis and simulation.

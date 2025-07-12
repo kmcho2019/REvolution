@@ -1,0 +1,10 @@
+The current design uses five 20-bit chunk muxes instantiated hierarchically, which balances modularity and synthesis optimization. However, to further improve PPA (performance, power, area), I propose flattening the hierarchy by implementing the entire 100-bit 2-to-1 mux in one vectorized conditional assignment without intermediate submodules.
+
+Benefits of this approach:
+- Reduces instantiation overhead and hierarchical complexity, potentially improving routing and timing.
+- Minimizes logic duplication and overhead associated with module instantiation.
+- The mux logic is purely combinational and concise, so synthesis tools will produce efficient mux trees.
+
+Since the logic is a simple vectorized mux, the synthesis tool can optimize for minimal area and delay, potentially improving power and area metrics. This simplification removes unnecessary module boundaries while maintaining clarity and maintainability. It is the most straightforward, minimal implementation.
+
+Thus, the improvement strategy is to replace the chunked hierarchical mux instantiations with a single vectorized conditional assignment for the entire 100-bit vector, preserving functionality while potentially improving PPA.

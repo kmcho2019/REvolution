@@ -1,0 +1,29 @@
+Refactor the IEEE-754 single-precision floating-point multiplier into a clear multi-cycle sequential module using an explicit cycle counter (as requested), separating the stages by counter values rather than named states, improving clarity in mantissa normalization, rounding, and special case handling.
+
+The design will:
+
+- Use `counter` (3 bits) to sequence the operations explicitly: 
+  0: capture inputs and extract fields,
+  1: detect special cases,
+  2: mantissa multiplication and exponent sum,
+  3: normalization,
+  4: rounding,
+  5: pack and output.
+
+- Use combinational signals for input field extraction and special case detection.
+
+- Handle denormals properly by adjusting mantissas and exponents at capture stage.
+
+- Normalize the mantissa product with potentially two shifts, not just one, to ensure correct normalization for denormals.
+
+- Implement round-to-nearest-even rounding using guard, round, and sticky bits from normalized mantissa product.
+
+- Adjust exponent accordingly for normalization and rounding overflow.
+
+- Handle exponent overflow/underflow with saturations to infinity or zero.
+
+- Propagate NaNs and infinities properly, producing quiet NaNs as needed.
+
+- Use registers for all intermediate signals as per pipeline stage indicated by counter.
+
+This approach meets the problem specification exactly and improves clarity while keeping close to the counter-based sequential logic design originally requested.

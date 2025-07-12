@@ -1,0 +1,5 @@
+Refactor the FSM by separating the next state logic into a combinational always block and using a registered state update in the sequential block. Instead of combining both next state calculation and state update inside a single clocked always block, first compute the next state combinationally based on the current state and inputs, then update the state register on the clock edge with synchronous reset.
+
+Maintain Moore output driven directly from the registered state to keep output timing consistent with the state. Use localparam for states to preserve clarity. This structure explicitly shows the classic two-process FSM style, improving readability and easing modifications or expansions to the FSM, while keeping the logic straightforward and efficient.
+
+This separation can help synthesis and simulation clarity, making it easier to trace the state transitions and debug, and is widely used in FPGA and ASIC designs.

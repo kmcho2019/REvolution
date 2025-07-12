@@ -1,0 +1,14 @@
+Novel approach using a circular shift register with parallel load capability:
+1. Instead of a simple linear shift register, implement a circular structure that can optionally parallel load
+2. Uses a 4-bit register with multiplexers at each stage to select between:
+   - Normal shift operation (serial in)
+   - Circular feedback (for test patterns)
+   - Parallel load (though unused in this interface)
+3. Maintains same external behavior as required while adding internal flexibility
+4. Benefits:
+   - Can be easily extended to support test modes
+   - Lower power when holding patterns (circular mode)
+   - Same area as traditional implementation
+   - Better for BIST (Built-In Self Test) applications
+5. Reset still synchronous and active-low
+6. Output taken from last stage as required

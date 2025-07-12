@@ -1,0 +1,14 @@
+The original code for the TopModule can be improved by accurately implementing the required operation based on the full_module's specifications. To optimize the design for better Power, Performance, and Area (PPA) metrics, we should focus on minimizing the critical path, reducing switching activity, and using area-efficient implementation.
+
+Given the original full_module code uses a specific next-state calculation (q <= {q[1] ^ q[2], q[0], q[2]}), we need to adjust the TopModule's logic to directly reflect this operation or properly incorporate the q_in and r_in inputs in a way that matches the full_module's behavior.
+
+Since the full_module's next-state calculation involves XOR and shift operations among the bits of q, the TopModule should also incorporate these operations when updating q_reg. However, as the TopModule will be instantiated three times and each instance will handle one bit of the q vector, the next-state calculation for each bit should be adjusted accordingly.
+
+For example, for the first bit (q[0]), the next-state calculation is simply q[2]. For the second bit (q[1]), it is q[1] ^ q[2], and for the third bit (q[2]), it remains q[2]. These calculations should be used to update q_reg in the TopModule.
+
+To improve the PPA metrics, we should:
+- **Performance (Timing):** Minimize the critical path through the multiplexer and the logic for calculating the next state of q_reg.
+- **Power:** Reduce switching activity by minimizing the number of times q_reg is updated unnecessarily.
+- **Area:** Use area-efficient implementation by minimizing the number of gates required.
+
+By incorporating these optimizations, the improved TopModule will not only correctly replicate the behavior of the full_module but also achieve better PPA metrics.

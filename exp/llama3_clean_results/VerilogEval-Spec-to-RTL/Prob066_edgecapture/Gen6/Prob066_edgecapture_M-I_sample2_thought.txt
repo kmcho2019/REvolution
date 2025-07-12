@@ -1,0 +1,7 @@
+The main issue with the original code is that it incorrectly clears the bits in the `out` register when the input bit is already 0, even if the previous state of the input bit was 1. This is because the expression `(~in & prev_in)` will be 0 when `in` is 0, causing the corresponding bit in `out` to be cleared.
+
+To fix this, we need to ensure that once a bit in `out` is set to 1, it remains 1 until the register is reset. This can be achieved by only updating the bits in `out` when a transition from 1 to 0 is detected, and leaving the bits unchanged otherwise.
+
+We can use a bitwise OR operation to set the bits in `out` to 1 when a transition is detected, and use the reset condition to clear `out`. This approach reduces complexity while maintaining the required functionality.
+
+Additionally, we can optimize the code by removing unnecessary registers and variables, and using a more efficient logic expression to update `out`.

@@ -1,0 +1,16 @@
+The original FSM implementation has several PPA inefficiencies:
+1. One-hot-like state encoding causes high switching power
+2. 12-way mux creates long combinatorial paths
+3. Redundant default case adds unnecessary logic
+
+Optimization strategy:
+1. Use binary state encoding to reduce switching power and mux complexity
+2. Implement simple increment-and-wrap logic instead of explicit state transitions
+3. Remove redundant default case
+4. Maintain same functionality (0-11 count, valid_count control, async reset)
+
+The improved version will use:
+- Binary counting with wrap-around at 11
+- Single comparator for wrap detection
+- More efficient encoding (4 bits naturally matches count range)
+- Cleaner reset logic

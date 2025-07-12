@@ -1,0 +1,15 @@
+Corrected approach for odd frequency division:
+1. Maintain two separate counters as originally specified - one for positive edge (cnt1) and one for negative edge (cnt2)
+2. Generate two intermediate clock signals (clk_div1 for posedge, clk_div2 for negedge)
+3. Toggle each intermediate clock when its counter reaches (NUM_DIV-1)/2
+4. Reset counters when they reach NUM_DIV-1
+5. Combine the intermediate clocks using OR operation to create final output
+6. Ensure proper reset initialization
+7. Keep parameter validation for odd division factor
+
+Key improvements:
+- Proper implementation of dual-edge counting with separate counters
+- Correct toggle points for 50% duty cycle
+- Clear separation of posedge and negedge logic
+- Maintains original specification requirements
+- Eliminates race conditions by not mixing edge triggers

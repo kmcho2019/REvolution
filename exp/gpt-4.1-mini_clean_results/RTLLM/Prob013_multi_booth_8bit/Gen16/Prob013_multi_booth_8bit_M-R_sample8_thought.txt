@@ -1,0 +1,10 @@
+Refactor the multiplier as a simple finite state machine (FSM) with two states: IDLE and BUSY.
+
+- On reset or IDLE state, load the sign-extended inputs into registers and clear the product and counter.
+- Transition to BUSY state where each clock cycle processes one multiplier bit.
+- If the bit is 1, add the shifted multiplicand to the partial product.
+- Shift the multiplicand left by one bit each cycle.
+- Increment the counter until 16 cycles complete.
+- Once done, assert the ready signal and return to IDLE to wait for the next multiplication.
+
+This approach separates initialization and multiplication explicitly, improves code clarity, and uses non-blocking updates with clear state transitions. The output signals and operations remain the same, but the structure is a clean FSM instead of a single always block with multiple conditions.

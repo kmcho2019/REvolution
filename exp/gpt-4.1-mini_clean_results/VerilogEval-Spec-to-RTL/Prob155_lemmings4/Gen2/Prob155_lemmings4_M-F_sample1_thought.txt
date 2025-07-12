@@ -1,0 +1,39 @@
+The previous design correctly separates mode and direction and prioritizes fall > dig > bump, but the simulation shows direction mismatches on walk outputs starting at a late time.
+
+The key insight is that direction toggling only happens in MODE_WALK, which is correct. However, transitions from falling or digging back to walking happen without re-applying the bump logic for that cycle (which is per spec — bumping during falling or digging does not affect direction).
+
+The issue likely arises because the direction register (dir) is updated combinationally alongside mode, but when the mode transitions from falling or digging to walking, the bump inputs present on that cycle cause no direction change, as bump is only processed in the current mode's combinational logic.
+
+In particular, consider a cycle where the FSM transitions from MODE_FALL to MODE_WALK because ground just returned, and bump inputs are high. The code will retain the old direction without flipping it, which is correct as per spec. However, if the bump signals remain high in the subsequent cycle (now in MODE_WALK), the code flips direction, causing direction toggling one cycle late.
+
+This is acceptable per the spec, but the mismatches imply the test expects the Lemming to have switched direction immediately on bump inputs even if ground just returned, or some other subtle timing.
+
+To fix this, we must ensure that direction is only toggled during MODE_WALK when on ground and bump inputs are high. But also, when transitioning from falling to walking, direction must remain stable regardless of bumps on the exact transition cycle.
+
+The original code does that, so the cause might be the non-inclusion of bumps that happen exactly on the cycle ground disappears or returns when walking resumes.
+
+Another possible cause is that the mode transitions and direction toggling are done in the same combinational always @(*) block without considering the sequential update properly, potentially causing glitches or mismatches in synthesis.
+
+**Fix Approach:**
+
+- Separate the direction update from the mode and fall_count update to a distinct always @(posedge clk or posedge areset) block so that direction toggling depends only on stable mode and input values at clock edges.
+
+- In other words, on clock edge, update mode and fall_count first, then update direction only if current mode is MODE_WALK and bump inputs are high.
+
+- This avoids combinational mixing of mode and direction updates that can cause glitches or mismatches.
+
+- Keep mode and fall_count updates in one sequential block, and direction update in another sequential block sensitive to clock and areset.
+
+- On async reset, initialize direction to left.
+
+- This ensures direction toggling only happens on clock edges in walking mode, and not during other modes.
+
+- This approach better matches hardware behaviour and resolves potential mismatches due to race conditions in combinational next_dir logic.
+
+- The rest of the FSM logic remains the same.
+
+This fix should eliminate the mismatches on walking direction outputs while preserving all the spec semantics and output behaviors.
+
+Outputs remain Moore, driven combinationally from current mode and direction registers.
+
+This separation ensures stable direction updates, better timing, and fixes the simulation mismatches.

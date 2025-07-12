@@ -1,0 +1,76 @@
+```thought
+To implement the sequence detector, we can design a finite state machine (FSM) with five states: IDLE, S1, S2, S3, and S4. The FSM transitions through these states based on the input data_in and the current state. We will use a Moore machine model, where the output sequence_detected is a function of the current state. The state machine will reset to the IDLE state when the reset_n signal is low. We will use Verilog's enum type to define the states and a case statement to implement the state transitions and output logic.
+```
+
+```verilog
+module sequence_detector(
+    input clk,
+    input reset_n,
+    input data_in,
+    output sequence_detected
+);
+
+// Define the states of the FSM
+enum logic [2:0] {
+    IDLE,
+    S1,
+    S2,
+    S3,
+    S4
+} state, next_state;
+
+// Output signal
+assign sequence_detected = (state == S4);
+
+// State register
+always_ff @(posedge clk or negedge reset_n) begin
+    if (~reset_n) begin
+        state <= IDLE;
+    end else begin
+        state <= next_state;
+    end
+end
+
+// Next state logic
+always_comb begin
+    case (state)
+        IDLE: begin
+            if (data_in == 1'b1) begin
+                next_state = S1;
+            end else begin
+                next_state = IDLE;
+            end
+        end
+        S1: begin
+            if (data_in == 1'b0) begin
+                next_state = S2;
+            end else begin
+                next_state = S1;
+            end
+        end
+        S2: begin
+            if (data_in == 1'b0) begin
+                next_state = S2;
+            end else begin
+                next_state = S3;
+            end
+        end
+        S3: begin
+            if (data_in == 1'b1) begin
+                next_state = S4;
+            end else begin
+                next_state = IDLE;
+            end
+        end
+        S4: begin
+            next_state = IDLE;
+        end
+        default: next_state = IDLE;
+    endcase
+end
+
+endmodule
+```
+
+--- WARNING: Parsing Issues ---
+Could not parse 'code' from LLM response. Expected ```code ... ``` block.(PARSE_ERROR)

@@ -1,0 +1,17 @@
+The correct behavior can be determined by analyzing the waveform patterns:
+1. State transitions:
+   - Set to 1 when a=1 and b=1
+   - Set to 0 when a=0 and b=0
+   - Maintain state otherwise
+
+2. Output q logic:
+   - When state=0: q follows b (matches original)
+   - When state=1: q equals a (not a^b as previously thought)
+   - Special case: When a=1 and b=1, q equals state (from waveform at 95ns)
+
+This gives us the complete truth table that matches all waveform cases:
+- state=0: q = b
+- state=1: q = (a & ~b) ? a : (state)
+- Simplified to: q = state ? (a & ~b ? a : state) : b
+- Further simplified to: q = state ? (a | ~b) & state : b
+- Final optimal form: q = (state & (a | ~b)) | (~state & b)

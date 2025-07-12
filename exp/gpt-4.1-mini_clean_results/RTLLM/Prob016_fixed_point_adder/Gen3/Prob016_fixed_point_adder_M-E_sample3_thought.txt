@@ -1,0 +1,33 @@
+A different architectural approach is to explicitly compute the fixed-point addition using unsigned magnitude arithmetic combined with explicit sign handling, rather than relying on signed types.
+
+Key points:
+
+1. Interpret inputs `a` and `b` as signed fixed-point numbers in two's complement with N bits and Q fractional bits.
+
+2. Extract sign bits, and compute absolute values as unsigned numbers (N-1 bits).
+
+3. Perform addition or subtraction on the unsigned magnitudes, depending on sign bits:
+
+   - If signs are equal, add magnitudes.
+
+   - If signs differ, subtract smaller magnitude from larger magnitude.
+
+4. Determine the sign of the result by:
+
+   - For equal signs: same as operands' sign.
+
+   - For different signs: sign of operand with larger magnitude; if magnitudes equal, output zero.
+
+5. Construct the final result by concatenating the sign bit and the magnitude result.
+
+6. Use registers and combinational always block for clarity.
+
+7. This method explicitly works at the magnitude level, avoiding signed arithmetic and provides clear control over the sign and magnitude logic.
+
+8. Overflow behavior: For addition of equal signs, magnitude addition can overflow N-1 bits (e.g., 15 bits if N=16). The MSB of the magnitude sum could overflow, which indicates overflow in two's complement fixed-point.
+
+   - Here, we discard overflow beyond N-1 bits (typical fixed-width wraparound).
+
+9. Fractional precision Q is inherent since we treat inputs as fixed-point values with Q fractional bits, and addition doesn't change Q.
+
+This architecture fully respects the fixed-point addition semantics via magnitude + sign processing, cleanly separates sign from magnitude arithmetic, and uses parameterizable widths with no reliance on signed data types.

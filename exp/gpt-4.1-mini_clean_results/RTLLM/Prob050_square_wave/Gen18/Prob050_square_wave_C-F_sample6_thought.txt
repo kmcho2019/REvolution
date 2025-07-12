@@ -1,0 +1,16 @@
+Fuse the strengths of both examples by using a synchronous counter that increments only when freq is non-zero (to save power by gating the counter increment), and register wave_out synchronously to avoid combinational glitches and reduce timing path complexity.
+
+Specifically:
+- Use a synchronous reset for stability.
+- Increment count only when freq != 0, thus reducing switching when the output is static.
+- Toggle wave_out when count reaches freq - 1, as per original spec, ensuring exact toggling frequency control.
+- Make wave_out a registered output to improve timing, reduce glitches, and optimize power.
+- This design keeps the explicit toggling logic from example 1 while adopting conditional counting and registered output from example 2.
+- Avoid combinational comparisons involving freq on the critical output path.
+  
+This approach combines low power through gated counting, clear timing through synchronous toggling and registered output, and a straightforward design that maps well to hardware with good PPA balance.
+
+The implementation uses:
+- reg [7:0] count: increments when freq != 0, resets at freq - 1.
+- reg wave_out: toggles on count wrap-around.
+- synchronous reset.

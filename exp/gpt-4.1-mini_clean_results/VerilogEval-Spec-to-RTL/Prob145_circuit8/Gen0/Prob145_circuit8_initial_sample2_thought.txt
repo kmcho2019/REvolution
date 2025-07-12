@@ -1,0 +1,99 @@
+Analyze the waveform data to deduce the behavior of outputs p and q relative to clock and input a.
+
+- At the beginning (time < 25ns), outputs p and q are undefined (x).
+- From 25ns to about 55ns with clock=1 and a=0, p=0 and q is x, then when clock=0 and a=0, p=0 and q=0.
+- Starting at 70-85ns with clock=0, p=0 and q=0 regardless of 'a'.
+- At clock=1 around 90ns, when a=1, p=1; when a=0, p=0. q remains 0 during this phase.
+- At 115-140ns with clock=0 and a varying, p=1 and q=1.
+- Then from 145-165ns with clock=1 and a=0, p=0 and q=1; when a=1 at 165ns, p=1 q=1.
+- Finally at 175-190ns with clock=0, p=0 and q=0 regardless of a.
+
+From this pattern, it appears that the circuit stores some state:
+
+- q acts like a flip-flop that captures p delayed by one clock cycle or holds its previous value on clock=0.
+- p depends on the input 'a' at clock=1 and the current q value.
+- When clock=0, p is zero except when q=1 and clock=0 (p=1), but that is not consistently so.
+
+Looking more closely:
+
+- When clock=1, p follows 'a' AND q OR just 'a' when q=0 seems not consistent.
+- When clock=0, q seems to latch the previous p value.
+- From the given data, a reasonable assumption: 
+   - On rising edge of clock (clock=1), p = a & ~q (or a), but the data does not fit a simple function.
+   - q = previous p latched at falling edge.
+
+Alternatively, q seems to be a D-type flip-flop output holding p at the falling edge of the clock.
+
+The simplest assumption fitting the data is:
+
+- p = a & q (or simply a when q=0) on clock=1.
+- q is updated to p at falling clock edge.
+
+But the waveform shows q goes to 1 at 115ns when clock=0 and p=1 at 110ns, confirming q follows p at clock falling edge.
+
+Implementation plan:
+
+- Use clock's falling edge to update q <= p
+- On clock's rising edge, p <= a & ~q or p <= a (based on data, p is a when clock=1, ignoring q)
+- On clock=0 p=0 except when q=1 and clock=0, p=1 (observed at 115ns)
+
+However, in waveform at 115ns clock=0 a=0 p=1 q=1, this suggests p is high when clock=0 and q=1.
+
+A more consistent interpretation is:
+
+- p = a when clock=1
+- p = q when clock=0
+
+- q is a register updated at falling clock edge to p.
+
+Testing this against data:
+
+At 90ns clock=1 a=1, p=1 q=0 (matches p=a)
+
+At 115ns clock=0 a=0 p=1 q=1 (p=q)
+
+At 145ns clock=1 a=0 p=0 q=1 (p=a)
+
+At 165ns clock=1 a=1 p=1 q=1 (p=a)
+
+At 175ns clock=0 a=1 p=1 q=1 (p=q=1) but data says p=0 q=0 contradicts this.
+
+So that assumption is off.
+
+Another angle:
+
+- p = (clock & a) | (~clock & ~q)
+
+Checking 115ns clock=0 a=0 q=1 => p = 0 | (1 & 0)=0 but data p=1 contradicts
+
+Try p = (clock & a) | (~clock & q)
+
+At 115ns clock=0 a=0 q=1 => p = 0 | (1 & 1) =1 matches data.
+
+At 70ns clock=0 a=1 q=0 => p=0 | (1 & 0)=0 matches data.
+
+At 90ns clock=1 a=1 q=0 => p=1 | 0=1 matches.
+
+At 75ns clock=0 a=0 q=0 => p=0 | 0=0 matches.
+
+At 175ns clock=0 a=1 q=0 => p=0 | 0=0 matches waveform data.
+
+Therefore:
+
+- p = (clock & a) | (~clock & q)
+
+- q is updated on falling edge of clock to value of p (q <= p)
+
+This logic fits the waveform:
+
+- On rising edge clock=1 p follows a
+
+- On falling edge clock=0 q captures p
+
+- When clock=0 p outputs q
+
+This sequential circuit can be implemented with:
+
+- p combinational depending on clock, a and q
+
+- q a register updated on negedge clock.

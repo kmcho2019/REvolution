@@ -1,0 +1,13 @@
+The original solution is mostly correct but has an initialization issue with prev_in that can cause false edge detections during startup. To improve it:
+
+1. Initialize prev_in to 0 on reset to prevent false edge detections
+2. Keep the efficient edge detection logic (prev_in & ~in)
+3. Maintain the latching behavior with the OR operation (out | ...)
+4. This ensures:
+   - Clean startup behavior
+   - Correct falling edge detection
+   - Proper latching until reset
+   - Minimal logic overhead
+   - No unnecessary resets
+
+The improved version will behave identically after reset but won't have false positives during initialization.

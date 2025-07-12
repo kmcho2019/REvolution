@@ -1,0 +1,19 @@
+To optimize the original FSM for better power and area without sacrificing performance, move pattern detection out of the FSM by implementing a 4-bit shift register that continuously captures incoming data bits. Use a combinational comparator to detect the 1101 pattern. This simplifies the FSM states, reducing states from 7 to 4 by removing the SEARCH states.
+
+The FSM states become:
+
+- IDLE: waiting for pattern detection (pattern_detect signal from the shift register logic)
+- SHIFT: shift_ena asserted for exactly 4 cycles (counted by a 2-bit counter)
+- COUNT: counting asserted until done_counting is high
+- DONE: done asserted until ack is received
+
+This approach reduces combinational logic complexity in the FSM and eliminates the multiple SEARCH states, thus saving area and reducing switching activity in the FSM.
+
+Additionally:
+
+- Use one-hot encoding for FSM states to minimize combinational decoding logic.
+- The 2-bit shift_count counter remains but only toggles during SHIFT state, minimizing switching.
+- Outputs remain combinationally derived from states.
+- Synchronous reset sets FSM to IDLE state.
+
+Overall, this offloads pattern detection to a small dedicated logic block, simplifying FSM and reducing dynamic power and area.

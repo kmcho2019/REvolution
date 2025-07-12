@@ -1,0 +1,12 @@
+Instead of accumulating the data sequentially and outputting only after four inputs, implement a shift-register style storage to hold the four 8-bit input values. Once four valid inputs are captured, perform the addition of all four inputs in parallel within one clock cycle to get the accumulated sum and pulse valid_out for that cycle only.
+
+This architectural approach decouples input capturing from addition, allowing addition only when four inputs are ready, which can improve timing by avoiding carry chain accumulation every cycle. It also makes it easier to extend to different accumulation lengths by changing the register array size.
+
+Implementation details:
+- Use a 2-bit counter to track how many inputs have been received.
+- Shift data_in into a 4-element 8-bit register array whenever valid_in is high.
+- When counter reaches 3 (four inputs received), perform a combinational sum of all four stored inputs plus current input_in.
+- Output this sum and pulse valid_out for one cycle.
+- Reset counter and registers after output.
+
+This approach yields a clean pipeline of data capture and parallel addition for accumulation with a simple state counter, minimizing toggling of the accumulator and ensuring valid_out pulses precisely when output is ready.

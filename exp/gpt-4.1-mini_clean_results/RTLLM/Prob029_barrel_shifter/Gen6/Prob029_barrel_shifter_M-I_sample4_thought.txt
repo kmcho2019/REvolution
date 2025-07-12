@@ -1,0 +1,12 @@
+The original solution correctly implements an 8-bit left barrel rotate using three stages of mux2-to-1 multiplexers controlled by `ctrl[2:0]`, each shifting by 4, 2, and 1 positions respectively. However, the problem with possible test failures may stem from ambiguity in rotation direction or subtle differences in rotation semantics.
+
+To ensure correctness and potential clarity, I will explicitly document that this barrel shifter performs **left rotation**, and verify the modular indexing accordingly (shifting left means bits rotate from MSB to LSB). 
+
+Also, to improve PPA (Power, Performance, Area), I will consolidate the three stages into a single combinational expression using nested conditional operators. This reduces instantiations of multiple mux modules and the logic depth, improving timing and resource utilization.
+
+The approach:
+- Compute a single final rotated result by applying all three shifts conditioned on the control bits.
+- Use a function or direct concatenation for rotation to ensure clarity and correctness.
+- This yields a cleaner and more efficient combinational circuit while maintaining full functionality.
+
+This design remains synthesizable, clearer, and potentially faster and smaller in hardware.

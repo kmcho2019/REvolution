@@ -1,0 +1,15 @@
+To simplify the solution while maintaining functionality, I'll analyze the Karnaugh map to find the most minimal expression. Key observations:
+1. The output is 1 when:
+   - x[3]x[4] = 11 (regardless of x[1]x[2] in most cases)
+   - x[3]x[4] = 10 and x[1]x[2] ≠ 11
+   - x[3]x[4] = 01 and x[1]x[2] = 11
+2. The output is 0 when:
+   - x[3]x[4] = 00 and x[1]x[2] = 01
+   - x[3]x[4] = 01 and x[1]x[2] = 00 or 10
+   - x[3]x[4] = 10 and x[1]x[2] = 11
+
+Simplified approach:
+- Output is 1 when either:
+  - x[3] is 1 and (x[4] is 1 OR x[1] is 1)
+  - x[1]x[2] is 11 and x[3]x[4] is 01
+This can be expressed as: f = x[3] | (x[1] & x[2] & ~x[4])

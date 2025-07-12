@@ -1,0 +1,14 @@
+An alternative approach is to instantiate eight individual single-bit D flip-flop modules with asynchronous reset, each handling one bit of the input vector independently.
+
+This modular bitwise implementation allows easy customization per bit if needed and clearly shows the asynchronous reset behavior for each flip-flop. Although it is less compact than vectorized code, it improves clarity for beginners or debugging.
+
+Each DFF module has an asynchronous reset and is clocked on the rising edge of clk, resetting output to zero when areset is high.
+
+The top module simply instantiates eight of these single-bit DFFs in a generate loop, wiring each bit of d and q accordingly.
+
+This approach:
+- Explicitly shows individual flip-flops with asynchronous reset,
+- Facilitates per-bit customization or tracing,
+- Keeps the design simple and intuitive,
+- Avoids wide vector registers for designers who prefer modular structures,
+- Maintains the required functionality with clean hierarchy.

@@ -1,0 +1,9 @@
+The original design is already minimal and efficient for an 8-bit right shifter. However, one small improvement can be made to reduce toggling power: use a clock enable signal internally that disables shifting when the input bit `d` is identical to the current MSB `q[7]`. If the MSB and the new input bit are the same, shifting in the same bit doesn't change the register content, so the register need not toggle. This reduces unnecessary toggling in the register and dynamic power while keeping the timing intact, since the design remains synchronous. It also slightly reduces activity when the input bit does not cause a state change in the register.
+
+This small clock enable logic adds a single XOR gate and a gating condition to the register update but can reduce switching activity and thus power consumption.
+
+For area, the overhead is negligible. Timing impact is minimal since it's a simple enable check before the register update.
+
+Hence, the shift update will only occur if `d != q[7]`. Otherwise, `q` stays unchanged, reducing unnecessary transitions.
+
+This method preserves the initialization and uses only standard synthesis constructs.

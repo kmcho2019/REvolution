@@ -1,0 +1,5 @@
+Refactor the recursive popcount module to an iterative, balanced adder tree implemented purely with generate loops and assigns, avoiding recursive module instantiations.  
+We will split the input vector into groups of fixed small width (e.g., 8 bits), compute partial popcounts using a simple combinational method (like a small LUT or a sum of bits), then iteratively sum these partial counts through a series of adders in a tree structure until only one sum remains.  
+This approach flattens the hierarchy into one module, reduces module instantiation overhead, and makes the structure more explicit for synthesis tools.  
+For the 255-bit input, pad it to 256 bits, split into 32 groups of 8 bits each, compute 8-bit popcounts of each group (ranging 0 to 8), then sum these 32 counts in stages until one 9-bit total sum remains.  
+This iterative, flattened tree approach is functionally equivalent but avoids recursive generics, making the code clearer and potentially more synthesis-friendly.

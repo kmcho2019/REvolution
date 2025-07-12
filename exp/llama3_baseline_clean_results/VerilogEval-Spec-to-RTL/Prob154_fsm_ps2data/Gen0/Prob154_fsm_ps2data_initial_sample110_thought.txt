@@ -1,0 +1,7 @@
+The problem requires a finite state machine (FSM) that searches for message boundaries in a byte stream. The FSM will have three states: idle, byte_2, and done. In the idle state, it discards bytes until it finds one with in[3] = 1. Once it finds this byte, it transitions to the byte_2 state and starts collecting the next two bytes. After collecting the third byte, it transitions to the done state, where it signals that a message has been received and outputs the 24-bit message. The FSM will reset to the idle state after the done signal has been asserted.
+
+To implement this, we'll use a 2-bit state register (curr_state) to represent the three states: idle (2'b00), byte_2 (2'b01), and done (2'b10). We'll also use a 2-bit counter (byte_count) to keep track of the number of bytes collected. Additionally, we'll use a 24-bit register (out_bytes_reg) to store the collected bytes.
+
+We'll use a combinational logic block to determine the next state and the output of the FSM based on the current state, the input byte, and the byte count. We'll also use a sequential logic block to update the state, byte count, and out_bytes_reg on the positive edge of the clock.
+
+The out_bytes output will be assigned the value of out_bytes_reg when the FSM is in the done state.

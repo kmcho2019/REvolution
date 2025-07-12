@@ -1,0 +1,6 @@
+Implement a Moore FSM that uses a compact binary-encoded state machine with four main states: IDLE (searching for pattern), SHIFT (shifting 4 bits), COUNT (waiting for counting done), and DONE (waiting for ack).  
+Use a 2-bit shift counter within the SHIFT state to track the 4 required shift cycles instead of expanding SHIFT into multiple substates, reducing the total state count.  
+Detect the pattern 1101 using a small 2-bit shift register for incoming bits to simplify pattern detection logic outside of the state machine. When pattern detected, transition from IDLE to SHIFT and start shift counter at zero.  
+On each shift cycle, increment the shift counter until 4 shifts done, then move to COUNT state.  
+Remain in COUNT until done_counting asserted, then move to DONE and assert done output. After ack is received, go back to IDLE.  
+This approach reduces area by minimizing number of states and eliminates the need for a long series of shift substates, improves power by limiting state transitions, and improves timing by separating pattern detection from state transitions and using a simple counter for shift cycles.

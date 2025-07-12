@@ -1,0 +1,12 @@
+The main issue with the previous implementation is in the dfr (supplemental flow) logic. The simple state comparison (next_state > prev_state) doesn't correctly represent the physical water level relationships because of how the states are encoded. 
+
+To fix this:
+1. We'll maintain the same state encoding for consistency
+2. Instead of numerical comparison, we'll implement explicit rising-edge detection based on the actual water level transitions:
+   - From BELOW_ALL to MID_LOW (rising)
+   - From MID_LOW to MID_HIGH (rising)
+   - From MID_HIGH to ABOVE_ALL (rising)
+3. All other transitions should not set dfr (except reset condition)
+4. The output logic for fr2, fr1, fr0 remains correct as is
+
+This change ensures dfr accurately reflects when the water level is physically rising between sensor thresholds, regardless of the numerical state encoding.

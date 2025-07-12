@@ -1,0 +1,7 @@
+To provide a novel architectural approach, I'll implement the Karnaugh map function by directly decoding the 4-bit input as an address to a small combinational ROM implemented with a case statement. This approach treats the function as a 16-entry truth table lookup, which is simple, intuitive, and efficient for a small input space. It avoids explicit Boolean factorization, instead leveraging a direct enumeration of output values per input combination.
+
+This ROM-style decoding enables easy modification and clear visibility of the function mapping, and synthesis tools typically implement such case statements efficiently as LUTs or minimal logic. It also naturally covers the function without intermediate wires or gates, improving clarity and potentially area due to direct LUT mapping.
+
+The Karnaugh map specifies f for each combination of x[3:0]. We'll carefully translate the map to a 16-bit vector or case expression, mapping the input bits to the correct minterm indices, respecting the given variable order and bit assignment.
+
+This method is especially suitable here because the input width is only 4 bits, making a truth table approach practical and scalable within a small domain.

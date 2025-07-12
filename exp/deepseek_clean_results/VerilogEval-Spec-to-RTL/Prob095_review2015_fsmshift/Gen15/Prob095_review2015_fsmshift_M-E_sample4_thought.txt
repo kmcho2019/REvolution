@@ -1,0 +1,14 @@
+Novel approach using a state machine with explicit cycle counting:
+1. Instead of a simple counter, implement a 4-state FSM that tracks the exact cycle count
+2. States represent each of the 4 active cycles (S0-S3) plus a terminal state (S_DONE)
+3. Advantages:
+   - Explicit state tracking ensures precise cycle control
+   - Clear state transitions make timing predictable
+   - Easy to modify if cycle count requirements change
+   - No arithmetic comparisons needed
+   - Terminal state ensures shift_ena stays low forever after 4 cycles
+4. Reset behavior:
+   - Synchronous reset moves to S0 (first active cycle)
+   - Progress through S1, S2, S3
+   - Transition to S_DONE after S3
+   - shift_ena only active in S0-S3 states

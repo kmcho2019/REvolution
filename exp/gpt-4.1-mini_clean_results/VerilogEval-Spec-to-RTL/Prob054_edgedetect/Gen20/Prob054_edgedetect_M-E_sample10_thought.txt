@@ -1,0 +1,11 @@
+Instead of using a register to hold the previous input value directly, we can implement a one-clock-cycle delayed version of the input using a pipeline register and then compare this delayed input with the current input to detect positive edges. To make the design structurally different, we separate the detection logic into combinational logic outside the clocked block, and register only the detected edges at the next clock cycle for synchronous output.
+
+This approach explicitly pipelines the input and detection stages, making the architecture modular and potentially better for timing by splitting the path. It also facilitates future scalability if additional processing stages are required.
+
+The key steps are:
+
+1. Register the input vector into a delay register on clk.
+2. Compute the positive edge (0->1) detection in combinational logic using delayed input and current input.
+3. Register the detection output to generate the pedge signal synchronously the next clock cycle.
+
+This yields the pedge output delayed by one cycle after the positive edge event, fulfilling the requirement while presenting a distinctly different architecture from the prior solution.

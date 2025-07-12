@@ -1,0 +1,11 @@
+The FSM next-state inputs Y1 and Y3 can be derived more directly by inspecting transitions and one-hot encoding:
+
+- Y1 (input to state B flip-flop, y[1]) is only set when current state is A (y[0]) and input w=1. So Y1 = y[0] & w.
+
+- Y3 (input to state D flip-flop, y[3]) is set on w=0 and current state is any of B (y[1]), C (y[2]), E (y[4]), or F (y[5]). So Y3 = ~w & (y[1] | y[2] | y[4] | y[5]).
+
+This expression is simple and intuitive without further Boolean simplifications or negations. It matches the FSM transition logic exactly.
+
+This removes the need for negations of y[0] and y[3] and is cleaner and easier to understand while preserving correctness.
+
+Thus, we implement Y1 = y[0]&w, Y3 = ~w & (y[1] | y[2] | y[4] | y[5]).

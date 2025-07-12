@@ -1,0 +1,11 @@
+Fuse the best ideas from both examples by:
+
+1. Using synchronous active-low reset and a 2-bit counter to track the number of valid inputs received.
+2. Updating accumulator and counter only when valid_in is high to minimize toggling and power usage.
+3. Keeping valid_out asserted exactly one cycle upon accumulating four inputs, and cleared by default each cycle to avoid spurious pulses.
+4. Performing accumulator update and outputting the sum atomically on the 4th input cycle to guarantee timing clarity.
+5. Avoiding redundant intermediate registers, keeping design clean and minimal area.
+6. Using non-blocking assignments for safe sequential logic.
+7. Applying an enable signal to gate accumulator and counter updates, reducing unnecessary toggling when no valid input arrives.
+
+This fusion strategy yields a power-aware, minimal-area, and high-performance accumulator module that outputs the 10-bit sum after every 4 valid 8-bit inputs, with a clean 1-cycle valid_out pulse.

@@ -1,0 +1,17 @@
+To implement the Lemmings behavior, we need to model the finite state machine with the following states: walking left, walking right, falling, and digging. We will use a Moore state machine, where the output depends only on the current state. We will also use a Mealy state machine for the transition logic, where the next state depends on the current state and the inputs. 
+
+The states will be encoded as follows:
+- 2'b00: walking left
+- 2'b01: walking right
+- 2'b10: falling
+- 2'b11: digging
+
+The transition logic will be as follows:
+- If the Lemming is walking and the ground disappears, it will start falling.
+- If the Lemming is walking and it's told to dig, it will start digging if there's ground.
+- If the Lemming is walking and it's bumped, it will change direction.
+- If the Lemming is falling and the ground reappears, it will resume walking in the same direction as before.
+- If the Lemming is digging and the ground disappears, it will start falling.
+- If the Lemming is digging and it reaches the other side, it will resume walking in the original direction when it hits ground again.
+
+We will use a separate register to store the walking direction before the Lemming starts falling or digging, so we can resume walking in the same direction later.

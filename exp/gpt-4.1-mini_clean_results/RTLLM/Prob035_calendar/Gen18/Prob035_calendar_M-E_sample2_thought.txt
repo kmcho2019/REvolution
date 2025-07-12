@@ -1,0 +1,9 @@
+Implement the perpetual calendar using three separate always blocks for Seconds, Minutes, and Hours with synchronous reset, which allows independent clock domain style updates within a single clock domain. This modular approach enhances clarity and isolates the logic for each time unit. Each always block increments its respective counter only when the lower significant counter wraps around. This separates concerns neatly and simplifies debugging.
+
+- Seconds increment every clock cycle, wrapping from 59 to 0.
+- Minutes increment when seconds wrap from 59 to 0, wrapping from 59 to 0.
+- Hours increment when both minutes and seconds wrap from 59 to 0, wrapping from 23 to 0.
+- Use registers sized appropriately: 6 bits for seconds and minutes, 5 bits for hours.
+- Implement synchronous reset in each always block triggered by posedge CLK.
+- Avoid unnecessary conditional register updates inside the always blocks for straightforwardness.
+- This approach may slightly increase area due to multiple always blocks but improves modularity and code readability.

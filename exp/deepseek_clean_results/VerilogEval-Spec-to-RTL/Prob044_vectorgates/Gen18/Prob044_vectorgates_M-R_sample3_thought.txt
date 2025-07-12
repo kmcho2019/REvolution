@@ -1,0 +1,21 @@
+Refactoring Approach:
+
+1. Key Changes:
+   - Eliminate submodules and implement all operations directly in TopModule
+   - Use continuous assignments (assign) for all operations
+   - Maintain same functionality but with flatter hierarchy
+   - Keep parameterization for flexibility
+   - Preserve optimal bit ordering for NOT operations
+
+2. Benefits:
+   - Reduced hierarchy improves simulation performance
+   - Simpler verification with all logic in one module
+   - Maintains same PPA characteristics
+   - Easier to understand at a glance
+   - Still parameterizable for different bit widths
+
+3. Implementation Notes:
+   - Bitwise OR remains parallel operation
+   - Logical OR uses reduction OR on the bitwise OR result
+   - NOT operations use direct inversion with concatenation
+   - All outputs driven by continuous assignments

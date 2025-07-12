@@ -1,0 +1,14 @@
+Refactor the fixed-point subtractor to explicitly implement the sign and magnitude logic as described, rather than relying solely on Verilog's signed subtraction. I will convert inputs to sign-magnitude format, handle same-sign and different-sign subtraction cases distinctly, and then reconstruct the signed output. This approach makes the logic explicit and synthesis-friendly.
+
+Steps:
+1. Extract sign bits and magnitudes (absolute values) of inputs `a` and `b`.
+2. If signs are the same, subtract magnitudes; the output sign is the same as inputs.
+3. If signs differ, add magnitudes and determine output sign by comparing `a` and `b`.
+4. Handle zero result explicitly by setting the sign bit to 0.
+5. Use only combinational `always @(*)` block with internal registers for intermediate results.
+6. Avoid mixing signed and unsigned bitwise operations; work with unsigned magnitudes for arithmetic.
+7. Assign final signed result to output `c`.
+
+This design is fully combinational, fully parameterized, synthesizable, and clearly implements the problem's requested arithmetic behavior and zero sign bit handling.
+
+Testbench can remain similar for verification.

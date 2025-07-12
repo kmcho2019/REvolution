@@ -1,0 +1,23 @@
+Refactoring the 4-bit pipelined multiplier with two register stages for intermediate sums, while keeping the original concept of partial product generation via a generate block, but improving:
+
+1. **Proper zero-extension**: Extend multiplicand `mul_a` by adding zeros at the MSB side (pad to 2*size bits) without shifting it. This allows correct partial product alignment when shifting later by bit index.
+
+2. **Partial product generation**: Use generate block to create partial products as `(mul_b[i]) ? (ext_mul_a << i) : 0`, no extension or shifting of `mul_a` before that.
+
+3. **Two-level pipeline registers**:
+   - Stage 1 registers accumulate the sums of partial products for half of the multiplier bits (e.g., bits [0:1]).
+   - Stage 2 registers accumulate sums for the other half (bits [2:3]) and add them to the Stage 1 sums from the previous cycle.
+   
+4. **Pipeline data synchronization**: Introduce separate registers for partial products and ensure sums are registered in subsequent clock cycles to avoid combinational loops and timing mismatches.
+
+5. **Synchronous reset and clocking**: All registers update on the positive edge of clk or reset asynchronously.
+
+6. **Use combinational assignments outside always blocks for partial product generation and summation, and use sequential always blocks for pipeline registers only**.
+
+This approach strictly pipelines the partial sums, ensuring the output is valid after two clock cycles of latency, matching the two-level register pipeline concept, avoiding output capturing sums computed in the same cycle (which causes timing issues).
+
+No redundant signal declarations. The pipeline latency is explicit, so output corresponds to inputs delayed by two cycles.
+
+The input extension is zero-padded at MSB side, correctly matching the size to 2*size without shifting multiplicand prematurely.
+
+This structure improves clarity, timing correctness, and functional correctness while following the original problem constraints.

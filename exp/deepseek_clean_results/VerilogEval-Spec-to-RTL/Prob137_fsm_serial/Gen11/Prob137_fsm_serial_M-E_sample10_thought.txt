@@ -1,0 +1,15 @@
+Instead of using a traditional FSM with separate state registers, we can leverage the shift register itself to track progress:
+1. Use a 10-bit shift register to capture the entire frame (start + 8 data + stop bits)
+2. Implement a counter to track bit positions
+3. Use combinational logic to detect valid frames
+4. The 'done' signal is generated when:
+   - We've received exactly 10 bits
+   - First bit is 0 (start)
+   - Last bit is 1 (stop)
+5. Reset clears all registers and counters
+
+Advantages:
+- Fewer states needed (just IDLE and RECEIVING)
+- More compact implementation
+- Easier to verify correct framing
+- Natural handling of stop bit verification

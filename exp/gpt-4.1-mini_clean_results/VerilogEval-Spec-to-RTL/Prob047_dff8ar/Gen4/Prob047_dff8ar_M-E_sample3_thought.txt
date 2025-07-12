@@ -1,0 +1,7 @@
+I will implement the TopModule using a single always block with an 8-bit register to hold the state of the D flip-flops. This register will have an active-high asynchronous reset that clears all bits simultaneously.
+
+This vectorized approach consolidates all eight flip-flops into one piece of sequential logic, reducing code duplication and potentially saving area and power. The always block sensitivity list will include both the positive edge of clk and the positive edge of areset to support asynchronous reset.
+
+On the asynchronous reset assertion (areset=1), the register will be cleared to zero immediately. Otherwise, on each positive clock edge, the register loads the 8-bit input vector d.
+
+This approach improves maintainability and can help synthesis tools optimize the design better, as all flip-flops share the same control signals and reset logic.

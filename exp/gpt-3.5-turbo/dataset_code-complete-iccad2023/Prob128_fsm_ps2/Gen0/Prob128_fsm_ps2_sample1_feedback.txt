@@ -1,3 +1,0 @@
-The issue in the code lies in the state transition logic, specifically in the `BYTE2` state. The `next_state` assignment to `DONE` should only happen when receiving the third byte with `in[3] == 1`. However, the current implementation is transitioning to the `DONE` state whenever `in[3]` is 1 in the `BYTE2` state, regardless of whether it's actually the third byte or not. This leads to the premature setting of `done` to 1, causing mismatches in the simulation results.
-
-To adhere to the design intent, the transition to the `DONE` state should only occur when the correct conditions for receiving the third byte are met. This logic oversight is leading to incorrect `done` signal generation and subsequent simulation failures.

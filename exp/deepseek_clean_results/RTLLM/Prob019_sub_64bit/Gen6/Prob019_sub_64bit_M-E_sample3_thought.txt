@@ -1,0 +1,19 @@
+Novel Architectural Idea: Carry-Save Subtraction with Parallel Overflow Detection
+
+1. **Carry-Save Subtraction**:
+   - Instead of using a direct subtractor, implement a carry-save approach that breaks the 64-bit operation into smaller chunks (16-bit in this case)
+   - This allows for parallel computation of partial results and early overflow detection
+
+2. **Hierarchical Overflow Detection**:
+   - Detect potential overflow at each 16-bit boundary before propagating carries
+   - Combine local overflow signals to determine the final overflow condition
+
+3. **Optimized Sign Handling**:
+   - Compute sign bits independently for each segment
+   - Use these to predict overflow conditions in parallel with the subtraction
+
+Key Advantages:
+- Potentially better timing due to reduced critical path
+- Early overflow detection can be useful for speculative execution
+- More scalable for larger bit-widths
+- Better power characteristics due to localized computation

@@ -1,0 +1,20 @@
+Simplified approach focusing on direct sensor interpretation and minimal state tracking:
+
+1. **Direct Sensor Mapping**: Instead of encoding levels, directly use sensor values to determine flow rates. This eliminates the need for level encoding/decoding.
+
+2. **Simplified Flow Logic**:
+   - fr0 is active whenever s[0] is not asserted (below or between sensors)
+   - fr1 is active when both s[0] and s[1] are not asserted
+   - fr2 is active only when no sensors are asserted
+
+3. **Supplemental Flow (dfr)**:
+   - Track only the previous state of s[0] (lowest sensor)
+   - dfr activates when current s[0] is higher than previous (water rising)
+
+4. **Reset Handling**: Forces all outputs high (maximum flow) synchronously.
+
+Benefits:
+- Eliminates complex state encoding
+- Reduces transition tracking to just one sensor
+- Maintains full functionality with simpler logic
+- Fewer registers needed

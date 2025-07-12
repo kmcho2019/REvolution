@@ -1,0 +1,11 @@
+To refactor the existing code, we can simplify the finite state machine by using a more straightforward approach. Instead of using separate signals to track the number of bytes received and whether a message is in progress, we can use a single state variable to encode the different states of the FSM. This approach eliminates the need for the `next_byte_count` and `next_msg_in_progress` signals, reducing the complexity of the code.
+
+The refactored FSM will have the following states:
+- IDLE: The initial state, where the FSM is waiting for a new message to start (in[3] = 1).
+- BYTE1: The first byte of the message has been received.
+- BYTE2: The second byte of the message has been received.
+- BYTE3: The third byte of the message has been received.
+
+The FSM will transition between these states based on the input `in[3]` signal and the current state. When a new message is detected (in[3] = 1), the FSM will transition to the BYTE1 state. Otherwise, the FSM will increment the byte count and transition to the next state.
+
+The 'done' signal will be asserted when the FSM is in the BYTE3 state, indicating that a complete message has been received.

@@ -1,0 +1,11 @@
+To improve the given LFSR design for better PPA and ensure a reliable non-zero state on reset, the following refinements are applied:
+
+- Initialize the LFSR to a non-zero seed to avoid lock-up at zero state.
+- Keep the feedback calculation combinational and simple with the required inverted XOR of MSB and next MSB bits.
+- Use a synchronous reset as specified.
+- Keep output as a registered 4-bit vector for stable output and efficient synthesis.
+- Add an explicit initial block for simulation to ensure known startup conditions (optional, but beneficial).
+- The design is kept minimal and straightforward for optimal synthesis and easy understanding.
+- Remove parameters if flexibility is not requested to simplify the module; however, if future configurability is needed, parameters can be retained.
+
+This version improves clarity, ensures no lock-up state (starting from SEED=4'b0001), and is optimal for synthesis tools targeting low power, better performance, and small area.

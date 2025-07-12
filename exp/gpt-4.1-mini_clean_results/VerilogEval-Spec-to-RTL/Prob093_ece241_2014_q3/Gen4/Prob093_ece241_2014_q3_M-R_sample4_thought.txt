@@ -1,0 +1,7 @@
+Refactor the implementation by explicitly structuring each mux_in[x] as a small 2-to-1 multiplexer tree that only uses conditional (ternary) operators, clearly reflecting the stepwise multiplexing logic instead of direct expressions.
+
+- For each mux_in[x], define it as nested 2-to-1 muxes controlled by inputs c and d.
+- Implement NOT d as a 2-to-1 mux since no logic gates allowed.
+- This explicit mux-tree approach ensures clarity and clear mapping to multiplexers.
+- Maintain the mapping: mux_in[0] = ab=00, mux_in[1]=ab=01, mux_in[2]=ab=11, mux_in[3]=ab=10.
+- This fully complies with the problem constraints, avoids direct logical expressions like 'c + d', and uses only muxes.

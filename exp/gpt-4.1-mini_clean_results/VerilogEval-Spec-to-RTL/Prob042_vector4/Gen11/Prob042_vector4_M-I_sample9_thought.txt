@@ -1,0 +1,15 @@
+The original design is already minimal and optimal for a pure sign-extension operation, which is combinational and simple. Given the PPA feedback, the key opportunities to optimize power are conditional logic or clock gating, but since this module is purely combinational, no clock gating is applicable. Area and timing are already minimal due to the simple replication operator. 
+
+A slight improvement can be to explicitly declare the output as reg and use an always_comb block for better synthesis tool friendliness and potential better optimization in some flows, especially if this module could be extended later. This doesn't change logic but can improve maintainability and clarity in some synthesis tools.
+
+Additionally, to reduce switching activity at the output, we can implement an output enable signal internally that only updates when the input changes, effectively registering the output and avoiding unnecessary toggling. This will add a flop stage but reduce dynamic power in subsequent logic by limiting switching at the output.
+
+So the improvement strategy is:
+
+- Use a registered output updated only on input changes to reduce switching activity and dynamic power downstream.
+- Use always_comb with reg output for clarity and potential synthesis benefits.
+- Keep the sign-extension logic the same but register the result on a clock and enable only when input changes (assuming we have a clock).
+
+Since the original interface has no clock input, we will add a clock and reset input to enable registering outputs. This change improves power significantly by lowering toggling on the output but adds minimal area and latency (one cycle).
+
+If adding clock/reset is not allowed, this improvement can't be applied. Assuming it's acceptable, here is the improved version.

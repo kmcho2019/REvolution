@@ -1,0 +1,10 @@
+To design the 64-bit Johnson counter (JC_counter), we need to follow these steps:
+1. Define the module with the required input and output ports.
+2. Use a reg type to declare the 64-bit register (Q) to store the counter value.
+3. Use an always block to update the counter value on every rising edge of the clock signal (clk) or the falling edge of the reset signal (rst_n).
+4. Inside the always block, check for the reset condition (rst_n == 0). If true, reset the counter value (Q) to 0.
+5. If not in reset, check the least significant bit (Q[0]) of the counter value. If Q[0] is 0, increment the counter by shifting the current value (Q[63:1]) to the right and appending a 1 at the most significant bit position.
+6. If Q[0] is 1, decrement the counter by shifting the current value (Q[63:1]) to the right and appending a 0 at the most significant bit position.
+7. Use non-blocking assignment (<=) to update the counter value (Q) to avoid race conditions.
+
+Note: Since the problem requires the counter to be updated on the falling edge of the reset signal (rst_n), we use the negedge keyword to specify this condition.

@@ -1,0 +1,5 @@
+To optimize the 16-bit wide 9-to-1 multiplexer for better performance and area, we can use a vector of inputs and index it by the selector instead of using a case statement. This approach can enable the synthesis tool to better infer a single-level mux structure, potentially improving timing and area utilization. Also, we avoid a procedural block and output is assigned combinationally via a continuous assignment, which can reduce register inference and associated overhead.
+
+For sel values 9 to 15, output all ones by checking if sel is less than 9; if not, output 16'hFFFF. This eliminates the default case in the case statement and uses a conditional expression.
+
+This method should have similar power but possibly better performance and area due to simpler inferred mux logic.

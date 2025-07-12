@@ -1,0 +1,18 @@
+The fusion strategy combines the best aspects of both examples while addressing their limitations:
+
+1. From Example 1, we keep the explicit data register (data_reg) for better robustness, as it ensures data stability during synchronization even if data_in changes right at the enable edge.
+
+2. From Example 2, we adopt the more streamlined enable synchronization path that directly synchronizes data_en without the intermediate en_data_reg.
+
+3. We maintain the two-stage synchronization for metastability protection as in both examples.
+
+4. We optimize the output assignment to only update when needed (like Example 2) but keep the data_reg for stability (like Example 1).
+
+5. We use non-blocking assignments consistently and maintain clear clock domain separation.
+
+Key improvements:
+- Fewer registers than Example 1 (eliminates en_data_reg)
+- More robust than Example 2 (keeps data_reg for stability)
+- Clear clock domain separation
+- Optimized output updates
+- Maintains all reset functionality

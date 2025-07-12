@@ -1,0 +1,11 @@
+Fuse the best aspects of both solutions: use a 2-bit counter counting down from 3 to 0 to index the bits of input 'd' directly (as in Example 1), ensuring the MSB is output first and LSB last, without shifting registers. Assert valid_out precisely on the cycle when the MSB bit is output (cnt == 3), indicating the availability of valid serial data for four cycles.
+
+This approach leverages the minimal register use and clean combinational logic of Example 1 with the explicit valid_out timing that aligns better with the specification. It avoids internal data registers and shifting, minimizing area and power, and outputs bits directly by indexing 'd' at cnt. The counter decrements from 3 down to 0, resetting to 3 afterward.
+
+This design offers:
+- Clarity: valid_out is asserted exactly when MSB is output (start of a new 4-bit sequence).
+- Minimal area: only a 2-bit counter, no data registers.
+- Low power: counter toggling minimized and valid_out pulse is only one clock.
+- Simplicity: direct indexing avoids shifting and extra muxing.
+
+Overall, this fused design provides a clean, power-efficient, minimal-area solution with precisely timed valid_out signal.

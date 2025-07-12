@@ -1,0 +1,13 @@
+To implement this serial communication receiver, we need a finite state machine (FSM) with the following states:
+1. IDLE: Wait for start bit (0)
+2. RECEIVE: Shift in 8 data bits (LSB first)
+3. STOP: Check for stop bit (1)
+4. ERROR: Wait for stop bit if not found
+
+The FSM transitions:
+- From IDLE to RECEIVE when start bit (0) is detected
+- After 8 bits are received, move to STOP to check stop bit
+- If stop bit is valid (1), go back to IDLE and assert done
+- If stop bit is invalid, go to ERROR state until stop bit is found
+
+We'll use a 3-bit counter to track received bits and an 8-bit shift register to accumulate the data.

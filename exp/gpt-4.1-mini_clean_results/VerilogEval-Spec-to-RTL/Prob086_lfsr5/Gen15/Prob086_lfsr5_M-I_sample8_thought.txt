@@ -1,0 +1,5 @@
+To optimize PPA (timing, power, and area), I will reduce the combinational logic depth and register update complexity by computing the next state of the entire 5-bit LFSR in a single vector assignment before the clock edge. This approach reduces the number of individual register updates and potentially improves synthesis efficiency by letting tools infer a single 5-bit register with combinational logic feeding it.
+
+I will keep the synchronous active-high reset initializing q to 5'b00001 and implement the Galois LFSR taps (bits 5 and 3, i.e., q[4] and q[2]) following the standard right-shift with XOR on tapped positions.
+
+This vectorized approach minimizes the critical path by simplifying the logic and reduces switching activity by updating q only once per clock cycle.

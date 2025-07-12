@@ -1,0 +1,25 @@
+Refactor the FSM to use an enumerated type for states (instead of one-hot encoding) for clarity and simpler next-state logic. Implement the outputs as registered signals updated in the clocked block to avoid combinational output glitches.
+
+Key points of the refactoring:
+
+1. Use `typedef enum` for state definitions with a compact binary encoding.
+2. Use a single always block for synchronous state update and outputs, ensuring Moore FSM style.
+3. Maintain a 3-bit shift register for `x` values, updated every clock cycle after reset is de-asserted (never reset during operation).
+4. Detect the `101` pattern on the shifted `x` samples immediately after the pulse f cycle.
+5. In the monitoring Y state, count the number of cycles elapsed (from 0 to 2), and check for `y == 1`. Transition accordingly.
+6. Outputs `f` and `g` are registered and follow the Moore FSM output requirements.
+7. Synchronous active-low reset clears state, shift register, counters, and outputs properly.
+
+This structure makes state transitions, output updates, and input monitoring all synchronous and straightforward, avoiding combinational feedback or glitches on outputs.
+
+The FSM states:
+
+- A_RESET: initial state on reset.
+- A_WAIT: wait one cycle after reset release.
+- A_PULSEF: pulse f=1 for one cycle.
+- A_SEQDETECT: sliding window on `x` until pattern detected.
+- A_MONITOR_Y: set g=1, wait up to two cycles for y=1.
+- A_HOLD_G1: keep g=1 forever.
+- A_HOLD_G0: keep g=0 forever.
+
+This design matches the original specification but improves code clarity and synchronous logic handling.

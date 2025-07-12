@@ -1,0 +1,15 @@
+To improve power and area efficiency while maintaining the same functionality, the main strategy is to reduce unnecessary toggling and optimize counters by using a unified counter instead of separate ones, and only toggle output clocks when needed.
+
+- Use a single 7-bit counter (0 to 99) to derive all output clocks. Since 100 input cycles represent a full period for CLK_1 (1MHz), toggling output clocks can be derived from this single counter's value.
+- Generate CLK_50 by toggling every 1 input cycle (divide by 2), as before.
+- Generate CLK_10 by toggling every 5 input cycles.
+- Generate CLK_1 by toggling every 50 input cycles.
+
+This allows the elimination of multiple counters and logic duplication, reducing area.
+
+- Synchronize reset to be synchronous rather than asynchronous, reducing glitches and power during reset assertion.
+- Use non-blocking assignments for all sequential logic.
+- Use minimum-width counters and combinational logic for toggling output clocks.
+- Keep separate always blocks for asynchronous reset if still requested, but synchronous reset is better for power and stability. Given original spec has asynchronous reset, maintain it but structure code so the toggling is well controlled.
+
+This approach reduces switching in the output clocks by toggling only at required counts, improves power by removing redundant counting logic, reduces area by using a single counter, and maintains timing clarity.

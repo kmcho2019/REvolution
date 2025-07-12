@@ -1,0 +1,5 @@
+To optimize the design for better power, area, and potentially timing, we reduce the storage per bit from a 2-bit shift register to a single bit holding only the previous input sample. This saves flip-flops (half the register count), cutting area and dynamic power from register toggling.
+
+We detect positive edges by checking where the previous bit was 0 and current bit is 1. To improve timing and reduce combinational load at output, we register the pedge output on the clock, breaking the combinational path and allowing better timing closure.
+
+This results in simpler logic, fewer registers, and a synchronous pedge output that aligns with the requirement of outputting the positive edge indication delayed by one cycle. The design remains clean, easily synthesizable, and functionally correct.

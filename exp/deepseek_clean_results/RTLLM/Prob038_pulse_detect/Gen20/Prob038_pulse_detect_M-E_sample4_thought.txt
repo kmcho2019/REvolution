@@ -1,0 +1,8 @@
+Instead of using a state machine, we can implement the pulse detector using a 3-bit shift register that tracks the last three samples of data_in. The detection logic then simply looks for the "010" pattern in this shift register. This approach:
+1. Uses a shift register to maintain history
+2. Compares against the target pattern directly
+3. Eliminates complex state transitions
+4. Is more scalable for different pulse patterns
+5. Has deterministic timing (always 3 cycles from start to detection)
+
+The shift register approach is particularly efficient for this pattern length and provides clear visibility into the detection process. The output is generated combinatorially based on the shift register contents, making the timing very predictable.

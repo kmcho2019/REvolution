@@ -1,0 +1,11 @@
+Fuse the strengths of both examples: Use the clean vector register and direct indexing from Example 2 for clear, concise, and efficient shift logic and readout, but retain the original specification that the MSB Q[0] is the input shift-in position (S), meaning the bit shifted in appears at Q[0]. This aligns with Example 1's indexing logic but avoids subtraction by reordering the shift direction and flip-flop outputs to directly map Q[0]=shift_reg[7].
+
+So the shift register shifts left, shifting S into Q[0] (MSB) as Example 1 intended, but implemented as a vector with bit 7 as Q[0], bits 6 down to 0 as Q[1]..Q[7]. Then, the output Z is indexed directly by {A,B,C} on the reverse order by wiring the bits accordingly: Q[0] corresponds to shift_reg[7], so to get Z=Q[{A,B,C}], we simply reverse the bit ordering in the register at assignment.
+
+This avoids subtraction in index calculation by defining the shift register such that Q[0] = shift_reg[7] = MSB where S is shifted in, and multiplexer selects from the bits indexed by {A,B,C} reversed to match Q[0] to shift_reg[7].
+
+In code, we implement the shift register shifting right with S shifted into bit 7, as in Example 1, but expose the Q vector as {Q[0], Q[1], ..., Q[7]} = shift_reg[7:0] reversed to match address indexing, avoiding subtraction logic.
+
+This fusion benefits from Example 2’s clean vector style and direct indexing with Example 1’s correct mapping of Q[0] to MSB (shift-in bit). The final multiplexer uses simple indexing without arithmetic operations and preserves the shift register semantics.
+
+This design is synthesizable, timing-friendly, and avoids arithmetic delays while strictly following the original specification.

@@ -1,0 +1,24 @@
+Revised design approach addressing all feedback points:
+
+1. Pattern Detection:
+- Implement proper 4-bit pattern detection in IDLE state by only checking when we have 4 valid bits
+- Maintain a separate 4-bit shift register for pattern detection
+
+2. Shift Counting:
+- Add explicit shift counter (shift_cnt) to accurately track 4 shift cycles
+- Clear shift counter when entering SHIFT state and increment each cycle
+
+3. State Transitions:
+- Move to SHIFT state only after full 1101 pattern is detected
+- Transition to COUNT state only after exactly 4 shifts
+- Move to DONE state only when done_counting is asserted
+- Return to IDLE only after ack is received
+
+4. Output Generation:
+- shift_ena active only during SHIFT state
+- counting active only during COUNT state
+- done active only during DONE state
+
+5. Reset Handling:
+- Properly initialize both state and pattern register on reset
+- Ensure clean transitions between states

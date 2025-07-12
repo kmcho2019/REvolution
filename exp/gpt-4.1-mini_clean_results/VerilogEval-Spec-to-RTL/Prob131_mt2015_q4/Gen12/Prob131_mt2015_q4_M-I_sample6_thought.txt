@@ -1,0 +1,18 @@
+The original solution uses two pairs of A and B modules with their outputs combined by OR and AND gates, then XORed for final output, which is clear but involves redundant computation because each submodule recomputes (x^y) or related logic independently. Since both A and B submodules use the same inputs (x, y), the XOR of x and y is computed multiple times.
+
+To optimize power and area, we can share the intermediate signals (x ^ y) and ~(x ^ y) once, and feed them into two A and two B modules that only perform their respective AND or NOT operations as needed, minimizing redundant XOR computations.
+
+Further, since all four submodules have identical inputs and logic, the shared intermediate signals reduce logic duplication and switching.
+
+Additionally, we can inline the A and B logic inside the wrappers to avoid module overhead and extra nets, while still meeting the problem requirement of two A and two B submodules instantiated.
+
+We maintain the same hierarchy with two pairs: one pair outputs OR of A.z and B.z, the other outputs AND of A.z and B.z; finally, the top module XORs these two outputs.
+
+This design:
+
+- Shares XOR computation reducing redundant logic and power.
+- Minimizes nets and interconnects by reducing duplication.
+- Keeps the problem's instantiation counts and logic structure intact.
+- Results in improved power and area due to shared intermediate signals and less duplicated logic.
+
+This approach balances clarity with PPA optimization.

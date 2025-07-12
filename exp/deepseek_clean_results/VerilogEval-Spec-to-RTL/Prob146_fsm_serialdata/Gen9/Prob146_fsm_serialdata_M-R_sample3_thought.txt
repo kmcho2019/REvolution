@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. State Machine Restructuring: Convert the Mealy FSM to a Moore FSM for cleaner state transitions and output generation. This separates state transitions from output logic.
+2. Output Logic Simplification: Move `done` and `out_byte` generation to separate combinational blocks using `assign` statements for better readability and potential timing optimization.
+3. Bit Counter Optimization: Replace the 3-bit counter with a one-hot encoded approach for the 8 data bits, reducing comparison logic.
+4. Error Handling Simplification: Merge ERROR and IDLE states since they have similar behavior (waiting for start bit).
+5. Shift Register Optimization: Keep the efficient right-shift but make the assignment more explicit.
+
+Key Improvements:
+- Moore FSM ensures outputs only depend on current state
+- Combinational outputs reduce sequential logic
+- One-hot bit counting simplifies timing paths
+- Fewer states reduce area

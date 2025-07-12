@@ -1,0 +1,18 @@
+I will fuse the two provided examples to create a superior 4-digit BCD counter by combining their strengths:
+
+- Use the compact and uniform `bcd_inc` function from Example 2 for incrementing BCD digits with carry detection, improving code clarity and reducing logic duplication.
+- Generate ena signals combinationally as in both examples, reflecting when upper digits should increment. Use the simpler carry chain logic from Example 1 to minimize logic depth and improve timing.
+- Implement sequential logic to update digits only when their enable signals are active (as in Example 1), reducing toggling and dynamic power by preventing unnecessary flip-flop updates.
+- Remove unused intermediate wires (like redundant `ones_plus`) to minimize area and power.
+- Keep all enable signals and next-state calculations combinational, so outputs are stable, while clocked logic is kept minimal and straightforward.
+- Use non-blocking assignments in the sequential block and combinational assignments outside it for clean, synthesizable design.
+- This approach maintains clear, modular digit increments, with short carry paths and gated updates to optimize performance, power, and area collectively.
+
+Overall, this fusion yields:
+- Clean code with function-based increment and carry detection,
+- Gated digit updates to reduce switching,
+- Stable, well-defined enable outputs,
+- Minimal redundant logic for power and area benefits,
+- Improved timing by shorter carry propagation paths than Example 2.
+
+Thus, it offers a balanced, PPA-optimized, and clear design.

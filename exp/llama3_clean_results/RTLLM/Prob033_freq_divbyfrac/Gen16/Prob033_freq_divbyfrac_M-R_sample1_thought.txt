@@ -1,0 +1,9 @@
+To refactor the provided Verilog code for the frequency divider module `freq_divbyfrac`, we can simplify the logic and improve readability by using a combination of sequential and combinational logic. Instead of using a single `always` block for both sequential and combinational logic, we can separate these into distinct blocks. 
+
+The core idea remains the same: to divide the input clock frequency by 3.5x using the double-edge clocking technique. However, we can achieve this by creating two intermediate divided clock signals (`clk_div_int1` and `clk_div_int2`) with uneven periods (4 cycles and 3 cycles) and then phase-shifting these signals to produce the final divided clock output (`clk_div`).
+
+We will use a counter (`cnt`) to track the clock cycles and generate the intermediate clock signals based on the counter value. The phase-shifting logic will be applied to produce a smooth fractional divided clock output. 
+
+To simplify the code, we will use `assign` statements for combinational logic where possible, reducing the complexity of the `always` block and making the code more readable. 
+
+Additionally, we will ensure that the reset logic is correctly implemented to initialize the module's internal signals and the output `clk_div` signal.

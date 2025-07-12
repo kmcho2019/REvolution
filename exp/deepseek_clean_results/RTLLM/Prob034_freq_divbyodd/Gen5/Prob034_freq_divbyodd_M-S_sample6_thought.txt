@@ -1,0 +1,19 @@
+To simplify the odd frequency divider while maintaining functionality, I'll implement these key changes:
+
+1. Dual Counter Approach:
+   - Use two separate counters for rising and falling edges (cnt_p and cnt_n)
+   - Each counts to (NUM_DIV-1)/2 before toggling their respective clock signals
+
+2. Simplified Logic:
+   - Remove complex state machine in favor of direct counter comparison
+   - Generate two intermediate clocks (clk_p and clk_n) from each counter
+
+3. Output Combination:
+   - OR the two intermediate clocks to create the final divided output
+   - This maintains 50% duty cycle for odd divisions
+
+Key simplifications:
+- Eliminates state machine complexity
+- Uses straightforward counter comparison
+- Maintains original dual-edge counting concept
+- Produces clean 50% duty cycle output

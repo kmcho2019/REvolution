@@ -1,0 +1,28 @@
+Implement an 8-bit Radix-4 Booth multiplier using a shift-register style iterative approach controlled by a 5-bit counter (0 to 8, as each cycle processes 2 multiplier bits). 
+
+Key points:
+- Inputs a (multiplicand) and b (multiplier) are sign-extended to 16 bits on reset.
+- A 33-bit register `accum` holds {accumulator(17 bits) concatenated with multiplier(16 bits) and 1 extra bit} to facilitate Booth recoding from LSB side.
+- On reset:
+  - `accum` = {16'b0, multiplier, 1'b0} (LSB appended 0).
+  - multiplicand is sign-extended to 17 bits to match accumulator width.
+  - counter is 0, rdy=0.
+- Each clock cycle (when counter < 8):
+  - Examine the lowest 3 bits of `accum` (accum[2:0]) for Radix-4 Booth recoding.
+  - Based on booth encoding, add multiplicand * factor (-2, -1, 0, 1, 2) to upper 17 bits of accumulator.
+  - Arithmetic right shift accumulator by 2 bits (preserves sign).
+  - Increment counter.
+- After 8 iterations (processing all 16 multiplier bits in pairs), output product = upper 16 bits of accumulator, and set rdy=1.
+- When reset is high, multiplication restarts.
+
+This approach uses a combined accumulator+multiplier register and shifts right by 2 bits per cycle, suitable for Radix-4 Booth multiplier. It is simple and common for iterative Booth multipliers.
+
+No FSM needed: control is by counter and reset.
+
+This design differs from previous examples by using a single accumulator register that combines product and multiplier and performs arithmetic right shifts by 2 bits, which is natural for Radix-4 Booth.
+
+All variables are declared properly. The accumulator and multiplicand are signed for correct arithmetic.
+
+The ready signal `rdy` indicates completion.
+
+This clean approach ensures proper sign extension, no variable declaration issues, correct indexing, and straightforward logic.

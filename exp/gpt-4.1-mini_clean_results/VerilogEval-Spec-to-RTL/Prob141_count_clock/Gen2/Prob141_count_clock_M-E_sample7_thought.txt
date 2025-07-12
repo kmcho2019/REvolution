@@ -1,0 +1,11 @@
+Implement the clock as separate BCD counters for seconds, minutes, and hours with clear next-value combinational logic. Instead of using functions, use explicit digit-wise increment logic for clarity. The 12-hour hour counter will count from 01 to 12, and the pm flag toggles precisely when hours wrap from 11 to 12 (i.e., on hour increment from 11 to 12, pm changes state).
+
+To achieve this:
+- Keep seconds and minutes as two BCD digits each (tens and ones).
+- For seconds and minutes, increment the ones digit, rolling over at 9; then increment tens digit, rolling over at 5; then roll over to zero.
+- For hours, increment ones digit (0-9), tens digit (0 or 1). Hours cycle: 01 → 02 → ... → 11 → 12 → 01...
+- Detect hour increment from 11 to 12 by comparing current hour to 11 and next hour to 12; toggle pm only at that event.
+- Reset synchronously sets time to 12:00:00 AM and pm=0.
+- All updates happen synchronously on clk posedge when ena is asserted, reset has highest priority.
+- Output ports are directly driven by internal regs representing each digit combined as BCD bytes.
+This approach avoids complicated function calls and ambiguity in overflow detection, making the behavior and pm toggle timing explicit and straightforward.

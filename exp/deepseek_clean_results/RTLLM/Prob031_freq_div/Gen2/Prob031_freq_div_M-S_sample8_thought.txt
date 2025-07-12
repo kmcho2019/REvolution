@@ -1,0 +1,6 @@
+To simplify the frequency divider while maintaining functionality:
+1. For CLK_50: Keep simple toggle flip-flop (most efficient implementation)
+2. For CLK_10: Reduce counter size to minimum (2 bits since we count 0-4)
+3. For CLK_1: Use a single 6-bit counter for both 10MHz and 1MHz generation by checking both 4 and 49 counts in same always block
+4. Remove redundant resets for counters since they're already handled by the main reset
+5. Combine all clock generation in a single always block for better synthesis optimization

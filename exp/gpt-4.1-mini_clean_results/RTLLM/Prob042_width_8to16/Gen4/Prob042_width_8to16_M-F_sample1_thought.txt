@@ -1,0 +1,13 @@
+To fix synthesis issues and improve timing, implement a simple 2-state finite state machine (FSM) with explicit states to track whether we have stored the first byte or are ready for output. Separate valid_out and data_out updates in registered logic without unconditional resets every cycle.
+
+Key points:
+- Define states IDLE (waiting for first byte) and OUTPUT_READY (have first byte stored).
+- On valid_in in IDLE, store the first byte and move to OUTPUT_READY.
+- On valid_in in OUTPUT_READY, concatenate stored byte and current input, register data_out and valid_out with one cycle latency, then return to IDLE.
+- valid_out is driven by a registered signal valid_out_reg, cleared only when new output is not ready.
+- This FSM and registered output signals avoid combinational clearing of valid_out, facilitating synthesis and timing closure.
+
+The output data and valid signal appear one clock cycle after the second input byte arrives, as specified.
+Reset clears all states and registers.
+
+This structure improves synthesis friendliness and removes glitches related to the immediate clearing of valid_out.

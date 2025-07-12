@@ -1,0 +1,16 @@
+Improved Clock Generator Design Strategy:
+1. Remove circular dependency by using a separate always block with delay statements for pure testbench clock generation
+2. Eliminate the counter-based approach since it's not suitable for primary clock generation
+3. Make the design purely behavioral for simulation purposes (not synthesizable)
+4. Maintain precise timing using delay statements
+5. Simplify the interface by removing unnecessary reset (testbench can control timing)
+6. Keep the parameterized PERIOD for flexibility
+7. Initialize clock to 0 and toggle every PERIOD/2 time units
+
+Key Improvements:
+- Solves the circular dependency issue
+- Produces clean, jitter-free clock signal
+- Simple and reliable for simulation
+- Maintains exact timing requirements
+- Removes unnecessary complexity
+- Clear separation from synthesizable code

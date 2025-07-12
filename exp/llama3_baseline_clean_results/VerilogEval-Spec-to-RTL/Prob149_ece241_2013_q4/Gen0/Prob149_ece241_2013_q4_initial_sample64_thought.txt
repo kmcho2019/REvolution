@@ -1,0 +1,11 @@
+To implement the TopModule, we can use a combinational logic approach, where the output flow rates are determined based on the current sensor inputs and the previous sensor state. We will need to store the previous sensor state to determine if the water level has changed. This can be achieved using a sequential logic element, such as a flip-flop. 
+
+The module will have the following states:
+- If all sensors are asserted (s[2], s[1], s[0]), the flow rate should be zero.
+- If only the lower two sensors are asserted (s[1], s[0]), the flow rate should be nominal (fr0 asserted).
+- If only the lowest sensor is asserted (s[0]), the flow rate should be higher (fr0 and fr1 asserted).
+- If no sensors are asserted, the flow rate should be maximum (fr0, fr1, and fr2 asserted).
+
+To determine if the supplemental flow rate should be increased (dfr asserted), we will need to compare the current sensor state with the previous sensor state. If the previous state had a lower water level, the supplemental flow rate should be increased.
+
+The module will also have an active-high synchronous reset that resets the state machine to a state equivalent to if the water level had been low for a long time (no sensors asserted, and all four outputs asserted).

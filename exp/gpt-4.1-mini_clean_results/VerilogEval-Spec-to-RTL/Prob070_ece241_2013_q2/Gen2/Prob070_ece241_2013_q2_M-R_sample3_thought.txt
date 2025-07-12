@@ -1,0 +1,18 @@
+The function outputs 1 only for decimal 2 (0010), 7 (0111), and 15 (1111), and 0 for certain other values, while 3,8,11,12 never appear (don't care). Using Karnaugh map or Boolean minimization considering these don't cares allows simplifying the expressions.
+
+From the previous analysis and problem conditions, the minimal SOP is:  
+out_sop = (~a & ~b & c & ~d) | (b & c & d)
+
+And the minimal POS is:  
+out_pos = (a + b + d)(a + c + d)(~a + ~b + c + ~d)
+
+To refactor and restructure the implementation without changing the core logic, I will:
+
+- Use continuous assign statements as before, but break down expressions into intermediate signals for clarity.
+- Avoid direct use of ~ operators inline; instead define inverted signals early.
+- Use combinational always @(*) block with intermediate signals for out_sop and out_pos to illustrate a different style.
+- This provides the same logic in a different structure (always block with intermediate wire/registers).
+
+This also facilitates easier expansion or modification.
+
+This refactored code remains fully combinational and synthesizable.

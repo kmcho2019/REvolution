@@ -1,0 +1,60 @@
+The problem requires implementing a 4-input multiplexer whose inputs (mux_in[3:0]) depend on (c,d) only, and the multiplexer selects among them with selector inputs (a,b). The final function is defined by the 4-variable Karnaugh map of (a,b,c,d).
+
+We must produce mux_in[3:0], where each mux_in[x] is a function of c and d for a fixed (a,b):
+
+- mux_in[0] = function for ab=00 (values from K-map column 00)
+- mux_in[1] = function for ab=01 (values from K-map column 01)
+- mux_in[2] = function for ab=11 (values from K-map column 11)
+- mux_in[3] = function for ab=10 (values from K-map column 10)
+
+The given K-map columns are:
+
+ab=00 column: cd=00->0, 01->1, 11->1, 10->1
+ab=01 column: always 0
+ab=11 column: cd=00->0, 01->0, 11->1, 10->0
+ab=10 column: cd=00->1, 01->0, 11->1, 10->1
+
+To implement these functions with minimum multiplexers and no other gates, we will encode each mux_in[x] as a 2:1 mux tree controlled by c and d (since mux_in depends on c,d only), using conditional operators.
+
+We can model any 2-variable function by nesting 2:1 muxes. For instance, choose c as the first selector, d as the second:
+
+Function f(c,d) = c ? f(1,d) : f(0,d)
+
+Where f(0,d) and f(1,d) are 1-variable functions of d (thus can be implemented as muxes).
+
+Specifically:
+
+1) mux_in[0] for ab=00:
+- cd=00:0,01:1,11:1,10:1
+Fix c=0 → d=0 =>0, d=1=>1
+Fix c=1 → d=0=>1, d=1=>1
+So:
+f(0,d) = d (since 0->0,1->1)
+f(1,d) = 1 (always 1)
+Implemented as mux_in[0] = c ? 1 : d
+
+2) mux_in[1] for ab=01: always 0
+
+3) mux_in[2] for ab=11:
+cd=00->0,01->0,11->1,10->0
+Check by c:
+c=0 → d=0->0,d=1->0
+c=1 → d=0->0,d=1->1
+So:
+f(0,d) = 0
+f(1,d) = d
+So mux_in[2] = c ? d : 0
+
+4) mux_in[3] for ab=10:
+cd=00->1,01->0,11->1,10->1
+By c:
+c=0 -> d=0->1,d=1->0
+c=1 -> d=0->1,d=1->1
+So:
+f(0,d) = d ? 0 : 1 = ~d (implemented as mux d?0:1)
+f(1,d) = 1
+Thus, mux_in[3] = c ? 1 : (~d)
+
+This implementation uses only 2:1 muxes (conditional operator) and no other gates, minimal logic, and matches the K-map exactly.
+
+We provide the Verilog code implementing mux_in bits accordingly.

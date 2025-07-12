@@ -1,0 +1,15 @@
+The current implementation uses a combination of wire assignments and an always block. We can refactor this to use purely continuous assignments (assign statements) for better readability and potential synthesis optimization. Here's the approach:
+
+1. Arithmetic Operation:
+   - Keep the same efficient adder-subtractor logic using conditional inversion and carry-in
+   - Move the entire logic to continuous assignments
+
+2. Zero Flag:
+   - Maintain the parallel zero detection using reduction OR
+   - Express it directly as a continuous assignment
+
+3. Benefits:
+   - Purely combinational logic expressed without procedural blocks
+   - Clearer dataflow representation
+   - Potential for better synthesis optimization as all outputs are directly driven
+   - Maintains the same PPA characteristics while being more readable

@@ -1,0 +1,11 @@
+To optimize the design for better power and performance without impacting correctness, we can introduce an enable signal for the pedge register update so it only toggles when a positive edge is detected on any bit. This reduces unnecessary toggling in the pedge register and hence dynamic power consumption.
+
+Specifically, we detect if any bit had a rising edge with an OR reduction on pos_edge_detect and only update pedge when this is true. For bits with no edge, pedge retains the previous value (which will usually be zero except for when an edge was detected). Since the requirement is to pulse the pedge output one cycle after the 0→1 transition, pedge should assert for one cycle per edge. The approach ensures that pedge pulses only when needed and does not toggle unnecessarily.
+
+This clock gating is a simple form of clock-enable logic and can be synthesized efficiently by modern tools.
+
+Area impact is negligible (a single AND gate and an OR reduction), and timing may improve as pedge register toggles less frequently. Power should improve due to reduced register switching activity.
+
+The prev_in register must still update every cycle to track inputs correctly.
+
+This approach preserves functionality and improves PPA, especially power, by gating pedge updates.

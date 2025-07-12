@@ -1,0 +1,14 @@
+Novel approach using bitmask comparison:
+1. Instead of counting '1's, we'll use pattern matching on the collected w samples
+2. Implement a 3-bit shift register to store the last 3 w values
+3. Use a bitmask comparison to detect exactly two '1's in the window
+4. Pre-compute all valid patterns (011, 101, 110) and compare against them
+5. Eliminate the need for an adder by using direct pattern matching
+6. Use a simple toggle to track when to evaluate the window
+7. Output z is generated combinatorially based on pattern match and timing
+
+Key advantages:
+- Eliminates arithmetic operations (no adder needed)
+- Parallel pattern matching is faster than sequential counting
+- Simpler window tracking logic
+- More efficient power consumption as only comparators are active

@@ -1,0 +1,7 @@
+To implement a population count (popcount) circuit for a 255-bit input, we'll need to count all the '1's in the input vector. The straightforward approach is to use a tree of adders to sum up all the bits. Since the input is 255 bits wide and the output is 8 bits (since 255 '1's can be represented in 8 bits), we'll need to hierarchically sum groups of bits until we get the final count.
+
+The implementation will:
+1. First sum adjacent bits in groups of 2 (creating 128 partial sums)
+2. Then sum those results in groups of 2 (64 sums)
+3. Continue this process until we have a final 8-bit sum
+4. Use a chain of adders at each stage to accumulate the counts

@@ -1,0 +1,13 @@
+For a 3-bit input, the original design using a simple sum of bits is already minimal and efficient. However, the '+' operator can generate a slightly larger gate-level adder than a purely combinational logic that counts bits using basic logic gates. To optimize for power and area, I will implement the population count using basic bitwise logic: each bit is a '1' if the input bit is high. The sum of three bits (0 to 3) can be encoded using bitwise operations as follows:
+
+- The least significant bit of the count (out[0]) is the XOR of all input bits if there's an odd number of 1s.
+- The most significant bit of the count (out[1]) is set if at least two input bits are 1.
+
+Concretely:
+
+- out[0] = in[0] ^ in[1] ^ in[2]
+- out[1] = (in[0] & in[1]) | (in[1] & in[2]) | (in[0] & in[2])
+
+This approach uses fewer gates than the '+' operator adder and may reduce power and area slightly with potentially lower delay, given that it involves only XORs and AND-OR gates rather than a binary adder. The circuit is still purely combinational and will produce the correct population count for 3 bits.
+
+This optimized logic will yield an accurate 2-bit count and can be efficiently synthesized and mapped to LUTs or gate arrays.

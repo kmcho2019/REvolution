@@ -1,0 +1,10 @@
+To improve performance and power based on the given metrics, I will apply the following optimizations without changing the FSM behavior:
+
+- Use one-hot encoding for the FSM states (walk, dig, fall, splat) to reduce combinational logic depth in next-state decoding, improving timing.
+- Add an enable signal to the fall_timer counter to increment only when in fall mode, reducing unnecessary toggling and saving power.
+- Simplify bump handling logic by combining bump_left and bump_right into a single bump signal and using fewer logic operations.
+- Minimize redundant next_state and next_direction assignments by carefully ordering condition checks.
+- Keep direction updates only on actual change (as original) to save switching power.
+- Use explicit state encoding constants for clarity and synthesis friendliness.
+
+These changes aim to reduce logic complexity and switching activity, improving timing and dynamic power, while maintaining minimal area increase or none.

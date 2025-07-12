@@ -1,0 +1,17 @@
+To fuse the best ideas from both examples, I will combine the borrow lookahead logic from Example 1 for low-latency borrow detection with the explicit difference computation from Example 2 to verify equality and distinguish between greater and equal conditions. This fusion leverages the borrow lookahead’s faster and cleaner borrow detection (A < B) and uses the computed difference bits to check if the subtraction result is zero (A == B) or non-zero (A > B).
+
+Specifically:
+- Use the borrow generate and propagate signals and borrow lookahead chain (as in Example 1) to determine the final borrow_out signal quickly, signaling A_less.
+- Simultaneously compute the bitwise difference bits using precomputed XORs and borrow chain (as in Example 2) to determine if the difference is zero or non-zero.
+- For equality, verify that the difference bits are all zero, which means A == B.
+- For greater than, assert A_greater when no borrow_out and difference ≠ 0.
+- Ensure outputs are mutually exclusive.
+
+This fusion provides the following benefits:
+- Borrow lookahead reduces critical path delay for A_less.
+- Difference bits enable precise distinction between A_equal and A_greater.
+- Precomputed XORs reduce logic redundancy.
+- The approach is still fully combinational and synthesizable.
+- This improves performance (lower latency for borrow detection) and keeps area/power reasonable by sharing XOR terms.
+
+This design represents a balanced and optimal combinational 4-bit comparator.

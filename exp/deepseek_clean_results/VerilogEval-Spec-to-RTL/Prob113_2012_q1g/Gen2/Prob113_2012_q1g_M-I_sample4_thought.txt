@@ -1,0 +1,25 @@
+To correctly implement the Karnaugh map, we need to:
+1. Carefully identify all minterms where f=1 from the Karnaugh map
+2. Group adjacent 1s to find optimal logic expressions
+3. Implement the minimal sum-of-products expression
+
+From the Karnaugh map, the minterms where f=1 are:
+- 0000 (0)
+- 0010 (2)
+- 1000 (8)
+- 1001 (9)
+- 1010 (10)
+- 1011 (11)
+- 1100 (12)
+- 1101 (13)
+- 1111 (15)
+
+We can see these form several prime implicants:
+1. ~x[3]&~x[2]&~x[0] (covers 0000,0010)
+2. x[3]&~x[2]&~x[1] (covers 1000,1001)
+3. x[3]&~x[2]&x[1] (covers 1010,1011)
+4. x[3]&x[2]&~x[1] (covers 1100,1101)
+5. x[3]&x[2]&x[0] (covers 1101,1111)
+
+This gives us the minimal expression:
+f = (~x[3]&~x[2]&~x[0]) | (x[3]&~x[2]&~x[1]) | (x[3]&~x[2]&x[1]) | (x[3]&x[2]&~x[1]) | (x[3]&x[2]&x[0])

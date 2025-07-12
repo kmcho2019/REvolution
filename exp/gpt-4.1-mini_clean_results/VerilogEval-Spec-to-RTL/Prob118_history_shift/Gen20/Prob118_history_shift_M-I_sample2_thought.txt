@@ -1,0 +1,11 @@
+To optimize for better PPA (timing, power, area), I will simplify the logic by eliminating the explicit next_history register and combinational block, merging the next state logic directly into the sequential block. This reduces combinational logic, as the next state depends only on a simple priority mux and shift operations.
+
+Additionally, I will implement clock enable gating inside the sequential block by updating predict_history only when misprediction or prediction occurs, which reduces unnecessary register toggling and switching activity, improving power.
+
+The asynchronous reset remains edge-triggered and immediate, ensuring correct initialization.
+
+This approach slightly reduces area by removing the combinational register and mux logic, reduces power by minimizing toggles, and can improve timing by shortening the data path between inputs and state updates.
+
+The logic priority is preserved: misprediction rollback takes precedence over prediction update.
+
+Overall, this direct-in sequential update with explicit gating simplifies the design and should result in better PPA metrics.

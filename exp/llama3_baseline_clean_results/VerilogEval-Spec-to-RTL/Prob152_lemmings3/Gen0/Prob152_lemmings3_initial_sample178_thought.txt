@@ -1,0 +1,5 @@
+To implement the Lemmings' behavior as a Moore state machine, we need to identify the states and transitions based on the given conditions. The states can be walking left, walking right, falling, and digging. Transitions between these states will be based on the input signals (bump_left, bump_right, ground, and dig). We'll use areset for asynchronous reset and synchronize the state changes with the positive edge of the clock. The outputs (walk_left, walk_right, aaah, and digging) will be determined by the current state.
+
+We'll define an enumeration for the states and use a state register to keep track of the current state. The next state logic will be determined by the current state and the input signals. We'll ensure that the outputs are updated based on the current state.
+
+To handle the priority of fall over dig over direction change, we'll consider the conditions in the specified order. If there's no ground, the Lemming will fall. If the Lemming is walking and told to dig, it will start digging. Otherwise, it will change direction based on bumps.

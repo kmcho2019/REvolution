@@ -1,0 +1,5 @@
+Refactor the comparator_4bit module by eliminating the generate loop and explicitly coding each bit's borrow generate and propagate signals. This unrolls the logic manually, making the code straightforward without using generate constructs. 
+
+Also, compute the borrow lookahead directly with intermediate signals representing borrow chains for clarity. Equality is checked via a single bitwise XNOR of A and B, followed by reduction AND.
+
+This refactoring maintains the same borrow-lookahead logic and mutual exclusivity of outputs but presents the logic explicitly per bit, which can improve readability and potentially guide synthesis tools better in small-bitwidth designs.

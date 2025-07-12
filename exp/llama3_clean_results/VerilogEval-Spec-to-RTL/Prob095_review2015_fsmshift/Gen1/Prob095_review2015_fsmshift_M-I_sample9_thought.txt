@@ -1,0 +1,10 @@
+To improve the provided solution, we need to correctly implement the finite state machine (FSM) to enable the shift register for exactly 4 clock cycles whenever the reset is asserted. We can achieve this by using a 2-bit counter to keep track of the number of cycles. We will also optimize the state machine to have only two states: idle and shift. The reset signal will be used to asynchronously set the FSM to the idle state and synchronously assert shift_ena for 4 clock cycles. To optimize the design for better PPA, we will use a more efficient state machine encoding and reduce the number of transitions in the state machine.
+
+The improved strategy involves the following steps:
+1. Define the state machine with two states: idle and shift.
+2. Use a 2-bit counter to keep track of the number of cycles.
+3. When the reset is asserted, transition to the shift state and assert shift_ena.
+4. In the shift state, increment the counter and keep shift_ena asserted for 4 cycles.
+5. After 4 cycles, transition back to the idle state and deassert shift_ena.
+
+By following these steps, we can correctly implement the FSM and optimize it for better PPA metrics.

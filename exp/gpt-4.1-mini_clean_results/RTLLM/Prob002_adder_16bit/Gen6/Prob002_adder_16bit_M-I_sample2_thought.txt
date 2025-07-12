@@ -1,0 +1,7 @@
+To improve the PPA of the 16-bit adder while maintaining modularity and clarity, I will use an 8-bit adder module instantiated twice in a ripple carry fashion, reducing the number of carry stages from four to two and potentially lowering critical path delay compared to the original four-stage 4-bit ripple carry. 
+
+Inside the 8-bit adder, I will implement a carry-lookahead scheme to speed up carry propagation, minimizing carry delay within the block. This approach reduces the number of carry ripples, speeding up the overall adder. The carry-lookahead logic will calculate generate and propagate signals to quickly determine carries.
+
+This hierarchical design uses two 8-bit blocks with internal carry-lookahead, improving timing and power by reducing carry chain length and switching activity. The use of the '+' operator is replaced with explicit bitwise logic and carry-lookahead expressions to better guide synthesis for fast carry propagation.
+
+Thus, the top module instantiates two 8-bit adders, and the 8-bit adder uses carry-lookahead internally to optimize critical path and power compared to pure ripple carry adders.

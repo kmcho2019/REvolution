@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. Remove explicit state machine - Not necessary for this simple conversion
+2. Use single shift register to accumulate bits
+3. Simple 3-bit counter to track received bits
+4. Generate valid pulse when counter reaches 7 (8 bits received)
+5. Directly output shift register contents when full
+6. Reset clears all registers and outputs
+
+Key Simplifications:
+- Eliminated state machine (COLLECT/OUTPUT states)
+- Single always block for all sequential logic
+- Counter automatically rolls over after 8 bits
+- Shift register serves as both accumulator and output buffer
+- Valid pulse generated combinatorially from counter value

@@ -1,0 +1,21 @@
+The original solution implements a fully bitwise pipelined 64-bit ripple carry adder with 65 pipeline stages, which introduces very high latency and registers on every bit in a complex and potentially inefficient way. Also, the code mixes operand loading and shifting which can cause confusion and may not synthesize well.
+
+To improve this design for better area, power, and performance (PPA) while maintaining pipelining, the strategy is:
+
+1. Use a fixed number of pipeline stages (e.g., 4 or 8 stages) to reduce latency and complexity, dividing the 64-bit addition into sub-blocks.
+
+2. Each pipeline stage performs addition of a segment (e.g., 16 bits if 4 stages) plus carry-in, producing partial sums and carry-out.
+
+3. Pipeline registers latch inputs and carry signals between stages. This reduces the number of registers versus one per bit.
+
+4. The carry ripple is contained within each stage only (16 bits max), reducing critical path length.
+
+5. The output enable signal is pipelined accordingly.
+
+6. This block pipelining approach balances throughput, latency, and resource usage well.
+
+7. The final result is assembled from partial sums and the last carry-out.
+
+This approach offers a significant improvement over bitwise pipelining by using coarser granularity pipeline stages, reducing register count and complexity while improving timing and power.
+
+I will implement a 4-stage pipeline, each handling 16 bits, cascading carries between stages and pipelining inputs and enables. The design will be fully synchronous and resettable, with proper enable synchronization.

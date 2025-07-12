@@ -1,0 +1,11 @@
+Novel architectural idea: Bit-sliced FSM implementation with parallel output generation
+
+1. **Bit-sliced approach**: Instead of treating the state as a monolithic 3-bit value, implement each bit of the next state (Y[2:0]) independently in parallel. This allows for more localized logic and potential area optimization.
+
+2. **Output generation**: Compute the output z directly from the current state bits using a minimal logic expression derived from the truth table, rather than through case statements.
+
+3. **Parallel computation**: Calculate each bit of the next state (Y0, Y1, Y2) separately based on the current state and input x, using optimized Boolean expressions.
+
+4. **Direct mapping**: The Y0 output is simply the least significant bit of the next state, which we compute directly without needing the full state vector.
+
+This approach eliminates the need for a large multiplexer structure and may lead to better synthesis results through localized optimization of each bit's logic.

@@ -1,0 +1,7 @@
+I will refactor the FSM using one-hot encoding for the states to simplify next-state logic and possibly speed up state decoding. The state will be represented as individual bits rather than an enum. The combinational logic for next state and outputs will be implemented using continuous assignments (`assign`) where possible, reducing the number of always blocks. 
+
+The bit counter and data shift registers will be updated synchronously as before but combined into a single always block for clarity. The done signal will be generated combinationally from the current state and input, then registered synchronously to produce a clean one-cycle pulse.
+
+This restructuring avoids typedef enums and multiple always blocks, uses one-hot states to simplify FSM logic, and separates combinational and sequential logic clearly. This style often improves synthesis friendliness and can reduce critical path latency because next state decoding is simpler with one-hot FSMs. It also reduces the overall number of assignments inside always blocks by employing `assign` statements.
+
+The synchronous reset is preserved, and the stop bit validation and wait-for-stop-bit recovery logic remain unchanged.

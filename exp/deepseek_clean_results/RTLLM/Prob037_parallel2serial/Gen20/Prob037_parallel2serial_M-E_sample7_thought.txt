@@ -1,0 +1,14 @@
+This design introduces a circular buffer architecture with these innovations:
+1. Pointer-based bit selection eliminates shifting operations entirely
+2. Early valid signaling (asserted when new data arrives, not just on first bit)
+3. Predictive loading of next data word during last bit transmission
+4. Single-cycle reset-to-ready capability
+5. Optimized for minimal gate count and maximum clock frequency
+
+Key features:
+- Uses a write pointer to track when new data is available
+- Read pointer automatically follows write pointer with 4-cycle offset
+- Valid signal remains high during entire conversion cycle
+- No shifting operations - pure pointer arithmetic
+- Minimal state (just two pointers) reduces area
+- Predictable timing with no combinational paths between pointers

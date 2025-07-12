@@ -1,0 +1,25 @@
+I will design a fully combinational IEEE-754 single-precision floating-point multiplier that produces the result in one clock cycle, synchronized by a simple registered interface with clk and rst. Instead of multi-cycle sequencing, all calculations including special cases detection, mantissa multiplication, normalization, and rounding will be done combinationally each cycle, while inputs and output are registered for stability and timing control.
+
+Key architectural features:
+
+1. Inputs a and b are latched at clk rising edge (with reset).
+
+2. All internal signals (signs, exponents, mantissas, special flags) are assigned combinationally from the latched inputs.
+
+3. Mantissa multiplication is done combinationally (24x24 bits = 48 bits product).
+
+4. The exponent addition and bias adjustment is done combinationally.
+
+5. Normalization checks MSB of the product and shifts right if needed, adjusting exponent accordingly.
+
+6. Rounding to nearest even is done with guard, round, sticky bits extracted from product.
+
+7. Special cases (NaN, infinity, zero, subnormal) are handled combinationally with priority.
+
+8. The final IEEE-754 output is formed combinationally, then registered at clk rising edge.
+
+This approach yields minimal latency (1 cycle after inputs are stable), simplifies control (no FSM needed), and allows straightforward combinational verification. The only sequential logic is input latching and output registering to ensure stable timing, making the design suitable for moderately high frequency but may have a longer combinational path due to full multiplication and normalization.
+
+The implementation uses localparams for constants and careful bit slicing to extract rounding bits. Sticky bit is computed as OR of lower bits. Denormal inputs are handled by treating their exponent as 1 but implicit leading bit as 0. Underflows flush to zero.
+
+This design trades potentially longer combinational delay for single-cycle throughput and simpler control.

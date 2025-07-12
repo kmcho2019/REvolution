@@ -1,0 +1,8 @@
+To fuse the best ideas from both examples, we combine clarity and modularity of next-state combinational logic (from Example 2) with the minimal, simple, and direct implementation of the shift operation aligned to "most-significant-bit first" shifting (from Example 1).
+
+Key fusion points:
+- Use a combinational block to compute the next value of `q`, which clarifies the control flow and helps synthesis tools optimize logic.
+- Maintain the shift direction as shifting left by one bit and inserting new data at the MSB (bit 3), which aligns precisely with the specification "most-significant-bit first".
+- Prioritize `shift_ena` over `count_ena` for control simplicity.
+- Keep the sequential update of `q` simple with a single always @(posedge clk) block.
+- This approach yields a clear, readable design, matching the problem statement strictly, and supports clean synthesis and potential optimizations.

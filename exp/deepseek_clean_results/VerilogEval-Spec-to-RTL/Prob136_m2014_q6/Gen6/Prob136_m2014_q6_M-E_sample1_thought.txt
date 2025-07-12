@@ -1,0 +1,11 @@
+Novel architectural idea: Implement the state machine using a ROM-based approach with a counter for state transitions. This approach:
+
+1. Uses a 4-bit counter (0-15) to address a 16x4 ROM that encodes both next state and output
+2. Maps states to counter values (A=0, B=1, C=2, D=3, E=4, F=5)
+3. ROM contents are pre-programmed with next state and output based on current state and input w
+4. Benefits:
+   - Predictable timing (single ROM access per cycle)
+   - Easy to modify state transitions by reprogramming ROM
+   - Potential power savings when synthesized with memory macros
+   - Clear separation of control and data path
+5. Output z is directly read from ROM

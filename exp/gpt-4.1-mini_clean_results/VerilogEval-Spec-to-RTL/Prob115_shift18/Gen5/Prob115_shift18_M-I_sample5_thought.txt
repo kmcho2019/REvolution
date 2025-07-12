@@ -1,0 +1,17 @@
+To optimize the existing design for better PPA without changing functionality, I will:
+
+- Replace the combinational always block with continuous assignments using wires for stage1 and stage2, removing unnecessary reg usage and avoiding implied latches or more complex logic.
+- Implement shift by 1 and 8 bits with mux-based logic instead of full shift operations or concatenations to reduce combinational depth.
+- Compute the shift signals selectively based on 'amount' decoding, avoiding redundant logic.
+- Use a single multiplexer stage per shift size (8-bit and 1-bit) to select shifted or original value, minimizing logic levels.
+- Keep synchronous load and enable logic simple and as-is.
+
+This approach reduces logic depth (critical path), combinational complexity, and area, potentially improving timing and power.
+
+The core idea is that shifting by 8 bits can be done by choosing between the original q and q shifted by 8 bits (left or right), then shifting by 1 bit similarly. Each shift is conditionally applied with multiplexers, reducing the logic compared to multi-level conditional always blocks.
+
+The arithmetic right shift uses sign extension for vacated bits, handled explicitly in the mux outputs.
+
+The final shift input to the register is determined by the enable and load signals.
+
+This should improve PPA metrics while maintaining correctness and simplicity.

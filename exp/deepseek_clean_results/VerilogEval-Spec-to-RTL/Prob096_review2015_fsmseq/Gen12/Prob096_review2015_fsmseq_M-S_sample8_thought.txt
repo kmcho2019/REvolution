@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Remove the explicit 'found' register since we can directly use the shift register's state to determine if the pattern was found
+2. Maintain the 4-bit shift register to store recent bits
+3. Compare the entire shift register contents (including new bit) in one operation when clocked
+4. Output is simply whether we've detected the pattern (1101) in the shift register
+5. Still maintain synchronous reset behavior
+
+Key Simplifications:
+- Eliminated separate 'found' register by using shift register value directly
+- Single comparison operation on full 4-bit register
+- Still maintains all required functionality with fewer registers
+- Simpler state tracking

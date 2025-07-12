@@ -1,0 +1,21 @@
+To implement a 2's complementer on a serial bitstream with a Moore FSM, we can exploit the fact that 2's complement can be computed by:
+1. Copying bits from LSB up to and including the first '1' bit directly (because the first '1' bit marks the LSB 1 in two's complement),
+2. After this first '1' bit, we invert all the remaining bits.
+
+Thus, our FSM has two states:
+- COPY state: output z = x, stay in COPY until we see first '1' in x, then move to INVERT state.
+- INVERT state: output z = ~x.
+
+On asynchronous reset (active high areset), FSM returns to COPY state.
+
+Output z is Moore output, so determined only by state and current input.
+
+We will implement:
+- State register with two states (COPY=0, INVERT=1).
+- On reset, state is COPY.
+- On each clock rising edge (if not in reset), update state according to input.
+- Output z depends on state and x.
+
+The output is 1-bit z each clock.
+
+When reset is high, output and state reset. When reset goes low, input is processed.

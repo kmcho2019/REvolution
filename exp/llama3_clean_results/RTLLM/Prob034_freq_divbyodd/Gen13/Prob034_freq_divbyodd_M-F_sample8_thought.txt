@@ -1,0 +1,9 @@
+To fix the frequency divider module, we need to adjust the logic for generating the divided clock signals clk_div1 and clk_div2. The main issue is that the current implementation does not correctly divide the input clock frequency by the odd number defined by the parameter NUM_DIV.
+
+We will modify the counters to count up to NUM_DIV - 1, and the clock dividers will be toggled when the counters reach half of NUM_DIV - 1 for the first half of the cycle and when the counters reach NUM_DIV - 1 for the second half of the cycle. This approach ensures that the input clock frequency is correctly divided by the odd divisor value.
+
+To implement this, we will use two reg variables: cnt for the counter, and clk_div for the divided clock output. Two always blocks will be used to update the counter based on the input clock and the reset signal. The divided clock output will then be assigned based on the counter value.
+
+Additionally, we need to ensure that the reset logic is properly synchronized with the clock edges to avoid potential race conditions. The reset signal should be checked on the rising edge of the clock.
+
+We also need to correctly derive the final divided clock output clk_div. Since we are dividing by an odd number, we can simply use a single counter and toggle the output when the counter reaches half of NUM_DIV - 1 for the first half of the cycle and when the counter reaches NUM_DIV - 1 for the second half of the cycle.

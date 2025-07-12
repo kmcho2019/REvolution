@@ -1,0 +1,7 @@
+Here's an alternative approach that avoids creating a large intermediate concatenated wire:
+1. Instead of concatenating all inputs first, we'll build each output byte by directly selecting the relevant bits from inputs
+2. For w[7:0], we'll take bits from a, b, and c (since 5+5+5=15 bits, but we only need 8)
+3. For x[7:0], we'll take remaining bits from c, plus d and e
+4. For y[7:0], we'll take remaining bits from e plus all of f
+5. For z[7:0], we'll use the remaining bits from f plus the two padding 1's
+This approach minimizes intermediate wiring and directly routes input bits to their final destinations.

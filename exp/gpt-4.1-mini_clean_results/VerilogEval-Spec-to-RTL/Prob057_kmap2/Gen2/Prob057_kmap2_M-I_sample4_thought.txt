@@ -1,0 +1,30 @@
+To optimize the given logic for better performance, power, and area, I will minimize the boolean function derived from the Karnaugh map instead of using the sum of all minterms directly. Grouping adjacent ones in the Karnaugh map yields a simplified expression:
+
+From the K-map, notable groups are:
+- Group1: (~c & ~d) covers minterms 0,1,2 (top-left corner)
+- Group2: (~c & a & ~b) covers minterms 2,6
+- Group3: (~c & ~a) & (d or ~d) effectively covers minterms with ~c and ~a, specifically minterms 0,1,4,9 (some overlaps)
+- Group4: (c & d & a) covers minterms 14,15
+- Group5: (c & d & b) covers minterms 13,15
+- Group6: (c & ~d & ~a) covers minterms 8,9
+- Group7: (~c & d & a & ~b) covers 6
+- Group8: (~c & d & ~a & ~b) covers 4
+- Group9: (~c & ~d & ~a) covers 0,1
+
+By carefully choosing prime implicants:
+
+Simplified expression (example):
+
+out = 
+    (~c & ~d)         // covers 0,1,2
+  | (c & ~d & ~a)     // covers 8,9
+  | (c & d & a)       // covers 14,15
+  | (c & d & b)       // covers 13,15
+  | (~c & d & ~a & ~b) // covers 4
+  | (~c & d & a & ~b)  // covers 6
+
+This reduces the number of terms and gates compared to listing all minterms separately.
+
+Implementing this expression will reduce gate count, improve power by reducing switching, and improve performance by reducing logic levels.
+
+I will implement this optimized logic directly in Verilog.

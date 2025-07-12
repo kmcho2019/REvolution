@@ -1,0 +1,19 @@
+To fix the off-by-one counting error and improve clarity, I will refactor the code with these changes:
+
+- Represent states with a parameterized encoding rather than typedef enum, which is more universally synthesizable.
+- Use a Moore state machine with explicit next-state and output logic in separate combinational always blocks.
+- Implement the pattern detector as a shift register updated combinationally on each clock in SEARCH state.
+- Use a 3-bit bit counter (0..3) to count the delay bit loading exactly.
+- Load the delay register MSB first by shifting left and inserting the incoming bit at LSB.
+- Load the segment_count as delay_reg (NOT delay_reg+1), then count down to zero. The output count shows segment_count minus one, so the first segment corresponds to delay value, as required.
+- Use a cycle counter counting 0 to 999 per segment; when it reaches 999, decrement segment_count (if >0).
+- When segment_count reaches 0 and cycle counter completes, move to DONE state.
+- Outputs are purely combinational and depend on current state and counters, making outputs stable and easy to verify.
+- Synchronous reset clears all counters and returns to SEARCH.
+- The done signal asserts only in DONE state.
+- The module only shifts data during SEARCH state and ignores data in others.
+- Waiting for ack in DONE state restarts the cycle.
+
+This approach avoids multiple always blocks writing the same register, uses purely combinational next-state logic, and aligns the output 'count' with the problem requirement: the count output shows the current remaining time segment, i.e., delay value for 1000 cycles, then delay-1, and so on, down to zero. This adjustment fixes the off-by-one error observed previously.
+
+The code is written for clear behavior, easy formal reasoning, and straightforward simulation, while adhering to the problem specification.

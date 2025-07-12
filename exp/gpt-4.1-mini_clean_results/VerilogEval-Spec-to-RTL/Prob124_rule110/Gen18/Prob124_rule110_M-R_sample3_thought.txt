@@ -1,0 +1,16 @@
+Refactor the design to separate the combinational next state logic from the sequential update logic more explicitly.
+
+Instead of computing the entire `next_q` vector via a generate-for loop and a function, we will:
+
+1. Use a combinational always block with a `for` loop to compute `next_q` in a procedural way.
+2. Keep the synchronous update of `q` in a separate always block.
+3. This restructuring keeps logic clear and may improve tool inference for large vector updates.
+4. Use direct combinational logic inside the procedural block instead of a function, which may reduce combinational depth and function call overhead.
+5. Retain the zero-padding approach for boundary conditions, indexing directly in the always block using a local extended vector.
+6. Output `q` as a reg updated synchronously.
+
+This change aims to improve readability for some synthesis tools and slightly simplify logic by removing the function call overhead, while maintaining the core functional and timing behavior.
+
+The core Rule 110 formula `next = (~left & center) | (center ^ right)` is directly implemented per cell.
+
+This structure clearly distinguishes between combinational and sequential blocks, possibly aiding synthesis and verification flows.

@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. State Encoding: Maintain the same optimized Gray-like encoding (A=000, B=001, C=011, D=010, E=110, F=111) for power efficiency and transition optimization.
+
+2. State Transition Logic: Replace the combinational always block with continuous assignments using ternary operators, which can sometimes lead to more optimized synthesis results.
+
+3. Output Logic: Keep the simple continuous assignment for z (MSB of state) as it's already optimal.
+
+4. State Storage: Keep the sequential always block for state updates as this is the most reliable way to implement flip-flops.
+
+Key Changes:
+- Convert state transition logic from case statement to ternary assignments
+- Maintain same state encoding and output logic
+- Keep synchronous reset behavior
+- This approach may yield better synthesis results as ternary operators can sometimes be optimized more effectively by synthesis tools

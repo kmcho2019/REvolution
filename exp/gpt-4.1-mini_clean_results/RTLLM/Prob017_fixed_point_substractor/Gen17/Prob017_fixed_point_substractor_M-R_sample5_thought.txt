@@ -1,0 +1,12 @@
+To refactor the fixed-point subtractor while preserving the core sign-magnitude handling logic, I will replace the combinational always block with continuous assignments and helper intermediate wires. This will:
+
+- Separate the logic into clearly defined combinational steps using wires and functions.
+- Avoid an always block for combinational logic, improving readability and potentially synthesis friendliness.
+- Retain the sign-magnitude approach: convert inputs from two's complement to sign and magnitude, handle same-sign subtraction or different-sign addition, determine result sign and magnitude, enforce zero-sign clearing, and convert back to two's complement.
+- Use explicit intermediate signals for clarity, avoiding a function call inside an always block by replacing it with a dedicated function used in continuous assignments.
+- Use a combinational function for two's complement to magnitude conversion to be called explicitly.
+- Declare the internal result register `res` as requested, updated combinationally from the wires.
+
+This restructuring maintains the original arithmetic approach and careful sign handling but uses continuous assignment and functional decomposition for cleaner, modular, and potentially more optimized code. The internal register `res` will store the final result combinationally updated for ease of use if needed downstream.
+
+Overall, this structure enhances clarity and modularity without changing the logic or functionality.

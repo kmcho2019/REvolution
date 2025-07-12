@@ -1,0 +1,11 @@
+Implement a 64-bit subtractor by splitting the operation into two 32-bit subtractors with carry borrow chaining between them. This "two-stage" subtractor first subtracts the lower 32 bits with borrow, then subtracts the upper 32 bits considering the borrow from the lower half. This approach leverages smaller ripple borrow subtractors, reducing carry chain delay and improving modularity.
+
+The borrow chain is explicitly computed: borrow out from the lower 32-bit subtractor acts as borrow in for the upper 32-bit subtractor. The borrow signal is computed using ripple borrow subtractor logic.
+
+Overflow detection remains the same: check if subtracting a negative from a positive yields a negative result (positive overflow) or subtracting a positive from a negative yields a positive result (negative overflow). It uses the top bit sign comparison of A, B, and result.
+
+Modules:
+- `sub_64bit`: top module combining two 32-bit subtractors, assembling final 64-bit result and overflow flag.
+- `sub_32bit`: ripple borrow subtractor performing A[31:0] - B[31:0] with borrow in and borrow out.
+  
+This partition reduces critical path delay by splitting the large 64-bit subtraction, improves readability, and explicitly tracks borrow, useful for educational and verification purposes.

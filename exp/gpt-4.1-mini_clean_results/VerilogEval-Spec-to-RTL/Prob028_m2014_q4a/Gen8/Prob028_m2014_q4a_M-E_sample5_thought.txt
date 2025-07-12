@@ -1,0 +1,10 @@
+To implement a D latch with an always block while ensuring clean synthesis and avoiding ambiguous inference, I will use a slightly different architectural idea: implement the latch by controlling the data input of a register with an explicit enable signal. 
+
+I will:
+- Declare `q` as a reg.
+- Use an always block sensitive only to `ena` and `d` (to model level-sensitive behavior).
+- Use non-blocking assignment (`<=`) to assign `q` when `ena` is high.
+- When `ena` is low, `q` will keep its old value because no assignment occurs.
+- The key difference here is using non-blocking assignments for better synthesis compatibility, as many synthesis tools expect non-blocking assignments for sequential behavior, even for latches.
+  
+This approach leverages the always block triggered by `(ena, d)` with `if (ena)` non-blocking assignment to `q <= d;` for latch transparency, implicitly keeping `q` when disabled. This style is clear, simple, and typically synthesizes to a level-sensitive latch in various tools.

@@ -1,0 +1,11 @@
+Novel Architectural Idea: Bit-Sliced State Machine
+1. **Bit-Sliced Approach**: Instead of treating the state as a monolithic 2-bit value, we'll process each state bit independently. This allows for potential optimization in synthesis where each bit's logic can be simplified separately.
+2. **Parallel Bit Processing**: Compute next_state[1] and next_state[0] separately based on current state and input.
+3. **Output Optimization**: Implement output logic using a NOR gate on the state bits (since D=11 is the only state with output=1), which might be more area-efficient than a comparator.
+4. **State Transition Logic**: Derive Boolean equations for each next state bit directly from the truth table, potentially reducing logic depth.
+
+Advantages:
+- Potential for better synthesis optimization as each bit's logic is independent
+- May result in smaller area due to simpler bit-wise operations
+- Output logic uses basic gates which could be more efficient
+- Clear mapping from specification to implementation

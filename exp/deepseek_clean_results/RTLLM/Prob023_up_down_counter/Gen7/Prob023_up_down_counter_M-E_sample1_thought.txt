@@ -1,0 +1,17 @@
+Novel Architecture: Dual-Clock Edge Detection Counter
+1. Instead of a single clock edge, use both rising and falling edges for counting to effectively double the counting rate
+2. Implement a phase-split architecture where:
+   - Rising edge handles increment operations
+   - Falling edge handles decrement operations
+3. Use a toggle flip-flop to alternate between increment and decrement phases when up_down=1
+4. For up_down=0, force decrement-only operation on both edges
+5. This approach provides:
+   - Higher counting throughput (2 operations per clock cycle when counting in one direction)
+   - Reduced combinational logic complexity by separating increment/decrement paths
+   - Built-in clock gating when counting direction changes
+
+Key Innovations:
+- Dual-edge counting doubles performance in single-direction mode
+- Natural clock gating when changing directions
+- Simplified arithmetic paths by separating operations
+- Maintains same interface as original specification

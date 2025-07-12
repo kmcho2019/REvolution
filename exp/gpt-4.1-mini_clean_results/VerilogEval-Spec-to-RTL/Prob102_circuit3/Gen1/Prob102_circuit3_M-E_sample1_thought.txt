@@ -1,0 +1,13 @@
+From the waveform, q=1 if:
+- b=1 and at least one of c or d is 1, OR
+- a=1 and at least one of c or d is 1, OR
+- b=1 and c=1 and d=0 (seen at 45ns), also q=1
+
+Looking closer, q=1 when ( (a OR b) AND (c OR d) ) is true.
+When (a=0, b=0) q=0 even if d=1 (at 20ns), so d alone does not suffice.
+
+Thus, q = (a | b) & (c | d) implements the observed pattern:
+- q=1 only when either a or b is 1 AND either c or d is 1.
+- Otherwise q=0.
+
+This logic fits all the waveform values exactly.

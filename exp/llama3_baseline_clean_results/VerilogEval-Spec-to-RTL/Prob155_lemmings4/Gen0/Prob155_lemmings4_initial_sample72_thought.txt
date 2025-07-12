@@ -1,0 +1,9 @@
+To implement the Lemming behavior as a Moore state machine, we will define states to represent the Lemming's current activity (walking, falling, digging, or splattered) and its walking direction. We'll use a 4-state machine: idle (initial state, walking left), walking (walking right), falling, and splattered. We'll also use a counter to track the number of clock cycles the Lemming has been falling. The next state and output logic will be based on the current state, inputs, and the counter value.
+
+We'll handle the following scenarios:
+- Walking: check for bumps to switch direction, check for dig input to start digging, and check for ground to start falling.
+- Falling: increment fall counter, check for ground to stop falling and potentially splatter, and check for dig input (which will be ignored).
+- Digging: check for ground to stop digging and start falling, and check for bumps (which will be ignored).
+- Splattered: all outputs will be 0.
+
+The state transitions and output logic will be implemented using Verilog's always_comb and always_ff blocks.

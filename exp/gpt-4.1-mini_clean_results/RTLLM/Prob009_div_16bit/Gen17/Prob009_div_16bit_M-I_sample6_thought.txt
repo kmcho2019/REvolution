@@ -1,0 +1,10 @@
+To improve the existing combinational 16-bit by 8-bit divider, I will reduce the combinational complexity and potential area by eliminating the first always block that simply latches inputs combinationally. Instead, inputs A and B will be used directly in the division logic. This does not change functional correctness but removes redundant logic and slightly improves timing and power.
+
+Additionally, I will simplify the remainder register array from 9-bit wide (to accommodate an extra bit) to an 8-bit register plus a carry bit handled separately. This can slightly reduce area by avoiding 9-bit registers. I will also use intermediate regs only as necessary.
+
+Overall:
+- Remove first always block that latches inputs combinationally.
+- Use inputs A and B directly in the second always block.
+- Implement remainder as 8-bit reg plus a carry bit to represent 9-bit remainder (reduce register width).
+- Keep the same bit-extraction and division algorithm.
+- This should improve power and area by reducing logic duplication and simplifying registers.

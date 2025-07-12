@@ -1,0 +1,11 @@
+Here's a novel approach using a priority encoder style implementation that leverages the one-hot properties differently:
+
+1. Instead of computing each next_state bit separately, we'll use a cascaded approach that first identifies the current state and then computes the transition based on the input.
+2. The output is still simply the D state bit (state[3]).
+3. For next_state computation:
+   - Use a priority encoder-like structure that checks each state bit in sequence
+   - For each state, implement the transition rules directly
+   - This approach might offer better synthesis optimization potential as it's more structural
+4. The key insight is that in one-hot encoding, only one state bit is active at a time, so we can structure the logic to take advantage of this mutual exclusivity.
+
+This approach might yield better power characteristics as it reduces unnecessary switching by being more explicit about state transitions.

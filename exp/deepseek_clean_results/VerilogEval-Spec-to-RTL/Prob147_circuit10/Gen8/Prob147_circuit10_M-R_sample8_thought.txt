@@ -1,0 +1,20 @@
+After carefully analyzing the waveform patterns, here's the refined understanding:
+
+1. State behavior:
+   - Initial state is 0
+   - State changes only when a=1 and b=1 (toggle)
+   - Otherwise maintains current state
+   - This differs from the initial solution where state was set to 1 on a=0,b=0
+
+2. Output q behavior:
+   - q = 1 when (state=0 and b=1) or (state=1 and b=0)
+   - This is equivalent to state XOR b
+   - But only when a=1 (except when a=1 and b=1 which toggles state)
+   - When a=0, q seems to hold its previous value
+
+Refactoring approach:
+1. Use a flip-flop for state storage (1-bit memory)
+2. Implement state transition logic purely based on a=1 and b=1 condition
+3. Make q output depend on both state and current inputs
+4. Use continuous assignments for combinational logic
+5. Keep sequential logic in always block for state updates

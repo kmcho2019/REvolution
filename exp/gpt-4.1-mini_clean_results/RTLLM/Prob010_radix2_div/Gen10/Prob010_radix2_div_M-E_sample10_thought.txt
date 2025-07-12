@@ -1,0 +1,11 @@
+Implement a radix-2 divider as a synchronous sequential circuit with an explicit FSM having three states: IDLE, DIVIDE, and DONE.  
+On `opn_valid`, latch inputs and preprocess signed inputs by converting them to absolute values and recording signs.  
+Use a 17-bit shift register `SR` to hold the concatenation of the 9-bit remainder (upper) and 8-bit quotient (lower).  
+Initialize `SR` with the dividend magnitude in the lower 8 bits, and remainder zero.  
+The divisor magnitude is stored separately.  
+In each divide cycle, shift `SR` left by 1, subtract the divisor magnitude from the remainder portion; if no borrow (remainder >= divisor), update quotient LSB to 1 and keep the subtraction result; otherwise, restore remainder and set quotient LSB to 0.  
+Repeat for 8 iterations.  
+After division finishes, if signed mode is enabled, adjust quotient and remainder signs accordingly.  
+Output the 16-bit `{remainder[7:0], quotient[7:0]}` when done and assert `res_valid`.  
+Wait for next operation after result is consumed.  
+This method cleanly separates control and data path, avoids overlapping always blocks and illegal declarations, and supports signed/unsigned division in a straightforward pipeline.

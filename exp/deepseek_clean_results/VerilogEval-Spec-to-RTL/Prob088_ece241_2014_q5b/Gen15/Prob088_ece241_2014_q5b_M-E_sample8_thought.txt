@@ -1,0 +1,21 @@
+Novel Architectural Idea:
+1. Shift Register Concept:
+   - Instead of traditional state encoding, use a shift register to track state transitions
+   - The shift register acts as a "history buffer" for the input x
+   - Only need to store the first '1' encountered (transition from A to B)
+
+2. Edge Detection:
+   - Detect the rising edge of x (0->1 transition) to initiate the complement operation
+   - After first '1', all subsequent bits are complemented until reset
+
+3. Implementation Benefits:
+   - Eliminates explicit state variables
+   - Simple shift register implementation
+   - Naturally implements the Mealy output behavior
+   - Asynchronous reset clears the history
+
+4. Key Insight:
+   - The FSM behavior can be viewed as:
+     * Before first '1': pass through input (z = x)
+     * After first '1': complement input (z = ~x)
+   - Only need to remember if we've seen the first '1'

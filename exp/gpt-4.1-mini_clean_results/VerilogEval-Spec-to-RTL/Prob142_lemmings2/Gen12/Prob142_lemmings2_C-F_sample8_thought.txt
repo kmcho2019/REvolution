@@ -1,0 +1,12 @@
+Fuse the clear explicit next-state logic style of Example 1 with the compact 2-bit state encoding and minimal output decoding of Example 2 for a superior, readable, and synthesis-friendly Moore FSM.
+
+- Use named localparams for all four states (walk/fall × left/right) for clarity and maintainability.
+- Maintain the 2-bit state encoding: bit1 = falling, bit0 = direction.
+- Next-state logic in one always_comb block with default assignment to avoid inferred latches.
+- Explicitly separate falling and walking states for clear state transitions.
+- Ignore bumps during falling and ground transitions, only flip direction bumps when walking on ground.
+- Asynchronous reset active high, sets state to WALK_LEFT (walking left).
+- Outputs Moore-style directly decoded from state bits.
+- Comments and structure for clarity to ease verification and maintenance.
+
+This fusion leverages strong modularity, minimal registers, and explicit next-state logic ensuring robust FSM functionality, excellent readability, straightforward verification, and excellent PPA qualities.

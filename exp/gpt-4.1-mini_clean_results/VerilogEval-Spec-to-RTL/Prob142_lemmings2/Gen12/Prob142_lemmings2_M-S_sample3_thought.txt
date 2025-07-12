@@ -1,0 +1,21 @@
+Simplify the FSM by encoding direction and falling as two separate 1-bit registers rather than a combined 2-bit state. This can improve readability and slightly reduce next-state logic complexity. Keep the asynchronous reset, but use two separate registers: one for direction and one for falling.
+
+- direction = 0 for left, 1 for right
+- falling = 0 walking, 1 falling
+
+On reset, direction=0 (left), falling=0 (walking).
+
+On each clock:
+- If falling, ignore bumps; when ground returns, falling=0, keep direction.
+- If walking and ground goes low, falling=1 (falling), keep direction.
+- If walking and ground is high, bump_left or bump_right (or both) cause direction flip:
+   * bump_left=1 sets direction=1 (right)
+   * bump_right=1 sets direction=0 (left)
+   * both bumps flip direction
+
+Outputs are simple assignments:
+- aaah = falling
+- walk_left = ~falling & ~direction
+- walk_right = ~falling & direction
+
+This separates concerns, simplifies next-state logic, and still fully implements the required FSM behavior.

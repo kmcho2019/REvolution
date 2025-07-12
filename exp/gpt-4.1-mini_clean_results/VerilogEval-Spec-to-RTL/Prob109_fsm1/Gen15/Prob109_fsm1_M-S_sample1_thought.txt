@@ -1,0 +1,9 @@
+The FSM has only two states (A=0, B=1) and the next-state logic is a simple XOR with inverted input. To simplify, I will:
+
+- Use a single reg 'state' without localparams for states, since encoding A=0 and B=1 can be inferred.
+- Directly encode output as equal to the state, as output equals '1' in state B (1) and '0' in state A (0).
+- Implement asynchronous reset to set 'state' to 1 (B).
+- Combine next_state logic directly in the always block to eliminate a separate wire.
+- Use a single always block with nonblocking assignments for state and combinational output assignment outside (continuous assignment) since output is just state.
+
+This reduces code size and complexity while maintaining the Moore machine behavior and async reset.

@@ -1,0 +1,12 @@
+Novel Hybrid Architecture:
+1. Hierarchical Division: Split the 16-bit adder into four 4-bit blocks for better granularity.
+2. Carry-Select Optimization: Implement the upper 12 bits (3 blocks) using carry-select to parallelize carry propagation.
+3. Ripple-Carry Base: Keep the lowest 4-bit block as ripple-carry for simplicity and area efficiency.
+4. Carry Prediction: Each 4-bit block generates both possible sums (with carry=0 and carry=1) then selects the correct path.
+5. Balanced PPA: This hybrid approach reduces critical path compared to pure ripple-carry while avoiding the area overhead of full carry-lookahead.
+
+Advantages:
+- Faster than pure ripple-carry (O(n/4) instead of O(n))
+- More area-efficient than full carry-select
+- Modular design allows easy parameterization
+- Balanced power consumption

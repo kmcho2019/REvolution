@@ -1,0 +1,11 @@
+To optimize the PPA metrics further, I will focus on reducing area and dynamic power by factoring the logic expression to minimize the number of gates and switching nodes. Currently, the expression for next_y1 is: B | (C & w) | (E & w) | F, where B, C, E, F are decoded as individual AND terms.
+
+I observe that both (C & w) and (E & w) share the w input, so factoring w out reduces repeated usage of w gates:
+
+next_y1 = B | F | w & (C | E)
+
+Also, I can consider encoding B, C, E, F decoding terms more compactly by leveraging the patterns in y bits to minimize inverter usage.
+
+This refactoring will reduce gate count and switching activity, which lowers area and power while keeping the same logic and timing.
+
+I will keep output Y1 = next_y1 (next y[1]) as required.

@@ -1,0 +1,12 @@
+To improve the given calendar module for better PPA (Power, Performance, Area), I will introduce clock enable signals to reduce unnecessary toggling, especially for minutes and hours counters. Seconds counter increments every clock cycle, but minutes and hours only change when seconds wrap (seconds=59). By gating the updates of minutes and hours registers using enable signals, we minimize switching activity, reducing power consumption. 
+
+For performance, breaking the combinational next-state logic into smaller, simpler operations can marginally improve timing, but since the critical path is already short, this is not strictly necessary. Also, we keep the reset synchronous to maintain design simplicity (asynchronous reset is already used). 
+
+For area, the added enable signals are minimal overhead, outweighed by power savings. This optimization suits designs where power is important, e.g., battery-powered devices.
+
+Summary of improvements:
+- Add clock enables for minutes and hours register updates.
+- Increment seconds every cycle as before.
+- Update minutes only when seconds wrap from 59 to 0.
+- Update hours only when minutes and seconds wrap.
+- Keep same counter widths and functionality.

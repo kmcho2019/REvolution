@@ -1,0 +1,19 @@
+To implement the division as requested, I will:
+
+- Use two combinational always blocks: 
+  1) one to latch inputs A and B into internal registers `a_reg` (16 bits) and `b_reg` (8 bits), 
+  2) another to perform the division by the iterative extraction method.
+
+- In the second block, I will:
+  - Initialize a 16-bit `temp_dividend` with `a_reg` and a 16-bit `quotient` and `remainder` set to zero.
+  - At each step (16 steps total), extract the top bits from `temp_dividend` equal in width to the divisor (8 bits).
+  - Compare the extracted bits with the divisor.
+  - If greater or equal, set quotient bit accordingly and calculate the difference as remainder.
+  - Then concatenate the remainder with the next highest bit from the remaining dividend bits (shift in the next bit).
+  - Shift the dividend bits left logically by one after each step to process next bit.
+  - Continue until all bits are consumed.
+- Assign `result` and `odd` to quotient and remainder respectively.
+
+This approach preserves the problem's iterative extraction and concatenation method and uses two combinational always blocks as required.
+
+This design treats the dividend as a shifting window of bits moving left to right, continuously extracting 8 bits and updating remainder and quotient bits accordingly.

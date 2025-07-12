@@ -1,0 +1,7 @@
+To improve the clock generator module, we need to correct the existing issues and align the design with the intended functionality. The primary goal is to generate a clock signal that toggles at regular intervals defined by the PERIOD parameter. 
+
+A straightforward approach involves using a single always block that is sensitive to a default clock (e.g., a virtual clock that increments at every time unit) and checks a counter value to determine when to toggle the output clock signal. The counter should reset when it reaches the specified PERIOD, ensuring the clock signal toggles every half PERIOD. 
+
+This design avoids the complexity of using an initial block for clock generation and instead relies on a structured always block to manage the clock signal's state. By doing so, we can ensure that the clock signal is generated correctly and in alignment with the desired periodic behavior.
+
+Additionally, to improve performance and reduce potential simulation issues, it's essential to minimize the use of initial blocks for anything other than initial variable assignments and instead leverage always blocks for dynamic logic and signal manipulation. This approach not only simplifies the code but also enhances its synthesizability and reliability.

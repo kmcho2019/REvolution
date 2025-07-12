@@ -1,0 +1,28 @@
+To improve PPA, we separate the next state register (state memory) from the combinational next state and output logic, ensuring synchronous state updates on clk's rising edge. The present state is stored internally in a 3-bit register (state_reg), rather than passing it as an input. This avoids confusion since y is given as an input but also described as present state; typically FSM stores state internally.
+
+The module will:
+
+- Use a synchronous state register updated on clk.
+- Implement next state and output logic in a combinational block based on current state and input x.
+- Output Y0 as the LSB of the next state before it is registered.
+- Output z combinationally based on current state and input x.
+  
+By encoding the FSM state internally, we reduce logic complexity and ensure correct synchronous operation. This also removes the confusing input 'y' as present state; instead, y will be used only as the initial/reset state if needed. However, since no reset is specified, the FSM initializes to 000.
+
+This restructuring reduces power (registered outputs reduce glitches), simplifies timing paths, and improves area by avoiding redundant combinational logic.
+
+If y is intended as a current state input (not internal state), then the design is not a classic FSM but a combinational function. However, typical FSMs store state internally. Hence, I will treat y as a reset/load input for initial state, or remove it if allowed. If y must be input and state is external, then a purely combinational module is fine.
+
+Since the problem states y as present state input and next state Y is output (with Y0 = next state's LSB), I will:
+
+- Implement combinational next state and output logic based on y and x.
+- Assign outputs z and Y0 combinationally.
+- Remove the internal register.
+
+This matches the problem's interface literally, avoids internal state, and the clk is unused.
+
+To optimize, I will implement the next state logic with a 2D lookup table using a function or with a structured case statement with minimal code repetition.
+
+This reduces combinational logic levels and avoids repeated assignments.
+
+This improves area and power marginally over repeated if-else logic and simplifies logic synthesis.

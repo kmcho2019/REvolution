@@ -1,0 +1,7 @@
+Implement a 64-bit ripple carry adder with 4 pipeline stages by splitting the 64-bit addition into 4 chunks of 16 bits each. Each stage performs a 16-bit addition with carry-in from the previous stage’s carry-out, registered on the clock.
+
+Pipeline registers store inputs, carry-ins, and intermediate sums per stage, synchronizing enable signals accordingly. This approach reduces latency from 64 cycles (bit-serial) to 4 cycles and balances complexity and throughput well. 
+
+At each clock cycle with i_en high, inputs are loaded into stage 0; subsequent stages add their portion in following cycles. The final result and output enable are available 4 cycles after i_en is asserted, when all pipeline stages have finished.
+
+This architecture avoids bit-serial design and complex carry shift registers, uses standard 16-bit adders with registered inputs and outputs, and provides clean, synthesizable pipeline logic.

@@ -1,0 +1,7 @@
+To refactor the existing Verilog code for the TopModule, we will introduce a different structure for the finite-state machine, leveraging `always` blocks for sequential logic and `assign` statements for combinational logic where applicable. Additionally, we'll consider simplifying the state machine's logic by possibly reducing the number of states or using a different approach to sequence detection, such as using a counter or a separate flag to track the detection of the sequence. The goal is to maintain the functionality while optimizing for PPA (Power, Performance, and Area) metrics.
+
+One potential approach is to use a flag variable that gets set once the sequence '1101' is detected, eliminating the need for the state machine to transition back to the initial state after detection. This could simplify the logic and potentially reduce switching activity, thereby improving power consumption.
+
+Moreover, instead of explicitly defining each state and its transitions, we can utilize a more compact representation of the state machine's logic, possibly leveraging the power of Verilog's combinational logic constructs like `assign` statements for deriving next state or output signals.
+
+We will maintain the same functionality: the module should search for the sequence '1101' in the input data stream, set `start_shifting` to '1' when the sequence is found, and keep it '1' until a reset occurs.

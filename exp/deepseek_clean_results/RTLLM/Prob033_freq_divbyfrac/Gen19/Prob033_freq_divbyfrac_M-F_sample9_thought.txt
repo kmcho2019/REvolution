@@ -1,0 +1,29 @@
+Corrected Fractional Divider Design:
+
+1. Core Concept:
+   - Implement true 3.5x division using double-edge technique
+   - Generate two phase-shifted clocks (0° and 180°)
+   - Combine them with OR to create fractional division
+
+2. Implementation Approach:
+   - Maintain 7-cycle counter (0-6) as base period
+   - Create two intermediate clocks:
+     * clk_div1: Toggles every 3 or 4 cycles (0° phase)
+     * clk_div2: Same as clk_div1 but phase-shifted by 180°
+   - Final output is OR of both intermediate clocks
+
+3. Duty Cycle Correction:
+   - First period: 4 cycles high, 3 low
+   - Second period: 3 cycles high, 4 low
+   - Phase shift creates uniform 50% duty cycle when combined
+
+4. Reset Behavior:
+   - Synchronous reset initializes counters and outputs
+   - Output starts low after reset
+
+Key Improvements:
+- Proper phase generation (0° and 180°)
+- Correct OR combination of intermediate clocks
+- Maintains exact 3.5x division ratio
+- Follows double-edge clocking technique
+- Matches problem specification exactly

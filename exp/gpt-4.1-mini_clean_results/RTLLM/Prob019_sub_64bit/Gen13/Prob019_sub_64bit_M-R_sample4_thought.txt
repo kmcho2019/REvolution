@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor to perform the subtraction and overflow detection in a purely combinational manner using Verilog's built-in addition and subtraction operators. Instead of manually implementing 32-bit CLAs and chaining carries, leverage the built-in operator for subtraction (`A - B`) and explicitly check overflow by analyzing the sign bits of A, B, and the result.
+
+This approach simplifies the design by removing the explicit carry lookahead adder modules and the inversion of B. It reduces code complexity and enhances readability while still providing the required overflow detection logic. It also uses `assign` statements for pure combinational logic.
+
+The overflow detection remains the same, checking if A and B have different signs and the sign of the result differs from A's sign.
+
+This refactoring trades a more explicit and modular carry lookahead implementation for a concise, synthesized-friendly behavioral description that synthesis tools will convert into efficient subtractor hardware automatically.

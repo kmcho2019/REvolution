@@ -1,0 +1,7 @@
+Since the problem is to implement 8 D flip-flops triggered on the positive edge of clk, each storing one bit of input d into q, the straightforward approach is to use an always block triggered on posedge clk with q as a reg updated by d. To refactor the code with the same functional behavior but a different structure, I will use an explicit instantiation of 8 individual D flip-flops as submodules within TopModule.
+
+Each DFF will be a simple module with clk, d, and q ports, capturing d on the rising edge of clk. The TopModule will instantiate 8 such DFFs and connect each bit of d and q to one instance.
+
+This changes the style from a single always block handling 8 bits at once, to modular, bit-wise DFF instantiations. It remains fully synchronous, functionally correct, and clearly maps to hardware D flip-flops without any conditional logic.
+
+This style is useful for clear structural design and can help in elaboration or when individual flip-flop control is needed.

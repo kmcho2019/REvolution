@@ -1,0 +1,31 @@
+To simplify while maintaining full functionality, I propose:
+
+1. Use a simple Moore FSM with clearly defined states and outputs depending only on the current state to avoid timing mismatches.
+
+2. Represent the pattern detection as a shift register updated on each clock cycle. Compare the pattern after the shift update in the sequential block to keep logic synchronous and straightforward.
+
+3. Keep outputs assigned directly from the current state in the sequential block (not next state), ensuring outputs stable during states.
+
+4. Use fewer states by encoding monitoring y with a simple counter rather than separate states.
+
+5. Keep synchronous active-low reset that forces FSM to initial state with outputs zero.
+
+This approach reduces combinational complexity, avoids off-by-one timing errors, and clearly separates states with Moore outputs, making the FSM easier to understand and robust.
+
+State list:
+
+- A: Reset state, outputs f=0,g=0
+- B: One-cycle pulse f=1, g=0
+- C: Monitoring x for pattern (keep shifting x bits)
+- D: One-cycle pulse g=1, f=0
+- E: Monitoring y for up to two cycles with g=1, f=0; use a counter
+- F: g=1 permanently, f=0
+- G: g=0 permanently, f=0
+
+The y-monitoring counter is incremented each cycle in E; if y=1 seen anytime, go to F; if counter reaches 2 with no y=1, go to G.
+
+Pattern is detected when 3-bit shift register equals 3'b101.
+
+FSM transitions happen synchronously on clock edges with outputs stable per state.
+
+This simplification removes subtle next_state output assignment errors and reduces states for clarity.

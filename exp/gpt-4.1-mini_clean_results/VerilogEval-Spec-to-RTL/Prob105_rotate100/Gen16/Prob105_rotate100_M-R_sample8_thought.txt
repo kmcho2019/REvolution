@@ -1,0 +1,7 @@
+Refactor the design by using a continuous assignment with a combinational function that computes the next rotated value based on the current state, load, and ena inputs. This eliminates the explicit `always @*` block for combinational logic and bundles the logic into a function for clarity and modularity.
+
+The sequential always block will remain to update the register `q` synchronously on the clock edge. This approach uses a function to encapsulate the rotation and load logic, improving code readability and reuse.
+
+By separating combinational logic into a function and using an assign for `next_q` (or a wire), the code structure differs while maintaining the same functionality. This style can improve maintainability and synthesis clarity.
+
+We still prioritize load over rotation and default to hold. The function handles the logic, returning the appropriate next state value.

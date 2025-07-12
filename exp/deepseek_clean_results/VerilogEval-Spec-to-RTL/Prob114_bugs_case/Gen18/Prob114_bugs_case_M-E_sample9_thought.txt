@@ -1,0 +1,14 @@
+Novel LUT-based approach:
+1. Instead of a case statement, use a parameterized array that directly maps scancodes to outputs
+2. Create a parallel validity check by comparing against all valid codes simultaneously
+3. Key innovations:
+   - The LUT provides constant-time lookup (O(1) complexity)
+   - Parallel validity check reduces critical path
+   - More scalable for larger code sets
+   - Easier to modify/add new codes
+   - Potentially more synthesis-friendly for some tools
+4. Implementation:
+   - Define a 256-entry LUT (covering all 8-bit possibilities)
+   - Initialize only the valid entries
+   - Use a reduction OR to generate the valid signal
+   - Default outputs to 0 when invalid

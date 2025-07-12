@@ -1,0 +1,19 @@
+The original implementation is functionally correct but shows minor timing violations (negative WNS). To optimize this design:
+
+1. **Timing Improvement**: 
+   - Add a pipeline register stage to break the critical path
+   - This will improve timing at the cost of one additional cycle latency
+
+2. **Power Optimization**:
+   - Add clock gating when the input is stable
+   - Use an enable signal to prevent unnecessary toggling
+
+3. **Area Consideration**:
+   - Keep the parameterized width for flexibility
+   - Use simpler flip-flops since this is a basic shift operation
+
+The improved version will:
+- Maintain the same functionality
+- Fix timing violations
+- Reduce power consumption
+- Keep area reasonable

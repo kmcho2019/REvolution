@@ -1,0 +1,7 @@
+Instead of using three separate always blocks for each time component, we can implement a unified counter approach with a single always block. This reduces the number of flip-flops and simplifies the control logic. We'll use a single 18-bit counter where:
+- Bits [5:0] represent seconds (0-59)
+- Bits [11:6] represent minutes (0-59)
+- Bits [16:12] represent hours (0-23)
+- Bits [17] unused (could be used for day counter in future expansion)
+
+The counter increments every clock cycle, and we handle rollover conditions through combinatorial logic that detects when each component reaches its maximum value. This approach minimizes the number of registers and simplifies the timing paths.

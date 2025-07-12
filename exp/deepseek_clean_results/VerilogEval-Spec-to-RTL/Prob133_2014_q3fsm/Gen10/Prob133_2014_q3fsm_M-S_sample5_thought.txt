@@ -1,0 +1,12 @@
+Simplified approach:
+1. Reduce state machine to just 2 states (A and B) since that's all we need
+2. Instead of storing all 3 w values, just count how many 1's we've seen in the current window
+3. Use a 2-bit counter to track both the cycle position and count of 1's
+4. Generate z output when cycle counter wraps around (every 3 cycles)
+5. Reset all counters when in state A or when reset is active
+
+Key simplifications:
+- Eliminated the 3-bit shift register (w_samples)
+- Combined cycle counting and 1's counting into a single 2-bit counter
+- Simplified output logic by checking counter value directly
+- Reduced total register bits from 6 (1+2+3) to 3 (1+2)

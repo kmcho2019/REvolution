@@ -1,0 +1,7 @@
+I will implement the FSM with only two main states: A (waiting for s=1) and B (processing groups of three w inputs). To minimize states, the group-of-three cycles will be tracked by a 2-bit cycle counter inside state B rather than explicit separate states.
+
+In state B, a small counter increments each cycle (0 to 2) and accumulates how many times w=1 over those three cycles. After the third cycle (count=2), the FSM outputs z=1 if the count of w=1 is exactly 2, else 0, then resets the counters and continues processing the next group of three.
+
+This approach reduces the FSM states to only two (A and B), using internal counters and combinational logic to handle the group counting and output logic. Output z is registered and updated after each group of three cycles.
+
+This design simplifies state encoding (1 bit), uses internal cycle and count registers, and ensures synchronous reset and outputs on clock edges, meeting timing and simplicity requirements.

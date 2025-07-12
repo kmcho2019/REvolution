@@ -1,0 +1,8 @@
+Instead of relying on delays, I will create a parameterized clock generator using a counter approach synchronized to a free-running simulation time by driving the clock through a separate thread that increments a counter on every unit time. The clock will toggle when the counter reaches half the PERIOD count. This simulates the clock toggling event using a register and a counter, avoiding explicit delay statements. This approach can be extended to synthesize a clock divider from a master clock but here simulates a clock generator using a self-driven counter. The initial value of clk is 0 and the toggling is controlled by the counter reaching half the PERIOD.
+
+Key points:
+- Use an integer counter incremented in an always block running at a fine granularity (e.g., #1).
+- When the counter reaches PERIOD/2, toggle clk and reset counter.
+- Initialize clk = 0 in initial block.
+- The toggling interval accurately reflects PERIOD with no recursive delays.
+- This design is unique compared to simple delay toggling, uses a counting approach instead.

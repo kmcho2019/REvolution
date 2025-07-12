@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. Combine the efficient 8-bit block structure from Example 1 with the hierarchical carry lookahead from Example 2
+2. Use direct carry computation within 8-bit blocks for fast local propagation (from Example 1)
+3. Implement proper block-level Pg/Gg between 8-bit blocks for global carry lookahead (from Example 2)
+4. Optimize the 32-bit composition by:
+   - Using only two hierarchical levels (8-bit → 32-bit)
+   - Calculating block propagate/generate more efficiently
+   - Eliminating redundant carry computations
+5. Balance between simplicity and performance by:
+   - Keeping the clean 8-bit block interface
+   - Adding just enough lookahead to minimize critical path
+
+Key Improvements:
+- Faster than Example 2 due to larger 8-bit blocks
+- Better carry propagation than Example 1 through block Pg/Gg
+- Simplified hierarchy compared to both examples
+- Optimized Pg/Gg calculations to reduce logic

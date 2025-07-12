@@ -1,0 +1,16 @@
+The original solution attempted to simplify the Karnaugh map but missed some key patterns. Let's re-analyze the map more carefully:
+
+1. First, note that when x[3] is 1 (rows 11 and 10), f is mostly 1 except when x[3]x[4]=10 and x[1]x[2]=11 or 10
+2. When x[3] is 0 (rows 00 and 01):
+   - f is 0 when x[3]x[4]=00 and x[1]x[2]=01
+   - f is 0 when x[3]x[4]=01 and x[1]x[2]=00 or 10
+   - f is 1 when x[3]x[4]=01 and x[1]x[2]=11
+   - Other cases are don't-care
+
+A better implementation would:
+1. Make f=1 when x[3]=1, except for x[3]x[4]=10 with x[1]x[2]=11 or 10
+2. For x[3]=0, only make f=1 when x[3]x[4]=01 and x[1]x[2]=11
+3. All other cases can be 0 (we'll use don't-cares to simplify)
+
+The logic becomes:
+f = (x[3] & ~(x[4] & x[1] & ~x[2])) | (~x[3] & x[4] & x[1] & x[2])

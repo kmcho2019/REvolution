@@ -1,0 +1,9 @@
+Correct the tap positions to zero-based indexing: taps at bits 31, 21, 1, and 0 correspond to the problem's 32, 22, 2, and 1. The LSB (bit 0) is the feedback output, not a tap, so taps are at bits 31, 21, and 1 only.
+
+Implement the Galois LFSR shifting right: for bit 0, next_q[0] = q[1]; for bits 1 to 31, if the bit is tapped, next_q[i] = q[i-1] ^ fb; else next_q[i] = q[i-1].
+
+Compute next_q combinationally first, then assign to q synchronously, to avoid assignment order issues and improve clarity.
+
+Use a fixed wire array for next state to simplify logic, ensuring synthesizable and clean RTL.
+
+Reset synchronously to 32'h1 on reset asserted at posedge clk.

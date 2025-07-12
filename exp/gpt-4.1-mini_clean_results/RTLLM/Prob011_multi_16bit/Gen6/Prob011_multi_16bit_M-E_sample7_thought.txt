@@ -1,0 +1,16 @@
+Implement an unsigned 16-bit multiplier using a shift-and-accumulate approach but differing in control and data handling. Instead of shifting both multiplicand and multiplier, fix the multiplier in a register and shift only the multiplicand right every cycle. The product accumulator adds the multiplier shifted according to the current bit position if that bit of the multiplicand is 1.
+
+Key differences:
+- Use a 5-bit counter `i` counting from 0 to 16 inclusive, representing the current bit position of the multiplicand.
+- At `i=0` load the inputs: multiplicand into `areg` and multiplier into `breg`.
+- On each cycle from 1 to 16, check the LSB of `areg`. If 1, accumulate `breg` shifted left by `(i-1)` bits into `yout_r`.
+- Shift `areg` right by 1 on each cycle after checking its LSB.
+- The multiplier `breg` stays constant (no shifting).
+- The done flag is set when `i` reaches 16, cleared after 17 or reset.
+- The start signal initiates the process, resetting registers and counter.
+- This method reduces toggling on the multiplier register since it is loaded once and held constant.
+- Accumulation uses combinational left shift and addition per bit, which can be simpler to implement.
+- The module clears outputs on reset or start deassertion.
+- This variation simplifies shifting to only the multiplicand, and shifts the multiplier logically during addition, potentially easing hardware complexity.
+
+This design strictly follows the spec and provides a novel architecture where only the multiplicand register shifts and the multiplier is shifted on-the-fly during addition.

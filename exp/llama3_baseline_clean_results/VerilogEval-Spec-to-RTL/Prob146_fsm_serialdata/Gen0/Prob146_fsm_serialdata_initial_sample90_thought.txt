@@ -1,0 +1,9 @@
+To implement the finite state machine (FSM) described in the problem, we'll follow these steps:
+1. **Idle State**: The FSM starts in an idle state, waiting for a start bit (0) on the input line. If the input is not 0, it stays in this state.
+2. **Start Bit Detected**: Upon detecting a start bit, the FSM transitions to a state where it starts collecting the 8 data bits. The data bits are stored in a register, with the least significant bit (LSB) being received first.
+3. **Data Bits Collection**: The FSM collects the 8 data bits, shifting the previous bits to the left and adding the new bit to the LSB position each clock cycle.
+4. **Stop Bit Verification**: After collecting all 8 data bits, the FSM waits for a stop bit (1). If the stop bit is not 1, it stays in this state until a stop bit is received.
+5. **Stop Bit Detected**: Upon detecting a valid stop bit, the FSM asserts the `done` signal and outputs the collected data byte on `out_byte`.
+6. **Reset**: If the `reset` signal is asserted, the FSM resets to the idle state, clearing any collected data and the `done` signal.
+
+The FSM will have four main states: idle, start, data, and stop. It will use a counter to keep track of the number of data bits collected and a register to store the collected data byte.

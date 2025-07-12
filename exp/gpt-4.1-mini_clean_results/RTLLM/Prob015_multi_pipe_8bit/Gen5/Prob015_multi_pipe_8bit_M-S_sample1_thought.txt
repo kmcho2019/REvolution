@@ -1,0 +1,9 @@
+Simplify the pipeline by using a straightforward 4-stage approach:
+1. Use a 4-bit shift register for the enable signal to track mul_en_in through the pipeline.
+2. On assertion of mul_en_in, sample inputs into registers.
+3. Generate all partial products combinationally in one step.
+4. Perform additions of partial products in two pipeline stages: first sum all partial products into one intermediate sum, then register the final product.
+5. Assign mul_en_out from the MSB of the enable shift register.
+6. Output mul_out only when mul_en_out is high; otherwise, output zero.
+
+This reduces the number of pipeline stages and addition logic complexity while still implementing pipelined operation with valid enable signaling.

@@ -1,0 +1,8 @@
+Refactor the design by separating the combinational logic for the next count value into an intermediate wire and then registering it in a synchronous always block. This structure explicitly separates the next state computation from state updating. 
+
+Advantages of this approach:
+- Clear distinction between combinational and sequential logic, which may improve readability and facilitate formal verification.
+- Easier to extend or modify next state logic if new features or conditions are added.
+- No change in functionality or timing behavior since both combinational and sequential parts remain synchronous and properly controlled.
+
+This approach avoids using the conditional operator directly in the sequential block and instead computes the next count combinationally before clock edge.

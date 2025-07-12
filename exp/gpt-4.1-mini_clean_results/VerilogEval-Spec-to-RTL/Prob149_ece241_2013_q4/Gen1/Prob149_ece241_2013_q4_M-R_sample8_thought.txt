@@ -1,0 +1,17 @@
+Refactor the design to explicitly store the previous water level in a register updated every clock cycle after capturing the current level, rather than updating previous level only on sensor change. This approach simplifies timing and state tracking and avoids missing sensor changes.
+
+1. Decode current water level continuously from sensors `s`.
+
+2. On each clock cycle (with synchronous reset), store the current level into `prev_level`. The `prev_level` thus always holds the level at the previous clock cycle.
+
+3. Outputs are combinational based on the current level and previous level stored in the register.
+
+4. Supplemental flow valve `dfr` is asserted if the current level is higher than the previous level (indicating rising water).
+
+5. On reset, set `prev_level` to the lowest level (0) and force all flow valves and dfr to 1 (all open).
+
+This change avoids complicated logic of detecting sensor changes and tracking previous sensor inputs and makes the design simpler, reliable, and cycle-aligned.
+
+All output signals (fr2, fr1, fr0, dfr) are assigned combinationally from current and previous levels.
+
+This solution aligns with synchronous design principles and fixes the timing issues seen in the original code.

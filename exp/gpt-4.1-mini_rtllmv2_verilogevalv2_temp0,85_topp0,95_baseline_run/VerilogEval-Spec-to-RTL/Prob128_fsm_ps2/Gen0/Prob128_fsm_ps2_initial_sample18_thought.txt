@@ -1,6 +1,0 @@
-Implement a 4-state FSM to detect messages in the byte stream. 
-States: IDLE (waiting for first byte), BYTE1 (received first byte), BYTE2 (received second byte), DONE (signal done). 
-On reset, go to IDLE. On each clock, if in IDLE and in[3] is 1, transition to BYTE1. 
-Then move to BYTE2 and BYTE3 states with each new byte. After receiving third byte, output done=1 for one cycle, then return to IDLE.
-Because the done signal is one cycle after receiving the third byte, we can generate done=1 when the FSM is in DONE state (or immediately after BYTE3). 
-We treat each incoming byte as arriving every clock cycle.

@@ -1,0 +1,16 @@
+Improved design approach:
+1. Use a 2-bit counter to count exactly 4 cycles after reset (0 to 3)
+2. The counter will increment on each clock cycle when not in reset
+3. shift_ena is asserted when counter value is less than 4 (0-3)
+4. After reaching count 3, shift_ena stays low forever until next reset
+5. Advantages:
+   - Explicit counting ensures exactly 4 cycles
+   - No shifting logic needed, simpler implementation
+   - Clear state transition (count increments until done)
+   - Guaranteed to meet timing requirements
+   - Lower power consumption than shift register approach
+6. Reset behavior:
+   - Synchronous reset sets counter to 0
+   - shift_ena immediately goes high (cycle 0)
+   - Counts through cycles 1, 2, 3
+   - After cycle 3, shift_ena stays low

@@ -1,0 +1,14 @@
+The goal is to fuse the modular clarity and toggling control from Example 1 with the compact, single always block and efficient combinational toggle logic from Example 2. 
+
+From Example 1, the use of separate enable signals for bit toggling provides explicit gating, reducing unnecessary toggling and power by only toggling higher bits when lower bits are all high, acting like a ripple enable. This also improves power efficiency by reducing bit toggling activity. The separate always blocks clarify the logic for each bit but may add some complexity.
+
+From Example 2, the single always block using bitwise XOR and AND efficiently computes the next count value in a minimal combinational depth, improving performance and reducing area due to fewer registers and no extra wires. It also is easy to maintain.
+
+Fusion strategy:
+- Keep the compact single always block from Example 2 for minimal area and straightforward timing.
+- Incorporate the explicit enable signals from Example 1 as local variables inside the always block to gate toggling of each bit, so toggling occurs only when needed (power optimization).
+- Use conditional toggling per bit inside the always block, controlled by these enable signals, to avoid unnecessary toggling on higher bits.
+- Maintain synchronous active-high reset as specified.
+- This balances power savings of gating toggling, clarity of explicit enable conditions, and performance/area benefits of single always block with non-blocking assignments.
+
+This fused approach reduces unnecessary toggling on upper bits (saving power), keeps minimal logic depth, and maintains a clean, synthesis-friendly structure.

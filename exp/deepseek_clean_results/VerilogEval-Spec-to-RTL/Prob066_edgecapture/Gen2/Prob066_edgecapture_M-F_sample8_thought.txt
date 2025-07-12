@@ -1,0 +1,11 @@
+To fix the module based on the feedback, we need to:
+1. Ensure proper initialization and reset behavior where all outputs are cleared
+2. Correctly detect 1->0 transitions by comparing current input with properly registered previous input
+3. Maintain captured transitions persistently until reset, without any spurious captures
+4. Separate the transition detection and state maintenance logic clearly
+
+Key improvements:
+- Use non-blocking assignments consistently for sequential logic
+- Ensure the previous input register is updated after transition detection
+- Make the output bit setting unconditional once a transition is detected
+- Maintain strict separation between reset logic and normal operation

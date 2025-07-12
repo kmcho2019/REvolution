@@ -1,0 +1,16 @@
+Implement the 100-bit rotate register by separating the synchronous load and rotation logic into distinct steps using a combinational rotation logic block followed by a registered update. Use an internal wire to compute the rotated value based on the ena input, minimizing the logic inside the sequential always block.
+
+Rotation is done via a one-bit barrel rotation using bit slicing and concatenation:
+- For rotate right (2'b01), output is q rotated right by 1.
+- For rotate left (2'b10), output is q rotated left by 1.
+- Otherwise, output equals current q (no rotation).
+
+On clock edge:
+- If load is asserted, load data.
+- Else, update q with rotated value.
+
+This architecture decouples rotation calculation from register update for clarity and possible synthesis optimization (e.g., enabling the rotation logic only when needed). This can also improve timing by reducing muxing inside the sequential logic and supports easy power gating at logic level.
+
+Add comments for maintainability and explain rotation directions. No changes occur if ena signals 00 or 11, reducing toggling on q.
+
+This design uses a single always block for synchronous updates but leverages combinational logic outside it to clarify rotation computation.

@@ -1,0 +1,14 @@
+Fuse Example 1's efficient modular arithmetic and compact single-bit indexing with Example 2's structural clarity and parallel neighbor summation using 2D arrays and generate blocks.
+
+Specifically:
+
+- Use Example 2's 2D wire arrays for cell states and neighbor counts to keep clear, parallel combinational logic that synthesis tools can optimize.
+- Use the bit-mask wrapping from Example 1 for modular arithmetic to avoid costly signed operations and make wrapping explicit and cheap (`& MASK`).
+- Replace the signed integer arithmetic `(r-1)` or `(r+1)` from Example 2 with modular arithmetic using `& MASK` and unsigned 4-bit variables to prevent costly adders.
+- Maintain the fully combinational neighbor counting with sums of eight neighbors for each cell in parallel.
+- Use a function or macro for coordinate wrapping that employs bit masking (mod 16) instead of signed arithmetic.
+- Compute next states via concise combinational assignments as in Example 2, but apply the neighbor count rules from Example 1.
+- Keep synchronous load logic from Example 1, only update `q` on `load` or advancing state.
+- This fusion balances clarity, synthesis friendliness, and efficiency by avoiding signed computations, minimizing arithmetic overhead, and maintaining easy-to-understand structure with generate loops and array indexing.
+
+This combined design should synthesize to efficient hardware, support high clock frequency, and minimize power and area due to modular arithmetic simplification and structural clarity.

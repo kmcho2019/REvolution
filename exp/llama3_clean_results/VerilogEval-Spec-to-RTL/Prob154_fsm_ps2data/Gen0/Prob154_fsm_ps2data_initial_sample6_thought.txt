@@ -1,0 +1,8 @@
+The TopModule can be implemented using a finite state machine (FSM) with four states: IDLE, BYTE1, BYTE2, and BYTE3. 
+- In the IDLE state, the FSM discards bytes until it sees one with in[3]=1. 
+- When a byte with in[3]=1 is seen, the FSM transitions to the BYTE1 state and stores the byte as the first byte of the message. 
+- In the BYTE1 state, the FSM stores the next byte as the second byte of the message and transitions to the BYTE2 state. 
+- In the BYTE2 state, the FSM stores the next byte as the third byte of the message and transitions to the BYTE3 state. 
+- In the BYTE3 state, the FSM signals done and outputs the 24-bit message. 
+- After signaling done, the FSM transitions back to the IDLE state. 
+The reset signal is used to reset the FSM to the IDLE state and clear the output.

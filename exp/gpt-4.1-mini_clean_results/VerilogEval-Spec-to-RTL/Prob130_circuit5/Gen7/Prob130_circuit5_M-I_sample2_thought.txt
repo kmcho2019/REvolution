@@ -1,0 +1,9 @@
+The original solution correctly implements the desired functionality by indexing into a concatenated 20-bit vector based on input c. However, the use of multiplication for shifting (idx * 4) can be replaced with a direct bit-shift operation (idx << 2) to ensure the synthesis tool recognizes this as a pure shift, improving timing and area. Additionally, since only c values from 0 to 4 are meaningful, we clamp c to 4 using a simple comparison to avoid out-of-range shifting.
+
+An alternative approach is to replace the shift-based selection with a combinational multiplexer (case statement) that explicitly selects q based on c. This can lead to simpler logic and smaller area, as synthesis tools can map the multiplexer to an efficient LUT or MUX tree instead of a variable shift circuit.
+
+Therefore, to optimize PPA:
+- Replace multiplication with bit-shift for index calculation.
+- Implement a small combinational mux via case statement instead of wide concatenation and shifting.
+- Clamp c to 4 to avoid invalid indexes.
+This approach reduces combinational path length, logic complexity, and switching, improving timing, power, and area.

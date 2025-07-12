@@ -1,0 +1,12 @@
+The original implementation is already optimal in terms of logic simplicity and mutual exclusivity. However, to slightly improve power and area, I can replace the two AND gates and one inverter with a single 2-to-1 multiplexer structure controlled by vibrate_mode. This reduces the gate count and potentially switching activity since only one output is driven based on vibrate_mode, and the logic is clearly a mux selection between two constant outputs (ringer active or motor active).
+
+The multiplexer approach:
+- When ring=0, both outputs are 0.
+- When ring=1 and vibrate_mode=0, ringer=1, motor=0.
+- When ring=1 and vibrate_mode=1, motor=1, ringer=0.
+
+This can be done using one assign statement and minimal gating, possibly improving area and power slightly.
+
+In addition, explicitly set outputs to 0 when ring=0 to avoid any glitches or unintended output.
+
+This minimal change preserves all requirements, reduces gate count and power, and may improve timing by simplifying logic and reducing fanout.

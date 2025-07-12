@@ -1,0 +1,7 @@
+Fuse the two approaches by using a single always block triggered on the positive clock edge for all 16 flip-flops, which reduces clock tree complexity and potential timing skew compared to multiple always blocks. Implement synchronous active-low reset at the highest priority. 
+
+Within this block, conditionally update the upper and lower bytes independently based on their respective byteena bits, thereby preserving byte-wise enable functionality and minimizing unnecessary toggling, which reduces power consumption.
+
+Assign the output q directly inside the clocked process to avoid glitches and improve timing. This single always block with conditional byte enables leverages the clarity and modularity of the two-byte partition while ensuring a compact, low-area design with efficient timing and power characteristics.
+
+This fusion combines the performance advantages of a single always block, the power benefits of byte-wise conditional updates, and the clean output assignment for robust and optimal implementation.

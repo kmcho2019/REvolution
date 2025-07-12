@@ -1,0 +1,5 @@
+To solve this problem, we need to design a finite state machine (FSM) that can detect the start and stop bits, and capture the 8 data bits in between. The FSM will have several states: idle, start, data, and stop. In the idle state, it waits for a start bit (0). Once a start bit is detected, it moves to the data state and starts shifting in the data bits. After 8 data bits have been received, it moves to the stop state and checks for the stop bit (1). If the stop bit is correct, it asserts the done signal and outputs the received data byte. If the stop bit is incorrect, it waits until it finds a stop bit before returning to the idle state.
+
+The FSM will be implemented using a state register and a next state logic. The state register will hold the current state, and the next state logic will determine the next state based on the current state and the input signals. The FSM will also use a counter to keep track of the number of data bits received, and a shift register to capture the data bits.
+
+We will use a parameterized module to make the code more reusable and flexible.

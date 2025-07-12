@@ -1,0 +1,9 @@
+Implement a sequential 32-bit IEEE-754 floating-point multiplier with a microcoded FSM controlling each step over multiple cycles. Unlike fully pipelined designs, this FSM-based approach uses a shared datapath to reduce area by reusing the multiplier and logic across cycles, trading latency for area savings. The design will:
+- Extract inputs and detect special cases immediately.
+- Use a small internal 48-bit multiplier unit iteratively if needed (here, direct 24x24 multiply since synthesizable multipliers are typical).
+- Normalize and round in a dedicated sequential step.
+- Handle special cases explicitly in FSM states.
+- Use a 3-bit cycle counter as the FSM state.
+- Perform rounding with round-to-nearest-even logic.
+- Output valid results after the sequence completes, holding output stable until reset or new input.
+This approach reduces area by avoiding multiple pipeline registers and wide parallel datapaths while maintaining IEEE correctness, suitable for area-constrained implementations with relaxed latency requirements.

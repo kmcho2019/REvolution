@@ -1,0 +1,17 @@
+Instead of computing all next states combinationally in parallel, this design implements the 512-cell Rule 110 automaton as a shift-register-like pipeline that sequentially calculates the next state of each cell using a small 3-cell sliding window moving through the current state vector every clock cycle. 
+
+We use a 3-stage process:
+
+1. On each clock edge, if `load` is asserted, load the full 512-bit state into `q`.
+
+2. Otherwise, we step through the cells one by one over 512 clock cycles, using an internal index counter to select which cell’s next state to compute.
+
+3. For each cell, using the stored `q` as a circular buffer with zero boundaries, we compute its next state from its neighbors and store the result into a separate register array `next_q`.
+
+After completing the full 512-cell pass (when the index reaches 511), we transfer `next_q` to `q` in the next clock cycle and repeat.
+
+This sequential approach trades throughput for area and power by only doing one cell update combinationally per clock, avoiding large fanout and complex combinational logic over 512 bits at once. It simplifies timing and reduces power consumption by limiting switching. The cost is a latency of 512 clocks per automaton step, suitable for applications not requiring ultra-fast updates but benefiting from smaller, low-power design.
+
+Boundary cells are handled by treating neighbors outside [0..511] as zero. The internal index counter and two 512-bit registers hold current and next state.
+
+This is a novel, low-resource, iterative solution suitable for FPGA or ASIC implementations where throughput can be traded for reduced area and power.

@@ -1,0 +1,13 @@
+To optimize the dual-port RAM for better PPA based on the provided metrics and the existing solution, I will:
+
+1. Change the read operation from a combinational read to a synchronous read register to improve timing closure and reduce combinational path delays. This typically improves the worst negative slack (wns) and timing variability.
+
+2. Maintain the synchronous reset initializing the RAM, since reset is active-low and needed for deterministic startup. However, instead of initializing the entire RAM on reset (which can increase toggling and power), I will only clear the read_data register on reset, and optionally rely on FPGA/ASIC memory initialization for RAM content if synthesis tools support it. If the reset initialization of RAM is strictly required, this could be optionally disabled or done only once.
+
+3. Keep gated write logic, as it is already optimal.
+
+4. Optimize the addressing by defining an `ADDR_WIDTH` parameter with `$clog2(DEPTH)` for minimal logic, as before.
+
+5. Overall, the synchronous read will add one cycle latency on reads but improve timing robustness and power by reducing combinational output glitches.
+
+This strategy balances improved timing (wns and tns), potential power savings, and small area impact while preserving functionality and code clarity.

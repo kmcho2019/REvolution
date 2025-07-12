@@ -1,0 +1,9 @@
+Fuse the area-efficient binary encoding from Example 2 with the power-saving clock enable and one-hot style simple next-state logic from Example 1, while maintaining a purely combinational Moore output for glitch-free assertion. Use binary encoded states (3 bits) to reduce flip-flop count and area compared to one-hot, but implement a clock enable that freezes state transitions once the final detected state (S4) is reached, reducing unnecessary toggling and power consumption.
+
+Specifically:
+- Use binary encoded states (3-bit) as in Example 2 for area and clarity.
+- Implement next-state logic combinationally with a case statement as in both examples.
+- Use a clock enable signal that disables state updates when in the sticky final state (S4).
+- Keep synchronous active-high reset.
+- Derive the output start_shifting combinationally from the current state (start_shifting = (state == S4)) for immediate and stable output assertion.
+- This combination balances area, power, and timing by minimizing registers, stopping transitions when detection is done, and ensuring glitch-free output with simple combinational logic.

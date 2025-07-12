@@ -1,0 +1,5 @@
+To improve PPA, I'll implement an enable-based register write approach instead of using conditional assignments for each byte. This can allow synthesis tools to infer clock enables or gating more effectively, reducing switching activity and improving timing and power. The synchronous reset remains active-low as specified. 
+
+Specifically, for each byte, I will create a clock enable signal derived from byteena and resetn; when resetn is low, the registers reset, else they update only if byte enable is asserted. This enables clock gating or enable logic synthesis optimizations to minimize unnecessary toggling inside the register byte. 
+
+This approach may help reduce mux complexity and power by enabling only the needed registers per cycle. Additionally, assigning the entire q register in one always block is retained, but separate enable signals for the two bytes are used for clarity. This style also aligns well with common synthesis practices for gated-clock flip-flops.

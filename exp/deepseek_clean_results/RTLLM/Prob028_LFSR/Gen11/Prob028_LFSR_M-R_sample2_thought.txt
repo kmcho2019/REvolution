@@ -1,0 +1,16 @@
+Refactoring approach:
+1. Maintain same LFSR functionality but implement using continuous assignments
+2. Split into combinational feedback logic and sequential state register
+3. Use wire for feedback calculation (more explicit data flow)
+4. Keep same reset behavior (initialize to 4'b0001)
+5. Separate the shift operation into explicit parts:
+   - Feedback calculation (XOR of bits 3 and 2)
+   - Concatenation for shift operation
+6. Use non-blocking assignments in sequential block for proper flip-flop inference
+7. Make feedback path clearly visible in code structure
+
+Key changes:
+- Separated combinational and sequential logic
+- Explicit feedback wire instead of inline calculation
+- Same functionality but more modular structure
+- Clear data flow visualization

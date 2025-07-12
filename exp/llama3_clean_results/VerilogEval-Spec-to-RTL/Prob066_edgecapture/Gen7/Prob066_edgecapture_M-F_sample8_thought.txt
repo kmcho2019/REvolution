@@ -1,0 +1,7 @@
+The primary issue in the existing code is the failure to retain the state of `out_reg` bits once they are set to 1 after detecting a transition from 1 to 0 in the input signal. To correct this, the code should explicitly retain the state of `out_reg` bits unless a reset is applied. 
+
+This can be achieved by modifying the logic inside the always block to not only set the `out_reg` bits to 1 when a transition is detected but also to retain their state in subsequent clock cycles unless a reset is applied. 
+
+Additionally, to optimize the design, the use of a for loop inside the always block can be avoided by using a bitwise operation to update `out_reg`. This can be achieved by using the bitwise OR operator to set the bits in `out_reg` when a transition is detected and using the bitwise assignment operator to retain the state of `out_reg` bits in subsequent clock cycles.
+
+By making these modifications, the code can be corrected to function as intended, ensuring that once a transition is detected, the corresponding bit in `out_reg` remains at 1 until the register is reset.

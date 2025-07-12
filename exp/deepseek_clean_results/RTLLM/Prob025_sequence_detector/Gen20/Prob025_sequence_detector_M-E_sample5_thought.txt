@@ -1,0 +1,27 @@
+Here's a novel approach using a parallel pattern matching technique with a twist - we'll implement a content-addressable memory (CAM) style detector:
+
+1. **Parallel Comparison**:
+   - Instead of using a shift register or traditional FSM, we'll maintain a 4-bit window of recent inputs
+   - Each clock cycle, we'll compare this window against our target pattern (1001)
+
+2. **Sliding Window Technique**:
+   - Implement a 4-bit register that shifts in new bits while maintaining the last 3 bits
+   - This creates a moving window of the last 4 input bits
+
+3. **Efficient Pattern Matching**:
+   - Use a single parallel comparison operation instead of sequential state transitions
+   - This reduces the critical path compared to traditional FSM approaches
+
+4. **Power Optimization**:
+   - Only enable the comparison logic when we have at least 4 valid bits
+   - Use registered output to prevent glitches
+
+5. **Reset Handling**:
+   - Clear the window register on reset
+   - The detector will naturally require 4 cycles after reset before it can detect anything
+
+This approach offers:
+- Simpler control logic than FSM implementations
+- Lower latency in detection (immediate output when pattern matches)
+- Better scalability for longer patterns
+- Reduced gate count compared to traditional FSMs

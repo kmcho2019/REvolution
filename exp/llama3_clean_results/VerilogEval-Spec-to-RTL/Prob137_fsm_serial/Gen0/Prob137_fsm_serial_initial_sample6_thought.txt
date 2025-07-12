@@ -1,0 +1,10 @@
+To implement the required finite state machine, we can break down the problem into several states: 
+1. Idle: waiting for a start bit (0).
+2. Start: found a start bit, preparing to receive data bits.
+3. Data: receiving the 8 data bits.
+4. Stop: waiting for the stop bit (1) after receiving data bits.
+5. Error: stop bit not received when expected, waiting for the next stop bit before going back to idle.
+
+We'll use a counter to keep track of the number of data bits received and a shift register to store the received data bits. 
+We'll also use a flag to indicate when a byte has been successfully received.
+The module will have a done output that will be set high when a byte has been correctly received.

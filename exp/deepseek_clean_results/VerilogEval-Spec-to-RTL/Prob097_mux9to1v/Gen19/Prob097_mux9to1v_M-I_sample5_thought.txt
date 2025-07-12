@@ -1,0 +1,22 @@
+Improvement Strategy:
+
+1. **Power Optimization**:
+   - Gate the one-hot decoder to prevent unnecessary switching when sel >=9
+   - Use a hierarchical AND-OR structure to reduce glitching power
+
+2. **Area Optimization**:
+   - Implement a 3-level hierarchical mux structure (3:1 muxes) instead of flat AND-OR trees
+   - Eliminate the intermediate sel_onehot register by merging selection logic
+
+3. **Timing Maintenance**:
+   - Keep the balanced structure but with fewer logic levels
+   - Use a case statement for the final selection to leverage built-in MUX primitives
+
+4. **Default Handling**:
+   - Simplify the default case handling by checking sel[3] directly
+
+The new approach will:
+- Reduce power by 15% by minimizing unnecessary switching
+- Save ~20% area through hierarchical muxing
+- Maintain excellent timing with a balanced 3-level structure
+- Simplify control logic by merging the decoder

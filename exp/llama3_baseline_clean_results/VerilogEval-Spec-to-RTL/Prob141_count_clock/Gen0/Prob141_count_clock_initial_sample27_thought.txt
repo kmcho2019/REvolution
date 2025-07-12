@@ -1,0 +1,7 @@
+To implement the TopModule as a 12-hour clock, we need to create a set of counters for hours, minutes, and seconds. The counters should be clocked by the fast-running clk and increment only when the ena signal is high (once per second). We'll use Binary-Coded Decimal (BCD) to represent hours (01-12), minutes (00-59), and seconds (00-59). 
+
+The pm signal will be asserted if the hour is between 12 and 23 (in 24-hour format), otherwise, it will be de-asserted. We'll use a 24-hour clock internally to simplify the logic and then convert it to 12-hour format for the output. 
+
+When the reset signal is high, the clock will reset to "12:00 AM". The reset signal has higher priority than the ena signal and can occur even when not enabled. 
+
+We'll use three separate counters for seconds, minutes, and hours, and use combinational logic to determine when to increment each counter. We'll also use combinational logic to convert the 24-hour internal clock to the 12-hour output format.

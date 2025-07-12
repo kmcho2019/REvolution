@@ -1,0 +1,14 @@
+Novel Architectural Idea: "Sliding Window with Shared Logic"
+
+Key Concepts:
+1. **Sliding Window Processing**: Instead of processing all 512 bits in parallel, process them in overlapping 3-bit windows with shared logic between adjacent windows. This reduces redundant logic and area.
+
+2. **Pipelined Evaluation**: Break the Rule 110 computation into two pipeline stages:
+   - Stage 1: Compute (left & center) and (center & right) in parallel
+   - Stage 2: Combine results with XOR/OR operations to get final next state
+
+3. **Boundary Handling Optimization**: Use a circular buffer approach where the boundary conditions are handled by wrapping the indices, reducing the need for conditional logic.
+
+4. **Clock Gating**: Implement clock gating for cells that remain unchanged between cycles to reduce power consumption.
+
+This approach should significantly reduce area and power while maintaining or improving timing performance through pipelining.

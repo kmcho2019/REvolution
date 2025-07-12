@@ -1,0 +1,12 @@
+To improve the provided fully combinational 8-bit multiplier based on shift-and-add, I will reduce the number of 16-bit adders used and thus reduce area and power, while maintaining the combinational behavior.
+
+Improvement strategy:
+- Instead of generating all 8 partial products first and then summing them in a balanced adder tree, I will implement a single iterative combinational process that successively adds shifted versions of A to an accumulator, conditioned on each bit of B.
+- This approach uses a single accumulator and adds partial sums serially within combinational logic, resulting in fewer adders instantiated and less wiring complexity.
+- This reduces logic area and dynamic power due to fewer parallel adders, while still producing the same correct product in zero combinational cycles (pure combinational).
+- The maximum combinational delay will be somewhat deeper due to the sequential addition in logic, but the critical path delay is acceptable for many applications, and area/power tradeoff favors this method.
+- The multiplicand A is shifted left by the bit index of B before addition, simulating the classic shift-and-add multiplication algorithm directly.
+
+This shift-and-add combinational implementation provides a balanced tradeoff for improved area and power with acceptable performance and simple code.
+
+Note: This does not use sequential logic; everything is still combinational for a direct multiply operation on inputs A and B.

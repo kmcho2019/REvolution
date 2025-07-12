@@ -1,0 +1,14 @@
+Implement a fully sequential multi-cycle floating-point multiplier to reduce critical path and area complexity by breaking the operation into smaller steps across multiple clock cycles.
+
+Key design points:
+- Use a cycle counter (3 bits) to sequence through extraction, special case detection, multiplication, normalization, rounding, and final packaging.
+- Extract and register input fields (sign, exponent, mantissa) on cycle 0.
+- Detect special cases (zero, infinity, NaN) early to bypass multiplication when possible.
+- Perform the mantissa multiplication using a sequential shift-and-add multiplier over multiple cycles instead of a big combinational 24x24 multiplier. This reduces area and critical path.
+- Normalize the product by shifting left until MSB is 1 or exponent underflows.
+- Implement IEEE-754 rounding (round to nearest even) using guard, round, and sticky bits.
+- Adjust exponent for normalization shifts and rounding overflows.
+- Package the final sign, exponent, and mantissa on the last cycle.
+- Use internal registers to hold intermediate results and the cycle counter to synchronize steps.
+- Output remains registered and valid only on the last cycle.
+This approach drastically reduces combinational complexity and spreads the multiplication load over several clock cycles, making the design suitable for low-area or power-sensitive environments while remaining IEEE-754 compliant.

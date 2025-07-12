@@ -1,6 +1,0 @@
-The issue in the code is related to the shifting logic inside the `always` block. 
-1. In the case for shifting left by 8 bits (2'b01), the concatenation is incorrectly assigning the bits. It should be `{q[55:0], q[63:56]}` instead of `{q[55:0], q[63:8]}`.
-2. In the case for arithmetic shift right by 1 bit (2'b10), the assignment is shifting the bits to the left instead of right, which is incorrect for an arithmetic shift.
-3. In the case for arithmetic shift right by 8 bits (2'b11), the concatenation is incorrectly assigning the bits. It should be `{q[63], q[63:8]}` instead of `{q[7:0], q[63:8]}`.
-
-These logic errors result in the incorrect shifting behavior of the shift register and lead to the large number of mismatches observed during simulation.

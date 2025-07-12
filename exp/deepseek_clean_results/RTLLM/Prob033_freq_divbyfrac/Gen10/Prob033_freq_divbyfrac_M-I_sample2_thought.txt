@@ -1,0 +1,26 @@
+Improved design strategy for 3.5x fractional divider:
+
+1. Maintain the fundamental 7-cycle period (0-6) but implement precise phase control
+2. Generate two properly aligned clock phases:
+   - Phase A: High for first 3.5 cycles (0 to falling edge of cycle 3)
+   - Phase B: High for next 3.5 cycles (rising edge of cycle 4 to 7)
+3. Implement accurate phase shifting:
+   - Phase A generated on positive edge with precise timing
+   - Phase B generated with 180° phase shift (negative edge)
+4. Combine phases using OR logic but with better timing control:
+   - Ensure no glitches during phase transitions
+   - Maintain consistent duty cycle throughout
+5. Simplified counter logic:
+   - Single 3-bit counter running continuously
+   - Clear phase registers on reset
+6. Optimized implementation:
+   - Reduced logic operations
+   - Better state coverage
+   - More precise timing control
+
+Key improvements:
+- Accurate 3.5x division ratio implementation
+- Proper phase alignment with half-cycle precision
+- Glitch-free output through careful phase combination
+- Simplified and more robust counter logic
+- Better reset behavior

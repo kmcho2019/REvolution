@@ -1,0 +1,12 @@
+After carefully analyzing the waveform, here's a new approach:
+
+1. p behavior: p is high for one clock cycle whenever 'a' transitions from low to high (rising edge detection)
+2. q behavior: q becomes high when p was high in the previous cycle and stays high until the next positive clock edge where 'a' is low
+3. The outputs should only update on positive clock edges
+4. Need to detect rising edges of 'a' to generate p pulses
+
+Key differences from previous approach:
+1. Uses edge detection for p generation
+2. q is set based on previous p and cleared when a is low at clock edge
+3. No continuous reset - outputs maintain state until specific conditions are met
+4. Simpler state tracking with just one previous a value

@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. State Encoding Optimization:
+   - Analyze state transition frequencies to minimize bit toggles
+   - Keep output bit (z) as MSB but optimize lower bits for common transitions
+   - New encoding: A:000, B:001, C:101, D:100, E:110, F:111
+   - Benefits: Single-bit transitions for B<->C (common path) and maintains z=state[2]
+
+2. Logic Simplification:
+   - Combine similar state transitions (D->F and D->A share w selection)
+   - Use ternary operators for compact expression where possible
+   - Remove default case since all states are explicitly handled
+
+3. Power Optimization:
+   - Group states with same output to minimize z transitions
+   - Ensure adjacent states in common paths differ by only 1 bit
+
+4. Timing Critical Paths:
+   - Optimize D state transitions (most critical path)
+   - Balance logic depth across all paths
+   - Use parallel case synthesis directive if supported

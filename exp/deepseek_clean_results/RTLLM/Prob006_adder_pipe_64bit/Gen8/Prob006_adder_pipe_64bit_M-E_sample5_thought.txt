@@ -1,0 +1,24 @@
+Novel Architecture Idea: Hybrid Carry-Select/Pipelined Adder
+
+This implementation combines the benefits of carry-select addition with pipelining for improved performance and area efficiency. The key innovations are:
+
+1. Hierarchical Structure: 
+   - First level: 4x 16-bit carry-select adders
+   - Second level: Carry propagation between blocks
+
+2. Smart Pipelining:
+   - Stage 1: Compute all possible sums (with carry=0 and carry=1) for each 16-bit block
+   - Stage 2: Select correct sums based on actual carry propagation
+   - Stage 3: Final result assembly
+
+3. Advantages:
+   - Reduces critical path compared to pure ripple-carry
+   - Maintains predictable 3-cycle latency
+   - Better area efficiency than pure carry-select
+   - Balanced pipeline stages
+
+4. Implementation Details:
+   - Pre-compute both carry scenarios in parallel
+   - Use multiplexers to select correct sums
+   - Properly pipeline enable signals
+   - Optimize register usage

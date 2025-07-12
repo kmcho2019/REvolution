@@ -1,0 +1,9 @@
+To improve PPA (power, performance, area), I will add a clock enable (ce) signal that only updates the accumulator when a new valid product should be accumulated; this reduces unnecessary toggling in the accumulator register and adder logic. Since the problem statement doesn't provide a clock enable, I will assume accumulation always happens, so this might not apply here.
+
+Instead, to reduce the critical path and improve timing (wns), I will pipeline the multiplier by registering the product output, separating multiplication and accumulation stages. This breaks the long combinational path of multiplier + adder into two stages: multiplier register and accumulator adder register, effectively halving the logic depth per stage and improving clock frequency.
+
+I will keep the accumulator as 64 bits internally to avoid overflow, but reduce the output to 32 bits (lower half) as required. Also, I will use synchronous reset only in the always block triggered on clock edge to match best synthesis practices.
+
+This pipelining reduces the critical path and lowers timing slack (wns) and effective clock period, improving performance. While area and power increase slightly due to the pipeline register, the overall PPA tradeoff is positive for timing-critical designs.
+
+The design remains functionally correct and meets the original requirement of accumulating the product of inputs a and b into the register c.

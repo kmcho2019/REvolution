@@ -1,0 +1,12 @@
+Looking at the truth table, I notice that q is 1 whenever either:
+1. b is 1 (regardless of other inputs), OR
+2. c is 1 and a is 0 (lines 25-50 vs 65-90)
+
+This suggests an alternative implementation where:
+- The primary condition is b OR c
+- But when a is 1, we need to mask the c condition
+- This can be implemented using a multiplexer-like structure where:
+  - When a=0: q = b OR c
+  - When a=1: q = b OR (c AND 0) = b
+
+This implementation uses slightly different logic but achieves the same functionality while potentially offering better testability or different timing characteristics.

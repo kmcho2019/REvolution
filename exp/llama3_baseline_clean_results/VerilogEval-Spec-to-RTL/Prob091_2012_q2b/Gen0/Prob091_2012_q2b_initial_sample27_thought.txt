@@ -1,0 +1,16 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the transitions between states based on the input 'w'. Since a one-hot code is used for state assignment, each state is represented by a unique binary code. The output signals Y1 and Y3 should be derived from the next state logic of the finite-state machine. By inspection, we can analyze the transitions and derive the logic for Y1 and Y3.
+
+For Y1 (y[1]), it is set in state B (000010) and possibly in the next states that can be reached from B when 'w' is 1. 
+For Y3 (y[3]), it is set in state D (001000) and possibly in the next states that can be reached from D.
+
+Based on the state transitions:
+- State A (000001) goes to B when 'w' is 1, so Y1 could be 'w' when in state A.
+- State B (000010) goes to C when 'w' is 1, and since C's encoding has y[3] = 0, Y3 should not be set when transitioning from B to C.
+- State C (000100) goes to E when 'w' is 1, and E's encoding has y[3] = 0, so Y3 remains 0 when in state C or transitioning from C.
+- State D (001000) goes to F when 'w' is 1, and F's encoding does not have y[1] or y[3] set, so neither Y1 nor Y3 should be directly related to state D's transitions based on 'w'.
+- State E (010000) remains in E when 'w' is 1 and goes to D when 'w' is 0. Since E does not set y[1] or y[3], Y1 and Y3 should not be influenced by E's 'w' = 1 transition.
+- State F (100000) goes to C when 'w' is 1, which means Y3 could potentially be influenced by F's transition, but since C does not have y[3] set, Y3 remains 0.
+
+Considering these transitions and the requirement that Y1 and Y3 are inputs to their respective state flip-flops, the logic for Y1 and Y3 should directly reflect the conditions under which the next state would have y[1] or y[3] set.
+
+Given the one-hot encoding and the transitions, we can directly derive the logic for Y1 and Y3 based on the current state and the input 'w'.

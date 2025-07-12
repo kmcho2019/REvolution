@@ -1,0 +1,16 @@
+Here's a novel approach using a lookup table (LUT) style implementation that leverages the regularity of the state transitions:
+
+1. **LUT Concept**: Instead of a case statement, we'll use the current state and input as an index into a pre-computed next state table. This eliminates branching logic.
+
+2. **Output Optimization**: The output is only high in state D (11), so we can implement this as a simple AND of the state bits (state[1] & state[0]).
+
+3. **Benefits**:
+   - More scalable for larger state machines
+   - Potentially better timing due to uniform decoding
+   - Clear mapping between truth table and implementation
+   - Output logic reduced to a single gate operation
+
+4. **Implementation**:
+   - Create a 4x2 LUT (4 states x 2 input values)
+   - Index using {state, in} concatenation
+   - Output is simply the AND of state bits

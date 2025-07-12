@@ -1,0 +1,9 @@
+To approach this problem with a novel architectural idea, let's consider implementing a hierarchical state machine (HSM) that can effectively manage the flow rates based on the water level and sensor inputs. The HSM can be divided into two levels: a top-level state machine that determines the overall state of the system (e.g., water level above, below, or between sensors), and a bottom-level state machine that controls the flow rate and supplemental flow valve (dfr) based on the top-level state and sensor inputs.
+
+The top-level state machine can be implemented as a simple combinational logic circuit that takes the sensor inputs and produces a 2-bit state code indicating the current state of the system (e.g., 00 for water level below s[0], 01 for water level between s[0] and s[1], 10 for water level between s[1] and s[2], and 11 for water level above s[2]).
+
+The bottom-level state machine can be implemented as a Moore machine, where the output (flow rate and dfr) is a function of the current state and inputs. The state machine can have four states: IDLE, INCREASING, DECREASING, and MAX_FLOW. The state machine transitions between these states based on the top-level state code and the change in sensor inputs.
+
+The state machine can also use a history register to keep track of the previous sensor inputs and top-level state code. This allows the state machine to determine the trend of the water level (rising or falling) and adjust the flow rate and dfr accordingly.
+
+To improve the design's Power, Performance, and Area (PPA) metrics, potential optimizations could include using a more efficient state encoding scheme, reducing the number of state transitions, and minimizing the number of combinational logic gates required to implement the state machine.

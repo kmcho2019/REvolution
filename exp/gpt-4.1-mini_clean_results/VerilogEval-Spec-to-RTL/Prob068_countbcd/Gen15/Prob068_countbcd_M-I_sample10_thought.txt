@@ -1,0 +1,25 @@
+To optimize the existing BCD counter for better PPA, I will focus on reducing the critical path delay caused by nested carry increments and minimizing unnecessary toggling in registers:
+
+1. **Reduce Critical Path:**  
+   Instead of a nested carry chain inside a single always block, I will break the carry propagation into staged updates using registers, but since the problem only asks for a simple synchronous BCD increment per clock, I will implement ripple carry logic more explicitly without nested ifs. This simplifies the logic and eases synthesis.
+
+2. **Use Intermediate Carry Signals:**  
+   Compute carry signals combinationally before updating the count in a single clocked process to avoid deep nesting.
+
+3. **Minimize Register Toggles:**  
+   Only update upper digits if carry occurs from the lower digit.
+
+4. **Register Enables:**  
+   Register the enable signals so they are stable and glitch-free, reducing switching power.
+
+5. **Declare intermediate variables outside the always block as regs or wires appropriately for synthesis clarity.**
+
+This approach balances the original design's correctness with improved timing due to simpler carry logic and reduced toggling on registers by gating updates.
+
+The final design:
+- Calculates carry outs for each digit combinationally.
+- Updates digits sequentially in a single always block with minimal if nesting.
+- Registers enable signals on the clock.
+- Ensures synchronous reset.
+
+This should improve timing (reduce critical path), lower dynamic power (less unnecessary toggling), and maintain area efficiency.

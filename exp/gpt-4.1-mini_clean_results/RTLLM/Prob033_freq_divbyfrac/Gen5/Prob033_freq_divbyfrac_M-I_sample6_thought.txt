@@ -1,0 +1,18 @@
+To improve the reliability and correctness of the fractional frequency divider by 3.5, we must generate a stable half-cycle phase shift without ambiguous asynchronous sampling. Instead of sampling `clk_pos` on the falling edge of `clk`, we generate two clocks (`clk_pos` and `clk_neg`) directly from the counter and the main clock edges:
+
+1. Use a modulo-7 counter counting from 0 to 6 on the rising edge of `clk`.
+2. Generate `clk_pos` high for 4 cycles (cnt 0 to 3), low for 3 cycles (4 to 6).
+3. Generate `clk_neg` by sampling the counter on the falling edge of `clk` and generating a complementary pattern shifted by half a clock:
+   - On `negedge clk`, increment a falling-edge counter phase.
+   - Generate `clk_neg` high for 3 cycles and low for 4 cycles, shifted relative to `clk_pos`.
+4. Combine `clk_pos` and `clk_neg` by OR-ing to produce `clk_div` with a period of 7 cycles, giving an exact 3.5 division and balanced duty cycle over the full period.
+5. Reset synchronously and asynchronously to avoid glitches.
+
+This approach uses fully synchronous counters on both edges, avoids metastability from asynchronous sampling, and creates stable complementary clocks that generate a smooth fractional divided clock with correct duty cycle and phase alignment.
+
+This method ensures:
+- Precise timing control,
+- Avoids any asynchronous sampling pitfalls,
+- Generates a robust fractional frequency divider suitable for FPGA or ASIC implementation.
+
+Note: The design assumes `clk` frequency is within synthesizable range and tools support dual-edge triggered logic.

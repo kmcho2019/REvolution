@@ -1,0 +1,12 @@
+To optimize PPA further while maintaining asynchronous reset and Moore FSM style:
+
+- Combine state and input sampling into a single clocked always block, which is already done, so no improvement there.
+- Simplify next_state logic by using a direct assignment rather than a case statement, slightly reducing combinational logic depth.
+- Reduce the number of registers by merging `x_reg` into state transitions logic if possible, but here `x_reg` is essential to maintain a stable output and pure Moore FSM.
+- Minimize toggling: The `state` register switches only once and remains '1' after the first '1' input, which is already efficient.
+- Reduce area by declaring `next_state` as a wire instead of a reg and use continuous assignment, which synthesis tools can better optimize.
+- Use a synchronous reset instead of asynchronous reset might improve timing, but the spec requires async reset, so keep as is.
+- Since output depends only on registered signals, no changes needed for glitch reduction.
+- So the main improvement is code style and slight simplification in combinational logic with a direct assignment and `wire` instead of reg for `next_state`.
+
+This optimization yields minimal logic change but may slightly reduce combinational logic area and possibly improve timing marginally.

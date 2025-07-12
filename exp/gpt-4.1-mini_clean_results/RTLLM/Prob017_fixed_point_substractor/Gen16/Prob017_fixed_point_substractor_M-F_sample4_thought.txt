@@ -1,0 +1,15 @@
+To fix the synthesis issues based on the feedback, the main change is to eliminate the registered output and always block driving the output `c`. Instead, declare `c` as a wire and drive it using a continuous assignment. This style is simpler, synthesis-friendly, and often preferred by synthesis tools for purely combinational logic.
+
+The subtraction can still be done as signed arithmetic directly. For the explicit zero sign bit fix, instead of using an if condition inside an always block, use a conditional operator (ternary `?:`) in the continuous assignment to force `c` to zero with a positive sign bit when the result is zero.
+
+This approach avoids registers for outputs, removes the always block which might cause synthesis tools to infer flip-flops or latch, and keeps the implementation clean and simple.
+
+Also, the parameter constraints should be explicitly stated in comments and expected to be enforced externally. The testbench remains the same but should be kept separate from synthesis.
+
+Summary of changes:
+- Declare output `c` as wire signed instead of reg.
+- Compute subtraction in a signed wire `res`.
+- Assign `c` using a continuous assignment with a ternary operator to handle zero result sign explicitly.
+- Remove the always block.
+
+This will ensure synthesis compatibility without changing functional correctness.

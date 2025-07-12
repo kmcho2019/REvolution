@@ -1,0 +1,16 @@
+Refactor the fixed-point subtractor to explicitly implement the sign-aware subtraction logic using continuous assignments and internal wires, reflecting the detailed requirements for same-sign and different-sign cases.
+
+Key points of the refactoring:
+- Decompose the inputs into sign, integer, and fractional parts.
+- Compute absolute values for inputs as needed to correctly handle addition or subtraction depending on sign.
+- Implement the "same sign subtraction" case by subtracting the absolute values.
+- Implement the "different sign subtraction" case by adding the absolute values.
+- Determine the result sign according to the relative magnitudes and input signs.
+- Handle zero result explicitly by forcing the sign bit to 0.
+- Use only combinational logic with continuous assignments (no always blocks).
+- Parameterize the width (N) and fractional bits (Q), carefully partitioning the fixed-point parts.
+- This approach explicitly models the algorithmic details rather than relying solely on signed subtraction.
+
+This clarifies and matches the detailed problem statement’s requirements, while remaining synthesizable and potentially easier to analyze by synthesis tools. It also demonstrates an explicit approach to sign handling rather than relying on implicit signed arithmetic.
+
+The output `c` is assigned via continuous assignment using internal wires for sign, magnitude, and result composition.

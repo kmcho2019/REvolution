@@ -1,0 +1,10 @@
+To achieve a simplified yet accurate 3.5x fractional frequency divider:
+1. Use a 3-bit counter to count 7 cycles (0-6) for the division ratio
+2. Generate two complementary clock phases:
+   - Phase 1: High for first 4 cycles (0-3)
+   - Phase 2: High for last 3 cycles (4-6), effectively 180° out of phase
+3. Combine these phases with an XOR operation instead of OR to:
+   - Avoid continuous high output
+   - Create proper duty cycle
+   - Achieve the correct fractional division
+This eliminates the need for double-edge triggering while maintaining the required frequency division through simple counter-based phase generation and logical combination.

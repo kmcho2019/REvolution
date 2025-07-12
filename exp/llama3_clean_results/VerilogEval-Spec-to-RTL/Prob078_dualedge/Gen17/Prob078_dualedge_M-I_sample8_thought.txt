@@ -1,0 +1,9 @@
+The provided solution already implements a dual-edge triggered flip-flop using two single-edge triggered flip-flops and a multiplexer. However, there's room for improvement. 
+
+One potential issue with the current implementation is that it uses a mux to select between the positive-edge and negative-edge triggered flip-flops based on the clock signal. This can lead to a potential glitch on the output when the clock signal transitions from high to low or vice versa.
+
+To improve this solution, we can remove the mux and directly assign the output based on the clock edge. We can use the positive-edge triggered flip-flop's output when the clock is high and the negative-edge triggered flip-flop's output when the clock is low.
+
+Another improvement is to consider the reset condition for the flip-flops. Currently, the flip-flops are not reset, which can lead to undefined behavior when the design is first powered on or reset. We can add a reset signal to reset the flip-flops to a known state.
+
+Finally, to optimize the design for better PPA metrics, we can consider using a more efficient clocking scheme, such as using a single clock signal and clock enables to control the flip-flops. However, given the constraints of the problem, the current implementation seems a reasonable trade-off between complexity and area efficiency.

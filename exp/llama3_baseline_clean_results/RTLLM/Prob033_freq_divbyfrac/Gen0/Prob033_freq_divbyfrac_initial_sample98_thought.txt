@@ -1,0 +1,6 @@
+To achieve a frequency division of 3.5x using the double-edge clocking technique, we will design a module named freq_divbyfrac. This module will take an input clock signal (clk) and an active low reset signal (rst_n), and produce a fractionally divided clock output (clk_div). The implementation involves counting clock cycles and generating intermediate divided clock signals with uneven periods. These signals will then be phase-shifted and combined to produce the final output. The key steps are:
+1. Define constants for the total number of cycles (MUL2_DIV_CLK) and the division ratio (DIV_RATIO).
+2. Initialize counters for the main clock cycle counter and for tracking the current state of the division.
+3. Generate two intermediate clock signals with uneven periods based on the division ratio (4 source clock cycles and 3 source clock cycles for 3.5x division).
+4. Implement a phase-shifting mechanism to delay one of the intermediate clocks by half a clock period and advance the other by half a clock period.
+5. Combine the phase-shifted clocks using a logical OR operation to produce the final fractionally divided clock output (clk_div).

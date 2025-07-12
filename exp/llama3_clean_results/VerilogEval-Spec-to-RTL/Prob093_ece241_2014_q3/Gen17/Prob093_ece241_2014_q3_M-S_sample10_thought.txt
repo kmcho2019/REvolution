@@ -1,0 +1,14 @@
+To simplify the solution, we can analyze the Karnaugh map again and look for patterns that can be implemented using the fewest number of multiplexers. 
+
+For ab = 00, the output is 'd'. 
+For ab = 01, the output is 'c'. 
+For ab = 11 and ab = 10, the output is '1' when c is '1', and 'd' when c is '0'. 
+
+Notice that the logic for ab = 11 and ab = 10 can be implemented by a single 2-to-1 multiplexer, since in both cases, when c is '1', the output is '1', and when c is '0', the output depends on 'd'.
+
+Therefore, we can simplify the implementation by:
+- Assigning 'd' directly to 'mux_in[0]' for ab = 00.
+- Assigning 'c' directly to 'mux_in[1]' for ab = 01.
+- Using a 2-to-1 multiplexer to select between '1' and 'd' for 'mux_in[2]' and 'mux_in[3]', controlled by 'c'.
+
+This simplification reduces the number of multiplexers required while maintaining the correct implementation of the Karnaugh map logic.

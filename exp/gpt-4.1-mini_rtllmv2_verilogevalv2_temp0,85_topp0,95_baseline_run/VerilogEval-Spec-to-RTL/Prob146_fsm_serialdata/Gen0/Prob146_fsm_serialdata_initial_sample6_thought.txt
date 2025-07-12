@@ -1,9 +1,0 @@
-Design a finite state machine with the following states:
-- IDLE: Wait for the start bit (0). The line is normally high (1) when idle.
-- DATA: After detecting the start bit, receive 8 bits of data, LSB first.
-- STOP: After 8 data bits, verify the stop bit (should be 1).
-- WAIT_STOP: If the stop bit is not 1, wait in this state until a stop bit (1) is received before returning to IDLE.
-
-On each clock edge, sample the input bit. Use a shift register to collect the 8 data bits, starting from LSB. When the stop bit is detected correctly, output the collected byte and assert done for one clock cycle. On reset, return to IDLE and clear outputs.
-
-This FSM ensures synchronization with the bit stream and proper handling of errors on stop bit.

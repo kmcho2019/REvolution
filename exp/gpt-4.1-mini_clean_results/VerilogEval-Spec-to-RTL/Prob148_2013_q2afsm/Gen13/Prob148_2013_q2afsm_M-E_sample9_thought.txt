@@ -1,0 +1,22 @@
+To implement the arbiter FSM with four states (A, B, C, D), I will use a one-hot encoding for the states instead of binary encoding. This means each state is represented by a single bit in a 4-bit vector. One-hot encoding can lead to faster state decoding in FPGAs because only one flip-flop is active per state, and next state logic is often simpler and faster.
+
+State encoding:
+- A = 4'b0001
+- B = 4'b0010 (grant device 0)
+- C = 4'b0100 (grant device 1)
+- D = 4'b1000 (grant device 2)
+
+The state register is a 4-bit register updated synchronously with clk. Resetn is active-low synchronous reset, which will clear to A (4'b0001).
+
+Next state logic is implemented combinationally with simple priority-based checks:
+- In state A, if r[0] = 1, go to B; else if r[1] = 1, go to C; else if r[2] = 1, go to D; else remain in A.
+- In grant states B, C, D, if the corresponding request remains 1, stay in that state; else go back to A.
+
+Outputs g are simply assigned based on the one-hot state bits:
+- g[0] = B state bit
+- g[1] = C state bit
+- g[2] = D state bit
+
+This approach results in simple and fast decoding and output logic, and clear next-state logic. The downside is more flip-flops (4 instead of 2), but area and timing can be improved in FPGAs.
+
+Separate always blocks are used for state register and next state logic, as per conventions.

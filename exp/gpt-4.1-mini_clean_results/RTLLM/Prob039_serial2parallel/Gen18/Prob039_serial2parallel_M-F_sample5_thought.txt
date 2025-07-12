@@ -1,0 +1,9 @@
+The root cause of the problem is the timing mismatch between updating the shift register and assigning the output `dout_parallel`. Since both `shift_reg` and `dout_parallel` are updated on the same clock edge using non-blocking assignments, the new value of `shift_reg` isn't immediately available when assigning `dout_parallel`. Calculating `dout_parallel` inline as `{din_serial, shift_reg[7:1]}` duplicates the shift operation and can cause mismatches or race conditions.
+
+To fix this, the design should update `shift_reg` independently on each valid input bit, shifting the new bit into MSB. The counter increments only when `din_valid` is asserted. When the counter reaches 7 (indicating the 8th bit), the module outputs the current value of the shift register (which already contains the 8-bit data with MSB as the first received bit) into `dout_parallel` and asserts `dout_valid` for exactly one clock cycle.
+
+By separating the shift register update and the output assignment, and using the updated `shift_reg` register directly for `dout_parallel`, the design avoids race conditions. Also, the output valid signal is reset to 0 by default each clock cycle, generating a clean single-cycle pulse.
+
+This approach ensures stable output data immediately after receiving 8 bits, satisfies the requirement that bits are ordered from MSB to LSB as received, and resolves simulation hang issues due to missing output valid assertions or timing problems.
+
+All signals are synchronous to clock with an active-low asynchronous reset, and nonblocking assignments are consistently used for proper synchronous design.

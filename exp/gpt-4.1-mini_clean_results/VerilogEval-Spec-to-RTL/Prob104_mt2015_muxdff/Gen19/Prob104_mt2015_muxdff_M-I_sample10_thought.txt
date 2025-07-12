@@ -1,0 +1,9 @@
+The original TopModule design is correct as a load-enabled flip-flop with a 2:1 mux selecting between r_in and q_in. Since full_module computes the combinational next state logic externally and passes the bitwise next state via q_in, TopModule only needs to implement this simple muxed flip-flop functionality.
+
+To improve PPA (performance, power, area), ensure the design is minimal and synthesizable without redundant registers or logic. The always block can be kept as is because it's synchronous and minimal. Using nonblocking assignment is proper for sequential logic.
+
+No extra logic or complexity is needed since the combinational XOR and bit selection are outside this module.
+
+Hence, the improved version just maintains this minimal, clean design, removing "reg" from output port and declaring an internal register explicitly. This style is preferred for clarity and better synthesis in modern tools.
+
+No functional changes; only style and clarity improvements.

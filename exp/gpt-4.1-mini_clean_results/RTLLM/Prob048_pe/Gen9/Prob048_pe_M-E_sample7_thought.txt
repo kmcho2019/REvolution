@@ -1,0 +1,17 @@
+I will implement the multiplying accumulator (MAC) using a serial accumulation approach where the multiplication is done in one cycle and accumulated in a 32-bit register with saturation arithmetic to prevent overflow. The key points of this approach are:
+
+1. Use a 64-bit internal register to hold the full precision product before accumulation, but only accumulate the lower 32 bits to the accumulator register with saturation.
+
+2. Instead of accumulating the full 64-bit product result, truncate to the lower 32 bits for addition but saturate on overflow, which prevents wrap-around issues on the 32-bit accumulator output.
+
+3. This reduces internal register width and complexity compared to a full 64-bit accumulator, trading off some precision for simpler and smaller hardware.
+
+4. The accumulator register will be 32 bits wide and will saturate at 32'hFFFFFFFF on overflow.
+
+5. On reset, accumulator is cleared to zero.
+
+6. The multiplication is combinational with a full 64-bit output; only the lower 32 bits are accumulated with saturation logic.
+
+7. Synchronous reset on the positive clock edge.
+
+This design is simpler in terms of register size and ensures the output does not wrap around due to overflow by saturating at maximum 32-bit unsigned integer value, making it suitable where overflow wraparound is undesirable.

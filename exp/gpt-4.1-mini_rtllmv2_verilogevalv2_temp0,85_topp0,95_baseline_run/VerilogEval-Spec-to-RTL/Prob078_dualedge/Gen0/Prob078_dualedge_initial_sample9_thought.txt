@@ -1,9 +1,0 @@
-Since FPGAs do not support true dual-edge triggered flip-flops, we can emulate this behavior by using two single-edge triggered flip-flops: one triggered on the rising edge and one triggered on the falling edge of the clock. Both flip-flops capture the input `d` on their respective edges, and the output `q` is updated accordingly. To avoid glitches and to combine these outputs safely, we can use a simple multiplexer or assign the output from one of the flip-flops depending on the clock edge. However, the simplest approach is to register the input `d` on both edges into two separate flip-flops and then combine their outputs using an OR or similar logic. But since `d` is just sampled, we can select the output `q` as the output of either flip-flop at the appropriate times. Another simpler and safer method is to use an internal clock signal that toggles at each clock edge and use that to select the appropriate flip-flop output. Alternatively, we can combine them with a simple OR or just assign `q` to the output of the flip-flop that triggered on the latest clock edge. For simplicity, here, we implement two flip-flops clocked on posedge and negedge respectively, and then use a simple multiplexer driven by the clock to select the correct output. This emulates a dual-edge triggered flip-flop.
-
-Note: Using `always @(negedge clk)` is generally allowed in Verilog, but the problem states it’s not accepted in the sensitivity list. To emulate this, we can use the posedge of clk and posedge of clk_bar (the inverted clock) as separate clocks for the two flip-flops.
-
-Therefore, we create an inverted clock internally and use two flip-flops clocked on posedge clk and posedge clk_bar respectively.
-
-Finally, output q is assigned based on which clock edge occurred last (using clk as selector).
-
-This approach is synthesizable and compatible with FPGA tools.

@@ -1,0 +1,12 @@
+I will implement the 4-digit BCD counter using a synchronous ripple carry approach with explicit enable signals registered for the upper three digits. The key difference is to register the enable signals so that they represent the increment enable for each digit in the previous cycle rather than being purely combinational. This approach models a ripple effect where each digit increments if its enable input from the previous digit's carry is high.
+
+Design details:
+- The ones digit increments every clock cycle.
+- Each upper digit (tens, hundreds, thousands) increments on the clock edge only if its enable (ena) is high.
+- The ena signals are registers updated synchronously to indicate when the corresponding digit should increment on the next cycle.
+- Carry signals are computed synchronously based on digit rollovers.
+- On reset, all digits and ena registers are cleared.
+- This pipelined style ripple counter captures increment enables cleanly, but ena signals are registered outputs, giving them one cycle latency relative to the actual count event.
+- The output q concatenates the 4 BCD digits as required.
+
+This design trades combinational complexity for a simple clocked ripple and registered enables, suitable for designs where enable timing latency is acceptable.

@@ -1,3 +1,0 @@
-The issue in the Verilog code lies in the way the "q_temp" and "q" signals are being handled. The use of two separate always blocks, one sensitive to the positive edge of the clock and the other to the negative edge, leads to unintended behavior. 
-In the given code, the initial value of "q_temp" is unknown. When the positive edge of the clock occurs, "q_temp" is assigned the value of input "d". This operation happens on every positive edge, followed by the assignment of "q_temp" to "q" on the negative edge. This results in mismatched behavior and causes the simulation to fail.
-To properly mimic the behavior of a dual-edge triggered flip-flop, the module needs to maintain the previous value of "q" and update it based on the current input only on alternating clock edges.

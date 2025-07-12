@@ -1,0 +1,23 @@
+To implement a fractional frequency divider by 3.5 with an improved architecture, I propose a time-division multiplexing approach using a single modulo-7 counter and a programmable toggle pattern.
+
+Key ideas:
+
+1. Use a modulo-7 counter incremented at every rising edge of the input clock.
+
+2. Define a toggle pattern for clk_div that achieves the desired fractional division (divide-by-3.5 = 7/2).  
+   - Over 7 input clock cycles, clk_div should have 2 full periods.
+   - So toggle clk_div twice in 7 cycles at appropriate counts to create two pulses of lengths 3 and 4 input clocks alternately.
+
+3. Implement clk_div as a register toggled synchronously on the rising edge of clk at specified counter values.  
+   For example, toggle clk_div at cnt == 3 and cnt == 0.
+
+4. To improve the duty cycle, use a pulse stretching technique: hold clk_div high for 3 cycles and low for 4 cycles (or vice versa), resulting in average frequency division of 3.5.
+
+5. This avoids double-edge clocking and complex phase-shifts, simplifying the design and ensuring synchronous behavior.
+
+6. On reset, initialize counter and clk_div properly.
+
+This method sacrifices the perfect 50% duty cycle but generates a clean fractional divided clock with steady frequency division and easily synthesizable.
+
+Additional note:  
+If better duty cycle is required, further logic with clock domain crossing or PLL/MMCM could be applied, but this approach fits basic FPGA or ASIC implementation needs with pure synchronous logic.

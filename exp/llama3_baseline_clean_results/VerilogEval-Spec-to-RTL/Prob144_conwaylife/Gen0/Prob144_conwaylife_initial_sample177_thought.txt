@@ -1,0 +1,20 @@
+To implement the TopModule, we need to break down the task into several steps. 
+First, we need to design a method to count the number of alive neighbours for each cell. 
+Since we are using a 16x16 toroid, we will need to handle the edges and corners separately.
+Next, we will implement the game logic to update the state of each cell based on the number of alive neighbours.
+Finally, we will add the load functionality to update the initial state of the grid.
+
+We will use two 256-bit registers, q and next_q, to store the current and next state of the game grid, respectively.
+The next_q register will be updated based on the current state of q and the game rules.
+We will also use a temporary variable to store the count of alive neighbours for each cell.
+
+To count the alive neighbours, we will use a nested loop to iterate over the 8 possible neighbour positions for each cell.
+For each neighbour position, we will calculate the corresponding index in the q register and check if the cell is alive.
+If the cell is alive, we will increment the neighbour count.
+
+Once we have the neighbour count, we will apply the game rules to update the state of each cell.
+If the neighbour count is 0 or 1, the cell becomes 0. If the neighbour count is 2, the cell state does not change.
+If the neighbour count is 3, the cell becomes 1. If the neighbour count is 4 or more, the cell becomes 0.
+
+Finally, we will add the load functionality to update the initial state of the grid.
+If the load signal is high, we will update the q register with the input data at the next clock edge.

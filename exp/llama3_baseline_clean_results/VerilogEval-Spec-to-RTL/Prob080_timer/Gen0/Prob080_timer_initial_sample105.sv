@@ -1,0 +1,22 @@
+module TopModule(
+    input clk,
+    input load,
+    input [9:0] data,
+    output reg tc
+);
+
+reg [9:0] count;
+
+always @(posedge clk) begin
+    if (load) begin
+        count <= data;
+        tc <= 1'b0; // reset tc when loading
+    end else if (count != 10'd0) begin
+        count <= count - 1;
+        tc <= 1'b0;
+    end else begin
+        tc <= 1'b1; // set tc when count reaches 0
+    end
+end
+
+endmodule

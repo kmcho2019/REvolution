@@ -1,0 +1,19 @@
+To improve the existing LIFObuffer for better PPA while preserving correctness, I will apply these enhancements:
+
+1. Replace the decrementing SP approach with an incrementing pointer from 0 (empty) to 4 (full) to simplify pointer arithmetic and avoid subtraction during indexing. This reduces combinational logic delay and glitching.
+
+2. Use non-blocking assignments consistently and avoid variable indexing computations dependent on pointer arithmetic.
+
+3. Implement synchronous reset without looping to clear the stack memory, as data is irrelevant when empty; only clear memory on reset if needed for debug visibility, else just clear SP and dataOut.
+
+4. Make EMPTY and FULL flags combinational outputs directly from SP value.
+
+5. Add clock gating for memory writes and stack pointer update to reduce unnecessary switching during idle or invalid operations.
+
+6. Retain dataOut register update only on valid pop operations to minimize toggling.
+
+7. Clear the popped memory location on pop (optional for debug; can be removed for power savings).
+
+8. Use a 3-bit SP pointer counting 0 to 4 (0 empty, 4 full) for clarity and improved timing.
+
+This simplifies control logic, reduces arithmetic overhead, and improves timing and power efficiency.

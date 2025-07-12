@@ -1,0 +1,9 @@
+The original code uses a continuous assignment to implement the logic of the TopModule. This approach directly implements the simplified logic derived from the Karnaugh map. However, an alternative way to structure this module is by using a procedural assignment within an `always` block.
+
+This refactoring involves moving the logic into an `always` block, which is typically used for combinational logic when the design requires more complex calculations or when the output depends on the current state of the inputs. In this case, since the output `f` only depends on the current values of the inputs `x`, an `always` block with a sensitivity list that includes all inputs `x` can be used.
+
+The logic inside the `always` block remains the same as in the original code because the relationship between the inputs and the output does not change. However, by using an `always` block, the code becomes more flexible and can be easily adapted if the logic becomes more complex or if additional calculations are needed.
+
+Another aspect to consider is the use of `reg` for the output `f`. In the original code, `f` is declared as a `reg` and assigned a value using the `assign` statement. When moving to an `always` block, it's essential to maintain the `reg` declaration for `f` to ensure that it behaves as expected in the procedural assignment context.
+
+Overall, the refactored code will have the same functionality as the original but will be structured differently, using an `always` block for the logic implementation instead of a continuous assignment.

@@ -1,0 +1,5 @@
+Refactor the design by explicitly instantiating eight individual negative-edge triggered D flip-flops, each with synchronous active-high reset to 0x34's corresponding bit. This decomposes the 8-bit register into separate 1-bit flip-flop modules, increasing modularity and clarity per bit. Each flip-flop is modeled by a dedicated submodule that reacts on negedge clk and applies synchronous reset.
+
+This structure maintains the exact synchronous reset behavior and negative clock triggering but breaks the monolithic vector register into smaller units. It makes the design more extensible and easier to modify or probe each bit independently, beneficial for debugging or further per-bit customization.
+
+The TopModule instantiates these eight flip-flop modules in a generate loop, wiring each bit of input and output separately. This implementation is functionally equivalent but structurally different from the vectorized register approach.

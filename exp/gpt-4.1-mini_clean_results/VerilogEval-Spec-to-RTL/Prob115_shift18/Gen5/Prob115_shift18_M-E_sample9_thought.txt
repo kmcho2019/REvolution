@@ -1,0 +1,16 @@
+Implement a compact 64-bit arithmetic shift register using a simple two-stage multiplexing structure to handle direction and amount shifts efficiently.
+
+The approach:
+- Use a single synchronous always block triggered by clk.
+- On load, directly load the data input.
+- On enable (and no load), shift by either 1 or 8 bits as specified.
+- For left shifts:
+  - Shift left by concatenating shifted bits with zeros.
+- For arithmetic right shifts:
+  - Extend sign bit replicated either 1 or 8 times to fill the shifted-in bits.
+- Use a single multiplexer tree for choosing shift amount (1 or 8) based on amount[0].
+- Use a separate mux for direction selection (left or right arithmetic).
+- This modular approach avoids multiple redundant shift computations.
+- Sign extension logic is centralized and reused.
+- Minimizes hardware by sharing sign extension and shift multiplexers.
+- Keeps combinational logic depth minimal for timing, with clear synchronous load/enable control.

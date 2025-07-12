@@ -1,0 +1,16 @@
+Instead of using direct combinational logic derived by inspection, we can implement the FSM next-state logic using a small combinational process that explicitly decodes the current one-hot state and input w, then generates the next state inputs. 
+
+Specifically, we will:
+- Decode the current state by checking which y bit is high.
+- For each state, determine if next state y[1] (B) and y[3] (D) will be active according to transitions.
+- Output Y1 and Y3 accordingly.
+
+This approach uses a combinational always block with a case statement over states decoded from y. It trades off a bit more logic for clarity and flexibility if FSM expands.
+
+This architecture also makes it easy to scale or modify outputs without needing complex boolean factoring.
+
+Since outputs Y1 and Y3 correspond to inputs of flip-flops for y[1] and y[3], we set them directly as 1 or 0 depending on transition from current state and input w.
+
+We encode the current state index by priority-encoding y vector, given one-hot encoding.
+
+This explicit enumeration approach can be more readable and more easily synthesized by tools.

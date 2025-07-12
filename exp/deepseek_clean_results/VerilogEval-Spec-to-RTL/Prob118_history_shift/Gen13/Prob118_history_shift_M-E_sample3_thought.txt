@@ -1,0 +1,13 @@
+Novel approach using a single register with speculative updates and rollback tracking:
+1. Use a single 32-bit history register that always contains the correct committed state
+2. Track speculative updates separately in a 1-bit register (speculative_bit) and depth counter
+3. On prediction (predict_valid):
+   - Store the predicted bit in speculative_bit
+   - Increment speculative_depth counter
+4. On misprediction (train_mispredicted):
+   - Rollback by shifting out speculative updates (using depth counter)
+   - Then apply the correct history from train_history + train_taken
+5. On commit (no misprediction), the speculative updates become committed
+6. This reduces area by eliminating the shadow register while maintaining single-cycle rollback
+7. Reset clears all state
+8. Output combines committed history with speculative bits when present

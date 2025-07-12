@@ -1,0 +1,12 @@
+Here's a novel approach using a priority-encoded state machine with explicit enable signals. The key innovations are:
+
+1. Priority-based activation: Heater has higher priority than aircon when both too_cold and too_hot are active (unlikely but possible scenario)
+2. Explicit enable signals: Separate logic for heater_enable and aircon_enable for better debug visibility
+3. Fan control with override: Fan can be forced on independently while respecting the heater/aircon state
+4. State encoding optimization: Uses one-hot encoding for better synthesis results in some technologies
+
+This approach provides:
+- Clear priority handling for conflicting conditions
+- Better debug capability with intermediate signals
+- Potential power savings by minimizing unnecessary switching
+- More explicit control flow compared to pure combinational solutions

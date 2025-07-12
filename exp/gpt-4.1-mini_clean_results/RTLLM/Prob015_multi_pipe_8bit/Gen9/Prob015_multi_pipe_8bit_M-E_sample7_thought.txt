@@ -1,0 +1,11 @@
+Implement a 4-stage pipelined unsigned 8-bit multiplier using a sequential partial product accumulation approach. Instead of computing all partial products and summing them combinationally in one cycle, accumulate one partial product per cycle in a pipeline register. This divides multiplication into 8 cycles internally, but the pipeline throughput is maintained after initial latency.
+
+Pipeline stages:
+1. Input register stage: latch operands and input enable.
+2. Partial product selection and accumulation stage: in each cycle, use multiplier bits sequentially to add shifted multiplicand to an accumulator register.
+3. Accumulation register stage: hold the intermediate sum and multiplier bit index.
+4. Output register stage: finalize product and output enable after all bits are processed.
+
+Enable signal is pipelined along the stages. This architecture balances logic per cycle, improves max frequency by reducing combinational logic, and spreads multiplication over multiple cycles while enabling new multiplications every cycle (pipelined).
+
+The output enable asserts when the final product is valid, after 8 cycles latency. The output is zero when invalid.

@@ -1,0 +1,38 @@
+The key issue was the unclear mapping of the input bits to the Karnaugh map axes. The problem states the input x is 4 bits, and the Karnaugh map rows are indexed by x[3] and x[4], but x[4] does not exist. To fix this, we interpret x[3:0] as [x3, x2, x1, x0] and assign row bits as x[3] (MSB of row) and x[2] (LSB of row), column bits as x[1] (MSB of column) and x[0] (LSB of column).
+
+Using this mapping:
+- row = {x[3], x[2]}
+- col = {x[1], x[0]}
+
+Then the Karnaugh map is:
+
+                x[1]x[0]
+  x[3]x[2]   00  01  11  10
+        00 | d | 0 | d | d |
+        01 | 0 | d | 1 | 0 |
+        11 | 1 | 1 | d | d |
+        10 | 1 | 1 | 0 | d |
+
+We list the minterms where f=1:
+
+Row (x3,x2) | Col (x1,x0) | x3 x2 x1 x0 | binary
+----------------------------------------------
+  01 (0 1)  |    11 (1 1) | 0 1 1 1 = 4'b0111
+  11 (1 1)  |    00 (0 0) | 1 1 0 0 = 4'b1100
+  11 (1 1)  |    01 (0 1) | 1 1 0 1 = 4'b1101
+  10 (1 0)  |    00 (0 0) | 1 0 0 0 = 4'b1000
+  10 (1 0)  |    01 (0 1) | 1 0 0 1 = 4'b1001
+
+We implement f=1 for these minterms.
+
+Then, for better PPA, we derive a minimal SOP or POS expression by grouping ones on the Karnaugh map. After simplification, the expression reduces to:
+
+f = (~x3 & x2 & x1 & x0)      // minterm 0111
+  + (x3 & x2 & ~x1)           // covers 1100 and 1101 (x3=1,x2=1,x1=0)
+  + (x3 & ~x2 & ~x1)          // covers 1000 and 1001 (x3=1,x2=0,x1=0)
+
+This is minimal and avoids explicitly listing all minterms.
+
+This logic is more efficient and directly corresponds to the Karnaugh map.
+
+We implement this expression in Verilog.

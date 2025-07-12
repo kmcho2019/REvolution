@@ -1,0 +1,29 @@
+Improved Radix-4 Booth Multiplier Implementation:
+
+1. Corrected Iteration Count:
+   - For 8-bit Radix-4, we need exactly 4 iterations (8 bits / 2 bits per iteration)
+   - Fixed counter logic to terminate after 4 complete cycles
+
+2. Proper Initialization:
+   - Correct multiplier initialization to 9 bits (8-bit input + 1 guard bit)
+   - Proper sign extension for multiplicand
+
+3. Optimized Partial Product Selection:
+   - Strict Booth encoding (00:0, 01:+A, 10:-A, 11:0)
+   - Simplified partial product generation
+   - Added explicit -A case (instead of -2A)
+
+4. Efficient Accumulation:
+   - Correct shifting by 2 bits per iteration
+   - Early accumulation to reduce critical path
+
+5. Timing Optimization:
+   - Ready signal generation after exactly 4 cycles
+   - Reduced register sizes where possible
+
+Key Improvements:
+- Fixed functional correctness issues
+- Reduced logic complexity
+- Improved timing with early accumulation
+- Proper handling of sign extension
+- Correct Booth encoding implementation

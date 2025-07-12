@@ -1,0 +1,17 @@
+Implement the fixed-point subtractor by explicitly decomposing the inputs into sign and magnitude parts, then perform magnitude operations based on sign conditions to clearly separate logic for same-sign and different-sign cases as specified.
+
+Architecture:
+- Extract sign bits and magnitudes (absolute values) of inputs.
+- If signs are the same:
+  - Subtract magnitudes (a_mag - b_mag).
+  - If result is negative, invert and set sign accordingly.
+  - The output sign equals input sign if the magnitude difference is positive, else inverted.
+- If signs differ:
+  - Add magnitudes (a_mag + b_mag).
+  - Determine output sign by the sign of the minuend operand (a).
+- Explicitly handle zero result to set sign bit to zero.
+- Use parameterized widths and fixed-point representation.
+- This approach makes the sign and magnitude logic explicit and aligned with the problem description, suitable for designs requiring clear sign handling.
+- Use combinational logic with internal registers for magnitude results and sign calculation.
+
+This design is more explicit about sign and magnitude and implements the problem's subtraction rules directly rather than relying on two's complement arithmetic.

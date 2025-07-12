@@ -1,0 +1,8 @@
+This design implements the LIFO buffer using a circular buffer architecture with separate read and write pointers:
+1. Uses two pointers (read_ptr and write_ptr) that wrap around when reaching the end
+2. Implements a virtual "top" concept by always writing to write_ptr and reading from write_ptr-1
+3. The EMPTY flag is set when read_ptr equals write_ptr
+4. The FULL flag is set when the buffer has 4 valid entries
+5. Uses a counter to track the number of valid entries for simpler flag generation
+6. Optimizes power by only updating the necessary memory locations
+7. Simplifies pointer arithmetic by using modulo operations implicitly

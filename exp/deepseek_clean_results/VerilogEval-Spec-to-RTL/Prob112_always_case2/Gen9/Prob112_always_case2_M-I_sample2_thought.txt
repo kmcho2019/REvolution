@@ -1,0 +1,12 @@
+The current implementation is already quite efficient, but we can make a few optimizations:
+
+1. Remove the 'reg' keyword for the output since we're using continuous assignment
+2. Use a simpler case statement structure by directly using the input as the case expression
+3. Maintain the same priority encoding (LSB has highest priority)
+4. Keep the all-zeros case handled implicitly by the case statement ordering
+5. This should result in slightly cleaner code while maintaining the same PPA metrics
+
+The improved version will use a casez statement which is more natural for priority encoders and allows us to:
+- Simplify the case items
+- Make the priority order more visually apparent
+- Potentially help synthesis tools better recognize the priority encoding pattern

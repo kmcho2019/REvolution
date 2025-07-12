@@ -1,0 +1,13 @@
+Implement an asynchronous FIFO with parameterized width and depth using a modular approach that explicitly separates pointer counting, Gray code conversion, pointer synchronization, and full/empty flag logic into individual submodules for clarity and reuse.
+
+Architectural idea:
+- Use a dedicated binary counter module for the write and read pointers in their respective clock domains.
+- Use a parameterized function/module for binary-to-Gray and Gray-to-binary conversion.
+- Use separate two-stage synchronizer modules for passing the read pointer into write clock domain and vice versa.
+- Implement the full and empty logic combinationally outside the pointer modules, using Gray code pointers.
+- Address generation for RAM is done by taking lower bits of binary pointers derived from Gray pointers.
+- Use a dual-port RAM submodule for storage, with independent clocks and enables.
+- Output data is registered on read clock.
+- Design signals and modules clearly segregated, enhancing readability and testability.
+
+This approach emphasizes modular design and reusability, clearly separating each FIFO functional block. It aids understanding and allows easier replacement or optimization of individual blocks.

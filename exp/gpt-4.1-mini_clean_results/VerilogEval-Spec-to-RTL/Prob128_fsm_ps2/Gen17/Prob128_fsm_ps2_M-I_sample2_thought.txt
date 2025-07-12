@@ -1,0 +1,5 @@
+To optimize the original design for better PPA, I will replace the 2-bit counter with a one-hot 3-state FSM that explicitly tracks the current byte position in the message (IDLE, BYTE1, BYTE2). This reduces combinational logic depth by turning counter comparison into state checks, potentially improving timing.
+
+The done pulse will be generated as a single-cycle pulse on the transition after receiving the third byte, with done defaulting to zero in all other cycles, avoiding unnecessary toggling.
+
+I will also gate the count/state update only when needed, minimizing switching. The synchronous reset is retained as specified. Overall, the FSM will be simpler with explicit states instead of counter increments, likely reducing power and area slightly and improving performance.

@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break down the 100-bit rotation into two steps to reduce critical path
+   - Use a pipelined approach with an intermediate register to improve timing
+   - Maintain single-cycle operation by carefully structuring the pipeline
+
+2. Power Optimization:
+   - Add clock gating for the no-rotation case (ena=2'b00/11)
+   - Use explicit enable signals to prevent unnecessary toggling
+
+3. Area Optimization:
+   - Share common subexpressions between left and right rotation cases
+   - Use more efficient multiplexer structures
+
+Key improvements:
+- Pipelined rotation logic to improve timing (reduce WNS)
+- Clock gating for power reduction
+- Shared rotation logic between directions
+- Maintained same functionality with better PPA metrics

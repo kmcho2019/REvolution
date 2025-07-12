@@ -1,0 +1,20 @@
+To design a 32-bit IEEE-754 floating-point multiplier with a fresh architectural approach, I'll implement a multi-cycle sequential design controlled by a simple FSM. Instead of a deeply pipelined design, this approach spreads the complex operations over multiple clock cycles, reducing combinational critical paths and hardware area.
+
+The module will use a small internal state machine with states for input decoding, special case detection, mantissa multiplication (via a built-in 24x24 multiplier), normalization, rounding, and output generation.
+
+Key elements:
+- Mantissas are extracted and prepared with implicit leading ones or zero if denormal.
+- Exponents are adjusted and added, considering bias.
+- Multiplication is computed in one cycle as combinational multiply (due to built-in multiplier in FPGA/ASIC).
+- Normalization checks the product MSB for alignment, shifting mantissa and adjusting exponent accordingly.
+- Rounding is round-to-nearest-even using guard, round, and sticky bits extracted from the product's lower bits.
+- Special cases (NaN, Inf, zero, denormals) are detected and handled explicitly.
+- The output is held until computation completes.
+
+This sequential, step-wise approach uses a small 3-bit cycle counter to coordinate operations, simplifies timing, reduces large combinational logic paths, and uses fewer pipeline registers. The trade-off is higher latency but simpler control and potentially less area and better timing.
+
+All arithmetic and logic are synchronous to the clock and reset signals. The module outputs the final result once ready, updated on the last cycle.
+
+This design also maintains internal registers for mantissas, exponents, sign bits, and intermediate products, along with rounding bits. The final IEEE-754 output is assembled carefully, considering overflow, underflow, and special case logic.
+
+This novel architecture contrasts with deeply pipelined designs by emphasizing a controlled multi-cycle sequence, improving timing and area at the expense of latency.

@@ -1,0 +1,9 @@
+To fuse the best ideas from both examples, I will maintain the clean prefix + keycode separation from Example 1 to avoid redundant full 16-bit comparisons and minimize comparator duplication, which helps reduce area and power. Then, I will use a single combinational always_comb block with a case statement on the 8-bit keycode to set the outputs as a one-hot vector. This approach reduces repeated comparisons, encodes outputs compactly, and retains full combinational logic for performance and clarity. By assigning all outputs from a single case, it avoids parallel logic duplication, improving area and potentially power.
+
+This fusion balances readability, performance, area, and power by:
+- Checking prefix once (8'hE0).
+- Using a single case on the lower byte.
+- Encoding outputs into a single 4-bit register, then mapping to outputs.
+- Using combinational logic only, no registers or clocked elements.
+
+This is an efficient, clean, and scalable design ideal for the given mapping.

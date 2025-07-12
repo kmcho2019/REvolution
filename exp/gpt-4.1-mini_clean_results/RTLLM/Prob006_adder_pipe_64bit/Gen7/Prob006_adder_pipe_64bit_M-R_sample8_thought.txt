@@ -1,0 +1,11 @@
+Refactor the 64-bit ripple carry adder with pipeline registers by using explicit stage-by-stage registers for sums and carries without arrays, making the pipeline stages more explicit and easier to follow. Instead of packing sums in arrays and using loops inside always blocks, use explicitly named stage registers for sums and carries.
+
+Use combinational assignments (`assign`) to calculate sums and carries at each stage based on registered carries and inputs, while pipeline registers hold the previous stage results. Pipeline the enable signal similarly.
+
+This approach improves readability and debuggability by making each pipeline stage explicit, and utilizes synchronous registers only for pipeline state, while addition logic is purely combinational per stage.
+
+This structure helps synthesis tools by clearly separating combinational adder logic from pipeline registers.
+
+The result and output enable are registered from the last pipeline stage to ensure timing alignment.
+
+This also avoids generate blocks, making code compatible with simpler tools or older synthesis flows.

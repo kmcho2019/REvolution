@@ -1,0 +1,7 @@
+To implement the TopModule, we need to create a 32-bit global history shift register. 
+This can be achieved using a 32-bit reg type in Verilog, where the value is updated based on the input signals. 
+We will use a combinational logic to determine whether to shift in a new value or load a new history. 
+If a prediction is made (predict_valid = 1), we will shift in predict_taken from the LSB side to update the branch history. 
+If a misprediction occurs (train_mispredicted = 1), we will load the branch history register with the history after the completion of the mispredicted branch. 
+The new history is created by concatenating train_history with train_taken. 
+In case both a prediction and a misprediction occur at the same time, we will give precedence to the misprediction.

@@ -1,0 +1,12 @@
+Fuse the simplicity and minimal overhead of direct assignments in TopModule from Example 2 with the scalable, modular generate-based bit-splitting inside BitSplitter from Example 1. Inline the generate loop inside BitSplitter to assign output bits dynamically, enabling easy scaling if the width changes, but avoid intermediate wire arrays by directly connecting outputs via generate block. This eliminates unnecessary internal signals, reducing power and area while preserving modularity and clarity.
+
+In TopModule, connect outv directly to vec for minimal logic overhead and instantiate the parameterized BitSplitter with explicit single-bit outputs (o0, o1, o2) mapped to vec bits 0,1,2 respectively.
+
+This hybrid approach ensures:
+- Clear modular structure and maintainability.
+- Minimal power by avoiding redundant signals.
+- Minimal area by removing unnecessary nets.
+- Scalability through parameterization and generate usage.
+- Direct, flat connections from inputs to outputs for performance.
+
+Overall, the design elegantly balances modularity with PPA optimization by leveraging generate loops for scalable bit extraction and direct top-level wiring.

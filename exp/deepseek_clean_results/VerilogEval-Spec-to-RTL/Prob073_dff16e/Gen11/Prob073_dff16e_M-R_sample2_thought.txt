@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Eliminate the separate DFF module and implement everything in TopModule
+2. Use a single always block for all 16 flip-flops instead of generate
+3. Implement byte enable control through bitwise masking in the always block
+4. Benefits:
+   - More compact code with same functionality
+   - Potential for better synthesis optimization (single always block)
+   - Reduced hierarchy improves readability
+   - Maintains identical behavior with synchronous reset and byte enables
+5. The implementation will:
+   - Create a 16-bit register q
+   - Use byteena to mask which bytes get updated
+   - Apply synchronous active-low reset
+   - All updates on positive clock edge

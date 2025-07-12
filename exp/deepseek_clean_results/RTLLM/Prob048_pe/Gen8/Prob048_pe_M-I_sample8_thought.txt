@@ -1,0 +1,12 @@
+Improvement Strategy:
+1. Pipeline the design to break the critical path (multiplier + adder) into two stages for better timing
+2. Remove redundant operand isolation logic since reset already handles zeroing
+3. Use 32-bit multiplication directly since we only need 32-bit result (assuming overflow handling isn't required)
+4. Add explicit register stages for pipelining while maintaining same functionality
+5. Optimize reset logic to be more area-efficient
+
+The improved design will:
+- Achieve better timing by reducing combinatorial path
+- Reduce power by eliminating unnecessary operations
+- Maintain same functionality with 1-cycle latency
+- Potentially reduce area by simplifying logic

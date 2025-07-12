@@ -1,0 +1,16 @@
+To improve the implementation, we'll make the following changes:
+
+1. Use a case statement instead of nested ternary operators:
+   - Case statements typically synthesize to more balanced multiplexer structures
+   - Better readability and maintainability
+   - More straightforward timing characteristics
+
+2. Remove the explicit range check:
+   - Since sel is 3 bits, values above 5 will naturally fall into the default case
+   - Reduces unnecessary comparison logic
+
+3. Keep the default case for invalid selections:
+   - Maintains the same functionality for invalid sel values
+   - Outputs 0 when sel is out of range (6 or 7)
+
+This approach should yield slightly better timing and area characteristics while maintaining identical functionality.

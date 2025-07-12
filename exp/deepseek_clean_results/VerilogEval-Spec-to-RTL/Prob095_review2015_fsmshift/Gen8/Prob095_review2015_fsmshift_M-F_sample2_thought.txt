@@ -1,0 +1,18 @@
+To fix the issues identified in the feedback, here's the revised approach:
+
+1. Counter Initialization: Initialize counter to 4 (3'b100) instead of 3 to ensure exactly 4 cycles of shift_ena assertion (counts 4→3→2→1→0).
+
+2. Immediate Reset Behavior: Make shift_ena a registered output that is:
+   - Immediately set to 1 when reset is asserted (first cycle)
+   - Maintained for 3 more cycles (total 4 cycles)
+   - Then set to 0 until next reset
+
+3. Counter Width: Use 3 bits to accommodate counting down from 4.
+
+4. Synchronous Logic: All state changes occur on positive clock edges for clean synchronization.
+
+The key improvements are:
+- Correct cycle count by starting from 4
+- Proper handling of first cycle assertion during reset
+- Clear state transition logic
+- Maintains synchronous design principles

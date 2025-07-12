@@ -1,0 +1,18 @@
+To robustly handle the timing and input scenarios, implement a simple 2-state FSM with states IDLE and HOLD:
+
+- In IDLE state (no stored data):
+  When valid_in arrives, store the first 8-bit input in data_lock, set data_lock_valid, and transition to HOLD state.
+  Do not produce valid_out yet.
+
+- In HOLD state (first data stored):
+  When the next valid_in arrives, store this second data_in as data_second.
+  Output valid_out=1 and data_out = {data_lock, data_second} in the *next* clock cycle.
+  After outputting, clear data_lock_valid and go back to IDLE.
+  
+This approach ensures:
+- The output valid_out and data_out are registered and generated exactly one cycle after the second valid input arrives.
+- Consecutive valid inputs are handled correctly, as the FSM always waits for pairs of inputs.
+- If only one valid input arrives, output is held until the next input arrives.
+- Avoids race conditions by clean state transitions and precise signal update ordering.
+
+The registers updated on posedge clk or negedge rst_n per specification.

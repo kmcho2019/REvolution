@@ -1,0 +1,6 @@
+Refactor the counter by splitting the next-state logic into a combinational always block and the state update into a sequential always block. This separation improves code readability and can help synthesis tools optimize the logic more effectively. Use a separate reg variable to hold the next count value computed combinationally:
+
+- Compute next count as (q == 999) ? 0 : q + 1 combinationally.
+- Update q synchronously on clk with reset resetting q to 0.
+  
+This explicit next-state logic separation is a common coding style that can aid synthesis and debugging without changing functionality.

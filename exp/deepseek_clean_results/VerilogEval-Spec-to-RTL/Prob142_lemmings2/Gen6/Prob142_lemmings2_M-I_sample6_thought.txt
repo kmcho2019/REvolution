@@ -1,0 +1,18 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll focus on the following improvements:
+
+1. **Performance (Timing):**
+   - Register the bump inputs to reduce critical path timing. This will help meet timing constraints by breaking the long combinational path from bump inputs to state transitions.
+   - Simplify the state transition logic by separating the bump detection from the walking direction update.
+
+2. **Power:**
+   - Add clock gating for the falling state logic when ground is stable (not transitioning). This reduces dynamic power when the falling state isn't changing.
+   - Use explicit clock enables for state updates to minimize unnecessary transitions.
+
+3. **Area:**
+   - Maintain the current compact state representation (1-bit for direction + 1-bit for falling).
+   - The area is already optimal, so no major changes needed here.
+
+The improved design will:
+- Have better timing by reducing combinational paths
+- Lower power through clock gating and reduced switching
+- Maintain the same area efficiency

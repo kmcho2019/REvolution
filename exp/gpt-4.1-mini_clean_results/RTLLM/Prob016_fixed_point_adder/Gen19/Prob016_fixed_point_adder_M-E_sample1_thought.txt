@@ -1,0 +1,7 @@
+Instead of working with sign and magnitude conversions explicitly, this design uses two's complement arithmetic directly, leveraging the fact that two's complement addition naturally handles sign and magnitude for fixed-point numbers. The module adds two N-bit two's complement fixed-point operands directly, producing an (N+1)-bit intermediate sum to detect overflow.
+
+To handle overflow, the module clamps the result to the maximum or minimum representable fixed-point value when overflow occurs. The output `c` is then the saturated sum truncated back to N bits. This avoids manual absolute value manipulation and explicit magnitude comparison, simplifying logic while ensuring correct fixed-point addition with saturation.
+
+This design uses the parameters Q (fractional bits) and N (total bits) solely to specify widths and fixed-point formats but relies on standard two's complement arithmetic for addition. Saturation is done by comparing the sign bits of the inputs and output to detect overflow. The fractional position (Q) is preserved through the operation since no scaling is done.
+
+This method provides a clean, parameterized, and efficient fixed-point adder with saturation and is easy to integrate into fixed-point arithmetic pipelines.

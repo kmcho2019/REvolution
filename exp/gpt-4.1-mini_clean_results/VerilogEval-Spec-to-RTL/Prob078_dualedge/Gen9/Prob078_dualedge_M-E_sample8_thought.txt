@@ -1,0 +1,11 @@
+To create a dual-edge triggered flip-flop on FPGA without using invalid sensitivity lists, I will:
+
+- Use a master-slave flip-flop approach clocked only on one clock edge (posedge clk).
+- Implement a small internal circuit that toggles a flip-flop on the negative edge by using a delayed version of the clock and sampling logic.
+- Sample the input 'd' on the positive edge as usual (master stage).
+- For the negative edge behavior, detect the falling edge of clk by using a shift register or by using the current and previous clock values and update the slave stage accordingly.
+- The output 'q' will be updated on both edges by internally synchronizing the updates so that the effective data changes on both clock edges.
+- This method uses only posedge triggered flip-flops and simple combinational logic to emulate dual-edge triggering.
+- The design avoids generating any inverted clocks and does not rely on negative edge always blocks.
+
+This approach effectively implements a "dual-edge flip-flop" without violating FPGA synthesis constraints and without duplicating full flip-flops for posedge and negedge.

@@ -1,0 +1,20 @@
+The original solution is correct but can be optimized for better PPA (Power, Performance, Area) metrics:
+
+1. Performance Optimization:
+   - Remove the separate direction register by using the MSB of the counter as direction indicator
+   - This eliminates the need for direction toggling logic and reduces critical path
+
+2. Power Optimization:
+   - Use arithmetic that naturally wraps around (no boundary condition checks)
+   - Fewer comparators mean less switching activity
+
+3. Area Optimization:
+   - Eliminate the direction register completely
+   - Reduce comparator logic by using arithmetic properties
+
+New approach:
+- Use a 6-bit counter internally (5 bits for value, 1 implicit direction)
+- The counter will naturally count up to 63 then wrap around
+- We use only the lower 5 bits for output, creating automatic triangle wave
+- Reset sets counter to 0 (counting up)
+- No explicit direction or boundary checks needed

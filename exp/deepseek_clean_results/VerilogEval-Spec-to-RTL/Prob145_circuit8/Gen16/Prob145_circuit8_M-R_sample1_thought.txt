@@ -1,0 +1,21 @@
+After analyzing the waveform and the feedback, here's a refactored approach:
+
+1. Key Observations:
+   - p is synchronous, updated only at rising clock edges
+   - p equals 'a' when q is 0, otherwise p is 0
+   - q behaves as a delayed version of p, but with asynchronous clear when 'a' is high during clock low
+   - q needs to remember if p was 1 in the previous cycle
+
+2. Refactoring Strategy:
+   - Use combinational logic for p (assign statement) based on current q and a
+   - Register p's value at clock edges
+   - Implement q as a flip-flop with:
+     * Asynchronous clear when a=1 during clock low
+     * Synchronous set when previous p was 1
+   - Use a separate register to track p's previous value
+
+3. Benefits of New Structure:
+   - Clear separation of combinational and sequential logic
+   - More explicit handling of asynchronous clear
+   - Easier to verify timing relationships
+   - Matches waveform requirements precisely

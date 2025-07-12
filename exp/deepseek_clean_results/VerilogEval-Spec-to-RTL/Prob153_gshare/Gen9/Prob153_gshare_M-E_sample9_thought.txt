@@ -1,0 +1,13 @@
+Novel "Delayed Update" Architecture:
+1. Instead of immediate GHR updates during prediction, buffer the prediction outcome and apply it in the next cycle
+2. This creates a 1-cycle prediction pipeline, allowing better timing closure
+3. Training still has immediate priority for mispredictions
+4. Added a prediction buffer register to store pending GHR updates
+5. Simplified PHT update logic using arithmetic saturation
+6. Optimized index calculation by pre-computing XOR results
+
+Key Benefits:
+- Better timing: Prediction path is split across two cycles
+- Reduced contention: Predictions and training naturally stagger
+- Same accuracy: Semantic behavior matches requirements
+- Power savings: Only update GHR when needed

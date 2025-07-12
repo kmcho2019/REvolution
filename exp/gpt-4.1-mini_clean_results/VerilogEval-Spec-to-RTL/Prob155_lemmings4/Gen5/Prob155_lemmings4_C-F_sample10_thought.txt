@@ -1,0 +1,15 @@
+Fuse the precise bump direction logic from Example 2 (explicitly setting direction on bump_left and bump_right with priority and both bump handling) with the well-structured mode enumeration and saturating fall timer logic from Example 1.
+
+Key fusion points:
+- Use 2-bit mode encoding (MODE_WALK, MODE_DIG, MODE_FALL, MODE_SPLAT) from Example 1 for clarity and standard FSM style.
+- Keep direction as a separate register bit, as in both examples, to reduce states and clarify walking direction.
+- Apply explicit bump logic: if bump_left && bump_right, toggle direction; else if bump_left, walk right; else if bump_right, walk left. This perfectly matches spec and avoids blind toggling.
+- Maintain priority order: fall > dig > bump.
+- Use a 5-bit saturating fall timer capped at 31, resetting on non-fall states.
+- Preserve asynchronous posedge reset to MODE_WALK and direction left.
+- Moore outputs derived from mode and direction.
+- Factor out duplicated next_dir = direction assignments for clarity.
+- Update fall_timer only during falling to reduce unnecessary toggling.
+- Overall, combine the clearest, minimal, and correct handling of bump logic, mode states, and fall timing to achieve an elegant, efficient and readable FSM design.
+
+This fusion yields a clean, maintainable FSM meeting all specs and improving correctness and clarity over Example 1's bump handling and Example 2's mode clarity.

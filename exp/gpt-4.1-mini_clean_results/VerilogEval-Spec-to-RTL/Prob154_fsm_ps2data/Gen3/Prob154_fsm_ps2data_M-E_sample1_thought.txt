@@ -1,0 +1,21 @@
+Use a two-process approach: a sequential process to capture bytes and track the message reception count, and combinational logic to determine the done signal and output.
+
+The FSM states will be encoded as one-hot for clarity and timing:
+
+- WAIT_START: Waiting for a byte where in[3] is 1 to start a message.
+- BYTE_2: Received first byte, now waiting for second byte.
+- BYTE_3: Received second byte, now waiting for third byte.
+
+A 3-byte shift register (24-bit) stores the message bytes as they arrive.
+
+On receiving the first byte (with in[3]=1), store it in bits [23:16], move to BYTE_2.
+
+On second byte, shift previous byte down and store new byte in [15:8], move to BYTE_3.
+
+On third byte, shift again and store in [7:0], assert done for one clock cycle, then return to WAIT_START.
+
+The done signal and out_bytes are registered outputs; done is high only in the cycle immediately after third byte arrives.
+
+Synchronous active-high reset clears the state, done, and outputs.
+
+This architecture uses shift registers to hold bytes and a one-hot FSM, resulting in clean logic and potentially better timing.

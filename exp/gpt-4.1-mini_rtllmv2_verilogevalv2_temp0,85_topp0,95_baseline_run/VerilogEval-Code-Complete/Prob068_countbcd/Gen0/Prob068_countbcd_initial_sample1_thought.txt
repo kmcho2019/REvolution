@@ -1,9 +1,0 @@
-To implement a 4-digit BCD counter with digits encoded in q[3:0] (ones), q[7:4] (tens), q[11:8] (hundreds), and q[15:12] (thousands), we need to increment the ones digit every clock cycle. When the ones digit reaches 9, it rolls over to 0 and enables the tens digit to increment. Similarly, when the tens digit reaches 9 and rolls over, it enables the hundreds digit, and the hundreds digit rolling over enables the thousands digit. The ena[3:1] signals should be asserted when the corresponding digit is to be incremented (i.e., when the lower digit rolls over from 9 to 0). The reset signal synchronously sets all digits to zero.
-
-We will:
-- Use synchronous logic triggered on the positive edge of clk.
-- Use a synchronous active-high reset to clear q and ena.
-- Calculate ena signals based on when the lower digit rolls over.
-- Properly handle BCD digit rollover from 9 to 0.
-
-This approach ensures a proper BCD counting sequence from 0000 to 9999.

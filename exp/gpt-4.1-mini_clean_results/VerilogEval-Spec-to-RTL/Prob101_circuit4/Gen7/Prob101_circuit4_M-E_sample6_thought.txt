@@ -1,0 +1,18 @@
+Analyze the given waveform to deduce the function of q in terms of inputs a, b, c, and d. From the data:
+
+- When a=0, q=1 if either b=1 or c=1; otherwise q=0.
+- When a=1, q=1 if either b=1 or c=1; otherwise q=0.
+- d does not affect output q at all.
+
+Thus, q = b OR c regardless of a or d.
+
+To implement this differently from just a simple OR, I can express q as a function of a and the OR of b and c: q = (~a & (b|c)) | (a & (b|c)) = b | c.
+
+To demonstrate a different architectural style, implement the OR operation via separate internal signals and use a generate block or assign with intermediate wires to explicitly show the logic flow, combining signals procedurally in an always block. The output will still be combinational but constructed through intermediate wires and a mux-like structure based on a, even though 'a' does not affect output logically, to add architectural difference.
+
+This shows the same functionality but with a two-stage logic decomposition:
+
+1. First compute bc_or = b | c.
+2. Then choose q based on a: q = bc_or regardless of a.
+
+This method intentionally adds a select mux (even if trivial) to showcase architectural variation.

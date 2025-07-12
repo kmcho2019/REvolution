@@ -1,0 +1,22 @@
+Novel Architectural Idea:
+1. Shift Register with Early Stop Detection:
+   - Instead of counting bits, use a 9-bit shift register to capture the entire frame (start + 8 data + stop)
+   - Detect start bit by monitoring the LSB of the shift register
+   - Validate frame when MSB (stop bit) is high and LSB (start bit) is low
+   - This eliminates the need for a separate bit counter and simplifies state transitions
+
+2. Predictive State Machine:
+   - Only 2 states needed: IDLE (waiting for start) and CAPTURE (collecting frame)
+   - Transition to IDLE immediately when a valid stop bit is detected
+   - Stay in CAPTURE until stop bit is found (handles framing errors)
+
+3. Edge Detection:
+   - Use falling edge of start bit to trigger capture
+   - This makes the design more robust to glitches during idle state
+
+Key Advantages:
+- Reduced state complexity (2 states vs 4 in original)
+- No explicit bit counting needed
+- Early detection of framing errors
+- More efficient use of shift register
+- Lower power due to simpler control logic

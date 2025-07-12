@@ -1,0 +1,11 @@
+To correctly implement the 32-bit Galois LFSR with taps at positions 32, 22, 2, and 1 (1-based indexing):
+
+1. First, understand the 1-based vs 0-based indexing: position 32 in 1-based is bit 31 in 0-based, position 22 is bit 21, etc.
+2. The correct tap mask should have bits set at these 0-based positions: 31, 21, 1, and 0
+3. The Galois LFSR operation requires:
+   - Right shift the register (q >> 1)
+   - XOR the feedback (q[0]) with each tapped bit position
+   - Insert the feedback bit at the MSB
+4. The XOR operations should be performed sequentially, not in parallel, to properly model the feedback path
+5. Maintain synchronous reset to 32'h1 on positive clock edge
+6. The corrected tap mask is 32'b10000000000100000000000000000011 (bits 31, 21, 1, and 0 set)

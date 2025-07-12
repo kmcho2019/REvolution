@@ -1,0 +1,20 @@
+The refactored solution will use a sequential approach with a finite state machine (FSM) to implement the shift-and-add multiplication. Here's the thought process:
+1. Use a 4-state FSM (IDLE, CHECK, ADD, SHIFT) to control the multiplication process
+2. Process one multiplier bit per cycle
+3. Maintain registers for:
+   - Current product (16-bit)
+   - Multiplicand copy (8-bit)
+   - Multiplier copy (8-bit)
+   - Bit counter (3-bit)
+4. In each cycle:
+   - Check current multiplier bit
+   - Add shifted multiplicand if bit is set
+   - Shift multiplicand left
+   - Shift multiplier right
+5. Output final product when all bits are processed
+
+This approach:
+- Uses sequential logic for better timing control
+- Processes one bit per cycle (8 cycles total)
+- Consumes less combinational logic than the parallel version
+- Easier to pipeline if needed

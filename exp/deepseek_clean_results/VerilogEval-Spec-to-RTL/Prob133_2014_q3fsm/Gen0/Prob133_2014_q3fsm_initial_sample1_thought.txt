@@ -1,0 +1,14 @@
+To implement this FSM, we'll need:
+1. Two main states: A (initial state) and B (counting state)
+2. A 3-bit shift register to track the last 3 values of w
+3. A counter to keep track of how many cycles we've been in state B
+4. Logic to determine when exactly two 1's appear in the 3-bit window
+
+The FSM operates as follows:
+- In state A: wait for s=1 to transition to B
+- In state B: 
+  - Shift in w each cycle
+  - After 3 cycles, check if exactly two 1's are in the window
+  - Set z accordingly in the next cycle
+  - Reset the counter and continue monitoring w
+- Synchronous reset returns to state A

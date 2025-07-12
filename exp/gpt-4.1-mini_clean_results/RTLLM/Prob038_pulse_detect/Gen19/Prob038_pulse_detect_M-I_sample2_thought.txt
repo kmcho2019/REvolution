@@ -1,0 +1,18 @@
+To optimize the existing pulse detection module for better Power, Performance, and Area (PPA), the main opportunities lie in reducing unnecessary toggling of registers and simplifying logic. The current design samples data_in every clock cycle into data_in_d, even when data_in is stable, which can cause switching power consumption.
+
+Improvement strategy:
+1. Implement conditional sampling of data_in only when it changes, reducing toggling in data_in_d register and thus power.
+2. Combine state and data_in_d into a single register by embedding previous data_in into the FSM state to reduce area and simplify logic.
+3. Simplify the FSM to two states (IDLE and HIGH) with the knowledge of previous data_in implicit in the FSM transitions.
+4. Generate data_out as a registered output to avoid combinational glitches and improve timing.
+5. Use non-blocking assignments consistently for synchronous logic.
+
+By doing these, we keep the logic minimal and synchronous, reduce power by conditional sampling, and improve timing by registering outputs.
+
+The new design will:
+- Hold a register prev_data_in that updates only when data_in changes.
+- Detect falling edge of data_in by comparing current data_in and prev_data_in.
+- Track FSM state to confirm pulse shape (0->1->0).
+- Assert data_out for one cycle at the falling edge after HIGH state.
+
+This approach balances simplicity with minor power savings and maintains or improves timing.

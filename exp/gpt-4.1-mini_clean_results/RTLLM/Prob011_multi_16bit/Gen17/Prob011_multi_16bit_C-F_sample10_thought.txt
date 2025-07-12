@@ -1,0 +1,19 @@
+To combine the best features of the two example designs, the fusion strategy includes:
+
+1. Clear separation of control and datapath from Example 1 with clock gating for registers to reduce toggling and power, plus synchronous reset and clean start/done signaling.
+
+2. Compact product register usage from Example 2, which packs multiplier and partial sums in one 32-bit register, reducing register count and simplifying datapath.
+
+3. Use a shift count from Example 1 that counts from 0 to 17 to provide explicit control and done signaling, making control clearer and easier to extend/debug.
+
+4. Update the product register by conditionally adding the multiplicand shifted into upper 16 bits only when the LSB of product is set, then shift right by one each cycle during active multiplication.
+
+5. Maintain the done flag logic from Example 1 that asserts at count==16 and clears at count==17 or start deassertion.
+
+6. Include explicit clock enable signals on registers to hold values steady outside operation, reducing unnecessary toggling for power savings.
+
+7. Use synchronous reset on all registers to simplify timing and ensure glitch-free reset behavior.
+
+8. Overall, implement shift-and-accumulate multiplication that processes one bit per clock cycle over 16 cycles once started, using minimal registers and simple logic.
+
+This fusion yields a clean, power-aware, and timing-friendly multiplier design that is easy to understand, debug, and synthesize efficiently.

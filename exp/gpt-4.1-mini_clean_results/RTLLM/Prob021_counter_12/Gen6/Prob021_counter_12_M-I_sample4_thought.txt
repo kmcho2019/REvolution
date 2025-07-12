@@ -1,0 +1,7 @@
+To improve PPA while preserving correctness, I will simplify the enable logic by removing the rst_n condition from count_enable since reset is handled separately in the always block. This reduces unnecessary logic toggling and simplifies synthesis. Further, I will separate the reset condition explicitly at the top, then use valid_count directly to control counting, ensuring minimal combinational overhead.
+
+Additionally, I'll implement a slightly optimized comparison by using the maximum count value as a parameter to improve scalability and readability. The counter will increment only when valid_count is high, and wrap to zero at 11.
+
+This yields a clean, minimal design with a straightforward counter enable signal, slightly reduced logic complexity, and better power due to less switching in enable logic.
+
+No clock gating instantiation is done as it may cause synthesis issues or require specific library cells; instead, the enable signal is used effectively for gating the counter increment.

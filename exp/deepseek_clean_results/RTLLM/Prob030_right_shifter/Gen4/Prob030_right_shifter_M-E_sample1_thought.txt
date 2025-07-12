@@ -1,0 +1,22 @@
+Novel Architecture Idea:
+1. Circular Buffer Implementation:
+   - Instead of physical bit shifting, use a write pointer to track insertion points
+   - Maintain a fixed 8-bit storage with pointer arithmetic for "virtual" shifting
+   - This reduces physical signal transitions (lower power) and simplifies timing paths
+
+2. Dual-Pointer System:
+   - Write pointer (w_ptr) for new data insertion
+   - Read pointer (r_ptr) for output alignment
+   - Allows future expansion for parallel access
+
+3. Benefits:
+   - No physical shifting means only one bit changes per cycle (better power)
+   - Pointer arithmetic is simpler than shift operations (better timing)
+   - Scales better for larger shift registers
+   - Enables potential read-while-write operation
+
+Implementation Details:
+- 3-bit pointers for 8 locations (0-7)
+- Output is always from r_ptr position
+- Each cycle: update w_ptr and copy input to buffer[w_ptr]
+- Reset initializes pointers to 0 and clears buffer

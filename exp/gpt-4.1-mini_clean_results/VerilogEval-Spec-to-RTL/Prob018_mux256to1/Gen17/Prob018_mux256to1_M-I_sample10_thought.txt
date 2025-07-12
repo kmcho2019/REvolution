@@ -1,0 +1,14 @@
+The original solution uses a balanced 4-level tree of 4-to-1 muxes, which is modular and clear but has a mux depth of 4 and 85 total small muxes. To improve PPA (performance, power, area), we can reduce the mux tree depth by increasing the mux radix.
+
+Specifically, replacing the 4-to-1 muxes with 16-to-1 muxes arranged in a 2-level tree reduces the logic depth from 4 mux stages to 2 mux stages, thus potentially improving timing. Using 16-to-1 muxes also reduces the total number of muxes instantiated, improving area and power.
+
+We can implement 16-to-1 muxes by indexing 16-bit inputs with 4-bit selects (sel bits). We can split the 8-bit sel into two 4-bit parts:
+
+- Level 0: 16 instances of 16-to-1 muxes, each takes 16 bits from 'in' selected by sel[3:0].
+- Level 1: 1 instance of 16-to-1 mux, selects among 16 outputs of level0 using sel[7:4].
+
+This halves the mux depth from 4 to 2, reduces number of muxes from 85 to 17, which should improve performance and area, and likely reduce power due to fewer active switching elements.
+
+The Mux16to1 module is simple and uses indexing to select one bit. The TopModule instantiates 16 Mux16to1 modules for level0, and a final Mux16to1 at level1.
+
+This approach maintains clarity and modularity, while significantly improving PPA metrics compared to the original hierarchical 4-to-1 mux tree.

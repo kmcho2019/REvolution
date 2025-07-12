@@ -1,0 +1,14 @@
+I will fuse the best ideas from both examples to create a superior 8-bit Radix-4 Booth multiplier by combining:
+
+- The explicit FSM structure with well-defined states (IDLE, RUN, DONE) and a clean next-state logic from Example 2, enhancing readability and stable output signaling.
+- The sign-extension of inputs and multiplier extension with a zero LSB for Booth recoding from both examples for correctness.
+- Use of a combinational Booth operation function (like Example 1) for clarity and to encapsulate the partial product logic cleanly, aiding maintainability and possible pipelining.
+- Precomputing Booth recoding bits combinationally, and using synchronous FSM and registers for partial product accumulation and multiplier shifting.
+- Using a signed 18-bit accumulator for partial sums with proper shifting, combining the better-formulated arithmetic and state machine from Example 1.
+- Holding outputs stable in DONE state and asserting ready only after completion.
+- Clear separation of combinational (Booth decoding) and sequential logic for easier synthesis and improved timing.
+- The module starts in IDLE after reset, then transitions to RUN once reset is deasserted, performs 5 steps (covering 8 bits radix-4 Booth), then enters DONE with ready asserted.
+- Reset synchronously initializes the module; the multiplier register is extended with one LSB zero bit for Booth recoding.
+- Employ non-blocking assignments in sequential logic and keep combinational logic outside sequential always blocks.
+
+This fusion balances clarity, correctness, timing, and power, providing a clean, maintainable, and synthesizable design with clear FSM states and encapsulated Booth logic.

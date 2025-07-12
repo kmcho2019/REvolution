@@ -1,0 +1,10 @@
+A different approach to designing the finite-state machine is to use a combination of counters and a state machine. The state machine can have four states: IDLE, SHIFT, COUNT, and WAIT_ACK. 
+In the IDLE state, the machine checks for the start pattern (1101) on the data input. 
+Once the pattern is detected, it transitions to the SHIFT state, where it asserts shift_ena for exactly 4 clock cycles and shifts in the duration bits. 
+After shifting, it transitions to the COUNT state, where it asserts counting and waits for done_counting to go high. 
+When done_counting is high, it transitions to the WAIT_ACK state, where it asserts done and waits for ack to go high. 
+Finally, when ack is high, it returns to the IDLE state. 
+A synchronous reset can be used to reset the state machine to the IDLE state when reset is high.
+
+This approach uses two counters: one to count the number of bits shifted in the SHIFT state and another to count the clock cycles in the COUNT state. 
+The state machine transitions between states based on the values of these counters and the inputs (data, done_counting, ack).

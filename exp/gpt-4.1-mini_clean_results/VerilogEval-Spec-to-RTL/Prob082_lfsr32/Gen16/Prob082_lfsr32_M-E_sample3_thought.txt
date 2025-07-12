@@ -1,0 +1,10 @@
+I will implement the 32-bit Galois LFSR using an explicit bit-by-bit next-state calculation inside a combinational always block. Instead of using a mask and a single XOR with q[0], I will propagate the feedback XOR sequentially through each tapped bit, effectively emulating the Galois LFSR shift-right behavior with taps at bits 31, 21, 1, and 0. 
+
+This approach:
+- Makes the feedback logic explicit by directly assigning each bit’s next state.
+- Helps illustrate how each bit depends on the current q and the LSB feedback bit.
+- Retains synchronous reset and positive-edge clock triggering.
+- Provides a fully synthesizable and understandable RTL style alternative to mask-based implementation.
+- May facilitate easier debug or formal verification due to direct bitwise next state logic.
+
+The downside is somewhat more verbose code but with clear visibility into the shift and XOR feedback operations.

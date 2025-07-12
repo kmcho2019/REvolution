@@ -1,0 +1,16 @@
+Fuse the two example solutions to design a pipelined unsigned 8-bit multiplier with a balanced 4-stage pipeline for improved timing, moderate latency, and efficient power and area usage.
+
+Fusion Strategy:
+- Use a 4-bit shift register pipeline for mul_en_in to track data validity through pipeline stages.
+- Sample inputs only when mul_en_in is asserted.
+- Generate all 8 partial products combinationally by shifting mul_a_reg by each bit index of mul_b_reg conditionally.
+- Divide the partial products into three groups for addition to reduce large multi-operand adder delay:
+  - Stage 1 sums partial_products[0..2]
+  - Stage 2 sums partial_products[3..5]
+  - Stage 3 sums partial_products[6..7]
+- Each stage sums a limited number of partial products, stored in pipeline registers only when valid.
+- Final stage sums the three partial sums from previous pipeline stages to produce the final 16-bit product.
+- Output enable (mul_en_out) is derived from the MSB of the enable shift register, indicating when the output product is valid.
+- Registers are cleared on reset and updated only when the corresponding enable bit is active, reducing switching and power.
+- This approach balances pipeline depth, reduces critical path delay from large adders in a single cycle, and improves throughput compared to example 1.
+- Using three sum registers followed by a final sum stage keeps logic manageable, avoids big multi-operand adders, and keeps latency at 4 cycles.

@@ -1,0 +1,13 @@
+To improve the 4-bit unsigned pipeline multiplier design, we need to address the identified issues and follow a structured approach to implement the multiplication process. Here's a step-by-step improvement strategy:
+
+1.  **Simplify the FSM:** Instead of using a complex FSM with multiple states, we can simplify the multiplication process into two main stages: partial product generation and accumulation. We can use two registers to store intermediate results, which allows us to break down the multiplication into two clock cycles.
+
+2.  **Handle Clock and Reset Signals:** We should handle the reset signal on the negative edge of `rst_n` or the positive edge of `rst` (active-high reset) for consistency and clarity.
+
+3.  **Data Width Management:** To prevent overflow and ensure accurate results, we need to properly manage the data width during the multiplication process. This involves extending the input signals by adding zeros at the most significant bit positions and using the correct data width for intermediate registers.
+
+4.  **Non-Blocking Assignments:** To avoid simulation issues and ensure correct sequential logic behavior, we should use non-blocking assignments (`<=`) for all sequential logic operations.
+
+5.  **Pipelined Implementation:** We should correctly implement a pipelined multiplication process, where each stage of the multiplication is separated by a clock cycle, allowing for a more efficient and scalable design.
+
+6.  **Optimization:** After addressing the functionality issues, we can optimize the design for better power, performance, and area (PPA) metrics by reducing unnecessary logic, minimizing the number of registers, and improving the overall architecture.

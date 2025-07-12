@@ -1,0 +1,9 @@
+Refactor the FSM by using a Moore FSM style with an explicit output register updated only in the sequential block at state transitions, and keep the w_count update separate. Use a smaller 2-bit state encoding and combine the three B states into one state with a 2-bit cycle counter (0 to 2) to track which cycle of the three we are currently in. This reduces the number of explicit states and simplifies next-state logic.
+
+Use an enumerated two-state FSM (A and B), with a 2-bit cycle counter when in B to count the three cycles. Accumulate the w count in a 2-bit register incrementally each cycle in B, and after the third cycle, assert z based on the count and reset the cycle and count registers.
+
+This approach uses a combination of a simple 2-state FSM and counters, which reduces state logic and makes the design more compact. Also, use combinational `assign` statements for next state and outputs to clarify logic, and use non-blocking assignments in sequential always blocks for registers, improving clarity and separation of combinational and sequential logic.
+
+Finally, remove the integer and implement all arithmetic with 2-bit registers and wires only.
+
+This refactoring maintains the original functionality and timing but improves clarity, reduces states, and uses counters in B instead of multiple states.

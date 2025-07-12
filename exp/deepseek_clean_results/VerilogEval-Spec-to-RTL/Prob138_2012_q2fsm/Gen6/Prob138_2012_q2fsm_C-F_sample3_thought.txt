@@ -1,0 +1,21 @@
+Fusion Strategy:
+1. State Encoding: Combine the efficiency of binary encoding (Example 2) with transition optimization (Example 1) by using a modified Gray code that minimizes transitions between frequently visited states (A-B-C-D path).
+
+2. Output Logic: Use the minimal bit-check approach from Example 1 (current_state[2]) for z output, which is more efficient than explicit state comparisons.
+
+3. Architecture: Maintain the clean two-always-block structure from both examples for readability and synthesis optimization.
+
+4. Reset Handling: Keep synchronous reset from both examples for consistent timing.
+
+Optimized State Encoding:
+A: 000 (reset state)
+B: 001 (1-bit change from A)
+C: 011 (1-bit change from B)
+D: 010 (1-bit change from C)
+E: 110 (1-bit change from C)
+F: 111 (1-bit change from D and E)
+
+This encoding ensures:
+- Single-bit transitions between A-B-C-D (most common path)
+- Minimal output logic (z = MSB)
+- No unused states (efficient encoding)

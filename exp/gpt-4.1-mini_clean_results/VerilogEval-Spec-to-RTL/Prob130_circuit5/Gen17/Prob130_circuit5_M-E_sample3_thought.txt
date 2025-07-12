@@ -1,0 +1,11 @@
+Implement the logic using a straightforward 16-to-1 multiplexer style with the 4-bit input 'c' as the selector. Create a 16-entry lookup table (ROM) that maps each possible 'c' value to the corresponding output 'q' per the waveform:
+
+- For c=0, q=b
+- For c=1, q=e
+- For c=2, q=a
+- For c=3, q=d
+- For c=4..15, q=4'hF
+
+This lookup table approach simplifies logic by indexing into inputs or constants based on 'c' without multiple equality comparators or gating. The 'q' output is assigned combinationally via a case statement on 'c', efficiently realizing the mux in hardware.
+
+This architecture minimizes gate count by using a single case construct, improving power by reducing unnecessary toggles on input signals not selected, and improves timing by avoiding wide OR trees. It is conceptually simple and scalable for more complex selections if needed.

@@ -1,0 +1,23 @@
+To properly implement a fractional frequency divider by 3.5 (i.e., dividing the clock frequency by 3.5), we need to generate a clock output with a period equal to 7 input clock cycles. Achieving this requires handling half-cycle phase shifts, which cannot be done using combinational logic alone.
+
+To fix the issue:
+
+1. Use both the positive and negative edges of the input clock to create two phase-shifted intermediate clocks:
+   - On the positive edge of `clk`, generate `clk_even` with a certain pulse width (high for 4 cycles, low for 3).
+   - On the negative edge of `clk`, generate `clk_odd` with the same pulse width but shifted by half a clock cycle (delayed by half clock period).
+   
+2. Implement two 3-bit counters, one incrementing on posedge (`cnt_pos`) and another on negedge (`cnt_neg`). Both count modulo 7.
+
+3. Generate `clk_even` and `clk_odd` using their respective counters:
+   - `clk_even` high for counts 0 to 3 (4 cycles).
+   - `clk_odd` high for counts 0 to 3 (4 cycles).
+   
+   Because the negative edge is half a clock period delayed relative to the positive edge, these two signals are effectively phase-shifted by half clock cycle.
+
+4. Combine `clk_even` and `clk_odd` via OR. This merges the two half-cycle-shifted signals, producing a smoother fractional frequency divided output.
+
+This double-edge clocking approach leverages both clock edges to simulate half-cycle delays, making the output clock period equal to 7 input cycles and duty cycle close to 50%. This corrects the original issue where only positive edge counting was used and phase shifts were approximated via combinational conditions.
+
+Also, synchronous resets initialize counters and outputs to known states. This solution matches the hardware constraints and achieves the intended fractional division of 3.5.
+
+Note: This design depends on both edges of the clock and may not be synthesizable on all FPGA architectures without special primitives, but it correctly models the desired fractional division in RTL.

@@ -1,0 +1,7 @@
+I will refactor the design to use a simple synchronous counter-based approach without explicit FSM states. On synchronous reset, the counter is loaded to 4, then decremented each clock cycle until zero. The shift_ena output is asserted whenever the counter is non-zero. This makes the assertion length explicit, and output is registered with the counter to ensure proper timing.
+
+This approach simplifies the logic and avoids combinational output derived from FSM states, preventing glitches or timing mismatches. The synchronous reset directly initializes the counter to 4 cycles of enable, then the output shift_ena is '1' while the counter is not zero, achieving exactly 4 clock cycles of enable after reset.
+
+This implementation keeps synchronous reset and positive edge triggered sequential logic. The counter width is 3 bits (enough to hold 4) and shift_ena is assigned based on the counter state.
+
+No FSM states or next state combinational logic is used here, making the design concise and robust for the required behavior.

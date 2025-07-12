@@ -1,0 +1,7 @@
+Refactor the FSM using a two-process structure separating state register and combinational next-state logic. Use a combinational always block to compute next_state and output z based on the current state and input x (not registered). Output z is driven as a registered signal updated synchronously. The state register and output register are updated on the clock with asynchronous reset.
+
+This separates next-state and output computation from state update cleanly, with z registered rather than purely combinational. This can improve timing by minimizing combinational fanout of z and aligns with a classic Moore FSM style where output depends only on the state. We avoid registering x explicitly, using the input x directly in next state and output combinational logic, which can reduce a register and simplify timing while maintaining correct behavior.
+
+The asynchronous reset initializes state and output registers. The output is updated in the sequential block, making it a Moore output depending on the current state only. This also ensures the output z is stable and synchronized with the state.
+
+Overall, this is a stylistic and structural refactor keeping the same two-state Moore FSM and function.

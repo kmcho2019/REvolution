@@ -1,0 +1,11 @@
+To solve this problem, I propose a novel architectural idea that utilizes a finite state machine (FSM) to control the entire process. The design will consist of five main states: IDLE, SHIFT, COUNT_INIT, COUNT, and DONE. 
+
+In the IDLE state, the FSM will search for the input sequence 1101. Once the sequence is detected, the FSM will transition to the SHIFT state and shift in the next 4 bits to determine the delay duration. 
+
+The FSM will then transition to the COUNT_INIT state, where it will initialize the counter with the desired value based on the delay duration. The FSM will then transition to the COUNT state, where it will count up to the desired number of clock cycles. 
+
+During the COUNT state, the FSM will decrement the counter every 1000 clock cycles and assert the 'counting' signal. The 'count' output will be updated with the remaining time. 
+
+Once the counter reaches zero, the FSM will transition to the DONE state, where it will assert the 'done' signal and wait for the ack signal to reset the state machine.
+
+The design will use a single always block to implement the FSM, and the output signals will be assigned based on the current state of the FSM.

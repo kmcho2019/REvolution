@@ -1,0 +1,10 @@
+To simplify the design while maintaining the original functionality:
+
+- Use a 2-bit stack pointer (SP) counting the number of used entries from 0 (empty) to 4 (full). This intuitive counting avoids subtracting from 4 and simplifies pointer logic.
+- Push increments SP after writing data at the current SP index; pop decrements SP before reading data, so operations are straightforward.
+- Keep the reset synchronous and clear SP and dataOut; do not clear stack memory on reset (optional optimization since clearing is not strictly required for correct function).
+- Update dataOut only on pop (read) operation.
+- Derive FULL and EMPTY flags directly from SP count (0 for empty, 4 for full).
+- Implement a single always_ff block triggered on rising clock with synchronous reset.
+- Keep code concise with minimal combinational signals.
+This reduces arithmetic and indexing complexity and results in cleaner, easy-to-understand code.

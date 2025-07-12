@@ -1,0 +1,17 @@
+The provided code for the TopModule implements a Mealy-type finite state machine that recognizes the sequence "101" on the input signal x. The existing implementation utilizes a shift register to track the last two bits of the input sequence and asserts the output z when the shift register contains the sequence "10" and the current input is "1". 
+
+To refactor this code, we can maintain the same core idea but implement it with a different structure. Instead of using a shift register, we can explicitly define the states of the finite state machine and use a combinational logic to determine the next state and the output.
+
+We will define three states: IDLE, STATE1, and STATE2. The IDLE state is the initial state, STATE1 represents the state when the first "1" is received, and STATE2 represents the state when the sequence "10" is received. 
+
+The next state logic will be defined as follows:
+- If the current state is IDLE and the input x is "1", the next state will be STATE1.
+- If the current state is IDLE and the input x is "0", the next state will remain IDLE.
+- If the current state is STATE1 and the input x is "0", the next state will be STATE2.
+- If the current state is STATE1 and the input x is "1", the next state will remain STATE1.
+- If the current state is STATE2 and the input x is "1", the next state will be IDLE and the output z will be asserted.
+- If the current state is STATE2 and the input x is "0", the next state will be IDLE.
+
+We will use a case statement to implement the next state logic and the output logic. This approach allows for a more explicit and readable definition of the finite state machine.
+
+Additionally, we will maintain the asynchronous reset to ensure proper initialization of the state machine.

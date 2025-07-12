@@ -1,0 +1,15 @@
+Refactor the FSM to a Mealy-style approach where outputs are generated directly from the current state and inputs, simplifying output logic. Use a one-hot encoded state register for clarity and easier timing control. Implement the pattern detection and counters as separate registers updated synchronously, and encode outputs directly from state and conditions without waiting for extra states.
+
+Specifically:
+- Implement states: A (reset), F_pulse, pattern detection (waiting for 101), G_pulse, Y_monitor, G_on, G_off.
+- Use a 3-bit shift register for x, updated on every clock.
+- Detect pattern `101` on the shift register synchronously.
+- Generate output f=1 for one cycle right after reset is deasserted.
+- Generate output g=1 for exactly one cycle right after the pattern detection, then monitor y for up to two cycles.
+- If y==1 within 2 cycles, hold g=1 permanently; else hold g=0 permanently.
+- Use combinational assigns for f and g based on current state (and possibly input).
+- Keep synchronous active-low reset inside the always block.
+- Count y monitor cycles with a 2-bit counter, reset appropriately.
+- Overall, keep a clear one-hot FSM implementation with direct outputs, reducing latency and aligning outputs correctly.
+
+This structure should reduce the complexity in output logic, avoid extended g pulses beyond requirements, and clarify timing to fix the mismatches observed previously.

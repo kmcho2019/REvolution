@@ -1,0 +1,24 @@
+Refactored Design Strategy:
+
+1. State Machine Restructuring:
+- Use one-hot encoding for clearer state representation
+- Separate state registers and next-state logic
+- Make outputs purely combinatorial functions of current state
+
+2. Pattern Detection:
+- Keep continuous shifting but only check pattern in IDLE state
+- Clear pattern register on reset and when leaving IDLE state
+
+3. Shift Counting:
+- Use a separate counter that resets when entering SHIFT state
+- Count exactly 4 cycles (0 to 3) before transitioning
+
+4. Output Logic:
+- Derive all outputs directly from state bits
+- Ensure outputs are asserted for exactly the required durations
+- No glitches between state transitions
+
+Key Improvements:
+- Clear separation of sequential and combinational logic
+- One-hot encoding makes state transitions more explicit
+- Outputs are glitch-free as they depend only on current state

@@ -1,0 +1,9 @@
+To optimize the existing synchronous decade counter for better PPA, I will apply these improvements:
+
+1. Simplify the detection of decimal 10 by replacing the bitwise expression with a simple equality check (q == 4'd10). This can lead to easier synthesis and potentially smaller area.
+2. Use a synchronous reset inside the sequential always block to reduce combinational logic, improving timing by making the next-state logic purely arithmetic and the reset explicit.
+3. Replace the combinational next_q logic with direct arithmetic increment and reset handling inside the clocked process, minimizing combinational logic depth.
+4. Add a small enable signal so that q only toggles when counting is active; however, since counting is continuous here, enable would just be implicit in reset and wrapping, so no clock gating is applied.
+5. Since this counter counts from 1 to 10 and wraps back to 1, we'll implement the wrap logic with a simple if statement in the clocked process.
+
+Overall, this reduces the combinational critical path, simplifies logic expressions, and can marginally improve power and area, while keeping the design clean and easy to synthesize.

@@ -1,0 +1,9 @@
+To implement the Moore machine described, we first need to identify the states and transitions. The machine has two states, A and B. We can represent these states using a 1-bit signal, 'state', where 'state' equals 0 for state A and 'state' equals 1 for state B. 
+
+The reset condition is asynchronous, meaning that whenever 'areset' is high, the machine should immediately reset to state B. 
+
+For the synchronous transitions, we can use a combinational logic to determine the next state based on the current state and input 'in'. The machine transitions from A to B when 'in' is 0 and stays in A when 'in' is 1. From state B, it stays in B when 'in' is 1 and transitions to A when 'in' is 0.
+
+We will use a sequential logic (e.g., always @(posedge clk) block) to update the state at every clock cycle.
+
+Finally, the output 'out' will be determined by the current state, which in this case, is simply the state itself since the output is a Moore output, dependent only on the current state.

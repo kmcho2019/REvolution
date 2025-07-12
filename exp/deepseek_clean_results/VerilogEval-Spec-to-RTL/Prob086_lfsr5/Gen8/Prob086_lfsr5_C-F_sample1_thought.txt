@@ -1,0 +1,13 @@
+Fusion strategy:
+1. Maintain the correct Galois LFSR structure with taps at positions 5 and 3 (0-based: bits 4 and 2)
+2. Keep the efficient single concatenation approach from both examples
+3. Preserve the active-high synchronous reset to 5'b00001
+4. Optimize the XOR operation placement to potentially improve timing:
+   - Move the XOR operation earlier in the logical flow
+   - Keep the same functionality but with better timing characteristics
+5. The resulting implementation should:
+   - Be functionally identical to both examples
+   - Potentially improve timing (reduce negative WNS)
+   - Maintain the excellent power and area characteristics
+
+Key insight: The XOR operation between q[3] and q[0] is the critical path. By keeping the same logical operation but expressing it differently, we might help the synthesis tool find a better implementation.

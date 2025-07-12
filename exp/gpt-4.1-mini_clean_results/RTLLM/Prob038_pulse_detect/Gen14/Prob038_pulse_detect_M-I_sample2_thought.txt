@@ -1,0 +1,5 @@
+The original design correctly detects the pulse pattern with a simple 3-state FSM and asserts data_out for one clock cycle. However, data_out is assigned both combinationally and sequentially, causing potential redundant toggling and slightly increased power consumption. To optimize for power and timing, I will move all data_out assignments exclusively into the sequential block.
+
+This ensures that data_out only changes on clock edges, reducing glitches and unnecessary switching. I will also simplify the combinational logic to only compute next_state, while data_out depends solely on the current FSM state.
+
+This approach maintains functional correctness while improving power and timing by minimizing combinational toggling on the output. The FSM remains minimal and clearly coded, with a synchronous reset and registered outputs for better timing closure.

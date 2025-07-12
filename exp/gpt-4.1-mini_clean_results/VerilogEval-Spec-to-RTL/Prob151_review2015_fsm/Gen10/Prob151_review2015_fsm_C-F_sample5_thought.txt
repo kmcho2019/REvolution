@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by implementing a clear Moore FSM with enumerated states for readability and maintainability, but use standard Verilog syntax with localparam for maximum compatibility and synthesis friendliness. 
+
+Keep the 4-step pattern detection embedded in states to avoid extra shift registers, enabling immediate overlapping pattern detection.
+
+Use a 2-bit shift_count counter for exactly 4 cycles of SHIFT state; reset it outside SHIFT state to minimize toggling.
+
+Separate sequential and combinational logic clearly to avoid race conditions and improve timing.
+
+Derive outputs purely combinationally from the current state (Moore outputs) for robust timing.
+
+This fusion yields a clean, synthesizable FSM: easy to understand, minimal in area, low power (counter only toggles 4 cycles), and good performance due to simple combinational logic. Avoid SystemVerilog-only constructs to enhance portability, yet keep code succinct and modern with localparam-based state encoding.

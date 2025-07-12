@@ -1,0 +1,14 @@
+Improvement Strategy:
+1. Timing Optimization: The current design has a negative WNS (-0.23ns). We can improve this by:
+   - Removing the comparator (q == 3'd6) and replacing it with a simpler wrap-around condition
+   - Using a direct increment with modulo operation which synthesizes more efficiently
+
+2. Power Optimization:
+   - Add clock gating for the increment logic when 'a' is high to prevent unnecessary toggling
+   - This reduces dynamic power by only enabling the increment logic when needed
+
+3. Area Optimization:
+   - Simplify the state transition logic to use fewer gates
+   - Use parameterized constants for better readability and potential optimization
+
+The improved design will maintain the same functionality while achieving better PPA metrics.

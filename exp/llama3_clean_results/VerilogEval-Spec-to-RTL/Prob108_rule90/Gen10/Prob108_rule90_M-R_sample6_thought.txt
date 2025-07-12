@@ -1,0 +1,9 @@
+To refactor the existing code, we can utilize a more structural approach by separating the combinational logic for calculating the next state into a separate module. This approach allows for a clearer separation of concerns, making the code more modular and potentially easier to maintain or optimize. The core idea is to create a sub-module that takes the current state and outputs the next state according to Rule 90, and then use this sub-module within the main `TopModule` to calculate the next state of the cellular automaton. This refactoring should make the code more organized and potentially more efficient in terms of synthesis and simulation.
+
+The main points to consider in this refactoring are:
+1. **Modularize the Next State Calculation**: Create a separate module (`Rule90NextState`) that calculates the next state based on the current state. This module will encapsulate the combinational logic required for Rule 90.
+2. **Use `assign` for Combinational Logic**: Within the `Rule90NextState` module, use `assign` statements to express the combinational logic for calculating the next state of each cell.
+3. **Handle Boundary Conditions**: Ensure that the left and right boundaries are correctly handled as having a value of 0 (off) in the calculation of the next states within the `Rule90NextState` module.
+4. **Simplify the Clock-Driven Logic**: Use a single `always` block in the `TopModule` to update the `q_reg` based on the `load` signal and the output from the `Rule90NextState` module.
+
+By implementing these changes, the code should be more modular, easier to understand, and potentially more efficient in terms of synthesis and simulation.

@@ -1,0 +1,10 @@
+Here's a novel approach using a toggle-based implementation instead of explicit state encoding. The key idea is:
+
+1. Eliminate explicit state variables by using the output itself as state storage
+2. Implement transitions through direct output manipulation:
+   - When in OFF (out=0) and j=1, toggle to ON (out=1)
+   - When in ON (out=1) and k=1, toggle to OFF (out=0)
+3. Use a single always block with synchronous reset
+4. The output is directly registered, making it glitch-free
+
+This approach reduces the state representation to just the output bit itself, eliminating any separate state variables while maintaining the exact same Moore machine behavior. It's particularly efficient for this simple 2-state machine.

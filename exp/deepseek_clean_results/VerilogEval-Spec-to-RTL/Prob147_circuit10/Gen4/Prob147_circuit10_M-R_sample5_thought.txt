@@ -1,0 +1,16 @@
+After carefully analyzing the waveform, I realize the circuit behaves as follows:
+1. State (flip-flop) updates on clock edges when:
+   - a=1 and b=1: toggle state
+   - a=0 and b=0: reset state to 0
+   - Otherwise: maintain state
+2. Output q is:
+   - When a=0: q = b
+   - When a=1: q = (b ? ~state : state)
+
+The key insight is that when a=1, q acts as a controlled inverter based on b:
+- b=0: q passes state
+- b=1: q inverts state
+
+This explains all waveform behavior perfectly. I'll implement this using:
+- A flip-flop for state with the described update rules
+- Continuous assignments for q based on the above logic

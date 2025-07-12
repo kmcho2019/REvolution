@@ -1,0 +1,5 @@
+Refactor the counter to separate the combinational next-state logic from the sequential state update. Use a wire for the next counter value `next_q` computed by combinational logic with a single 10-bit equality check to detect terminal count (999). Then, update the register `q` synchronously on clock edge using non-blocking assignment.
+
+This structure clearly distinguishes combinational and sequential parts, making the design modular and potentially easier for synthesis tools to optimize. The terminal count detection uses a direct 10-bit comparison for simplicity and potentially reduced logic. The synchronous reset remains active-high and resets `q` to 0.
+
+No split of the counter is done; the entire 10-bit value is checked directly, simplifying the comparison logic compared to split-part checks.

@@ -1,0 +1,9 @@
+To simplify the 3.5x fractional divider while maintaining functionality:
+1. Use a 3-bit counter to count 7 cycles (0-6) for the base period
+2. Generate two clock phases:
+   - Phase A: High for first 4 cycles (0-3), low for next 3 (4-6)
+   - Phase B: High for first 3 cycles (0-2), low for next 4 (3-6)
+3. Combine these phases with OR logic to create the final output
+4. The phase difference naturally creates the required fractional division
+5. Reset initializes all signals synchronously
+This approach eliminates the need for explicit phase shifting while maintaining the correct division ratio through simple counter-based control.

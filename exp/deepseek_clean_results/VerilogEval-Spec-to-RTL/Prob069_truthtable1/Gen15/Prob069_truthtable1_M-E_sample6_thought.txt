@@ -1,0 +1,18 @@
+Instead of using a mux, we can implement the function using a 3-to-8 decoder with output gating:
+1. First, decode the 3-bit input (x3,x2,x1) into 8 possible minterms
+2. Then OR together the minterms where f=1 in the truth table (rows 3,4,6,8)
+3. This approach:
+   - Explicitly shows the canonical sum-of-products form
+   - Makes it easy to modify if truth table changes
+   - Can be efficiently implemented in FPGAs using LUTs
+   - Shows the fundamental relationship between decoders and logic functions
+4. The decoder outputs are:
+   - d0 = ~x3 & ~x2 & ~x1 (row 1)
+   - d1 = ~x3 & ~x2 &  x1 (row 2)
+   - d2 = ~x3 &  x2 & ~x1 (row 3)
+   - d3 = ~x3 &  x2 &  x1 (row 4)
+   - d4 =  x3 & ~x2 & ~x1 (row 5)
+   - d5 =  x3 & ~x2 &  x1 (row 6)
+   - d6 =  x3 &  x2 & ~x1 (row 7)
+   - d7 =  x3 &  x2 &  x1 (row 8)
+5. f is then the OR of d2, d3, d5, d7

@@ -1,0 +1,9 @@
+To improve the existing solution, we should focus on optimizing the area and power consumption while maintaining the current performance. Given the PPA metrics, the design seems to be performing well in terms of timing but can be optimized further for area and power.
+
+One approach to optimize the area is to reduce the bit width of the signals where possible. Since the problem statement specifies that hours, minutes, and seconds are represented by 6-bit, 6-bit, and 6-bit outputs respectively, we can keep these as is to ensure we can represent the full range of values (0-59 for seconds and minutes, 0-23 for hours). However, internally, we can optimize the logic to minimize the number of bits required for intermediate calculations.
+
+For power optimization, we aim to reduce unnecessary switching activity. The current design already updates the time values only on the clock edge or reset, which is efficient. However, we can explore simplifying the conditional logic to further reduce switching activity.
+
+To balance these optimizations, we will maintain a single always block for simplicity and area efficiency but will ensure that the conditional logic is optimized for minimum switching activity. We will also ensure that the reset logic is properly handled to initialize all counters to zero when the reset signal is active.
+
+Given the current implementation uses a single always block with nested if-else statements, which seems efficient in terms of area and power, our focus will be on fine-tuning the conditional logic for better performance and ensuring the design meets the PPA requirements.

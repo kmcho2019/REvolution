@@ -1,0 +1,7 @@
+To optimize PPA while maintaining functionality, I will introduce explicit clock enables and minimize logic switching. Since shift_ena and count_ena are mutually exclusive, I will combine them into a single enable signal to gate the register update, reducing unnecessary toggling. Inside the always block, I will use a simple priority encoding with a case statement, improving logic clarity and easing synthesis optimization. This structure reduces combinational logic complexity on the data input to the register, potentially improving timing. Also, keeping data shifted into the MSB (most significant bit first) by shifting right and inserting data into q[3] clarifies the intended shift direction consistent with the problem statement. This is important: "Data is shifted in most-significant-bit first" means the new data enters the MSB, shifting the register right. The original solution shifted left and inserted data into LSB, which is backwards. Fixing this shift direction is critical for correctness and PPA by avoiding confusion in synthesis.
+
+Overall, the improved module uses:
+- a combined enable signal to gate register updates (less toggling)
+- correct MSB-first shift direction (shift right, insert data at MSB)
+- case statement for clarity and to help synthesis
+This should yield better timing, lower power, and maintain minimal area.

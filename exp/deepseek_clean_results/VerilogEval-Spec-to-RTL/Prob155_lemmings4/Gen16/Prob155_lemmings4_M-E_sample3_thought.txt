@@ -1,0 +1,13 @@
+I'll implement a hierarchical FSM with two layers:
+1. Top-level state machine for actions (walk/fall/dig/splat)
+2. Sub-state machine for direction (left/right)
+
+Key innovations:
+- Direction is tracked independently and only updated during walking state
+- Fall timer is implemented with a saturating counter
+- Strict priority encoding using nested if-else in state transitions
+- Outputs are purely combinatorial functions of state
+- Digging state persists until ground is lost, ignoring dig input
+- Splat condition is checked only when landing (ground=1 while falling)
+
+This separates concerns cleanly and makes the priority rules explicit in the code structure.

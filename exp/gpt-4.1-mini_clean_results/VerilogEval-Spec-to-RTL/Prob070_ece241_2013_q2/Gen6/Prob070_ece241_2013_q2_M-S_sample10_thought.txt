@@ -1,0 +1,35 @@
+The inputs a,b,c,d form a 4-bit number with a as MSB and d as LSB.
+
+The output should be logic-1 for decimal inputs 2 (0010), 7 (0111), and 15 (1111).  
+Logic-0 for inputs 0,1,4,5,6,9,10,13,14, while inputs 3,8,11,12 never occur (treated as don't-cares).
+
+We can write the sum-of-products by OR-ing the three minterms for 2, 7, and 15.
+
+To simplify the product-of-sums, we first find the zero outputs (the zeros) and their corresponding maxterms, then derive minimal POS expression including don't-cares to minimize it.
+
+Instead of complicated manual minimization, we exploit the fact that out = 1 if:
+- (a=0, b=0, c=1, d=0)  (2)
+- (a=0, b=1, c=1, d=1)  (7)
+- (a=1, b=1, c=1, d=1)  (15)
+
+We can factor terms to simplify the SOP:
+
+out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+Check for common factors:
+
+- The last two terms share (b & c & d):
+
+out_sop = (~a & ~b & c & ~d) | (b & c & d & (~a | a))  
+Since (~a | a) = 1,  
+out_sop = (~a & ~b & c & ~d) | (b & c & d)
+
+For POS form, use Demorgan on the SOP:
+
+out_pos = (a + b + ~c + d) & (a + ~b + ~c + ~d)
+
+This comes from negating the SOP minterms and converting to maxterms of zeros and don't-cares.
+
+This expression is minimal and logically equivalent.
+
+This provides a simpler, clean, and correct solution.

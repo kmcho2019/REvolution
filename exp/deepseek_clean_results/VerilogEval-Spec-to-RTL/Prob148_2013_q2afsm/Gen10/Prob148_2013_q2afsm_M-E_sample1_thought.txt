@@ -1,0 +1,15 @@
+Instead of a traditional FSM with explicit state transitions, I'll implement a priority-based arbiter with state tracking. The key innovations are:
+
+1. Priority Encoder Core: Uses combinational logic to determine the highest priority request at any cycle.
+
+2. State Tracking: Instead of separate states, we'll track the current grant holder using a register. This eliminates explicit state transitions.
+
+3. Dynamic Priority: The current grant holder maintains priority as long as their request is active (implicit state retention).
+
+4. Output Logic: Grants are directly derived from the current holder register.
+
+Advantages:
+- More scalable for additional requesters
+- Clear separation of priority logic and state maintenance
+- Reduced state transitions (only changes when grants switch)
+- Easier to modify priority scheme

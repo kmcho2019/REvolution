@@ -1,0 +1,26 @@
+Simplified solution approach:
+
+1. Pattern Detection:
+- Continuously shift data into pattern_reg in all states
+- Only check for 1101 pattern in IDLE state
+- No need to explicitly clear pattern_reg - it will naturally shift out old data
+
+2. Shift Control:
+- Use simple 2-bit counter for 4-cycle shift
+- Generate shift_ena only during SHIFT state
+- Transition to COUNT after exactly 4 shifts (when counter reaches 3)
+
+3. State Machine:
+- Minimal 4-state design (IDLE, SHIFT, COUNT, DONE)
+- Clear state transitions with simple conditions
+- Outputs directly tied to current state
+
+4. Reset Handling:
+- Synchronous reset to IDLE state
+- Counters and registers reset to zero
+
+Key simplifications:
+- Removed explicit pattern register clearing
+- Simplified counter comparison logic
+- Direct output assignments from state
+- Reduced redundant control logic

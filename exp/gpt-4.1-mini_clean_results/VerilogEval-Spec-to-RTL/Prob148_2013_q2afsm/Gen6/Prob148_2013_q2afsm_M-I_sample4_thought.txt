@@ -1,0 +1,12 @@
+The original design is functionally correct and clean but can be further optimized for area and power by reducing the number of flip-flops and simplifying output logic. The main area comes from storing state in a 2-bit register and decoding outputs with a combinational block.
+
+To improve PPA, I will:
+
+- Change the FSM encoding to one-hot using 4 flip-flops for states A-D, which can reduce combinational logic depth and speed up critical path by minimizing next-state logic complexity.
+- Use synchronous active-low reset as required.
+- Keep the priority and next-state logic but optimize it to rely on the one-hot encoding, enabling simpler next-state logic with minimal gate usage.
+- Generate outputs directly from the one-hot state signals, avoiding the need for explicit decoding logic.
+- Use non-blocking assignments in sequential blocks and blocking in combinational ones.
+- This approach may slightly increase flip-flop count from 2 to 4 but reduce logic complexity, improving timing and potentially lowering power due to simpler logic and fewer glitches.
+
+This trade-off balances timing and power improvements with minimal area increase and fits well for small FSMs with few states.

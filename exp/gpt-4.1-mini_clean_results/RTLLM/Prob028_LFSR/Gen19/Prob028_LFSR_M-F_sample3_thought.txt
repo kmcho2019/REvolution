@@ -1,0 +1,13 @@
+The key issue in the prior example was that the LFSR's reset initialized the register to zero, causing it to lock in that state, and that the testbench or environment had port width mismatches and unresolved signal assignment errors. To fix this:
+
+1. Keep the reset synchronous and active-high.
+2. Initialize the LFSR register to a non-zero seed (4'b0001) on reset to avoid lock-up in zero state.
+3. Explicitly define all testbench signals with correct widths (clk and rst as single-bit regs, out as 4-bit wire).
+4. Connect the module ports correctly with matching widths.
+5. Generate a clock with a fixed period.
+6. Drive the reset signal synchronously in the testbench.
+7. On every rising edge of the clock, print the LFSR output for verification.
+
+This will ensure a proper simulation environment, avoid locked states, and fix any port mismatch or unresolved assignment errors.
+
+The LFSR feedback remains as the inverted XOR of bits 3 and 2, shifted in at the LSB.

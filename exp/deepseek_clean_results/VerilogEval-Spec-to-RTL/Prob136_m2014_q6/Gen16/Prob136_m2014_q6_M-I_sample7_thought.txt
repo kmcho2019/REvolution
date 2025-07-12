@@ -1,0 +1,22 @@
+To optimize this solution further, I'll focus on improving PPA metrics while maintaining correctness:
+
+1. **State Encoding Optimization**: 
+   - Switch to one-hot encoding (6 bits for 6 states) to reduce combinational logic depth and improve timing
+   - One-hot typically has better timing at the cost of slightly more area, but our area metrics show we have headroom
+
+2. **Next State Logic**:
+   - Replace the function with direct combinational always block for better synthesis optimization
+   - Use casez for more efficient decoding of one-hot states
+
+3. **Output Logic**:
+   - Make output dependent on specific states rather than bit position for clearer intent
+   - Use continuous assignment for low power
+
+4. **Reset Handling**:
+   - Keep synchronous reset but initialize to first state (A)
+
+5. **Additional Optimizations**:
+   - Remove redundant default case since all states are covered
+   - Group related state transitions for better logic sharing
+
+This should improve timing (reduce WNS) while keeping power low and area reasonable.

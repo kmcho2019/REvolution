@@ -1,0 +1,13 @@
+Refactoring strategy:
+
+To maintain the combinational nature and the two-block structure, we replace explicit always blocks with one block for input capturing (same as before) and implement the division logic using a generate-for loop with continuous assignments inside a combinational block. 
+
+We will use an internal wire array to hold intermediate remainders and quotient bits, thus avoiding explicit registers for intermediate states and improving readability. This uses procedural loops for calculation but assigns outputs at the end, maintaining synthesizability.
+
+This approach clarifies the data flow by using intermediate wire variables and continuous assignment in a combinational always block, improving structural clarity while preserving the combinational behavior and the required two combinational always blocks.
+
+The first always block latches inputs into regs a_reg and b_reg as before.
+
+The second always block performs the division by iteratively shifting and comparing remainder with divisor, storing quotient bits into an intermediate reg array, and outputting final quotient and remainder.
+
+This approach highlights the stepwise division in a clear, readable manner different from the previous single for-loop style.

@@ -1,0 +1,7 @@
+To design a superior perpetual calendar, I will fuse the strengths of both examples by using a single always block that updates Hours, Mins, and Secs synchronously with an asynchronous reset to guarantee atomic, glitch-free updates without race conditions.
+
+I will explicitly declare local parameters for the maximum values of seconds (59), minutes (59), and hours (23) to improve code clarity and maintainability. Using a single always block reduces inter-block dependencies and helps the synthesis tool optimize logic better, potentially improving timing.
+
+I will flatten nested conditions for readability: check seconds rollover first, then minutes, and finally hours. Non-blocking assignments will be used to ensure correct sequential behavior. Hours will be 5 bits and Mins and Secs 6 bits as required.
+
+This approach balances clarity, timing, and area optimally and avoids the potential longer critical paths of multiple always blocks or complicated nested logic.

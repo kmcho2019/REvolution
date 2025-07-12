@@ -1,5 +1,0 @@
-The issue lies in the comparison of the value of 'a' and 'a_delayed' in the always block conditional statements. The design intent is for the counter 'q' to reset to 0 when 'a' transitions from 1 to 0 and increment when 'a' transitions from 0 to 1. However, due to the logic in the conditional statements, the counter behaves differently.
-
-Since 'a_delayed' is assigned at the beginning of the always block before the if-else conditions check, when 'a' transitions from 1 to 0, 'a_delayed' still holds the value of 1, causing the reset condition to be incorrectly triggered. This leads to the counter 'q' being reset at the wrong time. Similarly, during the 0 to 1 transition, 'a_delayed' retains the value of 0, preventing the counter from incrementing as expected.
-
-These incorrect comparisons result in the counter 'q' not behaving according to the specified waveform in the problem description, leading to the simulation mismatches observed.

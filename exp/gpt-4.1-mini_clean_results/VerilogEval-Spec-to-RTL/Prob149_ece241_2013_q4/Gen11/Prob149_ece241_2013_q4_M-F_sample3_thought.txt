@@ -1,0 +1,12 @@
+Revise the water level encoding to directly correspond to sensor patterns without ambiguity:  
+- BELOW when no sensors asserted (000)  
+- BETWEEN0 when only s[0] asserted (100)  
+- BETWEEN1 when s[0] and s[1] asserted (110)  
+- ABOVE when all sensors asserted (111)  
+Treat any other sensor pattern as BELOW, ensuring well-defined states.  
+
+Replace numeric comparison for rising water level detection with explicit ordinal encoding (from low to high): BELOW=0, BETWEEN0=1, BETWEEN1=2, ABOVE=3. This ordinal mapping makes 'curr_level > prev_level' reliable to detect rising water level transitions and accordingly open supplemental valve (dfr).  
+
+Outputs are fully combinational from registered previous level and current level, with synchronous reset initializing previous level to BELOW and outputs asserting all valves (fr0, fr1, fr2, dfr). Use always block to register previous level, and continuous assignments for outputs, ensuring stable and glitch-free outputs.  
+
+This approach faithfully maps sensor inputs to physical water levels, correctly detects rising water level transitions for supplemental flow control, and meets the reset behavior requirements.

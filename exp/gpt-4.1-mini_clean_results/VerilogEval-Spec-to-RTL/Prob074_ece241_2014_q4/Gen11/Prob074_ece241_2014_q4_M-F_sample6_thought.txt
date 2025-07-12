@@ -1,0 +1,10 @@
+To fix the synthesis and initial state issues, we need to remove the unsupported `initial` blocks and add an explicit synchronous reset signal internally that initializes the flip-flops to zero. Since the problem does not provide a reset input, we can introduce an internal reset signal that asserts for one clock cycle at the beginning of simulation using a register. This ensures the flip-flops start at zero and the design remains synthesizable.
+
+The approach is:
+1. Introduce an internal reset signal (`reset`) initialized to 1 at start.
+2. Use a synchronous reset that clears the flip-flops on the first clock cycle, then deasserts reset.
+3. Update the flip-flops on the positive edge of the clock with synchronous reset.
+4. Remove `initial` blocks for flip-flops.
+5. Keep the combinational logic and outputs unchanged.
+
+This guarantees zero initialization in synthesis without relying on unsupported `initial` blocks, resolving the mismatches and synthesis tool issues.

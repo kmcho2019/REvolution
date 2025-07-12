@@ -1,0 +1,24 @@
+Novel approach using hierarchical multiplexing:
+
+1. Key insights:
+   - Each mux_in output corresponds to a column in the K-map (ab values)
+   - Instead of direct logic expressions, use a hierarchical multiplexer structure
+   - First level: 2-to-1 muxes to handle the d input
+   - Second level: 2-to-1 muxes to handle the c input
+   - This creates a tree structure that precisely implements each K-map column
+
+2. Implementation strategy:
+   - For mux_in[0] (ab=00): Use muxes to select between 0 (when cd=00) and 1 (all other cases)
+   - For mux_in[1] (ab=01): Hardwire to 0 as all cases are 0
+   - For mux_in[2] (ab=11): Implement as d ? c : 1 (matches K-map requirements)
+   - For mux_in[3] (ab=10): Use muxes to implement the pattern (1,0,1,1)
+
+3. Advantages:
+   - Clear correspondence between mux structure and K-map
+   - Modular design that's easy to verify
+   - Uses exactly the required components (one 4-to-1 and minimal 2-to-1 muxes)
+
+4. Verification:
+   - Each output correctly implements its column in the K-map
+   - All cases are covered by the mux selection logic
+   - No additional gates used beyond the allowed multiplexers

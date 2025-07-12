@@ -1,0 +1,12 @@
+Here's a novel approach using a shift register to track the last three 'w' values:
+1. Use a 3-bit shift register to store the most recent three 'w' values
+2. Maintain only two states: A (waiting for s=1) and B (counting mode)
+3. In state B, shift in new 'w' values each cycle
+4. After every three cycles, count the number of 1's in the shift register
+5. Set z=1 in the next cycle if exactly two 1's were present
+6. This eliminates the need for separate cycle and w counters, using the shift register as both memory and counter
+
+Advantages:
+- More compact implementation using shift register as both storage and counter
+- Clear separation between data collection (shift reg) and evaluation (count)
+- Easily extensible if window size changes

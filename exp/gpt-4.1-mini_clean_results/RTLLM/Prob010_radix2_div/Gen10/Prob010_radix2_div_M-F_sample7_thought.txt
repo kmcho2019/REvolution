@@ -1,0 +1,9 @@
+The original code declared local regs inside a procedural block, causing a syntax error. To fix this, I will:
+
+- Move the declarations of `quotient_final` and `remainder_final` to module scope as `reg` variables.
+- Update these registers in the sequential block where the division completes.
+- Use these module-scope registers for final sign correction and result assembly.
+- Avoid declaring any variables inside procedural blocks.
+- Keep the radix-2 restoring division and signed/unsigned support intact.
+- Ensure `res_valid` is asserted when the result is ready.
+This resolves the syntax issue and maintains original functionality.

@@ -1,0 +1,15 @@
+Refactoring Strategy:
+1. State Encoding: Keep 2-bit encoding but use one-hot for better timing (though slightly more area)
+2. Shift Register: Use continuous assignment for shift operation to reduce sequential logic
+3. Done Signal: Generate combinatorially from state and input to reduce timing path
+4. Error Handling: Merge ERROR state into IDLE to simplify FSM
+5. Bit Counting: Use direct comparison but register the result to break timing path
+6. Output Logic: Separate into combinational block for better synthesis optimization
+
+Key Changes:
+1. Convert FSM to one-hot encoding for better timing
+2. Use continuous assignment for shift register
+3. Generate done signal combinatorially
+4. Simplify state machine by merging ERROR into IDLE
+5. Register bit_count comparison result
+6. Separate combinational and sequential logic clearly

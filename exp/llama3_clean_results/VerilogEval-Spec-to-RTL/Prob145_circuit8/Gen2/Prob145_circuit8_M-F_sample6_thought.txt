@@ -1,0 +1,7 @@
+Given the feedback and the observed behavior from the simulation waveforms, the main issue with the current implementation seems to be the incorrect handling of the state transitions and the logic for updating 'p' and 'q'. A more systematic approach would be to design a finite state machine (FSM) that accurately captures the behavior described by the waveforms.
+
+Upon re-examining the waveforms, we can observe that 'p' is set to 1 when 'a' is 1 during the high clock phase and remains 1 until 'a' is 1 during the low clock phase, at which point 'p' is reset to 0. 'q' becomes 1 after 'p' has been set and remains 1 until the reset condition is met.
+
+To simplify the design and ensure correct functionality, we can implement a 2-state FSM: an idle state (S0) and a set state (S1). The FSM transitions from S0 to S1 when 'a' is 1 during the high clock phase. In state S1, 'p' is set to 1. 'q' becomes 1 after the FSM has entered S1. The FSM resets to S0 when 'a' is 1 during the low clock phase.
+
+Using a single clock edge (posedge) for state transitions will simplify the design and avoid potential timing issues. This approach will also allow us to minimize the number of flip-flops and combinational logic gates used, thereby optimizing the design for better Power, Performance, and Area (PPA) metrics.

@@ -1,0 +1,7 @@
+To refactor the existing code, we will focus on improving the structure and readability while maintaining the same functionality. One approach is to use a combination of always blocks and assign statements to separate the clock and reset logic from the combinational logic that generates the output signals. 
+
+The key idea is to use two always blocks: one for handling the clock and reset signals to update the registers `ins_p1` and `ins_p2`, and another for deriving the output signals `ins`, `ad1`, and `ad2` directly from the stored instructions in `ins_p1` and `ins_p2`. 
+
+However, upon closer inspection, it's clear that the second always block is not necessary as the outputs can be derived directly using assign statements without the need for a separate always block. This approach simplifies the code and reduces the risk of unnecessary updates and potential race conditions.
+
+We will also consider using a case statement within the always block to handle the different fetch conditions in a more concise and readable manner.

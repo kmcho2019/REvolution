@@ -1,0 +1,71 @@
+To optimize the FSM's combinational logic further for power, performance, and area, I will use binary encoding's inherent logic patterns and reduce the number of comparisons. Observing the state transitions:
+
+- The output is simply the AND of both state bits (since out=1 only in state D=2'b11).
+- The next state bits can be expressed in terms of current state bits and input via boolean expressions, reducing logic gates.
+
+By deriving Boolean expressions for next_state[1] and next_state[0], we can minimize logic and avoid multiple state comparisons, leading to fewer gates, lower switching activity, and thus better PPA metrics.
+
+Let's denote:
+- S1 = state[1]
+- S0 = state[0]
+- I = in
+
+By analyzing the next state from the table:
+
+Next state MSB (next_state[1]):
+- From state A(00):
+  - in=0 -> next_state=00, MSB=0
+  - in=1 -> next_state=01, MSB=0
+- From state B(01):
+  - in=0 -> next_state=10, MSB=1
+  - in=1 -> next_state=01, MSB=0
+- From state C(10):
+  - in=0 -> next_state=00, MSB=0
+  - in=1 -> next_state=11, MSB=1
+- From state D(11):
+  - in=0 -> next_state=10, MSB=1
+  - in=1 -> next_state=01, MSB=0
+
+From this, we derive the logic for next_state[1]:
+
+- next_state[1] = (~S1 & S0 & ~I) | (S1 & ~S0 & I) | (S1 & S0 & ~I)
+
+Similarly, next_state[0]:
+
+- From state A(00):
+  - in=0 -> 0
+  - in=1 -> 1
+- From state B(01):
+  - in=0 -> 0
+  - in=1 -> 1
+- From state C(10):
+  - in=0 -> 0
+  - in=1 -> 1
+- From state D(11):
+  - in=0 -> 0
+  - in=1 -> 1
+
+The next_state LSB is 1 only when in=1 and state ≠ D? Actually from table next_state LSB = 1 if in=1 and current state is A, B, C or D with in=1 leads to next_state LSB=1 except for some cases.
+
+Check transitions:
+
+- A(00): in=1 -> next_state=01 (LSB=1)
+- B(01): in=1 -> next_state=01 (LSB=1)
+- C(10): in=1 -> next_state=11 (LSB=1)
+- D(11): in=1 -> next_state=01 (LSB=1)
+
+For in=0, next_state LSB=0 in all states.
+
+So next_state[0] = in
+
+This greatly simplifies logic.
+
+Thus:
+
+- next_state[1] = (~S1 & S0 & ~I) | (S1 & ~S0 & I) | (S1 & S0 & ~I)
+- next_state[0] = in
+- out = S1 & S0
+
+This leads to minimal gate count and low switching activity.
+
+Implementing this logic combinationally will optimize PPA significantly.

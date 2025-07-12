@@ -1,0 +1,13 @@
+To refactor the design while keeping the core functionality, I will change the implementation to use a single always block triggered on the positive clock edge with synchronous logic only. Instead of using a combinational next-state variable, the logic for shift and count will be directly written inside the clocked block.
+
+For shifting, to correctly implement shifting in the MSB first, the input data will be shifted into the most significant bit (q[3]), and the current bits will move one position toward LSB: bits [3:1] will be assigned from the previous q[2:0], and q[0] will drop out naturally.
+
+For counting, q will decrement by 1 when count_ena is asserted.
+
+Since both shift_ena and count_ena will never be high simultaneously in usage, the implementation will have an if-else structure inside the clocked block that handles count_ena first, then shift_ena, else hold.
+
+This style simplifies the design and avoids a separate combinational always block, providing a clear, concise, and efficient RTL description.
+
+No reset logic is added as per the problem statement.
+
+This approach improves readability and ensures the shift operation correctly preserves all 4 bits without dropping any.

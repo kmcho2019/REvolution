@@ -1,0 +1,11 @@
+To improve upon the straightforward ripple-style carry generation inside each 16-bit CLA block and enhance timing performance, I will implement a hierarchical carry-lookahead logic within the 16-bit block.
+
+Specifically, I will partition the 16-bit adder into four 4-bit sub-blocks, each computing their own group propagate and generate signals. These group signals will then feed a higher-level 4-bit CLA that quickly computes the carry-ins for each sub-block.
+
+Inside each 4-bit sub-block, generate and propagate signals are combined to form group propagate and group generate signals. The carries inside the sub-blocks are computed using fast lookahead logic, not ripple.
+
+This two-level hierarchy inside the 16-bit block reduces the longest carry path from 16 stages to roughly 2 stages: one 4-bit sub-block CLA stage, and one 4-group CLA stage.
+
+The top-level 32-bit adder is then built by instantiating two such 16-bit hierarchical CLA blocks and cascading the carry-out signals.
+
+This design offers better performance by reducing carry delay through hierarchical carry-lookahead, while maintaining clear modularity and the specified interface.

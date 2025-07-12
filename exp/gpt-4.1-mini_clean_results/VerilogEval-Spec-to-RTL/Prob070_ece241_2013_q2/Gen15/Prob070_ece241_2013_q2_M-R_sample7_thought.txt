@@ -1,0 +1,17 @@
+Refactor the implementation by explicitly decoding the input number and generating output signals based on case conditions for better readability and correctness. 
+
+Instead of directly minimizing expressions and risking confusion, decode inputs into a 4-bit vector representing the number and set outputs to 1 when the number is 2, 7, or 15; otherwise 0. 
+
+Then produce out_sop as a combinational signal using assign with simple boolean OR of matching conditions.
+
+For out_pos, since it's the product-of-sums form, implement it by directly using the minimal POS expression from the previous reasoning but expressed in terms of variables and their complements clearly, using assign statements.
+
+This approach improves clarity, correctness, and facilitates debugging while preserving the logic and minimal expressions for outputs.
+
+Note: Both outputs implement the same function, just different forms, but use explicit boolean expressions for clarity.
+
+Also, to avoid ambiguity, define a wire [3:0] num = {a,b,c,d}, then use boolean expressions involving num bits.
+
+This also explicitly matches the intended logic (a MSB to d LSB).
+
+This refactoring removes the usage of intermediate wires and directly produces the outputs, with comments for clarity.

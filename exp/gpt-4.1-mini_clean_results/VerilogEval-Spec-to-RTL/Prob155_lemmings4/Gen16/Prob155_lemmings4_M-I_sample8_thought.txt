@@ -1,0 +1,11 @@
+Optimize the fall timer logic to reduce toggling and simplify the fall_too_long flag update. Instead of incrementing the 5-bit fall_timer every falling cycle and comparing to 20, use a smaller saturating counter that increments only up to 20 and then stays saturated. Also, keep fall_too_long as a simple flag set when the counter saturates, and stop updating it afterward to minimize toggling. This avoids continuous comparisons and large counter increments once the threshold is reached.
+
+Additionally, encode the mode with one-hot style to simplify next-state logic and possibly reduce critical path in mode decoding, trading a few extra flip-flops for simpler logic. But considering area and simplicity, retain the 2-bit encoding.
+
+Implement clock gating by enabling the fall_timer counter only in falling state to reduce switching in other modes, using a small enable signal.
+
+Also, minimize next_state logic by restructuring the priority conditions as early exits, making the code easier for synthesis to optimize, potentially improving WNS.
+
+Keep asynchronous posedge reset as per spec.
+
+Overall, reduce switching in fall_timer and fall_too_long registers by saturating counter and latch flag. Minor changes in next-state logic style to aid synthesis. Preserve Moore outputs as before for clarity.

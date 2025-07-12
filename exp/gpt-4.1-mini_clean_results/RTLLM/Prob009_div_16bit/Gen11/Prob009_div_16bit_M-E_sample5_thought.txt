@@ -1,0 +1,9 @@
+Implement the 16-bit divided-by-8-bit combinational division using a sequential shift-subtract emulation fully combinationally but structured as nested loops unrolled manually within an always block.
+
+- Use two always blocks: one to register inputs into internal regs (a_reg, b_reg) combinationally, the other to execute the division.
+- Within the second always block, use a for loop that extracts the top 8 bits of the current remainder concatenated with the next dividend bit, compares with the divisor, sets the corresponding quotient bit, and updates the remainder accordingly.
+- Maintain the remainder as a 16-bit register to hold intermediate values but only the lower 8 bits after 16 steps represent the final remainder.
+- This implementation aligns with the requested use of two always blocks and uses straightforward integer-based iterative logic inside the second always block.
+- The logic mimics the manual long division approach shifting in one dividend bit at a time into the remainder, comparing, subtracting if possible, and building quotient bits MSB first.
+- Output the quotient and zero-extend remainder to 16 bits.
+- Using explicit loops inside an always block makes the design easier to read and synthesizable by common tools.

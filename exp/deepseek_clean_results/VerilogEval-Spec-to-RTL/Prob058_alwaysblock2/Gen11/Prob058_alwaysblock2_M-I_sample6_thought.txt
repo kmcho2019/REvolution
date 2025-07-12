@@ -1,0 +1,22 @@
+To optimize this design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. **Power Optimization**:
+   - Remove the redundant `xor_result` wire since synthesis tools can already optimize identical expressions
+   - This reduces unnecessary wire transitions and saves power
+
+2. **Area Optimization**:
+   - Keep only one XOR gate implementation that all outputs can share
+   - The synthesis tool will naturally share this resource since the logic is identical
+
+3. **Performance**:
+   - Maintain the same critical path (just an XOR gate for combinational paths)
+   - The sequential path remains unchanged (XOR + flip-flop)
+
+4. **Readability**:
+   - Keep the three distinct implementation styles clearly visible
+   - Use direct expressions rather than intermediate wires where possible
+
+The optimized version will have identical functionality but potentially better PPA metrics through:
+- Reduced wire toggling (power)
+- Simpler structure (area)
+- Maintained performance

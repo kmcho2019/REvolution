@@ -1,0 +1,13 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+- IDLE: The initial state where the FSM waits for a start bit (0).
+- START: The state where the FSM has detected a start bit and waits for the 8 data bits.
+- DATA: The state where the FSM receives the 8 data bits.
+- STOP: The state where the FSM waits for the stop bit (1).
+- DONE: A pseudo-state where the FSM asserts the done signal when a stop bit is detected.
+
+The FSM will transition from IDLE to START when a start bit is detected.
+It will then transition from START to DATA and remain in DATA for 8 clock cycles, shifting in the data bits.
+After 8 clock cycles, it will transition from DATA to STOP and wait for the stop bit.
+If the stop bit is correct, it will transition to DONE, assert the done signal, and output the received data byte.
+If the stop bit is incorrect, it will transition back to IDLE and wait for the next start bit.
+The FSM will also include an active-high synchronous reset that resets the FSM to the IDLE state.

@@ -1,0 +1,8 @@
+Simplify the pipelined unsigned 8-bit multiplier to three pipeline stages:
+1. On mul_en_in, sample mul_a and mul_b into registers.
+2. Generate partial products combinationally each clock cycle using registered inputs.
+3. Sum partial products with a single 16-bit adder tree and register the result as the output product.
+
+Use a 3-bit shift register for mul_en_in to track the pipeline and generate mul_en_out from the MSB. This keeps the enable synchronization simple.
+
+This approach avoids complex multiple pipeline addition stages, yet still pipelines input sampling, multiplication, and output registering, providing throughput improvement over a purely combinational multiplier while significantly reducing complexity.

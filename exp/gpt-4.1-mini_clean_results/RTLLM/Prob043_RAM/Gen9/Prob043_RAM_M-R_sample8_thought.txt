@@ -1,0 +1,5 @@
+Refactor the dual-port RAM by using a single always block triggered on the clock and reset to handle both reset and write operations, but separate the read operation as a registered (clocked) output rather than combinational. This means the read_data will be updated on the rising edge of clk when read_en is high, otherwise cleared to zero. This synchronous read output avoids combinational memory reads and can better align with FPGA block RAM inference, while still allowing simultaneous read and write operations. The reset logic will clear all RAM locations synchronously as before.
+
+This structure emphasizes a fully synchronous design for both read and write ports, which may improve timing and make reset behavior consistent for both memory contents and read_data register. The read_data is registered, causing one cycle latency on reads, but this trade-off can improve synthesis results on some devices and simplify timing closure.
+
+Use a generate block or integer loop inside the always block for reset. Keep address widths minimal based on DEPTH using $clog2(DEPTH).

@@ -1,0 +1,7 @@
+The errors reported are straightforward syntax and type issues:
+
+1. Remove the invalid standalone statement `digging_reg;` inside the combinational always block in the FALLING state branch. This is not a valid statement and should be deleted or replaced with a comment.
+
+2. Simplify the assignment to saved_dir in the sequential always block to avoid nested ternary operators that cause implicit cast issues. Instead, use if-else statements or simpler logic to explicitly assign saved_dir only when walking states are active. When in FALLING state, keep saved_dir unchanged.
+
+These changes preserve the intended logic but fix syntax errors and simulator compatibility. The overall FSM design and output logic remain unchanged.

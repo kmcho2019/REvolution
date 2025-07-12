@@ -1,0 +1,15 @@
+Implement a two-stage pipeline: first stage stores the first valid 8-bit input in a register, and sets a flag indicating stored data exists. When the second valid input arrives, immediately concatenate the stored and current inputs into a 16-bit register and assert valid_out in the *next* clock cycle.
+
+Use three registers:
+- `data_lock` to hold the first 8-bit input.
+- `has_data` flag to indicate stored first data.
+- `output_reg` and `valid_out_reg` to hold the output data and valid flag, which are registered and presented at outputs.
+
+In each clock cycle:
+- On reset, clear all registers.
+- If valid_in is asserted and no data is stored (has_data=0), store the first data and set has_data=1.
+- If valid_in is asserted and data is already stored (has_data=1), form the 16-bit concatenation and write it to `output_reg`, set valid_out_reg=1, and clear has_data=0.
+- If no valid_in, maintain current state.
+- Outputs `valid_out` and `data_out` are just registered versions of `valid_out_reg` and `output_reg`, updated each clock cycle.
+
+This design cleanly separates input buffering and output registration, ensures output valid is asserted exactly one cycle after the second valid input, and prevents glitches by using stable registers. It is also simpler and avoids combinational logic mixed with output registration.

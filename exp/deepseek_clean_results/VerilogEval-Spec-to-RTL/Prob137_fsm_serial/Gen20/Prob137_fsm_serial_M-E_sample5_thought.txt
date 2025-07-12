@@ -1,0 +1,14 @@
+Novel Architecture Idea:
+1. Combined Shift Register and State Machine: Use a 10-bit shift register that inherently tracks the protocol structure (1 start, 8 data, 1 stop)
+2. Early Stop Bit Detection: Monitor the incoming bit stream for protocol violations during reception
+3. State Encoding: Use the shift register contents to implicitly represent state (eliminates explicit state variables)
+4. Edge Detection: Use falling edge of 'in' to detect start bits without needing a separate state machine
+5. Power Optimization: Clock gating based on protocol phase to minimize switching activity
+6. Done Generation: Output 'done' when a complete valid frame is detected in the shift register
+
+Key Benefits:
+- Eliminates explicit state variables and counter logic
+- Protocol validation happens naturally through shift register contents
+- Reduced logic complexity compared to traditional FSM approach
+- Early detection of protocol violations
+- Efficient power management through targeted clock gating

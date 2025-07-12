@@ -1,0 +1,19 @@
+To improve the original ALU design's PPA (Power, Performance, Area), we focus on reducing unnecessary signal toggling and simplifying the always block logic:
+
+1. Separate carry and overflow computation only to arithmetic instructions (ADD, ADDU, SUB, SUBU) rather than assigning zero initially and then possibly overwriting. This avoids unnecessary toggling of carry and overflow signals for logical/shift ops.
+
+2. Avoid signed casts ($signed) when not required (especially for SLT and SLTU flag evaluation) by explicitly computing comparison results using signed arithmetic only where needed.
+
+3. Use local variables inside the always block for intermediate computations to minimize repeated expressions.
+
+4. Implement the default 'flag' output as high-impedance ('z') instead of 0 to match original problem requirement and reduce toggling. This can be done outside the always block using a continuous assignment driven by aluc.
+
+5. Use a combinational continuous assignment for zero and negative flags from the result to reduce logic in the always block.
+
+6. Keep shift amounts limited to 5 bits and pre-extract to reduce repeated indexing.
+
+7. Avoid concatenation of 'a[15:0],16'b0' for LUI; use constant 16'b0 concatenated with lower 16 bits of b instead (original problem states LUI loads upper 16 bits). Correct this for strict ISA compliance by shifting b left 16 bits (LUI loads immediate into upper half of register).
+
+Overall, these steps reduce logic toggling, separate flag assignments cleanly, and correct the LUI semantics.
+
+This approach improves power by reducing toggling on unused signals, improves timing by clarifying arithmetic boundaries, and reduces area by simpler flag logic and avoiding redundant operations.

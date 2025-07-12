@@ -1,0 +1,15 @@
+Simplify the design by directly mapping sensor inputs to nominal flow valves with explicit conditions, and track only whether the water level has risen by comparing the current and previous sensor patterns.
+
+Since the problem defines four distinct water levels by which sensors are asserted:
+- All sensors asserted (s == 3'b111) => no valves open.
+- s[0], s[1] asserted, s[2] not (s == 3'b011) => fr0 only.
+- s[0] asserted only (s == 3'b001) => fr0 and fr1.
+- None asserted (s == 3'b000) => fr0, fr1, fr2.
+
+For all other sensor inputs (including intermediate sensor states), treat them as below the lowest sensor (open all valves). This simplification covers all inputs without complex ranking.
+
+For supplemental flow valve dfr, assert when current sensor pattern represents a higher water level than previous. Define a simple water level rank based on the number of sensors asserted, or check sensor bits directly with the priority of highest sensor asserted.
+
+On reset, set outputs and previous sensor pattern to the lowest level state (000), with all valves open including dfr.
+
+This approach keeps the logic simple, fully covers all possible inputs, and accurately tracks rising water level to control dfr.

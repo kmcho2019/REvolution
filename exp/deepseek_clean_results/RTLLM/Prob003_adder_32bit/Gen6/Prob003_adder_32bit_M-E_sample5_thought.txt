@@ -1,0 +1,12 @@
+The novel hybrid architecture combines:
+1. Carry-lookahead for local fast carry propagation (4-bit blocks)
+2. Carry-select for global carry prediction (8-bit segments)
+3. Variable block sizing (4-8-4-8-4-4) to balance critical paths
+4. Early carry resolution for the most significant bits
+
+Key innovations:
+- Uses carry-select for upper 16 bits where timing is most critical
+- Implements smaller 4-bit CLA blocks in LSBs where carry chains are shorter
+- Special 8-bit blocks use parallel carry computation
+- Optimized carry merging logic reduces fan-out on critical paths
+- Balanced block sizes minimize worst-case delay

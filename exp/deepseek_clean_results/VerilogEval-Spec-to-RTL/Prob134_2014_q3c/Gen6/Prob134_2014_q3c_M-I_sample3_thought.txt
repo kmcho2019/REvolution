@@ -1,0 +1,18 @@
+The initial solution is correct but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. **Area Optimization**:
+   - Remove the default case since the FSM only uses states 000-100 (5 valid states)
+   - Combine output logic into a single assign statement where possible
+   - Use more efficient encoding for the state machine
+
+2. **Power Optimization**:
+   - Simplify logic to reduce switching activity
+   - Remove unnecessary registers (next_state can be directly assigned to Y0)
+
+3. **Performance**:
+   - The combinational logic is already minimal, but we can ensure the critical path is as short as possible
+
+Key changes:
+- Eliminate the next_state register and compute Y0 directly
+- Simplify the output logic by using bit patterns
+- Remove default case since all states are defined

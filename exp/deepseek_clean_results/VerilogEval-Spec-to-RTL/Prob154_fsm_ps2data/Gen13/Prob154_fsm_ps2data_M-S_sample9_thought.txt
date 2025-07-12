@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. State Machine: Keep only 3 states (IDLE, BYTE1, BYTE2) with binary encoding for minimal area
+2. Data Storage: Store bytes directly into output register segments when received
+3. Output Control: Only update out_bytes when storing new bytes and assert done after 3rd byte
+4. Reset Handling: Synchronous reset to clear state and outputs
+5. Power Optimization: Only update registers in relevant states to minimize switching
+6. Simplification: Remove unnecessary default assignments and combine storage with state transitions
+
+Key Simplifications:
+- Eliminate redundant register updates
+- Combine byte storage with state transitions
+- Remove unnecessary intermediate signals
+- Keep minimal state encoding
+- Only update outputs when needed

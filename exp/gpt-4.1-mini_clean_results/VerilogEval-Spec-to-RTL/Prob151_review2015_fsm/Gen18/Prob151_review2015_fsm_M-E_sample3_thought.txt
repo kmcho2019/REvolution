@@ -1,0 +1,7 @@
+Implement a Mealy FSM with an explicit 4-bit shift register for pattern detection: shift in serial data each clock and check the last 4 bits against the pattern 1101. When the pattern is matched, immediately transition to a SHIFT state where shift_ena is asserted for exactly 4 cycles, tracked by a 3-bit shift counter.
+
+After shifting, move to COUNT state where counting is asserted and wait for done_counting to go high. Then transition to DONE state asserting done until ack is received, then reset to SEARCH state.
+
+This approach separates pattern detection logic (simple shift register + comparator) from FSM states, simplifying FSM states to four: SEARCH, SHIFT, COUNT, DONE. Outputs depend on state and cycle count.
+
+Synchronous reset clears state and shift register. All sequential logic on posedge clk. This reduces the number of FSM states and improves clarity and modularity.

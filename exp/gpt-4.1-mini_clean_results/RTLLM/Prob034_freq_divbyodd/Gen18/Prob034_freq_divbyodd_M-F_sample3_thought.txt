@@ -1,0 +1,11 @@
+To correctly implement a frequency divider by an odd number using the specified approach:
+
+- Use two separate counters, cnt1 and cnt2, each counting modulo NUM_DIV. 
+- cnt1 increments on the positive edge of clk; cnt2 increments on the negative edge of clk.
+- Each counter toggles its respective divided clock (clk_div1, clk_div2) when the counter reaches HALF_DIV (NUM_DIV/2).
+- Both clk_div1 and clk_div2 start at zero on reset.
+- The final output clk_div is the logical OR of clk_div1 and clk_div2, combining the toggles on both edges to create a 50% duty cycle clock at the divided frequency.
+- Use synchronous reset logic for counters and registers, active low.
+- Add a compile-time check to ensure NUM_DIV is odd.
+- Use appropriate widths for counters based on $clog2(NUM_DIV).
+This approach fulfills the original requirement, correctly uses both edges of the input clock, two counters, and two divided clock signals, and logically ORs them to get the final output.

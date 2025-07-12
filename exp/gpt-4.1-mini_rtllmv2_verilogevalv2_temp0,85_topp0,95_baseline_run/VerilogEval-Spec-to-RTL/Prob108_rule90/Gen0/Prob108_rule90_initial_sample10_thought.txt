@@ -1,9 +1,0 @@
-To implement the Rule 90 cellular automaton with 512 cells, the next state of each cell is the XOR of its immediate neighbors' states. The center cell's own state is not included. The left neighbor of cell 0 is 0, and the right neighbor of cell 511 is 0 (boundary conditions).
-
-On each positive clock edge:
-- If load is high, the state q is loaded directly from data.
-- Otherwise, update q by computing for each cell i: q_next[i] = q[i-1] XOR q[i+1], with boundary cells using 0 for out-of-range neighbors.
-
-This can be efficiently done by shifting q left and right by 1 bit, padding zeros at boundaries, then XOR-ing the two shifted vectors.
-
-We'll implement this logic in a synchronous always block triggered on posedge clk.

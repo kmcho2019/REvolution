@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register implementation for the Moore machine:
+1. Instead of traditional state encoding, use a 2-bit shift register where each bit represents being in a state
+2. The left bit represents state B, right bit represents state A
+3. Only one bit is set at any time (one-hot like but with shift behavior)
+4. State transitions become simple shift operations with conditional inversion
+5. Output is directly the left bit of the register
+6. Reset initializes to '10' (state B)
+
+Advantages:
+- Eliminates combinational next-state logic
+- State transitions become simple shift operations
+- Output is directly tapped from a register bit
+- Potentially better timing as no combinational path between state and output

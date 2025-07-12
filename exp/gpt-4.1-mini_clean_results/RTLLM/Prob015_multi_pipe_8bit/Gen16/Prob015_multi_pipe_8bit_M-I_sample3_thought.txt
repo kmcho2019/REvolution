@@ -1,0 +1,11 @@
+To optimize the existing pipelined 8-bit multiplier for better performance and reduced critical path, I will break the addition of the eight partial products into a two-stage pipeline. 
+
+Stage 1: Generate and register the partial products based on multiplier bits and multiplicand.
+
+Stage 2: Sum the partial products in two groups of four to create two intermediate sums, register them, then finally sum these two intermediate sums to produce the final product.
+
+This approach reduces the longest combinational addition path per clock cycle, improving max clock frequency (performance). It also improves power by registering intermediate results, reducing glitching. Output enable signals are pipelined alongside the data to maintain correct timing.
+
+The design maintains the same input and output interface, active-low reset, and synchronous registers. By increasing pipeline stages from 2 to 3, it achieves better timing closure and balanced logic per stage while keeping overall latency low (3 cycles).
+
+This multi-stage pipeline addition strikes a good trade-off between area and performance without large resource duplication.

@@ -1,0 +1,15 @@
+To implement a gshare branch predictor, we can use a novel architectural idea that combines the benefits of a global branch history register and a pattern history table (PHT). The key idea is to use a hierarchical structure, where the global branch history register is divided into smaller segments, each of which is used to index a separate PHT. This allows us to reduce the number of bits required to represent the global branch history, while still maintaining a high degree of accuracy in predicting branch directions.
+
+The hierarchical structure consists of two levels: a top-level global branch history register and multiple second-level PHTs. The top-level global branch history register is used to select one of the second-level PHTs, and the selected PHT is then used to make a prediction about the branch direction.
+
+The top-level global branch history register is updated based on the actual branch outcome, and the second-level PHTs are updated based on the predictions made by the corresponding PHT. This hierarchical structure allows us to reduce the number of bits required to represent the global branch history, while still maintaining a high degree of accuracy in predicting branch directions.
+
+The novel architectural idea is to use a combination of a counter-based PHT and a saturating counter-based PHT. The counter-based PHT is used to count the number of times a branch is taken or not taken, and the saturating counter-based PHT is used to predict the branch direction based on the count.
+
+The saturating counter-based PHT is updated as follows: if the branch is taken, the counter is incremented, and if the branch is not taken, the counter is decremented. The counter is saturated at a maximum value, such that it does not overflow or underflow.
+
+The prediction is made based on the value of the counter: if the counter is greater than or equal to a threshold, the branch is predicted to be taken, and if the counter is less than the threshold, the branch is predicted to be not taken.
+
+The threshold value is chosen such that it maximizes the accuracy of the predictions. The threshold value can be adjusted dynamically based on the performance of the predictor.
+
+The novel architectural idea is implemented using Verilog code, which is described below.

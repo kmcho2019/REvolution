@@ -1,0 +1,19 @@
+The current implementation is already quite efficient, but we can make some targeted improvements for better PPA:
+
+1. **Timing Optimization**:
+   - Simplify the combinational logic by removing the redundant else branch for 'done' assignment
+   - The 'done' signal can be purely combinational based on the byte_counter state
+
+2. **Power Optimization**:
+   - Make 'done' purely combinational to reduce unnecessary register toggling
+   - Remove redundant assignments in the state machine
+
+3. **Area Optimization**:
+   - Keep the minimal 2-bit counter implementation
+   - Let synthesis tools optimize the logic by making the FSM more regular
+
+Key changes:
+- Make 'done' combinational based on current state
+- Simplify the state transition logic
+- Remove redundant assignments
+- Maintain the same functionality with cleaner code

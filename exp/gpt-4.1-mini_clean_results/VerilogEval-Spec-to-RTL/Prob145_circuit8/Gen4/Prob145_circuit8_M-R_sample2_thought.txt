@@ -1,0 +1,13 @@
+Refactor the design by explicitly separating the state storage for p and q into internal registers and defining their next-state logic combinationally. 
+
+- Use two internal registers: p_reg and q_reg to hold the state.
+- Define combinational signals p_next and q_next for their next values.
+- On the rising edge, update p_reg <= p_next.
+- On the falling edge, update q_reg <= q_next.
+- According to the original behavior:
+  - p updates on rising clock edge based on input a and current q_reg.
+  - q updates on falling clock edge by latching the current p_reg.
+- Outputs p and q directly reflect p_reg and q_reg respectively.
+- This structure improves clarity and aligns with typical FSM coding style.
+- Initialize p_reg and q_reg to 0 to match initial waveform.
+This approach maintains the same behavior but is clearer, easier to modify, and separates combinational next-state logic from sequential updates.

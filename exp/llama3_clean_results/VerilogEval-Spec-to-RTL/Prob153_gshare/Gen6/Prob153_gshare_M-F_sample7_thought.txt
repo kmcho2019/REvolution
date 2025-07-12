@@ -1,0 +1,15 @@
+To fix the existing GShare branch predictor design, we need to address the issues pointed out in the feedback. 
+
+Firstly, we should correct the 'index' calculation by using 'train_pc' when training and 'predict_pc' when predicting. 
+
+Secondly, we need to ensure that training takes precedence over prediction when both occur in the same cycle. This can be achieved by prioritizing the update of 'ghr' based on the training signal.
+
+Thirdly, we should update the 'index' calculation when predicting to use 'predict_pc' and 'ghr'. The 'predict_taken' signal should then be assigned based on the value of 'pht[index][1]' after the 'index' is correctly calculated.
+
+Lastly, we should update the 'pht_value' when predicting to be the value of 'pht[index]' after the 'index' is calculated.
+
+Additionally, we need to review the asynchronous reset logic to ensure it is functioning as expected. 
+
+To improve the design's PPA metrics, we can consider optimizations such as reducing combinational logic gates and pipelining the design. However, these optimizations should be secondary to fixing the existing functional errors.
+
+Here's a revised design that addresses these issues:

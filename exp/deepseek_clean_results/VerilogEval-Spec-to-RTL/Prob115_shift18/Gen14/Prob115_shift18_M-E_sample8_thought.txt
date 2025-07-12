@@ -1,0 +1,15 @@
+Novel Architectural Idea:
+1. Implement a barrel shifter with pre-computed shift patterns for all possible operations (left/right by 1/8 bits)
+2. Use a sign-extension mask generator that only activates during right shifts
+3. Employ a hierarchical multiplexer structure for efficient shift selection:
+   - First level selects direction (left/right)
+   - Second level selects shift amount (1/8 bits)
+4. Optimize for power by gating the shift computation when not enabled
+5. Use a single always block for both load and shift operations to minimize registers
+
+Key Innovations:
+- Barrel shifter implementation for constant-time shift operations
+- Dynamic sign-extension generation only when needed
+- Hierarchical mux structure reduces logic complexity
+- Power-optimized with enable gating
+- Compact implementation with single always block

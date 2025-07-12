@@ -1,0 +1,16 @@
+To properly implement the 3.5x fractional divider with correct timing:
+1. Use a 7-state counter (0-6) to track the division cycle
+2. Generate two complementary clock phases:
+   - Phase1: High for 3.5 cycles (0 to 3.5)
+   - Phase2: High for 3.5 cycles (3.5 to 7)
+3. Implement precise half-cycle timing by:
+   - Using both clock edges (double-edge triggering)
+   - Creating phase transitions at mid-cycle points
+4. Combine phases with OR operation while ensuring:
+   - No overlapping high periods
+   - Smooth transitions between phases
+5. Simplify control logic using continuous assignments
+Key improvements:
+- Replace sequential logic with combinational where possible
+- Explicitly handle half-cycle timing
+- Clear separation of phase generation

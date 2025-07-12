@@ -1,0 +1,7 @@
+Instead of implementing Y1 and Y3 outputs directly as combinational logic from y and w, this solution uses a priority-based encoded case statement inside a combinational always block to derive Y1 and Y3. This is different from the prior solution's flat gate-level expressions.
+
+We encode the next states explicitly by examining each possible current state bit set in y, and the input w. Then, we assert Y1 or Y3 if the transition leads to states B or D, respectively. 
+
+By using a combinational always block with a casez statement on y, we clearly separate the logic for each one-hot state and input, making the code more readable and scalable for complex FSMs.
+
+This approach can be more friendly for synthesis tools, which may infer LUTs or multiplexers more naturally from the case structure, and is flexible for expanding with more outputs or complex conditions.

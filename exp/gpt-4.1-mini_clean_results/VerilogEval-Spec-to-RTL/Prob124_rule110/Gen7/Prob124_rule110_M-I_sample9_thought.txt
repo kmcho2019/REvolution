@@ -1,0 +1,15 @@
+To improve PPA metrics, particularly timing and area, I will replace the direct Boolean expression for Rule 110 with a small 8-entry lookup table (LUT) representing the 3-bit neighborhood to next-state mapping. This LUT will be shared across all bits, so only one 8-bit ROM is needed, which the logic references for each cell update. This reduces logic complexity and can improve timing.
+
+Additionally, instead of recomputing neighbors with conditionals every cycle, I will create shifted versions of the state vector with zero-padded boundaries to form the left, center, and right neighborhoods as vectors. Then, for each bit position, these three bits form the LUT index.
+
+This vectorized approach reduces conditional logic and simplifies wiring, possibly enhancing synthesis results.
+
+The synchronous load and update logic remain the same.
+
+In summary:
+- Use a shared LUT (8-bit ROM) for Rule 110.
+- Create shifted left, center, right vectors with zero-padding.
+- Use these as LUT indices to produce next state.
+- Maintain synchronous update with load.
+
+This should reduce combinational logic area and improve timing while preserving functionality.

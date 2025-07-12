@@ -1,0 +1,3 @@
+Instead of implementing the synchronous reset directly inside the always block with an if-else, I can separate the reset logic from the data path by using a combinational assignment to a next-state signal that incorporates the synchronous reset condition. Then, the always block will only update the output with this next-state value on the clock's rising edge. This architectural style emphasizes separation of combinational and sequential logic, which can help clarity and potentially ease further modifications.
+
+Specifically, I'll create a reg called next_q that is combinationally assigned to 0 when reset is high, otherwise to d. Then on the clock edge, q is assigned to next_q. This still meets the requirement of synchronous active high reset but is expressed differently.

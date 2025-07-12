@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Simplify terminal count detection by using a direct 10-bit comparison (q == 10'd999) instead of separate upper/lower bit comparisons
+2. This reduces the logic depth from 2-level AND to a single comparison, improving timing
+3. Maintain synchronous reset functionality
+4. Benefits:
+   - Better timing performance (reduced critical path)
+   - Potentially lower power due to simpler comparator
+   - Clearer and more maintainable code
+   - Same functionality with improved PPA metrics
+
+The implementation will still count 0-999 with 1000-cycle period, resetting on active high or terminal count.

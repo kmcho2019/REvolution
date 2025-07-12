@@ -1,0 +1,9 @@
+The novel architectural idea is to utilize a 4-bit register with a separate enable signal for each bit. This approach allows for more flexibility and control over the shift operation. Instead of shifting the entire register, we can enable or disable the shift for each bit individually. This can be achieved by using a separate enable signal for each bit, which can be generated based on the 'ena' signal and the current state of the register.
+
+To implement this idea, we can use a 4-bit register with four separate enable signals, one for each bit. The enable signals can be generated using a combination of the 'ena' signal and the current state of the register. For example, the enable signal for the least significant bit (LSB) can be set to 'ena' only when the LSB is not zero, and the enable signal for the most significant bit (MSB) can be set to 'ena' only when the MSB is not zero and the 'load' signal is not asserted.
+
+This approach allows for a more efficient and flexible shift operation, as we can control the shift for each bit individually. Additionally, this approach can be easily extended to larger registers by simply adding more enable signals and bits to the register.
+
+The load operation can be implemented by asserting the 'load' signal and setting the enable signals for all bits to '1'. This will load the register with the input data.
+
+The reset operation can be implemented by asserting the 'areset' signal and setting all bits of the register to '0'.

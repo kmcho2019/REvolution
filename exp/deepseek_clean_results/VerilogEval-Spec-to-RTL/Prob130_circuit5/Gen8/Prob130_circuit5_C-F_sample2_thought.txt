@@ -1,0 +1,15 @@
+Fusion Strategy:
+1. **Selection Logic**: Combine the parallel mask approach from Example 1 with the efficient LUT concept from Example 2. Instead of using a barrel shifter, we'll use direct bitwise selection with masks derived from a decoded version of c[1:0].
+
+2. **Default Handling**: Maintain the efficient 'f' output detection from both examples (checking c[3:2]), but implement it as an early condition to potentially optimize power.
+
+3. **Optimizations**:
+   - Use a single 2-to-4 decoder for the selection masks (more power efficient than parallel comparators)
+   - Implement the output selection as a direct bitwise operation on the decoded masks
+   - Keep the structure simple and parallel for good timing
+
+Advantages:
+- More power efficient than Example 1 by using a single decoder
+- More area efficient than Example 2 by avoiding the barrel shifter
+- Maintains excellent timing characteristics from both approaches
+- Clean separation between the selection logic and default case handling

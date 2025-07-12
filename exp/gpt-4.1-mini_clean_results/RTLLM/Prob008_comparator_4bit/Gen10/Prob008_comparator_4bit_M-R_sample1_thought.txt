@@ -1,0 +1,11 @@
+Refactoring idea:
+Keep the same fundamental approach using borrow generate/propagate signals and equality detection, but restructure the logic to emphasize a stepwise calculation of intermediate borrow signals per bit in a carry-lookahead style. Instead of directly combining generates and propagates in a flat manner, calculate borrow signals per bit using intermediate wires representing borrow_in to each bit, with borrow_in[0] assumed zero (no initial borrow). Equality detection will be simplified by using direct XNOR operators instead of the negated XOR, improving clarity and possibly synthesis friendliness. The outputs remain mutually exclusive.
+
+This refactoring:
+- Uses per-bit borrow chain signals borrow_in[0..3] for clearer step-by-step borrow propagation.
+- Replaces the bit equality signals with simple XNOR expressions directly assigned.
+- Outputs assigned straightforwardly from borrow_out and equality signals.
+- Keeps pure combinational logic using only `assign` statements.
+- Slightly different, more explicit logic structure, but functionally equivalent to original.
+
+This should maintain low latency and power while improving code readability and clarity in borrow logic flow.

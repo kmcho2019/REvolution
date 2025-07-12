@@ -1,0 +1,20 @@
+To combine the best ideas from both examples, I will leverage the clear state decoding and simplified next_y1 logic from Example 1, which results in a concise, minimal expression that reduces switching activity and gate count:  
+next_y1 = B | F | ((C | E) & w)
+
+This expression is simple, clear, and groups states to minimize transitions on w, improving power and area.
+
+From Example 2, the approach is to implement pure combinational logic without explicit case statements and to directly assign Y1 = next_y1, which is straightforward and synthesis-friendly.
+
+The fusion strategy is:  
+- Use explicit decoding of relevant states (B, C, E, F) for clarity and minimal logic.  
+- Use the simplified minimized expression from Example 1 for next_y1 to reduce switching and gate count.  
+- Implement combinational logic with direct continuous assignments for clean and optimized code.  
+- Assign output Y1 = next_y1 as required.
+
+This approach yields clear, low-power, minimal-area combinational logic for the next-state bit y[1].
+
+No clock or registers are needed as the problem only requires next-state logic for y[1] and output Y1 = y[1].
+
+Hence, the final module will decode B, C, E, F states, compute next_y1 = B | F | ((C | E) & w), and assign this value to output Y1.
+
+This fuses the simplified minimal logic and the clarity of explicit state decoding.

@@ -1,0 +1,13 @@
+Fixed Design Strategy:
+1. Simplify state machine to use single flip-flop for state tracking
+2. Remove separate output register and generate data_out directly from combinational logic
+3. Maintain synchronous reset behavior but simplify default assignments
+4. Ensure valid_out is purely combinational to match timing requirements
+5. Keep same functionality while making it more synthesis-friendly
+
+Key Fixes:
+- Eliminated potential synthesis issues with state encoding by using simple binary states
+- Removed output_reg to prevent potential timing path problems
+- Made valid_out purely combinational based on current state and inputs
+- Simplified the always block structure for better synthesis results
+- Maintained same 2-cycle latency behavior while improving PPA characteristics

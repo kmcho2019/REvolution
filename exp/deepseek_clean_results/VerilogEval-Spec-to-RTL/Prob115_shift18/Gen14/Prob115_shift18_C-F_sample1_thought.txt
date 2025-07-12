@@ -1,0 +1,27 @@
+Fusion Strategy:
+1. **Critical Path Optimization**:
+   - Combine the parallel shift computation from Example 2 with the barrel shifter concept from Example 1
+   - Use a single-level mux for direction selection (left/right) to reduce logic depth
+   - Pre-compute both shift amounts (1 and 8) in parallel for each direction
+
+2. **Power Optimization**:
+   - Implement explicit clock gating as in Example 2
+   - Only compute arithmetic sign extension when needed (right shifts)
+   - Gate shift computations with 'ena' signal to prevent unnecessary switching
+
+3. **Area Efficiency**:
+   - Share common shift logic between 1-bit and 8-bit operations
+   - Use optimized sign extension that only calculates needed bits
+   - Remove redundant calculations by properly structuring control flow
+
+4. **Timing Closure**:
+   - Balance left/right shift paths by using similar computation structures
+   - Simplify control logic with direct case statement for shift amount
+   - Use bit-slicing for arithmetic right shifts instead of masking
+
+Key Improvements:
+- Single-level mux for direction selection reduces critical path
+- Parallel shift amount computation improves timing
+- Optimized sign extension reduces area and power
+- Clean control flow with case statement
+- Explicit clock gating for power savings

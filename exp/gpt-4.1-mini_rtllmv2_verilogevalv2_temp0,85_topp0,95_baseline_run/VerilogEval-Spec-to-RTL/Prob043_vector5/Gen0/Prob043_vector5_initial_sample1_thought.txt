@@ -1,9 +1,0 @@
-The task is to compare every pair of input bits (a, b, c, d, e) for equality and output the results in a 25-bit vector. Each output bit corresponds to one pair comparison, and the output bit is 1 if the two inputs are equal, else 0.
-
-There are 5 inputs, so 5x5=25 pairs. The output bits are arranged with index 24 for the (a,a) comparison, 23 for (a,b), ..., down to 0 for (e,e).
-
-The comparison for equality of two bits x and y can be done as ~(x ^ y).
-
-We'll map the pairs in row-major order: out[24] corresponds to comparing a with a (first row, first column), then a with b (first row, second column), ... out[20] is a with e, then out[19] is b with a, out[18] is b with b, ..., down to out[0] is e with e.
-
-We'll assign all 25 bits accordingly in a continuous assignment in Verilog.

@@ -1,0 +1,11 @@
+Implement a deeper 3-stage pipeline multiplier that breaks down the multiplication process into smaller steps to balance combinational delay and pipeline registers.
+
+Stage 1: Register inputs and enable signals; no combinational logic.
+
+Stage 2: Compute partial products for the lower 4 bits and upper 4 bits of the multiplier separately and store their sums in registers; this step partially sums partial products to reduce addition complexity in the next stage.
+
+Stage 3: Combine partial sums from Stage 2 with proper bit shifts, register the final product and output enable.
+
+This staged addition approach reduces the critical path by splitting the partial product summation across pipeline stages and makes the pipeline throughput higher with shorter combinational logic per stage. The output enable is propagated along pipeline stages accordingly.
+
+Output product is driven by the registered valid signal, else zeroed.

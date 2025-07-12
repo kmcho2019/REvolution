@@ -1,0 +1,12 @@
+The current solution uses two flip-flops to store history bits, which is efficient but can be simplified further by using a state machine approach with only 3 states as specified. Here's the simplified approach:
+
+1. **State Encoding**: Use 3 states to track the sequence detection progress:
+   - IDLE: Waiting for first '1'
+   - GOT1: Received first '1', waiting for '0'
+   - GOT10: Received '10', waiting for final '1'
+
+2. **Mealy Output**: The output z is asserted when in GOT10 state and current input is '1'
+
+3. **Overlap Handling**: The state transitions naturally handle overlapping sequences by returning to appropriate states after detection
+
+This approach uses fewer flip-flops (only 2 bits for 3 states) and simpler logic compared to the shift register implementation, while maintaining the same functionality.

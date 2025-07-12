@@ -1,0 +1,11 @@
+Novel Architecture Idea:
+1. Shift Register with Parallel Load: Instead of using a state machine, implement a 4-bit shift register that can parallel load new data.
+2. Dynamic Valid Signal: Generate valid_out based on whether the shift register contains fresh data (not yet fully shifted out).
+3. Smart Shifting: Only shift when needed (when not in load state) to save power.
+4. Early Valid Indication: Set valid_out immediately when new data is loaded, rather than waiting for the first bit.
+
+Key Advantages:
+- Eliminates explicit state machine, reducing control logic
+- Valid signal asserts immediately upon new data load
+- Shift operations only occur when needed
+- Simpler control flow with just two conditions (load vs shift)

@@ -1,0 +1,32 @@
+To fix the mismatches on walk_left and walk_right outputs, the key is to ensure the walking direction is fully encoded in the state itself, not kept separately in a `dir` register. This avoids any inconsistencies between direction and state during transitions.
+
+We will encode the walking direction as part of the four states: Walking Left (WL), Walking Right (WR), Falling Left (FL), Falling Right (FR), Digging Left (DL), and Digging Right (DR). This leads to a 3-bit or larger state encoding. For simplicity, use a 3-bit state encoding to include direction in every state.
+
+State encoding:
+
+- WL (walking left)
+- WR (walking right)
+- FL (falling left)
+- FR (falling right)
+- DL (digging left)
+- DR (digging right)
+
+The FSM transitions now carry the direction explicitly, so no separate `dir` register is needed.
+
+Outputs are assigned purely based on the current state: walk_left = (state == WL), walk_right = (state == WR), aaah = (falling states), digging = (digging states).
+
+State transitions:
+
+- When walking and ground disappears: go to falling state with current direction
+- When walking and dig=1 and ground=1: go to digging state with current direction
+- When walking and bump(s) detected and ground=1 and not digging: switch walking direction state
+- When falling and ground=1: resume walking state with stored direction
+- When digging and ground=0: transition to falling state with same direction
+- When digging and ground=1: remain digging
+- When falling and ground=0: remain falling
+
+Because direction is included in state, no mismatch between direction and state can occur, eliminating output glitches.
+
+Use an asynchronous reset to WL.
+
+This approach cleans up the design and matches the Moore FSM requirement with outputs depending only on the current state.

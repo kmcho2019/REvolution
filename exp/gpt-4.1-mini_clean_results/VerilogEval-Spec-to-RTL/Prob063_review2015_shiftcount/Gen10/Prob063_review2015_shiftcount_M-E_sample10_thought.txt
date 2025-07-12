@@ -1,0 +1,8 @@
+Implement the 4-bit shift register and down counter as a single always block with a case statement to explicitly select between shifting and counting operations. This approach combines the logic into a unified sequential process without separate combinational wires for next states.
+
+- On each clock's positive edge:
+  - If `shift_ena` is asserted, shift left by one bit (MSB-first) inserting the new `data` at LSB.
+  - Else if `count_ena` is asserted, decrement the register value by 1.
+  - Else keep the current value.
+
+This approach simplifies the control flow by embedding the entire logic in one clocked process, avoiding any intermediate combinational assignments and prioritizing shift over count naturally via case order.

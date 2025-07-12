@@ -1,0 +1,10 @@
+To ensure correct initialization of the flip-flops for synthesis and actual hardware, add a synchronous reset signal internally by introducing a reset at the first clock cycle. Since the problem does not provide a reset input, we can generate a power-on reset using an internal register that is initially set and cleared after the first clock edge. This guarantees flip-flops start at zero in synthesized hardware, avoiding reliance on initial blocks which might not be supported on all synthesis targets.
+
+Additionally, keep the logic as specified:
+- XOR D input: x XOR q_xor
+- AND D input: x AND (NOT q_and)
+- OR D input: x OR (NOT q_or)
+
+Output z is the NOR of the flip-flops outputs.
+
+This method provides a clean, deterministic reset to zero on startup with no external reset, addressing synthesis initialization problems. No logic or timing performance penalties are expected, and it improves PPA by ensuring clean initial states without additional inputs or complex reset circuits.

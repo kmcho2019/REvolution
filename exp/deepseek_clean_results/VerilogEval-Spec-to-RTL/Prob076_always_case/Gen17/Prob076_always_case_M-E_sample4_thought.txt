@@ -1,0 +1,19 @@
+Here's a novel approach using a lookup table (LUT) style implementation with a shift register:
+
+1. Key Idea:
+   - Concatenate all input data into a single 24-bit vector (6 inputs × 4 bits each)
+   - Use the sel value to determine the bit offset for selection
+   - Implement a barrel shifter-like operation to extract the correct 4-bit output
+
+2. Advantages:
+   - Eliminates traditional multiplexer logic
+   - Uses bit manipulation which can be efficient in hardware
+   - Single operation selection (shift + mask) instead of multiple comparisons
+   - Scales well with more inputs (just increase the concatenated vector)
+
+3. Implementation Details:
+   - Create a 24-bit concatenated vector of all inputs
+   - Multiply sel by 4 to get the bit offset (since each input is 4 bits)
+   - Right-shift the concatenated vector by this offset
+   - Take the lower 4 bits of the result
+   - Handle invalid sel cases by masking with the valid range

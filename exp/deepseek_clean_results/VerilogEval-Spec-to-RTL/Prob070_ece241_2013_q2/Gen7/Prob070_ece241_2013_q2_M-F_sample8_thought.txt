@@ -1,0 +1,24 @@
+Corrected Approach:
+
+1. Truth Table Re-examination:
+   - True cases (output=1): 2 (0010), 7 (0111), 15 (1111)
+   - False cases (output=0): 0,1,4,5,6,9,10,13,14
+   - Don't-cares: 3,8,11,12 (can be used for optimization)
+
+2. SOP Optimization:
+   - Original SOP terms were correct but not minimal
+   - Can combine terms using don't-cares:
+     - Term for 2 (0010) and 3 (0011) can be merged: ~a & ~b & c
+     - Term for 7 (0111) and 15 (1111) can be merged: b & c & d
+   - Final SOP: (~a & ~b & c) | (b & c & d)
+
+3. POS Optimization:
+   - Need to find minimal product of sums covering all false cases
+   - Can use don't-cares to simplify maxterms
+   - After Karnaugh map analysis, minimal POS is:
+     (a | b | c) & (a | c | d) & (~a | ~b | ~c | ~d)
+
+4. Verification:
+   - Both forms now correctly handle all specified cases
+   - Don't-cares are optimally used for minimization
+   - Outputs will match for all valid input combinations

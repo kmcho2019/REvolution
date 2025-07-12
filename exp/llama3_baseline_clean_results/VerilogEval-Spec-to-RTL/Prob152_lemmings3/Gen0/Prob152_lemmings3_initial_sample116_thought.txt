@@ -1,0 +1,8 @@
+To implement the Moore state machine for the Lemming behavior, we will define four main states: WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING. The initial state will be WALK_LEFT, and the state transitions will be based on the input signals and the current state. We will use a reset signal to reset the state machine to the initial state. The output signals will be updated based on the current state and input signals.
+
+The state machine will work as follows:
+- In the WALK_LEFT and WALK_RIGHT states, if the ground signal is low, the state machine will transition to the FALLING state.
+- In the WALK_LEFT and WALK_RIGHT states, if the dig signal is high and the ground signal is high, the state machine will transition to the DIGGING state.
+- In the WALK_LEFT and WALK_RIGHT states, if the bump_left or bump_right signals are high, the state machine will switch direction.
+- In the FALLING state, the state machine will wait for the ground signal to go high again, and then it will transition back to the WALK_LEFT or WALK_RIGHT state depending on the previous direction.
+- In the DIGGING state, the state machine will wait for the ground signal to go low, and then it will transition to the FALLING state.

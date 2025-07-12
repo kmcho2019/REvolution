@@ -1,0 +1,8 @@
+To implement the parallel-to-serial conversion module, we need to follow these steps: 
+1. Create a register to hold the parallel input data (d).
+2. Use a counter (cnt) to track the number of bits that have been converted.
+3. On each clock cycle, check if the counter has reached the value 3 (indicating the last bit of the parallel input).
+4. If the counter is 3, update the data register with the new parallel input, reset the counter to 0, and set the valid signal to 1.
+5. Otherwise, increment the counter, set the valid signal to 0, and shift the data register one bit to the right (not left, as the problem statement requires MSB to LSB conversion).
+6. Use the most significant bit of the data register as the serial output (dout).
+7. If the reset signal (rst_n) is low, reset the counter, data register, and valid signal.

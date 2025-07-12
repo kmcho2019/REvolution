@@ -1,0 +1,7 @@
+Refactor the pulse detection by explicitly implementing a small finite state machine (FSM) with three states corresponding to the pulse detection sequence: IDLE (waiting for 0), HIGH (data_in=1), and DONE (pulse detected). The FSM transitions only on clk edges and resets with rst_n.
+
+This method clearly separates the detection stages and output generation, making the design more readable for those familiar with FSMs, while retaining the same functionality.
+
+The output `data_out` is asserted only for one cycle when the FSM enters the DONE state, then immediately returns to IDLE for the next pulse detection.
+
+This structure avoids using a shift register and instead relies on state encoding, making the code structurally different but functionally equivalent.

@@ -1,0 +1,19 @@
+Here's a novel approach using a two-stage history buffer to optimize for misprediction recovery:
+
+1. Maintain two history registers:
+   - current_history: tracks the actual committed branch history
+   - speculative_history: tracks in-flight predictions
+
+2. On prediction:
+   - Only update speculative_history by shifting in predict_taken
+   - current_history remains unchanged until branch resolution
+
+3. On misprediction:
+   - Roll back to the known good state (current_history)
+   - Then apply the correct branch outcome (train_taken)
+
+4. On normal operation (no misprediction):
+   - Merge speculative updates into current_history
+   - This happens automatically as branches retire correctly
+
+This approach reduces unnecessary updates to the committed history and provides faster misprediction recovery since we always maintain a clean checkpoint. The speculative history can be quickly discarded on misprediction without complex rollback logic.

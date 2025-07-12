@@ -1,0 +1,37 @@
+The root cause of the prediction output mismatches lies in the timing and ordering of capturing the prediction history and updating the global history register (GHR). According to the specification and feedback:
+
+- The `predict_history` output should reflect the GHR state *used* to make the prediction, i.e., the GHR before any updates happen in the current cycle.
+
+- The GHR update on prediction or training occurs at the clock edge, and when both training (with misprediction) and prediction requests occur simultaneously, training's GHR update takes precedence.
+
+In the original code, `predict_history_r` and `predict_taken_r` are updated on the clock edge when `predict_valid` is asserted, capturing the current GHR and PHT prediction bit. However, because both capturing and GHR update occur in the same `always` block, subtle timing conflicts arise: the GHR update may logically precede the prediction capture or the combinational PHT read may reflect updated data if not carefully synchronized.
+
+**Fix approach:**
+
+- **Register `predict_history_r` and `predict_taken_r` *before* the GHR update**, so they hold the GHR and PHT state *prior* to any update on the current cycle. This means in the `always @(posedge clk or posedge areset)` block, we first update `predict_history_r` and `predict_taken_r` if `predict_valid` is high, using the *current* GHR and PHT state.
+
+- Then update the PHT and GHR according to training and prediction logic with the correct priority.
+
+- This explicit ordering ensures outputs correspond to the state *used* for the prediction, not the state after update.
+
+- Retain nonblocking assignments and no blocking assignments to maintain consistent timing semantics.
+
+- Maintain the priority that if `train_valid && train_mispredicted` both happen with `predict_valid`, training update and GHR recovery take precedence.
+
+- Keep PHT reads combinational from current indexed entry, so prediction sees PHT *before* training update in the same cycle.
+
+This adjustment fixes the timing relationship between output capture and state update, thereby resolving the output mismatches observed in the testbench.
+
+---
+
+Additional minor cleanups:
+
+- Eliminate redundant else branches that reassign registers to themselves to improve clarity.
+
+- Make sure all registers hold their previous state when not updated.
+
+- Keep the initial reset state of PHT to weakly not taken (2'b01).
+
+- Keep the saturating counter function as is for clarity.
+
+The final design strictly follows specification and resolves functional mismatches related to prediction outputs and GHR updates.

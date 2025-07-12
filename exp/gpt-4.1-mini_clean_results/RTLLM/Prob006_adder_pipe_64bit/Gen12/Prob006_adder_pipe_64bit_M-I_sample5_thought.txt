@@ -1,0 +1,17 @@
+The original design pipeline shifts the entire 64-bit operands and carry vectors each cycle, which is incorrect for a ripple carry adder pipeline that computes one bit per stage with carry propagation from one pipeline stage to the next. Instead, each pipeline stage should hold one bit of operand A, one bit of operand B, and a carry-in. The carry-out from stage i is passed to stage i+1 in the next clock cycle.
+
+To fix this:
+- Model the pipeline as arrays (vectors) of 65 stages for operand bits and carries.
+- At stage 0 (when i_en is asserted), load the 64-bit operands into the first 64 pipeline registers for the operands; the 65th stage (carry stage) starts at 0.
+- Each cycle, each pipeline stage computes sum_bit = a_bit ^ b_bit ^ carry_in and carries out to the next stage.
+- The carry out from stage 64 is the final carry out.
+- The pipeline latency is 65 cycles.
+- The output enable is a delayed version of i_en through a 65-stage shift register.
+- At the last pipeline stage, the sum bits and the carry out are assembled into a 65-bit result.
+- Use arrays for per stage storage to clearly represent the pipeline stages.
+- Implement synchronous reset and clocking.
+- This ensures the design correctly models the 64-bit ripple carry adder pipelined across 65 stages, with one stage per bit addition and carry propagation.
+
+This approach is simpler to understand, easier for synthesis tools to optimize, and fixes the logical flaw in the original code that incorrectly shifts entire operands each clock.
+
+The final code thus defines arrays for operand bits, carry bits, and sum bits, with the pipeline latency and enables properly aligned. The output is valid after 65 cycles from i_en.

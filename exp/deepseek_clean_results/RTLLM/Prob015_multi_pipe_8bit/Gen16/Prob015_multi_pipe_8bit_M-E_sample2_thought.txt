@@ -1,0 +1,13 @@
+Here's a novel approach using a Wallace Tree multiplier architecture with pipelining:
+
+Key Innovations:
+1. **Wallace Tree Compression**: Instead of simple shift-and-add, we use a 3:2 compressor tree for more efficient partial product reduction
+2. **Asymmetric Pipeline Stages**: The design uses deeper pipelining in the compression stages where timing is critical
+3. **Early Termination**: When mul_en_in is low, the pipeline flushes rather than processing invalid data
+4. **Carry-Save Adders**: Reduces critical path by avoiding full carry propagation until final stage
+
+Pipeline Structure:
+1. Stage 1: Input registration and partial product generation
+2. Stage 2: First level of 3:2 compression (Wallace Tree layer 1)
+3. Stage 3: Second level of compression (Wallace Tree layer 2)
+4. Stage 4: Final carry-propagate addition and output

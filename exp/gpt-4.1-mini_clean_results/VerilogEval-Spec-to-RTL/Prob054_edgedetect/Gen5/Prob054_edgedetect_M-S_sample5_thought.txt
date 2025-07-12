@@ -1,0 +1,5 @@
+The positive edge detection for each bit can be implemented with just a single register to hold the previous input value. On each clock edge, we compare the stored previous input with the current input; if the previous bit was 0 and the current bit is 1, then a positive edge occurred.
+
+Instead of using a separate wire for detection, we directly assign the output in the clocked always block by computing (~prev_in) & in.
+
+This approach reduces the number of signals and removes the combinational wire, simplifying the design while keeping the required delayed detection functionality intact.

@@ -1,0 +1,13 @@
+To optimize the original dual-edge triggered flip-flop implementation for better power, performance, and area (PPA), I propose to fuse the two flip-flops into a single positive-edge triggered flip-flop with clock frequency doubled using a clock generation block. This approach eliminates the mux on the output path, reducing delay and glitch potential. Although clock doubling can add complexity in the clock generation domain, within the module, it reduces the number of flip-flops from two to one, halving register area and dynamic clock power.
+
+Since the problem states only clk and d as inputs, and we cannot add external clock generation, an internal clock doubling is not possible directly without affecting timing and synthesis constraints.
+
+Therefore, an alternative PPA improvement is to replace the output continuous mux with a transparent latch controlled by the clock level, enabling lower mux delay and potentially less glitching and power consumption. This latch-based mux can reduce switching and area cost compared to a continuously switching 2:1 mux.
+
+Hence, keep two flip-flops triggered on opposite edges, but instead of using a continuous mux, latch the output based on the clock level to select between q_pos and q_neg. This should reduce glitches and improve timing slightly while maintaining correctness.
+
+This approach retains the modularity and correctness of the original solution but improves mux delay, glitching, and reduces dynamic switching on the output mux, thus improving PPA.
+
+Note: The latch is transparent when clk=1 and holds value when clk=0 (or vice versa), which is analogous to the mux select function but with less glitch potential.
+
+This is synthesis-friendly and commonly used in dual-edge FF emulation.

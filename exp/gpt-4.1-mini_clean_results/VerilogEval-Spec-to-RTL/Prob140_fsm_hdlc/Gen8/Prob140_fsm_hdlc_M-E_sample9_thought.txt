@@ -1,0 +1,10 @@
+Implement a compact Moore FSM that tracks the count of consecutive '1's in the input stream (from 0 to 6) plus three special output states: DISC (detected five consecutive ones then a zero), FLAG (detected six ones then a zero), and ERR (seven or more ones).
+
+Use a 3-bit state to represent counts 0-6; add three extra states for DISC, FLAG, ERR outputs, encoded separately. The FSM transitions on each input bit:
+
+- If input is '1', increment count up to 6, then go to ERR if more than 6 consecutive ones.
+- If input is '0', check if current count is 5 or 6, then output DISC or FLAG (one cycle delayed as Moore output). Otherwise, reset count to 0.
+
+The outputs (disc, flag, err) are asserted only in their dedicated states for exactly one clock cycle after the pattern is recognized, producing the required synchronous one-cycle pulse delayed output.
+
+This design keeps the FSM minimal and uses a combination of counting and output states, with synchronous reset to count=0. The next state logic is clean and structured as a small combinational block. Moore outputs depend on current state only.

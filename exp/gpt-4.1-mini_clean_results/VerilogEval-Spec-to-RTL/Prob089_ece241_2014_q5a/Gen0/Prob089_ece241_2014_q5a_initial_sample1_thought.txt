@@ -1,0 +1,19 @@
+To implement a one-input one-output serial 2's complementer Moore state machine, the FSM needs to detect the first '1' bit from the LSB side and then output the bits accordingly:
+- Before the first '1' bit is found, output matches the input bits.
+- Once the first '1' bit is found (this corresponds to adding 1 in 2's complement), output the inverted bits of the remaining input bits.
+Since this is a Moore machine, output depends only on the state, not directly on input, so output is determined by the current state and stored input bit.
+
+States:
+- S0: Initial state, output equals input (waiting to find first '1')
+- S1: After first '1' detected, output inverted input bits
+
+On async reset (areset), the machine goes to S0 and output Z is 0.
+
+At each clock cycle:
+- If in S0 and input x == 0: stay in S0, output = 0
+- If in S0 and x == 1: go to S1, output = 1
+- If in S1: stay in S1, output = ~x
+
+This logic will implement a serial 2's complementer.
+
+Note: Output is registered, so it changes on clock edge based on the current state and input.

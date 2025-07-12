@@ -1,0 +1,13 @@
+The core logic implementing the XOR, AND, and OR gates feeding D flip-flops and the output z as their NOR is correct.
+
+The primary issue lies in the reset initialization: the problem states flip-flops start at zero, but no explicit reset input is given. The previous design used a 2-cycle internal synchronous reset counter which may cause mismatches with a testbench expecting immediate reset or initial zero state.
+
+To fix this, instead of using an internal reset counter, we should initialize the flip-flops to zero using Verilog's `initial` block. This guarantees that the flip-flops start at zero at simulation time 0, matching the assumption that flip-flops are initially zero before the machine begins.
+
+The sequential logic then simply updates flip-flops on the positive clock edge without any reset condition.
+
+This approach aligns with the problem statement (no reset input, flip-flops start at zero), removes delayed reset artifacts, and avoids mismatches due to reset timing differences.
+
+Hence, the design uses registers initialized via `initial` blocks and purely synchronous state updates on `posedge clk`.
+
+This ensures the FSM behavior and output z match the specification and the testbench expectations exactly.

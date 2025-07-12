@@ -1,0 +1,13 @@
+Refactor the design to explicitly pipeline the concatenation and output stages using a simple FSM with two states: IDLE and HALF_FULL. 
+
+- In IDLE state, we wait for the first valid_in to latch into data_lock and move to HALF_FULL.
+
+- In HALF_FULL state, when the second valid_in arrives, concatenate stored data_lock and current data_in, latch it into an output register, and assert a single-cycle valid_out in the next clock cycle.
+
+- Maintain output valid_out and data_out as registered signals updated only in the output stage to ensure a one-cycle delay after receiving the second byte.
+
+- This approach clarifies timing by separating input buffering, concatenation, and output enabling, preventing valid_out/data_out being asserted in the same cycle as the second input, which caused functional failure before.
+
+- Use synchronous reset to initialize all registers.
+
+- The pipeline of states and data registers guarantees stable outputs and proper delay while fulfilling all requirements.

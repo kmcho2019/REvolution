@@ -1,0 +1,10 @@
+To refactor the LFSR implementation while maintaining the same functionality:
+1. Replace the sequential always block with continuous assignments for better readability and potential synthesis optimization
+2. Use a single assignment for next_q that combines:
+   - The right shift operation (q >> 1)
+   - XOR operations at tap positions (31,21,1,0)
+   - The new MSB from LSB (q[0])
+3. Maintain the synchronous reset functionality by using a ternary operator
+4. This approach reduces the number of intermediate wires and makes the LFSR operation more explicit in a single expression
+5. The tap positions are clearly visible in the XOR operations
+6. The structure remains combinational for next state calculation with sequential element only at the output register

@@ -1,0 +1,13 @@
+Instead of using separate counters for seconds, minutes, and hours, I'll implement a single 17-bit counter that increments every second. The total number of seconds in a day is 86400 (24*60*60), which fits within 17 bits. This approach offers several advantages:
+
+1. Single counter reduces register count and simplifies reset logic
+2. Eliminates cascaded rollover logic, improving timing
+3. Decode logic can be optimized for power since it only activates when outputs are needed
+4. Easier to extend for future features (like day counting)
+5. More consistent power profile since only one counter toggles
+
+The implementation will:
+- Use a 17-bit counter (0 to 86399)
+- Decode the counter value to hours, minutes, seconds
+- Reset to 0 at 86400 or when RST is active
+- Output decoding uses simple division/modulo operations

@@ -1,0 +1,49 @@
+To simplify the implementation, I will directly encode the function f as a combinational logic expression derived from the given Karnaugh map.
+
+First, note the mapping:
+
+- Inputs are x[3:0] (bits 3 down to 0).
+- The Karnaugh map rows correspond to x[3]x[0].
+- The Karnaugh map columns correspond to x[1]x[2].
+
+I will write the minterms corresponding to the '1's from the K-map explicitly:
+
+From the K-map:
+
+Positions with f=1:
+- row=01 (x[3]x[0]=0 1), col=11 (x[1]x[2]=1 1) => x = 0 1 1 1
+- row=11 (1 1), col=00 (0 0) => x=1 0 0 1
+- row=11, col=01 => x=1 0 1 1
+- row=10 (1 0), col=00 => x=1 0 0 0
+- row=10, col=01 => x=1 0 1 0
+
+These correspond to input bit patterns:
+
+- x[3] x[2] x[1] x[0] = 
+  - 0 1 1 1
+  - 1 0 0 1
+  - 1 0 1 1
+  - 1 0 0 0
+  - 1 0 1 0
+
+I will translate these into boolean minterms and OR them together.
+
+Alternatively, to simplify, express f using the K-map groups:
+
+- Group 1: row=11 or 10 and col=00 or 01 with f=1 (covers four 1s)
+- Group 2: single 1 at row=01, col=11
+
+In terms of inputs:
+
+- Group 1: x[3] = 1, x[1] = 0 (from col bits and rows)
+- Group 2: x[3]=0, x[0]=1, x[1]=1, x[2]=1
+
+Expressing logic:
+
+- f = (x[3] & ~x[1]) | (~x[3] & x[0] & x[1] & x[2])
+
+This is simple, does not need a case statement, and respects the Karnaugh map.
+
+No don't-cares are assigned explicitly; logic covers all cases.
+
+This is the simplest and cleanest solution implementing the required function.

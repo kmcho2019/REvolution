@@ -1,0 +1,13 @@
+Refactor the module by using a single 4-bit vector input formed by concatenating (a,b,c,d) so that the input number is represented as `num = {a,b,c,d}` with `a` as the MSB and `d` as the LSB. Then implement out_sop and out_pos by directly checking the input vector against the required values using simple comparisons and Boolean logic.
+
+For out_sop (Sum of Products), the minimal form is the OR of minterms for numbers 2, 7, and 15.
+
+For out_pos (Product of Sums), since the inputs 3,8,11,12 never occur (don't cares), we can write the logic as the negation of the minterms for zeros, or equivalently, use a direct combinational check with a case statement that assigns out_pos based on the input.
+
+This approach removes explicit minterm/maxterm product-of-sums/sum-of-products expressions and instead uses direct combinational logic that is functionally equivalent and simpler, enhancing readability and correctness.
+
+This avoids manual mistakes in Boolean expression minimization and ensures proper handling of don't-care conditions.
+
+We use continuous assignments (`assign`) and a combinational always block to implement out_pos cleanly.
+
+This is a clear and verifiable method that satisfies the requirements.

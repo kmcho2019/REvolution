@@ -1,0 +1,10 @@
+To create a superior 4-bit comparator by fusing the best ideas from both examples, I will:
+
+- Use the ripple borrow chain from Example 2 for clarity and correctness in detecting A < B, since it explicitly models the borrow propagation and is synthesis-friendly.
+- Use the balanced AND tree for equality detection from Example 1, leveraging the per-bit XNOR eq_bit signals and a balanced AND tree to reduce glitches and logic depth, improving timing and power.
+- Make output signals mutually exclusive by assigning A_less directly from the final borrow signal, A_equal from the balanced equality detection, and A_greater as the complement of (A_less or A_equal).
+- Use vectorized eq_bit for clarity and to align with both examples, combined with an explicit borrow chain with clear naming.
+- Keep the design fully combinational with no sequential blocks, ensuring simple and efficient synthesis and minimal timing overhead for 4 bits.
+- The resulting design balances clarity, timing, glitch reduction, power, and area efficiency for optimal PPA on a 4-bit comparator.
+
+This fusion provides clear borrow logic for less-than detection and a robust, balanced equality check, with mutually exclusive outputs. It also uses generate loops for clean and scalable code.

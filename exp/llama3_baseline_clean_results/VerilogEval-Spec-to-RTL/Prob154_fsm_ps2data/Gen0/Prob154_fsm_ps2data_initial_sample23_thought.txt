@@ -1,0 +1,7 @@
+To solve this problem, we'll implement a finite state machine (FSM) in Verilog. The FSM will have four states: 
+- IDLE: This is the initial state where we discard bytes until we see one with in[3]=1.
+- BYTE_1: Once we've seen the first byte, we transition to this state and store the byte.
+- BYTE_2: In this state, we store the second byte.
+- BYTE_3: After receiving the third byte, we transition to this state, store the byte, and assert the done signal in the next cycle.
+We will use a counter to keep track of the current byte and assign the input byte to the corresponding output byte position in each state.
+We will also use a reset signal to reset the FSM to the IDLE state when it is asserted.

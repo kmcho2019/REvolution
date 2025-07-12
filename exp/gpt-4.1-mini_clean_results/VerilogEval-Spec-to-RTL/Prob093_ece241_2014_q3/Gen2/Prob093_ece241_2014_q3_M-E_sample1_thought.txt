@@ -1,0 +1,15 @@
+We need to implement four signals mux_in[3:0], each corresponding to a column of the K-map indexed by selector inputs a,b on a 4-to-1 mux outside TopModule. The four mux_in bits are functions of inputs c and d only.
+
+Given that only multiplexers (one 4-to-1 with selector a,b outside TopModule and as many 2-to-1 muxes as needed) can be used, we must express each mux_in[i] as a cascade or combination of 2-to-1 multiplexers with c or d as select lines.
+
+Approach:
+
+1. Identify logic for each mux_in[i] from the K-map column associated with ab = 00, 01, 11, 10 respectively.
+
+2. For each, express as nested 2-to-1 muxes where select signals are only c or d (the inputs).
+
+3. The TopModule will implement all four mux_in bits in parallel.
+
+By carefully analyzing the K-map, we find minimal mux expressions for each mux_in[i], using only c or d as selector for 2-to-1 muxes. This satisfies the requirement of no other gates.
+
+This design is modular, uses only mux primitives, and outputs mux_in[3:0]. The external 4-to-1 mux with a,b selectors completes the function per problem statement.

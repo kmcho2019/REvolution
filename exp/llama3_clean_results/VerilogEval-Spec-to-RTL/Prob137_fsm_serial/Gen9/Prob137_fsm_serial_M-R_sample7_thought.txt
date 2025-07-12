@@ -1,0 +1,7 @@
+To refactor the existing code, we will simplify the state machine structure and minimize the combinational logic depth. We can use a two-stage state machine, where the first stage detects the start bit and the second stage receives the data bits and verifies the stop bit. 
+
+The state machine will have three states: IDLE, RECEIVE, and WAIT_STOP. In the IDLE state, it waits for the start bit. When the start bit is detected, it transitions to the RECEIVE state. In the RECEIVE state, it shifts in the data bits and checks for the stop bit. If the stop bit is correct, it sets the done signal high and transitions back to the IDLE state. If the stop bit is incorrect, it transitions to the WAIT_STOP state. In the WAIT_STOP state, it waits for the stop bit and then transitions back to the IDLE state.
+
+We will also use a separate counter to keep track of the number of bits received, and a register to store the received data bits. We will use an always block to update the state machine and the counters, and use assign statements to define the output signals.
+
+To optimize the code, we will minimize the number of assignments within the always block and use efficient logic structures. We will also consider using power-aware design techniques, such as clock gating or operand isolation, to reduce power consumption.

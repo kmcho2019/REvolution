@@ -1,0 +1,13 @@
+The new solution utilizes a pipeline-based architecture to improve the performance and reduce the power consumption of the serial byte receiver. The pipeline is divided into four stages: Start Bit Detection, Data Bit Collection, Stop Bit Verification, and Done Signal Generation. 
+
+In the Start Bit Detection stage, a simple detector is used to identify the start bit of the incoming byte. Once the start bit is detected, the Data Bit Collection stage is enabled, and it collects the 8 data bits of the incoming byte. 
+
+The Stop Bit Verification stage checks if the stop bit is correct. If the stop bit is incorrect, the receiver waits until a stop bit is detected before proceeding. 
+
+Finally, the Done Signal Generation stage generates the 'done' signal when a complete byte has been received and verified.
+
+This pipeline-based architecture allows for a more efficient and scalable design, as each stage can be optimized independently. The use of pipeline stages also reduces the critical path and allows for a higher clock frequency, improving the overall performance of the receiver.
+
+The new solution also includes a reset mechanism that resets the pipeline and the 'done' signal when the reset input is asserted. This ensures that the receiver is properly initialized and ready to receive new data after a reset.
+
+The pipeline-based architecture also reduces the power consumption by minimizing the switching activity within the receiver. The use of separate stages for each function reduces the number of logic gates required, resulting in a more area-efficient design.

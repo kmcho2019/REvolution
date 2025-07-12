@@ -1,0 +1,14 @@
+The waveform shows that q is high only when at least one of (a or b) is high and at least one of (c or d) is high. Another way to implement this is to use NAND gates and De Morgan's laws differently.
+
+Express q as q = ¬(¬(a | b) | ¬(c | d)) which is equivalent to q = (a | b) & (c | d).
+
+Instead of directly using OR and AND gates, implement q using only NAND gates:
+
+- First, generate nand_ab = NAND(a, b) = ¬(a & b).
+- Similarly, generate nand_cd = NAND(c, d).
+- Then invert nand_ab and nand_cd by NANDing them with themselves: ab_or = NAND(nand_ab, nand_ab) = a | b; cd_or = NAND(nand_cd, nand_cd) = c | d.
+- Finally, implement q = NAND(ab_or, cd_or) inverted: q = NAND(NAND(ab_or, cd_or), NAND(ab_or, cd_or)) = (a | b) & (c | d).
+
+This uses NAND gates exclusively and demonstrates how to build the logic from NAND primitives, which can be advantageous in some technologies optimized for NAND gates.
+
+It is functionally equivalent but structurally different from a direct implementation with OR/AND gates.

@@ -1,0 +1,10 @@
+This design uses a parallel prefix computation to propagate the 'first set' information across all bits simultaneously. The key idea is to:
+1. Generate a mask that identifies all bits to the right of the first set bit
+2. Use this mask to isolate the first set bit
+3. Encode the position using a logarithmic encoder
+
+The implementation:
+- First creates a 'higher_prio_set' vector where each bit indicates if any higher-priority (lower-index) bit is set
+- Then generates a mask where only the first set bit remains (by XORing with higher_prio_set)
+- Finally uses a logarithmic encoder to convert the one-hot position to binary
+This approach has uniform delay characteristics and scales well to larger widths.

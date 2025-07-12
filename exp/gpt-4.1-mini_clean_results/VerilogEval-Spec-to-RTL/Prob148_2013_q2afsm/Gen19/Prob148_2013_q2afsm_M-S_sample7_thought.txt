@@ -1,0 +1,7 @@
+Simplify the FSM by using a 2-bit binary state encoding instead of one-hot, which reduces the number of flip-flops from 3 to 2, minimizing area and power. Map states as:
+- 2'b00: Idle (A)
+- 2'b01: Grant device 0 (B)
+- 2'b10: Grant device 1 (C)
+- 2'b11: Grant device 2 (D)
+
+Implement synchronous active-low reset to idle state. The next-state logic respects priority: device 0 highest, then device 1, then device 2. While in a grant state, stay there if the corresponding request persists, otherwise return to idle. Use simple case statements for next state logic and combinational outputs derived from the state. This encoding reduces flip-flop count and simplifies outputs by decoding grants from state bits.

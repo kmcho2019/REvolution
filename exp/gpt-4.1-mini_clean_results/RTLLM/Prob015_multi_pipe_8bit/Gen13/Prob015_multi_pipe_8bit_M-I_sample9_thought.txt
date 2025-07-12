@@ -1,0 +1,11 @@
+To improve the PPA of the two-stage pipelined 8-bit multiplier, reduce the long combinational addition in a single cycle by splitting the summation of partial products into multiple pipeline stages. Implement a three-stage pipeline:
+
+1. Stage 1: Register inputs and mul_en_in.
+2. Stage 2: Generate partial products and sum them in two groups of four partial products each, register these two sums and the enable.
+3. Stage 3: Sum the two partial sums registered at Stage 2 to get the final product and register the output enable.
+
+This breaks down the critical addition path into smaller adders, improving timing and potentially allowing a higher clock frequency. It also reduces the fan-in of the adders in each pipeline stage, reducing switching power and area pressure.
+
+The enable signal is pipelined alongside data through all stages. Outputs are gated by the enable signal to zero otherwise. This pipeline adds only one extra register stage compared to the original design but effectively shortens the critical path, improving overall performance and power efficiency.
+
+The design still uses synchronous active-low reset and only updates input registers when enable is active. This approach meets all original specs and enhances PPA.

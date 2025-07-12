@@ -1,0 +1,14 @@
+To simplify the pipelined 8-bit multiplier while maintaining functionality, I'll focus on these key improvements:
+
+1. **Reduced Pipeline Stages**: Instead of 3 stages, use 2 stages (input registration + computation) to simplify control logic while still providing good performance.
+
+2. **Simplified Partial Product Calculation**: Generate all partial products in one stage using shift-and-add approach rather than separate generation and addition stages.
+
+3. **Optimized Enable Logic**: Use a single-bit enable pipeline register instead of 3-bit, since we only need to track when valid data reaches the output.
+
+4. **Combined Registers**: Use fewer intermediate registers by performing more computation in each pipeline stage.
+
+The simplified design will:
+- Stage 1: Register inputs and start partial product generation
+- Stage 2: Complete multiplication and register output
+- Use minimal control logic for enable signal propagation

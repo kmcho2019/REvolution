@@ -1,0 +1,11 @@
+To optimize the D latch implementation for better PPA metrics, particularly focusing on power and area, I propose the following improvements:
+
+1. **Power Optimization**: The current implementation has a feedback path that causes unnecessary switching when 'ena' is low. We'll use an explicit always block with proper sensitivity list to potentially give the synthesis tool more optimization opportunities.
+
+2. **Area Optimization**: By using a standard always block implementation, we allow the synthesis tool to potentially choose a more area-efficient latch structure from the technology library.
+
+3. **Maintain Functionality**: The improved solution must maintain identical latch behavior - transparent when 'ena' is high, and holding its value when 'ena' is low.
+
+4. **Readability**: The new implementation will remain clear and maintainable while potentially offering better PPA results.
+
+This approach may yield better power and area metrics as it gives the synthesis tool more explicit information about the intended latch behavior.

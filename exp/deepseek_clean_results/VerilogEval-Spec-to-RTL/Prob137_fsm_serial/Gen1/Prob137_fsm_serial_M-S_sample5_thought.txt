@@ -1,0 +1,8 @@
+To simplify the solution while maintaining functionality, we can:
+1. Eliminate the ERROR state by handling missing stop bits in the STOP state itself
+2. Reduce state machine to just 3 states: IDLE, RECEIVE, STOP
+3. Keep the bit counter and shift register but simplify their control logic
+4. Generate 'done' signal directly in the STOP state when valid stop bit is detected
+5. Return to IDLE immediately after stop bit check (whether valid or not)
+
+The key simplification is removing the ERROR state and handling all cases in STOP state. This reduces complexity while maintaining the same functionality since we still wait for a stop bit (1) before accepting new bytes.

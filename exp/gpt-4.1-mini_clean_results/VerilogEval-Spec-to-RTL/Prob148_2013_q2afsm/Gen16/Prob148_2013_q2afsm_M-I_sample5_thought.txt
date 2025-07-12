@@ -1,0 +1,26 @@
+The original solution uses a one-hot encoding with 3 flip-flops to represent 4 states (idle + 3 grants). This results in unnecessary flip-flops and somewhat longer combinational logic for next-state decoding and output logic. 
+
+To improve area, power, and timing, I will re-encode the FSM using a binary state encoding with 2 bits, which is the minimal number of bits to encode four states. This reduces flip-flop count and simplifies combinational logic.
+
+State encoding (2 bits):
+- 2'b00: State A (Idle)
+- 2'b01: State B (grant device 0)
+- 2'b10: State C (grant device 1)
+- 2'b11: State D (grant device 2)
+
+Next-state logic:
+- In Idle (A=2'b00): If requests exist, grant based on priority (r[0], then r[1], then r[2])
+- In granted states (B,C,D): remain in that state if corresponding r[i] remains asserted; else return to idle.
+
+Output logic:
+- Generate g based on current state: g0=1 for B, g1=1 for C, g2=1 for D, else zero.
+
+Synchronous active-low reset to state A.
+
+Benefits:
+- Reduced flip-flop count (2 vs 3)
+- Smaller combinational next-state logic and output decoding
+- Likely improved timing and lower power due to fewer registers and simpler logic
+- Easier to meet timing constraints and reduce area/power
+
+The code uses separate always blocks for state register (sequential) and next-state (combinational) logic, with output logic assigned via continuous assignment.

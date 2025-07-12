@@ -1,0 +1,10 @@
+Implement the fixed-point adder by leveraging two's complement arithmetic properties directly:
+- Treat inputs as signed numbers and perform a straightforward addition using full width.
+- No need for explicit absolute value computations or manual sign handling.
+- After addition, check for overflow by comparing input and result signs.
+- Assign the result directly, truncating or saturating if necessary to stay within N-bit signed range.
+- Use parameters Q (fractional bits) and N (total bits) for flexibility.
+- Overflow detection and saturation are handled in a concise manner.
+- This approach is clean, leverages native signed arithmetic, and ensures fixed-point correctness since inputs and outputs use the same format.
+
+This design uses a temporary wider signed register for addition to detect overflow and then clamps the output to valid range if overflow occurs, preserving fixed-point semantics and preventing wrap-around errors.

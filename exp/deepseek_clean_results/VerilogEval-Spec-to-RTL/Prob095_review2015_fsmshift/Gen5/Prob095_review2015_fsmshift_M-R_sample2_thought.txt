@@ -1,0 +1,11 @@
+Here's a refactored version that maintains the same core functionality but with a cleaner structure:
+
+1. Still use a 2-bit counter (0-3) to track the 4 cycles
+2. Make shift_ena purely combinational based on counter value
+3. Counter stops incrementing after reaching 3 (0b11)
+4. Reset synchronously clears the counter
+5. Key improvements:
+   - Clear separation between counter logic and output generation
+   - Counter stops after 4 cycles (doesn't wrap around)
+   - shift_ena is low after 4 cycles regardless of reset state
+   - More explicit state management

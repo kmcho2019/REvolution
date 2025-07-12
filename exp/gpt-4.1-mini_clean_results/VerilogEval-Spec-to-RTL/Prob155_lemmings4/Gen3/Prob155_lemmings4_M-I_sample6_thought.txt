@@ -1,0 +1,8 @@
+To improve PPA, focus on these optimizations without changing behavior:  
+1. Reduce toggle activity on direction and fall_timer registers by only updating them when their values actually change. This cuts unnecessary toggling, lowering power.  
+2. Simplify fall_timer increment and saturation logic by using a simple increment and clamp with a min comparator rather than a conditional increment, which may optimize timing.  
+3. Avoid redundant assignments in next state logic by restructuring conditions to be mutually exclusive, reducing combinational logic complexity.  
+4. Use an explicit state encoding with localparam for directions to improve clarity and potentially aid synthesis tools.  
+5. Minor style cleanups to keep combinational logic lean.  
+
+These changes improve timing (by reducing combinational path complexity), reduce power (less toggling on stable signals), and keep area similar or slightly improved.

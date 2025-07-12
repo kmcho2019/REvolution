@@ -1,0 +1,13 @@
+To simplify the solution while maintaining functionality, we can make these optimizations:
+
+1. Combine state and direction into a single 3-bit register (2 bits for state, 1 for direction) to reduce register count
+2. Eliminate separate next_state/next_direction signals by using direct assignments in the state machine
+3. Simplify the output logic by making it purely dependent on the current state
+4. Remove redundant condition checks by leveraging the priority order in the state transitions
+5. Use a single always block for both state and direction updates
+
+The key improvements are:
+- Reduced register count by combining state and direction
+- Simplified transition logic by removing intermediate signals
+- Maintained strict priority order (fall > dig > bump)
+- Kept outputs purely combinational based on current state

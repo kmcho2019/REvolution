@@ -1,0 +1,13 @@
+To improve the PPA of the 64-bit arithmetic shift register, I will implement the shift operation using a two-stage hierarchical barrel shifter: first shifting by the 8-bit amount if needed, then by the 1-bit amount. This decomposition reduces the combinational logic fan-in and shortens the critical path compared to doing large concatenations in one step.
+
+For both left and arithmetic right shifts:
+- Perform an 8-bit shift when amount[0] = 1 (i.e., for amounts 01 or 11).
+- Then perform a 1-bit shift when amount[1] = 0 or 1, corresponding to left or right direction.
+  
+Additionally:
+- Use Verilog's shift operators (<<, >>>) for clarity and synthesis efficiency.
+- Sign-extend arithmetic right shifts by replicating the MSB before shifting.
+- Avoid large concatenations to reduce gate count and fan-in.
+- Retain synchronous load and enable as before.
+
+This staged approach balances the shift amount and direction with smaller multiplexers and shifters, reducing the critical path, area, and potentially power, improving overall PPA.

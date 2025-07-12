@@ -1,0 +1,25 @@
+The key issues from the feedback are lack of initialization for the flip-flop state and an incorrect combinational logic for q that doesn't fully match the waveform.
+
+To fix this:
+- Initialize the flip-flop state to 0 on reset or at start.
+- From the waveform, `state` initially is 0 after the first clock.
+- The output q changes according to the pattern:
+  - When `state` is 0, q seems to be `(a | b)` except for some cases influenced by previous state.
+  - When `state` is 1, q appears to be `~(a & b)`.
+  
+From the waveform observations:
+- At clk=15ns (pos edge), state=0 and q=0
+- At clk=45ns, state=0, b=1, q=1
+- At clk=65ns, with a=1,b=1,state=0, q=0
+- At clk=75ns, state=1, q=1
+
+This suggests q = (~state & (a | b)) | (state & ~(a & b)).
+
+Implementing this q and adding initialization of state_reg to 0 will match the behavior and remove X values.
+
+Thus:
+- At posedge clk, state <= q
+- output q = (~state & (a | b)) | (state & ~(a & b))
+- initial state_reg = 0
+
+This matches the waveform and ensures defined startup state.

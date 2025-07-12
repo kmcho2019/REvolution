@@ -1,0 +1,21 @@
+Fuse the best ideas from both examples to create a superior unsigned 16-bit shift-and-accumulate multiplier by:
+
+- Using a 5-bit counter `i` progressing from 0 to 17 to control operation cycles:
+  - At `i=0`, load inputs (multiplicand in `areg` and zero-extended multiplier in `breg`), clear accumulator.
+  - From `i=1` to `i=16`, accumulate `breg` into `yout_r` when `areg[0]` is 1.
+  - Each cycle during `i=1` to `16`, shift `areg` right and `breg` left to align bits without wide dynamic shifts.
+  - At `i=16`, assert `done` flag.
+  - At `i=17`, hold registers stable and clear `done` flag.
+- Control the done flag precisely: set at `i==16`, cleared at `i==17` or when `start` deasserts.
+- On `start` deassert or reset, reset `i` and all internal registers to zero, avoiding toggling outside operation.
+- Minimize toggling by:
+  - Only incrementing `i` if less than 17 and `start` is high.
+  - Holding register values stable at `i==17`.
+  - Conditional accumulation (only add if LSB of `areg` is set).
+- Use zero-extended `breg` to 32 bits at load to simplify accumulation.
+- Implement all sequential logic with non-blocking assignments and asynchronous active-low reset.
+- Output product `yout` directly from register `yout_r` and done from `done_r`.
+- The design avoids wide variable left-shifts (e.g., `breg << (i-1)`), reducing hardware cost and critical path delay.
+- This fusion yields a clean, power-efficient, and easy-to-verify shift-and-accumulate multiplier with clear control signals and a well-defined done flag.
+
+Overall, this design balances clarity, power, area, and timing and addresses the requirements fully.

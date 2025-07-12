@@ -1,0 +1,12 @@
+To implement the simplified radix-2 divider, we will use a combination of sequential logic and combinatorial logic. The sequential logic will handle the synchronization of the inputs, the initialization of the registers, and the generation of the result validity signal. The combinatorial logic will handle the division process, including the subtraction, the update of the shift register, and the selection of the result based on the carry-out. We will use a finite state machine to manage the different states of the division process.
+
+The module will have three main states: 
+- Idle: waiting for a valid operation request
+- Division: performing the division
+- Done: result is valid and ready
+
+The division process will be performed in 8 clock cycles, during which the shift register SR will be updated based on the subtraction result. After the 8 clock cycles, the final remainder and quotient will be stored in the shift register SR.
+
+We will use a multiplexer to select the appropriate result based on the carry-out of the subtraction. If the carry-out is 0, the result will be the dividend minus the divisor; otherwise, the result will be the dividend.
+
+The res_valid signal will be set to high when the result is valid and ready, and it will be cleared when the reset signal is high or when the result has been consumed.

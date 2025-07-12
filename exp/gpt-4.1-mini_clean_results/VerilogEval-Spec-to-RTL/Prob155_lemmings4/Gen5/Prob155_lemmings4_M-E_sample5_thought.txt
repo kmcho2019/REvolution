@@ -1,0 +1,11 @@
+Implement the Lemmings FSM with a combined state machine encoding both mode and direction into one enumerated state variable to simplify state transition logic and remove a separate direction register. Use a parameterized bit field within the state encoding: 3 bits total to represent the six essential states (walking left/right, digging left/right, falling left/right), plus a splat state. This eliminates a separate direction register and makes the direction implicit in the state.
+
+Prioritize transitions by mode precedence (fall > dig > walk/bump) using a one-hot style next state assignment to reduce combinational complexity.
+
+Maintain a 5-bit fall timer incrementing only in falling states, saturating naturally at max value using a min function.
+
+Use synchronous reset for better timing closure and only reset asynchronously when required, but since problem requires asynchronous reset, use posedge async reset.
+
+Outputs directly decode from the encoded state (walk/dig/fall/splat + direction), simplifying output logic and reducing redundant signals.
+
+Overall, this approach reduces the number of state registers, removes redundant direction logic, and centralizes control, aiming to improve area and timing by simplifying next-state logic and output decoding.

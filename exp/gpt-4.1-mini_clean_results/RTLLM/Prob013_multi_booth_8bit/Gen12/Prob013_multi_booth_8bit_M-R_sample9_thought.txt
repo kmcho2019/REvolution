@@ -1,0 +1,14 @@
+Refactor the existing design by explicitly separating combinational and sequential logic, and restructuring the FSM with three states: IDLE (waiting for reset release), LOAD (load inputs), and CALC (perform multiplication). 
+
+- Use nonblocking assignments only in sequential blocks.
+- Use synchronous reset only.
+- Use separate registers for multiplicand, multiplier, product, and counter.
+- Use a combinational always block to determine the next state and next values.
+- Use registered outputs updated on clock.
+- This makes the design more modular, clear, and easier to verify, while keeping the same functionality.
+- No mixing of reset in the same always as clock edge.
+- The ready (rdy) signal asserted only after the 16 cycles complete.
+- The multiplicand shifts left every cycle, and the product accumulates multiplicand if multiplier bit is 1, per cycle.
+- The design is fully synchronous and uses a small FSM with explicit states.
+
+This structure improves clarity, maintainability, and testability.

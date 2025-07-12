@@ -1,0 +1,7 @@
+The waveform behavior shows q depends on c selecting among four 4-bit inputs (b, e, a, d) for c=0..3, and outputs 4'hF otherwise. Example 1 uses a compact vector shift approach, which is elegant but can cause unnecessary complexity and switching, impacting performance and power. Example 2 uses a clear case statement function, improving clarity but potentially adding a small overhead.
+
+The best fusion is to implement a simple and explicit 4-to-1 multiplexer for c values 0 to 3 using a concise case statement directly in a continuous assignment, which synthesis tools optimize efficiently. For c >= 4, output 4'hF.
+
+This design avoids shifts (from Ex1) and function call overhead (from Ex2), provides clarity, and limits switching and area by directly selecting inputs using a combinational case expression.
+
+Thus, we implement q with a compact case on c[3:0], selecting inputs for 0-3, else 4'hF, combining the clarity and performance advantages from both examples.

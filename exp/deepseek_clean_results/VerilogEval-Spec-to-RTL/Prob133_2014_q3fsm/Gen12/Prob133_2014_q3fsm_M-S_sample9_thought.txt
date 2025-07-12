@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. State Encoding: Keep minimal 1-bit state encoding (A/B)
+2. Counting Mechanism: Use single 2-bit counter for both cycle tracking and counting 1's by reusing bits
+3. Output Logic: Make output purely combinational based on counter values
+4. Reset Logic: Clear all counters when in state A or reset
+5. Key Insight: Since we only need to check for exactly two 1's in three cycles, we can track this with a simple counter that resets every 3 cycles
+
+Optimizations:
+- Eliminate separate cycle_count and ones_count registers by using a single 3-bit shift register
+- Output z is simply when the shift register has exactly two 1's (pattern matching)
+- State transition remains simple (only depends on s in state A)
+- Reduced register count from 4 bits to 3 bits

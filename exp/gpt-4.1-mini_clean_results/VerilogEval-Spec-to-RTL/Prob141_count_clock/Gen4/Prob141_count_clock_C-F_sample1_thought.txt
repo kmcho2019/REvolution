@@ -1,0 +1,8 @@
+Fuse modularity and clear combinational next-state logic from Example 1 with the digit-by-digit BCD increment approach of Example 2 to optimize clarity and reduce critical path delay. Specifically:
+- Use separate 4-bit BCD digits for units and tens of hours, minutes, seconds to simplify increment logic and minimize large comparators.
+- Implement combinational next-state logic for all digits and the PM indicator, triggered only on ena, separating next-state calculations from sequential register updates.
+- Handle hours counting with explicit logic for 12-hour format (01-12) and PM toggle when transitioning from 11 to 12.
+- Use small simple functions for incrementing single BCD digits with given max values (e.g., 9 for units, 5 for tens of seconds/minutes).
+- Synchronize reset to 12:00 AM with synchronous reset on clk.
+- Compose outputs from digits registers.
+This approach combines clarity, modularity, and potentially better timing by minimizing nested multi-level combinational logic and explicitly isolating state update from next-state computation.

@@ -1,0 +1,10 @@
+Instead of using a single vector register for all 8 bits, this design uses an array of eight individual D flip-flop modules, each with asynchronous reset. Each flip-flop is instantiated separately, allowing for bit-level customization or debugging. The asynchronous reset and clock triggering are handled inside each flip-flop module, ensuring clean separation of concerns.
+
+This approach:
+- Modularizes the design by implementing an explicit DFF module with async reset,
+- Supports independent handling or modification of each bit,
+- Improves traceability and testability of each flip-flop,
+- Still satisfies the requirement of asynchronous active-high reset and positive edge clock triggering,
+- Demonstrates a clear hierarchy and readability by explicitly instantiating flip-flops per bit.
+
+This method favors clarity and maintainability at the potential cost of slightly more verbose code, which can be beneficial in some verification or hardware debugging scenarios.

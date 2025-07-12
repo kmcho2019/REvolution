@@ -1,0 +1,14 @@
+Refactoring Approach:
+1. Replace the sequential shift register with a continuous assignment-based shift operation
+2. Move the sequence detection logic entirely to combinational assignments
+3. Keep the 'found' register for state tracking but simplify its update logic
+4. Use a single always block just for the 'found' register
+5. Maintain the same synchronous reset behavior
+6. Eliminate the intermediate wire for cleaner code
+
+Key Changes:
+- Shift operation now happens through continuous assignment
+- Sequence detection is computed in parallel with the shift
+- Reduced sequential logic to just the 'found' state
+- Simplified always block to only handle state latching
+- Same functionality with potentially better timing due to parallel computation

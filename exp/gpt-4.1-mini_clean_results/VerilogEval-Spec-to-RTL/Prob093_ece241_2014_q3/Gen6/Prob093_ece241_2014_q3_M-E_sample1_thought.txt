@@ -1,0 +1,77 @@
+To correctly implement the given K-map function, note that the full logic function has inputs a, b, c, d, with output defined in the table. The external 4-to-1 mux uses inputs a and b as selectors and takes 4 inputs mux_in[3:0], each a function of c and d only. Thus, our TopModule is responsible for producing these 4 mux inputs as functions of c and d.
+
+We must:
+
+1) Derive the functions for each mux_in[i], i = 0 to 3, corresponding to ab = 00, 01, 11, 10 respectively.
+
+2) Implement each mux_in[i] only with 2-to-1 multiplexers (and constants), avoiding all other logic gates.
+
+Analyzing the K-map per each fixed ab:
+
+- For ab=00 (mux_in[0]):
+
+cd:00->0,01->1,11->1,10->1
+
+Truth table (c,d): (00)0,(01)1,(11)1,(10)1
+
+Output is zero only at c=0,d=0, else 1
+
+=> out = c + d
+
+Implement c + d as a 2-to-1 mux: out = d ? 1 : c
+
+- For ab=01 (mux_in[1]):
+
+cd: all zeros
+
+=> output always 0 (constant 0)
+
+- For ab=11 (mux_in[2]):
+
+cd: 00=0,01=0,11=1,10=0
+
+Output is 1 only when c=1 and d=1, else 0
+
+=> out = c & d
+
+Implement c & d as out = d ? c : 0
+
+- For ab=10 (mux_in[3]):
+
+cd: 00=1,01=0,11=1,10=1
+
+Check expression:
+
+out = (~d) + c
+
+Because:
+
+(0,0): ~d=1, c=0 => 1+0=1
+
+(0,1): ~d=0, c=0 => 0+0=0
+
+(1,1): ~d=0, c=1 => 0+1=1
+
+(1,0): ~d=1, c=1 => 1+1=1
+
+Implement ~d by mux2to1 with sel=d, out = d ? 0 : 1
+
+Then implement out = c ? 1 : ~d
+
+Using mux2to1 with sel=c
+
+We will implement all these functions using a single module mux2to1 to realize the 2-to-1 multiplexers.
+
+Assign mux_in in the order:
+
+mux_in[0] = function for ab=00
+
+mux_in[1] = function for ab=01
+
+mux_in[2] = function for ab=11
+
+mux_in[3] = function for ab=10
+
+This implementation meets all requirements: uses one 4-to-1 mux externally indexed by a,b and minimal number of 2-to-1 muxes internally to create mux_in.
+
+The TopModule only needs inputs c,d and outputs mux_in[3:0].

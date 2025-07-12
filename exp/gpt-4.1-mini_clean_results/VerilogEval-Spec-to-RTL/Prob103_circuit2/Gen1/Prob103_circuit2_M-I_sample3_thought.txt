@@ -1,0 +1,9 @@
+The original implementation uses a 4-input XOR followed by an inversion to compute even parity, which is already concise and minimal.
+
+For improved PPA:
+- To reduce glitching and potentially lower dynamic power, implement the XOR in a balanced two-level tree instead of a flat XOR4.
+- Use two 2-input XORs in the first stage, then XOR their outputs in the second stage, and finally invert the result.
+- This reduces the fan-in at each gate, potentially reducing delay and power by lowering glitch susceptibility.
+- Also, explicitly instantiate the intermediate wires for clarity and optimization friendliness by synthesis tools.
+
+This balanced XOR tree is a standard practice for multi-input parity circuits for better timing and power characteristics.

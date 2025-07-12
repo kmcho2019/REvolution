@@ -1,0 +1,12 @@
+Refactor the fractional frequency divider by using a single 3-bit counter that increments on the positive edge of `clk` and wraps modulo 7. From this counter, generate two pulse signals: 
+
+- `clk_int_a` is high for counts 0..3 (4 cycles), 
+- `clk_int_b` is high for counts 3..5 (3 cycles), but shifted by half a clock period.
+
+To implement the half clock period phase shift for `clk_int_b` without using negedge clock domain, generate `clk_int_b` by sampling the counter at the negative edge of `clk`, synchronizing it back to positive edge domain to avoid asynchronous issues. This creates a deterministic half-clock phase shift.
+
+Combine these two pulses with an OR gate to produce `clk_div` with approximate 3.5x division and roughly 50% duty cycle.
+
+This structure avoids independent counters on posedge and negedge clocks, eliminates asynchronous resets, and uses a single synchronous counter plus registered delayed versions for phase shift, simplifying timing and improving reliability.
+
+All logic and registers use synchronous reset for predictable initialization.

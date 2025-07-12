@@ -1,0 +1,24 @@
+To correctly implement the pulse detector with the specified behavior (detecting 0->1->0 sequences exactly), I'll use a shift register approach combined with combinatorial logic. Here's the improved strategy:
+
+1. Shift Register Approach:
+   - Use a 3-bit shift register to track the last 3 values of data_in
+   - This directly captures the sequence history needed for detection
+
+2. Pulse Detection Logic:
+   - A pulse is detected when the shift register contains "010" (0->1->0)
+   - This is purely combinatorial logic based on the shift register contents
+
+3. Output Generation:
+   - data_out is high only in the cycle after detecting "010" in the shift register
+   - This matches the example where input "01010" gives output "00101"
+
+4. Advantages:
+   - Simple and direct implementation of the requirement
+   - No complex state machine needed
+   - Clearly shows the 3-cycle sequence requirement
+   - Easy to verify and understand
+   - Lower power than FSM approach (fewer transitions)
+
+5. Synchronization:
+   - Still includes proper clocking and reset
+   - All operations are synchronous

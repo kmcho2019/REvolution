@@ -1,0 +1,13 @@
+To simplify the clock implementation while maintaining functionality:
+1. Use single always blocks for each counter (ss, mm, hh) to maintain clarity
+2. Store hours in BCD format directly (1-12) to avoid conversion logic
+3. Use simple rollover conditions for each counter
+4. Implement PM as a simple toggle when hours roll from 11 to 12
+5. Maintain synchronous reset with highest priority
+6. Only update counters when enabled (ena)
+
+Key simplifications:
+- Direct BCD storage for all counters
+- Simplified hour counter with clear AM/PM transition at 11→12
+- Minimal condition checks for counter increments
+- Clear separation of reset, enable, and counting logic

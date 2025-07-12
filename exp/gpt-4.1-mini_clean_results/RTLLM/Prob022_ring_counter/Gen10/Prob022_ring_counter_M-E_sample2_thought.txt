@@ -1,0 +1,5 @@
+I will implement the ring counter using a single 8-bit shift register initialized with a single '1' in the least significant bit. On every clock rising edge, if reset is active, the register is reset to 8'b0000_0001. Otherwise, the register is shifted left by one bit, and the MSB wraps around to the LSB to create the cyclic ring behavior. 
+
+This approach avoids indexing or variable-bit assignments entirely. The shift-and-wrap operation is done using bitwise concatenation in the sequential always block, which is widely supported by all Verilog tools. The output is driven directly by the shift register.
+
+This method is a classic, simple and tool-friendly design for a ring counter with one-hot output, fully synthesizable and easy to simulate.

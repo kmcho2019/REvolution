@@ -1,0 +1,13 @@
+To fix the issues, I will:
+
+1. Add parameters `DATA_WIDTH=64` and `STG_WIDTH=16` to the module so it matches testbench expectations.
+2. Separate combinational addition logic from sequential registers by using intermediate wires for each pipeline stage's sum and carry-out.
+3. Use explicit intermediate wires for the sum and carry-out for each 16-bit stage, calculated combinationally from registered operands and carry-in.
+4. Register inputs (`adda`, `addb`) and the carry-in and enable signals at each pipeline stage, propagating data forward on each clock.
+5. Assemble the final 65-bit result after the last stage registers.
+6. Use a 4-stage pipeline with each stage handling 16 bits, propagating carry through pipeline registers to ensure correct ripple carry behavior.
+7. Use separate registers arrays for operands, carry-in, enable signals, and sums for clarity and synthesis friendliness.
+8. Initialize/reset all pipeline registers and outputs on `rst_n` low.
+9. Keep all sequential logic within a single clocked always block and keep addition in combinational logic outside that block.
+
+This approach makes the design synthesizable and simulation-ready, respects pipeline stages timing, and resolves the testbench parameter mismatch.

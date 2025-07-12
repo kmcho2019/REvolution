@@ -1,0 +1,9 @@
+Implement the HDLC framing detection as a Moore FSM with explicitly named states representing the count of consecutive ones seen so far (S0 for zero ones, S1 for one one, ... S6 for six ones). On each input bit, transition between states depending on whether the input is 0 or 1. The outputs disc, flag, and err are determined solely by the current state (one cycle after the triggering pattern). 
+
+Specifically:
+- When seeing five consecutive ones followed by a zero, disc is asserted in the next cycle.
+- When seeing six consecutive ones followed by a zero, flag is asserted in the next cycle.
+- When reaching seven or more consecutive ones (S7 or err state), err is asserted.
+- The FSM resets to S0 on reset.
+
+This approach explicitly tracks state transitions for clarity and eases reasoning about patterns, while meeting Moore output requirements (outputs depend only on current state). This explicit FSM also naturally prevents illegal transitions and clearly defines error state behavior.

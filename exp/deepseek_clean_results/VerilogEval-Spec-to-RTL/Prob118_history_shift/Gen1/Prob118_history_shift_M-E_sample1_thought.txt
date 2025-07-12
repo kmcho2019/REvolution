@@ -1,0 +1,15 @@
+Instead of using a conventional shift register, implement a circular buffer with head and tail pointers to track the history. This eliminates the need for physical shifting of bits, reducing power and improving timing.
+
+Key innovations:
+1. Use a 32-entry circular buffer (memory) and two pointers (head and tail)
+2. Pointer arithmetic replaces shift operations:
+   - Normal prediction: increment head pointer and write predict_taken
+   - Misprediction: restore pointers from train_history and append train_taken
+3. Output generation walks the buffer from tail to head
+4. Asynchronous reset initializes pointers and clears memory
+
+Advantages:
+- No physical shifting reduces dynamic power
+- Pointer updates are faster than 32-bit shifts
+- More scalable for larger history sizes
+- Easier to implement variable-length history if needed

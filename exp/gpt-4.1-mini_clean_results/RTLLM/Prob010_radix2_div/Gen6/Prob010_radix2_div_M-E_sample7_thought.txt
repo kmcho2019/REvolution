@@ -1,0 +1,27 @@
+This implementation adopts a classical radix-2 restoring division algorithm with an 18-bit shift register holding both remainder and quotient. 
+
+Key architectural decisions:
+
+- On receiving a valid operation, the module captures the signed inputs and converts them to absolute values. The divisor and dividend signs are stored to fix final quotient and remainder signs.
+
+- The shift register (18 bits) is initialized by concatenating the 8-bit dividend absolute value in the upper bits (bits [17:10]) and zeroed remainder and quotient bits.
+
+- Each cycle:
+  1. Shift left the shift register by 1 bit, moving the next dividend bit into remainder LSB.
+  2. Subtract divisor_abs from the upper 9 bits (remainder).
+  3. If subtraction is non-negative, keep the subtraction result in remainder and set quotient LSB to 1.
+  4. Otherwise, restore remainder by keeping old value and quotient LSB to 0.
+
+- The process runs for 8 cycles to produce an 8-bit quotient and an 8-bit remainder.
+
+- After division completes, the module corrects the quotient and remainder signs for signed division according to rules: 
+  - Quotient sign = dividend_sign XOR divisor_sign
+  - Remainder sign = dividend_sign
+
+- Output 'result' concatenates remainder (upper 8 bits) and quotient (lower 8 bits).
+
+- Control signals: 'res_valid' asserted when result is ready, cleared on reset or new operation.
+
+- The design is fully synchronous, with a finite state machine controlling operation phases: IDLE, DIVIDE, DONE.
+
+This approach is standard, clean, and supports signed and unsigned division within the requested interface.

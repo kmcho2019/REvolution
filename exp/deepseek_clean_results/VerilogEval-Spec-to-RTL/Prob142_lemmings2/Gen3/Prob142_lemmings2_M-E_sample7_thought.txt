@@ -1,0 +1,12 @@
+Here's a novel approach using a direction flag and fall state tracking:
+1. Instead of separate states for left/right falling, use a single FALL state with a direction register
+2. Maintain direction as a separate register (dir) that persists through falling
+3. State machine simplifies to just 3 states: WALK, FALL, and BUMP (for handling immediate direction changes)
+4. Bump events are processed in a dedicated BUMP state to ensure clean direction switching
+5. Outputs are generated combinatorially based on current state and direction
+
+Key advantages:
+- Reduced state encoding (3 states instead of 4)
+- Clear separation of direction logic from movement state
+- More efficient handling of bump events with dedicated state
+- Direction persistence through falls handled naturally

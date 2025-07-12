@@ -1,0 +1,11 @@
+A different approach is to implement the sequence detector as a Mealy FSM, where the output `sequence_detected` is asserted combinationally based on the current state and input bit, rather than waiting for a specific state. This can reduce latency by detecting the sequence as soon as the last bit arrives.
+
+Key design points:
+- Use an active-low asynchronous reset (`reset_n`), as per the original problem specification.
+- Define states representing how many bits of the sequence "1001" have been matched so far.
+- Transition states on the rising clock edge; reset asynchronously with active-low reset.
+- Assert `sequence_detected` combinationally in the always block based on state and input, ensuring output pulse is one clock cycle.
+- Overlapping sequences are handled naturally by carefully defining state transitions.
+- Use localparams for state encoding.
+- The Mealy output asserts `sequence_detected` when the input `data_in` completes the sequence in the current cycle.
+This design allows immediate sequence detection and is succinct and efficient.

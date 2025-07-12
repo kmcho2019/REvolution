@@ -1,0 +1,13 @@
+To optimize the 64-bit Johnson counter for better PPA metrics:
+
+1. **Timing Improvement**:
+   - The negative WNS (-0.12ns) suggests the critical path is in the 64-bit shift operation. We'll pipeline the shift operation by breaking it into two 32-bit stages, effectively halving the critical path.
+
+2. **Power Optimization**:
+   - Implement clock gating when the counter reaches its extreme states (all 0s or all 1s) since no state change occurs until the next reset.
+
+3. **Area Optimization**:
+   - While the basic structure is efficient, we'll use a more compact register implementation by combining the shift and MSB set operations in a single expression.
+
+4. **Reset Strategy**:
+   - Maintain synchronous reset for better timing characteristics in modern FPGAs/ASICs.

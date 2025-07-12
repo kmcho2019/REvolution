@@ -1,0 +1,13 @@
+To optimize the original hierarchical popcount for better PPA (performance, power, area), I will:
+
+1. Reduce the zero-padding and eliminate unnecessary wires by handling partial groups directly, rather than fixing array sizes with zero padding.
+2. Simplify the adder tree by switching from radix-3 to a binary adder tree for summation stages, which reduces fan-in and thus critical path delay and power.
+3. Combine the summation stages into two main levels after popcount5 blocks: 
+   - First, sum pairs of popcount5 outputs to reduce 51 counts to 26 sums.
+   - Then sum pairs again until one final sum remains.
+4. Use generate loops that handle non-power-of-two group sizes gracefully without large fixed arrays.
+5. Keep the popcount5 module combinational and simple.
+6. This will reduce area by cutting unnecessary padding and power by minimizing toggling in unused wires.
+7. The binary tree structure reduces critical path delay and improves max frequency compared to ternary adders.
+
+Overall, the structure remains hierarchical and combinational but uses binary tree additions with no padding to minimize area and power, improving PPA.

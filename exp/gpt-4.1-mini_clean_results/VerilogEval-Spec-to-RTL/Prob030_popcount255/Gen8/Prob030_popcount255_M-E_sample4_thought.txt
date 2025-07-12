@@ -1,0 +1,12 @@
+Implement a fully hierarchical popcount with a 5-level balanced binary adder tree directly on 255 bits, breaking the input into 85 chunks of 3 bits each. Each 3-bit chunk uses a compact popcount3 unit that outputs 2 bits (count of 0-3 ones). Then, the 85 partial sums are summed in a balanced tree: first sum pairs of popcount3 outputs into popcount6 sums (3 bits), next pairs to popcount12 sums (4 bits), and so forth, doubling the bit width at each level until the final sum fits in 8 bits.
+
+This approach exploits very small popcount3 units with minimal logic and a clean, explicit balanced tree summation with no generate loops or extra modules beyond popcount3. The final adder tree depth is fixed and regular.
+
+Advantages:
+- Minimal module complexity and small logic for popcount3.
+- Regular balanced addition tree scales nicely.
+- No need for larger popcount units; everything is based on popcount3 and adders.
+- Explicit wire sizing for minimal bit width to optimize area and power.
+- Uses only fixed-size adders and wires, improving synthesis clarity and possibly timing.
+
+The final sum will be exactly the population count of 255 bits, fitting in 8 bits.

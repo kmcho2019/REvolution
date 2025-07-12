@@ -1,0 +1,12 @@
+To implement a novel 64-bit Johnson counter, we can utilize a circular buffer approach with a rotating pointer. This design leverages a 64-bit shift register where the output of the most significant bit (MSB) is fed back to the least significant bit (LSB) position, but with a twist. Instead of directly feeding back the MSB, we use a control signal to decide whether to append a 1 or a 0 at the MSB position, depending on the current state of the counter.
+
+The counter state is determined by the LSB of the current count value (Q[0]). If Q[0] is 0, we append a 1; otherwise, we append a 0. This effectively creates a Johnson counter sequence. The circular buffer is implemented using a 64-bit register, and the rotation is achieved through a combination of shift operations and conditional logic.
+
+The benefits of this approach include a simple and efficient implementation, with minimal logic required for the control signal. The use of a circular buffer allows for easy extension to larger counter sizes, making the design scalable.
+
+To further optimize this design for Power, Performance, and Area (PPA) metrics, we can consider the following strategies:
+- For power optimization, reducing the number of flip-flops and minimizing switching activity by using enable signals can be beneficial.
+- For area optimization, using a distributed memory approach or optimizing the synthesis directives can help reduce the area usage.
+- For performance optimization, ensuring that the critical path is minimized by balancing the logic levels and using pipelining techniques where applicable can improve the effective clock period.
+
+The provided architectural idea offers a novel approach to implementing a 64-bit Johnson counter while maintaining simplicity and efficiency.

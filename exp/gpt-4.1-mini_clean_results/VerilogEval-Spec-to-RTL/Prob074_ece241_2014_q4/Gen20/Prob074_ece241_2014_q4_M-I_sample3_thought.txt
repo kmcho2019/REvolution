@@ -1,0 +1,21 @@
+To eliminate potential timing mismatches due to the synchronous reset counter and better match typical FPGA or ASIC reset semantics, replace the synchronous reset with an asynchronous active-high reset input that is externally driven (or tied internally to zero if not used). Since the problem states the flip-flops are initially reset to zero before operation, we can implement an asynchronous reset on the flip-flops with an initial block to set initial values for simulation, acknowledging that synthesis tools will infer proper reset logic or rely on the FPGA's power-on reset.
+
+This simplifies the design, removes the reset counter logic (saving area and power), and ensures flip-flops start at zero immediately at simulation time 0, which should fix the mismatch seen in early simulation cycles.
+
+The rest of the logic remains the same: compute D inputs for each flip-flop based on the gate operations with the correct inputs (ff outputs or their complements), and output z as the NOR of the flip-flops.
+
+If asynchronous reset is not desired or the environment does not provide a reset signal, we can use an initial block for simulation only to initialize the registers. For synthesis, initial blocks may be ignored, but many synthesis tools infer initial zero on registers by default or can be instructed via constraints.
+
+This approach improves clarity, area, and power (no reset counter toggling), ensures correct initial states, and satisfies all requirements.
+
+If an asynchronous reset port is not allowed, or must be internal, an initial block can be used solely for simulation, but for synthesis a reset input is recommended.
+
+Since the problem doesn't provide a reset input, we'll just use an initial block to set registers to zero for simulation and remove the reset logic entirely.
+
+This makes the design simpler, correct, and minimal.
+
+If needed, synthesis constraints or FPGA init features can guarantee power-on zero states.
+
+Hence the improvement strategy is to remove the synchronous reset logic, remove the reset_counter, use an initial block to initialize flip-flops, keep all combinational logic identical, and rely on flip-flops starting at zero.
+
+This fixes initial mismatches caused by delayed reset de-assertion and reduces area and power.

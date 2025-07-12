@@ -1,0 +1,16 @@
+Novel Architecture Idea:
+1. Use a shift register to store the last 4 input values (8-bit each)
+2. Implement a parallel adder tree to sum all 4 values simultaneously
+3. Add a state machine to control the accumulation process
+4. Key benefits:
+   - Parallel addition reduces critical path (no chained adders)
+   - Shift register enables easy data management
+   - State machine provides clear control flow
+   - Power efficient as only active during valid inputs
+   - Better timing due to parallel computation
+
+Operation:
+- Shift in new data when valid_in is high
+- When 4 values are collected, trigger parallel addition
+- Output result with valid_out pulse
+- Reset state machine after output

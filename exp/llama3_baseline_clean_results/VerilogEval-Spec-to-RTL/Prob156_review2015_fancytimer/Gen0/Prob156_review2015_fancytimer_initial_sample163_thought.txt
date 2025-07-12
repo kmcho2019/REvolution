@@ -1,0 +1,14 @@
+To implement the TopModule, we need to break it down into several components:
+- A finite state machine (FSM) that recognizes the start pattern (1101) and shifts in the delay bits.
+- A counter that counts for (delay + 1) * 1000 clock cycles.
+- A circuit that outputs the current remaining time.
+- A circuit that asserts done and waits for ack.
+
+The FSM can be implemented with several states:
+- IDLE: Search for the start pattern.
+- SHIFT_DELAY: Shift in the delay bits.
+- COUNTING: Count for (delay + 1) * 1000 clock cycles.
+- DONE: Assert done and wait for ack.
+
+The counter can be implemented using a 12-bit counter (since 2^12 > 1000 * 16).
+The current remaining time can be calculated by counting the number of 1000-cycle periods remaining.

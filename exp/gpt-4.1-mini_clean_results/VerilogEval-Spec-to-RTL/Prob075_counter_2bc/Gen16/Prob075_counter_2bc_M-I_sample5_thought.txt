@@ -1,0 +1,11 @@
+To optimize the original design for better PPA, the main idea is to simplify the combinational logic and reduce unnecessary conditional operations. Instead of using a 3-bit arithmetic wire and nested conditionals, implement explicit increment and decrement conditions that clamp the counter within 0 to 3 using simple arithmetic and comparison. Also, avoid redundant evaluations by using an enable signal to gate the state update, potentially reducing switching activity.
+
+Specifically:
+- Use a 2-bit register `state` and compute next state with simple conditions:
+  - Increment only if `train_valid` & `train_taken` and `state < 3`
+  - Decrement only if `train_valid` & ~`train_taken` and `state > 0`
+- Otherwise, maintain the current state.
+- Keep the asynchronous positive-edge reset.
+- This reduces combinational logic complexity, minimizes logic depth, and potentially reduces power by not toggling state when no update is needed.
+
+This approach preserves the functionality but simplifies the critical path and combinational logic, improving timing and area while also helping power efficiency.

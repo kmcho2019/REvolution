@@ -1,0 +1,12 @@
+To implement a 4-bit shift register with the specified functionality, we need to:
+1. Handle asynchronous reset (areset) which clears all bits to 0
+2. Prioritize load over enable when both are active
+3. Implement right shift operation when enabled (ena)
+4. Use positive edge-triggered clock for all synchronous operations
+5. The shift operation should set q[3] to 0 and discard q[0]
+
+The design will use an always block sensitive to posedge clk or posedge areset. Inside:
+- First check areset (highest priority)
+- Then check load condition
+- Then check ena condition
+- Otherwise maintain current state

@@ -1,0 +1,23 @@
+To optimize the solution for better PPA metrics, I'll implement the following improvements:
+
+1. State Encoding Optimization:
+- Switch from Gray code to one-hot encoding (6 bits) which typically has better timing characteristics for FPGAs
+- This eliminates the need for state decoding logic, reducing combinational path delays
+
+2. Output Logic Optimization:
+- Make z a direct register output from the state machine
+- This eliminates the combinational path for z, improving timing
+
+3. State Transition Logic:
+- Simplify the case statement to use one-hot encoding benefits
+- Remove default case since one-hot ensures all states are covered
+
+4. Power Optimization:
+- Use a clock gating strategy for state transitions when possible
+- Group similar state transitions to minimize switching activity
+
+5. Area Optimization:
+- Despite using more bits (6 vs 3), the simplified logic may reduce overall area
+- Remove unnecessary registers and simplify control logic
+
+These changes should improve timing (reduce WNS), maintain low power, and potentially reduce area through simpler logic structures.

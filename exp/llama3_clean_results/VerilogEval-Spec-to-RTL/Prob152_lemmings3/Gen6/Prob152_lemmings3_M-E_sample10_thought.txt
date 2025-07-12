@@ -1,0 +1,7 @@
+To develop a novel solution for the Lemmings game critter state machine, we can leverage a hierarchical state machine approach. This involves defining a top-level state machine that manages the primary states (walking left, walking right, falling, and digging) and then using sub-state machines for more detailed behavior within these states.
+
+The key idea is to decompose the complex behavior into smaller, manageable sub-states, each with its own set of rules and transitions. For example, when the Lemming is in the "walking" state, a sub-state machine can manage the direction (left or right) and handle bumps and dig commands. Similarly, when the Lemming is falling, a sub-state machine can track the transition to hitting the ground and resuming walking in the previous direction.
+
+This hierarchical approach allows for a more modular design, making it easier to add or modify behaviors without affecting the overall structure of the state machine. It also potentially simplifies the combinational logic for next state calculation, as each sub-state machine can be designed to handle its specific conditions independently.
+
+Furthermore, to enhance the design, we can utilize SystemVerilog features such as enums for state encoding and always_comb for combinational logic, improving readability and potentially reducing synthesis errors.

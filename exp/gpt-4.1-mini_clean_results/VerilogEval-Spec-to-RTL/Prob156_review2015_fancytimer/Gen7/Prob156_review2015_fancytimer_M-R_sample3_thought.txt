@@ -1,0 +1,21 @@
+Refactor the design by using a one-hot encoded FSM for clearer state transitions and better entry detection. Use a separate signal to detect state entry (a pulse on entering a state) so initialization logic occurs exactly once.
+
+Implement pattern detection with a 4-bit shift register always shifting in data every cycle, but only trigger pattern detection in the search state.
+
+For delay loading, shift in delay bits MSB first by inserting new bit at MSB and shifting right.
+
+Use combinational `assign` for the pattern matched signal.
+
+Use synchronous logic with explicit state entry detection for initializing counters and registers, avoiding edge detection pitfalls.
+
+Organize counters as two separate registers: a 10-bit cycle counter counting up to 999, and a 4-bit tick counter counting how many 1000-cycle periods remain.
+
+Output `count` as the remaining tick count, held constant during each 1000 cycle interval.
+
+Assert `counting` only during COUNT state, `done` only during WAIT_ACK state.
+
+Keep `count` as don't-care (4'bxxxx) during all states except COUNT.
+
+Wait for `ack` in WAIT_ACK state before returning to PATTERN_SEARCH.
+
+This refactor keeps the core logic but fixes bit ordering in delay loading, ensures state entry detection for initialization, and makes counting precise and synchronous with clear timing.

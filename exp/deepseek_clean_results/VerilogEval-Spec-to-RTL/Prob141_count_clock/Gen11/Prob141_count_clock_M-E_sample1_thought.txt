@@ -1,0 +1,25 @@
+Novel Architecture Idea:
+1. State Machine Approach:
+   - Use a finite state machine to track clock progression through states (seconds, minutes, hours)
+   - Each state represents a specific time increment operation
+   - Reduces combinational logic by breaking down operations into discrete steps
+
+2. Pre-computed BCD:
+   - Store all possible BCD values for hours (01-12) in a lookup table
+   - Eliminates runtime BCD conversion logic
+   - Simplifies hour counter implementation
+
+3. Unified Counter:
+   - Use a single 17-bit counter (5 bits for seconds, 6 bits for minutes, 4 bits for hours, 1 bit for PM)
+   - Decode counter values to outputs
+   - Reduces register count and simplifies reset logic
+
+4. Edge-triggered PM:
+   - Track AM/PM transitions using hour counter's MSB
+   - Only updates PM indicator when hour transitions between 11 and 12
+
+Key Benefits:
+- Reduced combinational logic due to state machine
+- Faster timing with pre-computed BCD
+- Simplified control flow
+- Lower power from reduced switching activity

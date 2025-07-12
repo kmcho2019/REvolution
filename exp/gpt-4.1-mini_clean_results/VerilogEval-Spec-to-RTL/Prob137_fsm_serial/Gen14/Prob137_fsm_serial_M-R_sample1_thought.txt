@@ -1,0 +1,9 @@
+Refactor the FSM by merging the next-state and output logic into one always block, using a synchronous reset and updating the output 'done' and other registers in the same sequential process. Use a state encoding with localparam but implement all logic inside one always @(posedge clk) block for clarity.
+
+Instead of a separate combinational always block for next_state, compute next_state as a reg updated sequentially, based on the current state and inputs, which may help in simplifying the design and potentially improve synthesis results by giving the tool clearer sequential semantics.
+
+Maintain the same four states and overall behavior, but use a procedural style for next state transitions inside the sequential block. The data bit shifting will remain as shifting in new bits into the MSB to maintain LSB-first order.
+
+This style also uses a default done=0 at each clock cycle, setting done=1 only when stop bit is correctly detected, ensuring single-cycle pulse output.
+
+Counters and shift registers are updated in the same always block, resetting them only when appropriate to reduce toggling and make the design explicit and easier to read.

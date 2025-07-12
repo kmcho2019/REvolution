@@ -1,0 +1,11 @@
+Simplification Strategy:
+1. **State Representation**: Since this is a one-hot FSM with only two states, we can represent it with a single register (state_B) and infer state_A as ~state_B.
+2. **State Transition**: The FSM only needs to transition from A to B on x=1, and then stay in B forever. This can be implemented with a simple OR operation.
+3. **Output Logic**: The output z is x in state A and ~x in state B, which can be expressed as z = x ^ state_B.
+4. **Reset Handling**: Asynchronous reset should set state_B to 0 (state A).
+
+Key Improvements:
+- Reduced state representation from two registers to one
+- Simplified state transition logic to a single OR gate
+- Maintained correct Mealy output behavior with XOR operation
+- Preserved asynchronous reset functionality

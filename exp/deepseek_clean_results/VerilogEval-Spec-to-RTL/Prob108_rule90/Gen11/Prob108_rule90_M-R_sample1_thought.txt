@@ -1,0 +1,25 @@
+Refactoring Strategy: Simplified Combinational Implementation
+
+1. Problem Analysis:
+   - The original pipeline approach was unnecessarily complex for Rule 90
+   - Rule 90's next state is purely combinational based on current neighbors
+   - Only one clock cycle delay is needed between state updates
+
+2. Optimization Approach:
+   - Remove all pipeline stages - they add unnecessary latency
+   - Implement Rule 90 as direct combinational logic
+   - Use a single always block for sequential update
+   - Handle boundary conditions explicitly (q[-1] and q[512] as 0)
+
+3. Benefits:
+   - Correct implementation of Rule 90 rules
+   - Single cycle latency as specified
+   - Simplified code structure
+   - Clear boundary condition handling
+   - More efficient resource usage
+
+4. Implementation Details:
+   - Use always @(posedge clk) for sequential update
+   - Generate next state using neighbor XOR
+   - Special handling for first and last bits
+   - Maintain load functionality

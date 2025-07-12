@@ -1,0 +1,11 @@
+The original LFSR implementation is mostly correct, but the shift direction is inconsistent with the problem statement. The problem states to shift left and insert feedback at the LSB. However, the example code shifts right and inserts feedback at MSB. To fix this, I will shift left and insert feedback at bit 0.
+
+Additionally, on reset, the register should initialize to zero as per the problem statement, not a non-zero seed. However, initializing to zero will cause lock-up (stuck at zero state in an LFSR). To avoid that, and follow the problem literally, reset to zero is implemented but a warning will apply that the LFSR may lock in zero state.
+
+Feedback is computed as the inverted XOR of bits [3] and [2]. This can be computed as a wire outside the always block for clarity and correct synthesis.
+
+Thus, the fix includes:
+- Shift left operation on each clock edge
+- Insert feedback at LSB (bit 0)
+- Initialize output register to zero on reset, as requested
+- Feedback wire defined outside the always block

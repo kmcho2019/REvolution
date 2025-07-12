@@ -1,0 +1,16 @@
+To create a superior solution, we combine the strengths of both examples:
+
+- From Example 1: Use direct combinational logic expressions derived from analyzing the FSM table for each next_state bit. This minimizes the number of comparators by avoiding multiple equality checks and instead uses compact boolean conditions on y’s bits and x, reducing logic complexity and potentially improving timing and power.
+
+- From Example 2: Use decoded one-hot signals selectively for only the required states to simplify boolean expressions where it clearly reduces complexity, especially for output z and complex next_state conditions. This leverages human-readable state decoding and simplifies some logic parts.
+
+Fusion strategy:
+- Decode only the states needed for complex conditions (001 and 100) with one-hot signals for next_state[2], and use direct bitwise patterns for simpler next_state bits.
+- Use boolean expressions on y bits and x for next_state[1] and next_state[0], applying conditional logic derived from the FSM table.
+- For output z, use the clean one-hot decode of the states 011 and 100, as it's minimal and very clear.
+- Avoid repeated equality checks by combining bitwise patterns and limited one-hot signals.
+- This hybrid approach reduces the number of comparators, logic depth, and logic duplication, improving area and power, while maintaining clarity and performance.
+
+The module implements combinational next state logic and output z logic exactly as specified, with Y0 assigned from the LSB of the next state.
+
+This fusion balances clarity, optimization, and minimal gate usage, yielding a superior FSM implementation.

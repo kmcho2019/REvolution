@@ -1,0 +1,123 @@
+module TopModule(
+    input  clk,
+    input  reset,
+    input  in,
+    output reg disc,
+    output reg flag,
+    output reg err
+);
+
+    // State encoding:
+    // 0..6 : count of consecutive ones
+    // D = disc output state (1 cycle after 5 ones + zero)
+    // F = flag output state (1 cycle after 6 ones + zero)
+    // E = error state (7 or more ones)
+    localparam 
+        S0 = 4'd0,
+        S1 = 4'd1,
+        S2 = 4'd2,
+        S3 = 4'd3,
+        S4 = 4'd4,
+        S5 = 4'd5,
+        S6 = 4'd6,
+        SD = 4'd7, // disc output state
+        SF = 4'd8, // flag output state
+        SE = 4'd9; // error state
+
+    reg [3:0] state, next_state;
+
+    // Next state logic (Moore FSM)
+    always @(*) begin
+        case(state)
+            S0: begin
+                if (in == 1'b1)
+                    next_state = S1;
+                else
+                    next_state = S0;
+            end
+            S1: begin
+                if (in == 1'b1)
+                    next_state = S2;
+                else
+                    next_state = S0;
+            end
+            S2: begin
+                if (in == 1'b1)
+                    next_state = S3;
+                else
+                    next_state = S0;
+            end
+            S3: begin
+                if (in == 1'b1)
+                    next_state = S4;
+                else
+                    next_state = S0;
+            end
+            S4: begin
+                if (in == 1'b1)
+                    next_state = S5;
+                else
+                    next_state = S0;
+            end
+            S5: begin
+                if (in == 1'b1)
+                    next_state = S6;
+                else
+                    // Detected five consecutive ones then zero -> disc output
+                    next_state = SD;
+            end
+            S6: begin
+                if (in == 1'b1)
+                    // Seven or more ones detected -> error
+                    next_state = SE;
+                else
+                    // Detected six consecutive ones then zero -> flag output
+                    next_state = SF;
+            end
+            SD: begin
+                // After disc output asserted one cycle, return to idle (S0)
+                next_state = S0;
+            end
+            SF: begin
+                // After flag output asserted one cycle, return to idle (S0)
+                next_state = S0;
+            end
+            SE: begin
+                if (in == 1'b0)
+                    // Reset error condition on zero input
+                    next_state = S0;
+                else
+                    // Stay in error while ones continue
+                    next_state = SE;
+            end
+            default: next_state = S0;
+        endcase
+    end
+
+    // Output logic (Moore): depend only on current state
+    always @(*) begin
+        disc = 1'b0;
+        flag = 1'b0;
+        err  = 1'b0;
+        case(state)
+            SD: disc = 1'b1;
+            SF: flag = 1'b1;
+            SE: err  = 1'b1;
+            default: begin
+                disc = 1'b0;
+                flag = 1'b0;
+                err  = 1'b0;
+            end
+        endcase
+    end
+
+    // State register
+    always @(posedge clk) begin
+        if (reset) begin
+            state <= S0;
+        end else begin
+            state <= next_state;
+        end
+    end
+
+endmodule

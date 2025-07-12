@@ -1,0 +1,9 @@
+To implement a 4-digit BCD counter, we first need to understand how BCD counting works. Each digit can range from 0 to 9, and once a digit reaches 9, the next digit should be incremented and the current digit resets to 0. 
+
+Our TopModule should have four internal counters: one for each digit. Each counter is 4 bits wide to represent the BCD value. 
+
+On every clock edge, we check if the ones digit (q[3:0]) has reached 9 (1001 in BCD). If it has, we reset it to 0 and enable the tens digit to increment. We repeat this process for the tens, hundreds, and thousands digits.
+
+The enable signals (ena) are used to indicate when each digit should be incremented. These signals will be high for one clock cycle when the corresponding digit needs to be incremented.
+
+The reset input will synchronously reset all counters to 0.

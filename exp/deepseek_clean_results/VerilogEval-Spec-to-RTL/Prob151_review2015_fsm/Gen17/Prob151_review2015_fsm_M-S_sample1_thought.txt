@@ -1,0 +1,27 @@
+Simplified design approach:
+
+1. **State Machine Reduction**:
+   - Use simple binary state encoding instead of one-hot
+   - Combine pattern detection and shift control into fewer states
+   - Remove explicit shift counter by using state transitions
+
+2. **Pattern Detection**:
+   - Maintain 4-bit shift register for pattern detection
+   - Clear pattern only on reset or after full operation cycle
+
+3. **State Transitions**:
+   - IDLE: Wait for 1101 pattern
+   - SHIFT: Active for exactly 4 cycles (implied by state duration)
+   - COUNTING: Wait for done_counting
+   - DONE: Wait for ack
+
+4. **Output Control**:
+   - Direct mapping from states to outputs
+   - No complex counters or conditional updates
+   - All sequential logic in single always block
+
+Key simplifications:
+- Removed separate shift counter
+- Simplified state encoding
+- Combined pattern clearing logic
+- Reduced conditional logic

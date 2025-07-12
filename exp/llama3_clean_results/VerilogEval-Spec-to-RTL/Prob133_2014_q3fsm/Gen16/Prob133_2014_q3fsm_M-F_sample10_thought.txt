@@ -1,0 +1,9 @@
+To fix the provided Verilog code and improve its functionality, we need to address the issues identified in the feedback. The main problems lie in the STATE_B block, where the FSM should examine the input 'w' and correctly update the counters and output 'z'. 
+
+One key fix is to properly reset 'w_counter' when starting a new 3-cycle window. This can be achieved by setting 'w_counter' to 0 when 'cycle_counter' reaches 3, regardless of the value of 'w'. This ensures that 'w_counter' accurately counts the number of times 'w' is 1 in each 3-cycle window.
+
+Another important fix is to ensure that 'z' is set correctly based on the value of 'w_counter' when 'cycle_counter' equals 3. We should also explicitly reset 'z' to 0 in all other cases within the STATE_B logic to prevent 'z' from retaining its value from the previous state.
+
+To simplify the design and improve PPA metrics, we can maintain the use of a single state (STATE_B) after the initial transition from STATE_A. This allows us to focus on correctly implementing the logic for examining 'w', updating counters, and setting 'z' without unnecessary state transitions.
+
+By making these adjustments, we can ensure that the FSM correctly implements the required functionality, including setting the output 'z' to 1 when 'w' is 1 in exactly two of the next three clock cycles, while also improving the PPA metrics of the design.

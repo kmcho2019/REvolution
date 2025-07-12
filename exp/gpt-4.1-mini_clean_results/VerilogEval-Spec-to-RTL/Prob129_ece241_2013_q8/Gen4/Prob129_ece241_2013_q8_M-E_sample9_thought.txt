@@ -1,0 +1,18 @@
+Implement the Mealy FSM with three states encoded as 2-bit binary states, but explicitly separate the output logic from the next state logic. Use an asynchronous negative edge reset to initialize the state to S0.
+
+Use non-blocking assignments in sequential always blocks for clarity and synthesis friendliness. The output z will be combinational logic dependent on the current state and input, as per Mealy machine semantics.
+
+To detect the sequence "101" with overlapping allowed:
+- S0: initial state, waiting for '1'
+- S1: detected '1'
+- S2: detected "10"
+
+When in S2 and input is '1', sequence "101" is detected, assert z=1.
+
+After detection, transit to S1 (because input is '1'), enabling overlapping sequence detection.
+
+Keep z combinational and only assert it at the cycle the sequence completes.
+
+This approach separates combinational output logic from next state calculation, which can improve clarity and timing compared to mixing them.
+
+Overall, this solution is functionally equivalent but architecturally distinct from the example provided.

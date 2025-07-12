@@ -1,0 +1,39 @@
+The state machine has 6 states encoded in one-hot as y[5:0]. We need to compute the next state signals Y1 and Y3 corresponding to next-state bits y[1] and y[3] based on the current state and input w.
+
+By inspection of the transitions and the one-hot encoding:
+- Y1 corresponds to next state's bit 1 (state B)
+- Y3 corresponds to next state's bit 3 (state D)
+
+Given current state signals y[5:0] representing A to F as one-hot, and input w:
+
+Check transitions:
+- From A (y[0]=1): 
+  If w=0 -> B (y[1]=1), so Y1 = y[0] & ~w
+  If w=1 -> A (y[0]=1), so not Y1
+
+- From B (y[1]=1): 
+  If w=0 -> C (y[2]=1), no Y1 or Y3
+  If w=1 -> D (y[3]=1), so Y3 = y[1] & w
+
+- From C (y[2]=1):
+  If w=0 -> E (y[4]=1), no Y1 or Y3
+  If w=1 -> D (y[3]=1), so Y3 = y[2] & w
+
+- From D (y[3]=1):
+  If w=0 -> F (y[5]=1), no Y1 or Y3
+  If w=1 -> A (y[0]=1), no Y1 or Y3
+
+- From E (y[4]=1):
+  Only valid if w=1 (per state machine) and stays in E or goes to D (which is Y3):
+  If w=0 -> E (y[4]), no Y1 or Y3
+  If w=1 -> D (y[3]=1), so Y3 = y[4] & w
+
+- From F (y[5]=1):
+  If w=0 -> C (y[2]=1), no Y1 or Y3
+  If w=1 -> D (y[3]=1), so Y3 = y[5] & w
+
+Therefore:
+Y1 = y[0] & ~w
+Y3 = (y[1] | y[2] | y[4] | y[5]) & w
+
+Implement these as combinational outputs.

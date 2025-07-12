@@ -1,0 +1,16 @@
+Refactor the design to separate combinational prediction logic from sequential state updates more explicitly and eliminate the register holding the predict history by instead using a pipeline register for prediction outputs. Use a two-stage pipeline approach: stage 1 samples inputs and reads PHT; stage 2 updates GHR and PHT synchronously.
+
+Key points:
+
+1. Prediction outputs (`predict_taken` and `predict_history`) are registered outputs from stage 1 to stabilize timing and align with clock edges.
+2. Keep a prediction pipeline register that holds the history used and predicted outcome for that prediction cycle.
+3. On the clock edge, update the GHR based on priority:
+   - If training with misprediction: recover GHR from training input.
+   - Else if prediction was valid in previous cycle: update GHR with predicted bit from that cycle.
+4. PHT updates occur on clock edge if training is valid, updating the saturating counter indexed by training pc and history.
+5. Use combinational functions to generate next saturating counter state.
+6. Separate the reading of PHT entries combinationally for prediction stage.
+7. Remove direct asynchronous reading of PHT indexed by the speculative GHR for GHR update; instead rely on the pipeline registers holding prediction info.
+8. This two-stage approach aligns prediction outputs with the global history used, respects priority of training over prediction for GHR update, and cleanly models timing, avoiding the subtle mismatches in original code.
+
+This approach keeps the same Gshare prediction algorithm but clarifies timing, aligns outputs with input requests, and cleanly handles simultaneous training and prediction without ambiguity.

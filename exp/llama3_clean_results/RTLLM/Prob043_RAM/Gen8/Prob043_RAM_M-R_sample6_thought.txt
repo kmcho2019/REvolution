@@ -1,0 +1,11 @@
+To refactor the provided Verilog code for the dual-port RAM, we will focus on simplifying the design while maintaining its functionality. The main idea is to remove unnecessary complexity and optimize the code for better readability and synthesizability.
+
+1. **Simplify Memory Structure**: Instead of using two separate memory structures (`reg_file` and `async_mem`), we will use a single memory array (`RAM`) to store the data. This simplification reduces area consumption and makes the design more efficient.
+
+2. **Unified Write and Read Operations**: We will merge the write and read operations into a single `always` block that triggers on the positive edge of the clock signal (`posedge clk`) or the negative edge of the reset signal (`negedge rst_n`). This approach simplifies the design and reduces the number of always blocks.
+
+3. **Clock-Gating**: We will remove the explicit clock-gating logic and instead, use the `write_en` signal directly to control the write operation. This simplifies the design and reduces the number of signals.
+
+4. **Asynchronous Read Operation**: We will maintain the asynchronous read operation using the `assign` statement to output the read data.
+
+By applying these simplifications, we can create a more efficient and readable design for the dual-port RAM.

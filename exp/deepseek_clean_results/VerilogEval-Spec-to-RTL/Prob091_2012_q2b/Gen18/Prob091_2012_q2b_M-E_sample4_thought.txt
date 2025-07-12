@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+Instead of using traditional combinational logic, let's implement the state transition logic using a multiplexer-based approach. This can potentially offer better regularity and routing efficiency in some technologies. The key insights are:
+
+1. For Y1 (next state for y[1]):
+   - Only set when transitioning from A (y[0]) with w=1
+   - Can be implemented as a simple AND gate (y[0] & w)
+
+2. For Y3 (next state for y[3]):
+   - Set when in states B, C, E, or F with w=0
+   - Instead of using De Morgan's, we'll use a 4-input OR gate to detect these states, then AND with ~w
+   - This makes the logic more explicit about which states can transition to D
+
+The multiplexer-style implementation makes the state transition conditions more visually apparent in the code and may offer better synthesis results in some technologies where wide OR gates are efficiently implemented.

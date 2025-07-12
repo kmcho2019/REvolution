@@ -1,0 +1,14 @@
+The primary fix is to ensure the combinational next-state logic is fully specified to avoid latches or X states. Initializing `next_state` to a default value at the beginning of the always block removes ambiguity if none of the one-hot bits are set. Also, rather than using `case (1'b1)` which can be error-prone if the state register is corrupted, switch to a standard `case` statement on an encoded binary state variable for clarity and robustness.
+
+To do this, encode the states using binary encoding instead of one-hot. This also reduces flip-flops and eliminates problems with one-hot decoding. Implement the state register and next-state logic with separate always blocks, with synchronous reset. The output z is asserted only in state E.
+
+This approach avoids issues with one-hot invalid states and possible glitches. The code becomes easier to simulate and synthesize consistently.
+
+We will:
+
+- Use binary state encoding (3 bits for 6 states).
+- Define state constants for readability.
+- Use a case statement on `state` in next-state logic.
+- Initialize `next_state` at the start of the combinational block.
+- Keep the synchronous active-high reset behavior.
+- Assign output z combinationally as (state == E).

@@ -1,0 +1,11 @@
+To fix the syntax errors and improve clarity, refactor by declaring all intermediate variables as module-level regs and avoid declaring regs inside always blocks. Use a state machine with two states: IDLE and BUSY, to clearly separate input capture and iterative division. Perform the division iterations inside the BUSY state, updating SR and cnt each clock cycle. At the end of iterations, adjust sign and assign result and res_valid accordingly.
+
+Key points of refactor:
+- Declare temporary variables outside always blocks.
+- Use separate registers to hold quotient and remainder outputs.
+- Use an explicit FSM for clearer control.
+- Use blocking assignments inside combinational always blocks for next-state logic, non-blocking for sequential updates.
+- Keep all operations synchronous on clk and reset.
+- Manage res_valid flag carefully as per problem spec.
+
+This structure avoids illegal variable declarations inside always blocks, improves readability, and keeps the same radix-2 division iterative logic.

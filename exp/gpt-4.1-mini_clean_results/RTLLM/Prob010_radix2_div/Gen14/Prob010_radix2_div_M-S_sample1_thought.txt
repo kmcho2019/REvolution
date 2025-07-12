@@ -1,0 +1,8 @@
+To simplify the radix-2 divider, I will keep the core operation and interface as required but streamline the logic:
+- Use an 18-bit shift register (1 bit wider) to hold remainder (9 bits) and quotient (8 bits) for clarity.
+- Use a single counter from 0 to 8 for the 8 division steps.
+- Calculate absolute values and determine sign flags once at the start.
+- During division steps, perform subtraction if possible and shift left, setting quotient bits accordingly.
+- After all steps, apply sign corrections to quotient and remainder as needed.
+- Manage res_valid to indicate output ready.
+This design is synchronous and resets properly, with clear and concise logic, ensuring a clean and easy-to-follow implementation.

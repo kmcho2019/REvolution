@@ -1,0 +1,13 @@
+The design implements a 16-bit divider using combinational logic that performs division through a series of comparison and subtraction steps. The algorithm works as follows:
+1. Start with the highest bits of the dividend (A) that match the divisor's width (8 bits)
+2. Compare these bits with the divisor (B):
+   - If greater or equal: set quotient bit to 1, subtract divisor from these bits
+   - Else: set quotient bit to 0
+3. Shift the remainder left by 1 bit and bring down the next bit from dividend
+4. Repeat until all 16 bits are processed
+5. Final remainder is stored in odd output
+6. The quotient is built bit by bit in result output
+
+The implementation uses two always blocks:
+- First for registering inputs (though not strictly necessary in combinational logic)
+- Second for the actual division algorithm

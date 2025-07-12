@@ -1,0 +1,36 @@
+By analyzing the Karnaugh map and the previous solution, we see the expression can be simplified by factoring and combining terms more compactly.
+
+The original simplified expression was:
+
+out = (~c & ~d & ~(a & b)) | (~c & d & ~b) | (c & ~d & ~a) | (c & d & (a | b))
+
+We can notice:
+
+- (~c & d & ~b) and (~c & ~d & ~(a & b)) both share ~c.
+- Similarly, (c & ~d & ~a) and (c & d & (a | b)) share c.
+
+Group terms by c:
+
+out = ~c & ((~d & ~(a & b)) | (d & ~b)) | c & ((~d & ~a) | (d & (a | b)))
+
+Now, note that (~d & ~(a & b)) | (d & ~b) can be simplified:
+
+(~d & ~(a & b)) | (d & ~b) = (~d & (~a | ~b)) | (d & ~b) = ~b | (~d & ~a)
+
+Hence,
+
+out = ~c & (~b | (~d & ~a)) | c & ((~d & ~a) | (d & (a | b)))
+
+This can be further factored:
+
+out = ~c & ~b | (~c & ~d & ~a) | c & ~d & ~a | c & d & (a | b)
+
+Note that (~c & ~d & ~a) | (c & ~d & ~a) = ~d & ~a
+
+So,
+
+out = (~c & ~b) | (~d & ~a) | (c & d & (a | b))
+
+This is a minimal and more elegant expression with fewer terms and logic levels.
+
+Implementing this reduces gate count and complexity while maintaining correct functionality.

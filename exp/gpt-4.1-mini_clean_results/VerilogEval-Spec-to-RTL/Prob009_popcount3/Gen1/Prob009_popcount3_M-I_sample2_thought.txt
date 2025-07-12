@@ -1,0 +1,15 @@
+The current implementation is already minimal and optimal for a 3-bit input, using a straightforward addition of the bits to get the population count. However, to optimize for power and area even further, we can avoid using an adder and instead encode the population count using simple combinational logic based on the known input patterns. Since the input is only 3 bits, the population count ranges from 0 to 3 and can be fully represented by a small combinational logic block or a lookup-based approach.
+
+A small optimized combinational logic can be formed for each bit of the output count:
+- out[1] is 1 if there are 2 or 3 ones in 'in'.
+- out[0] is 1 if there is an odd number of ones in 'in'.
+
+This approach replaces the adder with combinational logic gates that can synthesize to fewer or lower-power gates, potentially reducing power and area slightly.
+
+Specifically:
+- out[1] = (in[0] & in[1]) | (in[1] & in[2]) | (in[0] & in[2])
+- out[0] = in[0] ^ in[1] ^ in[2]
+
+This is a known minimal form for the population count of 3 bits.
+
+This can reduce gate usage compared to using a small adder, especially in technology where XOR and AND gates are cheaper than multi-bit adders.

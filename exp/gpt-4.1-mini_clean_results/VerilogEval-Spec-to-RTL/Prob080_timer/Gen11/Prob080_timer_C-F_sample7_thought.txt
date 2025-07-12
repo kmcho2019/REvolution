@@ -1,0 +1,9 @@
+To fuse the strengths of both examples, implement the timer with clear separation of combinational next-state logic and sequential register update (from Example 1) combined with explicit conditional checking inside the always block to avoid unnecessary decrements or register updates when the counter is zero (from Example 2).
+
+The design computes `next_counter` combinationally as in Example 1 but adds a clock-enable condition so that the counter register only updates when the counter needs to change (either loading new data or counting down if non-zero). This reduces switching and power since the counter holds its value when zero and load is low, avoiding redundant register toggling.
+
+The terminal count output `tc` remains a simple combinational zero detector for simplicity and minimal timing overhead.
+
+This hybrid approach retains code clarity by explicitly defining next state separately and improves power efficiency via an enable gating condition in the sequential block, which is absent in the first example. At the same time, it avoids verbosity by computing next state combinationally rather than embedding all logic in the always block, unlike Example 2.
+
+Overall, this design balances clarity, power efficiency, and simplicity while fully meeting the problem constraints including usage of a single 10-bit register (D flip-flop).

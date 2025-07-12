@@ -1,0 +1,12 @@
+The output q is a state that updates on each positive clock edge based on input a. Observing the waveform:
+
+- At time 15ns (pos edge clk, a=0), q becomes 1.
+- At time 35ns (pos edge clk, a=1), q remains 1.
+- At time 45ns (pos edge clk, a=1), q transitions to 0.
+- Then q stays 0 for subsequent clock edges with a=1.
+
+From the transitions, it appears q is set to 1 when a is 0 at the rising edge of clk, and cleared to 0 when a is 1 at the rising edge of clk.
+
+Hence, the logic is: on posedge clk, q <= ~a.
+
+This matches the waveform values. So the module stores q as the negation of a sampled at the clock's rising edge.

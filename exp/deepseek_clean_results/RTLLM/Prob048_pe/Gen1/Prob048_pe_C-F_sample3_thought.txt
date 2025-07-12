@@ -1,0 +1,17 @@
+Fusion Strategy:
+1. Combine the best timing characteristics from both examples (Example 2 has slightly better WNS)
+2. Keep the synchronous reset from Example 1 (posedge clk or posedge rst) for more robust reset behavior
+3. Maintain the signed arithmetic from both examples for correct operation
+4. Optimize power by:
+   - Using only the needed 32 bits of the product (like Example 2)
+   - Adding clock gating potential with an enable signal
+5. Improve area efficiency by:
+   - Explicitly declaring the product as 32 bits since we only use [31:0]
+   - Using non-blocking assignments consistently
+
+The new design will:
+- Use posedge reset for more reliable initialization
+- Maintain signed arithmetic for correct multiplication
+- Explicitly size the product to 32 bits to save resources
+- Keep clean synchronous design practices
+- Be ready for clock gating optimization

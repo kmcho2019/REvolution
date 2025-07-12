@@ -1,0 +1,12 @@
+To improve PPA (Timing, Power, Area), I will optimize the FSM by switching from binary state encoding to one-hot encoding. One-hot encoding uses one flip-flop per state, which simplifies next-state logic and reduces combinational path complexity, improving maximum clock frequency and reducing glitches, thus lowering dynamic power.
+
+Specifically:
+1. Use a 5-bit one-hot state register, each bit representing one FSM state (S0 to S4).
+2. Next-state logic will be simpler, mostly combinational assignments of single bits without decoding state numbers.
+3. MATCH output remains a combinational Mealy output based on current state and input.
+4. Use synchronous reset as before.
+5. Keep the interface unchanged.
+
+This approach typically improves timing due to simpler logic and reduces switching glitches, benefiting power consumption. The area increases slightly due to more flip-flops, but it is acceptable for the improved clock frequency and power.
+
+Thus, the improved design balances timing and power with minimal area overhead, fully meeting original requirements.

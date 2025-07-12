@@ -1,0 +1,9 @@
+An alternative architectural idea is to encapsulate all output signals into a single packed vector and connect the inputs to corresponding bits inside this vector. By using a vector output, we simplify the interface and internal connections, which can be useful when scaling up to multiple signals and facilitates bus handling in larger designs.
+
+Inside the module, we will assign individual bits of the output vector to inputs as specified, and then assign each bit of the output vector to the respective output ports using continuous assignments.
+
+This approach merges individual scalar outputs into a single vector internally, which can improve signal grouping, routing clarity, and potentially ease debugging and verification without adding extra modules or buffers.
+
+Since the problem requests single-bit output ports, we will unpack the vector internally to individual output ports before module output to maintain the required interface. The internal usage of a vector is purely organizational and architectural.
+
+This novel vectorized architecture offers a different structural style compared to traditional direct or structural wiring and prepares the design for easy expansion or integration in bus-based environments.

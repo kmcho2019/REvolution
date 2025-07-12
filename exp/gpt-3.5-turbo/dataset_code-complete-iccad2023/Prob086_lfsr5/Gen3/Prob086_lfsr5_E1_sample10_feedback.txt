@@ -1,7 +1,0 @@
-The design intent requires building a 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3. The code attempts to implement the LFSR logic using shift operations and XOR gates at the specified tap positions 5 and 3.
-
-The issue causing the simulation failures is likely related to the logic inside the `always` block. The feedback logic to generate the next state of the LFSR is incorrect, leading to the mismatches observed during simulation.
-
-In the `else` block of the `always` block, the line `q <= {q[4], q[3] ^ q[0], q[4], q[2], q[1]};` is responsible for calculating the next state of the LFSR. This line is incorrect because it does not correctly implement the Galois LFSR feedback logic with taps at positions 5 and 3. The connections between `q[3]` and `q[0]` for the XOR feedback are incorrect, resulting in the LFSR not functioning as intended.
-
-To resolve the issue and achieve the desired maximal-length LFSR behavior, the feedback logic needs to be adjusted to ensure that the correct bits are XORed at tap positions 5 and 3, according to the Galois LFSR design requirements.

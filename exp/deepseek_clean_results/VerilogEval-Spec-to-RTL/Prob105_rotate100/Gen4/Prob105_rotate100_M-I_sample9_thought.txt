@@ -1,0 +1,19 @@
+To optimize the PPA metrics while maintaining functionality:
+
+1. Timing Improvement:
+- Implement a logarithmic barrel shifter structure to reduce critical path
+- Break down the 100-bit rotation into smaller, balanced stages (5 stages of 2x rotation since 2^5=32 > 100)
+- This reduces the mux depth from O(n) to O(log n)
+
+2. Power Optimization:
+- Add clock gating for the default case (no rotation)
+- Only enable clock when there's actual rotation or load operation
+
+3. Area Optimization:
+- The barrel shifter structure will naturally reduce area by sharing common logic
+- Remove redundant muxing in the default case
+
+The improved design will:
+- Use a 5-stage barrel shifter for both left and right rotation
+- Maintain synchronous load functionality
+- Implement clock gating for power savings

@@ -1,0 +1,13 @@
+To correctly generate a fractional divide-by-3.5 clock using double-edge clocking, we must explicitly utilize both the positive and negative edges of the input clock to create two complementary clocks (`clk_a` and `clk_b`) that are phase-shifted by half a clock cycle.
+
+We will implement:
+
+- A modulo-7 counter that increments on every posedge of `clk` for `clk_a`.
+- Another modulo-7 counter that increments on every negedge of `clk` for `clk_b`.
+  
+`clk_a` is high for counts 0-3 (4 cycles) and low for counts 4-6 (3 cycles).  
+Similarly, `clk_b` is high for counts 0-3 (4 cycles) and low for counts 4-6 (3 cycles), but its counting occurs on the negedge of `clk`, effectively phase-shifting it by half a clock period relative to `clk_a`.
+
+Finally, OR'ing `clk_a` and `clk_b` generates the output `clk_div`, producing a clock with frequency divided by 3.5 and balanced duty cycle, leveraging true double-edge clocking.
+
+This approach uses two synchronous counters (one on posedge and one on negedge of `clk`) with separate registers to create the required phase shift. Reset signals will asynchronously initialize both counters. This method avoids complex combinational phase-shift calculations and ensures correct fractional division and timing alignment.

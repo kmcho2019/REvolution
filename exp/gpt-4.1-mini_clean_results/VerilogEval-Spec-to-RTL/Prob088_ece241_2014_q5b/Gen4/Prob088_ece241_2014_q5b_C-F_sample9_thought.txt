@@ -1,0 +1,11 @@
+The problem requires implementing the FSM with one-hot encoding (2 flip-flops) and an asynchronous active-high reset. Example 1 uses binary encoding with 1 flip-flop, optimizing area and power but not satisfying the one-hot encoding constraint. Example 2 uses one-hot encoding properly but can improve output logic and next-state logic by exploiting the one-hot nature more explicitly.
+
+To fuse the best ideas:
+- Use one-hot encoding strictly with two state bits (state_A and state_B).
+- Implement asynchronous active-high reset to set state_A = 1 and state_B = 0.
+- Use direct combinational logic for next state signals to simplify logic instead of case statements.
+- Derive output z directly from the state bits and input x, using simple Boolean expressions without case statements, minimizing combinational logic and improving power and area.
+- Keep sequential logic synchronous to clock with asynchronous reset.
+- This keeps one-hot encoding for clarity and potentially simpler combinational next state and output logic for speed and area, with the clean reset behavior preserved.
+
+This fusion results in a clear, maintainable, and synthesizable one-hot FSM with minimized combinational complexity and good PPA attributes.

@@ -1,0 +1,24 @@
+Novel Approach: Hierarchical State Machine with Sub-Counters
+
+1. **Two-Level State Machine**:
+   - Top-level FSM manages major phases (IDLE, CAPTURE, COUNT, DONE)
+   - Sub-FSM within COUNT state handles the 1000-cycle sub-counting
+
+2. **Precise Timing Control**:
+   - Main counter counts down from delay value
+   - Sub-counter precisely counts 1000 cycles for each delay step
+   - Eliminates division operations for count output
+
+3. **Optimized Pattern Detection**:
+   - Use overlapping pattern matching (detects 1101 in any 4-cycle window)
+   - Immediate transition to CAPTURE state upon detection
+
+4. **Output Generation**:
+   - count output directly mirrors delay register during counting
+   - counting/done outputs derived from state with minimal logic
+
+Key Advantages:
+- Guaranteed exact cycle counting (no timing drift)
+- Clear separation of timing domains
+- Efficient pattern matching
+- Minimal arithmetic operations

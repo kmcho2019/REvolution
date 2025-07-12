@@ -1,0 +1,9 @@
+To implement the Lemmings' behavior as a Moore state machine, we'll define states for walking left, walking right, falling, and digging. We'll use a state register to keep track of the current state and combinational logic to determine the next state and output values based on the current state and inputs.
+
+The state machine will have four states: WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING. 
+
+- When in WALK_LEFT or WALK_RIGHT, the Lemming will switch direction if bumped, fall if ground disappears, or start digging if dig is asserted and ground is present.
+- In the FALLING state, the Lemming will say "aaah!" and continue falling until ground reappears, at which point it will resume walking in its original direction.
+- In the DIGGING state, the Lemming will continue digging until ground disappears, at which point it will start falling.
+
+We'll use a state register to store the current state and update it on the positive edge of the clock based on the next state logic. The output values (walk_left, walk_right, aaah, digging) will be determined by the current state.

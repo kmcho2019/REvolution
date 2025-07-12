@@ -1,0 +1,55 @@
+Simplify the logic by using the Karnaugh map to find a minimal sum-of-products expression directly, aiming to reduce the number of terms and literals.
+
+From the K-map:
+
+   cd\ab  00 01 11 10
+   00    1  1  0  1
+   01    1  0  0  1
+   11    0  1  1  1
+   10    1  1  0  0
+
+We identify prime implicants and minimize:
+
+- Group1: c'd' (c=0,d=0) covers ab=00,01,10 → out=1 for those
+- Group2: a'b (a=0,b=1) covers cd=01,10,11 partially → out=1 in some cells
+- Group3: a b' c covers some others
+
+Upon inspection, a minimal expression is:
+
+out = c'd' + a'b + a b' c + c d a + c d b'  (but let's simplify more)
+
+Looking carefully:
+
+- c'd' covers (cd=00) with ab=00,01,10 → consistent ones
+
+- a'b covers cases where a=0,b=1 → covers (01 in ab), combined with c,d rows 00,10,11 where out=1
+
+- c d a covers c=1,d=1,a=1 covers (11 in cd) ab=11,10 mostly 1s
+
+Trying simpler minimal expression from the previous solution:
+
+The original solution uses 4 terms. To simplify, we can factor:
+
+out = c'd'(~a + ~b) + c d (a + b) + ~c d ~b + c ~d ~a
+
+Notice that ~c d ~b and c ~d ~a are smaller extra terms.
+
+Try to merge terms:
+
+out = c'd'(~a + ~b) + c d (a + b) + ( ~c d ~b + c ~d ~a )
+
+If we remove the last two terms and check if out matches, no; so these are essential.
+
+Given the original solution is already quite minimal, we can just remove the separate inverted inputs and write directly with minimal inversions, or combine some terms to reduce gate count.
+
+Hence, the simplified solution will:
+
+- Define a few inverted signals to save gates
+
+- Use minimal intermediate wires
+
+- Combine the first two big terms as a single expression to reduce OR gates
+
+- Keep the last two terms as is
+
+This balances simplicity and clarity while maintaining correct function.

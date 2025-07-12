@@ -1,0 +1,12 @@
+To fuse the strengths of both examples, we adopt the modularity and hierarchical structure from Example 2 (many small mux blocks) but choose a middle ground in chunk size like in Example 1. Instead of 4-bit or 20-bit chunks, we pick 10-bit chunks, creating 10 submodules for the 100-bit input. This balances instance count and mux size, easing synthesis optimization and routing complexity. 
+
+We implement a parameterized Mux2to1_Nbit module with vectorized conditional assignment for area- and power-efficient multiplexing within each chunk. This keeps the logic simple and synthesis-friendly. The top module uses generate to instantiate 10 chunks of 10 bits each, improving clarity, maintainability, and scalability.
+
+Compared to 4-bit chunks, this reduces instance overhead and potentially lowers interconnect complexity; compared to 20-bit chunks, it provides finer-grain modularity for synthesis and easier debug or modification. This is a balanced tradeoff targeting better PPA metrics without sacrificing readability or hierarchy.
+
+Summary:
+- Parameterized vectorized 2-1 mux module using conditional assignment.
+- Partition inputs into 10 chunks of 10 bits each.
+- Instantiate 10 chunk mux modules.
+- Concatenate chunk outputs to form the 100-bit output.
+- This fusion yields a cleaner hierarchy with moderate instance count and efficient synthesis.

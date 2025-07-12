@@ -1,0 +1,17 @@
+To create a novel dual-port RAM design that supports simultaneous read and write with the given parameters, I will implement a fully synchronous RAM with separate clocked processes for read and write. The key differences are:
+
+1. Synchronous Read: Instead of combinational read, read data will be registered at the clock edge when read_en is high, which improves timing predictability and output stability.
+
+2. Reset Behavior: On an active-low reset (rst_n = 0), the read_data output register is cleared to zero, but the memory content itself will be asynchronously initialized using an initial block (since clearing all RAM entries synchronously on reset would be expensive).
+
+3. Memory Declaration: The RAM array will be declared as reg [WIDTH-1:0] RAM [0:DEPTH-1] (matching depth 8 and width 6).
+
+4. Port Handling:
+   - Write occurs synchronously on the rising clock edge if write_en is asserted.
+   - Read operation also occurs synchronously on the rising clock edge if read_en is asserted; the output is held otherwise.
+
+5. Address Width: Use $clog2(DEPTH) for address width to maintain parameterization and portability.
+
+This approach ensures output data stability and predictable timing at the cost of a 1-cycle latency on reads, which is a common trade-off in RAM designs for better clock frequency and power characteristics. The read_data register provides a clean data output stage that holds the previous read data if read_en is low.
+
+This is distinct from the prior approach that had combinational read and no read_data register.

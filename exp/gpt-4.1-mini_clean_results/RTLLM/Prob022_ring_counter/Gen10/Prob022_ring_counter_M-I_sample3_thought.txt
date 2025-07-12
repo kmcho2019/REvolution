@@ -1,0 +1,7 @@
+The main issue arises from the assignment `out <= 8'b1 << position;` inside a sequential always block, which some tools may not support due to variable shift operations directly into a register vector.
+
+To fix this, I will eliminate the separate `position` register and maintain the one-hot pattern directly in the `out` register. On reset, `out` will be initialized to `8'b00000001`. On each clock rising edge, the pattern will rotate left by 1 bit, cycling the single '1' through all positions. This avoids any variable shift operations and directly updates the one-hot vector, improving synthesis compatibility.
+
+This also simplifies the design by keeping only `out` as the state. Rotation can be done by concatenating the MSB to the LSB, effectively rotating the vector.
+
+This approach is functionally equivalent and should be compatible with all synthesis and simulation tools.

@@ -1,0 +1,10 @@
+Refactor the 32-bit Galois LFSR implementation by using a fully synchronous always block without a loop, explicitly assigning each bit of the next state. This avoids the subtle off-by-one and tap detection errors by:
+
+- Assigning q[31] (MSB) directly to the feedback bit (which is q[0]).
+- For each bit from 30 down to 0, assign q[i] to q[i+1] XOR feedback if the bit (i+1) is tapped, otherwise just q[i+1].
+- Define taps clearly as a function or parameter for clarity.
+- This direct bit-by-bit assignment eliminates indexing mistakes and keeps the logic transparent.
+- Keep synchronous active-high reset that initializes q to 32'h1.
+- All logic triggered on the positive edge of clk.
+
+This approach is explicit, easier to verify, and prevents off-by-one errors from a loop.

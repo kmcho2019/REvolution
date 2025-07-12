@@ -1,0 +1,7 @@
+The existing code implements a Moore state machine using a lookup table (LUT) based design. To refactor this code, we can simplify the state machine by eliminating the need for the `next_state` variable and directly assigning the output value based on the current state. We can use `assign` statements to define the output `out` and use a single `always_ff` block to update the state.
+
+The state machine has two states: OFF (0) and ON (1). The output `out` is 0 in the OFF state and 1 in the ON state. We can use a simple `assign` statement to define the output `out` based on the current state.
+
+To update the state, we can use a single `always_ff` block that checks the current state and the input values `j` and `k`. If the current state is OFF and `j` is high, we transition to the ON state. If the current state is ON and `k` is high, we transition to the OFF state. Otherwise, we stay in the current state.
+
+This refactored design simplifies the state machine logic and reduces the number of variables, making it easier to understand and maintain.

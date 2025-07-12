@@ -1,0 +1,14 @@
+The main syntax error comes from declaring a reg inside an always block after procedural statements, which is illegal in Verilog. To fix it, I will:
+
+- Declare a reg `decoded_level` at module scope.
+- Compute the new decoded level outside the always block using a wire assigned to the function output.
+- Then update `current_level` and `previous_level_before_change` registers synchronously inside the always block.
+- This approach cleanly separates combinational decoding from sequential state updates and avoids illegal in-block declarations.
+
+Additionally, I will optimize by:
+- Using wires for nominal valve outputs driven combinationally from `current_level` to reduce register usage and improve PPA.
+- Use a reg only for `dfr` since it depends on previous state comparison and requires synchronous update.
+- Simplify the logic of supplemental valve (dfr) to be synchronous.
+- On reset, outputs are initialized per problem specs.
+
+This approach ensures clean synthesis-friendly code with fewer registers, maintaining synchronous reset and behavior.

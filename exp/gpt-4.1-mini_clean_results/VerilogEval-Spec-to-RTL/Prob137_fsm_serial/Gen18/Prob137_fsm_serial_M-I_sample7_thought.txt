@@ -1,0 +1,13 @@
+To improve the PPA metrics of the given FSM for serial byte reception, I will apply the following optimizations:
+
+1. Use one-hot state encoding instead of binary encoding. This often yields better timing performance by simplifying state decoding logic and reducing logic depth.
+
+2. Remove unnecessary continuous resetting of bit_count and shift_reg in the IDLE and WAIT_STOP states. Instead, reset bit_count and shift_reg only on reset or when transitioning into RECEIVE state. This reduces switching activity and dynamic power.
+
+3. Register the done signal in a separate flip-flop that captures the done pulse in the next cycle. This avoids asserting done combinationally inside the FSM sequential block and can improve timing.
+
+4. Only update the shift register and bit_count when in RECEIVE state and when receiving new bits, reducing toggling outside that state.
+
+These changes collectively aim to reduce logic complexity for the FSM decoding, lower toggling in counters and registers, and improve timing by clearer done signal registration. This approach also preserves the design's original functionality and synchronous reset requirement.
+
+Below is the revised code reflecting these improvements.

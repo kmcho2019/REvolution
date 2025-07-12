@@ -1,0 +1,11 @@
+To fix the issues identified in the feedback, we need to make the following improvements:
+
+1. Reset Behavior: The reset should immediately assert all outputs (fr2, fr1, fr0, dfr) to represent the maximum flow condition (below s[0]). We'll implement this with combinational logic that overrides normal operation during reset.
+
+2. dfr Logic: The supplemental flow valve (dfr) should only activate when the water level is rising (previous state was lower than current state). We'll simplify this to compare state encodings numerically since lower states represent lower water levels.
+
+3. State Encoding: We'll use a more intuitive state encoding where higher values represent higher water levels, making state comparisons for dfr calculation straightforward.
+
+4. Output Logic: We'll maintain the correct nominal flow rates for each state while ensuring dfr activates only during rising transitions.
+
+The key insight is that dfr should be active when we're transitioning to a higher state (water level rising), which we can detect by comparing current and previous state values.

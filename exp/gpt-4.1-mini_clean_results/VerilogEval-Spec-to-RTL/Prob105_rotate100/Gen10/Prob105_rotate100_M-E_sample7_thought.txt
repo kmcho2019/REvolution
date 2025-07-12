@@ -1,0 +1,10 @@
+Implement the 100-bit rotator using direct vector concatenation expressions for rotation. This approach uses a single synchronous always block and a simple multiplexer controlled by `ena` to choose between no change, rotate left, or rotate right. On `load`, the register is synchronously loaded with the input `data`.
+
+The rotation logic:
+- For rotate left (ena == 2'b10), the output q becomes `{q[98:0], q[99]}`, rotating bits one position left.
+- For rotate right (ena == 2'b01), q becomes `{q[0], q[99:1]}`, rotating bits one position right.
+- For other ena values, q remains unchanged.
+
+This vector-based rotation is concise and typically results in simpler and faster combinational logic than loop-based indexing. It enables the synthesis tool to infer efficient barrel rotation hardware, potentially improving timing and reducing area.
+
+The register updates synchronously on the rising edge of clk, respecting the synchronous load and rotate enables. This design is fully synchronous, clean, and optimized for typical synthesis flows, improving performance and power compared to bitwise loop approaches.

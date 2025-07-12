@@ -1,0 +1,6 @@
+Refactor by using an internal 64-bit accumulator register to hold full precision accumulation, preventing overflow naturally without explicit saturation logic.  
+The output `c` is derived by truncating the lower 32 bits of the accumulator.  
+Use an always block for synchronous reset and accumulation update of the 64-bit register.  
+Use a continuous assignment for the output `c` by slicing the lower 32 bits of the 64-bit accumulator, simplifying overflow handling and eliminating saturation logic.  
+This approach keeps the full precision internally, avoids complexity with saturation, and maintains a clean separation between sequential accumulation and combinational output.  
+It uses a simpler, wider internal register that accumulates full 64-bit products directly, which better reflects a typical MAC operation on 32-bit inputs.

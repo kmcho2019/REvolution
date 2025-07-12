@@ -1,0 +1,14 @@
+Improvement strategy:
+1. Direct implementation using shift register approach for simpler logic and better PPA
+2. Eliminate the counter+decoder to reduce logic levels
+3. Use a simple shift register with wrap-around
+4. Maintain one-hot encoding by shifting a single '1' bit
+5. Reset initializes to 8'b00000001
+6. Each clock shifts left with wrap-around from MSB to LSB
+
+Advantages:
+- Fewer logic gates (just DFFs and simple muxes)
+- Lower power (no binary counter toggling)
+- Smaller area (no decoder logic)
+- More intuitive implementation matching the ring counter concept
+- Guaranteed one-hot output without decoding

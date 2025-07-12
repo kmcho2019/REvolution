@@ -1,0 +1,18 @@
+Innovative fractional divider architecture:
+1. Use a 7-state ring counter (0-6) to track division phases
+2. Generate two complementary clock phases:
+   - Phase A: 4-cycle high, 3-cycle low
+   - Phase B: 3-cycle high, 4-cycle low (exactly offset)
+3. Implement precise half-cycle delays using:
+   - Positive edge for Phase A
+   - Negative edge for Phase B
+4. Combine phases with XOR instead of OR to:
+   - Better maintain duty cycle symmetry
+   - Create sharper transitions
+5. Add dynamic phase adjustment to compensate for any accumulated timing errors
+
+Key innovations:
+- Ring counter ensures exact phase relationships
+- XOR combination improves edge quality
+- Dynamic phase compensation maintains long-term accuracy
+- Separate positive/negative edge domains for clean phase generation

@@ -1,0 +1,9 @@
+Instead of using direct equality comparisons, we can implement a more efficient solution using bit pattern matching and priority encoding. Here's the novel approach:
+
+1. First, we'll recognize that all arrow key scancodes share a common prefix (0xE0) in their first byte
+2. We'll first check if the first byte matches 0xE0 to quickly filter non-arrow keys
+3. Then we'll use a priority encoder to decode the second byte into our four outputs
+4. This approach reduces the comparison logic by first checking the common prefix
+5. The priority encoding ensures only one output is active at a time (though the spec doesn't prohibit multiple outputs, this is good practice)
+
+This method potentially reduces gate count by sharing the common prefix check and using simpler logic for the second byte comparison.

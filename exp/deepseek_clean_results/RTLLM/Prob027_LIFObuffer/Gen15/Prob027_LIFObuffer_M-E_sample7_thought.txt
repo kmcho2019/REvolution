@@ -1,0 +1,15 @@
+Novel Architecture: Circular Buffer with Dual Pointers
+1. Instead of traditional stack pointer, use head and tail pointers to implement LIFO in a circular buffer
+2. Head pointer tracks the next write position, tail pointer tracks the next read position
+3. Special case handling when buffer is empty (pointers equal) or full (head wraps around to tail)
+4. Flags generated directly from pointer positions
+5. Optimized memory access by always writing to head and reading from tail
+6. Reset clears pointers and optionally memory (commented out for power optimization)
+7. Simplified control logic by combining pointer movement with data operations
+
+Key Advantages:
+1. More efficient pointer arithmetic (simple increments/decrements)
+2. Clear separation of read and write paths
+3. Better timing due to reduced combinational logic
+4. Easier to extend depth if needed
+5. More intuitive empty/full detection

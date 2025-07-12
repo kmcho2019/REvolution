@@ -1,0 +1,10 @@
+The original solution has two main issues that need to be fixed:
+1. The casez patterns are checking from LSB to MSB (bit 0 to bit 7), but we need to check from MSB to LSB (bit 7 to bit 0) to properly implement priority encoding where higher bits have priority.
+2. The default case should only apply when all bits are zero, not as a catch-all.
+
+The improved design approach is:
+1. Reverse the casez patterns to check from MSB to LSB
+2. Make the default case explicitly check for all zeros
+3. This ensures proper priority encoding where higher bits take precedence
+4. The output will correctly show the position of the first '1' from the left (MSB side)
+5. Still outputs 0 when all inputs are 0

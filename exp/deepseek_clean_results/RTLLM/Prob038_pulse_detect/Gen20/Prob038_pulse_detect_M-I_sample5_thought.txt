@@ -1,0 +1,27 @@
+Improved State Machine Implementation for Reliable Pulse Detection:
+
+1. Problem Analysis:
+   - The original solution failed to reliably detect 0-1-0 sequences because it only updated on input changes
+   - Need to track state across exactly 3 consecutive clock cycles
+   - Must detect complete 0-1-0 pattern regardless of input duration
+
+2. Solution Strategy:
+   - Implement a proper state machine with 4 states:
+     * IDLE: Waiting for first 0
+     * GOT_0: Received first 0, waiting for 1
+     * GOT_01: Received 0-1, waiting for final 0
+     * PULSE: Complete 0-1-0 detected
+   - Output pulses only when complete pattern is detected
+   - Reset to IDLE state on any pattern deviation
+
+3. Optimizations:
+   - Minimal state encoding (2 bits)
+   - Direct state transitions based on input
+   - Clean synchronous output generation
+   - No false positives during operation
+
+4. Verification Points:
+   - Correct detection of all 0-1-0 patterns
+   - Proper handling of partial patterns
+   - Clean reset behavior
+   - No false detections on other input patterns

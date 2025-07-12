@@ -1,0 +1,20 @@
+To optimize the PPA metrics while maintaining correct functionality, I'll implement these improvements:
+
+1. Timing Optimization:
+- Register the input requests to break the critical path from r[] to state transitions
+- Simplify the priority logic by using a casez statement for clearer synthesis
+
+2. Power Optimization:
+- Add clock gating for the grant register when in stable grant states (B/C/D)
+- Register the outputs to prevent combinational glitches
+
+3. Area Optimization:
+- Use one-hot encoding for states which is more area-efficient for small FSMs
+- Remove the default case since one-hot encoding covers all states
+
+Key changes:
+- Input synchronization registers
+- Clock gating control
+- One-hot state encoding
+- Registered outputs
+- Simplified priority logic

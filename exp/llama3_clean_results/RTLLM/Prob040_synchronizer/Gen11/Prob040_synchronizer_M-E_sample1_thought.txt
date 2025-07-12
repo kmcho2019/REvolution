@@ -1,0 +1,11 @@
+The problem statement requires a multi-bit MUX-based synchronizer that can handle data synchronization between two clock domains, clk_a and clk_b, with specific requirements for the enable signal data_en and the input data signal data_in. The new idea involves designing a synchronizer that utilizes a handshake protocol to ensure data integrity and synchronization across the clock domains.
+
+The proposed architecture consists of two main components: a data transmitter and a data receiver. The data transmitter is responsible for capturing the input data and sending it to the receiver, while the receiver is responsible for synchronizing the received data with the clk_b clock domain.
+
+The transmitter includes a data register (data_reg) to store the input data signal (data_in) when the enable signal (data_en) is high. The transmitter also includes a request signal (req) that is asserted when data is available in the data register.
+
+The receiver includes a data register (data_out_reg) to store the received data and a acknowledge signal (ack) that is asserted when the data is successfully received. The receiver also includes two D flip-flops to delay the enable signal (data_en) by two clk_b clock cycles.
+
+The handshake protocol ensures that data is only transmitted when the receiver is ready to receive it, and the transmitter only sends data when the receiver has acknowledged the previous data. This approach guarantees that data is not lost or corrupted during transmission.
+
+The novel aspect of this design is the use of a handshake protocol to synchronize data between the two clock domains, which provides a more robust and reliable method for data transfer compared to traditional synchronizer designs.

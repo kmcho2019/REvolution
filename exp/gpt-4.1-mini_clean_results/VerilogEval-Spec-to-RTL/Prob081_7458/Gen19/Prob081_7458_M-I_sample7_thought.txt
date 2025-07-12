@@ -1,0 +1,10 @@
+To optimize the design for better PPA (Performance, Power, Area) while preserving clarity, I will simplify the implementation by:
+
+- Removing the parameterized AndN module, which, while modular, introduces extra module overhead and potentially more gate delay.
+- Implement all AND gates explicitly as cascaded 2-input AND gates, which are typically more area- and power-efficient in synthesis because technology libraries usually map 2-input gates most optimally.
+- Keep the two OR gates as 2-input gates.
+- Remove the primitive modules (And2 and Or2) and instead use continuous assignment with bitwise operators directly, which synthesis tools easily optimize.
+- Eliminate intermediate wires for minimal net overhead by inlining the logic expressions for p1y and p2y directly, improving area and potentially power with fewer nets.
+- Overall, this flattens the hierarchy and reduces the gate count, which can improve power and area with negligible or improved timing since 2-input gates are fast and synthesis tools optimize for these.
+
+This results in a clean, concise, and efficient design that matches the 7458 chip behavior with minimal overhead.

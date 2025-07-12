@@ -1,0 +1,17 @@
+The original design is already minimal with one flip-flop and a simple next-state logic. To further optimize for PPA:
+
+- Merge the asynchronous reset and state update logic using synchronous reset instead, as synchronous resets often improve timing and reduce power in many modern ASIC libraries, though this depends on target technology. If asynchronous reset is a strict requirement, then keep it.
+
+- Since asynchronous reset is explicitly required, keep it but consider encoding the FSM with a one-hot or enumerated type to ease synthesis optimizations; however, here single bit is optimal.
+
+- To reduce toggling and dynamic power, gate the clock only when the state needs to change. However, clock gating FSMs is risky and often discouraged unless carefully implemented.
+
+- Alternatively, use a one always block with non-blocking assignments for clear semantics (already done).
+
+- The only small improvement here is to explicitly declare state encoding parameters for clarity and maintainability and use an enumerated reg to improve synthesis understandability, potentially improving PPA.
+
+- Lastly, add a synchronous path with a stable output assignment to prevent glitches; however, assigning output directly from state (Moore) is already glitch free.
+
+Therefore, the best practical optimization is to add state encoding constants and keep the code clean and synthesizable with asynchronous reset and non-blocking assignments.
+
+This aids tool optimizations and maintainability without changing functionality.

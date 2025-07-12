@@ -1,0 +1,18 @@
+Fusion Strategy:
+1. State Encoding: Use 2-bit encoding for compactness (from both examples) since it's sufficient for 4 states.
+2. Shift Register: Keep the efficient right-shift implementation (from both examples) for LSB-first reception.
+3. Done Signal: Use Example 1's approach of assigning done in STOP state for cleaner timing.
+4. Error Handling: Simplify by removing explicit ERROR state (from Example 2's feedback) since we can handle errors within STOP state.
+5. Optimization:
+   - Use Example 2's more concise state transition logic
+   - Add explicit default case for robustness
+   - Optimize bit_count comparison to use 3'b111
+   - Combine reset handling from both examples
+   - Remove redundant ERROR state to save area
+
+The fused solution improves upon both examples by:
+- Using minimal state encoding
+- Efficient shift operation
+- Clean done signal generation
+- Simplified state machine with fewer states
+- Clear error recovery path within STOP state

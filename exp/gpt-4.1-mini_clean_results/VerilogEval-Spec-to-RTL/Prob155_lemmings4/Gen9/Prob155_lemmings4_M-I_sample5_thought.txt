@@ -1,0 +1,11 @@
+To optimize the design for better PPA, I will separate the direction bit into a dedicated 1-bit register outside the mode encoding to reduce logic complexity, making the mode a 2-bit register and direction a separate register. This simplifies the FSM encoding and may improve critical path and area by making direction updates more explicit. 
+
+For the fall_timer, I will gate its increment only during the falling state, and avoid resetting it unnecessarily during walking or digging states to reduce unnecessary toggling and power consumption. The fall_timer increments only when falling, and saturates at 21 using a simple comparator to avoid complex logic.
+
+I will also simplify the bump detection logic by combining bump_left and bump_right into a single bump signal and handle direction toggling more directly, minimizing logic depth.
+
+All other logic and prioritization remain the same, preserving correctness and functionality, while aiming to improve timing, reduce toggling power, and slightly reduce area by clearer separation of mode and direction.
+
+The outputs remain Moore-style combinational outputs based on separate mode and direction signals.
+
+Asynchronous reset still sets the lemming to walk_left (direction=0, mode=walk).

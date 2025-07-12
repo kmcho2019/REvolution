@@ -1,0 +1,7 @@
+The novel architectural idea for the edge detection module involves utilizing a finite state machine (FSM) to track the state of the input signal `a` and detect rising and falling edges. This approach differs from the traditional method of directly comparing the current and previous states of `a` by instead encoding the states of `a` into a FSM, which then generates the `rise` and `down` signals based on state transitions.
+
+The FSM will have two states: `IDLE` (or `STABLE`) and `EDGE`. In the `IDLE` state, the FSM waits for a change in the input signal `a`. When a change is detected, the FSM transitions to the `EDGE` state and sets either `rise` or `down` based on the direction of the edge. The FSM remains in the `EDGE` state for one clock cycle, allowing the `rise` or `down` signal to be captured by any downstream logic. After one clock cycle, the FSM returns to the `IDLE` state, ready to detect the next edge.
+
+This approach has the potential to be more scalable and flexible than traditional methods, as it can be easily extended to detect more complex patterns in the input signal by adding additional states to the FSM. Furthermore, the FSM-based approach can help in reducing power consumption by minimizing unnecessary transitions in the output signals.
+
+To implement this idea, we will define an enumeration for the FSM states and use a register to store the current state. We will then use combinational logic to determine the next state and the values of `rise` and `down` based on the current state and the input signal `a`.

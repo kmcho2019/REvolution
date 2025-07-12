@@ -1,0 +1,14 @@
+Implement a simpler 8-bit Radix-4 Booth multiplier without complex variable shifting of partial products each cycle. Use a 17-bit signed multiplicand and a 10-bit signed multiplier (with appended zero bit) and accumulate the partial sums directly shifted by 2 bits per cycle inside the product register by shifting the product right by 2 bits each cycle. 
+
+At each cycle:
+- Extract the lowest 3 bits of the multiplier to decode the Booth factor.
+- Add/subtract the appropriate multiple of multiplicand to the product.
+- Arithmetic shift the multiplier right by 2 bits.
+- Arithmetic right-shift the product by 2 bits to simulate the place value change (maintains alignment).
+- Count up to 8 cycles.
+
+After 8 cycles, output the lower 16 bits of the product and set the ready signal. This avoids variable shifts by count inside the clock cycle, making the logic simpler and easier to synthesize.
+
+Reset initializes the registers and clears flags. The ready signal is asserted for one cycle when multiplication completes.
+
+This design is simpler, cleaner, and still correct for 8-bit Radix-4 Booth multiplication.

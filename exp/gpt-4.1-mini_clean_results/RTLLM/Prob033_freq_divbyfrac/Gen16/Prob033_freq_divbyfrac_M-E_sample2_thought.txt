@@ -1,0 +1,25 @@
+Implement the fractional frequency division by 3.5 using a phase accumulator approach combined with double-edge sampling for precise timing and consistent duty cycle.
+
+Key points of the new approach:
+
+1. **Phase Accumulator for Fractional Division:**
+   - Use a fixed-point phase accumulator incremented by a constant step each input clock.
+   - When the accumulator overflows, toggle the output clock.
+   - For division by 3.5, set the increment and modulo accordingly to create 3.5 output clock cycles per input clock cycles.
+
+2. **Double-Edge Clocking with 2x Clock Enable:**
+   - Generate an internal clock enable pulse at both posedge and negedge of input clock to effectively double the clock frequency seen by the divider.
+   - This allows toggling output clock on half clock cycles, achieving half-integer division.
+
+3. **Synchronous Logic:**
+   - Use a single clock domain by deriving a 2x clock enable signal toggling at posedge and negedge of `clk`.
+   - Use a simple synchronous process triggered by this enable to update phase accumulator and output clock.
+
+4. **Duty Cycle Balance:**
+   - The phase accumulator toggles output clock when its MSB changes, ensuring uniform high and low times.
+   - This method inherently balances duty cycle even for fractional divisions.
+
+5. **Reset:**
+   - Synchronous active low reset to initialize phase accumulator and output clock to known states.
+
+This architecture avoids complex asynchronous toggling and handshake issues, uses fixed-point arithmetic to represent fractional division precisely, and benefits from double-edge clocking to reach half-integer frequency division with clean timing and stable duty cycle.

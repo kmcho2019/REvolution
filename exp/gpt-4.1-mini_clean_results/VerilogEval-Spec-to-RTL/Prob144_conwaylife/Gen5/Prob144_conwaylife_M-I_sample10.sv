@@ -1,0 +1,57 @@
+module TopModule(
+    input        clk,
+    input        load,
+    input  [255:0] data,
+    output reg [255:0] q
+);
+    localparam WIDTH  = 16;
+    localparam HEIGHT = 16;
+
+    // Next state storage
+    reg [255:0] next_q;
+
+    integer r, c, dr, dc;
+    integer nr, nc;
+    integer neighbors;
+    reg current_cell;
+
+    always @(*) begin
+        // Compute next_q combinationally
+        for (r = 0; r < HEIGHT; r = r + 1) begin
+            for (c = 0; c < WIDTH; c = c + 1) begin
+                neighbors = 0;
+                for (dr = -1; dr <= 1; dr = dr + 1) begin
+                    for (dc = -1; dc <= 1; dc = dc + 1) begin
+                        if (!(dr == 0 && dc == 0)) begin
+                            // Wrap indices using masking (mod 16)
+                            nr = (r + dr) & 4'hF; 
+                            nc = (c + dc) & 4'hF;
+                            neighbors = neighbors + q[(nr << 4) + nc];
+                        end
+                    end
+                end
+
+                current_cell = q[(r << 4) + c];
+                // Apply rules with non-blocking assignment for synthesis friendliness
+                if (neighbors <= 1) begin
+                    next_q[(r << 4) + c] = 1'b0;
+                end else if (neighbors == 2) begin
+                    next_q[(r << 4) + c] = current_cell;
+                end else if (neighbors == 3) begin
+                    next_q[(r << 4) + c] = 1'b1;
+                end else begin
+                    next_q[(r << 4) + c] = 1'b0;
+                end
+            end
+        end
+    end
+
+    always @(posedge clk) begin
+        if (load) begin
+            q <= data;
+        end else begin
+            q <= next_q;
+        end
+    end
+
+endmodule

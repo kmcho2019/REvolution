@@ -1,0 +1,5 @@
+Refactor by splitting the design into two sequential registers: one to store the previous input and one to store the latched falling edge detections. Instead of directly using a combinational wire for falling edges, calculate the falling edge mask inside a clocked always block right after reading the previous input. This ensures that the falling edge detection uses stable, registered values from the last cycle.
+
+By updating the `prev_in` register first on the clock edge and then using its old value for detection in the next cycle, we avoid the timing ambiguity between combinational wires and sequential logic. This approach also uses a synchronous reset to clear both registers.
+
+This structure clarifies the data flow and timing, ensuring that falling edges are captured precisely on clock edges without ambiguity or delay.

@@ -1,0 +1,5 @@
+To optimize the 4-bit counter for better PPA, I will implement a gray code counter instead of a binary counter. Gray code increments only one bit per clock cycle, significantly reducing switching activity and thus dynamic power consumption, improving power efficiency. For performance, gray code counters often have shorter critical paths because of fewer bit toggles, potentially increasing max frequency. I will keep the synchronous active-high reset behavior. 
+
+Since the output q is expected as a binary count (per the problem statement), I will output the gray code count internally but decode it to binary for the q output. This decoding introduces minimal combinational delay but overall reduces toggle activity on the register bits, benefiting power and possibly performance. Area overhead is minimal because the gray-to-binary conversion logic is small.
+
+This approach trades a small combinational decoding cost for reduced dynamic power and better timing, improving overall PPA.

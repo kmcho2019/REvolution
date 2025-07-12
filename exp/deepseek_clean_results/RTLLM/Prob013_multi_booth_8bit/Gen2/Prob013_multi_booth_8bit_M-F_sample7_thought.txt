@@ -1,0 +1,14 @@
+To fix the Radix-4 Booth multiplier implementation while maintaining functionality and improving synthesis compatibility, we'll:
+1. Keep the core Radix-4 Booth algorithm logic intact
+2. Remove any tool-specific primitives that might cause synthesis issues
+3. Simplify the arithmetic operations to use standard Verilog operators
+4. Maintain proper sign extension and Booth encoding cases
+5. Ensure the ready signal timing remains correct (4 cycles for 8-bit inputs)
+6. Use standard register declarations without tool-specific optimizations
+
+Key improvements:
+- Use pure behavioral Verilog without tool-specific constructs
+- Maintain same cycle count (4 cycles) for 8-bit multiplication
+- Keep all Booth encoding cases (including ±1× and ±2× operations)
+- Ensure proper reset initialization
+- Use standard arithmetic operations that are widely supported

@@ -1,0 +1,14 @@
+Looking closely at Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w, note that y[2], y[4], and y[5] are bits 2, 4, and 5. Since the FSM uses one-hot encoding, only one of y's bits is '1' at a time. Therefore, (y[1] | y[2] | y[4] | y[5]) just means "not y[0] or y[3]", but y[3] is the target state for Y3. So we can rewrite it as (y & ~(y[0] | y[3])) & ~w, or simply as (~y[0] & ~y[3] & (y[1]|y[2]|y[4]|y[5])) & ~w. This is more complex though.
+
+However, since y is one-hot, only one bit is 1 at a time. So (y[1]|y[2]|y[4]|y[5]) equals (|y & ~(y[0] | y[3])). But since only one bit is 1, the OR over these bits equals the same as y[1] | y[2] | y[4] | y[5].
+
+Therefore, the original expression is minimal. We cannot simplify the OR further due to one-hot encoding.
+
+Hence, the original solution is already optimal; no simpler equivalent logic exists without changing interface or FSM.
+
+Given the requirement to simplify, we could write Y3 in sum-of-products style explicitly or use a case statement, but that would increase complexity. Thus, the original solution is both minimal and clear.
+
+Therefore, the simplest functional implementation is the same as original, but removing redundant parentheses:
+
+Y1 = y[0] & w;
+Y3 = (y[1] | y[2] | y[4] | y[5]) & ~w;

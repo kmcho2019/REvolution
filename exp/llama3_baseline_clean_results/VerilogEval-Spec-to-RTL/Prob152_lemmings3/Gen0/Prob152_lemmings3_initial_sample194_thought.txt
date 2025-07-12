@@ -1,0 +1,11 @@
+The problem describes a finite state machine (FSM) with various states and transitions. We can model this behavior using a Moore state machine, which is a type of FSM where the outputs depend only on the current state. The states can be represented as follows:
+- WALKING_LEFT: The Lemming is walking left.
+- WALKING_RIGHT: The Lemming is walking right.
+- FALLING: The Lemming is falling due to lack of ground.
+- DIGGING: The Lemming is digging.
+
+The transitions between these states will be based on the input signals. When the ground disappears, the Lemming will transition from walking to falling. When the ground reappears, the Lemming will transition from falling to walking. When the dig signal is high and the Lemming is walking on ground, it will transition to digging. When the ground disappears during digging, the Lemming will transition to falling. When the ground reappears, the Lemming will transition from falling to walking in its original direction.
+
+The outputs can be generated based on the current state. The walk_left and walk_right outputs will be high when the Lemming is in the WALKING_LEFT or WALKING_RIGHT states, respectively. The aaah output will be high when the Lemming is in the FALLING state. The digging output will be high when the Lemming is in the DIGGING state.
+
+To implement the bump left and bump right logic, we can add additional logic to switch the direction when a bump is detected. If a bump is detected on the left, the Lemming will transition from walking right to walking left, and if a bump is detected on the right, the Lemming will transition from walking left to walking right.

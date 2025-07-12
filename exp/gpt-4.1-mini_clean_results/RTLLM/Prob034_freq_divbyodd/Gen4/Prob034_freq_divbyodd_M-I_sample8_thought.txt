@@ -1,0 +1,15 @@
+The main issue lies in the toggling timing and phase alignment between the two counters and their corresponding divided clocks clk_div1 and clk_div2. To fix this:
+
+1. We should toggle clk_div1 and clk_div2 at the *end* of their counting cycle rather than in the middle count. For an odd divider NUM_DIV, toggling each clock divider at count = NUM_DIV-1 provides precise control and symmetry.
+
+2. Use counters that count from 0 to NUM_DIV-1, and toggle clk_div1 on the positive edge when cnt1 reaches NUM_DIV-1, then reset cnt1. Similarly, toggle clk_div2 on the negative edge when cnt2 reaches NUM_DIV-1 and reset cnt2.
+
+3. This ensures clk_div1 and clk_div2 toggle at complementary edges, separated by half a clock cycle, producing a nearly 50% duty cycle on clk_div when OR-ed.
+
+4. Reset synchronously on negedge rst_n to zero all counters and clk_div outputs.
+
+5. Keep parameter check and sizing intact.
+
+This adjustment aligns toggles with full counter cycles, creating stable and phase-aligned clk_div signals, thus generating a clean frequency division by an odd number with near 50% duty cycle.
+
+The final code implements these changes while preserving readability and synthesizability.

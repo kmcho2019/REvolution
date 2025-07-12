@@ -1,0 +1,11 @@
+To address the functional errors in the provided code, we need to reevaluate the state machine's logic and how we determine the `dfr` output. The comparison `dfr <= (nextState > currentState);` is not directly applicable due to the nature of the enum states, which do not inherently imply an order that correlates with the water level. 
+
+Instead, we should explicitly define the conditions under which `dfr` should be asserted. Given the system's requirements, `dfr` should be asserted when the water level is rising, meaning the current state indicates a higher water level than the previous state. We can achieve this by comparing the current and previous states explicitly.
+
+Another area of improvement is the unnecessary `case (1'b1)` statement, which can be simplified by directly evaluating the conditions for each state.
+
+Regarding the reset signal, ensuring it is handled correctly is crucial. The feedback suggests that the reset might not be behaving as expected, potentially due to timing issues or how it is integrated into the state machine logic. We should ensure that the reset is properly synchronized and that it correctly resets the state machine to its initial state.
+
+To improve the readability and maintainability of the code, we should consider explicitly defining the states and their corresponding output values. This could involve using local parameters or constants to map each state to its specific output configuration.
+
+Lastly, optimizing the switching activity of the signals, particularly `dfr`, could be beneficial once the functional errors are corrected. This might involve ensuring that the logic driving `dfr` is as straightforward and deterministic as possible, minimizing unnecessary state transitions.

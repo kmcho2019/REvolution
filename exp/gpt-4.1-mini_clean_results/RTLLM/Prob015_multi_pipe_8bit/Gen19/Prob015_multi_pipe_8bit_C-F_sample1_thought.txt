@@ -1,0 +1,31 @@
+Fuse the best aspects from both examples to achieve a better pipelined unsigned 8-bit multiplier design:
+
+- Use a 4-stage pipeline to better balance combinational complexity and timing:
+  1. Stage 0: Register inputs and mul_en_in.
+  2. Stage 1: Generate partial products combinationally from registered inputs.
+  3. Stage 2: Perform a balanced two-level addition tree of partial products to reduce logic depth.
+  4. Stage 3: Register the final sum output and the enable signal.
+
+- Use a 4-bit shift register for mul_en_in pipeline to track the enable signal through all pipeline stages; mul_en_out is the MSB.
+
+- Partial products are generated using conditional shifts based on multiplier bits, like in both examples.
+
+- The addition is split into two pipeline stages:
+  * Stage 2 sums pairs of partial products to get four intermediate sums.
+  * Stage 3 sums these four intermediate sums into the final product.
+
+- Registers only update on valid enable signals to reduce switching.
+
+- Output mul_out is gated by mul_en_out; otherwise zero.
+
+- This approach balances the addition pipeline, reducing critical path length at each stage, improving timing.
+
+- The additional pipeline stage introduces one cycle latency but increases throughput and max frequency.
+
+- Overall, this fusion improves timing and power (by pipelining large adders) while keeping area reasonable.
+
+- The enable pipeline synchronizes input and outputs correctly.
+
+- The code uses non-blocking assignments in sequential blocks and blocking assignments in combinational blocks.
+
+- All registers have synchronous reset (active low), aligning with specs.

@@ -1,0 +1,8 @@
+To optimize the 64-bit Johnson counter for better PPA (performance, power, area), I will make these improvements:  
+1. Convert the asynchronous reset to synchronous reset to avoid timing uncertainties and simplify clock domain management.  
+2. Use a shift register with enable instead of unconditional shifting to reduce unnecessary toggling, allowing the counter to pause if needed in the future. Although enable is always active here, it keeps design extensible and might improve synthesis optimizations.  
+3. Replace the explicit bit indexing for MSB insertion with a concise logic expression: MSB = ~Q[0]. This logic matches the toggling nature of the Johnson counter and simplifies combinational logic.  
+4. Declare Q as reg and assign within the synchronous block only on clock edges for better synthesis friendliness.  
+5. Keep the reset value as 0 to maintain initial known state.  
+
+These small refinements may reduce the critical path by simplifying combinational logic and improve synthesis quality and power efficiency by avoiding asynchronous reset and making logic simpler and more consistent.

@@ -1,0 +1,18 @@
+To implement the TopModule, we need to follow these steps:
+1. Define the module interface with the given input and output ports.
+2. Initialize the internal state of the game, which is the 16x16 grid, represented as a 256-bit vector.
+3. On the positive edge of the clock, if the load signal is high, update the internal state with the input data.
+4. Otherwise, calculate the next state of the game by applying the game rules to each cell in the current state.
+5. To apply the game rules, for each cell, count the number of alive neighbors and then update the cell state accordingly.
+6. To handle the toroidal grid, when counting neighbors, wrap around to the other side of the grid when necessary.
+
+The rules for counting neighbors are:
+- For each cell, count the number of alive neighbors.
+- For a cell at position (x, y), its neighbors are at positions (x-1, y-1), (x, y-1), (x+1, y-1), (x-1, y), (x+1, y), (x-1, y+1), (x, y+1), and (x+1, y+1).
+- If x or y is 0, and we need to go to the left or top, wrap around to 15. If x or y is 15, and we need to go to the right or bottom, wrap around to 0.
+
+The rules for updating the cell state are:
+- If a cell has 0 or 1 alive neighbors, it becomes 0.
+- If a cell has 2 alive neighbors, it stays the same.
+- If a cell has 3 alive neighbors, it becomes 1.
+- If a cell has 4 or more alive neighbors, it becomes 0.

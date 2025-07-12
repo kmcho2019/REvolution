@@ -1,0 +1,10 @@
+To improve PPA and timing closure over the prior gated-clock solution, the clock gating on the clock line should be removed to avoid clock skew and hold violations. Instead, implement an internal enable signal (valid_count) within the sequential logic. The counter will increment only when valid_count is asserted, otherwise it holds its value.
+
+This approach preserves functional correctness while enhancing timing and reducing potential clock-related issues. The synchronous active-low reset remains. The counter increments from 0 to 11 and wraps around to 0.
+
+Summary of improvements:
+- Use clean clk without gating.
+- Use valid_count as enable inside the always block.
+- Keep synchronous reset.
+- Use non-blocking assignments consistently.
+- The counter logic remains minimal for area and power efficiency.

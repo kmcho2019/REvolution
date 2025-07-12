@@ -1,0 +1,11 @@
+Improvement Strategy:
+1. Timing Optimization: Replace the variable shift operation with a direct 4:1 mux using case statement for more predictable timing paths
+2. Power Optimization: Change the OR operation to an equality check to reduce unnecessary switching activity
+3. Area Optimization: Eliminate the 16-bit concatenation by directly selecting inputs in the case statement
+4. Maintain Functionality: Keep the same behavior where q outputs b/e/a/d for c=0-3 respectively, and 'f' otherwise
+
+Key Changes:
+- Use case statement instead of shift operation for cleaner synthesis
+- Simplify the 'f' case detection to only check relevant bits
+- Directly wire inputs to case selection for better routing
+- Maintain all original functionality while improving PPA metrics

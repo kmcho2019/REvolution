@@ -1,0 +1,10 @@
+The original solution correctly implemented Y1 but missed including y[3] (state D) in the logic for Y3. The FSM transition shows that from state D (y[3]) on input w=0, the next state remains D. This means that y[3] & ~w should also be part of Y3.
+
+So the corrected logic for Y3 is:
+Y3 = (y[1] | y[2] | y[3] | y[4] | y[5]) & ~w;
+
+This fix ensures that the FSM transitions correctly for state D.
+
+Additionally, the logic is minimal and cannot be further optimized for PPA given the constraints and the nature of the FSM.
+
+Hence, the improvement strategy is to fix the missing term in Y3 logic for functional correctness.

@@ -1,0 +1,16 @@
+I will implement the fixed-point subtractor by explicitly separating the sign, integer, and fractional parts of the inputs and performing arithmetic accordingly, then reconstructing the fixed-point output. This approach closely follows the problem description logic about handling same and different signs.
+
+Key points of this approach:
+- Extract sign bits of inputs a and b.
+- Extract magnitude bits (absolute value) of a and b (by negation if negative).
+- When signs are the same, perform a magnitude subtraction (abs(a) - abs(b)), then assign the sign to be the same as inputs.
+- When signs differ, add the magnitudes (abs(a) + abs(b)), assign sign based on comparison of magnitudes.
+- Handle zero result by explicitly zeroing sign bit.
+- Use internal registers for res and sign to match the requirement.
+- Finally, reconstruct the output fixed-point number c with sign and magnitude.
+
+This method simulates fixed-point arithmetic with full control over sign and magnitude, giving an explicit handle on the subtraction logic and edge cases, which helps in debugging and formal verification.
+
+It will use only combinational always blocks (no clocks), uses parametric bit widths, and maintain the fixed-point fractional bits in all operations. All arithmetic on magnitudes will be done on unsigned numbers with one extra bit to accommodate overflow for additions.
+
+This approach complements the direct signed arithmetic method by focusing on the problem's prescribed sign-based arithmetic rules and zero sign bit handling.

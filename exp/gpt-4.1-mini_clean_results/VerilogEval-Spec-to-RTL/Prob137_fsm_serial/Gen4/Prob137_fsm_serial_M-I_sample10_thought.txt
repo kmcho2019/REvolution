@@ -1,0 +1,23 @@
+To optimize the existing FSM for better PPA, focus on the following:
+
+1. Simplify shift register logic by shifting left with the incoming bit at LSB as done, but use a consistent approach and avoid unnecessarily complex concatenation. Current implementation is fine but can be expressed more clearly.
+
+2. Use one-hot encoding for FSM states to improve timing (critical path) by minimizing combinational decoding logic and reducing glitches.
+
+3. Separate 'done' signal assignment into its own always block to reduce logic on the critical path of the main FSM.
+
+4. Minimize register updates: the shift register and bit count only need to update in RECEIVE state, elsewhere hold their values to reduce toggling and dynamic power.
+
+5. Use synchronous reset with non-blocking assignments, no changes needed here.
+
+6. Introduce a clock enable (clk_en) signal for the data bit shift and counter increment only when needed (RECEIVE state), further reducing toggling and power.
+
+7. Remove default assignments inside always blocks by initializing next_state to current state at the start of the combinational block, which is already done.
+
+8. Keep done asserted only for one clock cycle, specifically when stop bit is correctly detected, as before.
+
+Overall, these improvements reduce logic complexity and switching activity on registers and combinational paths, improving timing and power, while the FSM one-hot encoding improves the critical path and robustness.
+
+The area increase due to more flip-flops (one-hot states) is minimal and acceptable given timing gain.
+
+Note: Verilog-2001 does not support typedef enum logic easily, so for maximal compatibility, explicit parameters with one-hot encoding will be used.

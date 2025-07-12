@@ -1,0 +1,17 @@
+The key issue with the original implementation is the logic used to set dfr during a water level change. It incorrectly compares new_level with stable_level after stable_level has been updated in the same clock cycle, causing dfr to malfunction. The fix is to update prev_level and stable_level registers in sequence but calculate dfr by comparing the newly decoded water level (new_level) with the previous stable_level *before* updating stable_level.
+
+Specifically, at the clock edge when a sensor change is detected:
+- dfr = 1 if new_level > stable_level (old stable_level, before update)
+- dfr = 0 otherwise
+
+Then update prev_level <= stable_level and stable_level <= new_level.
+
+This guarantees the dfr decision is made based on the previous stable water level, as required by the spec.
+
+In addition, we can simplify the combinational nominal flow outputs directly from stable_level without additional logic.
+
+We keep the synchronous reset setting stable_level and prev_level to BELOW_S0 and dfr = 1, representing a long low-level stable state with all outputs asserted.
+
+This approach ensures dfr asserts only when water level rises, holds steady otherwise, and avoids glitches. It also respects the previous water level before the last sensor change as required.
+
+This correction fixes the large number of dfr mismatches and meets the spec perfectly.

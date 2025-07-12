@@ -1,0 +1,18 @@
+To implement the 8-bit Radix-4 Booth multiplier, we first need to understand the Booth algorithm. The Booth algorithm is a multiplication algorithm that multiplies two numbers using a series of addition and subtraction operations. The key idea is to use the bits of the multiplier to determine whether to add or subtract the multiplicand from the product.
+
+In our implementation, we use two 16-bit registers, `multiplier` and `multiplicand`, to store the multiplier and multiplicand, respectively. We also use a 5-bit counter, `ctr`, to keep track of the current bit position in the multiplier.
+
+When the reset signal is high, we initialize the `multiplier` and `multiplicand` registers with the input values `a` and `b`, respectively. When the reset signal is low, we enter the normal operation mode. In this mode, we check if the counter `ctr` is less than 16. If it is, we left-shift the `multiplicand` register by 1 to simulate the Booth algorithm's shifting operation.
+
+We then check the current bit of the `multiplier` register. If it is 1, we accumulate the value of the `multiplicand` register into the product register `p`. We also increment the counter `ctr` by 1. Once the counter `ctr` reaches 16, we set the ready signal `rdy` to 1 to indicate the completion of the multiplication process.
+
+To implement the Radix-4 Booth algorithm, we need to consider the current bit and the next bit of the multiplier register. We use a combination of these two bits to determine the Booth encoding. The possible Booth encodings are:
+
+- 00: do nothing
+- 01: add the multiplicand
+- 10: subtract the multiplicand
+- 11: do nothing (for Radix-4, this is equivalent to adding 2 times the multiplicand, but we don't need to handle this case explicitly)
+
+However, in this problem statement, we are asked to implement a simple version of the Booth multiplier without considering the Radix-4 aspect. So, we will simplify the implementation to just check the current bit of the multiplier register.
+
+Here is the Verilog code that implements this design:

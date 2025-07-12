@@ -1,0 +1,9 @@
+To address the issues identified in the feedback, we need to revise the state machine's transitions and outputs to ensure they align with the problem description. The first step is to correct the 'next_state' calculation in the 'fall' state. Instead of using the 'prev_state' to determine the next state when the ground reappears, we should maintain a separate variable to keep track of the walking direction before the fall. This will allow the state machine to resume walking in the same direction as before the fall.
+
+Next, we need to add logic to handle the 'bump_left' and 'bump_right' signals when the Lemming is in the 'fall' or 'dig' state. According to the problem description, being bumped while falling or digging should not affect the walking direction. This can be achieved by ignoring the 'bump_left' and 'bump_right' signals when the state machine is in the 'fall' or 'dig' state.
+
+Another area of improvement is to remove the default case in the 'next_state' calculation. If the 'state' is not one of the defined states, the 'next_state' should not default to 'walk_left'. Instead, we can use a more robust approach to handle undefined states.
+
+To minimize the number of state transitions and optimize the state encoding, we can use a one-hot encoding scheme. This can lead to better performance and area efficiency. Additionally, we can simplify the combinational logic by reducing the number of gates and minimizing the switching activity of the output signals.
+
+Finally, we should review the simulation log to ensure that the corrected design aligns with the problem description and produces the expected output.

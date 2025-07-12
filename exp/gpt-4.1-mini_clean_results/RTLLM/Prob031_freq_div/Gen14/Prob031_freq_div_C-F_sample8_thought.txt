@@ -1,0 +1,11 @@
+I will fuse the strengths of both prior examples to create a clean, modular, and resource-efficient frequency divider design:
+
+- Use a single 7-bit counter (cnt) counting from 0 to 99 to generate all output clocks. This merges the two counters (cnt_10 and cnt_100) into one, saving area and reducing redundant toggling.
+- Derive the CLK_50 output from the input clock directly (toggling every cycle) since it is divide-by-2 and simplest.
+- Generate CLK_10 by toggling when cnt modulo 10 equals 4 (toggle every 5 cycles, half period of 10).
+- Generate CLK_1 by toggling when cnt equals 49 (half period of 100).
+- Use a single always block with asynchronous reset for all sequential logic to synchronize and simplify reset handling.
+- This reduces the number of flip-flops and logic, improving area and power without sacrificing timing or modular clarity.
+- Use non-blocking assignments, clear comments, and proper bit widths.
+- This approach balances modularity, area, and power by consolidating counters while keeping CLK_50 logic simple and direct for performance.
+- The unified counter approach also helps lower switching power by reducing counter toggling frequency compared to separate counters incrementing every cycle.

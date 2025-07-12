@@ -1,0 +1,6 @@
+To implement the finite-state machine (FSM) for the timer, we can break down the problem into several states:
+- Idle state: The FSM starts in this state, waiting for the pattern 1101 to be detected on the input data pin.
+- Pattern detected state: Once the pattern is detected, the FSM shifts to this state and asserts the shift_ena output for exactly 4 clock cycles to shift in the duration bits.
+- Counting state: After the duration bits are shifted in, the FSM waits for the counters to finish counting by asserting the counting output and waiting for the done_counting input to be high.
+- Done state: Once the counters finish counting, the FSM asserts the done output to notify the user and waits for the ack input to be high before resetting to the idle state.
+We can implement these states using a parameterized enum to define the states and a case statement to determine the next state and output values based on the current state and input values.

@@ -1,0 +1,17 @@
+To meet the specification that 'rise' and 'down' signals are set to 1 on the clock cycle after the edge appears and remain at 1 until the next corresponding edge, we should explicitly register the outputs. This removes any potential combinational glitches and ensures stable synchronous outputs.
+
+The fusion strategy is:
+1. Register the input 'a' to detect edges by comparing the current and previous value.
+2. Generate combinational signals for rising and falling edges based on the registered previous state.
+3. Use these combinational signals to update registered outputs 'rise' and 'down'.
+4. On reset, all registers are cleared.
+5. When a rising edge is detected, set 'rise' to 1 and clear 'down'.
+6. When a falling edge is detected, set 'down' to 1 and clear 'rise'.
+7. If no edge is detected, maintain the previous output states ('rise' and 'down'), holding them at 1 until the next edge event clears them or toggles the other.
+
+This approach combines:
+- The simplicity of storing previous 'a' to detect edges.
+- The glitch-free and stable outputs by registering 'rise' and 'down'.
+- The output signals remain high until the corresponding next edge appears, fulfilling the problem statement.
+
+This design slightly increases area and complexity by adding two output registers but greatly improves output stability and matches the functional spec exactly.

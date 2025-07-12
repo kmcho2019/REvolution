@@ -1,0 +1,10 @@
+Instead of using a single register to store the previous input and directly detecting edges, use a pair of pipeline registers to hold delayed versions of the input vector. This approach creates a two-stage shift register for the input signal.
+
+- At every clock cycle, the first register stage captures the current input.
+- The second register stage captures the value from the first stage.
+- The edge detection is done by comparing the second stage (which holds the input from two cycles ago) and the first stage (input from the last cycle). A 0-to-1 transition is detected if the older delayed value is 0 and the newer delayed value is 1.
+- The pedge output is driven one cycle after the detected edge, effectively detecting a 0-to-1 edge between two previous cycles.
+  
+This pipelined approach adds one extra cycle of latency compared to the conventional method but keeps the logic simple. It can be beneficial in designs where staged input sampling is required or for easy integration into a deeper pipeline. It also provides a stable input window to observe changes and can help improve timing by distributing the registers.
+
+This method preserves low-complexity and allows clear tracking of signal transitions through pipeline stages.

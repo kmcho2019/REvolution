@@ -1,0 +1,10 @@
+module TopModule (
+    input  [1023:0] in,
+    input  [7:0]    sel,
+    output [3:0]    out
+);
+
+    // Direct calculation of output without intermediate storage
+    assign out = in[({sel[7:4], sel[3:0], 2'b00} +: 4)];
+
+endmodule

@@ -1,0 +1,9 @@
+To optimize for better Power, Performance, and Area (PPA), the design can be improved by adding a clock enable (ce) input to the vector DFF module. This allows the register to only update on clock edges when enabled, reducing unnecessary toggling and saving dynamic power.
+
+Since the original problem statement does not include a clock enable input, I will internally gate updates by detecting if input data differs from the stored output, thereby only assigning q <= d when data changes. This avoids unnecessary switching inside the register when data is stable, effectively implementing a clock enable internally.
+
+Additionally, removing the initial block can help synthesis tools better optimize reset initialization without simulation bias.
+
+The asynchronous reset remains as required by specification, but the update condition inside the synchronous portion is conditional on data change to reduce toggling.
+
+This approach reduces dynamic power by eliminating redundant register toggling, maintains the asynchronous reset functionality for fast reset response, and keeps the single vector flip-flop structure for area efficiency.

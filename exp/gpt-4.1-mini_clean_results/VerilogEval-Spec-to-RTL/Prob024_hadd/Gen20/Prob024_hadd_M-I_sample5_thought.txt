@@ -1,0 +1,24 @@
+The original design uses five NAND gates to implement the half adder structurally. We can reduce the gate count and thus power and area by using a more efficient NAND-based XOR and AND construction. 
+
+Specifically, the sum (XOR) can be realized with only four NAND gates by using the well-known minimal NAND XOR structure, and the carry (AND) is just one NAND gate followed by NANDing its output with itself (two NAND gates total). However, since the carry output is simply the AND of inputs a and b, we can implement it with just one NAND gate and an inverter. To maintain NAND-only logic, the inverter is made by connecting both inputs of a NAND gate together. 
+
+Hence, carry = AND(a,b) = NAND(a,b) followed by an inverter implemented by NAND gate with tied inputs. This requires 2 NAND gates for carry.
+
+For sum = a XOR b: we can use 4 NAND gates for XOR.
+
+Total gates = 4 (sum) + 2 (carry) = 6 NAND gates, which is one more than before. But the previous design reused NAND gates and had a redundant NAND gate for the carry output by doing NAND of a NAND gate with itself.
+
+Alternatively, since the carry output is just an AND of inputs, we can directly implement the AND gate using NAND2 followed by NAND2 acting as an inverter. That matches the original implementation.
+
+But to improve PPA, let's try to reduce gates by sharing intermediate signals.
+
+Idea: 
+- Use only 4 NAND gates to implement XOR (sum).
+- For carry, reuse the first NAND gate that computes NAND(a,b).
+- Use an inverter implemented by NAND gate with tied inputs for carry.
+
+This keeps total gates to 5, same as before, but reduces internal wires and perhaps optimizes power slightly by reusing the NAND(a,b) output.
+
+Additionally, reduce the number of wires by direct wiring, which can help area and power.
+
+The improved design clarifies gate sharing and better structural clarity.

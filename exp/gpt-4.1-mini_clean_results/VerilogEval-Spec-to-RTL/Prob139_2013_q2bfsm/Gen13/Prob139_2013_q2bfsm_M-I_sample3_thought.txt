@@ -1,0 +1,13 @@
+The main correction is to make the FSM outputs strictly depend on the *current state* rather than the *next state*. This is the conventional Moore FSM approach: outputs update immediately upon state change, not anticipating the next state.  
+
+Key improvements:
+1. Move output assignments outside the clocked state register block into a separate combinational block that uses the registered `state` to generate outputs `f` and `g`.  
+2. Keep state transitions and data updates synchronous with clock and reset as before.  
+3. Keep the pattern detection and counter logic intact, ensuring shifts and counters are updated in the clocked block based on combinational next-state logic.  
+4. Fix the Y-monitoring counter logic to properly count *up to two cycles* (counting 0 and 1), and ensure transition to G_OFF_STATE occurs after two cycles with no y=1 detected.
+
+This adjustment removes output misalignment and off-by-one errors by cleanly separating state transitions from output logic and making outputs purely state dependent, ensuring outputs reflect the actual FSM state each clock cycle.
+
+This will fix simulation mismatches of f and g and produce correct pulses and holds as specified.
+
+The overall FSM structure is unchanged, preserving clarity and correctness.

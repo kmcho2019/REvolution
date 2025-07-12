@@ -1,0 +1,15 @@
+To implement the gshare branch predictor module named TopModule, we need to follow these steps:
+1. Define the module interface with the given input and output ports.
+2. Initialize a 7-bit global branch history register.
+3. Implement the prediction logic: 
+   - Hash the 7-bit pc and 7-bit global history using XOR to generate a 7-bit index.
+   - Use this index to access a 128-entry table of two-bit saturating counters (PHT).
+   - Predict the branch direction based on the counter value.
+4. Update the global branch history register when a prediction is made.
+5. Implement the training logic:
+   - Update the PHT based on the actual branch outcome when training is requested.
+   - If a misprediction occurs, recover the branch history register to the state after the mispredicting branch completes execution.
+6. Handle the case when training and prediction of the same PHT entry happen at the same time.
+7. Implement asynchronous reset logic to reset the module when areset is high.
+
+We will use a reg array to implement the PHT, with each entry being a two-bit saturating counter.

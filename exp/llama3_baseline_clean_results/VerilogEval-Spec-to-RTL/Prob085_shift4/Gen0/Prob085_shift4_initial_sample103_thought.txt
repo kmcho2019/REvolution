@@ -1,0 +1,7 @@
+To implement the TopModule as described, we will use a 4-bit register to store the shift register's value. 
+
+When the areset signal is asserted, the shift register should be reset to zero regardless of the current clock state. This is an asynchronous reset, meaning it doesn't depend on the clock edge.
+
+For the synchronous signals, we check the load and ena signals at the positive edge of the clock. If the load signal is asserted, we load the shift register with the data[3:0] input. If the load signal is not asserted but the ena signal is, we shift the shift register to the right, with the most significant bit (q[3]) becoming zero and the least significant bit (q[0]) being shifted out.
+
+The priority of the load signal over the ena signal ensures that if both are asserted, the load operation takes precedence.

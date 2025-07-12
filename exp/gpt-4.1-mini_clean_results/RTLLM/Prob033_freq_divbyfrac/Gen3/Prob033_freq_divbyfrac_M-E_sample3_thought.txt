@@ -1,0 +1,22 @@
+To implement a fractional frequency divider by 3.5 using double-edge clocking, a novel approach is to use a single synchronous counter driven only on the positive edge of clk and generate two complementary internal signals that are toggled at different counter values. These two signals represent two clock phases: one toggled on rising clock edge, the other toggled on falling clock edge (emulated by using a shifted version of the counter).
+
+Specifically:
+
+- Use a 3-bit counter cycling through 0 to 6 (7 states).
+- Define two clock phases (`clk_phase_a` and `clk_phase_b`):
+  - `clk_phase_a` toggles at cnt == 0 (start of cycle), remains high for 4 cycles and low for 3 cycles.
+  - `clk_phase_b` is phase-shifted by half input clock period by updating on the falling edge of clk, but implemented by sampling and generating its value combinationally using a shifted version of cnt (or by effectively using a delayed signal synchronized to the posedge clock).
+
+To avoid asynchronous logic and two separate clock domains, the double-edge clocking effect is realized by generating `clk_phase_b` from the same synchronous counter but with a combinational lookahead using the next counter value or a small LUT.
+
+Finally, the fractional divided clock output `clk_div` is generated as the logical OR of `clk_phase_a` and `clk_phase_b`, producing a clock signal whose period equals 7 input clock cycles, but with pulses at both edges, effectively achieving a 3.5x division.
+
+This method ensures single clock domain synchronous logic for ease of timing closure, stable operation, and eliminates asynchronous domain crossing issues.
+
+Additional details:
+
+- The duty cycle imbalance is corrected by having `clk_phase_a` high for 4 cycles and low for 3 cycles.
+- `clk_phase_b` is similarly derived but delayed by half clock cycle using combinational logic.
+- The final output toggles at half clock cycle intervals alternating between the two phases, producing the fractional output.
+
+This approach relies on a single counter and combinational logic to emulate double-edge phase shifting, avoiding complex multi-domain synchronization and enabling synthesizable, glitch-free fractional division.

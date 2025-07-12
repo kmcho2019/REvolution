@@ -1,0 +1,10 @@
+The waveform suggests that outputs p and q form a 2-bit register with the following behavior:
+- At the first rising clock edge, p is set to 0 and q remains unknown (or 0).
+- On each rising clock edge, if input 'a' is 1, p is set to 1; otherwise p is cleared to 0.
+- The output q acts as a latch of the previous value of p at the falling edge of the clock, i.e., q updates to the previous value of p when clock goes from 1 to 0.
+This implies a two-stage sequential circuit:
+- p is updated synchronously on the rising clock edge based on input 'a'.
+- q is updated synchronously on the falling clock edge, capturing the previous value of p.
+We can implement this by using two always blocks: one triggered on the posedge clock for p and one triggered on the negedge clock for q.
+Initially both p and q are unknown (x), then after the first rising edge p is 0, and q updates on falling edges.
+This approach matches the waveform where p reacts immediately to 'a' on rising clock edges, and q follows p but delayed until the falling clock edges.

@@ -1,0 +1,11 @@
+The design requires a 32-bit shift register that can be updated in two ways:
+1. Normal prediction update: shift in predict_taken when predict_valid is high
+2. Misprediction recovery: load train_history concatenated with train_taken when train_mispredicted is high
+
+The misprediction has higher priority than normal prediction. The register should be asynchronously reset to 0 when areset is high. The output predict_history simply reflects the current value of the history register.
+
+Key points:
+- Use always block with posedge clk or posedge areset for sequential logic
+- Implement priority logic where misprediction overrides normal prediction
+- For misprediction recovery, concatenate train_history[30:0] with train_taken
+- For normal prediction, shift left and insert predict_taken at LSB

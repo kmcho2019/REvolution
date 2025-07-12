@@ -1,0 +1,8 @@
+To implement the finite state machine (FSM) for the serial byte receiver, we will define states to handle the detection of the start bit, the reception of the 8 data bits, and the verification of the stop bit. The FSM will transition between these states based on the input 'in' and will set 'done' high when a complete byte has been received correctly. The FSM will be reset to its initial state upon the assertion of 'reset'. We'll also use a counter to keep track of the number of data bits received.
+
+States:
+- IDLE: Waiting for the start bit (in = 0).
+- RECEIVE: Receiving data bits.
+- STOP: Checking for the stop bit.
+
+When 'in' goes low (start bit detected) while in the IDLE state, the FSM transitions to RECEIVE. In the RECEIVE state, we count up to 8, collecting data bits (assuming a register to store the received byte). After receiving all 8 bits, the FSM transitions to the STOP state to check for the stop bit. If the stop bit is high (1), the FSM sets 'done' high for one clock cycle and then returns to the IDLE state. If the stop bit is low (0) when expected, the FSM remains in the STOP state until it detects a high 'in' (stop bit), at which point it transitions back to the IDLE state to start over.

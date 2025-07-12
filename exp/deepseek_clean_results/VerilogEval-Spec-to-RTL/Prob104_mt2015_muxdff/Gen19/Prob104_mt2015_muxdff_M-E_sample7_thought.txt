@@ -1,0 +1,21 @@
+Novel Approach: Instead of using a simple mux for load/feedback selection, we'll implement a more sophisticated TopModule that incorporates the feedback logic internally. This makes each TopModule instance self-contained with its own feedback computation, while still maintaining the hierarchical structure.
+
+Key Insights:
+1. Each flip-flop position has unique feedback requirements:
+   - Bit 0: XOR of bits 1 and 2
+   - Bit 1: Previous value of bit 0
+   - Bit 2: Previous value of itself
+
+2. We can parameterize the feedback operation:
+   - 00: No feedback (shouldn't occur)
+   - 01: Hold value (for bit 2)
+   - 10: Previous bit (for bit 1)
+   - 11: XOR feedback (for bit 0)
+
+3. The full_module will provide the correct feedback mode to each instance
+
+Advantages:
+- More explicit feedback control
+- Clearer separation of concerns
+- Easier to modify feedback patterns
+- Each instance knows its own operation

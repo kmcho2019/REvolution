@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Optimize overflow detection by combining terms more efficiently to reduce logic levels
+2. Simplify correction logic by recognizing that +6 correction can be implemented as:
+   - Toggle bits 3 and 1 when overflow occurs
+   - Toggle bit 2 when overflow occurs AND sum_ext[1] is 0
+3. Share common sub-expressions between overflow detection and correction
+4. Maintain the single 5-bit adder approach for initial sum computation
+5. Reduce area by minimizing redundant logic operations
+
+Key Optimizations:
+- Combine overflow conditions more efficiently using De Morgan's laws
+- Implement correction as selective bit toggling rather than full addition
+- Share the (sum_ext[2] | sum_ext[1]) term between overflow and correction
+- Maintain parallel computation paths for timing optimization
+- Reduce gate count through logical simplification

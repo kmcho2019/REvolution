@@ -1,0 +1,11 @@
+The original design efficiently shares the XOR logic via an intermediate wire, which helps synthesis tools optimize the combinational logic. However, to further optimize timing and potentially reduce logic depth, we can eliminate the intermediate wire and use the direct XOR expression `a ^ b` in all three outputs. This may reduce the combinational logic depth by removing one net delay stage, potentially improving performance marginally.
+
+Since the outputs `out_assign` and `out_always_comb` are purely combinational, using the direct XOR expression is functionally equivalent and slightly simpler.
+
+For the sequential output `out_always_ff`, the XOR is computed directly at the clock edge.
+
+This approach removes the intermediate wire without duplicating XOR computations in hardware, as synthesis tools recognize the common expression.
+
+This slight simplification can reduce the propagation delay, minimally improve power by eliminating the wire net, and reduce area slightly due to fewer nets.
+
+Functionality and timing behavior remain unchanged except for the potential improvement in combinational path delay.

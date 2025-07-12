@@ -1,0 +1,11 @@
+To simplify the LIFO buffer design while maintaining functionality, I will:
+
+1. Use a 2-bit stack pointer (SP) counting entries from 0 to 4, as the stack depth is only 4.
+2. Keep synchronous reset to clear SP and dataOut, but omit initialization of stack memory since it’s unnecessary.
+3. Combine push and pop logic in one always block without separate enable signals.
+4. Update EMPTY and FULL flags directly from SP in a simple combinational manner.
+5. Perform push by writing dataIn at SP and incrementing SP; pop by decrementing SP and reading stack_mem at (SP - 1).
+6. Avoid clearing stack_mem on pop to reduce toggling.
+7. Remove extra wires or signals to simplify the code further.
+
+This approach results in a straightforward, easy-to-read design that meets all functional requirements with minimal code complexity.

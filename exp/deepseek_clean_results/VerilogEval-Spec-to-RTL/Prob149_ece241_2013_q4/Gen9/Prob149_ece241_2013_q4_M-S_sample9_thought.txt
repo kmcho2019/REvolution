@@ -1,0 +1,15 @@
+To simplify the solution while maintaining functionality:
+
+1. **Remove State Machine**: Instead of using explicit states, directly decode the sensor inputs to determine the current water level. This eliminates the need for state registers and next state logic.
+
+2. **Simplify Rising Detection**: Track only the previous sensor readings to detect if water level is rising (any sensor that was 0 is now 1).
+
+3. **Direct Output Logic**: Generate outputs directly from current sensor readings and rising detection without intermediate states.
+
+4. **Synchronous Reset**: Implement reset purely synchronously by registering all outputs.
+
+Key simplifications:
+- Eliminate state encoding and state transition logic
+- Use sensor inputs directly for level detection
+- Maintain only necessary history (previous sensors) for rising detection
+- Register outputs for clean synchronous behavior

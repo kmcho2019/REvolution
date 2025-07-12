@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states:
+- IDLE: Initial state where we wait for the input byte with in[3] = 1.
+- BYTE1: First byte of the message has been received.
+- BYTE2: Second byte of the message has been received.
+- BYTE3: Third byte of the message has been received.
+We will use a counter to keep track of the current byte. When the counter reaches 3, we will assert the done signal and output the 24-bit message.
+The FSM will transition from IDLE to BYTE1 when in[3] = 1, and then to BYTE2 and BYTE3 as each byte is received.
+The out_bytes output will be constructed by shifting in the new byte at each state and selecting the correct bytes when done is asserted.
+The reset signal will be used to reset the FSM to the IDLE state and clear the out_bytes output.

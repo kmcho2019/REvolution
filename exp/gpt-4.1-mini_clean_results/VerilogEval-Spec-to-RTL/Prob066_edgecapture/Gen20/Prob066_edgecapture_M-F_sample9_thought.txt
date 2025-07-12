@@ -1,0 +1,13 @@
+The root cause of the mismatches is the treatment of `prev_in` during reset. The original code updates `prev_in` to `in` on reset, but since reset and regular operation share the same assignment, a potential race or glitch can occur at the cycle immediately after reset deassertion, especially if `in` changes near that boundary.
+
+To fix this, separate the reset assignment of `prev_in` from the normal assignment: when reset is asserted, assign `prev_in` to `in` exactly once (to initialize), and on subsequent cycles without reset, update `prev_in` to the input. This can be done by differentiating reset assertion and normal operation so that `prev_in` only updates once during reset assertion and then continuously tracks `in`.
+
+Also, to avoid race conditions, do not update `prev_in` when reset is asserted multiple cycles; keep it stable to maintain proper initial state.
+
+This approach ensures no false falling edges are detected immediately after reset because `prev_in` and `in` match exactly after reset is released, and subsequent falling edges are detected correctly.
+
+The rest of the design stays unchanged: detect falling edges via `prev_in & ~in` and latch the output bits via OR until reset.
+
+Additionally, ensure synchronous reset is properly handled for all registers.
+
+This fix eliminates subtle race conditions around reset and input timing, addressing the mismatch problems observed in simulation.

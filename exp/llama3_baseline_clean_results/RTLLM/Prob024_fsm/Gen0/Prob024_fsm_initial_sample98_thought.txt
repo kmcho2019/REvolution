@@ -1,0 +1,19 @@
+To implement the Mealy FSM detection circuit, we will use a finite state machine with six states: S0 (initial state), S1, S2, S3, S4, and S5. The state transitions will be based on the current state and the input signal IN. When the FSM reaches the final state S5, it will output MATCH = 1. We will also handle the reset condition where if RST is active, the FSM will reset to the initial state S0. The FSM will operate synchronously with the clock signal CLK.
+
+Here's a step-by-step breakdown:
+
+1. Define the states: S0 (initial state), S1, S2, S3, S4, and S5.
+2. Determine the state transitions based on the input signal IN.
+3. Implement the reset condition to reset the FSM to S0 when RST is active.
+4. Set MATCH = 1 when the FSM reaches the final state S5.
+
+The state transitions will be as follows:
+
+- S0: IN = 1 -> S1, IN = 0 -> S0
+- S1: IN = 0 -> S2, IN = 1 -> S1
+- S2: IN = 0 -> S3, IN = 1 -> S1
+- S3: IN = 1 -> S4, IN = 0 -> S1
+- S4: IN = 1 -> S5, IN = 0 -> S1
+- S5: IN = 1 -> S5, IN = 0 -> S1 (but since MATCH = 1, we can stay in S5 or reset)
+
+The Verilog implementation will use a parameterized module for better readability and maintainability.

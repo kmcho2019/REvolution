@@ -1,0 +1,14 @@
+Novel solution approach:
+1. Use a one-hot encoded state machine with 5 states (IDLE + 4 active cycles)
+2. Eliminate explicit counter by using state transitions
+3. Each state directly controls shift_ena output
+4. Reset moves to first active state (S1)
+5. State transitions occur every clock cycle until reaching IDLE
+6. IDLE state persists until next reset
+
+Key advantages:
+- No separate counter needed (state encoding serves as counter)
+- Clear state transitions with explicit timing
+- One-hot encoding provides glitch-free outputs
+- Easily extensible if timing requirements change
+- Simple reset behavior with direct state transition

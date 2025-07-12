@@ -1,7 +1,0 @@
-Design a Moore FSM that tracks the count of consecutive 1's seen after a 0 to detect the three conditions. The FSM states represent how many consecutive 1's have been seen (from 0 to 6+). On input 0, the FSM resets to the initial state (as if previous was 0). When the FSM reaches five consecutive 1's and next input is 0, it outputs `disc` (discard the zero after 5 ones). When the FSM reaches six consecutive 1's (0 1111110), it outputs `flag`. If seven or more ones come consecutively, it asserts `err`. Since outputs are Moore type, outputs depend only on state and are asserted on the cycle after the input sequence is recognized.
-
-Implementation details:
-- States: S0 (0 consecutive ones), S1 (1 one), S2 (2 ones), ..., S6 (6 ones), S7 (7 or more ones)
-- Output signals are asserted in states that indicate the condition after the input symbol completes the sequence.
-- Synchronous reset sets state to S0.
-- Outputs disc, flag, err are one-clock cycle pulses asserted in the cycle after the condition is met.

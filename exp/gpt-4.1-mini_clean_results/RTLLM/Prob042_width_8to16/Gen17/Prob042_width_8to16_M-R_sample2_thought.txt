@@ -1,0 +1,15 @@
+Refactor the original design using an explicit two-state finite state machine (FSM) with states IDLE and WAIT. The FSM manages data input collection: 
+- In IDLE state, on valid_in, store first 8-bit input into a register and move to WAIT.
+- In WAIT state, on valid_in, concatenate stored first byte (upper 8 bits) with current input (lower 8 bits), register this as output, assert valid_out, and return to IDLE.
+
+This state machine approach avoids ambiguous flag usage and potential latch inference, making the design more synthesis-friendly and easier to follow.
+
+Also, valid_out and data_out are registered and produced one clock cycle after the second valid input, as required.
+
+This approach uses:
+- state register for FSM
+- data_lock register to hold the first input byte
+- data_out_reg and valid_out_reg registers to hold output data and valid signal
+- synchronous reset to initialize all registers
+
+This clear state encoding simplifies timing and control logic and should avoid synthesis issues related to inferred latches or undefined signal assignments.

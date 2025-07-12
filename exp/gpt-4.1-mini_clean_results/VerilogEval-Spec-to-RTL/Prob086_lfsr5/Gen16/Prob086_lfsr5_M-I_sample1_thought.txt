@@ -1,0 +1,7 @@
+To optimize for better PPA (performance, power, area), I will refactor the LFSR to use a combinational next_state signal computed outside the clocked always block. This eliminates dependent non-blocking assignments on the same register bits in one always block, reducing combinational path delays and improving timing.
+
+I will compute the feedback bit once as XOR of q[0] and q[2] (the taps at positions 5 and 3). Then shift q right by one bit and insert feedback at q[4]. This approach is more regular and synthesizes into fewer gates.
+
+The synchronous reset will be preserved, resetting q to 1.
+
+Overall, this approach minimizes gate levels and switching, improving timing and reducing power/area slightly compared to previous code with multiple dependent bit assignments inside the clock block.

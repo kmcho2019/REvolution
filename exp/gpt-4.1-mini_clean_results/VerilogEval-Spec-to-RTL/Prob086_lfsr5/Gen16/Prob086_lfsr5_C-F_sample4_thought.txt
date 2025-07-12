@@ -1,0 +1,10 @@
+To craft a superior 5-bit maximal-length Galois LFSR with taps at bits 5 and 3, I will fuse the strengths of both examples by:
+
+- Using a combinational wire `feedback` to isolate feedback logic, improving readability and helping synthesis tools optimize timing.
+- Computing the next state combinationally into a `next_q` wire vector to avoid read-after-write hazards inherent in referencing `q` bits on the right-hand side during sequential update. This reduces critical path delays and improves timing.
+- Applying synchronous active-high reset to set the state to 5'b00001, ensuring a valid maximal-length seed.
+- Updating the register `q` at every positive clock edge with the precomputed `next_q`, improving timing and logic clarity.
+- Using non-blocking assignments and avoiding intermediate temporary registers inside the sequential block to keep code clean and synthesis-friendly.
+- Keeping explicit bit assignments and indexing for clarity and compatibility with synthesis tools.
+  
+This approach reduces combinational logic depth in the sequential path, improves timing and power by avoiding multiple bit reads during update, and maintains minimal area. The fusion balances clarity, correctness, and PPA benefits effectively.

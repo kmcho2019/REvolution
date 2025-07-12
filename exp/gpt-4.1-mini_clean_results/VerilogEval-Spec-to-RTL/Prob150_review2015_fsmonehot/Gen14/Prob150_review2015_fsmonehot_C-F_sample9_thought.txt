@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by combining clear, explicit per-next-state assign statements with logical factorization and minimal intermediate signals:
+
+- Use localparams for state bit indices for clarity and easy maintenance.
+- Extract current state bits into named wires for readability.
+- Factor common terms (like `(S | S1 | S110) & ~d`) to reduce gate duplication and improve clarity.
+- Assign each requested next-state output separately with straightforward boolean expressions.
+- Derive Moore outputs (done, counting, shift_ena) directly from current states as simple ORs.
+- Avoid generating unused next-state signals for cleaner code.
+- This yields a clear, maintainable, efficient combinational logic for the one-hot FSM with minimal redundant logic, aiding synthesis and potential timing/power optimizations.

@@ -1,0 +1,11 @@
+The existing solution successfully detects edges in an 8-bit input vector but can be improved for better Power, Performance, and Area (PPA) metrics. 
+
+To improve the performance, the current solution already has a simple and efficient edge detection logic. However, one potential issue is that the `anyedge` output is being generated in a separate combinational logic block, which might introduce additional delay. To improve this, we can consider generating the `anyedge` output directly within the sequential logic block where the `curr_in` and `prev_in` registers are updated. This approach eliminates the need for a separate combinational logic block and can potentially reduce the critical path delay.
+
+For power consumption, the existing solution seems to be already relatively power-efficient. However, we can further reduce power consumption by minimizing the switching activity within the module. Since the edge detection logic is primarily dependent on input changes, we can ensure that the inputs to this module are as stable as possible when not changing, to minimize unnecessary switching.
+
+To optimize area, the existing solution is already relatively area-efficient. However, if further reduction is necessary, we can consider using more compact flip-flop designs or exploring alternative edge detection methods. 
+
+Another approach to improve the PPA metrics is to pipeline the design. Pipelining involves breaking down the combinational logic into smaller stages, with each stage separated by a register. This approach can improve the performance by reducing the critical path delay and can also reduce power consumption by minimizing switching activity. However, pipelining may increase the area due to the addition of more registers.
+
+In this case, we will focus on generating the `anyedge` output directly within the sequential logic block and ensuring that the inputs to the module are stable when not changing to minimize unnecessary switching.

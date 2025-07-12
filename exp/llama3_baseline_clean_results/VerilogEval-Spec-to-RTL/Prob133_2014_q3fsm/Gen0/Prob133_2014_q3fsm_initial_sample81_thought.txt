@@ -1,0 +1,10 @@
+The module TopModule will implement a finite state machine (FSM) with two states: A and B. 
+State A will be the reset state where the FSM stays as long as input s is 0. 
+When s becomes 1, the FSM moves to state B. In state B, the FSM examines the input w for three consecutive clock cycles. 
+It counts the number of times w is 1 during these three cycles and sets the output z accordingly in the next clock cycle. 
+The FSM will stay in state B, continuously checking the input w for the next three clock cycles.
+
+To implement this behavior with as few states as possible, we can use a single state machine with counters to keep track of the number of w=1 occurrences and the current cycle within the three-clock-cycle window.
+We'll use a 2-bit counter (0 to 3) to keep track of the cycle and a 2-bit counter (0 to 3) to count the number of w=1 occurrences.
+When the FSM is in state A, it will only transition to state B when s=1. 
+In state B, it will continuously count the w=1 occurrences and the cycles, and set z accordingly.

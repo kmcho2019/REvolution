@@ -1,0 +1,27 @@
+1. Input Analysis:
+   - The input is x[3:0] (4 bits)
+   - The Karnaugh map rows represent x[3]x[4], but since we only have x[3:0], this must be a typo
+   - Correct interpretation: rows are x[3]x[0], columns are x[1]x[2]
+
+2. Karnaugh Map Analysis:
+   - f is 1 in these cases:
+     * x[3]x[0]=01 and x[1]x[2]=11
+     * x[3]x[0]=11 and x[1]x[2]=00 or 01
+     * x[3]x[0]=10 and x[1]x[2]=00 or 01
+   - f is 0 in these cases:
+     * x[3]x[0]=00 and x[1]x[2]=01
+     * x[3]x[0]=01 and x[1]x[2]=00 or 10
+     * x[3]x[0]=10 and x[1]x[2]=11
+   - All other cases are don't-cares
+
+3. Optimized Implementation:
+   - Group 1s to minimize logic:
+     * x[3] & ~x[2] (covers 11-00/01 and 10-00/01)
+     * ~x[3] & x[0] & x[1] & x[2] (covers 01-11)
+   - Ensure no overlap with required 0 cases
+   - Use don't-cares to simplify further
+
+4. Final Logic:
+   - f = (x[3] & ~x[2]) | (~x[3] & x[0] & x[1] & x[2])
+   - This covers all required 1s while respecting required 0s
+   - Uses minimal gates (2 ANDs, 1 OR, 1 NOT)

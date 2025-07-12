@@ -1,0 +1,9 @@
+I will implement the serial byte receiver using a one-hot style FSM with three states: IDLE (waiting for start bit), READING (shifting in 8 data bits), and STOP_CHECK (checking stop bit). Instead of a separate bit counter, I will use an explicit 3-bit counter for bit counting. The design will shift in bits LSB first by shifting the register right and inserting the new bit at the MSB side for clarity.
+
+To handle invalid stop bits, the FSM moves to a WAIT_STOP state that repeatedly checks the line for a stop bit (logic 1) before returning to IDLE, ensuring correct synchronization.
+
+The done signal will be generated as a pulse for one clock cycle when a valid stop bit is detected, and out_byte is updated accordingly.
+
+I will implement the FSM and registers within a single synchronous always block with a case statement, controlled by a state register. All signals will be updated synchronously with the clock, and reset will synchronously reset all states and registers.
+
+This architecture keeps the design simple and linear, with minimal combinational logic outside the main sequential block, improving timing predictability. It also explicitly encodes WAIT_STOP as a separate state for clarity. The shift and counter update occur simultaneously at each clock cycle during READING. The done pulse is generated via a flag set only at the STOP_CHECK state with valid stop bit, ensuring clean one-cycle pulse generation.

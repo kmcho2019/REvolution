@@ -1,0 +1,8 @@
+The existing solution is already quite minimal, but we can make it slightly simpler by:
+
+1. Eliminating the separate next_state wire and combining the logic directly into the state update
+2. Maintaining the same efficient binary state encoding (0=A, 1=B)
+3. Keeping the asynchronous reset to state B
+4. Still using the same compact state transition logic (state ? in : ~in)
+
+This reduces the number of signals and makes the code more compact while maintaining identical functionality and PPA metrics.

@@ -1,0 +1,13 @@
+Novel architectural idea: State Machine with Preload Register
+1. Instead of a simple down-counter, use a state machine with two states: IDLE and COUNTING
+2. Maintain a separate preload register to store the initial value
+3. In COUNTING state, decrement the counter and transition to IDLE when reaching zero
+4. This approach provides more explicit control flow and potentially better timing characteristics
+5. The terminal count is generated when in IDLE state (counter = 0)
+6. Load operations update both the preload register and current counter simultaneously
+
+Advantages:
+- Clear separation of loading and counting operations
+- More flexible for future enhancements (e.g., pause/resume functionality)
+- Potentially better timing as counter logic is simpler (only decrement when in COUNTING state)
+- Explicit state transitions make the design intent clearer

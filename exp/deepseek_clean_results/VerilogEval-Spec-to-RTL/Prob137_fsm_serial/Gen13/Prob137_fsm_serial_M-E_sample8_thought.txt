@@ -1,0 +1,15 @@
+Novel Architecture Idea: Shift Register with Parallel Validation
+
+Key Concepts:
+1. Shift Register Core: Use a 10-bit shift register to capture the entire frame (start + 8 data + stop bits)
+2. Parallel Validation: Check all protocol requirements simultaneously when the register is full
+3. Edge Detection: Use start bit edge detection to initiate reception
+4. State Minimization: Reduce to just 2 states (IDLE and CAPTURE) by leveraging the shift register's natural counting
+5. Early Termination: Immediately reset on protocol violations without waiting for full reception
+
+Advantages:
+- Eliminates bit counter logic by using shift register length as implicit counter
+- Parallel validation reduces critical path compared to sequential checking
+- Simpler state machine with only 2 states
+- Immediate error detection and recovery
+- More efficient power usage by minimizing state transitions

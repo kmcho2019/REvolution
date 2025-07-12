@@ -1,0 +1,10 @@
+Refactor the code by separating the combinational decoding and nominal flow rate output from the synchronous logic that detects water level changes and generates dfr.
+
+- Use a registered variable `stable_level` to hold the last stable water level.
+- Use another registered variable `prev_level` to store the previous stable level before the last transition.
+- On each clock, if the decoded water level changes, update `prev_level` to the old `stable_level` and `stable_level` to the new value.
+- Generate `dfr` combinationally by comparing `stable_level` with `prev_level`. If the level rose (stable_level > prev_level), assert dfr; else deassert.
+- This approach makes dfr a combinational function of registered stable and previous levels, removing the timing issues in the original.
+- Nominal flow outputs remain combinationally decoded from `stable_level`.
+- Reset logic initializes registers to BELOW_S0 and dfr to 1 (all valves open).
+- This refactor uses `always @(posedge clk)` only for state updates and `assign` for outputs, ensuring cleaner, more reliable timing and functionality.

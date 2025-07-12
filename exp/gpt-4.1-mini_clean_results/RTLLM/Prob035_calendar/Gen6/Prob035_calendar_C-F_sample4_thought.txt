@@ -1,0 +1,11 @@
+Fuse the two best solutions by maintaining a single always block for atomic synchronous updates and reset, which ensures glitch-free and race-free counting of seconds, minutes, and hours. Use parameters for the maximum counts (SEC_MAX=59, MIN_MAX=59, HR_MAX=23) for readability and easier future modifications.
+
+Optimize timing by flattening conditions into separate checks using ternary operators inside the always block to reduce nested if-else complexity and thus decrease combinational logic depth on the critical path.
+
+Implement non-blocking assignments and a clear sequence: increment seconds; if seconds overflow, reset seconds and increment minutes; if minutes overflow, reset minutes and increment hours; if hours overflow, reset hours.
+
+This approach preserves clarity, correctness, and synthesis-friendly structure, while improving code maintainability, and potentially improving timing and power by reducing nested logic depth.
+
+Also, define Hours as 5 bits and Mins and Secs as 6 bits to match the required ranges.
+
+Overall, this fusion creates a minimal, clean, and high-quality perpetual calendar module.

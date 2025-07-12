@@ -1,0 +1,9 @@
+This solution uses explicit combinational assignments for each next_state bit, directly encoding the state transitions as Boolean expressions derived from the given FSM description.
+
+Instead of looping over active states, it computes each next_state bit as the OR of all conditions that cause a transition to that state from any active current state and input.
+
+Outputs out1 and out2 are assigned similarly by OR-ing the presence of any active states that produce those outputs, ensuring correct output behavior when multiple current states are active.
+
+This approach yields fully parallel combinational logic for next_state bits without iterative constructs, which may reduce the logic depth and simplify timing analysis. It also clearly shows the mapping between current states and their next states for each possible input, enhancing readability and ease of verification.
+
+It naturally handles multiple active states in 'state' by OR-ing all contributions to next_state bits from all active states. This method also avoids using loops or registers and directly infers combinational assignments suitable for synthesis.

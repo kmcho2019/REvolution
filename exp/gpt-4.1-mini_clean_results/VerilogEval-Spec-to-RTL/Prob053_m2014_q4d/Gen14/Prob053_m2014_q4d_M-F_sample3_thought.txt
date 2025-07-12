@@ -1,0 +1,7 @@
+The design already correctly implements the requested functionality, but the initial block initializing 'out' to zero is not synthesizable and causes simulation-synthesis mismatches. Since the specification forbids any reset, we cannot add one to control the initial state of 'out'.
+
+The best fix is to remove the initial block to ensure the RTL matches hardware behavior, accepting that the initial state of 'out' is undefined at hardware startup. This prevents simulation-synthesis mismatches caused by the simulation-only initialization.
+
+Keeping the explicit wire for the XOR and the synchronous always block maintains clean and synthesizable code. This approach correctly reflects that the hardware flip-flop power-on state is unknown, fulfilling the specification.
+
+In summary, remove the simulation-only initial block for consistency and correctness without altering the core logic.

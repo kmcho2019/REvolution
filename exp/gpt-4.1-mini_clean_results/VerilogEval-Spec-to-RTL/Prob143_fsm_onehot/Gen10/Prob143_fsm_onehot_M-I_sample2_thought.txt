@@ -1,0 +1,15 @@
+To further optimize the FSM next-state logic for better performance and power while maintaining clarity and correctness, I will factor common input conditions to reduce repeated AND gates. Since the transitions are conditioned on the input bit being '0' or '1', grouping transitions by input value simplifies logic.
+
+For example, the next_state bits triggered by input==0 can share a common AND gate for input==0, and similarly for input==1. This reduces fan-in and redundant conditions.
+
+Also, the large OR expressions for next_state bits can be implemented with fewer logic gates by using intermediate signals representing (in==0) and (in==1). This reduces the number of AND gates and overall gate count, potentially improving timing and power.
+
+The output logic is minimal and already optimal.
+
+Summary:
+- Introduce intermediate wires for 'in_0' and 'in_1'.
+- Use these wires in the next_state assignments to reduce redundant input bit comparisons.
+- Keep the next_state logic fully combinational and one-hot compatible.
+- This minor restructuring can reduce logic depth and gate count, aiding PPA.
+
+This approach maintains the original FSM behavior but simplifies the logic expressions, enabling synthesis tools to produce more efficient implementations.

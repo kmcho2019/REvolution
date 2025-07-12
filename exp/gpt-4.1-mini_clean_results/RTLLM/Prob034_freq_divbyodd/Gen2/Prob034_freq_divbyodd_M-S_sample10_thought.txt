@@ -1,0 +1,5 @@
+To divide an input clock frequency by an odd number using two counters (one on the positive edge and one on the negative edge of the clock), each counter counts from 0 to NUM_DIV-1 and toggles its own divided clock output (clk_div1 on posedge, clk_div2 on negedge) when reaching half of NUM_DIV (rounded down). The final divided clock output is the OR of clk_div1 and clk_div2, which effectively doubles the toggle frequency and achieves the correct odd division with improved duty cycle.
+
+Using two counters on opposite edges allows the output clock to toggle more frequently and smooth out the duty cycle for an odd division, while keeping counters simple. Reset initializes all counters and outputs to zero.
+
+This implementation follows the problem requirement closely but is simpler than more complex multi-state machines.

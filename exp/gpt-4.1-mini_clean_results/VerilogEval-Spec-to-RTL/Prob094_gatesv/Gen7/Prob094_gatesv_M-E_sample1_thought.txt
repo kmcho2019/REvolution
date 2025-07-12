@@ -1,0 +1,7 @@
+Implement the logic using vector slicing and concatenation to perform all operations in parallel without generate loops. This approach relies on shifted versions of the input vector to compare neighbors efficiently:
+
+- For out_both: Shift the input vector left by one bit, pad the LSB with 0, then bitwise AND with the original input vector. Set out_both[3]=0 explicitly.
+- For out_any: Shift the input vector right by one bit, pad the MSB with 0, then bitwise OR with the original input vector. Set out_any[0]=0 explicitly.
+- For out_different: Rotate the input vector left by one bit (wrap-around) then XOR with the original input vector.
+
+This vectorized approach eliminates the need for explicit loops and is concise and efficient.

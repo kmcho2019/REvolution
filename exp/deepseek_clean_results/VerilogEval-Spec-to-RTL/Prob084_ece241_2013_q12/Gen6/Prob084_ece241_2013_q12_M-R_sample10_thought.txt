@@ -1,0 +1,22 @@
+Refactored approach with these key changes:
+
+1. Shift Register Implementation:
+   - Replace the module-based circular shift register with an inline implementation using continuous assignments
+   - Eliminate the intermediate module to reduce hierarchy overhead
+   - Use a more direct shift register implementation while maintaining the same functionality
+
+2. Multiplexer Optimization:
+   - Replace the binary tree mux with a direct 8:1 mux using a case statement
+   - This simplifies the selection logic while maintaining the same functionality
+   - Case statements typically synthesize efficiently for small multiplexers
+
+3. Integration:
+   - Combine all logic directly in the TopModule
+   - Use continuous assignments for the shift register next state logic
+   - Maintain the same interface and functionality while reducing module hierarchy
+
+Key Benefits:
+- Reduced hierarchy improves synthesis optimization potential
+- Direct mux implementation may be more area-efficient for small selections
+- Simplified structure while maintaining identical functionality
+- Easier to understand and maintain with all logic in one module

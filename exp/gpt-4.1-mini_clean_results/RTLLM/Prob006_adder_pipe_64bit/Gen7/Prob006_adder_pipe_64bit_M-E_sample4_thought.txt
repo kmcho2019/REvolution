@@ -1,0 +1,12 @@
+Implement a 64-bit pipelined ripple carry adder with 16 pipeline stages, where each stage handles 4 bits addition. The pipeline registers store operand slices, carry-in, and valid enable signals to propagate addition results and synchronization.
+
+Key points:
+- Inputs are registered with enable on the first stage.
+- Each stage adds 4 bits from operands with registered carry-in from previous stage.
+- Sum and carry-out are registered and passed to next stage.
+- A shift register for enable signals tracks valid data propagation.
+- Final result is assembled by concatenating all 16 4-bit sum slices and the last carry-out bit.
+- Output enable signal (o_en) is asserted when the result is valid after 16 cycles latency.
+- This design balances fine pipeline granularity (4-bit slices) to reduce critical path delay and ensure proper carry propagation across pipeline stages.
+
+This approach ensures a latency of 16 cycles but supports new inputs every cycle when i_en=1, providing high throughput with fully pipelined addition.

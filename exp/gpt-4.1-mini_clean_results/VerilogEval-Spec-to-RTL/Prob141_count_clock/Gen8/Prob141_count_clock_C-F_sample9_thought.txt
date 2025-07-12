@@ -1,0 +1,7 @@
+Fuse the strengths of both examples by using binary counters internally for seconds, minutes, and hours to simplify counting and minimize combinational complexity. Use synchronous reset and enable controls, with priority on reset. To optimize BCD conversion (reducing multiplication complexity from Example 1), replace multiplication by 10 with shift-and-add operations or simple arithmetic subtraction-based conversion inspired by Example 1 but without costly multiplication.
+
+Keep PM toggle logic on hour rollover from 11 to 12 as in both examples. For seconds and minutes, use binary counters internally (0-59) and convert to BCD in a combinational block that uses arithmetic comparisons and subtraction (like Example 1), but implement the BCD conversion with subtraction by multiples of 10 done as repeated subtraction or simple logic, not multiplication, reducing critical path delay.
+
+The hour counter is binary (1-12) and converted similarly to BCD for output, using straightforward conditional logic. This approach combines Example 1's simplicity and efficiency in counting and conversion with Example 2's clean modular structure and clarity, aiming for better timing, power gating opportunities, and compact area.
+
+Overall, the design minimizes combinational multiplier use, avoids complex nested increments in multiple always blocks, and maintains a single synchronous block for counting, enhancing timing and power while preserving readability and correctness.

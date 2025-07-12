@@ -1,0 +1,14 @@
+To implement the gshare branch predictor, we need to:
+1. Maintain a 7-bit global history register (GHR)
+2. Use a 128-entry PHT (2-bit saturating counters)
+3. For prediction: XOR PC with GHR to index PHT, output prediction and current GHR
+4. For training: XOR PC with provided history to index PHT, update counter based on actual outcome
+5. Handle priority between concurrent predict/train operations
+6. Manage GHR updates - predict updates with prediction, misprediction recovers to trained history
+7. All updates happen on clock edges with async reset
+
+Key considerations:
+- Predict sees current PHT state, training updates happen next cycle
+- Training takes precedence over prediction when both occur
+- Misprediction recovery overrides normal GHR update
+- PHT counters saturate at 0 and 3

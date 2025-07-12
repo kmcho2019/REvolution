@@ -1,0 +1,12 @@
+Instead of using traditional state encoding, I'll implement a shift-register based state machine that:
+1. Uses a 4-bit one-hot shift register to represent states (only one bit is high at any time)
+2. Each state transition is implemented by shifting the 'hot' bit position
+3. The output is directly derived from the shift register's MSB (state D)
+4. Reset initializes the shift register to have only the LSB set (state A)
+
+Advantages:
+- Eliminates combinational logic for state transitions (just shift operations)
+- Naturally one-hot encoded for minimal switching power
+- Output logic is trivial (just tap the correct bit)
+- Very predictable timing characteristics
+- No need for explicit state decoding

@@ -1,0 +1,13 @@
+To address the issues in the original code and improve its functionality, several key aspects need to be refined:
+
+1. **Correct Sequence Detection**: Modify the sequence detection logic in the `SEQ_DETECT` state to properly identify the '1, 0, 1' sequence in the input `x`. This involves correctly updating the shift register `x_seq` and checking its value to ensure a match with the desired sequence.
+
+2. **Simplified State Transitions**: Streamline the state transition logic to ensure that the FSM moves through the states as intended. This includes correcting the conditions for transitioning from `RESET` to `PULSE`, from `PULSE` to `SEQ_DETECT`, from `SEQ_DETECT` to `WAIT_Y`, and from `WAIT_Y` to either `FINAL_G1` or `FINAL_G0`.
+
+3. **Improved Timer Handling**: Refine the timer logic in the `WAIT_Y` state to accurately count the cycles after detecting the sequence and to correctly handle the `y` input within the specified timeframe.
+
+4. **Output Control Refinement**: Ensure that the outputs `f` and `g` are correctly controlled based on the current state and input conditions. `f` should be set to 1 for one clock cycle after the reset is de-asserted, and `g` should be controlled based on the sequence detection and the subsequent `y` input.
+
+5. **Reset and Default State Handling**: Verify that the FSM correctly transitions back to the `RESET` state upon reset assertion and that the default state handling does not cause unexpected transitions.
+
+By addressing these areas and simplifying the logic where possible, the corrected code should accurately implement the desired behavior of the finite state machine, correctly controlling the outputs `f` and `g` based on the inputs `x` and `y` and the reset condition.

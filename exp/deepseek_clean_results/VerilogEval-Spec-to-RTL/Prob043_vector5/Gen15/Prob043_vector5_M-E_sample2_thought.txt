@@ -1,0 +1,14 @@
+A novel approach would be to use a lookup table (LUT) based implementation that encodes all possible input combinations and their corresponding output patterns. Here's the thought process:
+
+1. With 5 input bits, there are 2^5 = 32 possible input combinations
+2. For each combination, we can precompute all 25 pairwise comparisons
+3. We can use the 5-bit input combination as an address to a 32x25 bit ROM
+4. The ROM stores the precomputed comparison results for each possible input
+5. This approach trades combinational logic for memory, which might be more efficient in certain technologies
+6. The implementation uses a case statement to emulate the ROM behavior
+
+Advantages:
+- Potentially more regular structure for place-and-route
+- All comparisons are precomputed in parallel
+- Easy to modify comparison logic if requirements change
+- Scales well if more inputs are added (though ROM size grows exponentially)

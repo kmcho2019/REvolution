@@ -1,0 +1,15 @@
+Fuse the best of both examples to create a balanced, clean 4-cycle pipelined IEEE-754 single-precision floating-point multiplier:
+
+- Use the clear 4-stage pipeline structure from Example 2 for modularity, improved timing, and maintainability.
+- From Example 1, maintain careful rounding with explicit guard/round/sticky bits extraction and a precise rounding-to-nearest-even scheme.
+- Fuse the robust special-case handling and exponent adjustment logic from Example 1.
+- Optimize internal widths by using 10 bits for exponent calculations to handle overflow/underflow but constrain final output to 8 bits.
+- Implement rounding as combinational logic prior to the last stage register for clarity but keep it simple to limit critical path delays.
+- Use non-blocking assignments exclusively in sequential blocks and blocking assignments in combinational blocks.
+- Propagate special-case flags (zero, inf, nan) and sign bits through pipeline stages to preserve state.
+- Reduce redundant registers by consolidating mantissa and exponent storage.
+- Keep sticky bit calculation as OR-reduction over product bits, as it is essential for IEEE 754 rounding.
+- Add thorough comments and consistent naming for clarity.
+- Overall, merge Example 2’s cleaner pipeline registers and flow with Example 1’s precise normalization, rounding, and special-case output generation logic.
+
+This fusion will yield a superior design balancing clarity, correctness, and hardware implementation efficiency.

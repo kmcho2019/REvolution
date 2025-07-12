@@ -1,0 +1,17 @@
+Novel approach using hierarchical decoding:
+1. Instead of direct minterm implementation or case statements, use a hierarchical approach:
+   - First decode the row (x[3:2]) and column (x[1:0]) separately
+   - Then use these decoded signals to determine the output
+2. Benefits:
+   - More scalable for larger K-maps
+   - Clear separation of row and column logic
+   - Easier to modify if K-map changes
+3. Implementation steps:
+   - Create row decoders for x[3:2] (4 possible rows)
+   - Create column decoders for x[1:0] (4 possible columns)
+   - Combine using AND-OR logic based on K-map 1 positions
+   - Specifically:
+     * Row 00 (x[3:2]=00) activates when column is 00 or 10
+     * Row 11 (x[3:2]=11) activates for all columns except 10
+     * Row 10 (x[3:2]=10) activates for columns 00, 01, and 10
+4. This approach mimics how humans read K-maps by first identifying rows and columns

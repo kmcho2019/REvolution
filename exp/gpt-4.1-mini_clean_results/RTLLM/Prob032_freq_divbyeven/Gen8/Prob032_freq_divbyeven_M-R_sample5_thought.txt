@@ -1,0 +1,12 @@
+To correct the timing of the toggling event and avoid off-by-one errors, I will implement the frequency divider using a slightly different counting approach:
+
+- The counter will count from 0 up to (NUM_DIV/2 - 1).
+- When the counter reaches this value, it toggles the output clock and resets the counter.
+- This ensures that the output clock toggles exactly every half period of the divided clock (half the division factor in input clock cycles).
+- I will use a synchronous reset and a synchronous counter update for cleaner timing.
+- To avoid zero-width counters, I will define the counter width with max(1, $clog2(HALF_DIV)).
+- The toggling of clk_div occurs one clock cycle later than in the original code, aligning with expected output phase.
+- I will implement this with an always block triggered only on posedge clk and a synchronous reset to ensure no glitches.
+- The design parameter check remains to ensure even NUM_DIV >= 2.
+
+This structure ensures the output clock has the correct frequency and phase alignment with input clock cycles and is robust against edge conditions.

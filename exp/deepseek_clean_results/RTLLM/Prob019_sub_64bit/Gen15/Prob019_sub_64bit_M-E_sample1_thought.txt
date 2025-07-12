@@ -1,0 +1,14 @@
+Novel Hybrid Architecture:
+1. **Carry-Select Subtraction**: Split the 64-bit operation into 8-bit segments that compute both possible results (with carry=0 and carry=1) in parallel, then select the correct result based on actual carry propagation.
+
+2. **Speculative Overflow Detection**: Compute overflow conditions in parallel for each segment, combining results as carries propagate. This allows early overflow detection before final result stabilization.
+
+3. **Optimized Sign Handling**: Special handling of the MSB segment to directly compute the final sign bit and overflow condition without waiting for full carry propagation.
+
+4. **Resource Sharing**: Reuse the same adder logic for both carry=0 and carry=1 cases by time-multiplexing the computation in a single cycle.
+
+Key Advantages:
+- Faster than traditional ripple-carry by parallelizing carry paths
+- Lower power than full CLA by reducing redundant computations
+- Early overflow detection improves timing critical path
+- Balanced pipeline-friendly structure

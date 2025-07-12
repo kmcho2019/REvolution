@@ -1,0 +1,26 @@
+Here's the corrected design addressing all feedback points:
+
+1. Reset Behavior Fix:
+- Added direct output control during reset to assert all outputs (fr2, fr1, fr0, dfr = 1) as specified
+- Maintained synchronous reset for state tracking
+
+2. Output Logic Correction:
+- Separated nominal flow outputs into two parts:
+  - Normal operation based on current zone
+  - Reset override that forces all outputs high
+- Ensured outputs match specification for each zone
+
+3. Transition Detection Improvement:
+- Kept simple zone comparison for water rising detection
+- Added explicit handling for the lowest zone (always assert dfr)
+- Maintained correct supplemental flow behavior during transitions
+
+4. Zone Logic Verification:
+- Confirmed zone detection matches specification
+- Verified output combinations for each zone case
+
+The key changes are:
+- Adding reset-driven output assertions
+- Properly separating reset behavior from normal operation
+- Maintaining correct output logic for all zones
+- Keeping the transition detection simple but effective

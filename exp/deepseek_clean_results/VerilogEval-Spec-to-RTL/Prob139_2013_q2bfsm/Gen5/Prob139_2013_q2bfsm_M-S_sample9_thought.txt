@@ -1,0 +1,15 @@
+To simplify the FSM while maintaining functionality, I'll make these key changes:
+
+1. **Combine sequence detection states**: Instead of separate states for each step of the 1-0-1 sequence, use a shift register to track the last 3 x values and detect the pattern in a single state.
+
+2. **Simplify timeout logic**: Instead of a separate counter, use the state itself to track the 2-cycle timeout period when monitoring y.
+
+3. **Reduce state count**: Merge similar states and eliminate unnecessary transitions, resulting in only 4 states total.
+
+4. **Clean output logic**: Make outputs purely combinatorial based on current state to simplify the design.
+
+The simplified FSM will:
+- Pulse f for one cycle after reset
+- Detect 101 sequence on x using a shift register
+- Monitor y for 2 cycles after g is set
+- Enter final state with permanent g value

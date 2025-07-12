@@ -1,0 +1,14 @@
+Instead of a single history register, implement a dual-buffer system:
+1. Main history buffer (committed state)
+2. Speculative history buffer (uncommitted predictions)
+3. On prediction: update speculative buffer only
+4. On misprediction: merge train_history with train_taken into main buffer
+5. On clock edge: commit speculative to main if no misprediction
+6. This reduces critical path by separating prediction and training paths
+7. Also enables power savings by gating speculative updates
+
+Key advantages:
+- Parallel prediction and training paths improve timing
+- Reduced switching activity when no predictions occur
+- Clean separation of speculative and committed states
+- Easier to extend for more complex prediction schemes

@@ -1,0 +1,15 @@
+To simplify the traffic light controller while maintaining all functionality, I'll:
+
+1. Remove the idle state since we can initialize directly to red
+2. Combine state and counter logic into a single always block
+3. Use direct combinatorial output assignments from state
+4. Simplify pedestrian request handling by checking it only when in green state
+5. Reduce counter width to 6 bits (sufficient for max count of 60)
+6. Eliminate redundant registers by making outputs directly dependent on state
+
+The simplified design will:
+- Start in red state by default
+- Maintain all timing requirements (60 green, 5 yellow, 10 red)
+- Handle pedestrian requests by shortening green time to 10 if >10 remains
+- Use minimal state encoding (2 bits)
+- Have purely combinatorial outputs

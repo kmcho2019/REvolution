@@ -1,0 +1,14 @@
+Here's a novel approach using a hierarchical multiplexer structure:
+
+1. Instead of cascading shifts, we'll generate all possible shift amounts (0-7) in parallel
+2. Use the control signal as a direct selector for the final output
+3. Implement this with a single 8:1 multiplexer for each output bit
+4. Each output bit's mux selects from the appropriately rotated input bits
+5. This creates a fully parallel implementation with equal delay for all shift amounts
+
+Advantages:
+- Constant propagation delay regardless of shift amount
+- No intermediate stages needed
+- Clear one-to-one mapping between control input and shift amount
+- Easily scalable to larger widths
+- Intuitive implementation matching the problem description

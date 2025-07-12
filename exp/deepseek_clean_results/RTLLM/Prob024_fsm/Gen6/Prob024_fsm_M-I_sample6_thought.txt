@@ -1,0 +1,18 @@
+Improvement Strategy:
+
+1. Remove Clock Gating: Eliminate the unnecessary gated_clk logic which adds complexity and potential timing risks without significant power benefits. The FSM can operate reliably on every clock edge.
+
+2. Gray Code State Encoding: Implement Gray code encoding for state transitions to minimize switching activity and reduce power consumption during state changes.
+
+3. Output Optimization: Make MATCH combinational for immediate response (removing 1-cycle latency) while ensuring timing closure. This matches the original problem requirements better.
+
+4. State Machine Simplification: Remove redundant default case since all states are explicitly covered, saving minimal area.
+
+5. Direct State Bit Decoding: Optimize output logic by directly checking state bits rather than full state comparison.
+
+Key Changes:
+- Removed clock gating logic
+- Implemented Gray code state encoding
+- Made MATCH combinational
+- Simplified output logic
+- Maintained 4-state machine for pattern detection

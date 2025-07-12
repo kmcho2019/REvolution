@@ -1,0 +1,14 @@
+To implement the Lemmings game logic as a finite state machine (FSM), we can use a Moore machine, which is a type of FSM where the output is a function of the current state only. We will define two states: WALK_LEFT and WALK_RIGHT. The FSM will transition from WALK_LEFT to WALK_RIGHT when it receives a bump on the left, and from WALK_RIGHT to WALK_LEFT when it receives a bump on the right. If it receives bumps on both sides, it will still switch directions.
+
+We can use two flip-flops to implement the two states. The output of the FSM will be used to generate the walk_left and walk_right signals. We will also use the areset signal to asynchronously reset the FSM to the WALK_LEFT state.
+
+The state transition table for the FSM can be defined as follows:
+- If the current state is WALK_LEFT and bump_left is 1, transition to WALK_RIGHT.
+- If the current state is WALK_LEFT and bump_right is 0, stay in WALK_LEFT.
+- If the current state is WALK_RIGHT and bump_right is 1, transition to WALK_LEFT.
+- If the current state is WALK_RIGHT and bump_left is 0, stay in WALK_RIGHT.
+- If both bump_left and bump_right are 1, switch directions.
+
+This can be simplified to:
+- If bump_left is 1, transition to WALK_RIGHT.
+- If bump_right is 1 and bump_left is 0, transition to WALK_LEFT.

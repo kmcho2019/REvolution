@@ -1,0 +1,10 @@
+Fuse the clarity and explicit combinational next_state logic style of Example 2 with the minimalistic direction handling logic from Example 1 to create a clean, efficient FSM.  
+- Use two 1-bit registers: `falling` and `direction`, like Example 1, for easy understanding and minimal logic.  
+- Use a combinational always block to compute `next_falling` and `next_direction` based on the current state and inputs, enhancing clarity and synthesis friendliness as in Example 2.  
+- Update the state registers asynchronously reset to walking left, and synchronous updates on clock edge.  
+- On walking and ground present, direction changes only when bumped on left or right: bump_left causes walk_right, bump_right causes walk_left, both bumps flip direction.  
+- Ignore bumps during falling.  
+- Falling controlled solely by `ground` input: fall when ground==0, resume walking when ground==1, preserving direction.  
+- Moore outputs reflect current state bits directly for minimal combinational logic and timing efficiency.  
+
+This approach merges minimal state encoding and logic from Example 1 with the explicit combinational next state updates and readability from Example 2, yielding a balanced design easy to verify, synthesize, and optimize.

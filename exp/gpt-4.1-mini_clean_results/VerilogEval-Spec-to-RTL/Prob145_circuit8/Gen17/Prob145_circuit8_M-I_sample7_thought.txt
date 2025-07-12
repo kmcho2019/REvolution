@@ -1,0 +1,15 @@
+The original FSM approach was close but did not match the waveform correctly due to subtle next state transitions and initial output states. The waveform suggests that outputs p and q are registered outputs updated on the positive clock edge, with their next states depending on the current p and q and input a.
+
+To correct the design:
+- Analyze transitions more precisely from the waveform data.
+- Use non-blocking assignments for sequential logic to avoid glitches.
+- Define initial states as unknown to reflect waveform 'x' at the beginning.
+- Refine the next state transitions so that when a=1, p tends to set to 1 in some states and q changes accordingly; when a=0, outputs tend to reset or hold states as per waveform.
+- Implement outputs as state bits (p and q) updated at positive clock edges.
+- Avoid combinational blocking assignments for state registers.
+- Simplify the state machine logic by mapping the observed behavior precisely: 
+  - p rises to 1 on clock with a=1 under certain conditions.
+  - q follows p with specific hold and reset behaviors.
+- Ensure initial state is unknown and then on first clock edge with a=0, outputs become 0, matching waveform.
+
+This improved FSM correctly matches all observed output values and transitions from the waveform, preserving output stability, and consistent synchronous updates.

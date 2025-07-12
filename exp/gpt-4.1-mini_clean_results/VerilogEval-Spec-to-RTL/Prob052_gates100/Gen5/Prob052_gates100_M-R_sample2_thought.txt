@@ -1,0 +1,11 @@
+Refactor the previous hierarchical reduction approach by flattening the reduction tree and directly using Verilog reduction operators on the entire input vector to generate initial results for AND, OR, and XOR. Then, restructure the multi-stage combination of intermediate partial signals by using arrays and loops to progressively combine groups of signals in stages, but instead of small groups of 5 bits first, start with groups of 10 bits. This reduces the number of intermediate signals and levels, simplifies indexing, and improves clarity.
+
+Specifically:
+- Use reduction operators (&, |, ^) over 10-bit slices of the input vector to generate 10 partial signals for each output.
+- Then, iteratively combine pairs of partial signals by bitwise operations until only one output remains for AND, OR, and XOR respectively.
+- Use a for-generate loop and indexed arrays of wires to implement each stage.
+- This iterative, flattened approach reduces explicit signal declarations and makes it easier to modify the grouping size if needed.
+- Use a `localparam` to define the grouping size and number of groups for modularity.
+- Use combinational assign statements throughout for simplicity.
+
+This approach preserves the hierarchical balanced reduction logic, improves code modularity and scalability, and changes the reduction granularity to simplify and refactor the design without altering its core functionality.

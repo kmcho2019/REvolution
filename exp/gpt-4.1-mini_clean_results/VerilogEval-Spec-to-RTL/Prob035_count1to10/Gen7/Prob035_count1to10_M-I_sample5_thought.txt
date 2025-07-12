@@ -1,0 +1,13 @@
+To improve the given decade counter for better Power, Performance, and Area (PPA), I will:
+
+1. Replace the bitwise condition for detecting '10' with a numeric comparison (`q == 4'd10`) to allow synthesis tools to optimize the equality check better, potentially reducing area and simplifying combinational logic.
+2. Remove the unnecessary `count_enable` signal since counting should proceed unless reset is active; this reduces logic and switching logic complexity.
+3. Maintain synchronous active-high reset to 1.
+4. Use only non-blocking assignments inside the always block.
+5. Keep logic minimal and straightforward to help the synthesis tool produce optimized hardware.
+
+This approach reduces combinational logic complexity, which can improve timing and area, and limits toggling only to required cycles, reducing dynamic power. Modern synthesis tools typically optimize numeric comparisons efficiently, often better than manually written bitwise detection.
+
+Additionally, since the counter always counts from 1 to 10, no gating or enable is required beyond the reset; any gating would add overhead without clear benefit.
+
+The improved code is thus a clean, simple decade counter using numeric comparison to detect terminal count.

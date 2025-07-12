@@ -1,0 +1,9 @@
+Instead of a ripple carry or basic carry-lookahead structure, I will implement the 8-bit adder using a hierarchical approach with 4 two-bit adders. Each 2-bit adder internally performs ripple carry addition, and the carries between these 2-bit blocks are computed using simple carry propagate and generate signals at block level. 
+
+This approach balances modularity and partial carry lookahead without full CLA complexity: 
+- Each 2-bit block computes sum and block propagate and generate signals.
+- The top module calculates inter-block carry signals from these block-level p and g.
+- Within blocks, carry ripples over only 1 bit, so it limits carry delay inside block.
+- Between blocks, carry is resolved in parallel by block propagate/generate logic, reducing carry chain length from 8 to 4.
+- This reduces overall worst-case carry propagation delay compared to full ripple.
+- Design remains fully combinational and modular.

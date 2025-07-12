@@ -1,0 +1,16 @@
+I will implement the FSM with straightforward binary state encoding and a clean synchronous process for state and outputs. The reset is synchronous active-low, keeping the FSM in state A while asserted.
+
+The FSM states will be:
+- A: waiting for reset de-assertion
+- B: output f=1 for one cycle right after reset is released
+- C0, C1, C2: pattern detection states representing partial detection of the "101" sequence on input x
+- D0: output g=1, start monitoring y for up to 2 cycles
+- D1: second cycle monitoring y
+- E: permanent g=1 (y detected in time)
+- F: permanent g=0 (timeout without y=1)
+
+Using states for pattern detection avoids shift registers and potential off-by-one errors.
+
+Outputs f and g are registered for one-clock-cycle stability and clear timing.
+
+This design is simpler, with less state and register complexity, and aligns outputs directly with states for clear timing, minimizing mismatches.

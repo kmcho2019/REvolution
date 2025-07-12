@@ -1,0 +1,15 @@
+I'll refactor the solution with these key changes:
+
+1. **State Encoding**: Switch to one-hot encoding (6 bits) which often provides better timing and power characteristics for FPGAs, though at the cost of slightly more area.
+
+2. **Transition Logic**: Replace the case statement with direct combinatorial assignments for each state transition, which can be more readable and may synthesize differently.
+
+3. **Output Logic**: Keep it combinational but express it as a simple OR of the relevant state bits (E and F).
+
+4. **Reset Handling**: Keep synchronous reset but make it more explicit in the state register block.
+
+Key benefits of this refactoring:
+- One-hot encoding typically has better timing (only one bit changes per transition)
+- Direct assignments may be more readable than a large case statement
+- Output logic remains simple but now uses state bits directly
+- Still maintains separate combinational and sequential blocks

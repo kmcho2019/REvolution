@@ -1,0 +1,15 @@
+Here's a novel approach using a priority-encoded selection scheme:
+
+1. Instead of decoding all combinations, we'll prioritize the most common output patterns:
+   - The output is 1 in most cases (10 out of 16 possible inputs)
+   - The output is 0 only in specific patterns we need to catch
+
+2. We'll implement this as a "default 1" circuit with exceptions:
+   - First check for cd=01 (always output 0)
+   - Then check for ab=01 (output 0 unless cd=11/10)
+   - Finally handle the cd=00 case where ab=00 gives 0
+
+3. This approach minimizes logic by:
+   - Leveraging the high probability of output being 1
+   - Using don't-cares to simplify the 0 conditions
+   - Implementing the checks in a priority order that reduces gate count

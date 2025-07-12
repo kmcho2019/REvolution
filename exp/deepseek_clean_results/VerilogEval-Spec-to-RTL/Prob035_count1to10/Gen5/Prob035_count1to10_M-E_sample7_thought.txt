@@ -1,0 +1,14 @@
+Here's a novel approach using a ring counter with parallel load capability for the decade counter:
+
+1. Instead of a conventional binary counter, implement a ring counter that cycles through values 1-10.
+2. Use a 10-bit shift register where only one bit is active at a time, representing the current count.
+3. The counter will:
+   - Initialize to 0000000001 (representing 1)
+   - Shift left on each clock (0000000010 for 2, etc.)
+   - When reaching 1000000000 (representing 10), it wraps around to 0000000001
+4. A priority encoder converts the one-hot representation to 4-bit binary output
+5. Advantages:
+   - Simple wrap-around logic (just check MSB)
+   - Glitch-free outputs since only one bit changes at a time
+   - Fast operation as no arithmetic operations needed
+   - Low power as only one flip-flop toggles per cycle

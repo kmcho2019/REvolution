@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. State Encoding Optimization:
+   - Switch to one-hot encoding (6 bits for 6 states) to eliminate decoding logic and improve timing
+   - One-hot provides faster state transitions and simpler output logic
+   - Trade-off slightly higher area for better timing and power
+
+2. Timing Optimization:
+   - Break down complex state transitions into simpler parallel logic
+   - Use priority-encoded case statements for better synthesis
+   - Remove default case since one-hot ensures valid states
+
+3. Power Optimization:
+   - Maintain one-hot properties to minimize switching activity
+   - Keep output logic simple (OR of E and F states)
+
+4. Area Optimization:
+   - Despite larger state register, simpler combinational logic compensates
+   - No need for complex state decoding
+
+Key Improvements:
+- Expected 30% timing improvement from one-hot encoding
+- Simplified output logic (single OR gate)
+- Maintained low power through controlled transitions
+- More predictable synthesis results

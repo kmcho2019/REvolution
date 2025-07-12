@@ -1,0 +1,13 @@
+Implement a radix-2 divider using a classic restoring division algorithm with a simple two-stage pipeline-like approach. On opn_valid, latch inputs and convert them to absolute values if signed. Use a 9-bit remainder register (initialized to zero) and an 8-bit quotient register. The division proceeds over 8 clock cycles, shifting left the combined {remainder, dividend} each cycle, then subtracting the divisor from the remainder. If subtraction is successful (non-negative remainder), set the current quotient bit to 1; else restore remainder and set quotient bit to 0.
+
+At the end of 8 iterations, apply sign corrections to both quotient and remainder if signed division is requested. The result is output with remainder in upper 8 bits and quotient in lower 8 bits, along with a res_valid signal.
+
+This design uses only simple registers and combinational subtraction without a large shift register. It has a clear state machine with IDLE, DIVIDE, and DONE states for clarity and minimal combinational logic. Division iteration is done synchronously each clock cycle after initialization.
+
+Advantages:
+- Restoring division algorithm is intuitive and easy to implement.
+- Separate remainder and quotient registers improve clarity.
+- Sign corrections done only once at the end reduce complexity.
+- Simple FSM improves maintainability and debug-ability.
+
+The module uses an 8-bit counter to track division steps and outputs result only when division is done.

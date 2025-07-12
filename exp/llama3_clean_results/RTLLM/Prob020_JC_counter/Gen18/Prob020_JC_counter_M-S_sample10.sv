@@ -1,0 +1,19 @@
+// Define the module for the 64-bit Johnson counter
+module JC_counter(
+    input clk,      // Clock signal
+    input rst_n,    // Active-low reset signal
+    output reg [63:0] Q  // 64-bit register representing the current count value
+);
+
+// Always block for sequential logic
+always @(posedge clk or negedge rst_n) begin
+    if (~rst_n) begin
+        // Reset condition: Set Q to 0 when rst_n is low
+        Q <= 0;
+    end else begin
+        // Update Q based on the value of Q[0]
+        Q <= {Q[63], Q[63:1]};
+    end
+end
+
+endmodule

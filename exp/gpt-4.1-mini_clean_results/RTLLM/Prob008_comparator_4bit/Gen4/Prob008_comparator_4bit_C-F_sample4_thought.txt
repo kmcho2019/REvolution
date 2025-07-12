@@ -1,0 +1,21 @@
+The fusion strategy combines the efficient borrow lookahead logic from Example 1 with the clear standard borrow formula and generate loop structure from Example 2. 
+
+Specifically:
+- Use the standard borrow generate and propagate expressions per bit from Example 2 for clarity and correctness:
+  borrow_out = (~A & B) | ((~(A ^ B)) & borrow_in)
+- Instead of ripple borrow, implement a borrow lookahead logic as in Example 1 but based on these signals to eliminate ripple delay and improve performance.
+- Use a generate loop for scalable and clean code but calculate the lookahead borrow out combinationally using these borrow generate and propagate signals for all bits.
+- For equality, use bitwise XNOR and AND reduction (from both examples), efficiently detecting if all bits are equal.
+- Outputs are mutually exclusive:
+    * A_less asserted if borrow_out is 1 (borrow out of MSB),
+    * A_equal asserted if all bits equal,
+    * A_greater asserted otherwise.
+  
+This hybrid approach ensures:
+- Borrow logic correctness and clarity (Example 2),
+- Reduced critical path delay and improved timing due to borrow lookahead (Example 1),
+- Clean, scalable, and maintainable code style,
+- Minimal area overhead and power through optimized logic and no ripple chains,
+- Mutual exclusivity of outputs guaranteed.
+
+This solution effectively balances power, performance, and area (PPA) and is highly synthesizable for FPGA or ASIC flow.

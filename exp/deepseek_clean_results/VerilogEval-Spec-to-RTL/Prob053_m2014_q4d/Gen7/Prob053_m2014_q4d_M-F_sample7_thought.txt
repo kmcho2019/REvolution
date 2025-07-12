@@ -1,0 +1,9 @@
+To fix the timing issue identified in the feedback, we need to ensure the XOR operation uses the previous cycle's output value rather than potentially using the newly updated value during the same clock edge. The solution is to:
+
+1. Separate the current output value from the XOR operation by introducing an intermediate register
+2. Store the XOR result in this intermediate register
+3. Update the output register with this intermediate value on the clock edge
+4. This creates a one-cycle delay in the feedback path, ensuring stable timing behavior
+5. Maintain the same functionality while avoiding the race condition
+6. Still use non-blocking assignments for proper flip-flop behavior
+7. Keep the design reset-free as specified

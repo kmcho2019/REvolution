@@ -1,0 +1,22 @@
+I will simplify the FSM by encoding the walking direction directly into the state instead of separately tracking direction_before_fall. The FSM states will be:
+
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT (digging while originally walking left)
+- DIG_RIGHT
+- FALL (with direction saved as a separate signal)
+- SPLATTERED
+
+To simplify direction tracking during fall, I'll store direction in a 1-bit register whenever the Lemming enters falling, allowing simpler transitions back after falling.
+
+Also, the fall counter increments only in FALL state and resets otherwise.
+
+State transitions and output logic follow the problem specification and precedence rules (fall > dig > bump).
+
+This approach removes the need for complex logic handling direction_before_fall in various states, reduces conditional branches, and keeps the FSM and outputs Moore-type with minimal logic.
+
+Asynchronous reset places the Lemming in WALK_LEFT state, with fall counter reset and direction set accordingly.
+
+All outputs derive directly from the current state.
+
+This simplified encoding will maintain full functionality while being easier to follow and verify.

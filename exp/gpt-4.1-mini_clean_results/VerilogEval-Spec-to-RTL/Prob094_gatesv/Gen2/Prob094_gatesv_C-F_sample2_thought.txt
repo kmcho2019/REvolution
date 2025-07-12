@@ -1,0 +1,11 @@
+Fuse the clear and index-consistent assignments from Example 2 with the concise and vector-based bitwise operations from Example 1 to enhance readability and synthesis friendliness:
+
+- Use vector assignments with explicit indexing, aligning bit positions naturally from index 0 to 3.
+- For out_both, assign bits 0 to 2 as AND of in[i] and in[i+1], out_both[3] = 0 (no left neighbor).
+- For out_any, assign bits 1 to 3 as OR of in[i] and in[i-1], out_any[0] = 0 (no right neighbor).
+- For out_different, use wrap-around XOR with neat indexing: out_different[i] = in[i] ^ in[(i+1) % 4].
+- Define internal wires for repeated terms to reduce toggling and share signals if possible.
+- Avoid concatenations that invert bit order; keep direct indexed assignments for clarity.
+- This approach merges Example 1's compact vector usage with Example 2's explicit indexing, facilitating easier synthesis optimizations and readability.
+
+This fusion improves maintainability and potentially aids synthesis tools in optimizing area and power without impacting performance.

@@ -1,0 +1,12 @@
+To create a novel architectural idea for the 12-hour clock with AM/PM indicator, we can leverage a finite state machine (FSM) approach. This involves defining states for the clock's hours, minutes, and seconds, as well as for the AM/PM indicator. The FSM can transition between these states based on the `ena` signal, which increments the clock once per second. The FSM will ensure accurate wrapping around from 59 seconds to 0 seconds, from 59 minutes to 0 minutes, and from 12 hours to 1 hour, handling the AM/PM switch accordingly.
+
+The key states will be:
+- `S_RESET`: An initial state where the clock is reset to "12:00:00 AM."
+- `S_COUNTING`: The normal counting state where seconds, minutes, and hours are incremented based on the `ena` signal.
+- `S_WRAP_HOURS`: A state to handle the wrapping around from 12 hours to 1 hour and switching between AM and PM.
+
+Using this FSM approach, we can simplify the logic for handling the wrapping around of hours and switching between AM and PM, making the code more modular and easier to understand.
+
+To implement the BCD conversion efficiently, we can use separate modules or functions for converting the binary counts to BCD format. This modularity will improve code readability and maintainability.
+
+The FSM and BCD conversion modules will work together seamlessly to ensure the TopModule functions as intended, displaying the correct time in BCD format with the AM/PM indicator.

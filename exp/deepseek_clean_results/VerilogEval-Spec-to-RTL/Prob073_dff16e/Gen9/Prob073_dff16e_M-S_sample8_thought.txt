@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. Eliminate the parameterized DFF module and generate block to reduce hierarchy
+2. Use a single always block with byte enable control for all 16 flip-flops
+3. Maintain same functionality:
+   - Synchronous active-low reset
+   - Byte-level enable control (byteena[1] for upper byte, byteena[0] for lower)
+   - Positive edge clock triggering
+4. Benefits:
+   - Reduced module hierarchy (single module instead of 17)
+   - More concise code while maintaining same behavior
+   - Likely better synthesis optimization as single register bank
+   - Easier to read and maintain

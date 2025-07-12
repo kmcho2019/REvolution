@@ -1,0 +1,19 @@
+Novel Architectural Idea:
+Instead of using purely combinational logic, we can implement a sequential approach that processes the input bits in pairs using a small state machine. This reduces the parallel logic at the cost of some throughput, but offers potential area savings.
+
+Key Features:
+1. Use a 2-bit shift register to process input bits in pairs
+2. Implement a simple state machine to cycle through all bit positions
+3. Store results in a register that gets updated each cycle
+4. For out_different, maintain a circular buffer behavior by saving the first bit
+
+Advantages:
+- Significant reduction in combinational logic (from 100 parallel operations to 2)
+- Potential area savings due to reduced gate count
+- More scalable for very wide vectors
+- Easier timing closure due to reduced parallel paths
+
+Trade-offs:
+- Requires 50 cycles to process all bits (reduced throughput)
+- Needs a clock and control signals
+- Slightly more complex control logic

@@ -1,0 +1,15 @@
+To improve the pulse detection, I'll implement a more robust state machine that strictly follows the 0->1->0 sequence requirement. The key changes are:
+
+1. Use a Moore machine approach where outputs depend only on the current state
+2. Simplify the state transitions to only progress when the correct input is received
+3. Add explicit state for pulse completion (PULSE_DETECTED)
+4. Use a single always block for both state transition and output logic
+5. Ensure proper reset behavior
+
+The state machine will have these states:
+- IDLE: Initial state, waiting for first 0
+- GOT_0: Received first 0, waiting for 1
+- GOT_1: Received 1 after 0, waiting for final 0
+- PULSE_DETECTED: Temporary state to generate output pulse
+
+This ensures we only detect complete 0-1-0 sequences and properly generate the output pulse.

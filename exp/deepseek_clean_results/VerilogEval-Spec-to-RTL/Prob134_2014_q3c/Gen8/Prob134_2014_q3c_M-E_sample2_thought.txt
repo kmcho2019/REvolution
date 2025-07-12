@@ -1,0 +1,8 @@
+Here's a novel approach using a ROM-based implementation for the FSM:
+1. Encode the present state and input x as an address to a ROM
+2. Store both next state and output z in ROM words
+3. Use y[2:0] concatenated with x as the ROM address (4-bit address)
+4. The ROM output contains {next_state, z} (4 bits total)
+5. This approach minimizes combinational logic and leverages memory resources
+6. For Y0 output, simply take the LSB of the next_state from ROM
+This method is particularly efficient for FSMs with many states and can be power-efficient since it avoids large combinational logic trees.

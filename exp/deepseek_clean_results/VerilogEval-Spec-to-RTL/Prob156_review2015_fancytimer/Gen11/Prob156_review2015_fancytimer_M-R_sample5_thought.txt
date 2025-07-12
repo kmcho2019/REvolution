@@ -1,0 +1,20 @@
+Refactored approach:
+
+1. **Explicit State Machine**: Use a clear 4-state FSM with binary encoding for better resource utilization and simpler transitions.
+
+2. **Separate Pattern Detection**: Implement the 1101 pattern detector as a standalone shift register with continuous comparison.
+
+3. **Precise Cycle Counting**: 
+   - Use a 14-bit counter (since 15*1000=15000 needs 14 bits)
+   - Implement exact (delay+1)*1000 counting by pre-calculating total cycles
+   - Compare against zero for simpler logic
+
+4. **Clean Output Logic**: 
+   - Generate outputs directly from state and counters
+   - Use continuous assignments for non-registered outputs
+
+Key improvements:
+- More precise cycle counting
+- Clearer state transitions
+- Better separation of pattern detection
+- Simplified output generation

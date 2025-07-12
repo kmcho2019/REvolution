@@ -1,0 +1,7 @@
+The original design is correct and simple, but a minor optimization can be applied to improve power and timing by reducing combinational logic duplication. Specifically, since the output depends solely on the current state, and the state is updated only on clock or async reset, we can assign the output directly from the registered state without a separate combinational always block. This reduces unnecessary logic and potential glitches on the output.
+
+Also, we can declare output as a wire driven by the state register instead of a reg driven from combinational logic, which simplifies the design and may reduce switching.
+
+No change to the state encoding or state transition logic is necessary since it is already optimal for area and clarity.
+
+Thus, the main improvement is making the output a continuous assignment from the registered state, eliminating a combinational always block.

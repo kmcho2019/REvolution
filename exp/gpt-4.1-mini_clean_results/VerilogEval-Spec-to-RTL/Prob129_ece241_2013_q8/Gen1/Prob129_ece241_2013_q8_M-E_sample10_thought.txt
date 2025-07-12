@@ -1,0 +1,24 @@
+Use a 3-state Mealy FSM that tracks the progress of detecting "101" with states defined as:
+
+- IDLE: no pattern matched yet.
+- ONE: matched '1'
+- TEN: matched "10"
+
+Transitions:
+- From IDLE:
+  - If x=1, go to ONE
+  - Else, stay in IDLE
+- From ONE:
+  - If x=0, go to TEN
+  - If x=1, stay in ONE (since new sequence may start here)
+- From TEN:
+  - If x=1, output z=1 (pattern "101" detected), go to ONE (overlapping sequences)
+  - Else, go to IDLE
+
+Implement the output z as a combinational signal directly generated from the current state and input to keep output timing tight.
+
+The asynchronous reset is triggered on the negative edge of aresetn and resets the state to IDLE.
+
+Implement the FSM using one always_ff block for state registers and an always_comb block for next state and output logic.
+
+Use localparam for state encoding for clarity.

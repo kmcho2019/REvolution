@@ -1,0 +1,11 @@
+The main problem is in handling the detection of the 3-bit pattern "1,0,1" on input `x` continuously after the initial samples are collected. Instead of relying on a count of samples collected that saturates at 3, we can remove the explicit sample count and just continuously shift in new bits of `x` every cycle once pattern detection starts, checking the pattern every cycle. This way, we have a moving 3-bit window on `x`.
+
+Additionally, ensure that after reset release, the FSM produces a single-cycle `f=1` pulse (in STATE_B) exactly one cycle after resetn is deasserted, then moves to STATE_C to monitor `x`.
+
+For `g`, pulse it for one cycle (STATE_D) when the pattern is detected, then move to monitor `y` (STATE_E) for at most 2 cycles using a timer. Based on `y` detection, move to permanent `g=1` (STATE_F) or permanent `g=0` (STATE_G).
+
+Keep all outputs Moore style (based only on the current state).
+
+Make sure all registers including `x_shift` and `y_timer` are properly reset on resetn and updated synchronously.
+
+This approach removes the complexity of sample counting, ensures continuous pattern detection, fixes timing of `f` pulse, and aligns exactly with the specification and expected output behavior.

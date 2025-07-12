@@ -1,0 +1,10 @@
+The original implementation computes all 25 pairwise equalities explicitly, including symmetric pairs twice (e.g., (a,b) and (b,a)), causing redundant logic and increasing area and power unnecessarily. To optimize for PPA, I will:
+
+- Use a 5-element input vector and a nested generate loop to systematically compute the 25 comparisons.
+- Compute only the upper triangular matrix (i <= j) entries of the 5x5 comparison matrix (15 unique pairs, including diagonal).
+- For the lower triangular matrix (i > j), reuse the values by symmetry: out[idx(i,j)] = out[idx(j,i)].
+- This approach halves the logic computations for off-diagonal pairs, reducing switching activity, power, and gate count.
+- The indexing follows the specified order (out[24] = a vs a, out[23] = a vs b, ..., out[0] = e vs e) by calculating the correct index as 5*(4-i) + (4-j).
+- Using generate loops improves maintainability and scalability while preserving the output bit order.
+
+This method preserves correctness and reduces area and power by eliminating redundant computations.

@@ -1,0 +1,16 @@
+Novel Architecture Idea:
+1. State Encoding: Maintain minimal 1-bit state (A/B) as before
+2. Window Tracking: Use a circular buffer (3-bit shift register) for w values
+3. Pattern Matching: Instead of counting, pre-compute all valid patterns (011, 101, 110) and compare
+4. Output Logic: Use combinational pattern matching with registered output
+5. Optimization:
+   - Eliminate adder logic by using direct pattern comparison
+   - Reduce switching activity by only updating comparison when needed
+   - Use parallel comparison for all valid patterns
+   - Register output for better timing
+
+Key Advantages:
+- No arithmetic operations (reduces critical path)
+- Parallel pattern matching enables constant-time evaluation
+- Reduced dynamic power from fewer arithmetic operations
+- Clear separation of state and pattern matching logic

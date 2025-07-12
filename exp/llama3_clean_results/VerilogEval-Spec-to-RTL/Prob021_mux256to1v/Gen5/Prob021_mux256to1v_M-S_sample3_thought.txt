@@ -1,0 +1,5 @@
+The previous solution uses a hierarchical approach with two levels of multiplexers to select the appropriate 4-bit output from the 1024-bit input vector. To simplify this solution, we can use a single level of multiplexing and directly calculate the start index of the 4-bit group within the 1024-bit input vector based on the 8-bit select input. This approach eliminates the need for the first level of multiplexers and reduces the complexity of the design.
+
+We can calculate the start index by shifting the upper 4 bits of the select input (which selects the 64-bit group) 6 bits to the left (since each 64-bit group contains 16 4-bit groups) and adding the lower 4 bits of the select input (which selects the 4-bit group within the 64-bit group). This calculation gives us the index of the first bit of the desired 4-bit group within the 1024-bit input vector.
+
+We can then use this start index to extract the 4-bit output from the input vector.

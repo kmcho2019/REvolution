@@ -1,0 +1,12 @@
+Fusion Strategy:
+1. State Encoding: Use binary encoding (2-bit) for the state machine to balance between timing and area efficiency, avoiding the overhead of one-hot encoding while maintaining simplicity.
+2. Data Storage: Keep the direct shifting into out_bytes from Example 1 for area efficiency, but add byte-wise enable signals to reduce unnecessary switching activity.
+3. Timing Optimization: Register the done signal to meet timing requirements while keeping the combinational logic simple.
+4. Power Optimization: Only update out_bytes when new data is being captured, and make done signal assignment strictly conditional.
+5. Reset Handling: Maintain synchronous reset behavior but only reset essential control signals (state and done) to minimize area impact.
+
+Key Improvements:
+- Better timing through simplified state transitions and registered outputs
+- Lower power by gating unnecessary register updates
+- Reduced area through efficient state encoding and shared output register
+- Cleaner state machine with minimal default case logic

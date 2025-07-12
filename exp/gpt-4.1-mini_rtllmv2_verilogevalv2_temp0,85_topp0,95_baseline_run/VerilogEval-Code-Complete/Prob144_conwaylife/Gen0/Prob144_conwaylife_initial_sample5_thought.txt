@@ -1,8 +1,0 @@
-To implement the 16x16 toroidal Game of Life variant with the specified rules, we keep the current state in q and update it on every clock cycle. If load is high, we load new data into q. Otherwise, for each cell, we count its 8 neighbors using wrap-around addressing (toroid) and apply the rules:
-
-- neighbors <= 1: cell becomes 0
-- neighbors == 2: cell unchanged
-- neighbors == 3: cell becomes 1
-- neighbors >= 4: cell becomes 0
-
-We map the 2D indices (row, col) to the 1D vector index as row*16+col. The toroidal wrap-around is done by modulo 16 arithmetic using (row + 16 + delta) % 16 and (col + 16 + delta) % 16 for neighbors. The neighbor count is the sum of the 8 adjacent cells. The updated q is computed combinationally each clock cycle and registered on clk edge.

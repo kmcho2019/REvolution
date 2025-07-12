@@ -1,0 +1,11 @@
+Refactoring approach:
+1. **State Encoding**: Keep the same binary encoding (OFF=0, ON=1) for minimal hardware
+2. **State Transitions**: Replace the case statement with continuous assignments using ternary operators
+3. **State Register**: Maintain the same synchronous reset behavior but express the next state logic purely with combinational assignments
+4. **Output**: Keep the direct state-to-output assignment for minimal logic
+
+Key changes:
+- Eliminate the always block by using continuous assignments for state transitions
+- Express next state logic directly with combinational assignments
+- Maintain same synchronous reset behavior with a DFF-like structure
+- This approach may potentially reduce synthesis overhead by making the state machine structure more explicit to the tools

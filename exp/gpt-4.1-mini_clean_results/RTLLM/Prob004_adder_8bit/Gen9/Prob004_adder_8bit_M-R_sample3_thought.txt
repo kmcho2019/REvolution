@@ -1,0 +1,11 @@
+Refactor the 8-bit adder by removing the intermediate 4-bit adder modules and instantiating all 8 bit-level full adders directly in the top-level module with a generate loop. 
+
+This approach maintains the same ripple carry logic but:
+- Flattens hierarchy by having only the 1-bit full adder module and the 8-bit adder module.
+- Uses an internal wire array for carry signals between bit adders.
+- This direct chaining via generate loop with explicit carry wiring simplifies code structure and reduces module instantiations.
+- Keeps the design fully combinational with carry propagation.
+- Uses continuous assignments only, no always blocks.
+- Improves clarity by making all 8 full adders visible at the top level.
+
+This design is logically equivalent to the hierarchical approach but structurally flatter and more direct.

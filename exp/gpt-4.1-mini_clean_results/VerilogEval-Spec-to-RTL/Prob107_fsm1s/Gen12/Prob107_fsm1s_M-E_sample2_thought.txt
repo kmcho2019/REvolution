@@ -1,0 +1,7 @@
+Instead of explicitly encoding states as named parameters, use a single-bit state register directly to hold the current state. Implement the state transition logic using a simple ternary expression derived from the input and current state without any case or if-else branching. 
+
+Leverage a continuous assignment for the output signal to directly reflect the current state without registering it, as the output depends purely on the present state in this Moore machine. 
+
+Keep the synchronous active-high reset inside the sequential block to reset the state to B (encoded as 0). This approach minimizes combinational logic complexity and potentially improves the timing and area by removing an extra always block for output. 
+
+The code becomes succinct, clear, and leverages continuous assignments where possible to improve PPA.

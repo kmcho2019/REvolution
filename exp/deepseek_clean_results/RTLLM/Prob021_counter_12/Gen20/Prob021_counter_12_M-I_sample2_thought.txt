@@ -1,0 +1,20 @@
+The current implementation uses clock gating which is not recommended for synchronous designs. Here's an improved strategy:
+
+1. Performance:
+   - Remove gated clock and use synchronous enable (valid_count) to improve timing
+   - Keep the efficient wrap-around logic using pattern matching (4'b1011)
+   - Maintain asynchronous reset for consistent initialization
+
+2. Power:
+   - Use synchronous enable to stop counting when valid_count is low
+   - Simplified comparison logic reduces switching activity
+
+3. Area:
+   - Remove clock gating logic to reduce area
+   - Let synthesis tool optimize the counter increment logic
+
+The improved version will:
+- Be fully synchronous for better timing and reliability
+- Maintain the same functionality
+- Potentially improve PPA metrics further
+- Be more maintainable and portable across technologies

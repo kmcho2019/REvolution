@@ -1,0 +1,7 @@
+Refactor the 256-to-1 multiplexer to maintain the same 4-level hierarchical tree of 4-to-1 multiplexers but implement the Mux4to1 combinational selection purely with continuous assignments and a simple indexing expression instead of a case statement in an always block. This removes the procedural block and uses a combinational multiplexer implemented as a direct indexing of the input vector by the 2-bit selector. 
+
+Advantages of this refactor:
+- Simplifies the Mux4to1 module by using a purely combinational assign statement.
+- Potentially enables better synthesis optimization due to simpler logic.
+- Keeps the same balanced tree structure and the same usage of sel slices per level.
+- Maintains clarity while slightly reducing complexity of the mux module.

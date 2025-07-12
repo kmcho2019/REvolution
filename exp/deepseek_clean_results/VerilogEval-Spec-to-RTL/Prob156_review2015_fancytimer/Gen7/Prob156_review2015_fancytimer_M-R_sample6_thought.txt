@@ -1,0 +1,17 @@
+The key improvements in this refactored version are:
+
+1. Separated pattern detection and delay capture into distinct processes for clarity
+2. Used explicit state machine encoding with more states for better control
+3. Implemented two separate counters: 
+   - One for tracking 1000-cycle periods (period_counter)
+   - One for tracking remaining periods (count_down)
+4. Used continuous assignments for outputs where possible
+5. Made cycle counting more precise by:
+   - Resetting period_counter after each 1000 cycles
+   - Decrementing count_down only after full 1000 cycles
+6. Simplified the pattern detection logic with a dedicated shift register
+
+This structure ensures:
+- Exact cycle counting ((delay+1)*1000 cycles)
+- Proper synchronization between state transitions and counters
+- Clear separation of pattern detection and timing logic

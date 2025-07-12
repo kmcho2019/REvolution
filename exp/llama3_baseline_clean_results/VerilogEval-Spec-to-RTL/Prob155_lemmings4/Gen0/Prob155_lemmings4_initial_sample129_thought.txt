@@ -1,0 +1,11 @@
+To implement the Lemmings state machine, we can use a Moore finite state machine. The states we'll need are: walking left, walking right, falling, digging, and splattered. We'll use a counter to keep track of the number of clock cycles spent falling. 
+
+When the ground disappears, we transition to the falling state and start the counter. If the counter exceeds 20 before the ground reappears, we transition to the splattered state. 
+
+When in the walking states, we check for bump events and transition to the other walking state accordingly. We also check for the dig signal and transition to the digging state if the ground is present. 
+
+In the digging state, we continue digging until the ground disappears, at which point we transition to the falling state. 
+
+In the falling state, we check for the ground reappearing and transition to the walking state in the original direction if the counter is less than 21, or to the splattered state if the counter exceeds 20.
+
+The asynchronous reset is used to initialize the state machine to the walking left state.

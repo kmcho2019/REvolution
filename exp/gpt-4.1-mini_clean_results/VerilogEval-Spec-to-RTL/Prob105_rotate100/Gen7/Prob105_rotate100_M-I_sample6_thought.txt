@@ -1,0 +1,13 @@
+To optimize the design for better power and potentially timing, I will add an explicit enable condition around the register update so that q only toggles when either load is asserted or a valid rotation (ena=2'b01 or 2'b10) is requested. This avoids redundant toggling of the register bits when no operation is needed (ena=00 or 11). I will use a local wire 'rotate_enable' to hold this condition.
+
+This reduces unnecessary switching activity inside the register, improving power.
+
+The rotation logic remains implemented with simple concatenations to maintain clarity and avoid increasing area or latency with more complex barrel shifter stages.
+
+The always block updates q only when load or rotate_enable is asserted; otherwise, q retains its previous value without assignment.
+
+This simple conditional update improves power without affecting timing or area significantly, aligning with the reported PPA guidance.
+
+The interface and functionality are unchanged; comments clarify the optimization.
+
+Overall, this straightforward gating strategy is a good balance of improved power and design simplicity for a 100-bit rotator.

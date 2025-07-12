@@ -1,0 +1,7 @@
+To simplify the pulse detection, we can use a 2-bit shift register to track the last two samples of data_in. A pulse is detected when we see the sequence 0->1->0 in the shift register. This eliminates the need for explicit state machines while maintaining the same functionality.
+
+The approach:
+1. Use a 2-bit register to store the last two values of data_in
+2. At each clock edge, shift in the new data_in value
+3. Output is 1 when we detect the pattern 0 (oldest), 1 (middle), 0 (newest)
+4. Reset clears the shift register and output

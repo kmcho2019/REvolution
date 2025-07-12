@@ -1,0 +1,18 @@
+To build a superior dual-edge triggered flip-flop, we take the core effective idea from both examples: using two single-edge triggered flip-flops to sample input 'd' on rising and falling edges, and selecting between their outputs using the clock signal as a mux selector.
+
+To improve upon the examples:
+
+1. Register the mux output using a third flip-flop clocked on the rising edge. This reduces glitches on the output 'q' by making 'q' change only synchronously at posedges, improving timing stability and reducing dynamic power from combinational toggling on 'q'.
+
+2. Use nonblocking assignments properly in sequential always blocks to ensure clean simulation and synthesis semantics.
+
+3. Retain the simple mux controlled by 'clk' to select between posedge and negedge samples, so that data captured at both edges are integrated.
+
+This fusion strategy blends the dual-sampling mechanism with glitch reduction and more stable output, yielding improved timing, power, and signal integrity without increasing complexity or area significantly. It also adheres to legal Verilog constructs for FPGA synthesis.
+
+The design now has:
+- Two flip-flops sampling input 'd' on both edges.
+- A combinational mux selecting between these two samples based on clock level.
+- A third flip-flop to register the mux output, ensuring 'q' is updated only synchronously at posedge clk, avoiding glitches and potential timing issues.
+
+This is a well-balanced, practical solution for dual-edge triggered flip-flops on FPGAs.

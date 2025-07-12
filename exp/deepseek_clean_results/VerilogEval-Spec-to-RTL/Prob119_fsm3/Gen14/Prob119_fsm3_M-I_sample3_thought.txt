@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. **Timing Optimization**: The negative slack suggests we need to reduce the critical path. We'll simplify the state transition logic by:
+   - Removing the default case (since all states are explicitly handled)
+   - Using parallel case synthesis directive to potentially improve synthesis
+
+2. **Power Optimization**: 
+   - Add clock gating when the state is stable (no transition)
+   - Use explicit state encoding to help synthesis optimize better
+
+3. **Area Optimization**:
+   - Keep binary encoding but remove redundant logic
+   - Simplify output assignment to a direct comparison
+
+Key Changes:
+- Remove default case (all states are covered)
+- Add parallel_case directive for potential synthesis optimization
+- Simplify output logic
+- Maintain same functionality with cleaner implementation

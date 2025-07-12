@@ -1,0 +1,9 @@
+Use three states: A (initial wait for s=1), B0, B1, B2 representing counting of the three cycles where w is observed. In states B0, B1, B2, accumulate the number of w=1's in a 2-bit register. After B2, output z=1 in the next clock cycle if exactly two of the three w values were 1, else 0, then restart counting cycles from B0.
+
+This explicitly sequences through the three cycles by states rather than using counters, reducing arithmetic and packing logic. The output z is updated in state A and each time after completing B2, ensuring z is aligned with the "next cycle" after three samples. 
+
+The FSM resets to state A, waits for s=1 to go to B0. In B states, s is ignored. The w accumulation uses a 2-bit register updated by incrementing by w each cycle, simple addition of one bit and a 2-bit counter.
+
+This design simplifies cycle tracking by explicit states instead of cycle counters, and has straightforward sequential logic with minimal arithmetic, which might improve timing and simplify area.
+
+Synchronous reset active high, registered outputs, positive edge clock.

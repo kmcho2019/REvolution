@@ -1,0 +1,9 @@
+To create a novel solution, we will introduce a dual-path architecture that utilizes two separate instruction registers, ins_p1 and ins_p2, each with its own control logic. This approach allows for concurrent instruction fetching from different sources, improving the overall throughput of the system.
+
+The key idea is to use a round-robin scheduling mechanism to alternate between the two instruction registers on each clock cycle. This ensures that both registers are utilized efficiently, reducing idle time and increasing the system's ability to handle multiple instruction streams.
+
+The fetch signal will be used to determine which register to update with the new instruction. If fetch is 2'b01, the instruction is written to ins_p1; if fetch is 2'b10, the instruction is written to ins_p2. This allows for flexible control over which register is updated and when.
+
+To further optimize the design, we will use a single multiplexer to select the output from either ins_p1 or ins_p2, based on the fetch signal. This reduces the number of gates required and minimizes switching activity, leading to improved power efficiency.
+
+The output logic will be designed to directly derive the ins, ad1, and ad2 signals from the selected register, using continuous assignments for clarity and to follow best practices in combinational logic.

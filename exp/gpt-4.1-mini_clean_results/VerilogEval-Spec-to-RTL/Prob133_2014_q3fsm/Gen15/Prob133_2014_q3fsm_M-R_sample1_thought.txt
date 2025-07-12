@@ -1,0 +1,9 @@
+Refactor the FSM by using an explicit state register with a Moore FSM style, separating the state and output logic clearly. Implement the counters and accumulators as registers updated only in state B, but use a single always block for synchronous logic with clear state and output updates.
+
+Use combinational always blocks for next state and next counters computations, but calculate output z in a separate combinational block to maintain Moore FSM clarity (output depends only on state and counters, not on inputs during state B).
+
+Eliminate next_z signal in the synchronous block and assign z directly based on state and accumulated counts with a one-cycle delay by registering the output.
+
+This structure improves clarity by isolating output logic, and can help synthesis tools better optimize state and output logic separately. The logic depth for output remains minimal, and clock enables are handled by conditional updates inside the synchronous block, keeping toggling minimal.
+
+Overall, the code has the same functionality but with clearer separation of concerns between state, output, and data path updates.

@@ -1,0 +1,9 @@
+Refactor the design by making the output signals 'rise' and 'down' registered outputs that hold the pulse for exactly one clock cycle after an edge detection. Instead of purely combinational logic generating outputs from delayed input, use an always block triggered on clock and reset to set 'rise' and 'down' to 1 when an edge is detected and then automatically clear them on the next clock cycle.
+
+This approach:
+
+- Uses a registered delayed version of 'a' similar to original.
+- Uses sequential logic for outputs, ensuring outputs are aligned and registered.
+- Keeps outputs asserted exactly one clock cycle after the edge.
+- Maintains clean synchronous reset.
+- Shows an alternative coding style while preserving functionality.

@@ -1,0 +1,16 @@
+To improve the original 3-stage pipelined unsigned 8-bit multiplier, we will deepen the pipeline to 5 stages to reduce combinational path delay and improve maximum clock frequency. The key change is to pipeline the accumulation of partial products in an adder tree manner over multiple cycles, avoiding the large combinational sum of all partial products in one cycle.
+
+We break down the partial product addition into a balanced tree structure performed over three pipeline stages. This reduces critical path delay per stage and allows higher frequency operation.
+
+Enable signals are pipelined accordingly to track validity through all pipeline stages. Registers are inserted after each stage to latch intermediate sums, reducing glitching and dynamic power.
+
+This staged approach balances performance (higher clock rate), power (less glitching due to shorter combinational logic per stage), and area (adder reuse and staged registers). Output enable is valid at the last pipeline stage.
+
+Summary of pipeline stages:
+- Stage 0: Input register (register inputs, enable)
+- Stage 1: Partial product generation + first level adder tree (pairwise adds)
+- Stage 2: Second level adder tree (adding results from stage 1)
+- Stage 3: Final addition stage (combine last partial sums)
+- Stage 4: Output register stage for product and enable
+
+This pipelining strategy reduces the longest combinational path and improves timing and power efficiency, addressing the main issues in the original design.

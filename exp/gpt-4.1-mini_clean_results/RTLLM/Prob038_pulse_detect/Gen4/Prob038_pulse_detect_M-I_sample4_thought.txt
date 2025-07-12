@@ -1,0 +1,7 @@
+The original solution uses a one-hot state encoding, which is simple but not area efficient. To optimize for area and power (PPA), I will use a 2-bit binary encoded state machine. This reduces the number of flip-flops from 3 to 2 and simplifies combinational logic. The states will represent IDLE(0), HIGH(1), LOW(2) reflecting the 0->1->0 pulse pattern.
+
+To minimize glitch and power, I will keep data_out registered and assert it only at the end of the pulse (on transition from HIGH to LOW). The output logic is placed in sequential always block.
+
+This approach balances area and power while maintaining clear state transitions and output behavior. The reset remains asynchronous for quick initialization. Nonblocking assignments are used to avoid simulation mismatches.
+
+Thus, the design is functionally identical but uses fewer flip-flops and simpler logic, improving area and potentially power without sacrificing timing.

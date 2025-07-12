@@ -1,0 +1,8 @@
+A novel approach using a 3-state Mealy FSM with explicit state encoding:
+1. States represent the progress in detecting the sequence: IDLE (00), GOT1 (01), GOT10 (10)
+2. Output z is asserted when in GOT10 state and receiving a '1' input
+3. State transitions follow the sequence detection logic:
+   - Stay in IDLE until first '1' is seen
+   - Move to GOT1 after first '1', then to GOT10 if next is '0'
+   - Reset to appropriate state based on input pattern
+4. Overlapping sequences are handled naturally by the state transitions

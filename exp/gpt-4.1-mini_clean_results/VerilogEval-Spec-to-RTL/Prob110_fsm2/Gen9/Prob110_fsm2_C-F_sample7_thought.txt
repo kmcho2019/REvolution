@@ -1,0 +1,11 @@
+Fuse the best ideas by encoding state explicitly as a separate reg for clarity and scalability (like Example 2), but drive the output directly from the registered state signal to keep it glitch-free and minimal logic (like Example 1’s state=out approach). Keep asynchronous active-high reset.
+
+Specifically:
+- Define a single-bit state reg with meaningful parameters OFF=0 and ON=1.
+- Compute next_state combinationally in a clear case statement.
+- Register state with asynchronous reset on clk.
+- Drive output combinationally (not registered) from the registered state (Moore output).
+  This avoids extra logic in output register while keeping output glitch-free since state is synchronous.
+- This keeps FSM style clean and scalable, output stable and glitch-free, and area minimal with a single bit for state.
+
+This merges Example 2's explicit state register and clean next_state logic with Example 1's minimal register use for output and avoids the minor timing overhead of registering output by making it combinational from registered state, a common and effective Moore FSM style.

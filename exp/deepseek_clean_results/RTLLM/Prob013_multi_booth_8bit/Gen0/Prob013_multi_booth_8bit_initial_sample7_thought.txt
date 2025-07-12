@@ -1,0 +1,12 @@
+The Radix-4 Booth multiplier is an efficient algorithm for signed multiplication that reduces the number of partial products. Here's the design approach:
+1. Extend inputs to 16-bit (sign extension) for proper signed arithmetic
+2. Use a 5-bit counter (0-16) to control the multiplication steps
+3. Implement Booth recoding to examine 3 bits at a time (current and previous)
+4. At each step, perform the appropriate operation based on Booth encoding:
+   - 000/111: no operation
+   - 001/010: add multiplicand
+   - 011: add 2*multiplicand
+   - 100: sub 2*multiplicand
+   - 101/110: sub multiplicand
+5. Shift the product right by 2 bits after each operation (Radix-4)
+6. Set rdy when counter reaches 16 (8 steps for 8-bit numbers in Radix-4)

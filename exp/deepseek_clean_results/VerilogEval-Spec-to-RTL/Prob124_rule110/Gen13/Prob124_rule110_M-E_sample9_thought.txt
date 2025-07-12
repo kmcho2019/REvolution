@@ -1,0 +1,13 @@
+Here's a novel approach using a shift register with overlapping windows to compute Rule 110 more efficiently:
+
+1. **Windowed Processing**: Instead of processing each bit independently, we'll use a sliding 3-bit window approach. This allows us to compute multiple next states in parallel while sharing common neighbor bits.
+
+2. **Optimized Logic**: We'll implement the Rule 110 logic using a more compact representation that combines the truth table cases into minimal logical expressions. The key observation is that the next state is 1 in all cases except when all three inputs are 1 or when left=1 and center=0 and right=0.
+
+3. **Pipelined Computation**: We'll break the computation into two stages:
+   - Stage 1: Compute intermediate results for overlapping 3-bit windows
+   - Stage 2: Combine results to form the next state
+
+4. **Boundary Handling**: We'll extend the shift register by 2 bits (1 on each side) to naturally handle boundaries with zeros.
+
+This approach reduces redundant computation of neighbor bits and allows for better logic optimization.

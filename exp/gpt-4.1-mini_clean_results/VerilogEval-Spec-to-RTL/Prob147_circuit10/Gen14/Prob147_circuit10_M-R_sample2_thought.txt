@@ -1,0 +1,8 @@
+The original solution captures the logic of the next state and output but expresses it as a combinational wire for next_state, and an always block for state update. To refactor while keeping the core logic the same, we can restructure the design into an explicit Mealy-type state machine form:
+
+- Use a registered `state` flip-flop updated on the clock’s positive edge.
+- Compute next_state in a combinational always block using procedural style for clarity.
+- Compute output `q` combinationally as before.
+- Keep initial state at zero.
+
+This approach improves readability and makes the state machine behavior explicit, facilitating verification and potential future extensions, but maintains the exact behavior and logic equations previously determined.

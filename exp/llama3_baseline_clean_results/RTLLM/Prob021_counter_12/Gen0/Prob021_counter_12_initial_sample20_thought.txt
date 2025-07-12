@@ -1,0 +1,8 @@
+To design the counter_12 module, we need to consider the following key points:
+- The counter should reset to 0 when the reset signal (rst_n) is active low.
+- The counting process should be controlled by the valid_count signal, where the counter increments only when valid_count is 1.
+- The counter should wrap around to 0 when it reaches the maximum count value of 4'd11.
+- We will use a 4-bit output register (out) to represent the current count value.
+- The counter will increment on each clock cycle when the valid_count signal is active.
+
+The implementation will involve using an always block that is sensitive to the clock signal (clk) and the reset signal (rst_n). Inside the always block, we will first check for the reset condition. If the reset signal is active, we reset the output register (out) to 0. Otherwise, we check the valid_count signal. If it is 1, we increment the counter. Before incrementing, we will check if the current count value has reached the maximum count value (4'd11). If it has, we reset the counter to 0. If not, we simply increment the counter by 1.

@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor by leveraging Verilog's built-in addition with two's complement semantics directly, i.e., using `result = A + (~B) + 1` in a single continuous assignment. This simplifies the design by removing explicit propagate/generate and carry chain logic.
+
+For overflow detection, implement it explicitly based on sign bits as before.
+
+This approach reduces code complexity and improves readability while keeping the logic functionally equivalent. It also delegates carry chain optimization to the synthesis tool instead of manually describing the carry signals, potentially enabling better optimization.
+
+The subtraction operation and overflow detection remain combinational, but the arithmetic is expressed in a more concise and idiomatic way.

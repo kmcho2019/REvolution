@@ -1,0 +1,17 @@
+The original design is clean and functional, but two clear improvements can optimize PPA:
+
+1. **Correct the LUI operation**: In MIPS ISA, LUI loads the immediate into the upper 16 bits, zeroing the lower 16 bits. The provided code places `a[15:0]` in upper bits, which is reversed. We should take `b[15:0]` as the immediate and assign `r = {b[15:0], 16'd0}` to match conventional MIPS behavior, assuming operand `b` holds the immediate (common in ALUs where `a` is register content and `b` may be immediate or second operand). If the problem context differs, this can be adjusted.
+
+2. **Minimize unnecessary assignments for carry and overflow**: Currently, carry and overflow are always reset at every cycle, causing toggling. Instead, only update carry and overflow for ADD, ADDU, SUB, and SUBU, default them to zero only in those operations. For other operations, they stay at zero without assignments to minimize toggling.
+
+3. **Avoid multiple signed casts and use consistent signed operands for SLT and SRAV**: Already good.
+
+4. **Drive flag to 0 instead of high-impedance**: Keeps synthesizable and clean.
+
+5. **Calculate zero and negative outside the always block for pure combinational signals**, which helps synthesis and clarity.
+
+6. **Use blocking assignments in always @(*) for combinational clarity**.
+
+These changes should yield slightly reduced toggling (power), fix correctness for LUI (functionality), and maintain a clean structure for timing and area.
+
+Note: The assumption here is that operand `b` carries the immediate for LUI, typical for MIPS ALUs.

@@ -1,0 +1,3 @@
+To fix the functional correctness issue, remove the conditional check that prevents updating the output `q` when the input `d` equals the current output. D flip-flops by nature update their output unconditionally on the positive clock edge, reflecting the input at that moment. Therefore, simply assign `q <= d;` on every positive clock edge to accurately model eight D flip-flops capturing the 8-bit input vector.
+
+This change ensures correct simulation behavior matching the expected DFF semantics and testbench expectations, while meeting the original specification exactly without additional logic or complexity.

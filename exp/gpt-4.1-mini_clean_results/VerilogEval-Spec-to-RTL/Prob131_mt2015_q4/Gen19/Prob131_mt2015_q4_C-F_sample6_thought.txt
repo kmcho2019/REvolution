@@ -1,0 +1,7 @@
+Fuse the advantages of both examples by instantiating exactly two A and two B modules as required, but avoid redundant computation by precomputing shared intermediate signals (xor_xy and inv_xor_xy) only once. Instantiate two A modules using the shared xor_xy and two B modules using the shared inv_xor_xy to reflect the problem's requirement for two A and two B instances.
+
+Connect the outputs of the first A and B pair to an OR gate, the outputs of the second pair to an AND gate, and XOR their results for the final output z. This honors the specified module count and connectivity while minimizing redundant logic, reducing power and area compared to duplicating the entire logic inside A and B.
+
+The design remains fully combinational and simple, retains clear hierarchical structure, and improves maintainability by using generate loops for instantiation with shared signals. It also avoids the shortcut in Example 1 that used only one A and one B instance, thus strictly adhering to the problem statement while leveraging shared signal computations from Example 2.
+
+This fusion results in a clean, area-efficient, and power-conscious implementation without compromising functional correctness or performance.

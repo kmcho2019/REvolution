@@ -1,0 +1,16 @@
+The module TopModule implements a combinational circuit with inputs a, b, c, d and output q. 
+To determine the functionality of the circuit, we analyze the given simulation waveforms. 
+From the waveforms, we can observe that the output q is 1 when the inputs a, b, c, d are all 0, 
+or when b and c are both 1, or when a and d are both 1, or when a and b and c are all 1 and d is 1, 
+or when a is 1, b is 1, and c is 0 and d is 0. 
+However, a simpler way to implement this circuit is to use a Karnaugh map or by analyzing the patterns of the outputs.
+By analyzing the output patterns, it seems that q is 1 when an even number of inputs are 1 (including the case where all inputs are 0), 
+except for the cases where b and c are both 1 or when a and d are both 1. However, upon closer inspection, 
+we can simplify this logic further by using basic logic gates. 
+One way to implement this circuit is to use the logic equation: q = ~(a ^ b ^ c ^ d) ^ (b & c) ^ (a & d) ^ (a & b & ~c & d).
+However, this equation does not cover all the cases correctly. A more accurate equation is q = ~a & ~b & ~c & ~d | a & ~b & ~c & d | a & ~b & c & ~d | ~a & b & c & d | a & b & c & d | a & b & ~c & ~d.
+But again, a simpler and more correct way to represent the output is by analyzing the table and creating an equation that fits all the given output patterns.
+Upon re-examining the table, we see that the output q is actually the result of the following equation: 
+q = (~a & ~b & ~c & ~d) | (a & b & ~c & ~d) | (a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d) | (a & ~b & ~c & d).
+But looking at the data again, we realize that we can actually represent the equation as q = ~(a ^ b ^ c ^ d).
+Thus, the module TopModule can be implemented using the XOR gate and inverter.

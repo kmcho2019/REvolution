@@ -1,0 +1,16 @@
+To improve synthesis friendliness and reduce complexity, remove the clock and reset ports, making the module purely combinational. This also matches typical subtractor usage, which is combinational by nature.
+
+Keep the explicit sign/magnitude extraction and processing for clarity and correctness, but simplify by avoiding explicit two's complement conversions inside combinational logic.
+
+Use the inherent two's complement arithmetic for subtraction directly, then adjust the output sign bit if the result is zero to force zero sign bit to 0.
+
+This reduces logic duplication by leveraging native two's complement subtraction instead of manual magnitude arithmetic. The key fix is to perform subtraction directly and only handle the zero-sign bit correction separately.
+
+The module interface becomes simpler and more synthesizable without clock/reset signals. This approach preserves fixed-point precision and sign correctness while maintaining concise combinational logic.
+
+Summary of improvements:
+1. Remove clk and rst_n ports, making the module combinational.
+2. Perform subtraction directly with two's complement operands.
+3. Detect zero result and force sign bit to 0.
+4. Keep parameters N and Q for fixed-point clarity.
+5. Result output is assigned combinationally for best synthesis results.

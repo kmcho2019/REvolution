@@ -1,0 +1,11 @@
+The existing solution is already minimal and clear. However, we can slightly optimize gate usage and possibly reduce switching by observing that the Y3 output depends on y[0], y[3], and w all being zero/low.
+
+Instead of using three separate negations and a 3-input AND for Y3, we can use a NOR3 gate: Y3 = (~w) & (~y[0]) & (~y[3]) is equivalent to Y3 = NOR3(w, y[0], y[3]). Implementing it as a single 3-input NOR gate can reduce gate count and may decrease power due to fewer gate transitions.
+
+Similarly, for Y1, the logic is already minimal (Y1 = y[0] & w).
+
+Hence, the improvement is to implement Y3 using a single 3-input NOR gate rather than multiple NOT and AND gates.
+
+This reduces the number of inverters and AND gates, potentially reducing area and power, and potentially improving timing by reducing logic depth.
+
+We keep modularity by having the NextStateInput module instantiated inside TopModule.

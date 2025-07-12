@@ -1,0 +1,19 @@
+From the waveform, the circuit has one bit of state updated on each clock rising edge. The output 'state' is the stored bit. The output 'q' is combinationally driven by inputs 'a', 'b', and current 'state'.
+
+Analyzing the waveforms, the behavior is:
+
+- When 'b' is 1 and 'a' is 0, 'state' becomes 1.
+- When both 'a' and 'b' are 1, 'state' toggles.
+- Otherwise, 'state' stays the same or resets to 0.
+
+A simple way to capture this is:
+
+- If (a == 1 && b == 1), next state = ~state (toggle)
+- Else if (b == 1 && a == 0), next state = 1
+- Else next state = 0
+
+The output q can be simply the AND of current state and b, reflecting that q goes high when state is set and b is active.
+
+This logic is simpler, easy to verify, and matches the observed toggling and setting behavior from the waveform.
+
+Initialize state to 0.

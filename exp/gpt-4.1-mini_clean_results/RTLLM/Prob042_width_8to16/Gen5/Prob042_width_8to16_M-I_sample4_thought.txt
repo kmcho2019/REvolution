@@ -1,0 +1,17 @@
+To meet the specification and fix the shortcomings in the previous design, I will implement a simple two-state FSM:
+
+- IDLE: Waiting for first valid 8-bit input. When received, store it in a register and move to WAIT_SECOND.
+- WAIT_SECOND: Wait for second valid 8-bit input. When received, concatenate stored and new data, register output, assert valid_out in the next cycle, and return to IDLE.
+
+This FSM ensures valid_out and data_out are registered and asserted exactly one clock cycle after receiving the second valid input, as required.
+
+I will:
+
+- Use non-blocking assignments with a synchronous reset.
+- Avoid default deassertion of valid_out inside the always block; instead, control it explicitly in each state.
+- Register valid_out and data_out outputs to avoid glitches.
+- Ensure the output data is stable and valid_out is asserted for exactly one clock cycle.
+- Keep the design minimal with a small FSM, which improves readability and synthesis friendliness.
+- Keep all logic synchronous with clk and asynchronous active-low reset rst_n.
+
+This approach addresses the previous issues about timing of valid_out, data_out, and robust handling of input data sequences, including idle cycles between valid_in assertions.

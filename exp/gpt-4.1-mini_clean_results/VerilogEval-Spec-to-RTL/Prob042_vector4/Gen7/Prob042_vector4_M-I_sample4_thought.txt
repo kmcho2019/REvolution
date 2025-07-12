@@ -1,0 +1,7 @@
+The existing design already implements an optimal sign-extension using the replication operator, which is minimal in logic and straightforward in timing. Since the sign extension is purely combinational with a simple replication and concatenation, there is no practical way to reduce delay or area further at the RTL level.
+
+For power optimization, while the replication inherently duplicates the sign bit, causing potential switching activity downstream, this cannot be reduced at this stage without additional gating or clocking, which is beyond the scope and could add area and complexity.
+
+Therefore, the best strategy is to maintain the same implementation but improve code clarity by adding concise comments and explicitly declare port directions and widths for readability and maintainability without changing the logic. This can aid synthesis tools and designers understanding the intent clearly.
+
+No functional or structural changes are made, ensuring the design remains optimal for all PPA metrics.

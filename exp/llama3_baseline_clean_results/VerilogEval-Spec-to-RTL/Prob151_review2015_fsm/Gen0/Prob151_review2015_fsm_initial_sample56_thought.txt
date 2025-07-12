@@ -1,0 +1,7 @@
+The state machine can be designed with five main states: IDLE, SHIFT, COUNT, DONE, and ACK. 
+- In the IDLE state, it waits for the pattern 1101 to be detected.
+- Once the pattern is detected, it enters the SHIFT state, where it asserts shift_ena for 4 clock cycles to shift in the duration.
+- After shifting, it enters the COUNT state, where it asserts counting and waits for done_counting to be high.
+- Once done_counting is high, it enters the DONE state, where it asserts done and waits for ack to be high.
+- Once ack is high, it enters the ACK state, where it waits for one clock cycle before returning to the IDLE state.
+The state machine can be implemented using a finite state machine (FSM) with a 2-bit state register to represent the five states.

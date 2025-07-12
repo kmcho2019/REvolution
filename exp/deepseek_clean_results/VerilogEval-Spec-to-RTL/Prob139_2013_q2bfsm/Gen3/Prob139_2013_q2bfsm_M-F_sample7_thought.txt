@@ -1,0 +1,26 @@
+To fix the issues identified in the feedback, I'll make the following improvements:
+
+1. **Initial f Pulse**: Ensure f=1 is generated exactly one cycle after reset deassertion by properly synchronizing the state transition and output generation.
+
+2. **Sequence Detection**: Correct the 1-0-1 sequence detection logic by:
+   - Properly transitioning between states C, D, and E
+   - Only moving to state F after a complete 1-0-1 sequence
+
+3. **Timeout Logic**: Fix the timeout counter by:
+   - Only decrementing when y=0
+   - Properly handling the 2-cycle timeout
+   - Correctly transitioning to state G when timeout expires
+
+4. **Permanent States**: 
+   - In state F (g=1), maintain permanently if y=1 is detected
+   - In state G (g=0), maintain permanently regardless of y
+
+5. **Output Logic**: 
+   - Make f purely combinational based on current state
+   - Make g properly reflect the permanent states as specified
+
+Key changes:
+- Simplified output logic
+- Fixed timeout counter behavior
+- Corrected sequence detection transitions
+- Proper permanent state handling

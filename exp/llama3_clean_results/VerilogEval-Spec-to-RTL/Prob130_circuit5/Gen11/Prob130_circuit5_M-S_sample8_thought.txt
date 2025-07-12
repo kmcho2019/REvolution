@@ -1,0 +1,5 @@
+The existing solution uses a case statement to generate select signals based on the two least significant bits of `c`. This can be simplified by directly using the two least significant bits of `c` to select the input signals. Additionally, the condition to override the output to `4'b1111` when the two most significant bits of `c` are not both zero can be integrated into the logic more efficiently. 
+
+We can use a simpler conditional statement to select between the inputs `a`, `b`, `d`, or `e` based on `c[1:0]`. If `c[1:0]` is 2'b00, `b` is selected; if it's 2'b01, `e` is selected; if it's 2'b10, `a` is selected; and if it's 2'b11, `d` is selected. 
+
+For the condition where `c[3:2]` is not `2'b00`, we can directly assign `q` to `4'b1111`. This approach simplifies the logic and reduces the complexity of the circuit.

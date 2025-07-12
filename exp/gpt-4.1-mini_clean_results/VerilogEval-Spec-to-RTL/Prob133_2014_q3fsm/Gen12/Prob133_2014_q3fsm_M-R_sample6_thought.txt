@@ -1,0 +1,9 @@
+Refactor the FSM by separating state register and output logic from the counters, and use a one-hot style state encoding with a state machine that explicitly counts cycles and accumulates w in separate registers. 
+- Use a separate 2-bit cycle counter and 2-bit w accumulator registers instead of packing them.
+- Implement next state and output logic in combinational always block.
+- Use continuous assignments for z output register to make output timing clear.
+- Use synchronous reset and non-blocking assignments for all sequential registers.
+- The FSM has two states A and B; from A to B on s=1; in B, count 3 cycles of w input.
+- After 3 cycles, produce z=1 if exactly 2 w's were high in last 3 cycles.
+- Reset counters after every 3 cycles in B.
+This approach improves readability by decoupling counters and state, clarifies output timing by assigning z in a separate register updated after counting, and removes the packed accumulator for easier synthesis and potential timing improvements.

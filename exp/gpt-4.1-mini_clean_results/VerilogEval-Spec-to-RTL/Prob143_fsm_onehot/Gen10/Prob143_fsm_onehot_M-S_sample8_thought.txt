@@ -1,0 +1,14 @@
+Since the FSM uses one-hot encoding and transitions depend solely on the current active states and the input bit, we can simplify the next_state logic by directly assigning next_state bits using simple combinational expressions without any loop or case statement. The original solution already uses direct assignments per next_state bit and minimal masking for outputs.
+
+To further simplify while maintaining functionality, we can:
+- Use concise conditional assignments for each next state bit without repeated comparisons `(in == 1'b0 or 1'b1)`, replacing them with `~in` and `in`.
+- Remove localparam constants for output masks, and directly write the output logic as OR-reductions with selected state bits.
+- Keep all assignments as continuous assigns for clear combinational logic without any reg or always block.
+
+This approach keeps the code minimal and clear, with fewer characters and complexity, while fully implementing the FSM transition and output logic.
+
+Overall:
+- Use `~in` and `in` for conditions.
+- Direct OR assignments for next_state bits.
+- Direct OR of selected states for outputs.
+- Remove unnecessary parameters.

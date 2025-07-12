@@ -1,0 +1,39 @@
+The main issue causing output mismatches is in the sequence detection states (S_SEQ0, S_SEQ1, S_SEQ2). The current FSM may get stuck or delay detection because it doesn't properly restart pattern detection on unexpected inputs and does not handle overlapping sequences fully.
+
+To fix this, the sequence detection will be re-designed as a three-step pattern matcher with these principles:
+
+1. Use explicit states for each matched prefix of the pattern `1 0 1`.  
+2. On unexpected inputs, restart pattern detection appropriately rather than staying in a mismatched state.  
+3. Allow partial overlap in the pattern by transitioning to the correct prefix state on inputs that may start a new sequence. For example, if the pattern is `1 0 1`, after receiving `1 0 0`, the FSM should consider whether the last `0` might start a new sequence or not.
+
+The improved sequence detection logic:
+
+- S_SEQ0: Waiting for x=1 (pattern start).  
+- S_SEQ1: x=1 matched; waiting for x=0.  
+- S_SEQ2: `1 0` matched; waiting for x=1 to complete.  
+
+Transitions:
+
+- In S_SEQ0, if x=1, go to S_SEQ1, else stay in S_SEQ0.  
+- In S_SEQ1, if x=0, go to S_SEQ2; if x=1, stay in S_SEQ1 (pattern restarts); else back to S_SEQ0.  
+- In S_SEQ2, if x=1, pattern complete -> go to S_MON; if x=0, restart from S_SEQ0 or possibly S_SEQ1 if x=0 can be part of next pattern start (in this pattern 1 is required first, so restart S_SEQ0).
+
+Since pattern starts with 1, and there's no valid overlap starting with 0, S_SEQ2 on x=0 resets to S_SEQ0.
+
+Besides, maintain the one-cycle f pulse after reset, synchronous reset handled correctly.
+
+Outputs (f and g) are Moore-type from current state to avoid timing issues.
+
+Counters and state registers updated synchronously on clock posedge with synchronous active low reset.
+
+This redesign corrects the sequence detection and aligns output timing exactly with specification, eliminating previous mismatches.
+
+For PPA:
+
+- State encoding uses 3-bit binary parameters, compact and simple.  
+- All registers are minimal width.  
+- Combinational logic straightforward with case statements.  
+- Moore outputs keep outputs stable and predictable.  
+- The small mon_cnt counter is reset properly for each monitoring phase.
+
+This keeps the FSM simple and efficient.

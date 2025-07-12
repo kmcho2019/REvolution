@@ -1,0 +1,5 @@
+The previous solution computes both shift and count operations in parallel and then selects between them, which is efficient but can be simplified further since we know the enables are mutually exclusive (as per problem statement). We can:
+1. Remove the parallel computation since only one operation will be active at a time
+2. Use a single always block with priority given to shift over count (arbitrary choice since problem states priority doesn't matter)
+3. Directly update the register based on the active operation
+4. This reduces logic complexity while maintaining identical functionality

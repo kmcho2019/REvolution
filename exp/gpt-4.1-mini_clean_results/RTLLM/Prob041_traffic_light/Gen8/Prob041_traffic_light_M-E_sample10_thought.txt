@@ -1,0 +1,11 @@
+Implement a traffic light controller using a Moore FSM with four states (idle, red, green, yellow). The controller uses an 8-bit countdown timer for the current state's duration.
+
+Key architectural differences:
+- The FSM state register also encodes the output signals directly, so the outputs are registered together with the state.
+- Use a single always_ff block for synchronous reset, state, and timer update for simplicity.
+- Implement state transitions and timer reloads within the same clocked block.
+- On pedestrian button press during green state and if remaining green time > 10, shorten the timer to 10.
+- Use a next_state and next_timer variable for clarity but update synchronously.
+- Outputs (red, yellow, green) are extracted from the current state encoding.
+- Introduce an idle state that initializes the FSM to red state at start.
+- This approach reduces the number of always blocks and registers only needed signals, making the design concise and efficient.

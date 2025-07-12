@@ -1,0 +1,5 @@
+Refactor the module to use a combinational always block with a sensitivity list on the input vector. This approach groups all output assignments together inside a procedural block, instead of separate continuous assignments and intermediate wires. It still implements the same 4-input AND, OR, XOR reductions but uses procedural assignment to outputs directly.
+
+This style can improve code readability for designers more familiar with always blocks and can also help some synthesis tools infer the logic clearly as combinational. It is functionally equivalent but offers an alternative structural style. No registers or flip-flops are introduced, ensuring purely combinational behavior.
+
+Using a procedural block explicitly shows that all outputs depend combinationally on the input vector and updates whenever 'in' changes.

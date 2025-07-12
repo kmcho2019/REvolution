@@ -1,0 +1,15 @@
+To address the issue of the previous implementation, we can introduce a state machine that tracks the current and previous sensor states. This will enable us to accurately determine the flow rate based on the water level and the previous level.
+
+We will define an enumeration for the states, where each state corresponds to a specific water level range. We will use a combination of the current and previous sensor states to transition between these states and update the flow rate accordingly.
+
+The state machine will have the following states:
+- LOW: Water level is below the lowest sensor.
+- LOW_MID: Water level is between the lowest and middle sensors.
+- MID_HIGH: Water level is between the middle and highest sensors.
+- HIGH: Water level is above the highest sensor.
+
+We will use a variable to store the previous state and update it based on the current state and sensor inputs. This will allow us to track the previous water level and adjust the flow rate accordingly.
+
+For the 'dfr' signal, we will check if the current state indicates an increasing water level compared to the previous state. If so, we will set 'dfr' to '1'. Otherwise, we will set it to '0'.
+
+We will also include an active-high synchronous reset that resets the state machine to the LOW state, which corresponds to the water level being below the lowest sensor.

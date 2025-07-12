@@ -1,0 +1,18 @@
+To optimize the design for better PPA (Power, Performance, Area) metrics:
+
+1. Performance Improvement:
+   - Pipeline the accumulator by splitting into two stages (current sum + new input)
+   - Use one-hot encoding for state machine to reduce comparison logic delay
+   - Register the final output to break critical path
+
+2. Power Reduction:
+   - Add clock gating for accumulator when valid_in is low
+   - Minimize toggling of valid_out by making it purely combinatorial
+
+3. Area Optimization:
+   - Share adder resources between accumulation and final output
+   - Use smaller registers where possible (state machine)
+
+4. Timing Fixes:
+   - Break the long combinational path from accumulator to output
+   - Ensure setup/hold times are met with proper pipelining

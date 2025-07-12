@@ -1,0 +1,16 @@
+The Karnaugh map indicates the output is 0 only when a=0, b=0, and c=0. Another way to implement this logic is to use a NAND structure that outputs 0 only in that case.
+
+Specifically, we can express the function as the complement of the AND of the inverted inputs:
+
+out = NOT((NOT a) AND (NOT b) AND (NOT c)) = a OR b OR c
+
+However, to create a structurally different implementation, I'll implement this using De Morgan's theorem and a NAND3 gate at the RTL level.
+
+This structural expression will be:
+
+wire na = ~a;
+wire nb = ~b;
+wire nc = ~c;
+assign out = ~(na & nb & nc);
+
+This approach uses inversion of inputs followed by a three-input NAND gate, giving the same truth table, but with a different architectural style emphasizing the use of NAND gates and input inversions. This might be preferred in some standard cell libraries where NAND gates are optimized.

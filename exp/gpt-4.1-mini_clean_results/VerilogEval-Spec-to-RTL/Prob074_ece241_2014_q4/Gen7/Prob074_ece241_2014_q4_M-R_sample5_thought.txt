@@ -1,0 +1,18 @@
+The key behavioral requirements are to implement three D flip-flops driven by the outputs of XOR, AND, and OR gates fed by input x and respective flip-flop outputs (or their complements), and then combine their outputs through a 3-input NOR to produce z.
+
+To avoid the asynchronous reset and initial block complexity, I will implement the flip-flops using synchronous logic without any explicit reset input. According to the problem statement, we can assume that flip-flops are initialized to zero before the FSM begins (e.g., through FPGA power-up conditions), so no reset port or reset logic is required in the code.
+
+I will use a single always block triggered on the positive clock edge to update three registers q_xor, q_and, q_or without any reset. Their D inputs are continuously assigned by combinational logic using assign statements. This approach is synthesizable and simpler.
+
+The D input signals (d_xor, d_and, d_or) will be wires computed by the respective logic gates as described:
+- d_xor = x ^ q_xor
+- d_and = x & (~q_and)
+- d_or  = x | (~q_or)
+
+Flip-flops will update q_xor, q_and, q_or with d_xor, d_and, d_or at every clock's rising edge.
+
+Finally, the output z is the NOR of q_xor, q_and, and q_or.
+
+This structure is straightforward, has no asynchronous resets, and matches the problem statement's assumption that flip-flops start at zero.
+
+This refactor removes the asynchronous reset and initial block but maintains the correct functional behavior.

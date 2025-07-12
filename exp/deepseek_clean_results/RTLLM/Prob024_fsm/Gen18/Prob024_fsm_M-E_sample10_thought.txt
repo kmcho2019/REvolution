@@ -1,0 +1,19 @@
+Novel Architectural Idea: "Sliding Window with Parallel Matching"
+
+Key Concepts:
+1. Instead of traditional FSM states, use a 5-bit shift register to track the last 5 inputs
+2. Implement parallel comparison against the target pattern (10011)
+3. Use combinational logic to detect matches directly from the shift register
+4. Benefits:
+   - Eliminates state transition complexity
+   - Naturally handles continuous/overlapping patterns
+   - Simple, predictable timing
+   - Easily extensible to longer patterns
+   - Clear relationship between input history and output
+
+Implementation Details:
+- 5-bit shift register (history[4:0]) captures input sequence
+- Reset clears the shift register
+- Every clock shifts in new input (MSB first)
+- MATCH is purely combinational - high when history == 5'b10011
+- No need for explicit state machine logic

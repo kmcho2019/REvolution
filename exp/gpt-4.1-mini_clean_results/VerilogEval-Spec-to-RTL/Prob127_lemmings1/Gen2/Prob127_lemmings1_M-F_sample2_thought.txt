@@ -1,0 +1,9 @@
+The key fix is to make the outputs strictly a function of the current registered state, not the next_state, as per the Moore FSM model. Outputs should be assigned combinationally from the current state only, ensuring glitch-free and consistent output signals.
+
+Hence:
+- Keep asynchronous reset and state update in one always block.
+- Implement output logic in a separate combinational block or as continuous assignments based purely on the registered state.
+- On asynchronous reset, the state is initialized to WALK_LEFT; outputs naturally reflect this because they depend on the current state.
+- Remove output assignments from the sequential block to avoid conflicting assignments and timing issues.
+
+This clean separation adheres to the Moore FSM style and fixes output mismatches seen in simulation.

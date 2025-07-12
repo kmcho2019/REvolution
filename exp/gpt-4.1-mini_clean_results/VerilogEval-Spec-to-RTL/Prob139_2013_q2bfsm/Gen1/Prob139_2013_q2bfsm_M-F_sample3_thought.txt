@@ -1,0 +1,21 @@
+To fix the issues, we focus on these improvements:
+
+1. Output 'f' timing: Output f=1 exactly one cycle after reset deasserted. We align output assignment with the current state instead of the next_state to avoid off-by-one errors. Thus, outputs depend on the *current* state, ensuring proper timing.
+
+2. Sequence detection of x=1,0,1: Refine FSM states to handle repeated or unexpected inputs cleanly without fallback to earlier states unnecessarily. Specifically:
+   - S_C0: wait for first '1' in x.
+   - S_C1: expect '0' next; if '1' again, stay in S_C1 (still waiting for '0').
+   - S_C2: expect '1' next; if '0' or other, restart from S_C0.
+This guarantees the sequence must be consecutive cycles: 1, then 0, then 1.
+
+3. y monitoring in S_D: Start y_counter at 0 when entering S_D, increment it each cycle within S_D. Monitor y input for up to two cycles (counter 0 and 1).  
+   - If y=1 during these two cycles, transition to S_E and keep g=1 permanently.  
+   - If no y=1 in these two cycles, after the second cycle transition to S_F with g=0 permanently.
+
+This requires checking if y_counter == 1 (i.e., after two clock cycles in S_D) before moving to S_F.
+
+4. Output assignments are synchronous and based on the current state, not next_state, avoiding timing mismatches. y_counter updates are synchronous and reset or incremented properly within the clocked block.
+
+5. Keep reset logic synchronous active low, resetting state, outputs, and counter immediately.
+
+These changes fix output timing, sequence detection reliability, and y monitoring per specification.

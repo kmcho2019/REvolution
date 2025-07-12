@@ -1,0 +1,16 @@
+Refactoring Approach:
+1. Structural Change:
+   - Replace individual bit assignments with a single 4-bit assignment for next_state
+   - Use concatenation to build the next_state vector in one expression
+   - Maintain one-hot encoding guarantees by construction
+
+2. Logic Optimization:
+   - Express each next state bit as a direct function of current state and input
+   - Group related terms to minimize redundant logic
+   - Keep output logic identical (state[3]) as it's already optimal
+
+3. Benefits:
+   - Single assignment makes the state transition logic more cohesive
+   - Clearer relationship between current state and next state
+   - Maintains all PPA advantages of original solution
+   - Potentially better for synthesis tools to optimize as a whole

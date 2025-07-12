@@ -1,0 +1,12 @@
+Simplification Approach:
+1. Remove the shadow_history register since it's not strictly necessary - we can reconstruct the correct history from train_history and train_taken during misprediction
+2. Use a single always block for the history register updates
+3. Directly implement the priority scheme (misprediction > prediction) in the update logic
+4. Maintain the same reset behavior
+5. Simplify the output to just reflect the current history register value
+
+Key Changes:
+- Eliminated shadow_history register and related logic
+- Simplified next state calculation to be done directly in the always block
+- Reduced register count by 50% (from 2 to 1)
+- Maintained same functionality with less hardware

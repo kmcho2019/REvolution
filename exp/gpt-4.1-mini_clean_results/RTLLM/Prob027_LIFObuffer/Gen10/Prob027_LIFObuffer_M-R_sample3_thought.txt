@@ -1,0 +1,10 @@
+Refactor the design by splitting the stack pointer management and stack memory access into separate always blocks for clarity and improved timing:
+
+- Use one sequential block for SP update only, triggered on clock and reset, with push/pop logic controlled by RW, EN, and buffer state.
+- Use a separate combinational block to determine the read and write addresses, and dataOut updates, minimizing dependencies and improving timing.
+- Implement stack memory as a reg array, with synchronous writes during push and asynchronous reads for pop, using the SP pointer appropriately.
+- Use an assign statement for EMPTY and FULL flags based on SP.
+- This separation reduces combinational path length inside the main always block and decouples SP logic from memory and dataOut, possibly improving max frequency.
+- Maintain dataOut as a register updated only on pop operations.
+- On reset, clear SP and stack memory with synchronous resets.
+- This structure clearly distinguishes data path (memory and dataOut) and control path (SP), which aids readability, testability, and potentially synthesis optimization.

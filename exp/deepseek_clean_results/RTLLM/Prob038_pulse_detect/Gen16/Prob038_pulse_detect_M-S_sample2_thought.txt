@@ -1,0 +1,10 @@
+To simplify the pulse detection, we can use a shift register approach instead of a state machine. The key observations are:
+1. We only need to track the last 3 cycles of data_in to detect the 010 pattern
+2. A 3-bit shift register can store this history
+3. The output should be high when we detect "010" in the shift register
+
+This approach:
+- Eliminates the state machine complexity
+- Uses minimal registers (just 3 bits)
+- Directly detects the pattern in combinational logic
+- Maintains the same functionality where data_out is high for one cycle at the end of the pulse

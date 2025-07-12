@@ -1,0 +1,17 @@
+The original design uses simple carry-lookahead logic with a linear chain of carry computations, which is already efficient and correct for a 4-bit adder. However, to further optimize for Power, Performance, and Area (PPA):
+
+- Performance: Implement a true 4-bit carry-lookahead generator that computes carries in parallel using generate and propagate signals combined with an intermediate "group propagate" and "group generate". This will minimize carry path delay to just a couple of gate levels.
+- Power: Reducing logic levels reduces glitching and dynamic power. Also, by removing the unused full adder module and using purely combinational logic, switching is minimized.
+- Area: The new logic is slightly more complex but still compact and mostly composed of basic gates. This offers a better speed-area tradeoff by minimizing critical path logic depth.
+
+Summary of improvements:
+- Define intermediate group propagate (P) and group generate (G) signals.
+- Calculate carries c1..c4 fully in parallel with minimal logic depth:
+  c1 = g0 | (p0 & c0)
+  c2 = g1 | (p1 & g0) | (p1 & p0 & c0)
+  c3 = g2 | (p2 & g1) | (p2 & p1 & g0) | (p2 & p1 & p0 & c0)
+  c4 = g3 | (p3 & g2) | (p3 & p2 & g1) | (p3 & p2 & p1 & g0) | (p3 & p2 & p1 & p0 & c0)
+- Assign sum bits as p[i] XOR c[i], c0=0.
+- sum[4] = c4 is overflow bit.
+
+This approach shortens critical path logically and should reduce WNS and dynamic power while keeping area reasonable.

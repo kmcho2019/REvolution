@@ -1,0 +1,13 @@
+To create a novel architectural solution, I will design a state machine that utilizes a hybrid approach, combining the benefits of both Mealy and Moore machines. The idea is to use a hierarchical state machine structure, where the top-level state machine controls the overall flow, and a separate sub-state machine handles the pattern detection.
+
+The top-level state machine will have four main states: `IDLE`, `SHIFT`, `COUNT`, and `WAIT_ACK`. The `IDLE` state will be responsible for initializing the pattern detection sub-state machine and monitoring the input data for the `1101` pattern.
+
+Once the pattern is detected, the top-level state machine will transition to the `SHIFT` state, where it will assert the `shift_ena` signal for exactly 4 clock cycles. During this time, the input data will be shifted into a register to determine the duration.
+
+After the `SHIFT` state, the top-level state machine will transition to the `COUNT` state, where it will assert the `counting` signal and wait for the `done_counting` signal from the counters.
+
+Finally, the top-level state machine will transition to the `WAIT_ACK` state, where it will assert the `done` signal and wait for the `ack` signal from the user.
+
+The pattern detection sub-state machine will be implemented using a separate always block, which will monitor the input data and detect the `1101` pattern. Once the pattern is detected, the sub-state machine will assert a signal to the top-level state machine to transition to the `SHIFT` state.
+
+This hybrid approach will allow for a more efficient and scalable design, as the pattern detection logic is decoupled from the main state machine. Additionally, the use of a hierarchical state machine structure will simplify the design and reduce the number of states and transitions required.

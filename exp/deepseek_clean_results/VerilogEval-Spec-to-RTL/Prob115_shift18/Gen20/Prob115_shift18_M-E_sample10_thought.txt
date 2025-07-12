@@ -1,0 +1,15 @@
+Novel Architecture Idea: Hierarchical Shift Register with Pre-computed Shift Paths
+
+Key Concepts:
+1. Pre-compute all possible shift results in parallel before the clock edge
+2. Use a hierarchical approach where we first determine shift direction, then amount
+3. Implement arithmetic right shift by using sign-extension masks generated dynamically
+4. Optimize resource usage by sharing common shift logic between 1-bit and 8-bit cases
+5. Use a priority-encoded selection tree for the multiplexers to reduce critical path
+
+Advantages:
+- Parallel computation reduces sequential dependencies
+- Hierarchical selection improves timing by breaking long mux chains
+- Dynamic sign extension minimizes redundant logic
+- Clear separation of shift operations improves readability
+- More scalable for larger shift amounts

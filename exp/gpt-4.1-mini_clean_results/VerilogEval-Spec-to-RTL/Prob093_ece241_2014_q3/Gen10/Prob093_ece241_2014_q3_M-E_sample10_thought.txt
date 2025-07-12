@@ -1,0 +1,113 @@
+We must implement a 4-variable Boolean function f(a,b,c,d) given by a K-map, using a single external 4-to-1 mux selected by {a,b} that chooses one of four inputs mux_in[3:0], each 1-bit wide. Each mux_in[i] depends only on c and d, since a,b are selector inputs external to TopModule.
+
+The K-map gives for each ab combination (column) the function values over cd (rows), so:
+
+ab=00 → mux_in[0] = f(00,c,d)
+ab=01 → mux_in[1] = f(01,c,d)
+ab=11 → mux_in[2] = f(11,c,d)
+ab=10 → mux_in[3] = f(10,c,d)
+
+From the K-map:
+
+cd: 00  01  11  10
+ab=00: 0   1   1   1  → for cd=00(0),01(1),11(1),10(1)
+ab=01: 0   0   0   0
+ab=11: 0   0   1   0
+ab=10: 1   0   1   1
+
+We must realize each mux_in[i] as a logic function of c and d using only 2-to-1 muxes (mux2), no other gates.
+
+First, represent c and d inputs and their complements using mux2:
+
+- NOT x = mux2(sel=x, in0=1, in1=0)
+
+Implement the required functions:
+
+1) mux_in[0] = f(00,c,d) = 0 1 1 1 for cd=00,01,11,10.
+
+Index cd: c=MSB, d=LSB
+
+cd=00:0  
+cd=01:1  
+cd=10:1  
+cd=11:1
+
+Truth table for mux_in[0]:
+| c | d | out |
+|---|---|-----|
+| 0 | 0 |  0  |
+| 0 | 1 |  1  |
+| 1 | 0 |  1  |
+| 1 | 1 |  1  |
+
+This simplifies to (c + d) (since only 00=0, else 1).
+
+mux_in[0] = c OR d
+
+2) mux_in[1] = f(01,c,d) = all zeros
+
+mux_in[1] = 0
+
+3) mux_in[2] = f(11,c,d) = 0 0 1 0 at cd=00,01,11,10
+
+| c | d | out |
+|---|---|-----|
+| 0 | 0 |  0  |
+| 0 | 1 |  0  |
+| 1 | 1 |  1  |
+| 1 | 0 |  0  |
+
+This is c AND d
+
+4) mux_in[3] = f(10,c,d) = 1 0 1 1 at cd=00,01,11,10
+
+| c | d | out |
+|---|---|-----|
+| 0 | 0 |  1  |
+| 0 | 1 |  0  |
+| 1 | 1 |  1  |
+| 1 | 0 |  1  |
+
+Check if this can be simplified:
+
+Out = 1 at cd=00,10,11; 0 at 01
+
+This matches out = NOT d OR (c AND d)
+
+Use the mux implementation:
+
+NOT d = mux2(d,1,0)
+
+c AND d = mux2(c,0,d)
+
+OR(x,y) = NOT(AND(NOT x, NOT y))
+
+Implement OR via muxes:
+
+- Compute not_d and not_and
+
+- then final output = NOT (AND (NOT not_d, NOT c_and_d))
+
+But to minimize mux2 usage, use direct mux expression for this:
+
+out = mux2(d,1,c) implements d'?1:c.
+
+Therefore:
+
+mux_in[3] = mux2(d,1,c)
+
+Now build each function using only mux2 and no gates.
+
+Implement:
+
+- NOT c and NOT d
+
+- AND c&d
+
+- OR c+d
+
+Then assign mux_in[3:0] as above.
+
+This solution is minimal, uses only mux2 components, and yields outputs matching K-map columns, ready to feed the external 4-to-1 mux with selectors {a,b}.
+
+No a,b inputs inside TopModule, per problem statement.

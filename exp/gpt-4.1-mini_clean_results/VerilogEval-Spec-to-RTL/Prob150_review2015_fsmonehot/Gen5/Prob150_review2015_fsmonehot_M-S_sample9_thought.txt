@@ -1,0 +1,10 @@
+We can simplify the next-state combinational logic by factoring common terms and removing intermediate wires, directly assigning the next-state bits from current state and inputs using minimal expressions. Outputs remain from current state bits as before. This reduces verbosity and keeps clarity by avoiding redundant intermediate signals.
+
+Key simplifications:
+- Combine terms for S_next as (S | S1 | S110) & ~d plus Wait & ack.
+- Combine S11_next as (S1 | S11) & d.
+- Directly assign other next states from one-hot definitions without extra wires.
+- Outputs done, counting, and shift_ena derive directly from corresponding current states.
+- Next-state signals B3_next, S_next, etc., come from next_state bits.
+
+This approach preserves all functionality with fewer lines and simpler expressions, making the combinational logic easier to read and maintain.

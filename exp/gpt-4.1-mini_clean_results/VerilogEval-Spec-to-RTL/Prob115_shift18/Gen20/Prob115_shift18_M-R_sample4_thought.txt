@@ -1,0 +1,12 @@
+Refactor the design by separating the combinational shift logic into a dedicated function for clarity and reusability. Replace the sequential always block with a registered output updated via non-blocking assignment, but compute the next state combinationally using a separate "next_q" signal assigned with a combinational always block.
+
+This approach highlights the separation of combinational and sequential logic and emphasizes modularity. It uses a function to encapsulate the shift behavior, reducing duplication and improving readability. The function handles the different shift amounts and directions, implementing sign extension for arithmetic right shifts and zero fill for left shifts.
+
+The registered output q updates synchronously on the clock edge with either loaded data or the shifted value if enabled. This also makes it easier to modify or extend shift behavior and simplifies debugging by localizing shift logic.
+
+Thus, the design structure is:
+- A function that takes current q, amount, and returns the shifted result.
+- A combinational block that decides next_q based on load, ena, data, and shifted value.
+- A sequential block that updates q on the clock.
+
+This separation can improve code clarity and maintainability without changing the core logic, and it makes the design more scalable for future extensions.

@@ -1,0 +1,23 @@
+To optimize the original design for better Power, Performance, and Area (PPA) while maintaining the same functionality:
+
+1. Performance:
+- Remove redundant assignments to yout_r when no addition is needed, reducing unnecessary toggling and data movement.
+- Directly update done_r outside the main iteration block with clear conditions to avoid glitches.
+- Simplify the control logic by incrementing the shift count only when meaningful operations occur.
+
+2. Power:
+- Avoid updating registers (areg, breg, yout_r) when values do not change to reduce switching activity.
+- Use enable signals inside the always block to gate operations only when needed.
+
+3. Area:
+- Use minimal-width registers where possible (i is already 5 bits).
+- Share signals efficiently and avoid temporary variables.
+  
+Additional minor changes:
+- Use meaningful comments.
+- Keep reset behavior synchronous to negedge rst_n as specified.
+- Use blocking assignments for combinational-like updates inside always blocks to reduce logic delay (still nonblocking in sequential always blocks).
+  
+This approach will reduce toggles on yout_r and registers, thus lowering power, slightly improve max frequency by shortening critical path updates, and maintain area since the data width is fixed by problem requirements.
+
+The design remains a sequential iterative shift-and-add multiplier with done flag and start/reset control, preserving all required functionality and ports.

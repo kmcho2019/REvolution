@@ -1,0 +1,14 @@
+I'll refactor the sequence detector using these key changes:
+1. Use a Moore machine instead of Mealy for simpler timing (output only depends on state)
+2. Implement state transitions and output with continuous assignments (assign statements)
+3. Use one-hot encoding for states for potentially better timing
+4. Separate state registers and combinational logic clearly
+5. Keep the same functionality but with different implementation style
+
+The state machine will have:
+- IDLE: waiting for first '1'
+- S1: received '1' (first bit)
+- S10: received '10'
+- S100: received '100'
+Output goes high only when in S100 state and next input is '1' (now handled via state transition to DETECT)
+- DETECT: temporary state to indicate detection (outputs high for one cycle)

@@ -1,0 +1,5 @@
+I will implement the sequence detector using a Moore FSM with an output register to make the output synchronous and glitch-free. The FSM will be binary-encoded and use four states corresponding to how much of the sequence "1101" has been matched so far. When the full sequence is detected, the FSM will transition to a "detected" state, where the output register start_shifting will be set high and remain high until reset.
+
+Unlike the previous design, here I will explicitly register the output signal so that start_shifting changes only on clock edges, improving output timing predictability and reducing glitches. The FSM transitions will be derived carefully to ensure proper overlap handling for sequences like "11101" (i.e., overlapping sequence detection). The reset is synchronous active-high, clearing both state and output.
+
+This approach ensures synchronous outputs, no combinational output glitching, and a clean, simple binary FSM that sets start_shifting sticky after detecting "1101".

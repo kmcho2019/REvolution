@@ -1,0 +1,15 @@
+The solution can be simplified while maintaining functionality by:
+
+1. Reducing state encoding to just 3 states (LEFT, RIGHT, FALL) since digging can be treated as a special case of walking when ground=1 and dig=1.
+
+2. Combining direction into the state itself, eliminating the separate direction register.
+
+3. Simplifying output logic by directly deriving from current state.
+
+4. Maintaining the same priority order (fall > dig > bump) but with fewer states and transitions.
+
+Key simplifications:
+- DIG state is merged into walking states (LEFT/RIGHT) with a digging output
+- Direction is encoded in state rather than separate register
+- Fewer state transitions overall
+- Same behavior with less logic

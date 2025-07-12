@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. K-map Analysis:
+   - Identify essential prime implicants that cover all 1s in the map
+   - Notice that the output can be expressed with just 2 product terms when considering overlapping patterns
+
+2. Boolean Optimization:
+   - Combine terms that share common literals
+   - The expression can be simplified to: out = ~[(~a & ~b & c & d) | (a & b & ~(c & d)) | (a & c & ~d) | (b & ~c & d)]
+   - Further observe that (a & c & ~d) and (b & ~c & d) can be combined into a single term: (a & c & ~d) | (b & ~c & d)
+
+3. Final Simplified Expression:
+   - out = ~[(~a & ~b & c & d) | (a & b & ~(c & d)) | ((a & c & ~d) | (b & ~c & d))]
+   - This reduces the number of distinct product terms while maintaining full coverage

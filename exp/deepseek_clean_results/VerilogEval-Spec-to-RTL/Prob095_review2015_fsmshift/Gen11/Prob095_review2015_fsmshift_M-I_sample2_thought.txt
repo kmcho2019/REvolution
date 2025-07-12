@@ -1,0 +1,16 @@
+The original solution had the right concept but contained syntax errors due to duplicate declarations. Here's the improved approach:
+
+1. Use a single state_t enum declaration with 4 states (S0-S3) to represent the 4 cycles
+2. Maintain a single current_state register
+3. Reset transitions directly to S0 (first active cycle)
+4. Each state advances to next state on clock edge
+5. S3 loops back to itself (shift_ena=0)
+6. shift_ena is active in states S0-S2 (3 cycles) plus the transition into S0 (total 4 cycles)
+7. All logic is synchronous to positive clock edge
+
+Improvements:
+- Eliminated duplicate declarations
+- Clear state progression for exactly 4 cycles
+- Simple combinational output logic
+- Maintains all original functionality
+- More efficient than counter-based approach for small cycle counts

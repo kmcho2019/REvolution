@@ -1,0 +1,12 @@
+To tackle this problem with a novel approach, let's design a finite state machine (FSM) that utilizes a hierarchical state structure. This involves dividing the FSM into sub-states, each responsible for a specific task, such as detecting the 'x' sequence, monitoring the 'y' input, and controlling the outputs 'f' and 'g'. The main idea is to create a more modular and scalable design that is easier to understand, maintain, and extend if needed.
+
+The proposed FSM will operate as follows:
+1. It starts in an initial state, where it waits for the reset signal to be de-asserted.
+2. Upon reset de-assertion, it transitions to a state where it sets 'f' to 1 for one clock cycle.
+3. After setting 'f', it enters a state where it monitors the 'x' input to detect the sequence 1, 0, 1.
+4. Once the 'x' sequence is detected, it transitions to a state where it sets 'g' to 1 and starts monitoring the 'y' input.
+5. If 'y' becomes 1 within two clock cycles after 'g' is set to 1, the FSM maintains 'g' as 1 permanently. Otherwise, it sets 'g' to 0 permanently.
+
+To implement this hierarchical state machine, we will use a combination of enumerations to define the states and a case statement to handle the state transitions. Additionally, we will use counters and flags to monitor the 'x' and 'y' inputs and control the outputs 'f' and 'g'.
+
+This approach allows for a clean separation of concerns, making it easier to modify or extend the FSM in the future. It also improves the readability of the code, as each state and its corresponding actions are clearly defined.

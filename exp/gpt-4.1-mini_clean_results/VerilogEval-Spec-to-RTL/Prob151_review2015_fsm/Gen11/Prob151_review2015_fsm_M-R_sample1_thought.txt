@@ -1,0 +1,5 @@
+Refactor the FSM by using one always block for state transitions with synchronous reset and non-blocking assignments, and implement next state logic and output logic with separate combinational always blocks. Instead of encoding each intermediate pattern match as separate states, use a small shift register that continuously captures the last 4 data bits and detect the start pattern (1101) from it in combinational logic. When detected, transition directly to SHIFT state to count shifts.
+
+Use a 3-bit binary state encoding with states for IDLE (searching), SHIFT, COUNT, and DONE to simplify the design. Manage the shift counter with a separate register and reset it when leaving SHIFT. Outputs are driven based on state via combinational logic. This improves modularity, clarity, and separation of concerns while maintaining synchronous reset and positive edge clock.
+
+This approach removes explicit multi-state pattern matching by directly monitoring a 4-bit window on data input, reducing FSM complexity and improving readability.

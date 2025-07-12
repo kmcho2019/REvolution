@@ -1,0 +1,12 @@
+We combine the clarity and structured logic of Example 2's loop-based approach with Example 1's efficient fan-in reduction and explicit next_state assignments. Specifically, we:
+
+- Use a combinational always block with a loop to handle multiple simultaneously active states cleanly and scalably.
+- Avoid multiple assignments to the same next_state bit inside the loop by accumulating with ORs to handle multiple active states transitioning to the same next state.
+- Replace the potentially wide OR for next_state[0] from Example 1 with a factored approach inside the loop, but keep the explicit one-hot assignments to avoid large fan-in OR gates.
+- For outputs, rely on simple bitmasks on the current state vector, which is both minimal and easily synthesizable.
+- Use blocking assignments in the combinational always block for better synthesis interpretation.
+- Add intermediate wires for clarity in inputs (in and ~in) to avoid redundant inversion logic.
+- The code is fully combinational with no flip-flops, matches one-hot encoding semantics, and properly supports multiple active states simultaneously.
+- Comments are clean and helpful to maintain readability and ease of future maintenance.
+
+This fusion improves maintainability, avoids large OR fan-in gates in next_state[0], and preserves clear output logic, yielding a clean and efficient design suitable for synthesis with good PPA.

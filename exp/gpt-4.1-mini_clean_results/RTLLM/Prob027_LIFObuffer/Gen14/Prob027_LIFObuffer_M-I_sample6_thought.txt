@@ -1,0 +1,19 @@
+The original design is already efficient and clear, but some modest optimizations can improve power and timing further:
+
+1. **Clock Gating for stack_mem Registers:** Introduce internal clock enable for stack_mem writes to avoid toggling during cycles without a push operation, reducing dynamic power.
+
+2. **Reduce SP Bit Width:** SP needs to represent 0..4, so 3 bits are needed. It is already minimal.
+
+3. **Optimize Reset:** Use a synchronous reset for all registers but optimize stack_mem clearing by performing the reset initialization only once per reset assertion and not in a loop on every clock cycle, which synthesis tools usually handle well. We keep the loop as standard practice.
+
+4. **Output Data Register (dataOut) Update:** Keep updating dataOut only on a pop (read) operation, no change otherwise, as in the original, to reduce unnecessary toggling.
+
+5. **Rearrange Conditionals for Clarity:** Minimal, already good.
+
+6. **Add comment for inferred clock gating:** Modern synthesis tools can infer clock gating if clock enable conditions are explicit.
+
+These adjustments should marginally improve power by reducing unnecessary writes and toggling, and may slightly improve timing by gating writes to stack_mem.
+
+We maintain the single always_ff block style and combinational flag logic.
+
+This is a low-level micro-optimization; major structural changes would be overkill for a 4-deep stack.

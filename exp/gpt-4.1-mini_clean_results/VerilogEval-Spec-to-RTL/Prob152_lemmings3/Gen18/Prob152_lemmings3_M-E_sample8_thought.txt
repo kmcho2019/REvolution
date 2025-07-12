@@ -1,0 +1,5 @@
+Use a 3-bit FSM state encoding explicitly capturing all three orthogonal aspects: direction (left/right), mode (walking/falling), and digging (yes/no). This encodes walking left, walking right, falling left, falling right, digging left, digging right as distinct states. The FSM transitions are encoded explicitly with a combinational next state logic that handles the priorities: falling overrides digging and bump-based direction change, digging is only entered from walking on ground, and bump changes direction only when walking and not digging or falling.
+
+This approach simplifies next state logic by avoiding separate digging flags and integrates all behavior in the FSM states. The outputs are derived directly from the FSM states. Asynchronous reset initializes to walking left state. This approach improves clarity and separates behavior modes into distinct states, making transitions explicit and easier to extend or verify.
+
+Although this requires more state bits (3 bits for 6 states), the logic becomes more straightforward and readable, potentially improving maintainability and debugging.

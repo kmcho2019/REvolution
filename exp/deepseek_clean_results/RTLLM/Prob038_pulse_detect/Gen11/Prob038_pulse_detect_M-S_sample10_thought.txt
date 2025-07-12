@@ -1,0 +1,9 @@
+To properly detect a 3-cycle pulse pattern (0->1->0) while keeping the design simple:
+1. Use a 2-bit state register to track the progression of the pulse pattern
+2. Implement a simple state machine with 3 states:
+   - IDLE: waiting for initial 0
+   - GOT_0: received first 0, waiting for 1
+   - GOT_01: received 0->1, waiting for final 0
+3. Output is asserted only when we complete the sequence (in GOT_01 state and see 0)
+4. Reset returns to IDLE state
+5. This approach uses minimal storage (2 bits) while correctly detecting the full pattern

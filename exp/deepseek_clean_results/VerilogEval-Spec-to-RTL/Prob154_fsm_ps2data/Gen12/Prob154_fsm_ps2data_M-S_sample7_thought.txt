@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. State Machine: Use just 3 states (IDLE, BYTE1, BYTE2) to track message reception
+2. Data Storage: Store bytes directly into the output register as they arrive
+3. Done Signal: Assert only when third byte is received
+4. Reset Handling: Clear state and outputs synchronously
+5. Output: Only guarantee valid data when done is high, otherwise don't-care
+
+Key Simplifications:
+- Removed unnecessary default assignments
+- Simplified state transitions with direct conditions
+- Eliminated redundant registers
+- Maintained minimal control logic
+- Kept output undefined except when done

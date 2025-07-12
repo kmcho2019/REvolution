@@ -1,0 +1,9 @@
+Fuse the two approaches by encoding the FSM states explicitly as WALK, FALL, and DIG in a compact 2-bit state variable for clarity and easy extensibility (from Example 1), while adopting the minimalistic separate direction bit from Example 2. Use priority logic in a clean combinational always block that explicitly handles the precedence (fall > dig > bump) and only updates direction during WALK mode when bumped, to minimize switching. Keep asynchronous reset initializing to WALK and walking left.
+
+Output signals remain purely combinational and Moore-style derived from state and direction. This fusion gains clarity from explicit states, minimal flip-flop usage (3 bits total), and reduced logic toggling by gating bump inputs within WALK state only. Overall, this approach blends the structured state machine clarity and priority handling from Example 1 with the clean direction encoding and minimal register use from Example 2, resulting in clear, efficient, and power-aware code.
+
+Additional small improvements:
+- Use combined bump logic to toggle direction on double bump, or set direction explicitly on single bump.
+- Retain the asynchronous reset.
+- Use blocking assignments in combinational always block and non-blocking in sequential.
+- Reduce logic by gating bump detection only to WALK state.

@@ -1,0 +1,12 @@
+A novel approach is to use a hierarchical decision structure that prioritizes the most significant variables first. Here's the thought process:
+1. First, check the value of 'c' as it creates clear patterns in the K-map
+2. When c=0, the output depends mainly on a XOR b, except for ab=00 which should be 0
+3. When c=1, the output is 1 in most cases except when ab=00 and cd=0100
+4. Use don't-care conditions to simplify the c=1 case by ignoring 'd' entirely
+5. Implement this as a priority-based multiplexer structure for clarity
+
+The resulting logic: out = c ? (a | b) : (a ^ b)
+This properly handles:
+- c=0 cases where we need XOR behavior
+- c=1 cases where we need OR behavior
+- All don't-care conditions are optimally used to simplify to OR logic

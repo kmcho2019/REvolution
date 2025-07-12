@@ -1,0 +1,14 @@
+To solve this problem, we need to design a finite state machine (FSM) that models the behavior of a Lemming in the game. The FSM should have states for walking left, walking right, falling, and digging. We will use a Moore state machine, where the outputs are determined by the current state. We will also need to keep track of the number of clock cycles the Lemming has been falling to determine if it should splatter when hitting the ground.
+
+The state machine will have the following states:
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and is no longer moving.
+
+The state machine will transition between these states based on the input signals. For example, if the Lemming is walking to the left and hits an obstacle on the right, it will transition to the WALK_RIGHT state. If the Lemming is falling and hits the ground after more than 20 clock cycles, it will transition to the SPLATTERED state.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling. This counter will be reset when the Lemming hits the ground or starts walking again.
+
+We will also need to handle the case where the Lemming is bumped while falling or digging. In this case, the Lemming's direction will not change, but it will still fall or dig until it hits the ground or finishes digging.

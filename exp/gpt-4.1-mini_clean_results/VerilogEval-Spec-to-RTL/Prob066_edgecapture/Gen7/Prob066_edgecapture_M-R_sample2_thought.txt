@@ -1,0 +1,13 @@
+To maintain the same core functionality of detecting and latching falling edges bitwise, I will refactor the design to separate the combinational falling edge detection and the sequential capturing of those edges more explicitly.
+
+Key changes:
+- Use a continuous assign for falling edge detection (combinational).
+- Use a synchronous always block only to update `prev_in` and latch the detected falling edges into `out`.
+- At reset, initialize `prev_in` with the current input `in` rather than a fixed value like all ones, so that the initial "previous input" state corresponds exactly to the input at reset time. This prevents false detection on the very first cycle after reset and makes the design adaptive to the actual input.
+- Initialize `out` to zero at reset as before.
+  
+This approach removes assumptions about initial values of `prev_in` and relies on sampling the input at reset time for correct edge detection on the first post-reset clock cycle, thus improving correctness and avoiding mismatches at startup.
+
+Structurally, this separates combinational and sequential logic cleanly, using an explicit `falling_edge` wire and a sequential register `prev_in` to remember the last input. The output `out` is updated only by latching the detected edges until reset.
+
+This maintains the original requirement while improving initialization and clarity of data flow.

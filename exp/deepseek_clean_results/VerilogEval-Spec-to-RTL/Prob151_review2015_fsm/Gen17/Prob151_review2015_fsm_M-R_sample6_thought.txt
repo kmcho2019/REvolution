@@ -1,0 +1,24 @@
+Refactored approach using explicit state machine with clear separation of concerns:
+
+1. **State Machine Restructuring**:
+   - Use classic Moore machine with explicit state encoding
+   - Separate pattern detection from state transitions
+   - Add explicit shift counter for precise 4-cycle shift_ena control
+
+2. **Output Generation**:
+   - Move to continuous assignments for outputs (assign statements)
+   - Derive outputs directly from current state for clarity
+
+3. **Pattern Detection**:
+   - Maintain separate 4-bit shift register for pattern matching
+   - Clear pattern register only when necessary (not in SHIFT state)
+
+4. **Shift Counting**:
+   - Add dedicated 2-bit counter for tracking 4 shift cycles
+   - Reset counter when entering SHIFT state
+
+Key improvements:
+- Clear separation between pattern detection and state control
+- Precise shift cycle counting
+- More readable output generation
+- Maintains same functionality but with better structure

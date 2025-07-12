@@ -1,0 +1,23 @@
+Refactor the pipelined 4-bit multiplier to separate combinational and sequential logic more clearly and to improve synthesis friendliness and code clarity:
+
+1. Use a first pipeline stage of registers to hold partial products from the combinational generate block.
+
+2. Use a second pipeline stage of registers to hold the sum of partial product pairs.
+
+3. Implement the final output as a combinational addition of these second stage registers, then register this sum on the clock to produce `mul_out`.
+
+4. Use explicit combinational wires for partial products and partial sums outside always blocks.
+
+5. Use synchronous reset (active-low) inside always blocks only for registers.
+
+6. This structure emphasizes three pipeline registers: first for partial products, second for sums of pairs, and third for final sum output, but as per problem statement, only two levels of registers are desired. To maintain two levels total, keep the final output as registered output of the second sum stage register addition, combining the sum and output register in one step:
+
+   - Level 1: pipeline registers holding partial products.
+
+   - Level 2: pipeline registers holding sums of partial products and final output register.
+
+7. Therefore, sum registers will add partial products and directly produce `mul_out` registered on the same clock edge.
+
+This approach uses fewer always blocks, more `assign` statements for combinational logic, and combines the final addition and output registering stage, respecting the original problem requirement of two pipeline register levels.
+
+This refactoring also makes the code more readable and matches common pipeline design styles.

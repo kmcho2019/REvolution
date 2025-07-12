@@ -1,0 +1,11 @@
+The 2's complement operation on a serial bit stream (LSB first) can be done with a simple 2-state Moore FSM:
+
+- Start in the COPY state, where output z copies the input x.
+- Once the first '1' bit is encountered on input x, transition to the INVERT state.
+- In the INVERT state, output is always the inverted input bit (~x).
+
+Because it’s a Moore FSM, outputs depend only on the current state (and are stored in a register), not combinationally on input. So we store the output z in a register, updated on the clock edge with the current state and input. This avoids glitches and timing issues.
+
+We use an asynchronous active-high reset to initialize the state to COPY and output z to 0.
+
+This is a minimal, clean, and functional implementation that satisfies the requirements without extra complexity.

@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace the large 100-bit mux with a barrel shifter structure to reduce critical path
+   - Implement rotation using concatenation with parameterized shifts
+   - Separate load and rotate paths to reduce mux depth
+
+2. Power Optimization:
+   - Add clock gating for the no-rotation case (ena=00/11)
+   - Only compute rotation values when needed using enable-specific logic
+
+3. Area Optimization:
+   - Use more efficient rotation implementation
+   - Remove redundant logic by directly implementing the rotation cases
+
+Key Changes:
+- Barrel shifter implementation for better timing
+- Clock gating for power reduction
+- Simplified control logic
+- Parameterized rotation logic for better scalability

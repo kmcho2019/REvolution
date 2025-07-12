@@ -1,0 +1,17 @@
+To fix the issues identified in the feedback, I'll implement these key improvements:
+
+1. **Output Timing Alignment**: Ensure f=1 is generated precisely one cycle after reset deassertion by making it purely combinational based on state.
+
+2. **Sequence Detection Timing**: Adjust the 1-0-1 detection to match specification timing by checking the sequence at the correct clock edge.
+
+3. **Accurate Timeout Counting**: Replace the toggle-based timeout with a proper 2-cycle counter that resets appropriately.
+
+4. **Permanent Output Handling**: Maintain g's value strictly in STATE_E until reset, with clear transition conditions.
+
+5. **Simplified State Machine**: Use more straightforward state transitions and output logic to minimize timing issues.
+
+The fixed FSM will:
+- Generate f=1 only in STATE_B (immediately after reset)
+- Detect 1-0-1 sequence on the clock edge following the third sample
+- Use a dedicated timeout counter for the 2-cycle y monitoring
+- Latch g permanently in STATE_E based on y detection or timeout

@@ -1,0 +1,16 @@
+I will implement the sequence detector using a Moore FSM with explicit one-hot encoding of states for clarity and easy debugging. Each state corresponds to how many bits of the sequence "1001" have been matched.
+
+The states will be:
+- IDLE: waiting for '1' to start sequence
+- S1: matched '1'
+- S2: matched "10"
+- S3: matched "100"
+- S4: matched "1001" (sequence detected)
+
+The transitions will consider overlapping sequences, so after a full detection, the FSM can immediately start matching a new sequence if bits overlap.
+
+The `sequence_detected` output will be asserted high for exactly one clock cycle when the FSM enters the S4 state, making it synchronous with `clk`.
+
+The reset is asynchronous and active low (`reset_n`), which immediately resets the FSM to IDLE.
+
+This approach clearly separates state encoding and output generation, uses one-hot for fast state decoding and simple next-state logic, and supports immediate re-detection of overlapping sequences.

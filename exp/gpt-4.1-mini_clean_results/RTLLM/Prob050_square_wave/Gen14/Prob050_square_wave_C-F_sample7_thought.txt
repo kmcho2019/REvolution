@@ -1,0 +1,13 @@
+Fuse the single always block toggle logic from Example 1 with the explicit toggle_flag combinational signal from Example 2 for clarity and efficiency.
+
+Strategy:
+- Use a single always @(posedge clk) block with synchronous reset to avoid complexity and maintain timing.
+- Introduce a toggle_flag wire that asserts when count reaches freq-1 (and freq != 0), clarifying the toggle condition without arithmetic in the always block.
+- On toggle_flag, reset count and toggle wave_out; otherwise increment count if freq!=0.
+- When freq=0, hold count at 0 and keep wave_out steady, preventing toggling and saving power.
+- This reduces combinational logic in the sequential block by isolating toggle condition as a combinational signal.
+- The single always block merges counting and toggling, improving area and timing over two-block designs.
+- Keep non-blocking assignments and synchronous reset for safe, predictable operation.
+- Avoid subtracting freq-1 inside always block by performing it combinationally on toggle_flag.
+- Hold wave_out explicitly on reset, no unnecessary else branch needed as non-blocking retains value by default.
+This fusion achieves clarity, simplicity, and better timing and power characteristics.

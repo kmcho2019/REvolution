@@ -1,0 +1,7 @@
+Refactoring Strategy:
+
+- Retain the borrow-based subtraction logic concept but implement the borrow chain explicitly via combinational continuous assignments rather than a generate loop, for clearer step-by-step signal flow.
+- Introduce intermediate wires for borrow signals at each bit explicitly, making the logic easier to follow without generate blocks.
+- Use bitwise XNOR followed by an AND reduction for equality detection as before.
+- Compute outputs using the final borrow and equality signals, ensuring mutual exclusivity.
+- This refactor keeps the combinational, synthesizable nature of the design but uses explicit naming and direct assignment for all intermediate signals, improving readability and debuggability.

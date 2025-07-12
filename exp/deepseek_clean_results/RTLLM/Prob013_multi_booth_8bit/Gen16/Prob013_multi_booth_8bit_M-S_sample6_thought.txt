@@ -1,0 +1,23 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Core Optimization:
+   - Remove unnecessary prev_lsb register by using multiplier[0] directly
+   - Combine multiplier and counter into single 4-bit register (3 bits for multiplier, 1 bit for counter)
+   - Reduce multiplicand width to 10 bits (8 + 2 for shifting)
+
+2. Efficient Control:
+   - Use simple counter (2 bits) to track iterations
+   - Generate rdy signal directly from counter state
+   - Remove explicit reset of internal registers (power-on reset sufficient)
+
+3. Streamlined Arithmetic:
+   - Direct Booth encoding with immediate shifts
+   - Single addition/subtraction per cycle
+   - Simplified sign extension handling
+
+Key Improvements:
+- Reduced register count by 1 (prev_lsb eliminated)
+- Narrower data paths (10-bit vs 16-bit multiplicand)
+- Fewer conditional operations
+- Same cycle count (4 cycles) for completion
+- Maintains correct Booth algorithm implementation

@@ -1,0 +1,14 @@
+The original logic expressions for mux_in[3:0] correctly represent the K-map values. To better adhere to the problem's constraint of using a single 4-to-1 mux with selectors {a,b} (external) and as many 2-to-1 muxes internally as needed, we will explicitly implement each mux_in bit as a small mux hierarchy composed of 2-to-1 multiplexers. Each 2-to-1 mux will be modeled using ternary conditional assignments, so structurally it matches the concept of muxes.
+
+We will:
+
+- Implement each mux_in bit as a cascade of 2-to-1 muxes with c and d as selectors.
+- Use no other logic gates besides multiplexers (conditional operator is mux).
+- Write a helper function for a 2-to-1 mux to improve clarity.
+- Avoid using direct logical operators and instead build signals through mux hierarchy only.
+- Keep inputs as c,d only, consistent with the problem statement.
+- Maintain mapping of mux_in[0] to ab=00, mux_in[1] to ab=01, mux_in[2] to ab=11, and mux_in[3] to ab=10.
+
+This structure clarifies the hierarchy and meets the problem's requirement to rely only on multiplexers. It also avoids any ambiguous use of combinational operators beyond muxing and constant literals.
+
+No changes in functionality, but an explicit hierarchical mux construction is introduced for clarity and adherence.

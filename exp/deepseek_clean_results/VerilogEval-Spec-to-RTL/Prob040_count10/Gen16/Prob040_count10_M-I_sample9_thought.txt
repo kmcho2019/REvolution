@@ -1,0 +1,12 @@
+Optimization strategy based on PPA metrics:
+1. Timing: Replace the combinational terminal count check (q[3] & q[0]) with a direct comparison (q == 4'd9) which may synthesize to more efficient logic and improve timing.
+2. Power: Maintain the synchronous reset but remove the intermediate addition operation to reduce switching activity.
+3. Area: Keep the minimal 4-bit register but optimize the comparison logic.
+4. Clock period: The current negative WNS suggests we can potentially improve timing by simplifying the comparison logic.
+
+Key improvements:
+- Direct decimal comparison for terminal count (clearer intent and potentially better synthesis)
+- Maintain synchronous reset functionality
+- Simplified increment logic
+- Reduced combinational logic complexity
+- Better readability while maintaining efficiency

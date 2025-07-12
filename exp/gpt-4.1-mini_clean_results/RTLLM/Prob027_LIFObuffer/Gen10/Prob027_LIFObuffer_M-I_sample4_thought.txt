@@ -1,0 +1,11 @@
+To optimize the LIFO buffer for better performance, power, and area (PPA), I will replace the shift-register based stack with an indexed memory array of 4 entries, each 4 bits wide. A 3-bit stack pointer (SP) will track the next free location in the stack, initialized to 0 on reset indicating an empty stack.
+
+For push operations (RW=0), if not full, dataIn is stored at the current SP index and SP increments. For pop operations (RW=1), if not empty, SP decrements and dataOut is updated with the value at SP-1.
+
+This avoids expensive 16-bit shifting, significantly reducing switching activity and improving timing by accessing only one memory location per cycle.
+
+EMPTY and FULL are combinationally derived from SP (EMPTY when SP==0, FULL when SP==4).
+
+Memory clearing on reset will zero all entries synchronously.
+
+This indexed memory approach is more synthesis-friendly and reduces critical path delay, power consumption, and area compared to the shift-register implementation.

@@ -1,0 +1,15 @@
+Fuse the clarity and explicit Moore FSM state approach of Example 2 with the succinct saturating counter logic and synchronous output generation of Example 1.
+
+Specifically:
+
+- Use a 3-bit saturating counter (0 to 7) tracking consecutive ones to avoid complex case statements and reduce combinational logic depth.
+- Update the counter and generate Moore outputs synchronously in one clocked always block to minimize logic levels and improve timing.
+- Maintain synchronous reset initializing counter and outputs.
+- Derive outputs based on the current counter and input to ensure correct one-cycle delayed assertion:
+  * disc: when previous cycle had exactly 5 consecutive ones and current input zero (0111110)
+  * flag: when previous cycle had exactly 6 consecutive ones and current input zero (01111110)
+  * err: when input causes the counter to saturate at 7 or above (7+ ones)
+- This approach reduces combinational logic, uses simple arithmetic on a counter for next state, and synchronous output registers, improving PPA metrics.
+- It also keeps Moore output timing and synchronous reset for robustness and clear design flow.
+
+This fusion combines the compact counter state encoding, synchronous updates, and minimal combinational logic, yielding a clean, fast, low-power, and small-area design.

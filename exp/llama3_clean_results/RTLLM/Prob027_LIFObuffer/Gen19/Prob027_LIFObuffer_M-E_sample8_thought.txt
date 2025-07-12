@@ -1,0 +1,16 @@
+To create a novel solution for the LIFO buffer, we will introduce a new architectural idea that leverages a circular buffer with a double-pointer mechanism. This approach will allow for efficient push and pop operations, while also providing a straightforward implementation of the EMPTY and FULL flags.
+
+The key components of this design include:
+
+1.  A circular buffer (circular_buf) to store the data, with a fixed size of 4 entries.
+2.  Two pointers, write_ptr and read_ptr, to track the current positions for writing and reading data, respectively.
+3.  A counter (count) to keep track of the number of valid entries in the buffer.
+
+The operation of the LIFO buffer can be described as follows:
+
+*   When the buffer is empty (count == 0), the EMPTY flag is set, and the FULL flag is cleared.
+*   When the buffer is full (count == 4), the FULL flag is set, and the EMPTY flag is cleared.
+*   For a push operation (RW == 0), the data is written to the circular buffer at the current write_ptr position, and the write_ptr is incremented modulo the buffer size. The count is also incremented.
+*   For a pop operation (RW == 1), the data is read from the circular buffer at the current read_ptr position, and the read_ptr is incremented modulo the buffer size. The count is also decremented.
+
+This design provides an efficient and scalable solution for the LIFO buffer, with a simple and intuitive implementation.

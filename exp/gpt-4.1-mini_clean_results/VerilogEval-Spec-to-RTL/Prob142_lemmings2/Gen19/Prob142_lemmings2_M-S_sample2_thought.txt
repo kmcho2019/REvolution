@@ -1,0 +1,9 @@
+Use a single 2-bit state register where bit1 indicates falling and bit0 direction (0=left, 1=right). On each clock edge with asynchronous reset, update state based on ground and bump signals:
+
+- If falling, remain falling until ground returns; ignore bumps.
+- If walking:
+  - If ground lost, enter falling.
+  - Else if bumped left or right (including both), flip or set direction accordingly.
+- Outputs derived directly from state bits in Moore style.
+
+Remove localparams and comments for brevity, rely on intuitive bit usage and concise combinational next-state logic to reduce complexity but keep clear behavior.

@@ -1,0 +1,12 @@
+Combine the best aspects of both examples by using clear localparam state encoding for readability and maintainability, while adopting the clean, explicit priority-based next state logic with if-else statements from Example 1 for clarity and synthesis friendliness. Keep the synchronous active-low reset and positive-edge clocking in a single always block for state updates.
+
+Implement output logic combinationally with a case statement but improve output stability and power efficiency by registering the output grants 'g' on the clock edge, updating them synchronously with the state. This reduces glitches and switching noise on output lines, a common good practice in FSM design.
+
+Use a 2-bit state encoding (A=00, B=01, C=10, D=11), and in state A choose the highest priority request among r[0], r[1], r[2]. In granted states, stay granted if the corresponding request stays high; otherwise, return to idle (A).
+
+This approach achieves:
+- Clear, readable state definitions.
+- Explicit priority logic.
+- Synchronous output registers reducing glitches and improving power.
+- Proper, synchronous active-low reset.
+- Good separation of combinational and sequential logic for synthesis friendliness.

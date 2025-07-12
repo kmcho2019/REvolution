@@ -1,0 +1,8 @@
+Refactor the FSM logic into purely combinational `assign` statements without using a function. Specifically:
+
+- Use combinational logic with nested ternary operators (?:) to define the next state directly from present state `y` and input `x`.
+- Derive `Y0` directly as the LSB of the computed next state.
+- Implement output `z` as a simple combinational OR of the relevant present states (`y == 3'b011` or `y == 3'b100`), removing the bitmask approach for clearer logic.
+- Keep the design fully combinational and synthesis-friendly, while avoiding the function for possibly easier tooling compatibility and readability.
+
+This maintains the same FSM behavior but uses a different structural coding style emphasizing continuous assignments and boolean logic.

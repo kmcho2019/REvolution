@@ -1,0 +1,10 @@
+To optimize the original design for better power, performance, and area (PPA), we can:
+
+1. Register the output signals (red, yellow, green) to reduce combinational delay from state to outputs, improving timing.
+2. Use a clock enable signal for the timer counter decrement to avoid unnecessary toggling and save power.
+3. Merge the combinational output assignments into the sequential always block to reduce logic duplication.
+4. Use a single case statement for both state transitions and timer presets to simplify logic and potentially reduce area.
+5. Keep reset synchronous to avoid asynchronous resets which can cause timing closure problems.
+6. Slightly adjust encoding for clarity but keep 2-bit state to minimize area.
+
+These changes should reduce switching activity by gating counter updates, register outputs to improve timing, and simplify logic for synthesis tools to optimize better.

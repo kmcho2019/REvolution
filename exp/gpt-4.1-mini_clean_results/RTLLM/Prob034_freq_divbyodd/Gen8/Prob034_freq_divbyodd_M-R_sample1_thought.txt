@@ -1,0 +1,11 @@
+To refactor while keeping the core idea, I will implement the frequency divider using a single counter running on the rising edge of clk and derive the two phase-shifted signals clk_div1 and clk_div2 by comparing the counter value against carefully chosen thresholds. This eliminates the need for two separate counters on opposite edges, simplifying synchronization issues.
+
+The counter will count modulo NUM_DIV (odd), and clk_div1 will be high for the first half of the count, while clk_div2 will be high for the second half, effectively producing two non-overlapping pulses with a phase shift of half the division count. By OR-ing these two signals, the resulting clk_div output will have a frequency divided by NUM_DIV with a near 50% duty cycle.
+
+Reset initializes the counter to zero.
+
+This approach uses purely combinational logic to generate clk_div1 and clk_div2 signals from the counter, and one clocked always block for the counter, improving clarity and timing behavior.
+
+A compile-time assertion ensures NUM_DIV is odd.
+
+This solution better aligns with the original concept but structures the logic more cleanly and avoids dual-edge triggered flip-flops.

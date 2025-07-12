@@ -1,0 +1,10 @@
+The existing design uses synchronous reset to clear all memory locations, which can cause significant switching activity and power during reset, especially if reset is asserted frequently. Also, the read port is combinational, which may cause timing challenges and glitches. To improve PPA:
+
+1. Change reset to asynchronous reset for the RAM array to avoid toggling all registers on clock cycles during reset.
+2. Use a registered (synchronous) read output to improve timing predictability and reduce glitching on read_data output.
+3. Keep write synchronous and gated by write_en.
+4. Parameterize the address width with $clog2(DEPTH).
+5. Keep read_data zero when read_en is low by adding a read enable check in the synchronous read block.
+6. Use a reset for read_data output for clean startup state.
+
+This approach reduces reset power and switching (by asynchronous reset), improves timing closure and output stability (registered read), and maintains clear, compact logic. The change from combinational to synchronous read introduces one cycle read latency but greatly enhances timing and power characteristics.

@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. Fix pattern detection by maintaining the pattern register until explicitly cleared after full sequence detection
+2. Correct shift counter to count exactly 4 cycles (0-3) before transitioning
+3. Ensure proper state sequencing by:
+   - Only clearing pattern after successful detection
+   - Maintaining strict 4-cycle shift period
+   - Properly waiting for ack in DONE state
+4. Optimize implementation by:
+   - Using 2-bit state encoding (4 states)
+   - Simplifying output logic with direct state assignments
+   - Minimizing unnecessary registers
+
+Key Changes:
+- Pattern register now persists until SHIFT state completes
+- Shift counter properly counts 0-3 (4 cycles)
+- Clear pattern only when returning to IDLE
+- Simplified state machine with explicit transitions
+- Direct output assignments from state

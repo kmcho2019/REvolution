@@ -1,0 +1,14 @@
+To implement a radix-2 divider for 8-bit signed or unsigned integers, we can utilize a novel architectural approach that combines the benefits of iterative division and pipelining. The design will incorporate a series of stages, each responsible for a specific operation in the division process, such as bit shifting, subtraction, and quotient calculation. By pipelining these stages, we can significantly improve the throughput of the divider, allowing it to handle a continuous stream of division operations. 
+
+The module, named "radix2_div", will accept two 8-bit operands (dividend and divisor), a sign bit indicating whether the operation is signed or unsigned, and a valid input signal (opn_valid) to initiate the division process. The result will be a 16-bit output containing both the quotient and the remainder, with a separate valid output signal (res_valid) to indicate when the result is ready.
+
+The key components of this design include:
+
+1.  **Input Registers**: To store the dividend, divisor, and sign bit.
+2.  **Pipeline Stages**: A series of stages, each performing a specific function, such as:
+    *   **Stage 1**: Initialize the pipeline with the absolute value of the dividend and divisor, and set the quotient to zero.
+    *   **Stage 2-9**: Perform the radix-2 division iterations, where each stage shifts the dividend left by one bit, subtracts the divisor if possible, and updates the quotient accordingly.
+3.  **Result Formation**: After the final pipeline stage, the result is formed by concatenating the quotient and remainder.
+4.  **Control Logic**: Manages the flow of data through the pipeline, including handling the valid input signal, generating control signals for each stage, and asserting the result valid signal when the result is ready.
+
+By employing a pipelined architecture, this design aims to achieve high throughput and efficient division of 8-bit integers, making it suitable for applications requiring frequent division operations.

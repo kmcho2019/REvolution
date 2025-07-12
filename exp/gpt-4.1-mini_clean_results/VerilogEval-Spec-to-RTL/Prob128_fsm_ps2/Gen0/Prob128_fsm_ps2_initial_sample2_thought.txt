@@ -1,0 +1,14 @@
+The module will have a simple FSM with three states representing the bytes of the message: SEARCH, BYTE2, BYTE3.
+
+- In the SEARCH state, the FSM discards input bytes until it finds one with in[3] = 1, marking the start of a message.
+- When such a byte is found, it transitions to BYTE2 state (waiting for second byte).
+- Upon receiving the next byte, transition to BYTE3 state.
+- After receiving the third byte, assert done signal for one clock cycle and return to SEARCH state.
+
+The reset is synchronous and active high, so on reset the FSM goes to SEARCH state and done is deasserted.
+
+done will be a one-cycle pulse asserted on the clock cycle immediately after the third byte is received.
+
+Assume that the input byte stream is continuous and each byte arrives on a clock cycle.
+
+The implementation will use a state register and combinational next-state logic.

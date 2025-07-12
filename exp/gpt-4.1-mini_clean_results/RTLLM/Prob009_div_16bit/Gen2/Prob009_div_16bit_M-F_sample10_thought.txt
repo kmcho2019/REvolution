@@ -1,0 +1,21 @@
+To correctly implement the described division algorithm, we must closely follow the problem's stepwise procedure:  
+- Extract the top bits of the dividend equal in width to the divisor (8 bits initially).  
+- Compare these bits with the divisor. If greater or equal, set quotient bit to 1, else 0, and update the remainder accordingly.  
+- Then concatenate the remainder with the next highest dividend bit (moving from MSB down to LSB), repeating this process for all 16 dividend bits.  
+
+This process requires:  
+1. A temporary remainder register wide enough to hold (divisor width + 1) bits (9 bits), because concatenating one more bit to the divisor-width segment is needed.  
+2. At each iteration, take the current remainder bits, shift left by 1, and append the next dividend bit from the highest remaining bit downwards.  
+3. Compare only the top divisor-width bits of this remainder with the divisor.  
+4. If remainder's top bits >= divisor, subtract divisor and set current quotient bit to 1; else set quotient bit to 0.  
+
+Also:  
+- Quotient bits are assigned from the highest bit (15) down to the lowest bit (0) following dividend bit processing order.  
+- The final remainder is the lower divisor-width bits of the remainder register (since we subtract divisor when possible).  
+- The outputs 'result' (quotient) and 'odd' (remainder) are both 16 bits: quotient is full 16-bit result, remainder is zero-extended to 16 bits with the remainder in lower 8 bits and zeros in upper 8 bits.
+
+Implement two combinational always blocks:  
+- The first always block latches inputs into registers (a_reg and b_reg) for stable inputs during division.  
+- The second always block performs the division using these latched inputs, as described.
+
+This approach respects the problem requirements and corrects the misunderstanding in previous code by explicitly managing the remainder width, processing bits from MSB to LSB, and setting quotient bits accordingly.

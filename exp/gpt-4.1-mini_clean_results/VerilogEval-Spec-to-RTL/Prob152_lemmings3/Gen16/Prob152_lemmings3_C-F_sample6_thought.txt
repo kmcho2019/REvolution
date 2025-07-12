@@ -1,0 +1,7 @@
+Fuse the compact 2-bit state encoding of direction and mode (walk/fall) from Example 1 with the clear tri-state FSM from Example 2 (walk, fall, dig). Represent states using a 2-bit direction+mode for walking/falling, and a separate digging register to distinguish digging vs walking modes on ground, as in Example 1. 
+
+Use Example 1's priority order and detailed next state conditions (fall > dig > bump), but simplify and flatten next state logic by avoiding nested ifs with clearer conditions and minimized redundancy. Use Example 2's clean bump handling logic: switch direction on any bump, and toggle direction if both bumps occur simultaneously.
+
+Keep asynchronous reset to walk_left. Outputs are Moore-style, derived directly from state and digging flags.
+
+This fusion keeps the minimal 2-bit FSM state to represent direction and mode (walking/falling), stores digging in a separate bit (allowing easy mode checking and reducing state bits), prioritizes inputs neatly, and clarifies bump handling for power and performance. The result is a minimal, efficient, and clean FSM implementation.

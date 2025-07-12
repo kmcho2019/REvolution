@@ -1,0 +1,5 @@
+I will refactor the JK flip-flop implementation to use a single always block with a case statement on the concatenated inputs {j, k} and the current state Q to directly determine the next state. This approach explicitly enumerates all JK input cases, improving readability and clarity by showing the direct transition for each JK input combination.
+
+Instead of computing Q_next combinationally outside and then updating Q, I will embed the logic inside the always @(posedge clk) block, assigning Q synchronously based on the case. This removes the intermediate wire and uses only one always block with a non-blocking assignment, which is idiomatic and straightforward for sequential logic.
+
+This refactoring keeps the logic functionally identical, preserves synthesis friendliness, and enhances code clarity by directly representing the JK flip-flop behavior through structured case analysis without separate combinational logic.

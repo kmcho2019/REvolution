@@ -1,0 +1,21 @@
+This new asynchronous FIFO design uses a parameterized structure with a clean modular breakdown similar to the request but approaches the pointer management with a simplified and fully synchronous pointer update and synchronization scheme:
+
+1. The write and read pointers are maintained as binary counters in their respective clock domains. On each write or read increment (winc/rinc), the pointers increment modulo DEPTH.
+
+2. These binary pointers are converted to Gray code for safe synchronization across clock domains.
+
+3. Pointer synchronization uses dedicated two-stage flip-flop synchronizers to transfer Gray-coded pointers from one clock domain to the other.
+
+4. Full and empty flags are generated based on the difference between the Gray-coded pointers, following standard FIFO full/empty detection logic:  
+   - Empty when synchronized write pointer equals read pointer  
+   - Full when write pointer is one ahead of read pointer, considering the upper bits for wrap-around detection
+
+5. The dual-port RAM submodule is instantiated as requested, with separate clocks for write and read ports, and enables for write and read. The addresses are taken as the lower bits of the binary pointers converted from Gray code, as specified.
+
+6. Write enable (wen) is asserted only when FIFO is not full, read enable (ren) only when FIFO not empty.
+
+7. Output data rdata is registered on the read clock domain after the read enable.
+
+This design uses parameter DEPTH and WIDTH; address width ADDR_WIDTH is derived from DEPTH. The pointers are (ADDR_WIDTH+1) bits wide to enable full/empty detection logic using Gray code. The implementation carefully avoids combinational loops, and all pointer synchronizers use two flip-flop stages for metastability protection.
+
+This new design is self-contained and explicitly defines all internal signals, functions, and modules, meeting the requirements and naming conventions of the problem statement.

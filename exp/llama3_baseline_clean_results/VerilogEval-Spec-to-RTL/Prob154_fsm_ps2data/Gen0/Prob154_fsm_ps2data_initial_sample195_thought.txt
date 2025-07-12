@@ -1,0 +1,15 @@
+To solve this problem, we will implement a finite state machine (FSM) with the following states:
+- Idle: The initial state where the FSM waits for a byte with in[3]=1.
+- Byte1: The state where the first byte of the message is received.
+- Byte2: The state where the second byte of the message is received.
+- Byte3: The state where the third byte of the message is received.
+
+We will also use registers to store the received bytes and a counter to keep track of the current state.
+
+When the FSM is in the Idle state, it will check if the current input byte has in[3]=1. If it does, it will transition to the Byte1 state and store the current byte.
+
+In the Byte1, Byte2, and Byte3 states, the FSM will store the current byte and transition to the next state.
+
+When the FSM is in the Byte3 state, it will set the done signal to 1 and output the received message (out_bytes).
+
+The FSM will also reset to the Idle state when the reset signal is active high.

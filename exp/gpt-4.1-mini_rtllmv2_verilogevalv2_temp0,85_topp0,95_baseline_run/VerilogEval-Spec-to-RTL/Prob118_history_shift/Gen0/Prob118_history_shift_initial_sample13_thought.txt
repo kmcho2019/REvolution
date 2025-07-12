@@ -1,8 +1,0 @@
-Implement a 32-bit shift register for global branch history. On a positive edge clock:
-- If areset is asserted, asynchronously reset the history to zero.
-- If train_mispredicted is asserted, load history with {train_history[31:1], train_taken} (train_history concatenated with train_taken, shifted right by one).
-- Else if predict_valid is asserted, shift in predict_taken from LSB side (history <= {history[30:0], predict_taken}).
-- Otherwise, keep history unchanged.
-Output predict_history reflects the current history register.
-Misprediction update takes priority over prediction update.
-The reset is asynchronous but positive edge triggered, which means the reset action happens on the rising clock edge and also asynchronously asserted positive edge. However, since asynchronous resets typically mean immediate reset without waiting for clock, but the problem states positive edge triggered asynchronous reset, so we treat it as synchronous reset triggered asynchronously on posedge of areset signal (i.e., if areset posedge happens, reset immediately). We can implement this with an asynchronous reset on the always block triggered by posedge clk or posedge areset, and in the block, if areset is high, reset history to zero. This fits the requirement.

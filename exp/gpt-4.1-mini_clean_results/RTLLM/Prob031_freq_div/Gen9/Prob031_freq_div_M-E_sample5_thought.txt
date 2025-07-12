@@ -1,0 +1,13 @@
+Instead of using three independent counters with separate always blocks, I will implement a single wide counter to generate all output clocks by checking its value against divisors derived from the input clock frequency. Each output clock will toggle when the counter reaches half of its corresponding division factor minus one, ensuring 50% duty cycles.
+
+This single-counter approach reduces the number of registers and logic resources by multiplexing the counting hardware and control logic. The toggling conditions will be precisely calculated based on the division requirements:
+
+- 50 MHz: divide by 2, toggle every 1 count (half period = 1)
+- 10 MHz: divide by 10, toggle every 5 counts (half period = 5)
+- 1 MHz: divide by 100, toggle every 50 counts (half period = 50)
+
+The counter will reset on reaching the largest division factor (100 counts), wrapping around to zero.
+
+The design uses synchronous reset and a single always block triggered on the input clock's positive edge, which improves resource sharing and can simplify timing closure.
+
+This method ensures all output clocks are phase-aligned relative to the input clock and each other, and reduces hardware complexity compared to separate counters. The code will be clean and highly maintainable.

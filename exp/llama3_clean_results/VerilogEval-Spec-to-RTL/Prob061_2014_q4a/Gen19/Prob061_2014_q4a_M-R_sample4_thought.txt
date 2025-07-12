@@ -1,0 +1,11 @@
+The existing solution uses a sequential approach with an always block to update the output Q based on the inputs. To refactor this code, we can consider using a combinational logic approach with an assign statement. This approach can potentially simplify the design and make it more amenable to optimization by the synthesis tool.
+
+One way to refactor the design is to use a multiplexer-based approach. The idea is to use the inputs L, E, and the current state Q to select the next state of Q. When L is asserted, the next state of Q is R. When E is asserted and L is not, the next state of Q is w. Otherwise, the next state of Q remains the same.
+
+We can implement this logic using an assign statement with a conditional operator. However, to ensure that the design is sequential and only updates on the positive edge of the clock, we need to use a register to store the current state of Q and update it on the clock edge.
+
+Another approach is to use a state machine with two states: idle and load. When L is asserted, the state machine transitions to the load state, and when L is deasserted, it transitions back to the idle state. In the idle state, when E is asserted, the next state of Q is w; otherwise, the next state of Q remains the same.
+
+However, considering the simplicity of the existing design and the fact that it is already optimized for PPA metrics, a more straightforward approach would be to use a single assign statement to define the combinational logic that drives the D input of a D flip-flop. The Q output of the D flip-flop can then be used as the output of the module.
+
+This approach simplifies the design and makes it more modular, as the combinational logic and the sequential logic are separated. The synthesis tool can then optimize the combinational logic and the D flip-flop separately, potentially leading to better PPA metrics.

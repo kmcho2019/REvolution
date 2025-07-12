@@ -1,0 +1,9 @@
+To simplify the implementation while maintaining correct functionality, let's analyze the Karnaugh map more carefully. We can identify the essential prime implicants that cover all the 1s in the map:
+
+1. The top-left quadrant (cd=00) shows output 1 for all ab except 11 → (~c & ~d & ~(a & b))
+2. The cd=01 column shows output 1 when ab=00 or 10 → (~c & d & (~a | ~b))
+3. The cd=11 column shows output 1 when ab=01, 11, or 10 → (c & d & (a | b))
+4. The cd=10 column shows output 1 when ab=01 or 11 → (c & ~d & b)
+
+This gives us a more accurate and simplified expression:
+out = (~c & ~d & ~(a & b)) | (~c & d & (~a | ~b)) | (c & d & (a | b)) | (c & ~d & b)

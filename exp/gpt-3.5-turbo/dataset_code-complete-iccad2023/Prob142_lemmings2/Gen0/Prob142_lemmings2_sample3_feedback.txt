@@ -1,7 +1,0 @@
-1. The initial state assignment in the Moore state machine is not deterministic. When using asynchronous reset (areset), the state should be set explicitly to a known state to avoid ambiguity. In this case, the state is inconsistently set to `LEFT` without considering the asynchronous reset signal.
-
-2. The state transitions in the `LEFT` and `RIGHT` states are not handling all the specified conditions correctly. For instance, when a Lemming should say "aaah!" while falling (ground=0), the walking direction should not change, but the code logic does not account for this behavior. This lack of consideration for the falling state leads to incorrect output assignments and mismatches in the simulation results.
-
-3. The output assignments are performed within a combinational block (`always @(*)`). However, the outputs `walk_left`, `walk_right`, and `aaah` are dependent on the current state and certain conditions, which should be captured in a sequential block to prevent race conditions and ensure consistent behavior. The combinational logic used here may lead to glitches and incorrect output changes based on the inputs.
-
-4. The Moore state machine's next state logic and output assignments need to be refined to adhere to the specified Lemmings behavior accurately. By addressing the state transitions and output assignments' correct timing and conditions, the mismatches in the simulation output can be reduced.

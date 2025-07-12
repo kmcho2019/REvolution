@@ -1,0 +1,11 @@
+To properly implement the 3.5x fractional frequency divider, we need to:
+1. Maintain the 7-cycle counter (MUL2_DIV_CLK = 7) for the base division
+2. Generate two complementary clock phases with precise timing:
+   - Primary phase (clk_div_p): 4 cycles high, 3 cycles low
+   - Secondary phase (clk_div_n): 3 cycles high, 4 cycles low, but phase-shifted by half cycle
+3. Align the phase generation precisely with the counter:
+   - Primary phase changes on positive edges
+   - Secondary phase changes on negative edges with adjusted timing
+4. Combine the phases using OR logic to create uniform output periods
+5. Ensure proper reset synchronization and edge alignment
+6. Adjust the secondary phase timing to properly interleave with the primary phase

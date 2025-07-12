@@ -1,0 +1,16 @@
+Refactored Architecture Idea: Single-Register Johnson Counter with Direct Feedback
+1. Core Concept: 
+   - Eliminate pipeline stages and use a single 64-bit register with direct feedback
+   - Implement shift operation using concatenation and bit selection
+   - Use continuous assignment for the shift logic
+2. Benefits:
+   - Reduced area (single register instead of pipeline stages)
+   - Lower power (eliminates intermediate register toggling)
+   - Simpler timing path (direct feedback from LSB to MSB)
+3. Implementation:
+   - Single always block for synchronous operations
+   - Reset initializes counter to all zeros
+   - Shift operation combines feedback (inverted LSB) with current value
+4. Optimization:
+   - Let synthesis tool optimize shift register implementation
+   - Clean synchronous design without unnecessary attributes

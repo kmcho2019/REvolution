@@ -1,0 +1,20 @@
+This design introduces a pipelined, segmented multiplier with carry-save accumulation to optimize both performance and power:
+
+1. Multiplier Segmentation:
+   - Break the 32x32 multiplication into four 16x16 segments
+   - Compute partial products in parallel
+   - Combine results with proper sign extension
+
+2. Carry-Save Accumulation:
+   - Use carry-save format for intermediate accumulation
+   - Convert to final result only when needed
+   - Reduces critical path delay
+
+3. Power Optimization:
+   - Dynamic operand isolation for zero inputs
+   - Clock gating when inputs are stable
+   - Partial product suppression for known-zero segments
+
+4. Precision Management:
+   - Saturation arithmetic for overflow protection
+   - Configurable truncation of LSBs for power-area tradeoffs

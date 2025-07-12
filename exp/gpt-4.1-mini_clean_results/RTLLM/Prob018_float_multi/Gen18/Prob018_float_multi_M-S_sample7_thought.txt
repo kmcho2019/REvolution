@@ -1,0 +1,11 @@
+Simplify the 5-stage pipelined floating-point multiplier to a single-cycle combinational design for clarity and reduced complexity, while maintaining full IEEE-754 compliance (special cases, normalization, rounding). This removes the pipeline registers and cycle counter, reducing code size and control complexity. The multiplier inputs are processed combinationally each cycle, with the output registered synchronously.
+
+Key points:
+- Extract sign, exponent, mantissa, and special flags combinationally.
+- Compute sign, exponent sum, and mantissa product combinationally.
+- Normalize mantissa product and adjust exponent.
+- Round using guard, round, and sticky bits to nearest even.
+- Handle special cases (NaN, Inf, zero) and overflow/underflow.
+- Output result is registered on clock edge with reset.
+
+This approach keeps the core IEEE-754 algorithm intact but simplifies the control, making it easier to understand and verify at the cost of higher combinational delay and no pipelining.

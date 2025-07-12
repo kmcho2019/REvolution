@@ -1,0 +1,23 @@
+Here's a novel approach using a hierarchical counter structure and parallel pattern matching:
+
+1. **Parallel Pattern Detection**: Instead of a shift register, use combinatorial logic to detect the 1101 pattern in the last 4 bits. This reduces state transitions and makes detection instantaneous.
+
+2. **Hierarchical Counting**: 
+   - Main counter counts in 1000-cycle blocks
+   - Sub-counter counts individual cycles within each block
+   - This simplifies the (delay+1)*1000 calculation
+
+3. **State Machine Optimization**:
+   - Combine SHIFT_DELAY and COUNTING states into one active state
+   - Use a bit counter to track both pattern and delay bits
+   - Eliminate intermediate states for cleaner transitions
+
+4. **Output Generation**:
+   - Generate count output directly from the remaining blocks
+   - Use registered outputs for clean timing
+
+The design will be more efficient with:
+- Fewer state transitions
+- Simplified counter logic
+- Immediate pattern detection
+- Clear separation between detection and counting phases

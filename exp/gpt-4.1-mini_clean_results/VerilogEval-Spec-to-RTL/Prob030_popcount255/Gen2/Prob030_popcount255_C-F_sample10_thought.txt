@@ -1,0 +1,10 @@
+Fuse the hierarchical balanced summation tree from Example 1 with a more efficient and explicit parallel population count within each smaller block, replacing the simple for-loop sum inside popcount17 by a parallel tree-based summation of smaller bit-groups. This should reduce the critical path inside each partial count block and improve both timing and power, while preserving modularity and area efficiency.
+
+Specifically:
+- Divide the 255-bit input into 15 blocks of 17 bits each.
+- For each 17-bit block, use a parallel adder tree to sum groups of bits in multiple stages instead of a single for-loop, minimizing long ripple carry chains.
+- Then sum the 15 partial counts in a balanced adder tree as in Example 1.
+- Make all summations explicit so synthesis can optimize well.
+- The final output remains 8 bits since max sum is 255.
+
+This fusion combines the hierarchical structured approach with a more optimal summation inside each small block, improving timing and power compared to Example 1, while keeping area moderate and code clarity high.

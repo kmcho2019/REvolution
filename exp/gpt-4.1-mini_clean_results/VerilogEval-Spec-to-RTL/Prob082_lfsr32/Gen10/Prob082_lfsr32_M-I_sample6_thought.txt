@@ -1,0 +1,5 @@
+To optimize the original design for better PPA metrics, reduce unnecessary switching and logic depth by selectively updating only the bits with taps rather than XORing the entire 32-bit register. This can be done by implementing the Galois LFSR logic with a for-loop where only tap positions incorporate XOR with the feedback bit (q[0]), while other bits simply shift right. This approach reduces toggling on non-tap bits, thereby lowering power, and potentially decreases critical path delay by localizing XOR operations rather than applying a wide XOR across all bits.
+
+The synchronous reset remains unchanged, setting q to 32'h1. This more explicit implementation clarifies which bits are tapped, facilitating synthesis optimizations and possibly better mapping to hardware shift register primitives.
+
+Overall, the improved design trades a slightly larger code size for potential gains in timing, power, and area efficiency.

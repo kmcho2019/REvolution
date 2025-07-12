@@ -1,0 +1,8 @@
+This design implements a parallel pattern matching FSM that tracks all possible partial matches simultaneously. The key innovations are:
+1. Uses a one-hot encoded state machine where each bit represents a partial match progress
+2. State transitions happen in parallel for all possible pattern positions
+3. Eliminates the need for shift registers by directly tracking pattern progress
+4. Each clock cycle, the current state and input bit determine next state in parallel
+5. When state '1101' (binary 13) is reached, the pattern is matched
+6. More power efficient as only relevant state bits toggle each cycle
+7. Potentially better timing as the critical path is just simple state transitions

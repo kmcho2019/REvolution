@@ -1,0 +1,19 @@
+Implement a novel combinational divider by performing a hierarchical divide-and-conquer approach that splits the 16-bit dividend into two 8-bit halves. 
+
+Concept:
+- The divisor is 8-bit, so we divide the upper 8 bits of the dividend first to get a preliminary quotient and remainder.
+- Then combine that remainder (8-bit) with the lower 8 bits of the dividend to form a new 16-bit value.
+- Divide this combined value again by the divisor to get the lower 8 bits of the quotient and a final remainder.
+- Concatenate the two 8-bit quotient parts to form the full 16-bit quotient, and zero-extend the remainder to 16 bits.
+  
+This two-step division using two 8-bit divisions reduces complexity and critical path by operating in smaller bit widths and avoids a long iterative shift-subtract loop.
+It uses two always blocks as requested: the first to latch inputs, the second to implement the two-step division combinationally using simple arithmetic and comparison.
+
+This approach aligns with the problem requirements:
+- Uses combinational always blocks
+- Uses explicit registers for intermediate results
+- Extracts the top 8 bits, compares, subtracts, and continues iteratively (in two stages)
+- Produces result and remainder outputs consistent with the problem description
+- Uses no generate or iterative loops, just explicit arithmetic.
+
+This design can be synthesizable and relatively fast since it uses only two 8-bit divisions.

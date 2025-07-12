@@ -1,0 +1,16 @@
+The initial solution correctly derives the boolean function from the Karnaugh map but misassigns the bits of the 4-bit input vector to the Karnaugh map variables, leading to a functional mismatch. The correct assumption should be that the 4-bit input `x[3:0]` corresponds to bits x[4], x[3], x[2], x[1] of the problem statement as follows:
+
+- x[3] → x[4]
+- x[2] → x[3]
+- x[1] → x[2]
+- x[0] → x[1]
+
+This matches the problem's rows (x[3]x[4]) to bits x[2] and x[3], and columns (x[1]x[2]) to bits x[0] and x[1] respectively.
+
+Thus:
+- Row bits: x[3] (input bit 3) and x[2] (input bit 2)
+- Column bits: x[1] (input bit 1) and x[0] (input bit 0)
+
+Using this mapping, I will implement the same logic but by directly using a combinational `always @(*)` block with a `case` statement over the 4-bit input to specify outputs for all the relevant minterms explicitly, including don't-cares assigned conveniently to zero. This structure improves readability and explicitness. Finally, output `f` will be assigned accordingly.
+
+This change preserves the function and makes the design easier to verify, while fixing the input bit mapping confusion.

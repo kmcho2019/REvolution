@@ -1,0 +1,13 @@
+This solution takes a different approach by using a lookup table (LUT) implemented as a ROM to map scancodes to arrow key outputs. The key innovations are:
+
+1. ROM-based implementation where the 16-bit scancode serves as the address
+2. Each ROM location stores a 4-bit one-hot encoded output pattern
+3. Only 4 valid scancodes are programmed in the ROM (others default to 0)
+4. Outputs are directly driven by the ROM data bits
+
+Advantages:
+- Extremely simple and clean implementation
+- No complex comparison logic needed
+- Easy to modify/extend for additional key mappings
+- ROM can be optimized by synthesis tools
+- All outputs computed in parallel with single lookup

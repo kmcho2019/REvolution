@@ -1,0 +1,13 @@
+Instead of directly writing combinational logic for each next state signal, we can implement the next-state decoding by first extracting the current one-hot state bits and then defining next state bits using a concise case statement style encoded combinational logic. This modular approach uses a combinational always block for the next state vector signals, deriving next state signals by direct mapping from current state and inputs. Outputs are similarly derived by decoding current state bits.
+
+By representing next state as a 10-bit one-hot vector and driving each next state bit directly from conditions, the code becomes very readable and extensible.
+
+Additionally, to optimize logic for shift_ena, done, and counting signals, we assign them as combinational ORs of the corresponding current state bits.
+
+This approach benefits from clarity and scalability and can be easily synthesized, ensuring all output signals are combinational and derived solely from inputs and current state, complying strictly with the Moore FSM requirements.
+
+No intermediate logic is introduced beyond the combinational always block. This method provides a different architectural style compared to purely combinational assign statements.
+
+We explicitly calculate next state signals: B3_next, S_next, S1_next, Count_next, Wait_next from the next_state vector, and derive outputs from the current state.
+
+This solution is a clean, modular, and alternative approach for the combinational logic of a one-hot encoded FSM.

@@ -1,0 +1,16 @@
+Implement the 16-bit unsigned multiplier as a classic shift-and-add sequential multiplier but with a different architectural approach:
+
+- Instead of shifting the multiplicand (areg) and multiplier (breg), keep both inputs fixed in registers.
+- Use a separate 5-bit counter to track the current bit index (from 0 to 15).
+- On each cycle, check the current bit (indexed by counter) of the multiplier (bin register). If that bit is 1, add the multiplicand shifted left by that bit index to an accumulator register.
+- This eliminates the need for repeated shifting of registers every cycle.
+- The multiplicand is shifted using a combinational shifter (<< bit index) during addition.
+- The done flag is asserted after the 16 cycles of addition/shifting are complete.
+- The start signal loads the inputs and begins operation.
+- Reset clears all registers and the done flag.
+- This approach trades off some hardware for simpler control and no shifting of multiplicand/multiplier registers every cycle, which may reduce switching activity on these registers.
+- Because the multiplicand shift amount is directly the bit index, no shift register required.
+- This may improve power due to less toggling of input registers; performance depends on the adder implementation.
+- The output is stored in a 32-bit accumulator register and presented as yout.
+
+This design fully respects the original I/O and control signals and provides a distinct architectural approach.

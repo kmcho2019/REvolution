@@ -1,0 +1,9 @@
+To implement the finite-state machine that controls the timer, we can define a set of states that correspond to each step of the process:
+- Idle: Waiting for the start pattern (1101)
+- Shift: Shifting in 4 more bits to determine the duration
+- Counting: Waiting for the counters to finish counting
+- Done: Notifying the user and waiting for acknowledgement
+
+We will use a Mealy machine model, where the outputs depend on both the current state and the inputs. We will also use a binary counter to keep track of the number of bits shifted.
+
+The state machine will start in the Idle state and transition to the Shift state when the start pattern is detected. It will then stay in the Shift state for 4 clock cycles, shifting in the duration bits. After that, it will transition to the Counting state and wait until the counters finish counting. Once the counters are done, it will transition to the Done state and assert the done output. The state machine will stay in the Done state until the ack input is high, at which point it will reset to the Idle state.

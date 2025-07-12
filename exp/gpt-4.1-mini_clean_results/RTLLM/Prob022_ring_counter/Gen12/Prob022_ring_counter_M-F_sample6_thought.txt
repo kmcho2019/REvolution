@@ -1,0 +1,11 @@
+To avoid the synthesis or simulation tool limitation that causes failure with concatenation inside combinational assignments, I will implement the ring counter rotation using explicit bitwise operations and shift registers without concatenations.
+
+Instead of using `{out[6:0], out[7]}` to rotate, I can detect if the MSB is set and create the next state by shifting left by one bit and wrapping the shifted-out bit to LSB manually using conditional logic.
+
+Alternatively, I can represent the output as a single bit that moves from bit 0 to bit 7 in a cyclical fashion by shifting left, and if the MSB was set, wrap back to bit 0.
+
+This avoids concatenation and uses only standard bitwise and shift operators that should be widely supported and synthesizable.
+
+On reset, set `out` to 1 (LSB set), and on each clock, shift left by one. If the MSB was previously set, wrap it back to the LSB.
+
+This approach preserves one-hot property, cyclical behavior, and reset initialization.

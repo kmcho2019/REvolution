@@ -1,0 +1,12 @@
+To implement the TopModule, we will use a finite state machine (FSM) with several states to handle the different phases of the timer. 
+The states can be: 
+- IDLE: searching for the start sequence (1101)
+- DELAY_SHIFT: shifting in the 4-bit delay value
+- COUNTING: counting down the timer
+- DONE: waiting for the ack signal
+- RESET: reset state
+
+We will use a counter to count the number of clock cycles and another register to store the remaining time. 
+When the start sequence is detected, we will shift in the delay value and then start counting. 
+When the counting is done, we will assert the done signal and wait for the ack signal. 
+The reset signal will reset the FSM to the IDLE state.

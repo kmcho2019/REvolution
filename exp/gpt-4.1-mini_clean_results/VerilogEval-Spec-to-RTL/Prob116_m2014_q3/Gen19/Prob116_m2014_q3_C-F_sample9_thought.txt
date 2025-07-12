@@ -1,0 +1,25 @@
+The best solution fuses the minimal boolean clarity from Example 1 with the clarity and maintainability of using named signals and structured logic from Example 2. We will:
+
+- Use named wires for input bits as in both examples for clarity.
+- Express the function as a minimal sum-of-products expression derived from the Karnaugh map minterms where output=1.
+- Factor common terms to reduce area and power, reducing redundant gates (e.g., factor out x3 & ~x1 where possible).
+- Avoid chained equality comparisons to inputs; directly compute combinational logic from boolean expressions.
+- Treat don't-cares optimally by including only necessary minterms with output=1.
+- Keep the design purely combinational with a single assign statement for simplicity.
+- This approach improves power and area (due to logic factoring and fewer terms) while preserving clarity and excellent performance.
+
+Specifically, from the 1-cells in the Karnaugh map:
+- (x3,x4,x1,x2) = 
+  (1,1,0,0), (1,1,0,1), (1,0,0,0), (1,0,0,1), (0,1,1,1)
+
+Group terms:
+- Group 1: x3=1 & ~x1=1 covers (11,00), (11,01), (10,00), (10,01)
+- Group 2: ~x3=1 & x4=1 & x1=1 & x2=1 for (01,11)
+
+So f = (x3 & ~x1) | (~x3 & x4 & x1 & x2)
+
+This is minimal and covers all 1 outputs, ignoring don't-cares as we like.
+
+This reduces area, power, and logic depth versus listing all minterms or using chained comparisons.
+
+We implement this minimal expression in Verilog.

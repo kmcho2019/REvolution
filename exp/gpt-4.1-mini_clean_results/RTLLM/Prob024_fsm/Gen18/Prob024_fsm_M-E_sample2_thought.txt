@@ -1,0 +1,16 @@
+I will implement a Mealy FSM detector for the sequence "10011" using a binary encoded state machine with explicit state transition logic that supports overlapping sequences. Instead of one-hot encoding, I'll use a minimal 3-bit state to reduce flip-flop count and combinational complexity. 
+
+The FSM states represent how many bits have matched in the sequence so far (0 to 5), with state 5 implicitly meaning full match and reset to intermediate state after detection. The MATCH output will be asserted when the input matches the final bit of the sequence at the appropriate state, ensuring minimal latency typical of a Mealy FSM.
+
+This approach is efficient in area, with fewer flip-flops, and straightforward next state logic. The code will use synchronous reset and separate combinational next state calculation from sequential state update. The MATCH signal depends combinationally on current state and input to respond immediately when the final bit of the sequence is detected.
+
+This design ensures continuous and overlapping detection by transitioning the FSM to the correct partial match state after a successful match. The explicit numeric states simplify debugging and minimize encoding overhead compared to one-hot.
+
+The sequence to detect: 1(0)0(0)1(1)
+States:
+S0: no match yet
+S1: matched '1'
+S2: matched '10'
+S3: matched '100'
+S4: matched '1001'
+On next correct bit '1', MATCH=1 and move state accordingly for overlapping detection.

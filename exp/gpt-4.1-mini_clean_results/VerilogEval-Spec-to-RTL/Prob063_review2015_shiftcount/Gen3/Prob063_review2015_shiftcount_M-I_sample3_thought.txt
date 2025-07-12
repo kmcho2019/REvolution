@@ -1,0 +1,13 @@
+The original problem specification does not include any reset signal, and adding one causes mismatches with testbenches that do not drive it. To be fully compliant, we must remove the reset input and the initial block, and rely on the user or testbench to properly initialize or allow unknown start states.
+
+Since the problem states the system never uses shift_ena and count_ena simultaneously, we can assign simple priority, e.g., shift_ena highest, then count_ena.
+
+Regarding the shift direction: "Data is shifted in most-significant-bit first" means the new data bit is loaded into q[3] (MSB), and all bits shift right by one (towards LSB). The existing bits q[3:1] shift into q[2:0]. The original `{data, q[3:1]}` accomplishes this correctly.
+
+For decrementing the 4-bit counter, simply subtract 1 from q. The code is straightforward and minimal for good PPA.
+
+Thus, the improvement is to remove reset, remove initial block (which synthesizes poorly and may cause mismatches), keep the same shift logic, and clarify the priority. This ensures compliance with the specification and maximum compatibility with testbenches.
+
+If a defined initial value is needed, it should be handled externally (e.g., testbench reset).
+
+This approach improves correctness relative to the spec, ensures no undriven inputs cause mismatches, and keeps the design simple and efficient.

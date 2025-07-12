@@ -1,0 +1,13 @@
+Fuse the low toggling and counter update gating strategy from Example 1 with the clean, simple logic style of Example 2.
+
+Use two FSM states (A and B), with synchronous reset and positive clock edge. 
+Keep separate 2-bit cycle counter and 2-bit w accumulator to avoid packed arithmetic and simplify addition.
+
+Update cycle counter and w accumulator only in state B to reduce unnecessary toggling in state A.
+Accumulate w count by adding current w input (single-bit addition).
+
+At the end of each 3-cycle window (cycle_cnt == 2), output z in the same cycle delayed by one cycle (registered), set z = 1 only if exactly two w=1 samples occurred in the window (w_accum + current w == 2).
+
+Reset counters on leaving state B or when in A, keep z registered and set to 0 in state A or when no output condition met.
+
+By merging these approaches, the design minimizes switching, maintains simple counters and logic, and produces correct delayed output with minimal states and logic overhead, optimizing power, performance, and area.

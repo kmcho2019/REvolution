@@ -1,0 +1,13 @@
+To implement the design of a 4-bit unsigned number pipeline multiplier, I propose a novel architectural idea that utilizes a combination of shift registers, adders, and a state machine to perform the multiplication operation in a pipelined fashion. The design consists of two levels of registers to store intermediate values and control the multiplication process.
+
+The design will operate in three stages: 
+
+1. **Initialization Stage**: The input signals `mul_a` and `mul_b` will be extended by adding "size" number of zero bits at the most significant bit positions and stored in registers `reg_a` and `reg_b`. 
+
+2. **Multiplication and Addition Stage**: The multiplication operation will be performed in a pipelined fashion. For each bit position `i` of the multiplier `mul_b`, the multiplicand `mul_a` will be left-shifted by `i` positions if the current bit of `mul_b` is 1, and the result will be added to the sum stored in register `reg_sum`. The sum will be updated in each clock cycle. 
+
+3. **Output Stage**: After all bit positions of the multiplier have been processed, the final product will be calculated by assigning the accumulated sum to the output register `mul_out`.
+
+The design will handle the reset condition by setting the registers to zero when the reset signal `rst_n` is low. When `rst_n` is high, the design will perform the multiplication operation and update the output register with the final product.
+
+The use of shift registers and adders in a pipelined fashion will simplify the multiplication logic and reduce the complexity of the design.

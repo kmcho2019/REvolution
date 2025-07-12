@@ -1,0 +1,5 @@
+A different architectural approach is to embed the counting direction logic inside the sequential always block instead of separating next_count logic combinationally. The counter will increment or decrement directly within the clocked process, based on the up_down input at each rising clock edge.
+
+This approach avoids the additional combinational logic block and may slightly reduce logic since addition or subtraction happens in the same clocked process, which some synthesis tools might optimize better. The synchronous reset still clears the counter.
+
+The design is simple: on each clock edge, if reset is active, count is zeroed; else if up_down is high, count increments; else it decrements. The wrapping around behavior is inherent due to 16-bit arithmetic.

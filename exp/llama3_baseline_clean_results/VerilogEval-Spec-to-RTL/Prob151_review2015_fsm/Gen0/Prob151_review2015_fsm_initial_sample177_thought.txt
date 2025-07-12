@@ -1,0 +1,11 @@
+The problem can be solved by designing a finite state machine (FSM) with the following states: 
+- IDLE: The initial state where the FSM looks for the pattern 1101.
+- SHIFT: After detecting the pattern, the FSM shifts in 4 more bits.
+- COUNT: The FSM waits for the counters to finish counting.
+- DONE: The FSM notifies the user and waits for the user to acknowledge the timer.
+The FSM can be implemented using a 4-state machine. 
+- In the IDLE state, the FSM checks for the pattern 1101. If the pattern is detected, it moves to the SHIFT state.
+- In the SHIFT state, the FSM asserts shift_ena for exactly 4 clock cycles. After that, it moves to the COUNT state.
+- In the COUNT state, the FSM asserts counting and waits until done_counting is high. Then, it moves to the DONE state.
+- In the DONE state, the FSM asserts done and waits until ack is 1. Then, it moves back to the IDLE state.
+The FSM also has a synchronous reset that sets the state to IDLE.

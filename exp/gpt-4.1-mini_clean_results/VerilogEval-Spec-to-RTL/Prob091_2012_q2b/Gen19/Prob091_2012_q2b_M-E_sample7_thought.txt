@@ -1,0 +1,7 @@
+Instead of directly implementing Y1 and Y3 as simple product terms from the one-hot encoded states, I will create a combinational next-state decoder module that computes the next state inputs for all states based on the given FSM transitions. Then, Y1 and Y3 are selected from these next-state inputs.
+
+Specifically, for each state in the one-hot encoding, the next state depends on the input w as per the FSM transition table. Using the one-hot input vector y, the next state inputs can be derived by OR-ing the relevant previous states combined with the input w or its complement.
+
+This approach generalizes the next-state generation logic to all states and clearly captures the FSM behavior, making it easier to extend if needed. Y1 and Y3 outputs are then just wires tapping into the next-state input of the B and D states, respectively.
+
+This architectural approach uses a next state decoder, supporting modularity and straightforward expansion, unlike direct minimal expressions for Y1 and Y3 only.

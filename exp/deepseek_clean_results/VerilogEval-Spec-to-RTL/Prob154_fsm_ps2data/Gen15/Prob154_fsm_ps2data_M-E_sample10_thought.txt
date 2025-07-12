@@ -1,0 +1,13 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of storing bytes in separate registers, use a 24-bit shift register that shifts in new bytes. This reduces register count and simplifies the data path.
+2. Smart State Machine: Combine the IDLE and capture states into a single state that checks for both start condition and byte count.
+3. Early Done Detection: Calculate 'done' combinatorially based on the state and byte count rather than registering it, saving a flip-flop.
+4. Power Optimization: Only enable the shift register when actively capturing bytes to reduce switching activity.
+5. Compact Encoding: Use Gray coding for state transitions to minimize switching power and glitches.
+
+Key Advantages:
+- Reduced register count (single 24-bit shift register vs multiple byte registers)
+- Combinational done signal reduces latency and flip-flop usage
+- Gray-coded states minimize switching power
+- Shift operation naturally handles byte ordering
+- Only activates shift register when needed for power savings

@@ -1,0 +1,5 @@
+To provide a novel architectural approach, instead of manually writing all pairwise equality expressions or using a fixed matrix concatenation, I will store the inputs into a 5-bit vector and then generate the output bits by dynamically indexing this vector twice with two nested generate loops.
+
+Each output bit corresponds to comparing bits at indices i and j in the vector: out[5* (4 - i) + (4 - j)] = ~(in_vec[i] ^ in_vec[j]). The bit ordering is arranged such that the highest bits correspond to (a,a) and the lowest bits correspond to (e,e), matching the problem's specification.
+
+This approach uses generate loops to scale easily for different input sizes, avoids manual repetition, and leverages an indexed approach with an intermediate vector. The output is flattened in the correct order by calculating the correct output bit index, making the design succinct and parameterizable.

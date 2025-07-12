@@ -1,0 +1,12 @@
+Refactoring approach:
+1. Maintain the same Mealy FSM behavior but implement using continuous assignments for all logic
+2. Eliminate the always block by using DFF primitives for state registers
+3. Use explicit wire declarations for better readability
+4. Keep one-hot encoding but make state transitions more explicit in the assignments
+5. Maintain asynchronous reset functionality
+
+Key changes:
+- Replace always block with direct D flip-flop instantiations
+- Make all state transitions and output logic purely combinational
+- Use explicit wire declarations for intermediate signals
+- Keep the same efficient output logic (z = state_A ? x : ~x)

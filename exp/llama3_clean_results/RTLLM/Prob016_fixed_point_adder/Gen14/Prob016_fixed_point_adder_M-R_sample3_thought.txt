@@ -1,0 +1,13 @@
+To refactor the existing fixed-point adder code, we can focus on simplifying the logic and utilizing Verilog's capabilities for combinational logic. 
+
+1. **Combinational Logic**: Instead of using an `always` block, which is typically used for sequential logic, we can leverage Verilog's ability to describe combinational logic directly using `assign` statements. This allows for a more concise and synthesizable description of the fixed-point adder's functionality.
+
+2. **Simplified Conditional Logic**: We can simplify the conditional logic by directly assigning the result of the addition or subtraction to the output based on the comparison of the input operands' signs.
+
+3. **Explicit Sign Bit Management**: To ensure consistent sign bit management, we can explicitly handle the sign bit of the result based on the operation type (addition or subtraction) and the signs of the input operands.
+
+4. **Parameterized Implementation**: We will maintain the parameterized nature of the design, allowing for flexible specification of the total number of bits (`N`) and the number of fractional bits (`Q`).
+
+5. **Eliminating Unnecessary Registers**: Since the output can be directly computed from the inputs without needing to store intermediate results, we can eliminate the use of internal registers (`res`) and directly assign the result to the output (`c`).
+
+By refactoring the code to utilize combinational logic and simplifying the conditional statements, we can improve the design's synthesizability and readability while maintaining its core functionality.

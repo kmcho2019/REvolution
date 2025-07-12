@@ -1,0 +1,7 @@
+Here's a novel approach that avoids creating a large intermediate concatenated wire:
+1. Instead of concatenating all inputs first, we'll build the outputs directly by:
+   - Assigning the upper bits of each output from corresponding input bits
+   - Handling the padding bits separately
+2. For outputs w and x, we'll take complete 8-bit chunks from inputs a-e
+3. For outputs y and z, we'll combine remaining input bits with the padding '1's
+4. This method reduces wire fanout and eliminates the need for a 32-bit temporary wire

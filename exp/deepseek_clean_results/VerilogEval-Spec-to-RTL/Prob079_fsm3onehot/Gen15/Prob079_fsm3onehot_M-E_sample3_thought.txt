@@ -1,0 +1,21 @@
+Here's a novel approach using a more structural implementation that leverages the properties of one-hot encoding differently:
+
+1. Key Insight:
+- Since we're using one-hot encoding, each state bit can be treated independently
+- The next state logic can be decomposed into per-state logic blocks that activate based on current state and input
+
+2. Novel Architecture:
+- Implement four parallel state transition blocks (one for each possible next state)
+- Each block checks if the current state and input combination would lead to that next state
+- The output is simply the MSB of the current state (D state)
+
+3. Advantages:
+- More modular and scalable design
+- Clear separation of state transition conditions
+- Potential for better physical implementation due to localized logic
+- Easier to modify individual state transitions
+
+4. Implementation:
+- For each next state bit, implement the exact conditions when it should be active
+- Use direct state bit checks rather than intermediate variables
+- Output remains a simple direct assignment

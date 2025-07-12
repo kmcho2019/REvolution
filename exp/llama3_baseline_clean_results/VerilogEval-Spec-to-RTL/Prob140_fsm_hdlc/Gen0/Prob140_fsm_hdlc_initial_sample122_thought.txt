@@ -1,0 +1,6 @@
+To implement the synchronous HDLC framing module, we will design a Moore-type finite state machine. The FSM will have states to track the consecutive ones and reset the state when necessary. The states can be: 
+- S0: Initial state or after seeing a 0.
+- S1 to S6: Seeing 1 to 6 consecutive ones, respectively.
+- SERR: Error state for seeing 7 or more consecutive ones.
+
+The outputs will be generated based on the current state and the next input. For instance, if we are in S5 and see another 1, we go to S6 and signal that a bit needs to be discarded (disc). If we are in S6 and see another 1, we go to SERR and signal an error (err). If we are in S6 and see a 0, we signal the beginning/end of a frame (flag).

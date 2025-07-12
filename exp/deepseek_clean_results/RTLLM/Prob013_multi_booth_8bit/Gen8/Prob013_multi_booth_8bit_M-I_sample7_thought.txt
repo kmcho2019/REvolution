@@ -1,0 +1,22 @@
+The improved implementation corrects the Radix-4 Booth multiplier with these key changes:
+
+1. Proper Radix-4 Implementation:
+   - Correct 4-iteration count for 8-bit multiplication (n/2 steps)
+   - Proper Booth encoding with 3-bit window (current and previous bits)
+   - Correct arithmetic operations (+A, -A, +2A, -2A) with sign extension
+
+2. Register Width Correction:
+   - Expanded multiplier register to 10 bits (8-bit input + 2 extra bits)
+   - Proper sign extension for multiplicand in 16-bit operations
+
+3. State Machine Improvement:
+   - Added explicit start condition (transition from IDLE only when inputs change)
+   - Proper completion detection after exactly 4 iterations
+
+4. Shift Operation Fix:
+   - Correct arithmetic right shift by 2 bits for Radix-4
+   - Maintained sign bit during shifts
+
+5. Output Handling:
+   - Final product register properly accumulates partial results
+   - Ready signal asserted only after completion

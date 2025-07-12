@@ -1,0 +1,9 @@
+To solve this problem, we can design a finite state machine (FSM) with multiple states to control the motor based on the inputs x and y. The FSM will have the following states:
+- State A: The initial state where the FSM stays when the reset input is asserted. In this state, f and g are both 0.
+- State B: After reset is de-asserted, the FSM moves to this state where f is set to 1 for one clock cycle.
+- State C: The FSM moves to this state after State B and monitors the input x. It checks for the sequence 1, 0, 1 in three successive clock cycles.
+- State D: Once the sequence 1, 0, 1 is detected, the FSM moves to this state and sets g to 1. It then monitors the input y for at most two clock cycles.
+- State E: If y becomes 1 within two clock cycles, the FSM moves to this state and maintains g = 1 permanently.
+- State F: If y does not become 1 within two clock cycles, the FSM moves to this state and sets g = 0 permanently.
+
+The FSM will use a combination of counters and sequential logic to implement the state transitions and output logic.

@@ -1,0 +1,22 @@
+The previous implementation had timing and synchronization issues. Here's the improved design strategy:
+
+1. **Precise Cycle Counting**:
+   - Use a 10-bit counter for exact 1000-cycle intervals (0-999)
+   - Properly synchronize delay counter decrement with the 1000th cycle
+   - Reset cycle counter at the correct time
+
+2. **Accurate Pattern Detection**:
+   - Implement shift register that updates only when needed
+   - Clear pattern register after successful detection
+
+3. **Correct State Transitions**:
+   - Ensure state changes occur at proper clock edges
+   - Maintain DONE state until acknowledgment received
+   - Properly reset all counters when returning to IDLE
+
+4. **Output Timing**:
+   - Ensure counting output is only high during COUNTING state
+   - Maintain done output until acknowledgment
+   - Output correct count value during counting phase
+
+The improved design strictly follows the specification with precise cycle counting and proper state transitions.

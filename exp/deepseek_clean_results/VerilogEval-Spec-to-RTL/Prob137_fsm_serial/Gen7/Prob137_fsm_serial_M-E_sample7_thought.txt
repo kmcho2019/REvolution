@@ -1,0 +1,12 @@
+Here's a novel approach using a shift register with integrated state tracking:
+
+1. Instead of separate state and data registers, we'll use a combined 11-bit shift register that captures the entire frame (start + 8 data + stop bits)
+2. The MSB will serve as a "valid" flag when the frame is complete
+3. We'll use a counter to track when we've received all 11 bits
+4. The done signal will be asserted when:
+   - We have all 11 bits
+   - Start bit is 0 (bit 10)
+   - Stop bit is 1 (bit 0)
+5. The shift register automatically handles error cases by continuing to shift until a valid frame is found
+
+This approach reduces state transitions and combines data storage with frame validation logic.

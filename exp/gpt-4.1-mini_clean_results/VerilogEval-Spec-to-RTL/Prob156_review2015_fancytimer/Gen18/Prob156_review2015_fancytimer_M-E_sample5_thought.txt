@@ -1,0 +1,12 @@
+Use a 5-bit shift register that always shifts in the incoming data bit each clock.  
+- When the lower 4 bits of the shift register match the pattern 1101, enter a LOAD state.  
+- In LOAD state, shift in 4 delay bits MSB first into a separate 4-bit register (delay). Use a 3-bit counter to track bits received.  
+- After loading delay, go to COUNT state, where we run a 10-bit cycle counter (counting 0 to 999) and a 4-bit block counter initialized to delay+1.  
+- At each cycle counter rollover (every 1000 cycles), decrement block counter.  
+- The output `count` reflects the current block count minus one (showing remaining blocks), held constant during each 1000-cycle block.  
+- When block counter reaches zero and cycle counter completes, transition to DONE state.  
+- In DONE, assert done and wait for ack to restart detection.  
+- Pattern detection is continuous during PATTERN_DETECT but disabled during LOAD and COUNT states by freezing shift register or ignoring matches until done.  
+- Implement the state machine with four states: PATTERN_DETECT, LOAD, COUNT, DONE.  
+- Synchronous active-high reset resets all registers and state machine.  
+This approach avoids complex pattern masking, ensures exact counting of (delay+1)*1000 cycles, and cleanly separates pattern detection from loading and counting phases.

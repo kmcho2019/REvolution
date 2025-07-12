@@ -1,0 +1,11 @@
+The original modular design using separate XNOR2 and XOR2 gate modules is clear and reusable but introduces slight overhead in hierarchy and intermediate nets. Since the logic is very simple and purely combinational, it can be optimized for better power and area by removing the gate module instantiations and intermediate wires, directly implementing the combined logic expression as a single continuous assignment. This reduces net count and module overhead, potentially lowering switching activity and area.
+
+The expression out = ((in1 XNOR in2) XOR in3) can be rewritten directly using Verilog operators: out = (~(in1 ^ in2)) ^ in3; This keeps the logic equivalent but more compact and synthesis-friendly.
+
+This approach:
+- Removes intermediate wire and module instantiations.
+- Uses direct Boolean expressions for minimal logic.
+- Keeps the design purely combinational and clean.
+- Slightly improves area and power metrics without affecting performance.
+
+Hence, implementing the logic as a one-liner continuous assignment is the most efficient improvement here.

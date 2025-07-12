@@ -1,0 +1,15 @@
+To fix the timing mismatch and incorrect clk_div output, I will avoid capturing the counter value on the falling edge because it causes synchronization issues.
+
+Instead, I will use a single counter running from 0 to 6 (7 states) incrementing at each rising edge of clk.
+
+- For clk_pos (rising-edge toggled clock), toggle it at counts 0 and 4.
+
+- For clk_neg (falling-edge toggled clock), use the same counter value, but toggle clk_neg on the falling edge when the counter's *next* value is 1 or 5.
+
+This can be implemented by having the counter update on rising edge, and on falling edge, evaluate the *next* count value (which is (cnt + 1) modulo 7) to determine when to toggle clk_neg.
+
+This way, clk_neg toggling aligns with the proper half-cycle counts, removing the need for a separate registered counter at falling edge.
+
+The final output clk_div is clk_pos OR clk_neg, which achieves fractional divide by 3.5 with improved timing alignment and balanced duty cycle.
+
+This approach keeps both toggles synchronized to the same counter state, improves timing consistency, and matches the desired fractional division behavior.

@@ -1,0 +1,8 @@
+To optimize for better power, performance, and area (PPA), I will:
+1. Replace function calls with inline combinational logic inside the always block to reduce function call overhead and improve timing.
+2. Use binary counters internally for hours (1-12) to simplify increment and comparison logic, converting only for output to BCD. This reduces combinational complexity for hours.
+3. Keep minutes and seconds in BCD for straightforward increment and boundary checks, but implement their increments with inline logic rather than functions.
+4. Minimize unnecessary toggling by gating increments clearly on rollover conditions.
+5. Use synchronous reset and update only on enable as before.
+
+This approach reduces combinational path complexity and area from multiple small functions and repeated BCD arithmetic on hours, improving timing and area with similar power efficiency.

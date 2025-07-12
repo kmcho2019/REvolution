@@ -1,0 +1,16 @@
+Novel Architecture Idea: Hierarchical Rule 90 Computation with Block Processing
+
+Key Concepts:
+1. Divide the 512-bit array into 16 blocks of 32 bits each for parallel processing
+2. Implement a hierarchical XOR tree within each block to reduce critical path
+3. Use boundary registers between blocks to maintain correct neighbor relationships
+4. Implement a two-stage pipeline:
+   - Stage 1: Compute next state for all internal cells (non-boundary)
+   - Stage 2: Compute next state for boundary cells using registered values
+5. Optimize clock gating by tracking activity at block level
+
+Advantages:
+- Reduced critical path through hierarchical computation
+- Better timing closure with pipelined boundary handling
+- Lower power through block-level activity detection
+- Scalable architecture for different array sizes

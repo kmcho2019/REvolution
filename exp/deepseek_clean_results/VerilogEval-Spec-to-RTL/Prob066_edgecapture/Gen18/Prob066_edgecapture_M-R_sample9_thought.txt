@@ -1,0 +1,14 @@
+Refactored approach with clearer state maintenance:
+
+1. Maintain the same falling edge detection principle (prev_in & ~in)
+2. Key improvement: Use a dedicated 'capture' register that:
+   - Gets set when a falling edge is detected
+   - Only clears on reset
+3. Separate the detection logic from state maintenance
+4. Use continuous assignment for output to make data flow clearer
+5. Benefits:
+   - Explicit state maintenance (won't be affected by subsequent inputs)
+   - Clear separation of detection and capture functions
+   - Same synchronous design principles
+   - More readable and maintainable structure
+6. Reset behavior remains identical (clears all state)

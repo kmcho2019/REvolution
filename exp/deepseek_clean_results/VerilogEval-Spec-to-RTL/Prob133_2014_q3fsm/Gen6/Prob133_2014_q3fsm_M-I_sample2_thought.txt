@@ -1,0 +1,16 @@
+Improved solution with correct counting mechanism:
+
+1. Maintain the same two-state FSM (A and B) with clear state transitions
+2. Use a 2-bit cycle counter (0-2) to track the 3-cycle window in state B
+3. Use a 2-bit ones counter that properly accumulates 'w' values across all three cycles
+4. Reset both counters when leaving state B or during reset
+5. Output z is asserted at the end of each window (cycle_count==2) when exactly two '1's were counted
+6. Separate combinational and sequential logic for clarity
+7. Fix the ones_count accumulation by properly adding 'w' each cycle and resetting at window boundaries
+
+Key improvements:
+- Correct accumulation of 'w' values across the entire 3-cycle window
+- Clear reset conditions for all counters
+- Maintained simple state machine structure
+- Efficient use of 2-bit counters
+- Proper handling of window boundaries

@@ -1,0 +1,10 @@
+Simplify the FSM by integrating the cycle count and w accumulation into a single counter and state variable, minimizing the number of registers and logic.
+
+- Use a 2-bit cycle counter counting from 0 to 2 within state B to track the 3 clock cycles.
+- Accumulate the count of w=1 in a 2-bit accumulator.
+- In state A, stay until s=1, then transition to B.
+- In state B, accumulate w over three cycles; at the end (cycle count 2), check if w=1 exactly two times and set z accordingly.
+- Use nonblocking assignments consistently.
+- Avoid redundant resets of counters when staying in states.
+- Output z is only asserted for one clock cycle after completing each 3-cycle window.
+- This approach maintains minimal logic and state while reducing some redundant assignments and simplifying the logic structure.

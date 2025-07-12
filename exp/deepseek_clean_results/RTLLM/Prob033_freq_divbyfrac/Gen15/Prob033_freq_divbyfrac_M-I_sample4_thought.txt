@@ -1,0 +1,26 @@
+Improved fractional divider with precise phase control:
+
+1. Core Improvements:
+   - Replace the delay counter with a direct phase-shifted counter implementation
+   - Use both clock edges to achieve precise 3.5 cycle phase shift
+   - Implement proper reset synchronization for both phases
+   - Optimize counter logic for clean transitions
+
+2. Enhanced Features:
+   - True 3.5 cycle phase shift using edge-triggered logic
+   - Balanced duty cycle through symmetrical counter control
+   - Glitch-free output with proper signal synchronization
+   - Simplified state machine for better timing
+
+3. Implementation Strategy:
+   - Primary counter runs on positive edges
+   - Secondary counter runs on negative edges for natural 0.5 cycle offset
+   - Both counters share the same division value (7 cycles)
+   - Output combination through synchronized OR gate
+   - Reset properly initializes both phases
+
+4. Advantages:
+   - Precise fractional division with perfect phase alignment
+   - Reduced logic complexity compared to original solution
+   - Better timing characteristics
+   - More reliable initialization

@@ -1,0 +1,5 @@
+To optimize the existing design for better PPA (performance, power, area), replace the saturating 3-bit counter with an explicit FSM having states encoding the count of consecutive ones. This removes arithmetic from the critical path and simplifies state transitions to minimal combinational logic, improving timing (WNS) and reducing switching activity.
+
+Additionally, update outputs only when state changes require asserting disc, flag, or err, reducing unnecessary toggling and power. Use a Moore FSM with one-hot or binary encoded states (3 bits) representing 0 to 7 consecutive ones. The reset state corresponds to zero consecutive ones (previous input zero). Synchronous reset and outputs are preserved.
+
+This approach reduces combinational complexity and output toggling, improving PPA without changing functionality or timing of output assertions (outputs asserted exactly one clock cycle after detection event). It also makes the FSM easier to analyze and synthesize efficiently.

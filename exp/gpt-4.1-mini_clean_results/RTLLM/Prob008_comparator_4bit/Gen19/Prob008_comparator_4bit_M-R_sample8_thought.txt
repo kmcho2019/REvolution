@@ -1,0 +1,7 @@
+Refactor the comparator_4bit module by reorganizing the borrow and equality logic into vector operations and parameterized generate blocks to compact the code and enhance readability. Instead of defining each bit-level signal separately, use vectors to hold generate (g), propagate (p), and equality (eq) signals. Then compute borrow_out using a generate loop to replicate the borrow chain logic explicitly in a procedural `for` loop within a combinational block, avoiding nested logic expressions.
+
+Equality can be computed as a single equality vector reduction using bitwise XNOR and reduction AND operations instead of balanced AND trees, which simplifies the code further.
+
+Keep outputs mutually exclusive by encoding output logic from borrow and equality signals using continuous assignments.
+
+This approach maintains the same borrow chain and equality concepts, but structures logic compactly and makes the borrow chain calculation explicit, which can help some synthesis tools infer carry chains more readily.

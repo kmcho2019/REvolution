@@ -1,0 +1,16 @@
+This design will encode the FSM states using a 2-bit binary encoding instead of one-hot encoding. We assign:
+- State A (idle): 2'b00
+- State B (grant device 0): 2'b01
+- State C (grant device 1): 2'b10
+- State D (grant device 2): 2'b11
+
+The FSM next-state logic prioritizes requests in state A as before: device 0 > device 1 > device 2. In grant states (B, C, D), the FSM stays if the corresponding request remains asserted, else returns to A.
+
+The outputs `g` are combinationally decoded from the current state:
+- g[0] = 1 when in state B
+- g[1] = 1 when in state C
+- g[2] = 1 when in state D
+
+This binary-encoded FSM reduces the number of flip-flops (only 2 bits), potentially improving area and power. The state machine is fully synchronous with synchronous active-low reset to state A.
+
+Separate always blocks are used for state register update and next-state combinational logic, as per best practice.

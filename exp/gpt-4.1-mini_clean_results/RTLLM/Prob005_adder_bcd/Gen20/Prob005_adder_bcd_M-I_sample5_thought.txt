@@ -1,0 +1,7 @@
+To optimize the BCD adder for better PPA, we eliminate the numeric comparator (raw_sum > 9) and replace it with simple combinational logic to detect if correction is needed. A 5-bit adder already computes raw_sum, and correction is only needed if the binary sum exceeds 9 (1001). Instead of numeric comparison, we detect correction_needed by checking if raw_sum[4] is set (sum >= 16) or if raw_sum[3:0] > 9 when raw_sum[4] is 0. This condition can be simplified using bitwise logic.
+
+Further, since correction always adds 6 (0110), the addition of 6 can be implemented with minimal logic rather than a full adder. We can generate the corrected sum bits by selectively adding 6 only when correction_needed is asserted.
+
+This reduces the critical path by removing the numeric comparator and one 5-bit adder, cutting gate count and logic depth. It also reduces switching power by avoiding unnecessary addition when no correction is needed.
+
+Thus, the improved design uses one 5-bit adder for raw_sum, a combinational circuit for correction_needed detection, and a small combinational logic to add 6 if needed, optimizing timing, power, and area.

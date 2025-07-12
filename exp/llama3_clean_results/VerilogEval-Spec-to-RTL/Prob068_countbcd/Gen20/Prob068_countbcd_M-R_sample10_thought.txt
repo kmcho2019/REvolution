@@ -1,0 +1,11 @@
+To refactor the provided code for a 4-digit BCD counter, we can aim to maintain its functionality while potentially simplifying the logic or improving its efficiency. A key observation is that the current implementation uses four separate BCD counters, which might not be the most efficient way to implement the counter, especially considering the enable signals for the upper digits are directly dependent on the carry of the lower digits. 
+
+A potential refactoring approach could involve directly manipulating the binary representation of the counter to increment it in BCD format, rather than relying on separate counters for each digit. This would eliminate the need for explicit carry signals and enable logic, potentially simplifying the design.
+
+However, the original requirement of outputting an enable signal for each of the upper three digits complicates this approach, as it still requires tracking when each digit should be incremented. Thus, instead of completely abandoning the separate counter approach, we could focus on optimizing the logic for calculating the enable signals and managing the counters.
+
+Another approach could be to use a single counter and then convert its binary output to BCD. This would significantly simplify the counter logic but would require additional logic to convert the binary count to BCD, which could potentially offset the simplification in terms of area and power.
+
+Given these considerations, our refactoring strategy will involve simplifying the enable logic while maintaining the basic structure of using separate counters for each BCD digit. This will ensure that the design remains straightforward and easy to understand while potentially offering some improvements in terms of area and power consumption.
+
+One simplification could be to directly calculate the enable signals within the combinational logic without needing to instantiate separate modules for each BCD counter. This could reduce area usage and potentially lower power consumption by minimizing the number of flip-flops and logic gates required.

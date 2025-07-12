@@ -1,0 +1,22 @@
+Innovative approach using circular shift registers and parallel processing:
+
+1. Instead of direct bitwise operations, implement a circular shift register that rotates the input left by 1 bit
+2. This rotated version (shifted_in) gives us all left neighbors in parallel
+3. For out_both:
+   - Use AND between original input and shifted_in
+   - Force MSB to 0 as it has no left neighbor
+
+4. For out_any:
+   - Create a right-shifted version (shifted_right) by rotating right
+   - Use OR between original input and shifted_right
+   - Force LSB to 0 as it has no right neighbor
+
+5. For out_different:
+   - Use XOR between original input and shifted_in (circular)
+   - This automatically handles the wrap-around requirement
+
+Benefits:
+- Uses shift registers which could be more efficient in some FPGA architectures
+- Demonstrates an alternative way to think about neighbor operations
+- The circular shift operation is reused for multiple outputs
+- May offer better routing in certain physical implementations

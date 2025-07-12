@@ -1,0 +1,20 @@
+The current design correctly implements a dual-edge triggered flip-flop using two edge-triggered flip-flops and a transparent latch as a mux. To improve PPA, focus on optimizing power and area while retaining functional correctness:
+
+1. Replace the transparent latch with a gated clock approach using a multiplexer on the input of a single positive edge-triggered flip-flop to reduce latch complexity. However, gated clocks are often discouraged in FPGA flows.
+
+2. Alternatively, use a fast multiplexer on the output of the two FFs driven by the clock level, but use a continuous assignment instead of a latch. This reduces latch area and simplifies timing, potentially reducing glitches with proper timing constraints.
+
+3. To balance glitch reduction and simplicity, replace the latch mux with a 2-to-1 mux using continuous assignment and add output registers if needed at a higher level (outside this module).
+
+4. Merge the PosEdgeFF and NegEdgeFF modules into a single module using internal always blocks to reduce area and improve synthesis optimization.
+
+5. Use non-blocking assignments consistently.
+
+Hence, the improved solution will:
+- Combine both flip-flops into the TopModule (remove submodules),
+- Use continuous assignment for muxing outputs,
+- Add output register to avoid glitches,
+- Keep two flip-flops as required for dual-edge sampling,
+- This simplifies the design, potentially reduces area and power by avoiding a latch and separate modules.
+
+This approach provides a good trade-off for FPGA synthesis, avoiding explicit latch constructs while keeping glitching low by using registered output.

@@ -1,0 +1,13 @@
+I will implement a Mealy FSM that samples the serial input bits synchronized to the clock, detecting the start bit by monitoring a transition from idle (logic 1) to start (logic 0). Once the start bit is detected, the FSM enters a data reception state where it shifts in bits LSB first over 8 clocks using a shift register. Then it moves to a stop bit check state. If the stop bit is valid (logic 1), it outputs the received byte and asserts done for one cycle; if not, it enters a recovery state waiting for the line to return to idle (logic 1) before resuming detection of new start bits.
+
+The FSM state and data shifting will be implemented in one synchronous block for simplicity and minimal clock domain crossings. The done signal will be asserted combinationally by checking the FSM state and input, simplifying output logic and removing the need for extra flip-flops.
+
+I will encode the FSM states with localparam integers for clarity and synthesis friendliness. The bit counter and shift register will be reset on start bit detection and only updated when receiving data bits.
+
+This approach reduces the number of always blocks and uses a more minimalistic design, keeping everything in one synchronous block except for the combinational done output. This reduces resource usage and simplifies timing paths while ensuring the byte is correctly extracted.
+
+The asynchronous reset will be synchronous and active high, as required.
+
+The design also avoids unnecessary waiting states by only waiting for the stop bit or idle line when stop bit is incorrect, otherwise it starts immediately to detect next start bit.
+
+This will lead to a clean, minimal, and efficient FSM implementation that meets the spec.

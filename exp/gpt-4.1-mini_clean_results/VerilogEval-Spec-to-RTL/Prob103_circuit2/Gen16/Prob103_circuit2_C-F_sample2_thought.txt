@@ -1,0 +1,12 @@
+Both examples implement the same logic: q = ~(a ^ b ^ c ^ d), i.e., even parity of four inputs. Example 1 uses the XNOR chain (a ~^ b ~^ c ~^ d), which is logically equivalent to the inverted XOR chain in Example 2. XNOR gates inherently perform the inversion, potentially reducing gate count and power by eliminating an explicit NOT gate.
+
+The fusion strategy is to explicitly structure the logic as a balanced XNOR tree to minimize the logic depth and switching activity. Instead of chaining the four inputs linearly, I will group inputs in pairs, then XNOR their results, producing a balanced tree. This reduces the logic depth and might improve timing and power by minimizing glitches.
+
+Concretely:
+- Compute w1 = a ~^ b;
+- Compute w2 = c ~^ d;
+- Then q = w1 ~^ w2;
+
+This balanced approach maintains the same function, matches the waveform, and is more friendly to synthesis tools for optimization, potentially improving PPA.
+
+Therefore, the final implementation is a balanced XNOR tree for even parity.

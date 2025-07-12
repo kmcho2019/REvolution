@@ -1,0 +1,7 @@
+To solve this problem, I will design a finite state machine (FSM) with the following states:
+- IDLE: Wait for the start bit (0) to be received.
+- START: Received the start bit, wait for the 8 data bits.
+- DATA: Receive the 8 data bits.
+- STOP: Wait for the stop bit (1) to be received.
+
+The FSM will shift the received data bits into a register, and when a stop bit is received, it will output the received byte and assert the done signal. If a stop bit is not received when expected, the FSM will wait until it finds a stop bit before attempting to receive the next byte. The module will also have a synchronous reset to reset the FSM to the IDLE state.

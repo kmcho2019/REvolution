@@ -1,0 +1,14 @@
+To simplify the implementation while maintaining functionality, we can make the following observations:
+
+1. The K-map shows that mux_in[1] is always 0, so it can be directly assigned to 0 without any logic.
+2. For the other outputs:
+   - mux_in[0] is 1 when either c or d is 1 (OR function)
+   - mux_in[2] is 1 only when both c and d are 1 (AND function)
+   - mux_in[3] is the complement of d (NOT function)
+3. We can implement these functions using just three 2-to-1 multiplexers:
+   - mux_in[0]: Use d as selector, choose between 1 (when d=1) or c (when d=0)
+   - mux_in[2]: Use c as selector, choose between 0 (when c=0) or d (when c=1)
+   - mux_in[3]: Use d as selector, choose between 1 (when d=0) or 0 (when d=1)
+4. This eliminates the need for intermediate wires and combines all assignments into a single statement.
+
+The simplified solution uses exactly three 2-to-1 multiplexers (implemented via ternary operators) and one constant assignment.

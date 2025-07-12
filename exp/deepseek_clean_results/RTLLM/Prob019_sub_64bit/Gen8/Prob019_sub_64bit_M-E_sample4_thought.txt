@@ -1,0 +1,22 @@
+Novel Architectural Idea: Carry-Select Subtracter with Early Overflow Prediction
+
+Key Innovations:
+1. Hierarchical Carry-Select Architecture:
+   - Split the 64-bit operation into 16-bit chunks for better timing
+   - Each chunk computes both possible results (with/without carry-in)
+   - Final result selected based on actual carry chain
+
+2. Early Overflow Prediction:
+   - Parallel overflow detection for each chunk
+   - Combines local overflow signals with carry propagation
+   - Eliminates need for full result computation before overflow check
+
+3. Power Optimization:
+   - Gated clock domains for each 16-bit chunk
+   - Dynamic operand isolation for inactive sections
+
+Advantages:
+- Better timing due to parallel chunk computation
+- Early overflow detection improves critical path
+- Power savings from selective activation
+- Scalable to even wider bit-widths

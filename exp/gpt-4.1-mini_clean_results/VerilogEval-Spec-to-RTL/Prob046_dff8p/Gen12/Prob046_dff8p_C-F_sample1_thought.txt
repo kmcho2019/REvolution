@@ -1,0 +1,10 @@
+Fusion strategy:
+- Implement all 8 flip-flops in a single always block triggered on the negative edge of clk for better area and performance by consolidating logic.
+- Use a vector register for q to minimize module instantiations and overhead.
+- Implement a synchronous active-high reset that loads the entire reset vector 0x34 simultaneously, improving area and reducing routing.
+- This preserves the negative edge triggering and synchronous reset requirements.
+- Use non-blocking assignments and a vector d input.
+- This fused approach keeps modular clarity (reset vector constant) while optimizing area and power by reducing the number of instantiated modules and separate always blocks.
+- Overall, the single vector register with synchronous reset meets all specs, reduces power by minimizing redundant logic, and simplifies synthesis optimizations.
+
+This combines the modular clarity of a fixed reset vector from Example 2 with the area and power benefits of a single-vector register from Example 1.

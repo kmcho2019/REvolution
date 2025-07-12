@@ -1,0 +1,24 @@
+module TopModule(
+    input  clk,
+    input  areset,
+    input  j,
+    input  k,
+    output out
+);
+
+    localparam OFF = 1'b0, ON = 1'b1;
+
+    reg state;
+
+    always @(posedge clk or posedge areset) begin
+        if (areset)
+            state <= OFF;
+        else if (state == OFF)
+            state <= j ? ON : OFF;
+        else
+            state <= k ? OFF : ON;
+    end
+
+    assign out = state;
+
+endmodule

@@ -1,0 +1,9 @@
+Refactor by splitting multiplication and accumulation stages: 
+1. Perform multiplication in a separate combinational always block with inputs `a` and `b`.
+2. Store the product in a registered 64-bit intermediate register.
+3. Accumulate the lower 32 bits of the registered product into the 32-bit accumulator register.
+4. Detect overflow by extending the sum with a carry bit.
+5. Perform accumulation and saturation logic only in the accumulator always block.
+6. Use two sequential blocks to pipeline multiplication and accumulation, which also simplifies timing.
+7. Reset remains synchronous and resets both intermediate product register and accumulator.
+8. This approach improves timing by isolating multiplication from accumulation and structures code with registers to potentially increase frequency.

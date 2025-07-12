@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor design to implement the subtraction as a single 64-bit carry lookahead adder (CLA) instead of two 32-bit CLAs chained. This unifies the carry computation in a single module, potentially reducing carry propagation delay and simplifying hierarchical carry logic. The B operand is still inverted and added with a carry-in of 1 to achieve subtraction via two's complement.
+
+Overflow detection logic remains the same: overflow occurs if A and B have different signs, and the result's sign differs from A's sign.
+
+The 64-bit CLA is implemented using four 16-bit CLA blocks with hierarchical carry computation, balancing modularity and speed. The propagate and generate signals are computed per bit and grouped for fast carry calculation across 16-bit blocks. This approach also improves timing and scalability.
+
+This refactoring reduces the complexity of chaining two large CLA blocks and may improve performance by eliminating intermediate carry dependencies between two separate CLAs.

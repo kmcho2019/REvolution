@@ -1,0 +1,7 @@
+Use a simple 2-bit counter as the FSM state and a 24-bit shift register to accumulate message bytes.  
+On reset, clear count and out_bytes synchronously.  
+In state 0 (count=0), wait for a start byte where in[3]=1; once detected, shift this byte into out_bytes (into the upper 8 bits) and move to count=1.  
+For count=1 and count=2, shift in the next bytes by shifting out_bytes left 8 bits and inserting new byte in the least significant 8 bits, increment count.  
+When count=3 (after the third byte), assert done for one cycle with out_bytes holding the full 3-byte message, then reset count to 0.  
+This approach simplifies the FSM to a counter, minimizes register usage by using a single 24-bit register for bytes, and keeps done timing and outputs correct.  
+All operations and resets are synchronous on the rising clock edge.

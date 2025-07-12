@@ -1,0 +1,12 @@
+Fusion Strategy:
+1. State Machine Control: Adopt the explicit state machine from Example 1 for better control flow visibility and timing optimization, but simplify it to 3 states (IDLE, CALC, DONE) by merging LOAD into CALC initialization.
+
+2. Counter Optimization: Use a 4-bit counter (0-15) from Example 1 but modify the comparison logic to eliminate the need for count=17 check, reducing area.
+
+3. Shift Operation: Implement the parallel shift approach suggested in feedback - pre-compute all possible shifted versions of the multiplier during LOAD phase to break the critical path.
+
+4. Power Optimization: Add clock gating for the accumulator when not accumulating (areg[count]==0) as suggested in feedback.
+
+5. Area Reduction: Use 31-bit accumulator since max product is (2^16-1)^2 = 2^32-2^17+1 which fits in 31 bits.
+
+The combined solution improves timing by parallelizing shifts, reduces power via conditional accumulation, and minimizes area while maintaining clear state machine control.

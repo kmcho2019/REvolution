@@ -1,0 +1,26 @@
+To improve the original design while keeping correctness and fixed-point precision intact, we target enhancements to optimize Performance, Power, and Area (PPA):
+
+1. **Performance:**
+   - Reduce critical path by avoiding multiple comparisons of large vectors. 
+     We do this by storing magnitude comparisons once and reusing.
+   - Simplify sign and magnitude handling logic to reduce combinational complexity.
+   
+2. **Power:**
+   - Prevent unnecessary toggling by caching absolute values and sign bits.
+   - Provide optional enable signal (default to always enabled) for future integration into clocked environments (though not requested, a placeholder is good practice).
+
+3. **Area:**
+   - Avoid recomputing absolute values multiple times by computing them once at the top-level.
+   - Use blocking assignments in combinational always block for clarity and synthesis friendliness.
+   - Use generate blocks or parameters only when necessary to avoid extra logic (already minimal).
+
+4. **Code clarity and reusability:**
+   - Keep parameters with default values.
+   - Add clear comments describing each step.
+   - Keep zero sign bit handling explicit.
+   - Add a testbench parameterized example comment to prevent instantiation errors.
+   - Slightly refactor logic for more intuitive readability.
+
+The main improvement is better reuse of comparisons and absolute values, with clear assignment blocks for better timing. This reduces critical path delay and toggling, positively impacting performance and power. Area is unchanged or improved slightly by avoiding duplicated logic.
+
+No changes are made to the fixed-point arithmetic semantics or output format to maintain correctness.

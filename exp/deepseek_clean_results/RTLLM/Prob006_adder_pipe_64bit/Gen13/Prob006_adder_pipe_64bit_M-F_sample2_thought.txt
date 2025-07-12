@@ -1,0 +1,25 @@
+Fixed 64-bit Pipelined Adder Design:
+
+1. Parameterization:
+   - Added DATA_WIDTH parameter (default 64) for operand width
+   - Added STG_WIDTH parameter (default 32) for pipeline stage width
+   - Made all internal signals width-dependent on parameters
+
+2. Pipeline Structure:
+   - Maintained 2-stage pipeline (lower and upper halves)
+   - Dynamic stage splitting based on STG_WIDTH
+   - Proper carry propagation between stages
+
+3. Signal Handling:
+   - Corrected result concatenation to match parameterized widths
+   - Maintained proper enable signal propagation through pipeline
+   - Ensured all registers are properly sized for parameters
+
+4. Reset Behavior:
+   - All registers properly initialized on reset
+   - Output enable cleared during reset
+
+5. Compatibility:
+   - Maintains same functionality as original
+   - Now works with testbench expecting parameterized design
+   - Backward compatible with fixed 64-bit case

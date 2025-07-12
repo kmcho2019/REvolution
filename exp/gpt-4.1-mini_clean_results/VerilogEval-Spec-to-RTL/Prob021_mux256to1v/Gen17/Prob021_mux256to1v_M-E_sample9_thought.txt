@@ -1,0 +1,9 @@
+Instead of unpacking the 1024-bit input vector into an array or using a hierarchical mux structure, we can directly compute the starting bit index from the select input and use a single continuous indexed part-select on the input vector. This approach takes advantage of Verilog's variable part-select syntax ([start +: width]) to directly extract the selected 4-bit slice. 
+
+This method:
+1. Avoids intermediate unpacking or mux structures, reducing logic and wiring.
+2. Reduces the critical path to a single multiplexer stage implemented by the synthesis tool.
+3. Minimizes switching activity and area by only selecting the needed bits without generating 256 intermediate signals.
+4. Results in a compact and efficient hardware implementation suitable for synthesis and formal verification.
+
+The only subtlety is that sel is 8 bits and the selection index must be multiplied by 4 to index the 1024-bit input, which can be done using a shift operation (sel << 2).

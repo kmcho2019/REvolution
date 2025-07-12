@@ -1,0 +1,11 @@
+Implement the frequency divider by separately counting rising and falling edges of the input clock using two counters: cnt1 increments on the positive edge of clk, and cnt2 increments on the negative edge. Each counter counts from 0 to NUM_DIV-1.
+
+At the moment cnt1 and cnt2 reach the half division point (NUM_DIV >> 1), the corresponding clk_div1 or clk_div2 toggles.
+
+The final output clk_div is formed by OR-ing clk_div1 and clk_div2, producing a waveform with a period of NUM_DIV input clock cycles and a more balanced duty cycle for odd division factors.
+
+Use asynchronous active-low reset for immediate initialization of counters and toggle signals.
+
+Parameterize NUM_DIV and enforce at compile-time that it is odd.
+
+This design respects the problem's requirement of using two counters and two toggles on both clock edges, achieving the odd frequency division with improved output clock quality.

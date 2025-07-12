@@ -1,0 +1,12 @@
+Simplified Design Approach:
+1. State Machine: Use a simple 3-state FSM (IDLE, BYTE1, BYTE2) to track message collection progress
+2. Data Storage: Directly store incoming bytes into their respective positions in the 24-bit output register
+3. Output Control: Only update output registers when needed (during state transitions) and assert 'done' immediately after third byte
+4. Reset Handling: Synchronous reset to initialize all registers
+5. Don't-care Optimization: Output remains don't-care when not in done state
+
+Key Simplifications:
+- Removed unnecessary optimizations from original solution
+- Straightforward state transitions without complex conditions
+- Minimal register updates (only when storing bytes)
+- Clean output handling with explicit don't-care when not done

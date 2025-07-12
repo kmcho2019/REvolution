@@ -1,0 +1,7 @@
+To address the issues identified in the feedback, we need to modify the state machine to transition between states only when a new byte is received and to correctly identify valid message boundaries. We can achieve this by adding a separate register to keep track of whether the current byte has been processed. 
+
+The key insight is to introduce a new signal, `new_byte`, that gets set when `in` changes and `reset` is low. This allows us to only advance the state machine when a new byte is received. Furthermore, the state machine should only transition to the next state if the current state is `BYTE1`, `BYTE2`, or `BYTE3`, and a new byte has been received. 
+
+Additionally, we need to correct the condition for asserting the `done` signal. The `done` signal should be asserted when the state machine is in the `BYTE3` state, a new byte has been received, and the first byte of the message had `in[3] = 1`. This ensures that `done` is only asserted after receiving a valid message.
+
+We also need to handle the reset condition properly to ensure that the state machine and all signals are reset to their initial states when `reset` is high.

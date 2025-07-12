@@ -1,0 +1,7 @@
+To implement this finite state machine (FSM), we can use a minimal number of states. The FSM starts in state A. When `s` becomes 1, it transitions to state B, where it examines `w` for the next three clock cycles. We can use counters and flags to track the number of times `w` is 1 during these three cycles. If `w` is 1 exactly twice, we set `z` to 1 in the next cycle. We only need a few states to manage this process: one for the initial state A, and others to handle the counting and checking of `w` in state B.
+
+Given the requirements, we can break down state B into sub-states where we count the occurrences of `w = 1` over three clock cycles. This can be efficiently handled with a single state machine that keeps track of the count of `w` being 1 and the cycle number.
+
+We'll use a 2-bit counter to keep track of the cycle (0 to 3 cycles) and a 2-bit counter to count how many times `w` is 1 during these cycles. Based on the count of `w` and the cycle, we determine the output `z`.
+
+We'll implement the FSM using a single `always` block that handles the state transitions and the logic for `z` based on the current state and inputs.

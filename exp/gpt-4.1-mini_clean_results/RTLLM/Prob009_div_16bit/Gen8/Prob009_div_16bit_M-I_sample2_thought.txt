@@ -1,0 +1,13 @@
+The existing solution implements a purely combinational 16-bit by 8-bit divider using a generate loop for iterative subtraction. While correct and clear, it has a long critical path due to 16 sequential subtractor stages in combinational logic, leading to large delay and power consumption. To improve PPA (power, performance, area), the strategy is:
+
+1. Reduce the width of remainder registers to 8 bits where possible, as the divisor is 8-bit and remainder never exceeds 8 bits. This reduces logic complexity in subtraction and comparisons.
+2. Replace the 9-bit wires (8-bit divisor + 1 bit) with 8-bit wires, carefully handling borrow/overflow to avoid unnecessary 9-bit wide subtractors.
+3. Use a one-hot mux style to select between subtract or no subtract results, minimizing logic complexity.
+4. Implement a combinational divider using only blocking assignments in an always @* block to facilitate tool optimizations and potentially more efficient logic inference.
+5. Avoid generating 16 subtractors and instead perform subtraction only once per stage by precomputing candidate remainder and using conditional assignment.
+6. Limit intermediate signals' width to reduce area and power.
+7. Keep two always blocks as per specification: one to register inputs (a_reg, b_reg), one to perform the division. Although the inputs are combinational, this matches the requirement and enables clear separation.
+
+This approach maintains correctness, keeps it fully combinational (no clock), and reduces logic width and critical path by limiting signal sizes and using cleaner conditional assignments. This can reduce area and power and improve timing slightly due to less complex subtraction and wiring.
+
+Below is the improved code applying these ideas.

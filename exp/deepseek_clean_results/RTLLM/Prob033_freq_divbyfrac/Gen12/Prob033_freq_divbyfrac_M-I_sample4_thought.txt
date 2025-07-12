@@ -1,0 +1,23 @@
+Improved design strategy for accurate 3.5x fractional divider:
+
+1. Maintain the fundamental 7-cycle period (0-6) for correct division ratio
+2. Implement true phase shifting:
+   - Generate two 50% duty cycle clocks at 1/3.5 frequency
+   - Phase shift them by 180° (half period)
+3. Use double-edge triggering:
+   - Create one phase on positive edges
+   - Create complementary phase on negative edges
+4. Proper duty cycle control:
+   - Each phase high for exactly 1.75 cycles (half of 3.5)
+   - Phases overlap to create continuous output
+5. Optimized implementation:
+   - Single counter for both phases
+   - Minimal register usage
+   - Clean reset handling
+
+Key improvements:
+- Accurate phase shifting through double-edge clocking
+- Proper duty cycle control for each phase
+- Correct overlapping of phases for continuous output
+- Maintains exact 3.5x division ratio
+- Reduced glitch potential

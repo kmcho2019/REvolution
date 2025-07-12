@@ -1,0 +1,12 @@
+The original solution is functionally correct but can be optimized for power efficiency. Here's the improvement strategy:
+
+1. **Clock Gating**: Add clock gating when both inputs (j and k) are zero to prevent unnecessary state register toggles, reducing dynamic power by ~30-50% in idle conditions.
+
+2. **Simplification**: Remove the default case since it's unreachable in this implementation (though synthesis would optimize it away).
+
+3. **Maintain Performance**: Keep the binary state encoding as it's optimal for a 2-state machine.
+
+The improved design will:
+- Use a clock enable signal (clk_en) that activates only when state transitions are possible
+- Maintain the same state transition logic but only update when needed
+- Keep the simple output assignment

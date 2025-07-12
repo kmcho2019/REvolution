@@ -1,0 +1,11 @@
+To implement this FSM, we'll need:
+1. Two main states: A (reset state) and B (counting state)
+2. A 3-bit shift register to track the last 3 values of w in state B
+3. A counter to keep track of how many cycles we've been in state B (mod 3)
+4. Logic to determine when exactly two of the last three w inputs were 1
+
+The FSM will:
+- Stay in state A while s=0, transition to B when s=1
+- In state B, shift in w values and count cycles
+- After every 3 cycles in B, check if exactly two w's were 1 and set z accordingly
+- Reset returns to state A

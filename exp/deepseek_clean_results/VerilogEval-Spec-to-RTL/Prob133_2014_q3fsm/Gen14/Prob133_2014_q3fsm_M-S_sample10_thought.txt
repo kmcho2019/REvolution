@@ -1,0 +1,13 @@
+Simplified Design Approach:
+1. State Reduction: Keep only 2 states (A and B) since that's sufficient for the FSM behavior
+2. Counter Optimization: Use a single 2-bit counter to track both the cycle count and 1's count
+3. Output Logic: Make z purely combinational based on current state and counter values
+4. Reset Handling: Clear all state on synchronous reset
+5. State Transition: Simple transition from A to B based on s input
+6. Counting Logic: Only count w values when in state B, reset counts when returning to state A
+
+Key Simplifications:
+- Eliminated separate cycle_count and ones_count registers by using a single counter
+- Simplified counting logic by using modulo-3 behavior implicitly
+- Maintained minimal state representation
+- Kept output logic simple and combinational

@@ -1,0 +1,15 @@
+Instead of using an initial block with delays to toggle the clock, use a continuous procedural block that toggles the clock on a timed event triggered by a forever loop inside an always block combined with a timer variable.
+
+Specifically, implement a free-running clock with an always block and a counter variable incremented by a time unit (e.g., #1), toggling the clock every half period.
+
+This approach avoids reliance on delays inside an initial block and models the clock toggling more structurally.
+
+It also provides clear cycle timing and can be easily modified for synthesis or simulation.
+
+The clock is initialized to 0, and an integer counter counts time steps until half_period, at which point the clock toggles and counter resets.
+
+This method ensures integer granularity timing and good simulation compatibility.
+
+It is also easy to extend with a clock enable or reset if needed later.
+
+This design is novel relative to the original initial+forever+delay approach.

@@ -1,0 +1,25 @@
+Here's a novel approach using a finite state machine (FSM) with explicit state transitions for pulse detection:
+
+1. FSM Design:
+   - Implement a 3-state machine (IDLE, GOT_0, GOT_1)
+   - Each state represents progress in detecting the 010 sequence
+   - Explicit transitions ensure precise pattern matching
+
+2. Edge Detection:
+   - Use registered input to detect rising/falling edges
+   - This makes the FSM transition conditions more robust
+
+3. Output Generation:
+   - Output is only set when completing the full sequence
+   - Clear immediately after detection for single-cycle pulse
+
+4. Advantages:
+   - More explicit control over sequence detection
+   - Easier to modify for different patterns
+   - Clear state visibility for debugging
+   - Better handling of irregular input patterns
+
+The FSM states:
+- IDLE: Waiting for first 0
+- GOT_0: Received first 0, waiting for 1
+- GOT_1: Received 1 after 0, waiting for final 0

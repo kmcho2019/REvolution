@@ -1,0 +1,13 @@
+Refactoring approach:
+1. Convert the Moore state machine to a Mealy machine for reduced latency
+2. Use continuous assignments (assign) for the output to eliminate sequential output logic
+3. Maintain the same state transition logic but express it more concisely
+4. Keep the asynchronous reset functionality
+5. Simplify parameter definitions since they're only used internally
+6. Combine state transition and output logic into a single always block for clarity
+
+Key changes:
+- Output z becomes combinational (assign) based on current state and input
+- State transitions remain sequential (always block)
+- Reduced register usage (only state needs to be registered)
+- More compact state encoding without sacrificing readability

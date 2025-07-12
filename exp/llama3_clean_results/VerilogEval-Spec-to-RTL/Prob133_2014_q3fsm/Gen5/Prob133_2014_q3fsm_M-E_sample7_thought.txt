@@ -1,0 +1,7 @@
+To implement a novel solution for the finite state machine (FSM) that meets the requirements, we can use a pipelined approach. The idea is to create a 3-stage pipeline where each stage represents a clock cycle in the 3-clock cycle window. 
+
+The first stage will check the input w and set a flag if w = 1. The second stage will receive this flag and the current input w, and it will set its own flag if w = 1 or the previous flag is set. The third stage will receive the flags from the previous two stages and the current input w, and it will set the output z accordingly.
+
+We can use three registers to store the flags from each stage. We will also use a state variable to track the current state (A or B) of the FSM. When the FSM is in state A, it will stay in state A until s = 1, at which point it will transition to state B. 
+
+In state B, the FSM will start checking the input w and update the output z based on the pipeline stages. This approach allows us to simplify the logic and reduce the number of counters needed.

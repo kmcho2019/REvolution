@@ -1,0 +1,10 @@
+Fuse the best ideas from both examples by:
+1. Using a single always_ff block for synchronous updates of SP, stack_mem, and dataOut to simplify timing and maintainability.
+2. Calculating push_en and pop_en as mutually exclusive enables for push (write) and pop (read) operations to avoid conflicting actions.
+3. Precomputing push_addr (SP - 1) and pop_addr (SP) combinationally to simplify addressing and reduce arithmetic complexity.
+4. Updating dataOut only during pop operations for minimal switching and clearer intent.
+5. Initializing stack_mem to zero on reset with a for-loop for clarity and synthesis friendliness.
+6. Avoiding memory clearing on pop for power saving, accepting that dataOut and SP changes reflect stack state.
+7. Deriving EMPTY and FULL flags combinationally from SP for immediate, simple status signals.
+8. Maintaining SP as a 3-bit value ranging from 0 (full) to 4 (empty) for intuitive stack depth tracking.
+This fusion strategy ensures clarity, efficiency, and optimized performance, power, and area, leveraging the explicit control signals and straightforward synchronous logic.

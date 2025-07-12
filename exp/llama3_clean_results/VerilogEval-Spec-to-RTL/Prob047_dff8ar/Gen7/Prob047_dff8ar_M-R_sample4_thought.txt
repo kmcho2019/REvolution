@@ -1,0 +1,7 @@
+To refactor the existing code, we can focus on simplifying the implementation while maintaining the same functionality. One approach is to eliminate the use of an `always` block for the D flip-flop and instead use a more direct assignment. However, this won't work with the asynchronous reset. An alternative approach is to use a single `always` block to handle both the clock edge and the asynchronous reset condition. This simplification aims to maintain the core idea of implementing an 8-bit D flip-flop with an active high asynchronous reset while using a potentially more area-efficient structure.
+
+Another consideration is to keep the 8-bit D flip-flop in a separate module to maintain modularity, but to streamline the logic within that module. The existing code already follows this structure, which is beneficial for readability and maintainability.
+
+By maintaining the use of non-blocking assignments (`<=`) within the `always` block, we ensure that the sequential logic is properly handled, which is important for the correctness of the D flip-flop operation at the positive edge of the clock.
+
+Given that the current design is already efficient in terms of area and power, as indicated by the PPA metrics, our refactoring should not introduce unnecessary complexity or inefficiency. The goal is to provide an alternative implementation that is as efficient as the existing one but with a potentially simpler structure.

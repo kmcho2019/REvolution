@@ -1,0 +1,7 @@
+To implement a Mealy-type finite state machine that recognizes the sequence "101" on an input signal named x, we can design a state machine with three states: idle, saw_1, and saw_10. 
+- The idle state is the reset state where the machine starts and waits for the first '1' in the sequence.
+- When a '1' is detected in the idle state, the machine transitions to the saw_1 state.
+- In the saw_1 state, if a '0' is detected, the machine transitions to the saw_10 state.
+- In the saw_10 state, if a '1' is detected, the machine asserts the output z to '1' and remains in this state until the sequence is broken by a '0', at which point it transitions back to the saw_1 state if the input is '1' or to the idle state if the input is '0'.
+- The state machine will have a negative edge triggered asynchronous reset. 
+- The output z is asserted whenever the sequence "101" is detected, allowing for overlapping sequences.

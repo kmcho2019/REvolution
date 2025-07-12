@@ -1,0 +1,10 @@
+Fuse the strengths of both FSM implementations by:
+- Using one-hot state encoding to reduce combinational logic complexity and glitches, improving timing and clarity.
+- Adopting a case statement in the combinational next-state logic for synthesis friendliness and shorter critical path.
+- Keeping a sticky final detected state (S4) to permanently latch the start_shifting output, reducing toggling and power on output logic.
+- Employing synchronous active-high reset to ensure deterministic and safe initialization.
+- Generating output combinationally from the current state in a Moore style for glitch-free assertion.
+- Defaulting next_state to the current state to prevent inferred latches and to reduce logic switching.
+- Structuring the code with clear localparam definitions and consistent style for maintainability and readability.
+
+This fusion balances the lower flip-flop count and area efficiency of one-hot encoding with clear, optimized combinational logic, achieving a power-efficient and high-performance FSM detecting "1101" and permanently asserting start_shifting after detection.

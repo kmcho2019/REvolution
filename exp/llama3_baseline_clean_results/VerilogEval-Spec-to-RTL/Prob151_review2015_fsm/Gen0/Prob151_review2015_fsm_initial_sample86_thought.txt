@@ -1,0 +1,19 @@
+To solve this problem, we will design a finite-state machine (FSM) with the following states: 
+- IDLE: The initial state where the FSM searches for the pattern 1101.
+- SHIFT: After detecting the pattern, the FSM shifts in 4 more bits to determine the duration.
+- COUNTING: The FSM waits for the counters to finish counting.
+- DONE: The FSM notifies the user and waits for the acknowledgment.
+The FSM will transition between these states based on the input signals and the current state.
+
+The FSM will use a 2-bit or larger state register to represent the current state.
+A series of if-else statements or a case statement will be used to describe the state transitions.
+The next state logic will be implemented based on the current state and input signals.
+The output logic will be derived from the current state.
+
+In the IDLE state, the FSM will check the input data to detect the pattern 1101.
+When the pattern is detected, the FSM will move to the SHIFT state and assert shift_ena for exactly 4 clock cycles.
+In the SHIFT state, the FSM will count the number of clock cycles and transition to the COUNTING state after 4 cycles.
+In the COUNTING state, the FSM will wait for the done_counting signal to be high and then transition to the DONE state.
+In the DONE state, the FSM will assert the done signal and wait for the ack signal to be high before transitioning back to the IDLE state.
+
+The FSM will also be reset to the IDLE state when the reset signal is high.

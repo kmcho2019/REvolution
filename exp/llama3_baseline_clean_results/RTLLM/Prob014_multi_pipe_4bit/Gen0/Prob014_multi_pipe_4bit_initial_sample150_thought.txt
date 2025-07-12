@@ -1,0 +1,9 @@
+To implement a 4-bit unsigned number pipeline multiplier, we will design a Verilog module named 'multi_pipe_4bit'. The module will have two levels of registers to store intermediate values and control the multiplication process. 
+
+We start by defining the module and its ports. The module will have a clock signal 'clk', an active-low reset signal 'rst_n', two 4-bit input signals 'mul_a' and 'mul_b' representing the multiplicand and the multiplier, respectively, and an 8-bit output signal 'mul_out' representing the product.
+
+To perform the multiplication, we will first extend the input signals by adding 4 zero bits at the most significant bit positions. Then, we will use a generate block to perform the multiplication for each bit position of the multiplier and generate the partial products.
+
+We will use registers to store the intermediate sum values. On the positive edge of the clock signal or the falling edge of the reset signal, the module will perform add operations to update the registers. If the reset signal is low, the registers will be set to 0. If the reset signal is high, the registers will be updated with the sum of the corresponding partial products.
+
+Finally, on the positive edge of the clock signal or the falling edge of the reset signal, the module will calculate the final product by summing the values of the registers. If the reset signal is low, the product output will be set to 0. If the reset signal is high, the product output will be updated with the sum of the registers.

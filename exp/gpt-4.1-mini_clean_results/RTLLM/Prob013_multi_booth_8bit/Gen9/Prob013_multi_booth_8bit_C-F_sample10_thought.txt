@@ -1,0 +1,18 @@
+To implement a superior 8-bit Radix-4 Booth multiplier combining the best ideas from both examples:
+
+- Use a synchronous reset only on clk posedge for synthesis friendliness and cleaner timing.
+- Accurately implement Radix-4 Booth algorithm by processing two bits of the multiplier per cycle (except the initial appended bit), reducing the number of cycles from 16 to 8.
+- Store the multiplier with an appended zero LSB to simplify Booth recoding (multiplier = {b, 0}).
+- Use a signed 17-bit multiplier register (to hold 8 bits of multiplier plus an appended 0 bit plus sign extension) and signed 17-bit multiplicand and product registers to properly accommodate sign extension and shifting.
+- Implement a 4-bit counter for 8 iterations of Radix-4 Booth encoding.
+- Use Booth recoding logic on 3 bits per cycle: {multiplier[2*i+1], multiplier[2*i], multiplier[2*i-1]} (for i from 0 to 7; for i=0, multiplier[-1] = 0).
+- Determine partial product multiple (0, +1, -1, +2, -2) times multiplicand based on recoding value.
+- Accumulate the partial product shifted appropriately into the product register.
+- Shift the multiplicand by multiples of 2 bits is not necessary since the algorithm uses multiples (-2, -1, 0, +1, +2) to generate partial products to add.
+- After 8 cycles, the product register holds the final 16-bit signed product.
+- Output registered product and assert ready signal for one cycle to indicate completion.
+- Use non-blocking assignments throughout to ensure clean sequential behavior.
+- Keep code clean and readable with appropriate comments and FSM states for clarity.
+- This approach fuses correct radix-4 encoding (vs radix-2 bit-by-bit), cleaner synchronous reset and signed registers, output registration, and ready signal handshake.
+
+This design improves performance by halving the iteration count, reduces switching on the multiplicand register by not shifting every cycle, and achieves proper radix-4 Booth multiplication accuracy with proper sign extension and output stability.

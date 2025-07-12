@@ -1,0 +1,9 @@
+To improve the PPA (performance, power, area) of the 4-bit adder, I will replace the ripple-carry structure with a simple carry-lookahead logic, reducing the critical path delay significantly. Instead of chaining full adders with carry-out feeding into the next full adder's carry-in, I will compute the carries directly using generate and propagate signals. This removes the sequential carry propagation and improves timing. 
+
+Power is likely improved due to reduced glitches and toggling in the carry chain. Area may slightly increase due to carry logic, but for a 4-bit adder, the carry-lookahead logic is compact and efficient.
+
+The sum bits are still calculated via XOR of inputs and carry-in. Carry bits are computed in parallel using the generate (g) and propagate (p) signals.
+
+I will implement a single TopModule without instantiating full adders for minimal overhead and clear logic.
+
+This approach balances improved performance and power with minimal area impact and straightforward code.

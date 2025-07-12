@@ -1,7 +1,0 @@
-The issue in the provided Verilog code lies in the logic for the LFSR shifting operation. The line `{q[4] ^ q[2], q[4], q[3], q[2], q[1]}` tries to implement the shifting of the LFSR with XOR gates at tap positions 5 and 3. 
-
-The problem arises because the new value of q[1] is computed using the previous q[2] without being shifted. This logic propagates an incorrect output through the LFSR, leading to mismatches in the simulation results. 
-
-To align with the design intent of a Galois LFSR with taps at bit positions 5 and 3, the shifting logic should be modified to ensure that the bits without taps are shifted to the right, while the bits with taps are updated based on the XOR operation involving the LSB output bit q[0].
-
-This fundamental error in the shifting logic results in the observed simulation mismatches.

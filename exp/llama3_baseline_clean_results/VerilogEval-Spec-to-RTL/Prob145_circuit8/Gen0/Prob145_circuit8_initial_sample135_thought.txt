@@ -1,0 +1,14 @@
+To solve this problem, we need to analyze the given simulation waveforms and identify the behavior of the sequential circuit. Looking at the waveforms, it appears that the circuit is implementing a basic finite state machine (FSM) with two outputs, p and q.
+
+The FSM has two states: 
+- When clock is 1 and a is 1, p is 1 and q is 0. 
+- When clock is 0, p is 0 but q depends on the previous value of a. 
+- q becomes 1 after a is 0 when clock is 1 for at least one cycle after a was 1.
+
+This behavior suggests that we can implement this circuit using a simple two-state FSM with two D flip-flops, one for p and one for q. The next state logic for p and q will depend on the current state of p, q, and the input a.
+
+Based on the waveform, we can implement the following logic:
+- p is 1 when a is 1 and clock is 1.
+- q becomes 1 and stays 1 when clock is 0 after a was 1, regardless of the value of a when clock is 0.
+
+This logic can be implemented in Verilog using the following code.

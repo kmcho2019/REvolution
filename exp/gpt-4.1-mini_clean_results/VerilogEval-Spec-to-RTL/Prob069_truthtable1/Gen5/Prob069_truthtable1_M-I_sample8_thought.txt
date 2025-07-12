@@ -1,0 +1,29 @@
+The original implementation uses a 2-to-1 multiplexer expression: f = x3 ? x1 : x2, which matches the truth table exactly and is minimal in terms of logic gates. The reported power and area metrics are already low and near the theoretical minimum for this function.
+
+To optimize further for PPA, we can consider rewriting the expression using Boolean algebra to see if a simpler expression exists that might reduce switching or gate count.
+
+By examining the truth table and function:
+
+f is true in rows where:
+- x3=0 and x2=1 (regardless of x1)
+- x3=1 and x1=1 (regardless of x2)
+
+This corresponds exactly to f = (~x3 & x2) | (x3 & x1).
+
+This expression uses two AND gates and one OR gate.
+
+The multiplexer form (f = x3 ? x1 : x2) is a standard minimal form using a 2-to-1 mux which is often implemented efficiently in hardware.
+
+For certain FPGA architectures or standard cell libraries, the mux implementation may be more area and power-efficient than implementing explicit AND and OR gates.
+
+However, the explicit Boolean form may allow simpler or faster logic optimization depending on synthesis tools and technology.
+
+Therefore, providing the expression f = (~x3 & x2) | (x3 & x1) as a continuous assignment may help some synthesis tools optimize the logic differently.
+
+In addition, since f is purely combinational, using continuous assignment is best for PPA.
+
+Overall, this is a minor variation on the original code that expresses the logic more directly, potentially benefiting synthesis tools.
+
+No clock or sequential logic is involved, so no further PPA gains are expected here.
+
+Hence, the improvement is expressing the logic explicitly with AND/OR rather than conditional operator, to provide synthesis tools an alternative form for optimization.

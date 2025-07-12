@@ -1,0 +1,9 @@
+Implement the FSM using one-hot state encoding instead of binary encoding to potentially simplify next-state decoding and reduce combinational path complexity, as only one flip-flop is active per state. 
+
+Separate the output logic completely from the next state logic by defining output as a combinational function of the current state only, ensuring strict Moore machine behavior.
+
+Use synchronous active-high reset to initialize the state register to the A state flip-flop asserted, and all others cleared.
+
+Keep next-state logic in a combinational always block with blocking assignments for clarity, and update state registers on the positive clock edge with non-blocking assignments.
+
+This approach simplifies output logic, avoids muxing on the output path, and leverages one-hot encoding benefits (easier timing closure and potentially lower glitching on complex FPGAs), at the cost of a few more flip-flops.

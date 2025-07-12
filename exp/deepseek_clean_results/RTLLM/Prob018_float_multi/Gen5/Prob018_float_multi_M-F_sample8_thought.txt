@@ -1,0 +1,25 @@
+Improvement Strategy:
+1. Rounding Logic Fix:
+   - Remove incorrect check for normalized_product[23] in rounding condition
+   - Simplify rounding to use only guard, round, and sticky bits
+   - Ensure proper carry propagation during rounding
+
+2. Overflow/Underflow Enhancement:
+   - Improve overflow detection by checking exponent range more precisely
+   - Add explicit underflow check when exponent becomes too small
+   - Handle denormal numbers more carefully
+
+3. Exponent Calculation Correction:
+   - Verify exponent calculation with proper bias adjustment
+   - Add boundary checks for maximum and minimum exponent values
+
+4. Pipeline Optimization:
+   - Maintain 3-stage pipeline structure
+   - Ensure all special cases are handled in stage 0
+   - Streamline normalization and rounding in stage 2
+
+Key Changes:
+- Fixed rounding logic to strictly follow IEEE-754 round-to-nearest-even
+- Improved overflow/underflow detection with better boundary checks
+- Maintained all special case handling
+- Kept pipeline structure while improving accuracy

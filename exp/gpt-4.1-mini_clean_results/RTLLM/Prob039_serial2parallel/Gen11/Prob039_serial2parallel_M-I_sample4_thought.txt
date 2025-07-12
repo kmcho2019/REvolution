@@ -1,0 +1,5 @@
+To improve correctness and clarity, separate the shift register update and output latch. Shift the serial input bit into the shift register MSB first on each valid input, counting bits until 8 are collected. On the cycle after receiving the 8th bit, latch the complete shift register value into the parallel output and assert dout_valid for exactly one clock cycle. This avoids race conditions between shift_reg and dout_parallel and ensures stable output data.
+
+Reset all registers synchronously on rst_n low.
+
+This approach guarantees the first received bit maps to dout_parallel[7], and the output valid signal pulses once per 8 bits received, facilitating proper handshake with downstream logic and preventing simulation timeout.

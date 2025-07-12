@@ -1,0 +1,22 @@
+Refactoring Approach:
+1. State Machine Restructuring:
+   - Replace sequential state register with combinational next_state logic using assign
+   - Move state transition logic entirely to continuous assignments
+
+2. Phase Counter Optimization:
+   - Implement phase counter as a modulo-3 counter using arithmetic
+   - Use clear terminal count comparison (phase == 2'd2) for readability
+
+3. Shift Register Simplification:
+   - Keep the 3-bit shift register but make its update logic more explicit
+   - Use concatenation for clear bit rotation
+
+4. Output Logic Clarity:
+   - Separate the output condition into clear components
+   - Use intermediate wires for better readability
+
+Key Changes:
+- All sequential elements moved to single always block
+- State machine logic made combinational
+- Clear separation of phase counting and w history
+- More explicit terminal count detection

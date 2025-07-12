@@ -1,0 +1,19 @@
+To optimize the existing FSM for better PPA (Performance, Power, Area), I will:
+
+1. Simplify the shift register update to use a shift-left approach (data_shift <= {in, data_shift[7:1]} is actually shift-right with MSB= new bit). Since LSB first is required, shifting right with MSB updated is correct; but to reduce switching, I will keep the same approach but remove unnecessary assignments.
+
+2. Remove redundant "bit_count <= bit_count;" and "data_shift <= data_shift;" statements in the default case to reduce inferred mux logic.
+
+3. Combine the reset and start bit detection into one condition for clearing bit_count and data_shift to avoid separate cases.
+
+4. Introduce an enable signal for shifting and counting only during RECEIVE state to gate flip-flops and reduce switching power.
+
+5. Refactor the always blocks so that bit_count, data_shift, and done are updated only when enabled, keeping them stable otherwise.
+
+6. Change the state encoding from typedef enum to localparam to reduce synthesis overhead.
+
+7. Ensure done is asserted for one clock cycle at the STOP state with a correct stop bit.
+
+This will reduce switching activity by gating register updates, reduce mux complexity by removing unnecessary assignments, and slightly improve area and power while maintaining performance and correctness.
+
+The logic remains fully synchronous with active-high reset and positive edge clock triggering.

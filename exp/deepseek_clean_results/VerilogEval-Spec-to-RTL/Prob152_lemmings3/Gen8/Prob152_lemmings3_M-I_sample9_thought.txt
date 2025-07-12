@@ -1,0 +1,19 @@
+Improvement strategy based on PPA metrics:
+1. Timing Optimization:
+   - Separate direction logic from state transitions to reduce critical path
+   - Use one-hot encoding for states to simplify transition logic
+   - Add registered outputs to break long combinatorial paths
+
+2. Power Optimization:
+   - Add clock gating for direction register updates
+   - Filter bump signals to prevent unnecessary toggles
+
+3. Area Optimization:
+   - Keep one-hot encoding which is area-efficient for small state machines
+   - Maintain simple output logic structure
+
+Key changes:
+- Use one-hot state encoding (3 bits for 3 states)
+- Separate direction update logic with clock gating
+- Register outputs to improve timing
+- Add bump signal filtering to reduce power

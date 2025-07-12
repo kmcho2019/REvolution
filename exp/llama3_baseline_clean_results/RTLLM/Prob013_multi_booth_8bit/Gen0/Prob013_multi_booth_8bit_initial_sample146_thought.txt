@@ -1,0 +1,10 @@
+To implement an 8-bit Radix-4 Booth multiplier, we first need to understand the Booth algorithm and how it can be applied in a hardware context. The Booth algorithm allows for the multiplication of two numbers by iteratively adding or subtracting the multiplicand from a running product, depending on the current bit of the multiplier. 
+
+The key steps in implementing this in Verilog are:
+1. Initialize the registers for the multiplicand and multiplier on the positive edge of the reset signal.
+2. Implement a counter to keep track of the current bit being processed in the multiplier.
+3. On each clock cycle, check if the current bit of the multiplier is 1. If it is, accumulate the multiplicand into the product.
+4. Left-shift the multiplicand by 1 to simulate the Booth algorithm's shifting operation.
+5. Once the counter reaches 16, indicating all bits have been processed, set the ready signal to 1.
+
+We will utilize two 16-bit registers, one for the multiplicand and one for the multiplier, to hold the extended sign versions of the inputs. A 5-bit counter will be used to track the current bit being processed.

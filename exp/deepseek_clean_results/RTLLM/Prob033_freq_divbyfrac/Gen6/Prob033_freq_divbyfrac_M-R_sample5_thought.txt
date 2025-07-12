@@ -1,0 +1,13 @@
+To properly implement the 3.5x fractional divider with correct duty cycle:
+
+1. Maintain the 7-cycle period (0-6) but adjust the active periods
+2. Generate two complementary clock phases:
+   - Main phase: high for first 3.5 cycles (0-3 rising, 3 falling)
+   - Shifted phase: same pattern but delayed by half cycle
+3. Use edge-triggered flip-flops for precise phase shifting
+4. Combine phases with XOR instead of OR to create uniform pulses
+5. Key improvements:
+   - Precise 50% duty cycle output
+   - Correct phase alignment
+   - Simplified control logic
+   - No overlapping active periods

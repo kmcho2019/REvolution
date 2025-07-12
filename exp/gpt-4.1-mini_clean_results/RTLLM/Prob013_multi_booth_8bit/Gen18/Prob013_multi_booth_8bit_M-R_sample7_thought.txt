@@ -1,0 +1,9 @@
+Refactor the radix-4 Booth multiplier into a simple FSM with three states: IDLE, CALC, DONE.
+
+- On reset, initialize sign-extended multiplicand and multiplier (with appended zero bit) registers, clear product and counter, and move to CALC state.
+- In CALC state, process one radix-4 group per clock cycle by decoding the current 3 multiplier bits using a combinational function and accumulating the partial product shifted accordingly.
+- Shift the multiplier right by 2 bits at each step and increment the step counter.
+- When all 4 steps are done, transition to DONE state, set rdy high, and output the lower 16 bits of the product.
+- In DONE, wait until reset or next start.
+
+This FSM separates control flow cleanly, uses non-blocking assignments consistently, and isolates combinational decoding from sequential logic. It improves readability and ease of modification while keeping the core algorithm unchanged.

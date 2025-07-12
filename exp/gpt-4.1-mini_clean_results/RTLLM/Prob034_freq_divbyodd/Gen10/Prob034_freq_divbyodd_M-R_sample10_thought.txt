@@ -1,0 +1,7 @@
+Refactor the frequency divider to use a single counter clocked on the rising edge, avoiding two separate counters and dual-edge always blocks. 
+Use combinational logic to generate two pulse signals corresponding to rising and falling edge pulses based on counter values. 
+Generate clk_div1 and clk_div2 as registered signals toggled by these pulses on the positive clock edge, thus using only one always block triggered by posedge clk and asynchronous reset.
+Finally, OR clk_div1 and clk_div2 to get clk_div output.
+This approach reduces complexity by eliminating negative edge logic, potentially improving timing, power, and area.
+We maintain the same functional behavior by generating two phase-shifted pulses to approximate the divided clock waveform for odd division.
+Also, parameterize and check for oddness as before.

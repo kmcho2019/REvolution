@@ -1,0 +1,12 @@
+To fix the transition detection logic, we need to:
+1. Simplify the pipeline to only store the previous input value (single register instead of two)
+2. Compare current input with previous cycle's input to detect 1->0 transitions
+3. Maintain the captured state by OR-ing new detections with existing state
+4. Clear everything synchronously on reset
+
+The corrected design will:
+- Use a single register to store the previous input value (prev_in)
+- Compare current input (t) with prev_in (t-1) to detect 1->0 transitions
+- Accumulate detected transitions in captured_state
+- Reset all registers synchronously
+This eliminates the unnecessary pipeline stage and ensures correct transition detection timing.

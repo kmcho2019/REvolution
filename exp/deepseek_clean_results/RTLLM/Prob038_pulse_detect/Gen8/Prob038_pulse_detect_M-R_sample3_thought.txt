@@ -1,0 +1,13 @@
+I'll refactor the solution to use a more explicit state machine approach while maintaining the same functionality. The key changes are:
+
+1. Replace the shift register with explicit state encoding (IDLE, GOT_1, GOT_10)
+2. Use a combinatorial assign for the output to separate state logic from output logic
+3. Make the state transitions more explicit and self-documenting
+4. Keep the same detection pattern (0->1->0)
+
+Advantages of this refactoring:
+- More explicit state transitions make the design intent clearer
+- Output logic is separated from state transition logic
+- Easier to modify if pulse detection criteria changes
+- Still maintains minimal hardware usage (3 states encoded in 2 bits)
+- Same cycle-accurate behavior as original

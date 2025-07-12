@@ -1,0 +1,30 @@
+Implement the Lemming FSM using an explicit three-bit state encoding that encodes both mode and direction in a single state variable to simplify control logic. We'll encode all combinations of mode (walk left, walk right, dig left, dig right, fall left, fall right, splat) as distinct states, eliminating separate direction registers. This reduces the complexity of next-state logic by representing direction as part of the state itself.
+
+The state machine will be Moore type, with outputs derived directly from the state encoding.
+
+- States:
+  - WALK_LEFT
+  - WALK_RIGHT
+  - DIG_LEFT
+  - DIG_RIGHT
+  - FALL_LEFT
+  - FALL_RIGHT
+  - SPLAT (no direction needed)
+
+This avoids having to keep a separate direction signal and handles direction switching by direct state transitions.
+
+Fall timer will be a 5-bit counter incremented only in fall states.
+
+On bump events while walking, the FSM moves to the opposite walk direction state.
+
+If ground is lost from walking or digging, the FSM transitions to the corresponding fall state with direction preserved.
+
+Digging starts only when dig=1 and walking on ground, transitioning to DIG state with the current direction.
+
+Splatter occurs when falling for more than 20 cycles before landing.
+
+Async reset sets the FSM to WALK_LEFT and clears timer.
+
+Outputs are asserted based on state category.
+
+This architectural approach emphasizes state encoding to reduce complexity and keep the design easily extensible and clear.

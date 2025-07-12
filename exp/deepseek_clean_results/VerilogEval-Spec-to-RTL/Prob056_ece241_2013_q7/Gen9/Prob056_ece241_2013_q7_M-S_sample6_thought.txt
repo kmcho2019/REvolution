@@ -1,0 +1,13 @@
+To further simplify the JK flip-flop implementation:
+
+1. Observe that the truth table can be expressed more compactly by recognizing that:
+   - When J=K=0: maintain state (Q <= Q)
+   - When J≠K: Q takes J's value
+   - When J=K=1: toggle state (Q <= ~Q)
+
+2. This reduces the logic to just 3 simple cases that can be expressed with a single conditional assignment:
+   - If J=K then Q <= J ? ~Q : Q
+   - Else Q <= J
+
+3. The implementation uses a single always block with non-blocking assignment for proper sequential behavior
+4. This approach minimizes logic operations while maintaining full functionality

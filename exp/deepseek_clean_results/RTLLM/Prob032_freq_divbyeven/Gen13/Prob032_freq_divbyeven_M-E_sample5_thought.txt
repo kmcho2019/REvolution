@@ -1,0 +1,8 @@
+Novel architectural idea:
+1. Use a shift register approach instead of a conventional counter
+2. Implement a circular shift register with width equal to NUM_DIV/2
+3. The divided clock is generated from the MSB of the shift register
+4. On each clock edge, shift left with circular feedback
+5. Reset initializes the shift register to have a single '1' at LSB
+6. This creates a natural divide-by-N behavior where N is the register width*2
+7. Advantages: simpler logic, no comparators needed, scales easily with division factor

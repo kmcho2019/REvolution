@@ -1,0 +1,11 @@
+To improve the existing solution, we will focus on optimizing the PPA metrics (performance, power, and area) based on the provided metrics. 
+
+1. **Performance Optimization**: The current design uses a single always block to update all counters, which might lead to a long critical path. To improve timing performance, we can break down the logic into separate always blocks for each counter. This can potentially reduce the combinational logic depth and improve the critical path.
+
+2. **Power Consumption Optimization**: Since the counters are constantly incrementing, there might be opportunities to reduce power by using clock gating or other power-saving techniques, especially in the hours and minutes counters, which only change at specific times. We can also minimize switching activity by only updating the counters when necessary.
+
+3. **Area Optimization**: The current design uses a 6-bit wide signal for minutes and seconds, which is sufficient for the given problem. The hours counter already uses a 5-bit signal, which is efficient. Further area reduction might be achieved by exploring more compact encoding schemes or resource sharing.
+
+The key idea is to maintain the same functionality while optimizing the design for better PPA metrics. We will employ a structured state machine-like approach to manage the seconds, minutes, and hours counters, ensuring a clean and efficient design.
+
+By utilizing separate always blocks for each counter, minimizing switching activity, and optimizing the counter designs, we can create a more streamlined and efficient design for the perpetual calendar module.

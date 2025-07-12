@@ -1,0 +1,7 @@
+To fix the race condition in the feedback loop, we need to ensure the XOR operation uses the previous flip-flop state rather than the current output. This can be achieved by:
+1. Using the registered value 'q' directly in the XOR operation instead of 'out'
+2. Maintaining the same logical functionality since 'out' is just an alias for 'q'
+3. This eliminates the combinational loop between 'out' and the XOR input
+4. The flip-flop will now correctly capture the XOR result based on its previous state
+
+The key insight is that 'out' is just a direct assignment of 'q', so we can use 'q' in the XOR operation to break the potential timing loop while maintaining identical functionality.

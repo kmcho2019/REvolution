@@ -1,0 +1,13 @@
+The existing solution is already minimal and optimal for a 3-bit population count: it sums three 1-bit inputs directly using simple addition. Any hardware synthesis tool will produce a minimal combinational logic with negligible delay, power, and area.
+
+One minor improvement is to replace explicit indexing and addition with a reduction operator that counts the number of ones, i.e., using the Verilog built-in reduction operator. This removes explicit addition expressions, potentially enabling a more straightforward synthesis interpretation, although the effect on PPA is negligible here.
+
+We can implement the population count using the Verilog built-in "count of set bits" idiom: sum = in[0] + in[1] + in[2] or equivalently, out = in[0] + in[1] + in[2].
+
+Alternatively, since the input width is just 3 bits, we can use a small combinational logic to output the sum using a truth table encoded with a case statement or a constant assignment with concatenations. But such approaches do not offer meaningful PPA benefits compared to the direct sum.
+
+Overall, the improvement is stylistic and slightly more concise by using a reduction operator combined with a cast to an integer. This could help synthesis tools infer the minimal logic directly.
+
+Hence, the improved code will use the reduction operator and an explicit cast to a 2-bit result, ensuring a concise and clear intent for the population count.
+
+This approach provides the best readability and synthesis hint for population count in a small vector and could provide negligible benefits in area or power by simplifying the inferred logic.

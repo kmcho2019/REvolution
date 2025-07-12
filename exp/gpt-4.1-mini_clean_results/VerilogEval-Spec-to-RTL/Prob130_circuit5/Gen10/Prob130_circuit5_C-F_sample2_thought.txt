@@ -1,0 +1,11 @@
+The first example uses an elegant vector concatenation with a shift-based mux for concise logic, but shifting the 16-bit vector for selection can increase delay, power, and area. The second example uses straightforward nested ternaries, which synthesize cleanly but can imply priority encoders rather than a pure indexed mux.
+
+To fuse these approaches, I will implement a direct indexed mux using the lower two bits of c to select among b, e, a, and d inputs without shifting or nested ternaries. This will use an explicit case statement on c[1:0], gated by the condition c < 4 to output q; otherwise, output 4'hF.
+
+This approach keeps the clean, structural clarity of example 2 but avoids nested ternaries, which might infer priority logic, and also avoids the shift operation overhead in example 1. By decoding c < 4 and then indexing with c[1:0], the mux is a straightforward 4-way mux, reducing logic depth and switching activity, improving timing, power, and area.
+
+Thus, the design is:
+- If c < 4, q = one of (b, e, a, d) selected by c[1:0]
+- Else q = 4'hF
+
+This yields a pure combinational mux with no shifting or nested ternaries, synthesizing efficiently and cleanly.

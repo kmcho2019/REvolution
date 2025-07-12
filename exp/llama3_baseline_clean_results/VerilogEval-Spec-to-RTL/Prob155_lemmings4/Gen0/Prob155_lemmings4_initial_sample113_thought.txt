@@ -1,0 +1,18 @@
+To implement the Moore state machine modeling the Lemming's behavior, we will first identify the necessary states and transitions. We will have the following states:
+- WALKING_LEFT
+- WALKING_RIGHT
+- FALLING
+- DIGGING
+- DEAD
+
+The state machine will transition between these states based on the inputs. The main priority will be given to falling, then digging, and finally switching directions.
+
+We will use two counters, one to track the number of clock cycles the Lemming has been falling and another to keep track of the direction it was walking before falling or digging.
+
+When the Lemming is in the WALKING state, it will check for bumps, ground, and dig signals. If it receives a bump signal, it will switch direction. If the ground signal is low, it will start falling. If the dig signal is high, it will start digging.
+
+When the Lemming is in the FALLING state, it will check for the ground signal. If the ground signal is high and it has been falling for more than 20 clock cycles, it will transition to the DEAD state. If it has not been falling for more than 20 clock cycles, it will resume walking in its previous direction.
+
+When the Lemming is in the DIGGING state, it will check for the ground signal. If the ground signal is low, it will start falling.
+
+We will use a reset signal to reset the state machine to the WALKING_LEFT state.

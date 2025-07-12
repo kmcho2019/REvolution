@@ -1,0 +1,7 @@
+To correctly assemble serial bits into parallel output with the first received bit in the MSB and the last received bit in the LSB, the shift register should shift left on each valid input, inserting the new serial bit at the LSB position, pushing previous bits toward MSB. This preserves input bit order as required.
+
+We keep a 4-bit counter to count the number of received bits. Once 8 bits are collected, dout_parallel is updated with the assembled shift register, and dout_valid is asserted for one clock cycle.
+
+On reset, clear the shift register, counter, and output signals. Each clock cycle, default dout_valid to 0 except when new valid parallel data is output.
+
+This modification fixes the bit-order mismatch from the original solution without adding complexity, improving functional correctness while keeping a minimal, synchronous design.

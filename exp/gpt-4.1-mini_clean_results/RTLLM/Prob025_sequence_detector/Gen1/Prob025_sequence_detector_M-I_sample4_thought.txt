@@ -1,0 +1,11 @@
+The original design is a correct Moore FSM that detects the 4-bit sequence 1001 on a serial input. However, it uses an active-low asynchronous reset signal (`reset_n`), while the problem statement specifies a reset signal to initialize the state machine without explicitly stating polarity. To clarify and align with the problem statement, I will implement an active-high synchronous reset for easier timing and integration.
+
+Moreover, the code uses SystemVerilog `typedef enum` for states, which is nice for clarity but could be replaced with simple localparam constants if tool compatibility is a concern.
+
+For better PPA (Power, Performance, Area), I will:
+- Use synchronous reset instead of asynchronous to avoid metastability issues and extra reset-related logic.
+- Simplify the state encoding to 3-bit localparam constants.
+- Keep the FSM logic and transitions the same.
+- Assert the `sequence_detected` output only when entering the final state S4, making it a one-clock cycle pulse.
+
+This design will be synthesizable, clear, and compatible with standard Verilog flows.

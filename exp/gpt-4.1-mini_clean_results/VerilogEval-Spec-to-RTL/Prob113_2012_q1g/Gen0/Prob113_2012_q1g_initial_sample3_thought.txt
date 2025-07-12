@@ -1,0 +1,241 @@
+The function f is defined by a 4-variable Karnaugh map indexed by x[3:0]. We can treat x as {x[3], x[2], x[1], x[0]} to match the row and column designations. According to the K-map:
+
+Rows: x[3]x[2] = 00,01,11,10
+Cols: x[1]x[0] = 00,01,11,10
+
+We list all minterms where f=1 and write a sum-of-products form. Then we can implement it with combinational logic.
+
+The 1's in the map at positions:
+
+Row Col   x[3] x[2] x[1] x[0]  f=1
+00  00    0    0    0    0
+00  10    0    0    1    0
+11  00    1    1    0    0
+11  01    1    1    0    1
+11  11    1    1    1    1
+10  00    1    0    0    0
+10  01    1    0    0    1
+
+Wait, need to be precise:
+
+From the given map (rows and columns):
+
+Row x[2]x[3] and Column x[0]x[1]? The problem states:
+
+"             x[0]x[1]
+x[2]x[3]  00  01  11  10
+  00     | 1 | 0 | 0 | 1 |
+  01     | 0 | 0 | 0 | 0 |
+  11     | 1 | 1 | 1 | 0 |
+  10     | 1 | 1 | 0 | 1 |"
+
+So the rows are x[2]x[3], columns are x[0]x[1].
+
+Normally, the first index is most significant bit. So let's define:
+
+Row index = x[2]*2 + x[3]
+Col index = x[0]*2 + x[1]
+
+Then K-map entries:
+
+Row=0(x[2]x[3]=00):
+
+col=0(00):1
+
+col=1(01):0
+
+col=2(11):0
+
+col=3(10):1
+
+Row=1(01):
+
+all zeros
+
+Row=2(11):
+
+cols: 1 1 1 0
+
+Row=3(10):
+
+cols: 1 1 0 1
+
+Now, expressing f in terms of x[3:0], indexing according to row=x[2]*2+x[3] and col=x[0]*2+x[1].
+
+We can implement f as a case statement on x to implement the truth table, or generate a sum-of-minterms.
+
+Alternatively, since x is 4-bit, we can index the function with x as {x[2], x[3], x[0], x[1]} or another order.
+
+Let's reorder the bits as {x[2], x[3], x[0], x[1]} and write out the minterms where f=1.
+
+Bit order: [3] = x[2], [2]=x[3], [1]=x[0], [0]=x[1]
+
+We list all combinations where f=1:
+
+Row=00, col=00 => x[2]=0,x[3]=0,x[0]=0,x[1]=0 => bits: 0 0 0 0 (index 0) f=1
+
+Row=00, col=10 => x[2]=0,x[3]=0,x[0]=1,x[1]=0 => bits: 0 0 1 0 (index 2) f=1
+
+Row=11, col=00 => x[2]=1,x[3]=1,x[0]=0,x[1]=0 => bits: 1 1 0 0 (index 12) f=1
+
+Row=11, col=01 => x[2]=1,x[3]=1,x[0]=0,x[1]=1 => bits: 1 1 0 1 (index 13) f=1
+
+Row=11, col=11 => x[2]=1,x[3]=1,x[0]=1,x[1]=1 => bits: 1 1 1 1 (index 15) f=1
+
+Row=10, col=00 => x[2]=1,x[3]=0,x[0]=0,x[1]=0 => bits: 1 0 0 0 (index 8) f=1
+
+Row=10, col=01 => x[2]=1,x[3]=0,x[0]=0,x[1]=1 => bits: 1 0 0 1 (index 9) f=1
+
+Row=10, col=10 => x[2]=1,x[3]=0,x[0]=1,x[1]=0 => bits: 1 0 1 0 (index 10) f=1
+
+Now we have the indices where f=1:
+
+0,2,8,9,10,12,13,15
+
+We can write f as a LUT using a 16-bit vector indexed by x in the order:
+
+We need to map the original x[3:0] to the same order used above to access the LUT.
+
+Original x: x[3], x[2], x[1], x[0]
+
+Our K-map indexing uses x[2], x[3], x[0], x[1]
+
+So let's create a new address:
+
+addr = {x[2], x[3], x[0], x[1]} -> 4 bits
+
+Then we can write a LUT as:
+
+f = lut[addr] where lut = 16'b1001111011000011 (bits for indices 0-15)
+
+Calculating lut:
+
+bit position corresponds to addr (MSB to LSB)
+
+index: bit value:
+
+0:1
+
+1:0
+
+2:1
+
+3:1
+
+4:1
+
+5:1
+
+6:0
+
+7:1
+
+8:1
+
+9:1
+
+10:0
+
+11:0
+
+12:1
+
+13:1
+
+14:0
+
+15:0
+
+Wait, this contradicts previous list.
+
+Wait, let's explicitly write the 16-bit lut where lut[addr]=f:
+
+addr: decimal | addr bits(x2 x3 x0 x1) | f
+
+0 (0000): 0 0 0 0 -> f=1
+
+1(0001): 0 0 0 1 -> f=0 (not in list)
+
+2(0010): 0 0 1 0 -> f=1 (in list)
+
+3(0011): 0 0 1 1 -> f=0
+
+4(0100): 0 1 0 0 -> f=0 (row=01 col=00 all zero)
+
+5(0101): 0 1 0 1 -> 0
+
+6(0110): 0 1 1 0 -> 0
+
+7(0111): 0 1 1 1 -> 0
+
+8(1000): 1 0 0 0 -> f=1
+
+9(1001): 1 0 0 1 -> f=1
+
+10(1010):1 0 1 0 -> f=1
+
+11(1011):1 0 1 1 -> 0
+
+12(1100):1 1 0 0 -> f=1
+
+13(1101):1 1 0 1 -> f=1
+
+14(1110):1 1 1 0 -> 0
+
+15(1111):1 1 1 1 -> f=1
+
+Now write the lut bits with bit0 = addr0, bit15=addr15:
+
+bit15 addr15 f=1
+
+bit14 addr14 f=0
+
+bit13 addr13 f=1
+
+bit12 addr12 f=1
+
+bit11 addr11 f=0
+
+bit10 addr10 f=1
+
+bit9 addr9 f=1
+
+bit8 addr8 f=1
+
+bit7 addr7 f=0
+
+bit6 addr6 f=0
+
+bit5 addr5 f=0
+
+bit4 addr4 f=0
+
+bit3 addr3 f=0
+
+bit2 addr2 f=1
+
+bit1 addr1 f=0
+
+bit0 addr0 f=1
+
+So lut = 16'b1_0_1_1_0_1_1_1_0_0_0_0_0_1_0_1
+
+In binary: 1 0 1 1 0 1 1 1 0 0 0 0 0 1 0 1
+
+Corresponding hex: bits 15-12: 1011 = B
+
+bits 11-8: 0111 = 7
+
+bits 7-4: 0000=0
+
+bits 3-0: 0101=5
+
+lut = 16'hB705
+
+We will implement:
+
+wire [3:0] addr = {x[2], x[3], x[0], x[1]};
+
+assign f = 16'hB705[addr];
+
+This implements the function directly and cleanly.

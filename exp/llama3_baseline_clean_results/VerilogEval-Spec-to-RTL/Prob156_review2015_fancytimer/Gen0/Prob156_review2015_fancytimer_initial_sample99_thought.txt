@@ -1,0 +1,12 @@
+To implement the TopModule, we can use a finite state machine (FSM) that has several states to control the behavior of the timer. The states can be: 
+- IDLE: This is the initial state where the module searches for the start sequence (1101).
+- SHIFT: After the start sequence is detected, the module shifts in the next 4 bits to determine the duration of the delay.
+- COUNT: The module counts for the specified number of clock cycles based on the delay value.
+- DONE: After the counting is finished, the module asserts the done signal and waits for the ack signal to be asserted.
+- RESET: This state is used to reset the module to the initial state.
+
+We will use a counter to keep track of the remaining time and a separate counter to count the clock cycles. We will also use a variable to store the delay value.
+
+To implement the counter, we can use a 4-bit register and decrement it every 1000 clock cycles. We will also use a 10-bit counter to count the clock cycles.
+
+We will use a state machine to control the behavior of the module based on the current state and the input signals.

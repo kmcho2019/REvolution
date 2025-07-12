@@ -1,0 +1,29 @@
+I will implement the 4-bit comparator by creating four independent 1-bit comparators that simultaneously produce "greater", "equal", and "less" signals for each bit. These signals will then be combined hierarchically from the most significant bit (MSB) down to the least significant bit (LSB) to determine the final outputs.
+
+This approach mimics a parallel bitwise comparison tree, where for each bit, we determine if A > B, A = B, or A < B at that bit-level. Then:
+
+- Starting from MSB (bit 3), if A[3] > B[3], then A > B overall.
+- Else if A[3] = B[3], then the decision depends on lower bits.
+- Continue down to LSB until a difference is found.
+- If no differences found, A = B.
+
+This bitwise parallel comparison reduces the complexity to simple combinational logic and avoids the borrow-propagate logic of subtraction. Outputs are mutually exclusive by construction.
+
+Advantages:
+- Conceptually simpler and modular.
+- No subtraction or borrow logic, just comparisons and cascaded select logic.
+- Can be expanded easily to larger bit-widths by extending the hierarchy.
+- Pure combinational, efficient for synthesis.
+
+Implementation details:
+- Create signals gt[i], eq[i], lt[i] for each bit i, where:
+  - gt[i] = 1 if A[i] > B[i]
+  - eq[i] = 1 if A[i] == B[i]
+  - lt[i] = 1 if A[i] < B[i]
+- Then recursively combine these starting from MSB:
+  - For bit i, overall_greater = gt[i] | (eq[i] & overall_greater_from_lower_bits)
+  - Similarly for less, and equal is the AND of all eq[i].
+
+Outputs will be assigned based on combined signals at the bottom.
+
+This structure uses generate loops for bitwise comparison signals and combinational logic to combine the results, yielding a clean and parallel implementation.

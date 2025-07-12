@@ -1,0 +1,20 @@
+To simplify the 4-bit pipeline multiplier while maintaining functionality:
+
+1. Remove unnecessary optimizations that complicate the design:
+   - Eliminate clock gating logic since it adds complexity without being critical for a 4-bit multiplier
+   - Remove carry-save addition as it's overkill for such a small multiplier
+
+2. Simplify pipeline stages:
+   - Use just two pipeline stages (original requirement)
+   - First stage calculates all partial products
+   - Second stage sums them in two steps (first two and last two partial products)
+
+3. Clean up signal widths:
+   - Use consistent 8-bit widths throughout (4-bit inputs extended to 8 bits)
+   - No need for variable-width registers in a small design
+
+4. Straightforward reset logic:
+   - Only reset affects registers, no combinational reset paths
+   - Clear all registers synchronously on reset
+
+This simplified version maintains the same functionality with cleaner, more maintainable code while still being pipelined.

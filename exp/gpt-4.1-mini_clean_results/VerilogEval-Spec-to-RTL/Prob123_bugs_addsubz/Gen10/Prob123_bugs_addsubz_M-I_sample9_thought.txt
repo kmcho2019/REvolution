@@ -1,0 +1,10 @@
+The original solution uses a full 8-bit ripple-carry adder/subtractor with explicit carry chain logic and a zero flag computed as a reduction NOR of the sum bits. This is functionally correct but not optimized for area or power.
+
+Improvement strategy:
+- Replace the manual ripple-carry adder logic with the built-in Verilog addition/subtraction operator, which synthesis tools typically optimize better.
+- Use a single addition operator with the conditional subtraction encoded via two's complement: out = a + (do_sub ? ~b + 1 : b).
+- Compute the zero flag by reduction NOR on the final output.
+- This approach reduces code complexity, gate count, and switching activity on the carry chain, thus improving area and power metrics while maintaining zero latency and WNS.
+- Keep outputs as reg type to match the original interface, updating them in a combinational always block for clarity and synthesis friendliness.
+
+This simple rewrite should yield better PPA without sacrificing correctness or functionality.

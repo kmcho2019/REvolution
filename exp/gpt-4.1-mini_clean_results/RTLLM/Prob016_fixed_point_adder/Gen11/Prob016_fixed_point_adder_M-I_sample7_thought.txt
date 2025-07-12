@@ -1,0 +1,15 @@
+The given solution correctly implements the fixed-point adder as specified. However, to improve the design for better PPA (Power, Performance, Area), the following optimizations are applied:
+
+1. Remove the 1-bit extension in addition to fit the result back into N bits by saturating or truncating correctly if overflow occurs. Since the module expects N-bit output, and the result may overflow, this logic will be simplified to keep only the lower N bits, understanding overflow will be handled by the user or external logic.
+
+2. Simplify the sign and magnitude handling by performing the operation directly on two's complement values instead of converting back and forth between magnitude and sign, which reduces complexity and gate count.
+
+3. Keep the combinational logic as pure as possible with minimal arithmetic overhead, using standard two's complement addition and subtraction based on sign comparison, improving timing and reducing area.
+
+4. Retain parameterization and support for fractional bits (Q) without explicitly using Q in logic since fixed-point addition for same Q values is a direct integer addition.
+
+This approach reduces the logic complexity while maintaining correct signed fixed-point addition semantics, which should lead to better synthesis results in PPA and easier integration.
+
+The resulting code uses the sign bits only to decide the operation (add or subtract), computes the result using two's complement arithmetic, and outputs the result directly.
+
+If overflow detection is needed, it should be implemented externally or by extending this module with saturating logic.

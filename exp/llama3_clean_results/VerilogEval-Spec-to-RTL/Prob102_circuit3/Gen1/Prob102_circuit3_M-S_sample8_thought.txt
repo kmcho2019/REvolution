@@ -1,0 +1,15 @@
+To simplify the solution, we need to analyze the simulation waveforms and identify a pattern that can be implemented using basic logical operations in Verilog.
+
+The output q is 1 whenever the inputs a or b or (c and d) are 1, but looking closely at the waveform, it seems like q is 1 whenever (b or (c and d)) is true, or when a is 1 and d is 1. So, the correct expression becomes (a and d) or (b or (c and d)).
+
+However, this expression can be further simplified by applying the distributive law of logical operations. 
+
+The distributive law states that (A or (B and C)) = ((A or B) and (A or C)).
+
+Applying this law to our expression, we get: (a and d) or b or (c and d).
+
+Further simplification leads to the fact that if b is 1, then the whole expression is true. If b is 0, then the expression is true if (a and d) or (c and d) is true.
+
+Since (a and d) or (c and d) can be simplified to (a or c) and d, we can simplify our expression to b or ((a or c) and d).
+
+We can implement this logic in Verilog using the "or" and "and" operators.

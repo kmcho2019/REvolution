@@ -1,0 +1,9 @@
+To implement the Lemmings finite state machine as described, we can define four states: 
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALL: The Lemming is falling and says "aaah!".
+- RESUME: This state is used to remember the walking direction when the Lemming was falling, and to transition back to either WALK_LEFT or WALK_RIGHT when the ground reappears.
+
+The state transitions will be based on the current state, bump_left, bump_right, and ground signals. When the Lemming is walking and bumps are detected, it will switch direction. If ground is 0, it will start falling. When the ground reappears (ground = 1), it will resume walking in the previous direction.
+
+In the Verilog code, we'll use a parameterized case statement to handle the different states and an always block for the sequential logic that will trigger on the positive edge of the clock. Asynchronous reset will be implemented using the areset signal.

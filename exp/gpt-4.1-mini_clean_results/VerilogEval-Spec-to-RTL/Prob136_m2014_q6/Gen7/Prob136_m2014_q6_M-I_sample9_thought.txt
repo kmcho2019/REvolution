@@ -1,0 +1,7 @@
+The existing design is functionally correct and uses a compact 3-bit binary encoding for six states, which balances area and complexity well. To improve performance and potentially reduce power, I will explore one-hot encoding, which often simplifies next-state logic by reducing the complexity of combinational decoding and can lead to faster clock cycles at the cost of a modest increase in area. Since this FSM has only six states, the area overhead is manageable. One-hot encoding also reduces bit toggling since only one flip-flop is active at a time, which can reduce dynamic power.
+
+Additionally, I will separate the output logic into its own simple combinational block using parallel case statements for clarity, and use synchronous reset for the state flip-flops. This separation can aid synthesis tools in optimizing output path timing.
+
+Finally, I'll add comments for clarity and maintain nonblocking assignments in sequential logic and blocking in combinational logic for best practice.
+
+This approach targets improved timing and power due to simpler next-state decoding and one-hot state bits toggling less simultaneously, trading a slight increase in area (6 flip-flops vs 3) for better PPA balance.

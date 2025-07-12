@@ -1,0 +1,31 @@
+Revised Fractional Divider Solution:
+
+1. **Problem Analysis**:
+   - Current implementation fails due to improper phase alignment between main and phase-shifted clocks
+   - Simple OR combination doesn't account for the precise timing needed for 3.5x division
+   - Need to generate two complementary clocks with precise phase relationship
+
+2. **New Approach**:
+   - Maintain 7-cycle counter (0-6) for accurate period measurement
+   - Generate two independent clocks:
+     * Clock A: High for first 4 cycles, low for next 3
+     * Clock B: High for last 3 cycles, low for first 4 (phase-shifted version)
+   - Use XOR instead of OR to combine clocks for proper fractional division
+   - This creates a clock with:
+     * 3.5 source clock periods per output cycle
+     * 50% duty cycle (after multiple cycles)
+     * Correct phase alignment
+
+3. **Implementation Details**:
+   - Keep 3-bit counter for cycle tracking
+   - Generate Clock A on positive edge
+   - Generate Clock B with inverted pattern and half-cycle delay
+   - XOR combination ensures proper pulse timing
+   - Reset properly initializes all signals
+
+4. **Key Improvements**:
+   - Correct phase relationship between clock components
+   - Proper pulse timing through XOR combination
+   - Maintains accurate 3.5x division ratio
+   - Better duty cycle distribution
+   - Verified reset behavior

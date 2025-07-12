@@ -1,0 +1,11 @@
+To simplify the design while maintaining full functionality, I will:
+
+- Use straightforward parameterized state encoding with `localparam` instead of typedef enum for broader compatibility and simplicity.
+- Combine all sequential logic into one always block triggered on the positive clock edge and synchronous reset, reducing the number of always blocks.
+- Implement the state machine with a simple register for the state and next state, and update both in the same always block to reduce combinational logic complexity.
+- Integrate bit counting and data shifting directly inside the state machine logic without separate always blocks.
+- Drive the done and out_byte signals from the same sequential block for simplicity.
+- Avoid extra variables or duplicated logic; just use minimal registers.
+- The stop bit error wait state will wait until the line goes back to idle (1).
+- Keep the shift direction consistent with LSB-first serial reception by shifting right and inserting the new bit at MSB.
+- Make the design concise, readable, and easy to synthesize while preserving all protocol behaviors.

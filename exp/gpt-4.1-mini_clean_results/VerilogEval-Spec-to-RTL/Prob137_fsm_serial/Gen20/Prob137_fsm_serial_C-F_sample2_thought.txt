@@ -1,0 +1,15 @@
+Fuse the robustness and error recovery of the first example's binary-encoded FSM with the clarity of separating state transitions and synchronous reset, but simplify and optimize the bit counting and data shifting.
+
+Use a 3-bit counter to track received data bits rather than expanding states for each bit, thus reducing FSM size and complexity compared to one-hot per-bit states.
+
+Implement state encoding with four states: IDLE (waiting for start bit 0), RECEIVE (shifting in 8 bits LSB first), CHECK_STOP (validating stop bit 1 and generating done pulse), and WAIT_STOP (error recovery waiting for line idle).
+
+Use a shift register updated only during RECEIVE state, shifting right with incoming bit at MSB to maintain LSB-first ordering.
+
+Generate done as a one-cycle pulse in CHECK_STOP state when stop bit is valid.
+
+Keep the done signal active only one clock cycle to minimize power.
+
+Ensure synchronous active-high reset initializes FSM and registers correctly.
+
+This fusion merges the small FSM and low area of example 1 with the explicit, clean error handling approach of example 2, while avoiding one-hot complexity and excessive states for bit reception. It optimizes power by gating the shift register and done signal, balances timing with simple combinational next_state logic, and uses minimal area registers.

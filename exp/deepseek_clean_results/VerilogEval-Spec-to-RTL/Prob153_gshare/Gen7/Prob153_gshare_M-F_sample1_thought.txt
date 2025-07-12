@@ -1,0 +1,14 @@
+The feedback indicates several key issues that need to be addressed:
+
+1. **Prediction Timing**: Predictions should use the current PHT state, not the next state after training. We need to separate the prediction path from the training update path.
+
+2. **History Update Priority**: Training (especially mispredictions) must take precedence over predictions. The current implementation may not properly handle this priority in all cases.
+
+3. **PHT Access**: The combinational always block with 128 PHT entries is inefficient and may cause simulation issues. We should optimize this.
+
+Key fixes:
+- Separate prediction logic from training updates
+- Ensure prediction uses current PHT state while training updates future state
+- Simplify GHR update logic with clear priority
+- Optimize PHT access by only updating the relevant entry
+- Maintain proper timing relationship between operations

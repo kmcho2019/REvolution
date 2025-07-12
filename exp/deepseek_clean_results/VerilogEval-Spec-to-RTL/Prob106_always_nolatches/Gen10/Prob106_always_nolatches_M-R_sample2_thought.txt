@@ -1,0 +1,14 @@
+I'll refactor the code to use continuous assignments (assign statements) instead of an always block. This approach:
+
+1. Eliminates the need for a procedural block, making the design purely combinational
+2. Maintains the same functionality but with potentially better readability
+3. May offer slight PPA improvements by:
+   - Reducing synthesis overhead from procedural blocks
+   - Enabling more straightforward optimization of the comparison logic
+   - Making the direct mapping between scancodes and outputs more explicit
+
+The key changes are:
+- Replace the always block with four parallel assign statements
+- Each output is directly assigned based on the full 16-bit scancode match
+- The E0 prefix check is incorporated into each comparison
+- Default assignments are handled by the logical AND structure

@@ -1,0 +1,12 @@
+To implement the Lemming machine, we will design a Moore finite state machine with the following states: 
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALL: The Lemming is falling.
+- DIG: The Lemming is digging.
+We will handle the transitions between these states based on the input signals: 
+- If ground is 0, the Lemming will transition to the FALL state regardless of its current state.
+- If the Lemming is in the FALL state and ground is 1, it will transition back to its original walking direction (WALK_LEFT or WALK_RIGHT).
+- If the Lemming is in the WALK_LEFT or WALK_RIGHT state and dig is 1 and ground is 1, it will transition to the DIG state.
+- If the Lemming is in the DIG state and ground is 0, it will transition to the FALL state.
+- If the Lemming is in the WALK_LEFT or WALK_RIGHT state and bump_left or bump_right is 1, it will change its walking direction.
+We will also ensure that being bumped while falling or digging has no effect on the walking direction.

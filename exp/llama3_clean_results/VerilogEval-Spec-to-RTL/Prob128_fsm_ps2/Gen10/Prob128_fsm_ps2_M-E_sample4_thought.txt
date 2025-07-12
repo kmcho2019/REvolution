@@ -1,0 +1,15 @@
+To address the problem of detecting message boundaries in a byte stream according to the PS/2 mouse protocol, a novel approach could involve utilizing a shift register to track the sequence of bytes and detect the specific pattern that indicates the start of a message. The key idea here is to leverage the property that the first byte of each message has in[3]=1, and to use this as a trigger to initiate the counting of bytes until a complete message of three bytes is received.
+
+The proposed architecture involves the following components:
+
+1.  **Shift Register:** An 8-bit shift register is used to store the current byte being processed. This allows for the examination of the byte's bits, particularly the third bit (in[3]), to determine if it matches the pattern for the start of a message.
+
+2.  **Byte Counter:** A simple counter is implemented to keep track of the number of bytes received since the last message start was detected. This counter is reset whenever a new message start is detected (i.e., when in[3]=1) and is incremented for each subsequent byte until it reaches 3, indicating a complete message.
+
+3.  **Control Logic:** The control logic is responsible for managing the state of the system based on the current byte and the byte counter. It determines when to reset the counter, when to increment the counter, and when to assert the 'done' signal to indicate that a complete message has been received.
+
+4.  **Done Signal Generation:** The 'done' signal is asserted when the byte counter reaches 3, indicating that a complete message of three bytes has been received. This signal is critical for notifying the system that a message is ready for processing.
+
+By incorporating these components and leveraging the specific pattern of the PS/2 mouse protocol, the system can efficiently detect message boundaries in the byte stream. The shift register allows for the examination of each byte, the byte counter tracks the progress towards a complete message, and the control logic ensures that the system responds appropriately to the detection of message starts and completions.
+
+This architectural approach simplifies the detection logic and potentially reduces the complexity of the finite state machine, making it easier to understand and implement.

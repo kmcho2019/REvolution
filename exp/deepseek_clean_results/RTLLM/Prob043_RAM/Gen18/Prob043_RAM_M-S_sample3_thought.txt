@@ -1,0 +1,12 @@
+Simplified design approach:
+1. Use a single always block for synchronous operations (reset and write)
+2. Make read operation purely combinational for immediate output
+3. Initialize memory using a for-loop for cleaner code
+4. Remove unnecessary zeroing of read_data when read_en is low (let it float)
+5. Benefits:
+   - Reduced code complexity
+   - Fewer always blocks (from 2 to 1)
+   - More efficient memory initialization
+   - Maintains same functionality with simpler structure
+   - Better timing for read operations (combinational path)
+   - Lower power consumption (no forced zeroing of read_data)

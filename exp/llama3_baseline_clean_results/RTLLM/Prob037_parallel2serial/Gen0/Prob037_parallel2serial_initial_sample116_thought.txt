@@ -1,0 +1,9 @@
+To implement the parallel-to-serial conversion module, we need to follow these steps:
+- Design a counter (cnt) to keep track of the bits that have been output.
+- Implement a data register (data) to hold the input parallel data.
+- Use the most significant bit of the data register as the serial output (dout).
+- On each clock cycle, check if the counter has reached 3, indicating that all bits have been output. If so, update the data register with the new parallel input (d), reset the counter, and set the valid signal (valid_out) to 1.
+- If the counter is not 3, increment the counter, set the valid signal to 0, and shift the data register one bit to the left, with the most significant bit becoming the least significant bit.
+- If the reset signal (rst_n) is low, reset the counter, data register, and valid signal.
+
+We will use a 2-bit counter to keep track of the four states (0, 1, 2, 3) and a 4-bit data register to hold the parallel input.

@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace binary state encoding with one-hot encoding to simplify state decoding logic
+   - Pre-compute shifted versions of the multiplier in parallel to eliminate the variable-width shifter
+   - Pipeline the accumulation operation to break the critical path
+
+2. Power Optimization:
+   - Add clock gating for the accumulator when not in CALC state
+   - Freeze state registers when no state change is needed
+   - Optimize the areg[count] check to reduce switching activity
+
+3. Area Optimization:
+   - Remove redundant default case in state machine
+   - Use carry-save adder during accumulation phase
+   - Optimize counter width and comparison logic
+
+The improved design will:
+1. Use one-hot state encoding for faster state transitions
+2. Implement parallel shift computation to eliminate variable shifters
+3. Add clock gating for power savings
+4. Optimize the counter logic
+5. Use carry-save addition during accumulation

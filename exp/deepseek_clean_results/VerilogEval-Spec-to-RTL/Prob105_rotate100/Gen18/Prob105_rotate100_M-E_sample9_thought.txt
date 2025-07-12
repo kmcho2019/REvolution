@@ -1,0 +1,16 @@
+Barrel Shifter with Direction Multiplexing Approach:
+1. Implement a unified barrel shifter that can handle both left and right rotations
+2. Use a single 100-bit register with a direction-controlled multiplexer network
+3. The rotation direction is determined by a control signal derived from ena
+4. For right rotation, we effectively create a left rotation by 99 positions
+5. The multiplexer network selects between:
+   - Direct load (highest priority)
+   - Left rotation (ena=2'b10)
+   - Right rotation (ena=2'b01, implemented as left rotation by 99)
+   - Hold current value (default)
+
+Key Advantages:
+- More compact implementation using a single rotation path
+- Reduced logic duplication compared to separate left/right paths
+- Better potential for synthesis optimization due to unified structure
+- Easier to extend to larger rotation amounts if needed

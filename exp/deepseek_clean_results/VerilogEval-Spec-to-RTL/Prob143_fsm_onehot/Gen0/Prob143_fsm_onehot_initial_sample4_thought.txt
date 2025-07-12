@@ -1,0 +1,9 @@
+The problem requires implementing a state machine with one-hot encoding where multiple states can be active simultaneously. The solution involves:
+1. For each possible current state (S0-S9), determine the next state based on the input 'in'.
+2. Since multiple states can be active, we need to OR together all possible transitions from all active states.
+3. The outputs (out1, out2) should be set based on any active state that has non-zero outputs (S7, S8, S9).
+4. Implement this as combinational logic since we're not handling state storage (flip-flops).
+
+The approach is:
+- For each next_state bit, determine if any current state would transition to it based on 'in'
+- For outputs, check if any of S7, S8, or S9 are active (S7: out2=1, S8: out1=1, S9: both=1)

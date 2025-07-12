@@ -1,0 +1,13 @@
+The original specification requires the barrel shifter to be implemented with a series of 2-to-1 multiplexers (`mux2X1`) to select between shifted and unshifted bits at each stage, controlled by the bits in `ctrl`. The initial design replaced these multiplexers by concatenations and ternary operators, which caused functional mismatches especially in bit-level testing or verification expecting mux2X1 behavior.
+
+To strictly follow the problem requirements and still keep the design clean, I will:
+1. Define the `mux2X1` module as requested.
+2. Implement each stage as a set of 8 mux2X1 instances, each choosing the bit from either the original input or the shifted input.
+3. Chain the stages: 
+   - Stage 1: shifts by 4 bits controlled by `ctrl[2]`.
+   - Stage 2: shifts the output of stage 1 by 2 bits controlled by `ctrl[1]`.
+   - Stage 3: shifts the output of stage 2 by 1 bit controlled by `ctrl[0]`.
+4. Use generate blocks to instantiate mux arrays for modularity.
+5. This approach matches the problem description, ensures bitwise mux control, and aligns with verification expecting mux2X1 usage.
+
+The final result is a clear, modular, synthesizable barrel shifter with correct rotation direction (left rotate), matching the control signals and problem statement.

@@ -1,0 +1,11 @@
+To improve the existing solution, I will replace `localparam` with `parameter` for `STG_WIDTH` and `STAGES` so that the module is more flexible and compatible with parameter overriding from testbenches or higher-level modules.
+
+Additionally, I will improve the assembly of the final `result` by collecting the sum slices into a packed register array during the sequential block rather than using a hardcoded concatenation of stage sums. This will allow scalability and cleaner code.
+
+For better PPA (Power, Performance, Area), I will keep the 8-stage pipeline, which balances latency and throughput well. Each stage computes 8 bits plus carry, minimizing critical path length.
+
+Also, I will rename internal variables to have clear indexing, reduce unnecessary complexity, and ensure carry registers correctly propagate.
+
+Finally, the pipeline registers for operand slices, carry, and enable signals will be declared using arrays of vectors for clarity.
+
+This approach maintains clean pipeline registers, combinational adders, and synchronized enable signals, improving flexibility and maintainability without changing the core architecture.

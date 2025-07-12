@@ -1,0 +1,10 @@
+The shift register approach has timing and pattern detection issues. Instead, we should implement a proper Moore FSM that explicitly tracks the count of consecutive 1s. The FSM will have states representing:
+- Initial state (after reset or 0)
+- States for counting 1s (1 to 6 consecutive 1s)
+- Error state (7+ consecutive 1s)
+
+This approach provides precise control over pattern detection timing and ensures outputs are asserted exactly one cycle after the condition occurs. The FSM will:
+1. Transition between states based on input bits
+2. Generate outputs combinatorially based on current state and input
+3. Register outputs for proper timing
+4. Handle reset by returning to initial state

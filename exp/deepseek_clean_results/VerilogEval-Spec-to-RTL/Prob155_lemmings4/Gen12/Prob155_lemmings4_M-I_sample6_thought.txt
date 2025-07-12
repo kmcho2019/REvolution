@@ -1,0 +1,31 @@
+Improved Lemming State Machine Design:
+
+1. State Machine Optimization:
+   - Simplified to 5 states (LEFT, RIGHT, DIG, FALL, SPLAT) with direction stored separately
+   - Reduced state encoding bits while maintaining functionality
+   - Clear separation of state and direction tracking
+
+2. Priority Handling:
+   - Explicit priority order: FALL > DIG > BUMP
+   - Single always block with nested if-else to enforce priority
+   - Ground check first, then dig, then bump
+
+3. Fall Counter Enhancement:
+   - Accurate counting only during FALL state
+   - Splat condition checked only when ground returns
+   - Counter reset when leaving FALL state
+
+4. Direction Management:
+   - Direction stored in separate register
+   - Preserved during DIG and FALL states
+   - Only updated in walking states when bumped
+
+5. Output Generation:
+   - Direct combinatorial mapping from state and direction
+   - Clear conditions for each output signal
+
+Key Improvements:
+- More efficient state encoding (3 bits -> 2 bits)
+- Explicit priority handling through nested conditionals
+- Clean separation of state and direction
+- Reduced logic complexity while maintaining all functionality

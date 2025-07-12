@@ -1,0 +1,14 @@
+From the waveform, q outputs 1 whenever either b or c is 1, regardless of a and d. Therefore, q = b | c.
+
+A novel architectural approach is to implement q using a 4-to-1 multiplexer (MUX) where the select inputs are {b, c} and the data inputs are tied to 0 and 1 appropriately to produce q = b | c. Specifically, the 4 possible input combinations of {b,c} are:
+
+00 -> 0  
+01 -> 1  
+10 -> 1  
+11 -> 1
+
+This function matches q = b | c. The multiplexer inputs can be set as i0=0, i1=1, i2=1, i3=1, with select lines as {b,c} (b is MSB, c is LSB).
+
+This method uses a structural primitive multiplexer to implement q, leveraging the select lines as inputs to directly generate the OR function, showing a different architectural style with explicit multiplexing.
+
+Inputs a and d are unused as the waveform shows no effect on q.

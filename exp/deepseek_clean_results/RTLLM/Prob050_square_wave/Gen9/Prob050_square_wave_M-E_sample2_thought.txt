@@ -1,0 +1,16 @@
+Novel Architecture: Phase Accumulator Approach
+1. Instead of using a counter-based approach, implement a phase accumulator which is commonly used in DDS (Direct Digital Synthesis)
+2. The phase accumulator adds the frequency control word (freq) to a phase register at each clock cycle
+3. The MSB of the phase register naturally creates a square wave with frequency proportional to the input freq value
+4. Benefits:
+   - More precise frequency control
+   - No explicit comparison needed (saves logic)
+   - Automatically handles frequency changes smoothly
+   - Scales well for higher resolution frequencies
+5. Special case handling for freq=0 (maximum frequency output)
+
+Implementation Details:
+- 8-bit phase accumulator (matches input freq width)
+- Output is simply the MSB of the phase register
+- No explicit counter or comparison logic needed
+- Phase wraps around automatically

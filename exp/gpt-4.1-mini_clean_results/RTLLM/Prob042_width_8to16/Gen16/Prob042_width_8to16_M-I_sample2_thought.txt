@@ -1,0 +1,9 @@
+To strictly meet the requirement that valid_out and data_out are generated exactly one clock cycle after the arrival of the second valid input byte, the design will use a simple two-stage mechanism: 
+
+- On arrival of the first valid_in, store data_in in a register (`data_lock`) and set a flag (`has_first_byte`) to indicate the first byte is ready.
+- On arrival of the second valid_in, store it in another register (`data_in_reg`), and also set a flag (`output_pending`) indicating that data_out and valid_out must be generated *in the next cycle*. 
+- In the cycle after the second input, concatenate the stored first byte and second byte, output them on data_out, assert valid_out for one cycle, then clear `has_first_byte` and `output_pending`, ready for the next pair.
+
+This approach avoids complex FSM states, keeps timing and flag updates simple, and ensures data_out and valid_out are synchronous and valid exactly one cycle after the second byte arrives. It also ensures that if only one byte arrives, the module waits for the next byte to complete the pair before outputting.
+
+This matches the problem spec's mention of a `data_lock` register and generates output signals exactly one cycle after receiving the second input byte.

@@ -1,0 +1,29 @@
+I will implement the gshare predictor with a single global history register and a synchronous update scheme that ensures clear timing and prioritization:
+
+1. Maintain a single 7-bit global history register `ghr` reflecting the speculative global history (used for prediction and updated speculatively).
+
+2. The Pattern History Table (PHT) is a 128-entry array of 2-bit saturating counters.
+
+3. When a prediction request (`predict_valid`) occurs:
+   - Use `ghr ^ predict_pc` to index the PHT and output prediction.
+   - Output the current `ghr` as `predict_history`.
+   - Schedule updating `ghr` on the next clock edge by shifting in the predicted direction bit.
+
+4. When a training request (`train_valid`) occurs:
+   - Update the corresponding PHT entry (`train_pc ^ train_history`) based on actual outcome (`train_taken`).
+   - If mispredicted (`train_mispredicted`), recover `ghr` to the supplied `train_history` at the next clock edge, thus rolling back speculative updates beyond the mispredicting branch.
+   - Otherwise, on non-misprediction training, do not modify `ghr` since it already reflects speculative history, and updates to `ghr` come only from prediction.
+
+5. If both prediction and training (with misprediction) occur simultaneously, training recovery of `ghr` takes priority over the prediction update.
+
+6. This approach uses a single global history register `ghr` that may be updated speculatively on prediction, but is recovered on mispredicted training to ensure correctness.
+
+7. The PHT updates occur on clock edge during training.
+
+8. Asynchronous reset initializes `ghr` and PHT entries.
+
+This architecture simplifies the history tracking, avoids maintaining two separate history registers, and aligns with the problem spec about priority and update order. Output `predict_history` is the `ghr` before updating for that prediction, matching the time of prediction request.
+
+Because only one `ghr` exists, updates and recoveries on training are clean and straightforward.
+
+This design is synthesizable, avoids races, and matches timing requirements.

@@ -1,0 +1,11 @@
+Fuse the best aspects of both solutions by using a single always block synchronous FSM as in Example 1, to keep code simple and reduce combinational complexity, but incorporate clearer state definitions and maintain explicit counters and shift registers.
+
+Maintain the 4-state FSM: IDLE (wait for start bit), RECEIVE (shift in 8 bits, LSB first), STOP (check stop bit), WAIT_STOP (recover from bad stop).
+
+Use non-blocking assignments to avoid race conditions.
+
+Keep the done signal asserted for exactly one cycle after a valid stop bit and output the captured byte.
+
+On reset, initialize all registers synchronously.
+
+This approach merges the clean and straightforward code of Example 1 with the clarity of explicit STOP state and done signaling from Example 2, yielding a robust, efficient, and easy-to-understand design that meets timing and power considerations by minimizing combinational logic and state transitions in one always block.

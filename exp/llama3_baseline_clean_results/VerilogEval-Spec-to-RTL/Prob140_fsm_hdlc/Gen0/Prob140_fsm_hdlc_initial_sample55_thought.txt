@@ -1,0 +1,13 @@
+To solve this problem, we will implement a Moore-type finite state machine (FSM) in Verilog. The FSM will have states to track the sequence of bits and detect the patterns 0111110, 01111110, and 01111111... (7 or more 1s). The FSM will be reset to a state that behaves as though the previous input were 0 when the reset signal is high. The output signals disc, flag, and err will be asserted for a complete cycle after the condition occurs. We will use a parameterized approach to define the states and transitions.
+
+We can define the states as follows:
+- S0: Initial state or previous input was 0
+- S1: Previous input was 1
+- S2: Previous two inputs were 1
+- S3: Previous three inputs were 1
+- S4: Previous four inputs were 1
+- S5: Previous five inputs were 1
+- S6: Previous six inputs were 1
+- S7: Previous seven or more inputs were 1 (error state)
+
+The transitions between states will be based on the current state and input. When a flag is detected, the FSM will transition back to S0. When an error occurs, the FSM will remain in the error state until reset.

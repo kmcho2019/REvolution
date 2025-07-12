@@ -1,0 +1,5 @@
+Refactor the design to remove the separate combinational always block by embedding the increment/decrement logic directly inside the sequential always block. Use a single always @(posedge clk) block with a non-blocking assignment that updates `count` by adding either +1 or -1 based on the `up_down` control signal. This keeps the behavior identical but simplifies the design by eliminating the intermediate `next_count` register and its associated combinational logic.
+
+This approach reduces the number of always blocks, potentially making the code more compact and slightly improving timing by collapsing the combinational next-state calculation into the clocked logic. The synchronous reset remains, ensuring deterministic reset behavior.
+
+The counter still wraps around naturally because of 16-bit arithmetic. This refactoring improves code brevity while maintaining readability and correctness.

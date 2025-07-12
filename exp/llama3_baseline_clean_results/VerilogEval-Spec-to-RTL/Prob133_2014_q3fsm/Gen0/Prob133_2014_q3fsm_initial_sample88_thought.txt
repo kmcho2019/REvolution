@@ -1,0 +1,9 @@
+To implement the described finite state machine (FSM) with the fewest states, we need to track the transitions based on the inputs s and w. The FSM has a reset state A and then moves to state B based on s. Once in state B, we need to monitor w over three clock cycles to determine the output z. 
+
+We can achieve this with three states: A (reset state), B (waiting for w=1), and C (counting w=1 instances over three cycles). 
+
+- State A: Wait for s=1 to move to B.
+- State B: Start counting w=1 instances over the next three cycles. If exactly two w=1 instances are detected in these three cycles, set z=1 in the next cycle. Otherwise, z=0.
+- Since we need to examine w over three cycles, we can use a counter within state B to track these cycles and the number of w=1 instances. However, to minimize states, we'll consider the functionality within state B to encompass the counting and decision logic.
+
+The reset is active high and synchronous, meaning when reset is high, the FSM should return to state A on the next positive clock edge.

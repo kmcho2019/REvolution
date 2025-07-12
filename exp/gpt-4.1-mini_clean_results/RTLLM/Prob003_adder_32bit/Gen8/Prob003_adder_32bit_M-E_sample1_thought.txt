@@ -1,0 +1,18 @@
+I will implement a 32-bit carry-lookahead adder using a hierarchical block structure with 4 instances of an 8-bit CLA block. Each 8-bit CLA computes internal carries fully in parallel using standard CLA carry equations to maximize speed, avoiding serial ripple dependencies inside the block.
+
+The 8-bit CLA block will:
+- Compute propagate and generate for each bit.
+- Use carry-lookahead logic formulas to calculate carry outputs for all bits simultaneously.
+- Provide carry-out to the next block.
+
+The top-level 32-bit adder instantiates four 8-bit CLAs:
+- The first CLA receives a carry-in of zero.
+- The carry-out of each CLA block connects to the next CLA's carry-in.
+
+This 8-bit CLA hierarchy strikes a good balance between granularity and complexity:
+- More parallelism inside each small block reduces critical path delay,
+- The hierarchical top structure simplifies wiring and promotes modularity.
+
+Sum bits are produced by XOR of propagate and carry-in per bit.
+
+This design fully implements carry-lookahead carry logic in each 8-bit module, which is a more genuine CLA than a linear carry chain, improving speed and scalability.

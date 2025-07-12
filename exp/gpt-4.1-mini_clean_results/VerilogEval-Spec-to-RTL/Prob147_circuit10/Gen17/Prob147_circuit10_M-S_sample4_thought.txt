@@ -1,0 +1,9 @@
+Analyzing the waveform reveals that the state flip-flop follows a simple pattern: it becomes 1 when `b` is 1 (regardless of `a`), and resets to 0 when `a` is 1 and `b` is 1 while in state=1. Otherwise, it holds its previous value. This can be expressed simply as:
+
+- next_state = (state & ~(a & b)) | b;
+
+The output `q` directly reflects the current state (i.e., `q = state`).
+
+This simplification matches the waveform behavior: `q` tracks the flip-flop output, and state updates depend mainly on `b` and the condition `(a & b)` when state is 1.
+
+This implementation uses minimal combinational logic with one flip-flop, maintaining functionality while simplifying the code.

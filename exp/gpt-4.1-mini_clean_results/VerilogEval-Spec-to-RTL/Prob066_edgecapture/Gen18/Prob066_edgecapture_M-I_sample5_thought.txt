@@ -1,0 +1,9 @@
+The original design correctly captures falling edges by comparing the previous and current input bits, setting output bits permanently until reset. It uses straightforward logic with a synchronous reset, which is clear and synthesizable.
+
+To improve power efficiency and potentially reduce unnecessary toggling, I will add a clock enable signal derived from whether any new falling edge has been detected. This will gate the loading of the output register to only when necessary (i.e., when out would change). This does not affect functionality but reduces switching activity on the output register when no new falling edges occur, lowering dynamic power consumption.
+
+Performance-wise, the critical path remains minimal and unchanged. Area overhead for adding a simple OR-tree to generate the enable signal is negligible compared to the benefit in power.
+
+I will keep the synchronous reset logic as is and maintain the existing structure for clarity.
+
+This small improvement optimizes power by reducing unnecessary register toggling while preserving original correctness and performance.

@@ -1,0 +1,19 @@
+module comparator_3bit(
+    input [2:0] A,
+    input [2:0] B,
+    output A_greater,
+    output A_equal,
+    output A_less
+);
+
+    // Compare A and B
+    assign A_greater = (A > B) ? 1'b1 : 1'b0;
+    assign A_equal = (A == B) ? 1'b1 : 1'b0;
+    assign A_less = (A < B) ? 1'b1 : 1'b0;
+
+    // Ensure mutually exclusive outputs
+    assign A_greater = A_greater & ~(A_equal | A_less);
+    assign A_equal = A_equal & ~(A_greater | A_less);
+    assign A_less = A_less & ~(A_greater | A_equal);
+
+endmodule

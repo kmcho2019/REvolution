@@ -1,0 +1,21 @@
+To fix the issues identified in the feedback, I'll make the following key improvements:
+
+1. Pattern Detection:
+   - Make pattern detection continuous by always shifting in new data
+   - Clear pattern register on reset to ensure clean detection
+
+2. Shift Counter:
+   - Correct the shift counter to count exactly 4 cycles (0 to 3)
+   - Use shift_ctr == 3'b011 (decimal 3) as the transition condition
+
+3. State Machine Timing:
+   - Ensure proper state transitions with clear conditions
+   - Maintain SHIFT state for exactly 4 cycles
+   - Transition to COUNTING immediately after shift completes
+   - Stay in DONE state until ack is received
+
+4. Output Logic:
+   - Keep outputs directly tied to states
+   - Ensure outputs change immediately with state transitions
+
+The improved version will correctly detect the 1101 pattern, maintain shift_ena for exactly 4 cycles, and properly handle the counting and acknowledgment phases.

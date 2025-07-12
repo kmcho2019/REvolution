@@ -1,0 +1,8 @@
+The design involves creating a module named 'serial2parallel' that converts serial input data to parallel output data. The module will use a synchronous design, operating on the rising edge of the clock signal 'clk'. It will utilize a 4-bit counter 'cnt' to keep track of the number of serial input data bits received. The input serial data 'din_serial' will be sequentially placed in the output 'dout_parallel' from the most significant bit to the least significant bit. When all 8 serial data bits have been received, the output 'dout_valid' will be set to 1, indicating that the parallel output data is valid.
+
+The module will be designed using the following steps:
+1. Initialize the counter 'cnt' and the output 'dout_parallel' to zero when the reset signal 'rst_n' is low.
+2. On the rising edge of the clock signal 'clk', check if the input 'din_valid' is high. If it is, shift the current 'dout_parallel' to the left by one bit and append the new 'din_serial' bit to the least significant bit.
+3. Increment the counter 'cnt' when 'din_valid' is high.
+4. When the counter 'cnt' reaches 8, set 'dout_valid' to 1 and reset the counter 'cnt' to 0.
+5. Otherwise, set 'dout_valid' to 0.

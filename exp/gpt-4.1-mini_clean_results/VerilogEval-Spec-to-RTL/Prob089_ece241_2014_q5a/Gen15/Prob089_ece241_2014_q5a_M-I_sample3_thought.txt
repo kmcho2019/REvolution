@@ -1,0 +1,9 @@
+To optimize for better PPA while preserving functionality, we can reduce latency by combining input sampling and state update into a single always block, thus removing one register stage. This will improve performance by reducing the clock-to-output delay. 
+
+We also avoid registering `x` unnecessarily on reset by sampling `x` only when not in reset. Using synchronous reset within the always block triggered by asynchronous reset in the sensitivity list ensures correct reset behavior.
+
+Additionally, the output `z` can be implemented as a combinational assignment from the current state and input sampled within the same always block, removing redundant registers.
+
+This reduces overall area (one less register), improves performance by lowering latency, and slightly reduces power by avoiding unnecessary `x` sampling during reset.
+
+The state machine remains a Moore FSM with two states, and the output logic remains simple and clear.

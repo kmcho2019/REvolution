@@ -1,0 +1,13 @@
+Fuse the clarity and minimalism of both examples by:
+
+- Using typedef enum logic [1:0] for clear state representation (from Example 1).
+- Keep negative edge asynchronous reset on posedge clk, ensuring robust reset behavior.
+- Separate next_state logic and output z logic into two distinct always_comb blocks to improve synthesis clarity and potentially enhance timing and power by reducing combinational logic complexity per block.
+- Use blocking assignments in combinational blocks and non-blocking in sequential block as best practice.
+- Ensure output z is combinational and asserted only when "101" is detected, per Mealy FSM behavior.
+- Maintain overlapping sequence detection by transitioning to S1 after detecting "101".
+- This separation helps synthesis tools optimize next_state and output logic independently, possibly improving PPA.
+- Keep state encoding minimal (2 bits) for area efficiency.
+- Keep code clean and structured for readability and maintainability.
+
+This fusion provides modular combinational logic, potentially better timing and power, while preserving all functional requirements.

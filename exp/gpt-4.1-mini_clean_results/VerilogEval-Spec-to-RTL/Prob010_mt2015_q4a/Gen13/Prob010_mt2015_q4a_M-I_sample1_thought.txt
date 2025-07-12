@@ -1,0 +1,12 @@
+The original expression z = (x ^ y) & x can be simplified to z = x & ~y, which uses fewer gates. However, the previous approach implemented this simplification structurally using separate NOT and AND gates.
+
+To optimize power and area further, I will combine the logic into a single assign statement using bitwise operators directly in the TopModule, avoiding intermediate signals and separate gate modules. This reduces unnecessary module instantiations, decreases netlist complexity, and avoids extra wiring, which can lower power and area consumption.
+
+Since this is a small logic function with only two inputs, this simple dataflow modeling is efficient and synthesizes into minimal logic. The critical path is minimal with just one inverter and one AND internally inferred by synthesis tools.
+
+Thus, the improved solution:
+- Uses the simplified expression z = x & ~y.
+- Implements it directly using continuous assignment without extra modules or wires.
+- Minimizes module hierarchy and intermediate signals for the best PPA.
+
+This approach preserves correctness, enhances clarity, and improves PPA by reducing gate count and switching activity.

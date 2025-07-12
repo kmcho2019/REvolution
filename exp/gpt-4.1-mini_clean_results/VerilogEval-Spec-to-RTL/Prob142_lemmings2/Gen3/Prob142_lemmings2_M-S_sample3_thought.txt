@@ -1,0 +1,13 @@
+Simplify the FSM to two states representing direction only: WALK_LEFT and WALK_RIGHT. Use a separate flag "falling" to indicate the FALLING condition. This way, direction and falling status are tracked independently.
+
+- On reset, start walking left (WALK_LEFT), falling=0.
+- If ground==0, set falling=1 but keep direction unchanged.
+- When falling=1 and ground==1, set falling=0 to resume walking.
+- If not falling, bumps on either side flip direction.
+- If falling, bumps are ignored.
+- Outputs depend on direction and falling flag:
+  - walk_left = (direction == left) && !falling
+  - walk_right = (direction == right) && !falling
+  - aaah = falling
+
+This reduces the FSM states from 3 to 2 and separates falling status, making transitions and outputs simpler and clearer.

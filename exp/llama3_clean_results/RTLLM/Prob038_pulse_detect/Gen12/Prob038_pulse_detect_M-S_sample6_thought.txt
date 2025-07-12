@@ -1,0 +1,7 @@
+To simplify the existing pulse detection module, we need to focus on capturing the sequence of 0 to 1 to 0 within three cycles while minimizing the complexity of the design.
+
+The main concept here is to track the state of the input signal `data_in` over time. Since we are looking for a specific sequence (0 to 1 to 0), we can use a finite state machine (FSM) approach with a minimal number of states to keep track of this sequence.
+
+We start in an idle state, waiting for the first transition from 0 to 1. Once this transition is detected, we move to a state where we are waiting for the transition from 1 to 0. If this second transition occurs within the next cycle, we set `data_out` to 1, indicating a pulse has been detected, and then return to the idle state.
+
+To reduce complexity, we avoid unnecessary register assignments and focus on the essential logic required for pulse detection. This approach ensures that the design remains simple and efficient while accurately detecting the desired pulse pattern.

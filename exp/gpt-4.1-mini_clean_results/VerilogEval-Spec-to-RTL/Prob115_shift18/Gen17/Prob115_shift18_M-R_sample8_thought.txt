@@ -1,0 +1,5 @@
+Refactor the design to separate the next state logic from the register update and use a combinational always block with a case statement for shift selection. This structure replaces the multiple nested conditional operators with a clean and explicit case-based approach for selecting the shifted value, improving readability and potentially helping synthesis tools optimize multiplexers.
+
+The shift computation remains the same, but the final selection of the shifted value is performed inside a combinational always block assigned to a `next_q` signal. The register `q` is then updated synchronously on the clock with `next_q` or `data` if load is asserted.
+
+This refactor preserves functionality while providing a clear state update pipeline and makes the shifting logic explicit and structured, which can ease further optimizations or modifications.

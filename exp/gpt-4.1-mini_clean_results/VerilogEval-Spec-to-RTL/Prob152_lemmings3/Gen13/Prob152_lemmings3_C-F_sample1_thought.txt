@@ -1,0 +1,8 @@
+Fuse the explicit direction+mode combined 3-bit state encoding from Example 2 (for clarity and direct state decoding) with the optimized, flattened next-state logic and clear priority encoding from Example 1 (to reduce logic depth and redundant conditions). Maintain asynchronous reset with positive clock edge state update. Use consistent non-blocking assignments. 
+
+Specifically:
+- Keep mode in bits [2:1], direction in bit [0] as in Example 1, since that packs mode and direction cleanly and matches typical FSM design.
+- Implement next state logic using a clean case(mode) with highest-priority conditions first: fall (ground=0) > dig (dig=1 and ground=1 and mode=walk) > bump (switch direction) > hold state.
+- Avoid redundant self-assignments for clearer synthesis.
+- Derive outputs combinationally from mode and direction as per Moore FSM.
+- This fusion preserves clarity, concise priority order, minimal logic depth, and good synthesis-friendly style to improve timing, power, and area.

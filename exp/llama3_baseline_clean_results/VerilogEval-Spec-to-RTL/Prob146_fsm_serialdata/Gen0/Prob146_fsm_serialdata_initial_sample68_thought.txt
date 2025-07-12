@@ -1,0 +1,7 @@
+The design idea is to implement a finite state machine (FSM) with four main states: IDLE, START, DATA, and STOP. 
+- In the IDLE state, the FSM waits for a start bit (0) on the input 'in' and then transitions to the START state.
+- In the START state, the FSM waits for one clock cycle (since the start bit is already received in the IDLE state) and then transitions to the DATA state.
+- In the DATA state, the FSM receives the 8 data bits (from least significant bit to most significant bit) and stores them in the 'out_byte' register. 
+- After receiving all 8 data bits, the FSM transitions to the STOP state.
+- In the STOP state, the FSM checks if the stop bit is correct (1) and asserts the 'done' signal. If the stop bit is not correct, the FSM stays in the STOP state until it receives a stop bit.
+- The FSM also includes a synchronous reset, which resets the FSM to the IDLE state when 'reset' is high.

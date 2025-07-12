@@ -1,0 +1,11 @@
+Fuse the two approaches by:
+
+- Keeping modular, parameterized single-edge flip-flops for reusability and clarity.
+- Using a latch-based output selector like Example 2 to reduce glitches and improve power/stability compared to a purely combinational mux.
+- Implementing the latch as an explicit level-sensitive always block controlled by clk, passing the posedge or negedge FF output accordingly.
+- Avoiding inverted clocks or illegal sensitivity lists to ensure FPGA-friendly synthesis.
+- Using non-blocking assignments in flip-flops and blocking assignment in latch for correct behavioral modeling.
+- Structuring the TopModule cleanly with minimal hierarchy.
+- This fusion maintains dual-edge functional behavior, glitch reduction at output, simple structure, and is fully synthesizable and FPGA compatible.
+
+This design balances clarity, power, and timing better than pure mux or latch approaches alone.

@@ -1,0 +1,10 @@
+Instead of using a single vectorized always block, I will implement the TopModule using 8 individually instantiated single-bit D flip-flops with asynchronous active-high reset. Each DFF will be a separate module with a clear interface and asynchronous reset. This architecture emphasizes explicit modularity and clarity for each bit, which is useful for certain verification flows and possibly for detailed control or modification per bit.
+
+Key points:
+- Implement a single-bit DFF with asynchronous reset.
+- Instantiate eight such DFFs in TopModule, connecting each bit of d and q separately.
+- This approach makes it straightforward to add per-bit features or replace flip-flops selectively.
+- The asynchronous reset is explicitly modeled using `posedge clk or posedge areset`.
+- Although this uses more instances, the clarity and individual control per bit is emphasized.
+
+This design differs architecturally from a vectorized approach while fulfilling all functional requirements.

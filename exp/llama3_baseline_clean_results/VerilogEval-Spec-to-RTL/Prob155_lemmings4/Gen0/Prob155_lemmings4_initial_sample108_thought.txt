@@ -1,0 +1,16 @@
+To implement the Lemmings behavior as a Moore state machine, we need to identify the different states the Lemming can be in. Based on the description, the states are: walking left, walking right, falling, digging, and splattered. 
+
+The Moore state machine will have a current state and a next state, with the next state determined by the current state and the inputs. The outputs will be determined by the current state.
+
+The states and transitions can be described as follows:
+- The initial state is walking left.
+- When the Lemming is walking and bumps into an obstacle, it switches direction.
+- When the ground disappears, the Lemming falls.
+- When the Lemming is walking and the dig input is high, it starts digging.
+- When the Lemming is digging and the ground disappears, it falls.
+- When the Lemming falls for more than 20 clock cycles and hits the ground, it splatters.
+- The Lemming can only splatter when hitting the ground, not in mid-air.
+
+To keep track of the number of clock cycles the Lemming has been falling, a counter can be used.
+
+The Verilog implementation will use a case statement to determine the next state based on the current state and inputs. The outputs will be assigned based on the current state.

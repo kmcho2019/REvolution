@@ -1,0 +1,19 @@
+To fix the FSM timing and output mismatches, the key is to separate current state and outputs updates clearly, avoiding outputs assigned based on next_state inside the clocked process. Instead, outputs should be driven by the current state (Moore style), updated synchronously on the clock edge.
+
+Specifically:
+
+- Update the shift register unconditionally every clock, as before, to detect the pattern correctly.
+
+- Use the current state to drive outputs inside the clocked block, ensuring outputs change at the same time as state transitions.
+
+- Update the state at the clock edge after next_state is computed combinationally.
+
+- Increment the shift_counter inside the clocked block only when in SHIFT state, ensuring it aligns exactly with the SHIFT period.
+
+- In the combinational next_state logic, base decisions on current state and counter values for precise transition timing.
+
+- Reset all registers synchronously.
+
+This approach guarantees that outputs and internal counters move synchronously with the state machine, eliminating the timing misalignment issues previously observed.
+
+The refined FSM outputs are stable and synchronous, and the pattern detection aligns precisely with the shift register shifting and FSM state transitions.

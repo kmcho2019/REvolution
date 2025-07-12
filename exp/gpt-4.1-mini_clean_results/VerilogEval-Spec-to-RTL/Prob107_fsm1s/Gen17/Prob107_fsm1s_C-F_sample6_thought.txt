@@ -1,0 +1,11 @@
+I will combine the strengths of both examples by keeping the clear separation of combinational next-state logic and synchronous state update for readability and synthesis optimization. I will also incorporate a clock enable signal to update the state only when necessary, reducing unnecessary toggling and dynamic power. 
+
+However, to avoid adding complexity on the clock path from a direct combinational comparison (state != next_state), I will simplify the clock enable condition to use the computed next_state and current state directly but keep it minimal with a single-bit comparison. This keeps power benefits while avoiding potential clock path timing issues.
+
+The synchronous active-high reset will be preserved for reliable reset behavior.
+
+The Moore output will remain a continuous assignment based on current state, ensuring glitch-free output and simple output logic.
+
+This fusion balances clarity, power efficiency by reducing clock toggling, and performance by isolating combinational logic without overly complicating the clock enable condition.
+
+I will add clear comments to enhance maintainability and understanding.

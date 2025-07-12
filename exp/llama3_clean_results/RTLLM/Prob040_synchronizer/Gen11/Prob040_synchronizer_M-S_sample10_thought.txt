@@ -1,0 +1,7 @@
+The existing solution implements a multi-bit MUX-based synchronizer that meets the problem requirements. To simplify this solution while maintaining functionality, we can focus on reducing the complexity of the clock domain crossing and the enable signal propagation.
+
+The key idea is to ensure that the data_in signal remains constant during the period when data_en is high, and data_en is delayed by two clk_b cycles. This can be achieved by using a simpler clock domain crossing approach and minimizing the number of registers used for the enable signal.
+
+We can use a single always block to update the data_reg and en_data_reg on the positive edge of clk_a, and another always block to update the en_clap_one and en_clap_two registers on the positive edge of clk_b. This approach ensures that the data_in signal is properly synchronized and the enable signal is delayed as required.
+
+By simplifying the clock domain crossing and reducing the number of registers, we can improve the overall efficiency and reduce the complexity of the design.

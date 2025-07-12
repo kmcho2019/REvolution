@@ -1,0 +1,7 @@
+Refactor the FSM by using a single reg vector for one-hot state encoding instead of separate single-bit state registers. Use a 2-bit vector `state` where bit 0 represents state_A and bit 1 represents state_B, ensuring only one-hot encoding (one bit high). 
+
+Implement the next-state and output logic using continuous assignments (`assign`) for combinational signals, and use a synchronous always block with async reset only for state update. This makes the next-state logic and output logic more explicit and separated from the sequential block, improving readability.
+
+The output z is computed directly from the current state and input x by using a combinational assign statement reflecting the Mealy output function.
+
+This refactoring clarifies the one-hot encoding by grouping state bits in a vector, uses continuous assignments for next state and output, and keeps sequential logic clean.

@@ -1,0 +1,9 @@
+To improve synthesis friendliness and potentially enhance performance and power efficiency, change the design from assigning bits directly indexed by (7 - cnt) to using a shift register approach. In this approach, each valid serial input bit is shifted into the register from LSB side while shifting existing bits to the left. This naturally assembles the 8-bit parallel data with the first received bit in the MSB (bit 7) and the last in the LSB (bit 0). The counter counts from 0 to 7, and once 8 bits have been received, dout_valid pulses high for one clock cycle.
+
+Benefits:
+1. Simplifies indexing logic — no variable bit selection.
+2. May improve timing by implementing a straightforward shift register.
+3. Reduces bit toggling on random bit positions; all bits shift uniformly.
+4. Maintains the synchronous reset and correct control flow.
+
+This revised design fully meets the functional requirements and follows synchronous design best practices.

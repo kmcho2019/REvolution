@@ -1,0 +1,9 @@
+To implement the TopModule, we need to design a finite state machine (FSM) with several states: 
+- State A (initial state): stays in this state when reset is asserted, and transitions to State B when reset is de-asserted.
+- State B: sets output f to 1 for one clock cycle, then transitions to State C.
+- State C: monitors input x, and transitions to State D when x produces the values 1, 0, 1 in three successive clock cycles.
+- State D: sets output g to 1, then monitors input y. If y becomes 1 within two clock cycles, transitions to State E (maintaining g = 1 permanently). If y does not become 1 within two clock cycles, transitions to State F (setting g = 0 permanently).
+- State E: maintains output g = 1 permanently.
+- State F: sets output g = 0 permanently.
+
+We will use a parameterized enumerated type to represent the states, and use a case statement to implement the state transitions and output logic.

@@ -1,0 +1,5 @@
+To fix synthesis issues with the inferred latch primitive, use blocking assignments (`=`) instead of nonblocking (`<=`) inside the always block for latch inference. Blocking assignments are the conventional style for inferring level-sensitive latches and better supported by synthesis tools like Yosys.
+
+Additionally, keep the sensitivity list to `d` and `ena` to maintain level sensitivity. Update `q` only when `ena` is high, otherwise `q` holds its value by not assigning it in the else case, which infers the latch behavior.
+
+This style guides synthesis tools to infer a standard latch cell without unusual primitives, ensuring successful synthesis while preserving the intended latch functionality.

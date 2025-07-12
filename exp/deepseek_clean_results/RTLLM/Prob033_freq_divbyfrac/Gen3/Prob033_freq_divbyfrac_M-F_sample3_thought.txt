@@ -1,0 +1,10 @@
+To properly implement the 3.5x fractional divider with correct phase shifting:
+1. Use two separate counters to track the main and phase-shifted clocks
+2. The main counter counts 7 cycles (0-6) and toggles between 4 and 3 cycle periods
+3. The phase-shifted counter is offset by half the period (3.5 cycles)
+4. Generate two intermediate clocks:
+   - clk_main: Toggles every 3 or 4 cycles alternatively
+   - clk_shift: Same as clk_main but phase shifted by 180°
+5. Combine these clocks using OR logic to create the final output
+6. Ensure proper reset behavior with all signals initialized to 0
+7. Use precise comparison points for clock generation to maintain correct duty cycle

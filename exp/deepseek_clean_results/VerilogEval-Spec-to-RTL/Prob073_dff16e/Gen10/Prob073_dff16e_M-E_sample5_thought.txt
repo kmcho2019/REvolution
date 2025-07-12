@@ -1,0 +1,9 @@
+The new architecture implements a unified 16-bit register with conditional write logic that operates at the bit level, while still respecting the byte enable signals. This approach:
+1. Uses a single always block for all 16 flip-flops, enabling better synthesis optimization
+2. Implements bit-level write masking based on byte enables
+3. Maintains synchronous reset functionality
+4. Reduces hierarchy overhead by eliminating sub-modules
+5. Allows potential for more aggressive synthesis optimizations across byte boundaries
+6. Simplifies timing analysis with a single clock domain
+
+The key innovation is using the byte enable signals to generate a 16-bit write mask, which is then applied in a single conditional update operation. This provides the same functionality while potentially improving synthesis results.

@@ -1,0 +1,15 @@
+Combine the clarity and modularity of the hierarchical 16-bit CLA blocks with explicit propagate/generate outputs (from Example 1) and the simple, direct carry computation style (from Example 2) by implementing a parameterized, scalable 16-bit CLA block.
+
+Inside the 16-bit CLA block, compute per-bit propagate and generate signals, then calculate all carry signals using a generate loop for code compactness and clarity. Expose block-level propagate (P) and generate (G) signals for top-level carry chaining.
+
+At the top level, instantiate two such 16-bit CLA blocks. Use the block propagate and generate signals to compute the carry-in of the upper block precisely using the carry-lookahead formula for hierarchical carry computation:
+
+C_in_high = G_low + P_low * Cin_low
+
+Since the top-level Cin is zero, carry into upper block = G_low.
+
+This avoids ripple delay between blocks, improves performance versus chaining via the carry-out only, and reduces critical path length.
+
+Mapping inputs and outputs between the 1-based port specification and internal 0-based indexing is handled explicitly with generate loops for clarity and synthesis friendliness.
+
+This fusion approach gives a clean, scalable, hierarchical CLA implementation balancing modularity, performance, and simplicity.

@@ -1,0 +1,9 @@
+To improve PPA (performance, power, area), I'll optimize the combinational logic by explicitly defining the next state bitwise. Instead of XORing a full 32-bit mask when q[0] is 1, I will implement the Galois LFSR logic per bit:
+
+- The LSB (bit 0) is always q[31] XOR q[0] because it shifts right and the new MSB is feedback influenced.
+- For bits with taps (bits 31, 21, 1), the next state bit is q[bit-1] XOR q[0].
+- For other bits, the next state bit is just q[bit-1].
+
+This explicit bitwise implementation reduces fan-out and complex XOR gates and can help synthesis better optimize the logic for speed and area. It also minimizes dynamic power by reducing unnecessary XOR toggling when q[0] = 0.
+
+The synchronous reset remains as before. This approach keeps the logic explicit and should improve critical path delay and reduce gate count while keeping the same functionality.

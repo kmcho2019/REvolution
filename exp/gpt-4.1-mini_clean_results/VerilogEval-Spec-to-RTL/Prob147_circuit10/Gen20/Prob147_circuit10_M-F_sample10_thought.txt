@@ -1,0 +1,18 @@
+Analyze the waveform carefully to deduce the exact next_state and q logic. The state changes only on the positive edge of clk and depends on current state, a, and b. Observing state and q transitions:
+
+- At clk rising edges, state updates as:
+  next_state = (state XOR a) AND (NOT b)
+
+- Output q matches the previous state value (before update). This means q = state (registered output).
+
+This fits the waveform data:
+
+- When b=1, state resets to 0 regardless of a.
+- When b=0, state toggles if a=1; else state remains.
+- q outputs the current state value (state before update), as it changes synchronously with clk.
+
+Implementing next_state as (state XOR a) & (~b) with synchronous state update on clk posedge.
+
+Output q driven by current state value (not next_state), making it a registered output reflecting the stored bit.
+
+Initialize state to 0 for stable startup.

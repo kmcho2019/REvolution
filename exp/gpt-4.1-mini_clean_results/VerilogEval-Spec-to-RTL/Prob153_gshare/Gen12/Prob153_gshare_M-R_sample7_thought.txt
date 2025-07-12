@@ -1,0 +1,11 @@
+To resolve the timing misalignment issues and better match the specification:
+
+- Use separate pipeline registers for prediction inputs (predict_valid, predict_pc) so prediction outputs correspond exactly to those inputs without delay.
+- Implement the global history register (`ghr_reg`) as the committed history updated at posedge clk.
+- Maintain a speculative history register (`ghr_spec`) that updates combinationally based on whether prediction or recovery is active in the current cycle, ensuring the GHR update is synchronized but also reflects priority (training recovery > prediction update).
+- Derive prediction outputs directly from the committed history (`ghr_reg`) and PHT entry indexed by XOR of `ghr_reg` and delayed `predict_pc`.
+- Implement PHT updates at posedge clk on training only, so predictions see the pre-update PHT state.
+- Use combinational logic to compute the next speculative history, then update `ghr_reg` with that at clock edge. This avoids immediate update of `ghr_reg` within the same cycle, aligning outputs with the stable state.
+- Output prediction history as the committed `ghr_reg`, corresponding to the actual history used for prediction.
+- This structuring cleanly separates combinational prediction outputs (based on stable state), combinational speculative history update logic, and synchronous sequential state updates.
+- By doing so, timing alignment is preserved: prediction outputs reflect the pre-update state, history is updated correctly after prediction/training arbitration, and training misprediction recovery has priority.

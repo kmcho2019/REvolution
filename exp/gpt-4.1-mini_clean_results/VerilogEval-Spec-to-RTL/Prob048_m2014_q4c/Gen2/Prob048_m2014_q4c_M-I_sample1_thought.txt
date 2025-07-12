@@ -1,0 +1,11 @@
+The original design is functionally correct and minimal in area and power since it is just a single D flip-flop with synchronous reset. However, a common optimization in synthesis tools is to declare the reset signal as asynchronous if the use case allows, which often improves timing and power because the reset is not held synchronous to the clock. But since the specification explicitly requires synchronous reset, we must keep that behavior.
+
+Another subtle improvement is to remove the unnecessary else branch by leveraging the ternary operator in an always block. This can help synthesis tools optimize the mux logic slightly.
+
+Additionally, explicitly specifying non-blocking assignments and the output as reg is already done correctly.
+
+Overall, given the simplicity, the best optimization is to rewrite the always block with a conditional assignment using a ternary operator, which can sometimes result in better area and timing, and keep all functionality intact.
+
+No clock gating or power gating is applied because it requires more context.
+
+Thus, the improved design is functionally identical but expressed with a conditional operator for slight potential optimization.

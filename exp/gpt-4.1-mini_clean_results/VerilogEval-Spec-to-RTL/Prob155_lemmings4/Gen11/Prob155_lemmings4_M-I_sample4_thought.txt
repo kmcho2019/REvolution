@@ -1,0 +1,17 @@
+To improve PPA (Power, Performance, Area) over the given clean design, focus on reducing switching activity and logic complexity without changing FSM behavior:
+
+1. **Power**: 
+   - Gate the fall_timer increment only when in FALL and timer not saturated to avoid unnecessary toggling.
+   - Avoid recomputing bump conditions and direction toggling multiple times; use a simple wire with direct logic, minimizing combinational depth.
+   
+2. **Performance**:
+   - Split the combinational block into two: one purely for next_state and next_fall_timer, and another for next_direction, reducing critical path complexity.
+   - Use simpler priority encoding for the FSM transitions with early exits for fall and dig.
+   
+3. **Area**:
+   - Keep encoding the same; no extra registers.
+   - Use simple logic expressions and fewer intermediate signals.
+
+By gating fall_timer increment and factoring direction logic, the next_state combinational logic becomes shorter and less power-hungry. Outputs remain Moore and directly derived from the registers, so no change there.
+
+This strategy optimizes toggling and reduces logic depth, providing better PPA while maintaining correct FSM semantics.

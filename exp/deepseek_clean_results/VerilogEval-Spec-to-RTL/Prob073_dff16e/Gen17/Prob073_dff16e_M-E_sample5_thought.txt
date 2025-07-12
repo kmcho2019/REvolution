@@ -1,0 +1,15 @@
+Novel Architecture Idea: Bit-Sliced Conditional Update
+1. Instead of using byte-level modules, implement a flat 16-bit register with conditional updates
+2. Use a single always block for all flip-flops to enable better synthesis optimization
+3. For each bit, create a write condition combining byte enable and bit position
+4. Key advantages:
+   - Eliminates hierarchy overhead while maintaining functionality
+   - Enables potential for better synthesis optimization of the entire register
+   - More direct mapping to physical flip-flops with enables
+   - Clear synchronous reset implementation
+   - Efficient byte-level control without intermediate modules
+5. Implementation approach:
+   - Single always block triggered by posedge clk
+   - Reset condition clears all bits
+   - For each bit, check if it belongs to an enabled byte
+   - Update only bits in enabled bytes

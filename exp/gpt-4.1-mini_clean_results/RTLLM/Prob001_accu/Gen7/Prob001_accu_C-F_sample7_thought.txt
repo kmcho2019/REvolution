@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by ensuring accumulator and count update only when valid_in is high to reduce toggling, while avoiding redundant addition of data_in in the output cycle by using an intermediate variable to hold the final sum.
+
+Use synchronous active-low reset for clean initialization. valid_out pulses exactly one cycle when four valid inputs have been accumulated.
+
+At the cycle when the 4th data arrives, output the sum (accumulator + data_in) using a temporary register to avoid duplicate addition in the same clock edge, then reset accumulator and count immediately. This minimizes critical path delay and toggling.
+
+All signals updated with non-blocking assignments inside a single always block, simplifying timing and logic.
+
+The accumulator is 10 bits, and counter 2 bits as needed. valid_out defaults to 0 each cycle except the output cycle, ensuring a clean one-cycle pulse.
+
+This design balances clarity, minimal toggling, good performance by avoiding duplicated logic, and minimal area.

@@ -1,0 +1,16 @@
+Implement a radix-2 divider with a simple iterative approach that leverages a finite state machine (FSM) to manage the division steps cleanly. Key ideas:
+
+- Separate FSM states: IDLE, RUNNING, DONE.
+- On receiving `opn_valid` with no operation running, latch inputs and start division.
+- Convert operands to absolute values upfront and determine sign flags.
+- Use a 9-bit remainder register and an 8-bit quotient register:
+  - The remainder register holds the partial remainder during shifting and subtraction.
+- Perform one bit of the division per clock cycle:
+  - Shift left the remainder and bring in the next dividend bit.
+  - Subtract divisor if possible (if remainder >= divisor).
+  - Set quotient bit accordingly.
+- After 8 iterations, fix the sign of quotient and remainder.
+- Output result with remainder in upper 8 bits, quotient in lower 8 bits.
+- Support division by zero by outputting zero quotient and remainder immediately.
+- Use synchronous reset and ensure `res_valid` is only high one cycle after division completes.
+This architecture separates control and datapath cleanly, uses standard FSM style for clarity and robustness, and easily supports signed and unsigned division.

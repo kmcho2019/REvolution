@@ -1,0 +1,19 @@
+To implement the state transition and output logic of the given Moore state machine, we first need to define the current state and its one-hot encoding. Based on the provided state machine diagram, we can derive the next-state logic equations and output logic equations by inspection.
+
+We will use the one-hot encoding: (S, S1, S11, S110, B0, B1, B2, B3, Count, Wait) = (10'b0000000001, 10'b0000000010, 10'b0000000100, ... , 10'b1000000000).
+
+The next-state logic equations will be derived based on the current state and input values. The output logic equations will be derived based on the current state.
+
+For the given state machine, the next-state logic equations can be derived as follows:
+- S_next: current state is S and d=0, or current state is S1 and d=0, or current state is S110 and d=0, or current state is Wait and ack=1
+- S1_next: current state is S and d=1
+- Count_next: current state is B3
+- Wait_next: current state is Count and done_counting=1
+- B3_next: current state is B2
+
+The output logic equations can be derived as follows:
+- done: current state is Wait
+- counting: current state is Count
+- shift_ena: current state is B0, B1, B2, or B3
+
+Now, let's write the Verilog code for the combinational logic portion of the state machine.

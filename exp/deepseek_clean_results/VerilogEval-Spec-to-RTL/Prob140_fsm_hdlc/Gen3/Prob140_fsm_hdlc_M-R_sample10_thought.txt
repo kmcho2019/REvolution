@@ -1,0 +1,12 @@
+To refactor the code while maintaining the same functionality, I'll:
+1. Convert the counter-based approach to an explicit state machine with named states
+2. Use separate always blocks for state transitions and output generation (Moore style)
+3. Make outputs combinational (using assign) for better timing
+4. Keep the same reset behavior and output timing requirements
+5. Optimize state encoding for better PPA (using one-hot encoding)
+
+The state machine will have:
+- IDLE: initial state (previous input was 0)
+- S1-S6: states representing 1-6 consecutive 1s
+- ERROR: state for 7+ consecutive 1s
+Outputs will be generated based on current state and input

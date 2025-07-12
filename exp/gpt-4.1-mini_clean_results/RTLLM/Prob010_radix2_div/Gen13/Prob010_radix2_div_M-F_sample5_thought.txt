@@ -1,0 +1,11 @@
+The reported issue is an external port mismatch between the module and the testbench: the testbench uses a signal named 'res_ready', but the module outputs 'res_valid'. The module itself uses the correct port name 'res_valid' as specified. To fix this issue, I will keep the module interface as required and clearly document the ports to avoid confusion. The user/testbench should refer to 'res_valid' (not 'res_ready') to check result readiness.
+
+Additionally, I will clean up and clarify the design:
+- Use a consistent 17-bit SR register, with 9-bit remainder (SR[16:8]) and 8-bit quotient (SR[7:0]).
+- Ensure the subtraction and shift logic properly reflect radix-2 restoring division.
+- Confirm sign correction is applied only when res_valid is asserted.
+- Manage counters and flags cleanly with synchronous reset.
+
+This will ensure the module compiles, simulates correctly, and the interface matches the specification exactly. The fix is mainly in documentation and interface consistency rather than internal logic.
+
+No changes to port names; only clarify the code and confirm port naming consistency.

@@ -1,0 +1,14 @@
+Simplify the float_multi design by removing multi-cycle FSM and using a combinational approach synchronized on clk. Perform extraction, special case detection, normalization, multiplication, rounding, and result formation in a single clock cycle with reset clearing the output. Handle special cases (NaN, infinity, zero) explicitly, normalize subnormal inputs by left shifting with fixed loops, multiply mantissas, adjust exponent, and round according to IEEE-754 round to nearest even.
+
+To avoid Verilog illegal dynamic part-select issues, use fixed shifts and combinational sticky bit calculation with OR reductions over fixed ranges. This keeps the design simpler and more straightforward at a small cost of latency (one cycle), suitable for many practical designs.
+
+The implementation uses:
+- Extraction of sign, exponent, and mantissa with implicit leading one for normalized inputs.
+- Handling of special inputs (NaN, Inf, zero).
+- Mantissa multiplication yielding 48-bit product.
+- Normalization of product if MSB is not set by shifting left once.
+- Rounding using guard, round, sticky bits.
+- Final exponent adjustment for overflow/underflow.
+- Output assembly in IEEE-754 format.
+
+This approach trades pipeline depth for clarity and straightforward synthesis compatibility.

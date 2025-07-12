@@ -1,0 +1,5 @@
+To refactor the D latch implementation for better synthesis compatibility, we can use a continuous assignment with a ternary operator instead of an always block. By declaring 'q' as a reg and driving it via an always block triggered on 'ena' and 'd', the previous approach caused synthesis issues due to explicit self-assignment.
+
+Here, we explicitly implement the latch behavior using a combinational always block with a latch inferred by incomplete assignment: assign q = d when ena is high; otherwise retain q. But to avoid self-assignment issues and ensure clearer latch inference, implement a procedural block with a sensitivity list including 'ena' and 'd', and only assign q when ena is high. When ena is low, do not assign q, letting synthesis infer latch behavior naturally.
+
+This approach simplifies the code and improves compatibility, avoiding explicit self-assignments or continuous assignments that may confuse synthesis tools.

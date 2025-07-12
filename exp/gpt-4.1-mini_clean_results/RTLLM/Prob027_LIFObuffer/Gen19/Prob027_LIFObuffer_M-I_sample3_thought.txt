@@ -1,0 +1,15 @@
+To improve the existing LIFObuffer design for better performance, power, and area (PPA), the strategy focuses on decoupling pointer update and data output timing to reduce critical path delay. Instead of reading stack_mem at (SP-1) immediately after decrementing SP in the same clock cycle (which can cause combinational complexity due to SP-1 computation), introduce a registered read pointer (read_ptr) that holds the address for pop data. This allows stable addressing and dataOut assignment one cycle after the pointer update, simplifying the timing.
+
+For power, gating operations using EN is already done; maintain that. For area, keep the logic minimal by retaining the straightforward SP counting entries from 0 to 4 and no explicit stack_mem clearing.
+
+Also, align reset behavior to asynchronous active-high reset, which can improve timing closure on reset path in some flows.
+
+Summary of improvements:
+- Use separate read pointer registered on pop to address stack_mem for dataOut, avoiding address computation on critical path.
+- Update dataOut from stack_mem asynchronously (one cycle after pop) to avoid timing bottlenecks.
+- Maintain push operation as before.
+- Use non-blocking assignments consistently.
+- Keep EMPTY and FULL signals derived from SP.
+- Use asynchronous reset for SP and dataOut initialization.
+
+This approach reduces critical path delay caused by SP arithmetic in pop operation, improving timing and robustness without increasing area or power significantly.

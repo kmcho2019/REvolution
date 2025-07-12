@@ -1,0 +1,14 @@
+Novel Architectural Idea: Dual-Counter Approach with Predictive State Transition
+
+Instead of using a state machine to control increment/decrement direction, we can implement two counters that run simultaneously:
+1. An up-counter that counts from 0 to 31
+2. A down-counter that counts from 31 to 0
+
+The output is selected between these two counters using a toggle flip-flop that changes direction at the boundaries. This approach:
+- Eliminates the need for comparison operations during normal counting
+- Reduces critical path by having independent counters
+- Uses simple boundary detection (just checking counter MSBs)
+- Allows for potential power optimization by gating the inactive counter
+- Provides more regular structure that could be pipelined if needed
+
+The key innovation is using parallel counters with a simple selection mechanism rather than conditional counting logic.

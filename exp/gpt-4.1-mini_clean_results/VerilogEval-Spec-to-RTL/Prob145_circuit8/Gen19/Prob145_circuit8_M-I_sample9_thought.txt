@@ -1,0 +1,19 @@
+Analyzing the waveform more carefully shows that outputs p and q act like a 2-bit shift register triggered by clock edges with additional logic involving input a:
+
+- At rising clock edges (e.g., 25ns, 90ns, 100ns, 110ns, 145ns, 165ns), p and q update.
+- When clock is high, p follows the input a, and q holds the previous value of p.
+- When clock is low, q follows p, and p holds its previous value.
+- The output q essentially latches p on the falling edge of clock, while p updates on rising edge based on a.
+- This implies p is clocked on the rising edge of clock, and q is clocked on the falling edge.
+
+This corresponds to a dual-edge triggered circuit:
+- On posedge clock: p <= a; q remains stable.
+- On negedge clock: q <= p; p remains stable.
+
+This perfectly matches the waveform where p updates on rising clock edges according to input a, and q updates on falling edges copying p.
+
+Hence, implement p registered on the rising edge, q registered on the falling edge.
+
+This matches the waveforms closely without extra state logic. No reset is specified, so outputs start as unknown (x).
+
+This dual-edge triggered implementation fits the waveform data perfectly.

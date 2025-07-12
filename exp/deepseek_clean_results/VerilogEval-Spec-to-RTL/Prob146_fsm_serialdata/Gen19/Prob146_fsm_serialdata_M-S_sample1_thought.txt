@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. State Machine: Reduce to 3 states (IDLE, RECEIVE, STOP) by eliminating ERROR state - just wait for stop bit in IDLE
+2. Bit Counting: Use simpler 3-bit counter with clearer initialization (0 to 7)
+3. Shift Register: Keep efficient right-shift but simplify control logic
+4. Done Signal: Generate only in STOP state when valid stop bit is detected
+5. Reset Handling: Maintain synchronous reset for all registers
+6. Error Handling: Treat missing stop bit same as idle condition (wait for next start bit)
+
+Key Simplifications:
+1. Fewer states (3 vs 4) reduces complexity
+2. Clearer bit counting (0-7 instead of 7-0)
+3. Removed redundant ERROR state
+4. Simplified state transitions
+5. Maintains all required functionality

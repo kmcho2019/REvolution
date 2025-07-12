@@ -1,0 +1,15 @@
+The TopModule will be designed as a 512-cell system, where each cell's next state is determined by the XOR of its two current neighbors. We will use a sequential logic approach, where the current state of the system (q) is stored in a register. On each positive clock edge, the next state of the system is calculated based on the current state, and then the current state is updated to the new state. The load input is used to load the initial state of the system from the data input. 
+The system will use the following steps to calculate the next state:
+1. Calculate the next state of each cell based on the current state of its neighbors.
+2. Update the current state of the system to the new state.
+The system will use the following equations to calculate the next state of each cell:
+- q[i]' = q[i-1] ^ q[i+1] for i = 1 to 511
+- q[0]' = q[511] ^ q[1]
+- q[511]' = q[510] ^ q[0]
+However, since q[-1] and q[512] are assumed to be zero, the equations can be simplified as follows:
+- q[0]' = 0 ^ q[1]
+- q[511]' = q[510] ^ 0
+This simplifies to:
+- q[0]' = q[1]
+- q[511]' = q[510]
+So, we will use these simplified equations to calculate the next state of the first and last cells.

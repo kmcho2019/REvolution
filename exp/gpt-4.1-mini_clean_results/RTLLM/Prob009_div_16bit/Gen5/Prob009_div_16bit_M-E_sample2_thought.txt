@@ -1,0 +1,26 @@
+I will implement the divider using two combinational always blocks as required, but with a different architectural approach based on explicit iterative subtraction and bit extraction without overlapping bits:
+
+1. The first always block stores inputs A and B into registers `a_reg` and `b_reg`.
+
+2. The second always block performs the division in combinational logic:
+   - Start with the highest 8 bits of `a_reg` as the initial remainder.
+   - For each iteration (16 total), process one bit of the dividend starting from bit 7 down to bit 0 for the lower 8 bits, concatenated to the remainder on left side.
+   - At each step:
+     - Shift remainder left by 1 bit.
+     - Bring in the next dividend bit (moving downward from bit 7 to bit 0, then bits below zero handled as zeros).
+     - Compare remainder with divisor (`b_reg`).
+     - If remainder >= divisor, set quotient bit = 1 and subtract divisor from remainder.
+     - Else quotient bit = 0.
+   - This approach clearly partitions the dividend bits to avoid overlap and uses the top 8 bits only once to initialize the remainder.
+   
+3. Quotient bits are filled from MSB down to LSB, matching the iteration index from 15 down to 0, respecting the dividend's bit order.
+
+4. The remainder is 8 bits and extended to 16 bits for output.
+
+5. This approach handles the bit indexing carefully by treating the initial 8 bits of dividend as remainder and then processing lower bits for remainder shifting in order, avoiding overlap or double-counting bits.
+
+6. The design matches the problem constraints and uses two always blocks.
+
+7. Additionally, the divisor zero case is not explicitly handled, assuming it's non-zero.
+
+This method is distinct from standard restoring division by its clear indexing and controlled concatenation, fitting the requirement to "extract higher bits matching divisor width" and then "concatenate remainder with next dividend bit" iteratively.

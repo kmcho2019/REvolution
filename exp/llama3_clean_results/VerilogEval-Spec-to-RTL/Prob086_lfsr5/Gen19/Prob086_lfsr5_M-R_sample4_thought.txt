@@ -1,0 +1,11 @@
+To refactor the existing code, we can adopt a more traditional approach to implementing a Galois LFSR, which uses bitwise operations to calculate the next state instead of relying on a lookup table (LUT). This approach can improve the performance, area, and power consumption of the LFSR.
+
+One way to refactor the code is to use a combination of `always` blocks and `assign` statements to calculate the next state of the LFSR. We can use an `always` block to update the state of the LFSR on the positive edge of the clock, and an `assign` statement to calculate the next state based on the current state.
+
+In terms of the reset functionality, we can use an initial block to set the initial value of the state register to a known non-zero state, and an `if` statement within the `always` block to reset the state when the reset signal is asserted.
+
+To implement the Galois configuration, we can use bitwise XOR operations to calculate the next state of the LFSR. Specifically, we can use the expression `next[4] = currState[0] ^ currState[2]; next[3] = currState[3]; next[2] = currState[1]; next[1] = currState[4]; next[0] = currState[3];` to calculate the next state of the LFSR.
+
+However, this implementation does not correctly implement a 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3. To achieve this, the taps should be connected to the feedback path from the least significant bit (q[0]) to the most significant bit (q[4]) as `next[4] = currState[4] ^ currState[3] ^ currState[0];` and `next[3:0] = currState[4:1];`.
+
+Overall, the refactored code will provide a more efficient and accurate implementation of the 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3.

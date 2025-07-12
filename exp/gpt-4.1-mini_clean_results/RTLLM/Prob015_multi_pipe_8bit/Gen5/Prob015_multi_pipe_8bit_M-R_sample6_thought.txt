@@ -1,0 +1,10 @@
+Refactor the design to emphasize clearer separation between combinational and sequential logic by moving partial product generation and all additions into combinational blocks outside the always blocks, using continuous assignments and intermediate wires. Then, pipeline registers capture the sums stage by stage. This reduces complexity inside always blocks, improves readability, and separates data-path from control-path cleanly. The enable pipeline shift register remains, but we pipeline enables and data registers separately to clearly isolate control signals.
+
+Specifically:
+- Generate partial products as wires combinationally.
+- Sum partial products combinationally in three stages using assign statements.
+- Pipeline registers simply capture the combinational sums on clock edges, gated by enable signals.
+- Use a pipeline enable register shifted on clock edge, aligned with pipeline registers.
+- Assign outputs based on the pipelined enable.
+- Reset logic zeroes registers when reset is active.
+This style encourages better synthesis optimization and easier debugging.

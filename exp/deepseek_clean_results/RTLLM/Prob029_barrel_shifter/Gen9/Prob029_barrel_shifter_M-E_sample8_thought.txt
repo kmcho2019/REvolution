@@ -1,0 +1,15 @@
+Here's a novel approach using a hierarchical multiplexer structure that directly selects the rotated output based on the combined shift amount (0-7):
+
+1. Instead of cascading shift stages, we'll pre-compute all 8 possible rotation amounts (0-7 positions)
+2. Use the 3-bit control signal as a direct selector for these pre-computed rotations
+3. Implement this as a single 8:1 multiplexer where each input is a differently rotated version of the input
+4. The rotation amounts are calculated by concatenating the appropriate slices of the input vector
+5. This approach is more direct and eliminates the cumulative error potential of cascaded shifts
+6. The implementation will be purely combinational with no intermediate stages
+7. The shift direction will be right rotation (moving LSBs to MSB positions) as this is more common in barrel shifters
+
+Advantages:
+- Single-cycle operation with no propagation delay through multiple stages
+- Clear 1:1 mapping between control value and shift amount
+- Easier to verify since each control value directly selects its corresponding rotation
+- More efficient for synthesis as modern FPGAs have optimized multiplexer structures

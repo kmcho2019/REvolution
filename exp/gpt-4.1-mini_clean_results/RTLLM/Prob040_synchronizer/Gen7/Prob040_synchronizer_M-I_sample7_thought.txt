@@ -1,0 +1,3 @@
+To optimize the existing multi-bit MUX-based synchronizer for better power efficiency with minimal impact on area and timing, we introduce conditional updating of data_reg and en_data_reg in the clk_a domain only when data_en is high. Since data_in remains constant when data_en is high and changes infrequently with minimum intervals, avoiding unnecessary register updates reduces toggle rates, saving dynamic power.
+
+The two-stage enable synchronizer and output logic in the clk_b domain remain unchanged because enable toggling is already minimal. Reset behavior and dual clock domain handling stay as specified. This gating reduces unnecessary switching in clk_a domain registers while preserving the functional correctness and synchronization robustness.

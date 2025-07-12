@@ -1,0 +1,14 @@
+Implement an asynchronous FIFO where the dual-port RAM is instantiated as a separate module with true dual-port capability, each port clocked by separate clocks (wclk and rclk). Instead of maintaining full binary pointers and converting to Gray, directly maintain Gray-coded read and write pointers for pointer synchronization, and use separate binary pointers internally for addressing RAM. The read and write pointers are synchronized across clock domains via a two-stage synchronizer chain.
+
+For full and empty detection, rely solely on Gray pointer comparisons, detecting full when the write pointer wraps one cycle ahead of the read pointer with inverted two highest bits, and empty when read and write pointers are equal.
+
+The RAM addresses are derived by converting Gray-coded pointers to binary pointers before accessing memory.
+
+Key differences:
+- Store pointers always in Gray code.
+- Convert Gray to binary only for addressing RAM, minimizing binary logic spread.
+- Use nonblocking assignments carefully.
+- Use explicit synchronizers for pointer passing.
+- Implement a separate module for dual_port_RAM with separate clocks and enables.
+
+This approach isolates Gray-to-binary conversion only to address computation, avoiding mixing pointer increments in binary domain, and simplifies synchronization by passing Gray pointers directly.

@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. Implement a pure 4-bit carry-lookahead structure for better timing consistency
+2. Combine all carry computations into a single 8-bit vector for better resource sharing
+3. Optimize overflow detection by reusing the final carry-out (c7) and sign bits
+4. Reduce redundant logic by computing sum directly from propagate and carry terms
+5. Benefits:
+   - More uniform carry propagation structure improves timing predictability
+   - Single carry vector reduces wiring complexity and area
+   - Overflow detection becomes simpler by observing carry-in and carry-out of MSB
+   - Cleaner code organization with generate blocks for scalability
+
+Key Optimizations:
+- Use hierarchical 4-bit carry-lookahead blocks
+- Compute overflow as (carry[7] ^ carry[6])
+- Direct sum computation from p and c terms
+- Reduced wire declarations through better organization

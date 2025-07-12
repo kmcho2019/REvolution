@@ -1,0 +1,9 @@
+I will implement the FSM with just two states: A and B.  
+- In state A, wait for s=1 to transition to state B.  
+- In state B, I will use a 2-bit counter to count the three cycles of w sampling. Instead of separate states for each sample, the counter cycles from 0 to 2 and resets to 0 every three clocks.  
+
+I will accumulate the count of w=1 samples in a 2-bit register over these three cycles. When the counter reaches 2 (end of 3rd cycle), I will output z=1 if the count equals exactly 2; otherwise, z=0. Then the counter resets and counting restarts for the next 3 samples.  
+
+This design uses minimal states and a simple counter, reducing the state encoding to one bit and relying on the counter for cycle tracking. This approach reduces state flip-flops and logic complexity by combining cycle tracking into a single register, simplifying the FSM. The output z is registered and valid one cycle after the third sample, matching the specification.
+
+All sequential logic is synchronous with reset active high and triggered on posedge clk. The design uses minimal logic, reducing area and potentially improving performance and power by limiting state toggling and combinational complexity.

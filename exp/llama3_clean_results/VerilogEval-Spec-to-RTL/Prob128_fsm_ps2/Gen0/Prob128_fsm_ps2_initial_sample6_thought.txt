@@ -1,0 +1,9 @@
+To solve this problem, we will implement a finite state machine (FSM) in the TopModule. The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. 
+
+In the IDLE state, the FSM will discard incoming bytes until it sees a byte with in[3]=1. Once such a byte is seen, the FSM will transition to the BYTE1 state and store the byte. 
+
+In the BYTE1 and BYTE2 states, the FSM will store the incoming bytes and transition to the next state. 
+
+In the BYTE3 state, the FSM will store the incoming byte and then signal the receipt of a message by setting the done signal high. The FSM will then transition back to the IDLE state, ready to search for the next message.
+
+The FSM will also have a reset mechanism to reset the FSM to the IDLE state when the reset signal is high.

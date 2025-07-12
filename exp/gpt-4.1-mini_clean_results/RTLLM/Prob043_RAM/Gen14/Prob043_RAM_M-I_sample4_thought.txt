@@ -1,0 +1,18 @@
+To optimize the original design for better power, performance, and area (PPA) without losing functionality:
+
+1. Keep synchronous reset for RAM initialization to ensure deterministic start state.
+2. Use minimal address width based on DEPTH with $clog2, which is already optimal.
+3. Use synchronous write operation on posedge clk with write_en gating.
+4. Change the read operation from combinational (asynchronous) to registered synchronous read:
+   - Registering the read_data output reduces glitches and power by stabilizing outputs.
+   - Though it adds one cycle of read latency, it improves timing closure and reduces output toggling.
+5. Maintain clearing read_data on reset and when read_en is low to avoid spurious outputs.
+6. Avoid combinational reads that can cause glitches or large switching.
+7. Retain zero initialization of RAM on reset.
+8. The overall impact:
+   - Slight increase in read latency (1 cycle) acceptable for many synchronous designs.
+   - Reduced power from glitch reduction and controlled output toggling.
+   - Improved timing due to registered output.
+9. Add comments for clarity and maintain clean coding style.
+
+This approach balances synchronous read latency with improved power and timing behavior, commonly preferred in ASIC and FPGA RAM designs.

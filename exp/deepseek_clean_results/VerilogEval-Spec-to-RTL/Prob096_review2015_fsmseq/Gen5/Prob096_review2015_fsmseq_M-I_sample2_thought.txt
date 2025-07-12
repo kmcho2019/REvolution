@@ -1,0 +1,16 @@
+Improvement Strategy:
+1. State Encoding Optimization: Switch from one-hot to binary encoding (2 bits for 4 states) to reduce area and power while maintaining reasonable timing.
+2. State Reduction: Combine GOT11 and GOT110 states since they both represent intermediate steps in the sequence detection.
+3. Output Optimization: Make start_shifting a direct register output to avoid combinational path.
+4. Reset Handling: Explicitly handle all state transitions to remove default case and save logic.
+
+New State Mapping:
+- IDLE (00)
+- GOT1 (01)
+- GOT11 (10)
+- FOUND (11)
+
+The modified state machine will:
+- Transition from GOT11 to FOUND when seeing '1' after "110"
+- Transition from GOT11 to GOT1 when seeing '0' (partial match "1100")
+- This reduces states while maintaining correct sequence detection

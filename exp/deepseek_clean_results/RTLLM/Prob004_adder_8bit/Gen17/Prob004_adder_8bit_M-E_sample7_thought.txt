@@ -1,0 +1,15 @@
+Novel Hybrid Carry-Select/Predict Architecture:
+1. Split the 8-bit adder into two 4-bit chunks (lower and upper nibbles)
+2. For the upper nibble, compute both possible sums (assuming carry-in 0 and 1)
+3. Use a carry-predict circuit to determine the actual carry-in to upper nibble
+4. Mux the correct upper sum based on the predicted carry
+5. Benefits:
+   - Reduces critical path by parallel computation of upper sums
+   - Carry prediction is faster than ripple propagation
+   - Only one 4-bit ripple chain remains in critical path
+   - Good balance between speed and area
+6. Implementation:
+   - Lower 4-bit ripple carry adder
+   - Upper 4-bit dual-path computation
+   - Fast carry predictor using lookahead-like logic
+   - Final output muxing

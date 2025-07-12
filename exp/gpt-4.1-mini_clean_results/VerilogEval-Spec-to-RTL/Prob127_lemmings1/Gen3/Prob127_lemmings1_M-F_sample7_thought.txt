@@ -1,0 +1,7 @@
+The FSM only needs to switch direction whenever either bump_left or bump_right is asserted (logic high) at the clock edge, regardless of whether the bump signals are edges or held high. Edge detection logic is unnecessary and incorrect per the specification.
+
+Therefore, the state should update on every clock edge (except during asynchronous reset) by checking if bump_left or bump_right is 1. If yes, toggle the walking direction state; if not, keep the current state.
+
+The reset is asynchronous and positive edge triggered, setting the state to walk_left.
+
+The outputs are Moore outputs, derived solely from the state. This approach ensures correct toggling behavior regardless of bump signal duration, aligning perfectly with the problem statement and feedback.

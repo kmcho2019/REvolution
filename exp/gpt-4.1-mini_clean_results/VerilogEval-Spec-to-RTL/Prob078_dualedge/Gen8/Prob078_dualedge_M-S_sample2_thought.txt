@@ -1,0 +1,6 @@
+To simplify the dual-edge triggered flip-flop implementation while maintaining functionality:
+
+- Remove the parameterized EdgeFF module to reduce hierarchy and complexity.
+- Directly instantiate two simple always blocks inside TopModule: one triggered on posedge, one on negedge, each capturing the input d.
+- Use a continuous assign statement with a mux on the clock level to output the data corresponding to the latest clock edge.
+- This approach uses minimal code and is synthesis-friendly without generating any inverted clocks or illegal sensitivity lists.

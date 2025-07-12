@@ -1,0 +1,10 @@
+Use a simple binary-encoded FSM with four states: IDLE, BYTE1, BYTE2, DONE. 
+
+- Initially, the FSM waits in IDLE, discarding bytes until it sees a byte with in[3]=1.
+- When such byte arrives, it's saved as the first message byte, then the FSM moves to BYTE1 state.
+- On next clock cycles, it stores the second and third bytes in BYTE2 and DONE states respectively.
+- The done signal is asserted for one cycle when the third byte is received (DONE state).
+- The 24-bit output assembles the three bytes as required.
+- To keep the design clean and pipeline friendly, store each byte in a dedicated register.
+- The done signal is asserted synchronously with the third byte reception.
+- The reset is synchronous and active high as specified.

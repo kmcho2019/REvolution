@@ -1,0 +1,20 @@
+The original code mostly works but has some issues:
+1. It tries to latch operands into each stage on the corresponding pipeline cycle, but this breaks the ripple carry flow; ripple carry requires carry-out from stage n to be input carry-in to stage n+1 *in the same cycle* or via a pipeline register. Here, carry is generated every cycle from registered operands and registered carry-in.
+2. The approach to load operands into all stages on their corresponding pipeline cycle is incorrect because we must hold operands from the initial input capture and propagate carry signals through the pipeline.
+3. Also, the sum concatenation was duplicated and an extra redundant branch existed.
+4. The carry pipeline was treated as registers but assigned in the same always block with blocking/non-blocking issues.
+5. It is better to register inputs once at stage 0, then propagate carry and sum through pipeline registers.
+6. The enable pipeline must track valid data and produce o_en correctly.
+
+Improvement strategy:
+- Pipeline the 64-bit addition as 4 stages of 16 bits each.
+- At stage 0 (on i_en), latch the 64-bit operands into stage registers.
+- Use combinational adders within each stage to compute sum and carry-out based on registered operands and registered carry-in.
+- Register sum and carry-out at each stage, creating a pipeline ripple carry chain.
+- Propagate the enable signal through a shift register matching pipeline depth.
+- On o_en asserted, produce final 65-bit result by concatenating stage sums and the final carry-out.
+- This approach reduces combinational path delay per stage and aligns with a real pipeline ripple carry adder.
+- Ensure consistent non-blocking assignments and synchronous reset.
+- Also remove redundant conditional checks and fix sum concatenation order.
+
+This yields a clean, synthesizable, and testable 64-bit pipelined ripple carry adder with 4 pipeline stages and an output enable.

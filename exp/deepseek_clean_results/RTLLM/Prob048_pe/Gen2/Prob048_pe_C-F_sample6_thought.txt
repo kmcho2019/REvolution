@@ -1,0 +1,18 @@
+Fusion Strategy:
+1. Maintain the synchronous reset functionality from both examples for consistent behavior
+2. Keep the 64-bit product calculation but optimize its usage (only store lower 32 bits)
+3. Add pipeline registers to break the critical path (multiplier + adder)
+4. Implement clock gating for power optimization when inputs are zero
+5. Use signed arithmetic consistently for correct operation
+
+Key Improvements:
+- 2-stage pipeline (multiply in first stage, accumulate in second) for better timing
+- Input change detection to reduce unnecessary operations
+- Explicit truncation of multiplication result to save power
+- Maintain clean reset synchronization
+
+The new design will:
+1. First stage: Register inputs and compute product
+2. Second stage: Accumulate with registered product
+3. Only update when inputs change or reset is active
+4. Properly handle signed arithmetic throughout

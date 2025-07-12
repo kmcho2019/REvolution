@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Pipelining: Add one pipeline stage between multiplication and accumulation to improve timing (critical path is currently multiplier+adder)
+2. Overflow Handling: Implement saturation logic to prevent undefined behavior from 32-bit overflow
+3. Clock Gating: Add enable signal to reduce power consumption during idle cycles
+4. Resource Optimization: Remove unused upper 32 bits of product when not needed for overflow detection
+5. Reset Optimization: Make reset more power-efficient by only updating registers when needed
+
+Key Changes:
+- 2-stage pipeline (multiply then accumulate)
+- Saturation logic for overflow protection
+- Enable signal for power reduction
+- Optimized reset handling
+- Maintained signed arithmetic correctness

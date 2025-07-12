@@ -1,0 +1,10 @@
+Refactor the pulse detector FSM to use a two-process style with a separate combinational block for next state logic using an always @(*) block and synchronous sequential logic for state and output updates. Instead of computing output inline as Mealy style in the always @(posedge clk), separate the output assignment to a registered Moore style output, which is asserted when the FSM reaches the state corresponding to pulse completion. This means we encode the FSM states more explicitly (e.g., IDLE, HIGH, PULSE_DETECT) for clarity, although functionally similar to the original 1-bit FSM.
+
+The FSM states:
+- IDLE (0): waiting for rising edge (data_in=0)
+- HIGH (1): data_in=1 (rising edge detected)
+- PULSE_DETECT (2): data_in=0 after HIGH, pulse detected
+
+On detecting the pulse (rising then falling edge), the FSM transitions to PULSE_DETECT for one cycle, asserts data_out=1, then returns to IDLE. This makes data_out a registered Moore output, which avoids glitches because it depends only on the FSM state.
+
+This approach improves readability and clarity by using named states and a Moore output signal, while keeping the detection logic equivalent. The output data_out is registered and stable throughout the cycle where pulse is detected. This method slightly increases FSM states but improves output signal stability and eases verification.

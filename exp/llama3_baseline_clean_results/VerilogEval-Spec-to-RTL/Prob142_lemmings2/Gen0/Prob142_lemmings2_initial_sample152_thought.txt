@@ -1,0 +1,14 @@
+The Moore state machine will have three states: walking left, walking right, and falling. The state transitions are as follows:
+- From walking left or right, the Lemming will fall if the ground disappears (ground=0) and will resume walking in the same direction when the ground reappears (ground=1).
+- From walking left, the Lemming will switch to walking right if bumped on the left (bump_left=1), regardless of whether it's also bumped on the right.
+- From walking right, the Lemming will switch to walking left if bumped on the right (bump_right=1), regardless of whether it's also bumped on the left.
+- While falling, the Lemming will not switch direction if bumped.
+We'll use a single 2-bit register to keep track of the state and another register to store the previous walking direction.
+
+We'll use the following state encoding:
+- 2'b00: walking left
+- 2'b01: walking right
+- 2'b10: falling
+- 2'b11: unused
+
+We'll also use a separate register to store the previous walking direction when the Lemming starts falling.

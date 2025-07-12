@@ -1,0 +1,53 @@
+First, let's identify the binary representations for the given input numbers. Since a,b,c,d are inputs, assume the order as a is the MSB and d is the LSB, so the 4-bit input is abcd.
+
+Numbers to output logic-1 (out_sop = 1): 2, 7, 15
+- 2:  0010 -> a=0, b=0, c=1, d=0
+- 7:  0111 -> a=0, b=1, c=1, d=1
+- 15: 1111 -> a=1, b=1, c=1, d=1
+
+Numbers to output logic-0 (out_sop = 0): 0,1,4,5,6,9,10,13,14
+These are the only valid inputs as 3,8,11,12 never occur.
+
+We need to find minimal SOP and minimal POS expressions for the function f which is 1 at 2,7,15 and 0 at listed numbers.
+
+Let's write the truth table for inputs and outputs:
+
+| a | b | c | d | decimal | f |
+|---|---|---|---|---------|---|
+| 0 | 0 | 0 | 0 | 0       | 0 |
+| 0 | 0 | 0 | 1 | 1       | 0 |
+| 0 | 0 | 1 | 0 | 2       | 1 |
+| 0 | 0 | 1 | 1 | 3       | x (never occurs) |
+| 0 | 1 | 0 | 0 | 4       | 0 |
+| 0 | 1 | 0 | 1 | 5       | 0 |
+| 0 | 1 | 1 | 0 | 6       | 0 |
+| 0 | 1 | 1 | 1 | 7       | 1 |
+| 1 | 0 | 0 | 0 | 8       | x (never occurs) |
+| 1 | 0 | 0 | 1 | 9       | 0 |
+| 1 | 0 | 1 | 0 | 10      | 0 |
+| 1 | 0 | 1 | 1 | 11      | x (never occurs) |
+| 1 | 1 | 0 | 0 | 12      | x (never occurs) |
+| 1 | 1 | 0 | 1 | 13      | 0 |
+| 1 | 1 | 1 | 0 | 14      | 0 |
+| 1 | 1 | 1 | 1 | 15      | 1 |
+
+Using Karnaugh map or Boolean simplification, we get the minimal SOP and POS.
+
+Minimal SOP (Sum of Products) for out_sop:
+- f = a b c d + ~a b c d + ~a ~b c ~d
+- Which is: f = a b c d + ~a b c d + ~a ~b c ~d
+
+Minimal POS (Product of Sums) for out_pos (f=0 cases):
+- The complement of f is 1 for the 0-cases.
+- Using the complement function and simplifying gives the POS form.
+
+Since out_pos is the minimal POS expression of the function (output=1 for inputs where out_sop=0), it equals the complement of out_sop.
+
+Hence:
+
+- out_sop = a b c d + ~a b c d + ~a ~b c ~d
+- out_pos = (a + ~b + ~c + d)(a + b + ~c + ~d)(~a + b + ~c + d)
+
+Implement both using these minimal expressions.
+
+We'll implement the two outputs accordingly.

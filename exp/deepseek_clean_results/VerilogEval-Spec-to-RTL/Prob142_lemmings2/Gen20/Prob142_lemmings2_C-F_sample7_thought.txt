@@ -1,0 +1,22 @@
+Optimized Fusion Strategy:
+1. State Representation: Use a 2-bit state encoding combining both state and direction (like Example 2) but with clearer separation (like Example 1)
+2. Transition Logic:
+   - Prioritize ground checking first (critical for correct falling behavior)
+   - Handle bumps only when walking and on ground (simplifies conditions)
+   - Use explicit state transitions for better readability
+3. Output Logic:
+   - Direct decoding from state bits (most efficient)
+   - Ensure mutual exclusivity of walk_left/walk_right
+4. Reset Handling:
+   - Maintain simple asynchronous reset to walk left
+5. Optimizations:
+   - Combine the minimal register usage of Example 1
+   - Use the clean state organization of Example 2
+   - Simplify bump logic by treating left/right symmetrically
+
+Key Advantages:
+- Clear state transitions with prioritized conditions
+- Minimal logic for bump handling
+- Optimal output generation
+- Better timing due to simplified conditions
+- Lower power from reduced switching activity

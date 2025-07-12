@@ -1,0 +1,17 @@
+From the waveform, 'p' updates only on the rising edge of clock and seems to follow 'a' but only when certain conditions apply (not every clock cycle). 'q' behaves like a memory that switches from 0 to 1 after several clock cycles and remains stable until reset.
+
+Observing the waveform closely:
+- 'p' stays 0 until clock cycles where 'a' is 1 and previous 'p' was 0, then p becomes 1 at that clock.
+- 'q' sets to 1 after 'p' becomes 1 for the first time and remains at 1 except at some falling edges where it resets when clock is low and 'a' is high.
+- Before the first rising edge of clock, outputs are unknown, which means no initial reset.
+
+Idea:
+Implement a 2-bit shift register capturing the history of input 'a' sampled at clock rising edges. Use these delayed 'a's to determine when 'p' becomes 1 (e.g., if current 'a' and previous 'a' match some pattern).
+
+For 'q', use a set-reset latch updated synchronously at the rising edge of clock: set when 'p' becomes 1, reset when clock is low and 'a' is high (observed from waveform time 115-140ns region).
+
+By sampling everything at the rising edge only, and using internal registers to track the sequence of 'a', 'p', and 'q', the circuit is synchronous and avoids negedge usage.
+
+This model produces sequential detection of 'a' pattern causing 'p' to pulse, then 'q' to latch, which matches the waveform's behavior.
+
+No explicit reset signals needed; outputs initialize to unknown as per simulation.

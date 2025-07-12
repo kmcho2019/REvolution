@@ -1,0 +1,16 @@
+Instead of relying solely on two's complement subtraction, explicitly extract sign, integer, and fractional parts of each input to handle same-sign and different-sign subtraction scenarios separately. 
+
+1. Extract sign bits of inputs a and b.
+2. Separate integer and fractional parts based on Q and N.
+3. When signs are the same:
+   - Subtract absolute values (integer and fractional parts combined as fixed-point).
+   - Result sign is the same as inputs if subtraction is non-negative, else invert result and sign.
+4. When signs differ:
+   - Add absolute values since subtraction of opposite signs is addition.
+   - Result sign equals sign of the input with larger magnitude.
+5. If result is zero, force sign to 0.
+6. Combine sign, integer, and fractional parts back into N-bit fixed-point output.
+
+This approach explicitly models the fixed-point subtraction semantics at bit level and clarifies sign and magnitude handling, avoiding direct two’s complement subtraction. This helps validate exact fixed-point behavior and makes sign management explicit.
+
+The module uses parameters N and Q for bit widths, has signed and unsigned logic where needed, and a combinational always block. Internal registers store magnitude and result components.

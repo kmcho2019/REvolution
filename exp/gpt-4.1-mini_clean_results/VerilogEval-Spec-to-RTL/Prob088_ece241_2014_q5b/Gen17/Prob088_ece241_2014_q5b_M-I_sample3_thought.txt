@@ -1,0 +1,13 @@
+The original solution uses a single flip-flop to represent the states, which is more of a binary encoding than true one-hot encoding. Since the problem explicitly requires a one-hot encoding, we should represent each state with a separate flip-flop, where exactly one flip-flop is '1' at any time.
+
+To optimize PPA while conforming strictly to the one-hot encoding requirement:
+- Use two flip-flops representing states A and B, respectively.
+- Asynchronous active-high reset sets state A flip-flop.
+- Next-state logic activates the corresponding state flip-flop.
+- Output z is computed combinationally as Mealy output based on current state and input.
+- Use blocking assignments in combinational always blocks and non-blocking in sequential always blocks.
+- Combine next-state and output logic to avoid redundant logic and reduce switching.
+- This approach meets the one-hot encoding requirement strictly and should have minimal overhead due to just two flip-flops.
+- Since the design is very small, any power and area impact is minimal but ensures correctness and clarity.
+
+This improves correctness (fully one-hot) and maintains good PPA tradeoffs.

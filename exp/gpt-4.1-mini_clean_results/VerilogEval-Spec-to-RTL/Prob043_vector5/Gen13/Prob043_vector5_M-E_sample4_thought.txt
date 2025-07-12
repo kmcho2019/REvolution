@@ -1,0 +1,7 @@
+A novel architectural approach is to first pack the five input bits into a 5-bit vector, then use nested generate loops to perform the pairwise comparisons systematically. By using a two-dimensional for-loop, we can assign each bit of the output vector in a well-defined order without manually enumerating each term.
+
+Specifically, define `in_vec = {a,b,c,d,e}` indexed 4 down to 0. For output bits, follow the given ordering: bit 24 corresponds to comparing in_vec[4] with in_vec[4], bit 23 is in_vec[4] with in_vec[3], etc., down to bit 0 for in_vec[0] with in_vec[0].
+
+We can calculate the output index as `out_idx = (4 - i)*5 + (4 - j)`, where `i` and `j` range from 0 to 4, and `i` is the row index of the first input and `j` is the column index of the second input.
+
+This method enables scalable, maintainable, and concise code, easy to extend if more bits are added. It also clearly separates the data packing and the comparison logic, promoting clean design. The generate block will create all comparisons with XNOR gates, adhering to the specification that out is 1 if the compared bits are equal.

@@ -1,0 +1,6 @@
+The main issue in the original design is the race condition between register updates and output generation. To simplify:
+1. Remove the separate output registers (ins, ad1, ad2) and make them combinational outputs derived directly from the internal registers
+2. Keep the two 8-bit internal registers (ins_p1, ins_p2) for storage
+3. Update registers only on clock edges based on fetch signal
+4. Make outputs continuous assignments from the stored values
+This eliminates the timing ambiguity while maintaining the same functionality.

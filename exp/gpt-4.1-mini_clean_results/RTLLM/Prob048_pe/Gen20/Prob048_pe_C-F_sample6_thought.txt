@@ -1,0 +1,19 @@
+Fuse the two example designs by preserving the 64-bit full product to maintain precision, but accumulate the full 64-bit value internally rather than only the lower 32 bits to avoid losing upper bits and potential overflow from repeated accumulation.
+
+Use a 64-bit accumulator register internally that sums the 64-bit product each cycle to avoid truncation.
+
+Output only the lower 32 bits as `c` to match the interface, but saturate at the maximum 64-bit value internally to handle overflow safely.
+
+Implement saturation logic for the 64-bit accumulator so that when overflow beyond 64 bits might occur, the accumulator saturates at 0xFFFF_FFFF_FFFF_FFFF.
+
+Use synchronous reset and non-blocking assignments in a single always block triggered by posedge clk or posedge rst to ensure robust reset behavior.
+
+Compute the 64-bit product combinationally from inputs, then add it to the 64-bit accumulator.
+
+On overflow detection (carry-out or accumulator maxed), saturate the accumulator register to maximum 64-bit unsigned value.
+
+Output `c` from the lower 32 bits of the 64-bit accumulator.
+
+This fusion improves correctness by avoiding accumulation truncation and handling overflow more precisely while maintaining a clean, synthesizable RTL structure with clear separation of combinational and sequential logic. It balances precision, reliability, and simplicity, making the design suitable for robust high-quality synthesis with minimal register count (1 64-bit acc register). The cost is an increased accumulator register size, but this is justified to preserve accuracy in accumulation and avoid silent overflow errors common in 32-bit accumulation.
+
+Optionally, adding comments and structure for readability and maintainability.

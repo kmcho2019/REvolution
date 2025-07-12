@@ -1,0 +1,11 @@
+The original implementation uses two separate gate-level module instantiations with an intermediate wire to implement the required logic. While clear and modular, this introduces an extra net and module boundaries, which slightly increases area and power due to added wiring and gate overhead. 
+
+To optimize for better PPA, I will combine the logic into a single continuous assignment using a single expression: out = ((in1 XNOR in2) XOR in3). This reduces logic depth and eliminates the intermediate net, lowering both area and dynamic power by reducing toggling and module overhead. 
+
+This single-line RTL also maps efficiently to standard cells during synthesis, potentially resulting in minimal area and power while maintaining performance. It retains functional correctness and readability by expressing the logic succinctly.
+
+In summary:
+- Remove intermediate wire and modules.
+- Use a direct assign with combined logic expression.
+- Simplify hierarchy and net count for improved area and power.
+- Keep code readable and synthesis-friendly.

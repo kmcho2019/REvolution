@@ -1,0 +1,7 @@
+The finite-state machine can be designed with five states: IDLE, SHIFT, COUNT, WAIT_DONE, and WAIT_ACK. 
+In the IDLE state, the machine checks for the start pattern (1101) on the data input. 
+Once the pattern is detected, it transitions to the SHIFT state, where it asserts shift_ena for exactly 4 clock cycles. 
+After shifting, it transitions to the COUNT state, where it asserts counting and waits for done_counting to go high. 
+Once done_counting is high, it transitions to the WAIT_DONE state, where it asserts done and waits for ack to go high. 
+Finally, when ack is high, it transitions to the WAIT_ACK state, where it waits for one clock cycle and then returns to the IDLE state. 
+A synchronous reset can be used to reset the state machine to the IDLE state when reset is high.

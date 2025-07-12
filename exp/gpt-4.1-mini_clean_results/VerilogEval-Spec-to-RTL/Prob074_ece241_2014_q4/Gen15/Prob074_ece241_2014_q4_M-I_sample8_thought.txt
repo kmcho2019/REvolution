@@ -1,0 +1,13 @@
+The original problem states that all flip-flops are initially reset to zero before the machine begins, but does not include a reset input port. To comply exactly with this specification and maintain a clean interface, I will remove the explicit reset input from the module.
+
+Instead, I will initialize the flip-flops' outputs to zero via an initial block, which is synthesizable for FPGA/ASIC tools that support initial values or can be used as a behavioral model. This guarantees known zero initialization without requiring an external reset.
+
+The combinational logic and sequential logic will remain the same as before, ensuring correct implementation of the gate operations feeding into flip-flops and the NOR output.
+
+This approach:
+- Meets the problem requirement to have flip-flops initially zeroed without adding ports.
+- Keeps the interface exactly as specified (clk, x, z).
+- Uses initial block for initialization, which is standard practice for initial reset in behavioral RTL.
+- Keeps combinational and sequential logic cleanly separated.
+
+This solution should pass the tests and is synthesizable on most modern tools that support register initialization.

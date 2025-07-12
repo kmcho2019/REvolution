@@ -1,0 +1,14 @@
+To implement the next-state signals Y2 and Y4 for bits y[1] (B) and y[3] (D), I'll model the FSM transitions using combinational logic derived from the one-hot encoding of the current state y and input w.
+
+Instead of directly writing the logic by inspection, I will map out all next-state transitions as Boolean expressions for each state bit in the next state vector.
+
+Since the outputs Y2 and Y4 correspond to the next state bits for B (y[1]) and D (y[3]), I will derive their expressions from the state transition table:
+
+- Next state B (y[1]) is reached only from A(0) with input 0.
+- Next state D (y[3]) is reached from B(1), C(2), D(3), E(4), and F(5) on input 1.
+
+I will explicitly define the next-state vector next_y as a 6-bit wire and assign Y2 = next_y[1] and Y4 = next_y[3].
+
+This approach emphasizes scalability and readability, as next_y can be extended if all next state bits are needed in the future.
+
+This modular solution cleanly separates combinational next-state logic and output assignments.

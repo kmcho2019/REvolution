@@ -1,0 +1,8 @@
+To optimize the design for better power and area while maintaining performance, I will leverage vector bitwise operations instead of explicit bit-by-bit assignments. This reduces code verbosity, enables synthesis tools to recognize patterns and optimize logic more effectively, and slightly lowers switching activity by minimizing redundant signal fanout.
+
+Specifically:
+- Use vector bitwise AND of `in[3:1]` and `in[2:0]` for `out_both[2:0]`, set MSB zero.
+- Use vector bitwise OR of `in[3:1]` and `in[2:0]` for `out_any[3:1]`, set LSB zero.
+- For `out_different`, perform a 1-bit left circular rotation of `in` and XOR with original `in`.
+
+This approach synthesizes to simpler logic gates and shared routing, improving area and power metrics while keeping zero delay in timing for such a small design.

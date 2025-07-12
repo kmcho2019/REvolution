@@ -1,0 +1,21 @@
+Implement a finite state machine with the following states:
+
+1. IDLE: searching for the start pattern 1101 serially on the data input, shifting in bits and detecting the pattern.
+2. LOAD_DELAY: after detecting 1101, shift in next 4 bits MSB first to form the delay[3:0] register.
+3. COUNTING: assert counting=1, start a counter for (delay+1)*1000 cycles. Output count = remaining delay (starting from delay and decrementing every 1000 cycles).
+4. DONE: assert done=1, wait for ack=1 to return to IDLE and start searching for next pattern.
+
+Use a 4-bit shift register to detect the pattern 1101 in the IDLE state.
+Use a 4-bit register to shift in the delay bits.
+Use a 10-bit counter to count 1000 cycles (0 to 999).
+Use a 4-bit down-counter for the number of 1000-cycle blocks left.
+
+All operations are synchronous with the positive edge of clk.
+reset is synchronous active high.
+
+Output signals:
+- counting: asserted in COUNTING state
+- done: asserted in DONE state
+- count[3:0]: outputs current remaining delay count while counting, don't care otherwise.
+
+This design meets the problem requirements.

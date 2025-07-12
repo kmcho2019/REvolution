@@ -1,0 +1,10 @@
+To optimize the existing 2-bit saturating counter for better PPA, we simplify the next_state logic by using arithmetic operations combined with clamping via min/max functions instead of explicit if-else saturation. This reduces branching and logic depth, potentially improving timing and power.
+
+Specifically:
+- Use a signed integer to compute an intermediate value: increment by +1 or -1 or 0 depending on train_valid and train_taken.
+- Clamp the result between 0 and 3 using the Verilog min/max idiom.
+- This approach reduces combinational complexity by avoiding multiple if-else branches.
+- Maintain asynchronous positive-edge reset and nonblocking assignments for synthesis friendliness.
+- The output state directly reflects the register content.
+
+This change likely improves timing and power by simplifying combinational paths and reducing switching activity in logic. Area impact is neutral or slightly improved due to simpler logic.

@@ -1,0 +1,19 @@
+I will design the FSM as a classic Moore machine with strictly current-state-based output assignments to avoid timing issues. The key improvements and architectural changes are:
+
+1. Use a separate synchronous process for state and data updates (shift register and counter) triggered by the clock and synchronous active-low reset.
+
+2. Separate combinational logic for next state computation based only on current state and registered inputs.
+
+3. Outputs `f` and `g` will be assigned as registered signals purely from the current state, ensuring stable, glitch-free outputs.
+
+4. Implement the pattern detection using a 3-bit shift register that continuously shifts input `x` in state C, and is reset to zero on other states. This register updates synchronously with the clock.
+
+5. Use an explicit 2-bit counter `y_cnt` that increments each cycle in state E, starts at 0 when entering E, and stops otherwise.
+
+6. For the `y` monitoring phase (state E), if `y`=1 during the counting window (<=2 cycles), transition to permanent g=1 state; else after 2 cycles, transition to permanent g=0 state.
+
+7. The FSM states will be encoded as parameters; outputs `f` and `g` will be assigned in a combinational block based on the registered state.
+
+8. The synchronous reset (`resetn`) forces the FSM to state A and clears internal registers.
+
+This approach cleanly separates sequential updates and combinational next-state/outputs logic, preventing timing issues and ensuring the FSM meets all timing and functional requirements.

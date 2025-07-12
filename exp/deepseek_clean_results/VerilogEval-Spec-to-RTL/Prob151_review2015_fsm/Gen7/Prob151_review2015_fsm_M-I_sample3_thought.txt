@@ -1,0 +1,20 @@
+The main issues with the original solution stem from overly aggressive pattern register clearing and potential timing mismatches in state transitions. Here's the improved strategy:
+
+1. Pattern Detection:
+   - Only clear pattern register on reset or after successful detection (when entering SHIFT state)
+   - This ensures proper accumulation of the 1101 sequence
+
+2. State Transitions:
+   - Make SHIFT state exactly 4 cycles by checking shift_cnt == 3 before transition
+   - Ensure COUNT state properly waits for done_counting
+   - Maintain DONE state until ack is received
+
+3. Output Generation:
+   - Keep outputs purely combinational based on current state
+   - Ensure no glitches during state transitions
+
+4. Reset Behavior:
+   - Clear all registers synchronously on reset
+   - No additional clearing conditions that might interfere with normal operation
+
+The improved version maintains the same state machine structure but fixes the pattern detection and timing issues while keeping the clean separation of concerns.

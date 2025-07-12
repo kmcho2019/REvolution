@@ -1,0 +1,6 @@
+To simplify the sequence detector while maintaining functionality:
+1. Reduce state encoding from 3 bits to 2 bits since we only need 5 states (log2(5)=3 bits is actually minimal, but we can optimize the implementation)
+2. Combine the output logic into the sequential always block to eliminate a separate combinational block
+3. Use simple binary state encoding instead of enum for potential area savings
+4. Keep the same state transition logic as it's already minimal
+5. The output only needs to be set in FOUND state and held until reset

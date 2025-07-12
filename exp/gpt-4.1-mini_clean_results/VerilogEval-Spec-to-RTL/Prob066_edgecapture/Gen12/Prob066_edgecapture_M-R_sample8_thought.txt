@@ -1,0 +1,7 @@
+Refactor the design by separating the falling edge detection combinationally and registering the output in a synchronous always block. Instead of updating `out` and `prev_in` in the same always block with nonblocking assignments, use a combinational wire to detect the falling edges and then latch them into `out` register at the clock edge. This separation can improve clarity and might help simulators or synthesis tools to better understand the intent, potentially avoiding subtle timing or initialization issues.
+
+Initialize `prev_in` and `out` synchronously on reset as before.
+
+This structure also makes the falling-edge detection explicit as a wire, simplifying debug and verification.
+
+The functionality remains identical: once a falling edge on any bit is detected, that bit in `out` remains set until a synchronous reset.

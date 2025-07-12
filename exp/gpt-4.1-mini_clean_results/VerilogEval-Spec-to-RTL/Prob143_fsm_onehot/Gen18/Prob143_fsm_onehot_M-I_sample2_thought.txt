@@ -1,0 +1,10 @@
+To optimize the original design for better PPA, we focus on reducing logic depth and gate fan-in, especially for next_state[0], which combines many states. 
+
+Improvements include:
+- For next_state[0], replace three separate OR groups combined with ORs into a balanced two-level OR tree. This reduces fan-in per gate and improves timing and power.
+- Combine repeated zero_in AND terms into a single gate to avoid redundant logic.
+- For other next_state bits, group states leading to the same next state on input 1 to reduce redundant AND gates.
+- For outputs, keep the bitmasking, but replace the OR reduction with a single wire OR for clarity and possible optimization.
+- Minimize intermediate signals and reuse existing wires for area saving.
+  
+This approach keeps all combinational, supports multiple simultaneous active states, and improves timing and power by balancing the OR trees and reducing redundant gates.

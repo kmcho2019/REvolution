@@ -1,0 +1,23 @@
+Improvement Strategy:
+1. Critical Path Optimization:
+   - Move popcount calculation to sequential logic to break the critical path
+   - Precompute the popcount during the w_history update to avoid combinational adder delay
+
+2. Power Optimization:
+   - Only update w_history when in state B to reduce unnecessary switching
+   - Gate the popcount calculation to only occur when needed (phase == 2'd0)
+
+3. Area Optimization:
+   - Maintain minimal state encoding (1-bit)
+   - Keep compact phase counter (2-bit)
+   - Use efficient popcount implementation
+
+4. Timing Improvement:
+   - Remove combinational popcount from output path
+   - Simplify output logic to just a registered comparison
+
+Key Changes:
+- Sequential popcount calculation
+- Gated w_history updates
+- Registered output for better timing
+- Maintain same functionality with improved PPA

@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. State Encoding: Keep binary encoding but separate state transitions and data storage into parallel always blocks for better timing
+2. Data Storage: Use shift register approach with byte-wise enables to reduce unnecessary updates
+3. Output Control: Generate done combinatorially to reduce register load
+4. Power Optimization: Only update relevant byte segments when needed
+5. Clear Separation: Split control logic (state machine) from data path for better modularity
+
+Key Changes:
+- Separate state machine and data path into parallel always blocks
+- Use shift register with byte enables for efficient storage
+- Generate done signal combinatorially based on state
+- Only update output bytes when valid data is available
+- Maintain same functionality but with cleaner structure

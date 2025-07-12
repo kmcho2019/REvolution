@@ -1,0 +1,17 @@
+Improvement strategy:
+1. Power Optimization:
+   - Eliminate redundant XOR computation by sharing a single combinational XOR result for both out_assign and out_always_comb
+   - Add input change detection to the sequential block to reduce unnecessary flip-flop toggles
+
+2. Area Optimization:
+   - Remove duplicate XOR logic by using a shared intermediate signal
+   - Maintain only essential flip-flop without additional logic
+
+3. Timing Consideration:
+   - Keep the sequential path clean with minimal logic before the flip-flop
+   - Ensure all paths meet timing with zero violations
+
+Key changes:
+- Introduce wire xor_result to share combinational XOR output
+- Add input change detection (a or b) to sequential block enable
+- Maintain same interface and functionality while improving PPA

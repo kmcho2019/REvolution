@@ -1,0 +1,13 @@
+This solution introduces a dynamic priority scheme while minimizing state space:
+
+1. Instead of fixed priorities, we implement a rotating priority that changes after each grant cycle to prevent starvation
+2. Use a 2-bit state register to encode all states (A, B, C, D) efficiently
+3. Implement a priority rotation counter that shifts after each complete grant cycle
+4. Output logic is combinational based on current state
+5. The FSM evaluates requests in the rotated priority order when in idle state
+
+Key innovations:
+- Rotating priority ensures fairness over time while maintaining priority within a cycle
+- Minimal state encoding (only 2 bits)
+- Efficient priority evaluation using bitwise operations
+- Clear separation between state transitions and output generation

@@ -1,0 +1,9 @@
+To improve PPA, reduce the logic depth and gate count by replacing the generate loop with bitwise vector operations, enabling synthesis tools to optimize better. Specifically, we leverage bitwise shifts to obtain left and right neighbors for all bits at once, using zeros for boundaries by masking shifted bits.
+
+This vectorized approach:
+- Computes all neighbors with simple shifts, which synthesis maps efficiently to wires.
+- Avoids 512 replicated logic blocks, improving area and potentially timing.
+- Preserves the same next-state boolean formula for Rule 110.
+- Keeps synchronous load and register update logic unchanged.
+
+This should reduce critical path length (better WNS/TNS) and area, while maintaining correctness and clarity.

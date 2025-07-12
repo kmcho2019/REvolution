@@ -1,0 +1,7 @@
+Use a simple flag to indicate if the first 8-bit data has been latched. On each clock with valid_in:
+
+- If the flag is clear, store data_in into data_lock and set the flag; do not output.
+- If the flag is set, concatenate data_lock (high 8 bits) and current data_in (low 8 bits) into data_out_reg, assert valid_out_reg in the *next* clock cycle after the second input, and clear the flag.
+- Use a pipeline register for valid_out and data_out to ensure the output signals appear one cycle *after* the second input.
+- On reset, clear all registers.
+This simple two-step approach meets the requirements without a state machine.

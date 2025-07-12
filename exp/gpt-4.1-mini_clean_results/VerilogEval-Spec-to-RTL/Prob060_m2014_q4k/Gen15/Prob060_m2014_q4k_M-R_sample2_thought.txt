@@ -1,0 +1,10 @@
+Refactor the design by consolidating the shift register storage into a single reg vector updated synchronously in one always block with an active-low synchronous reset. This eliminates the separate DFF module and generate loop by directly modeling the shift register as a single register that shifts bits on every clock cycle. 
+
+This approach:
+- Uses a single 4-bit register for all shift stages instead of instantiating multiple flip-flops.
+- Implements the synchronous active-low reset within the always block controlling the entire register.
+- Simplifies the design by removing the generate block and submodule, enhancing readability and reducing hierarchy.
+- Maintains the same functional behavior: shifting the input into the LSB on every clock cycle and outputting the MSB.
+- Is concise and synthesis-friendly, preserving synchronous reset semantics and positive-edge clock triggering.
+
+This refactoring keeps the same functionality but simplifies the RTL structure while retaining clarity and good synthesis results.

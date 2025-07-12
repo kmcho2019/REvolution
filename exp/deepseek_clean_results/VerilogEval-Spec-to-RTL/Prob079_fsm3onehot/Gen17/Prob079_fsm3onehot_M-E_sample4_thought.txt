@@ -1,0 +1,20 @@
+Novel Architectural Idea: Parallel State Transition with Shared Logic
+1. Key Insight:
+   - Leverage the fact that state transitions can be expressed as combinations of current state and input conditions
+   - Create shared intermediate terms that are used across multiple state transitions
+   - Use a 2-level logic structure: first compute common terms, then combine them for final state transitions
+
+2. Implementation Strategy:
+   - Compute three fundamental conditions first:
+     - stay_in_A_or_C: (state[0] | state[2]) & ~in
+     - move_to_B: in & (state[0] | state[1] | state[3])
+     - move_to_C: ~in & (state[1] | state[3])
+   - Derive all next states from these shared terms
+   - Output remains simple (state[3]) as in original
+
+3. Advantages:
+   - Reduced logic redundancy through term sharing
+   - Balanced logic depth across all state transitions
+   - Potential for better power efficiency due to shared computations
+   - Maintains one-hot property guarantees
+   - Clear separation of condition computation and state assignment

@@ -1,0 +1,12 @@
+Refactor the design by splitting the data capturing and output generation logic into two separate always blocks for clarity and clean separation of concerns. 
+
+- Use a 1-bit state register `has_first_byte` to track whether the first byte has been captured.
+- Capture the first byte in a register `data_lock` on the first valid input.
+- On the second valid input, form the 16-bit concatenation `{data_lock, data_in}` and store it into a register `combined_data`.
+- Introduce a valid register `out_valid_d` to indicate when `combined_data` is valid.
+- Finally, in a separate always block, register `combined_data` and `out_valid_d` into the output signals `data_out` and `valid_out` to produce them exactly one clock cycle after the second input.
+- On reset, clear all registers.
+  
+This approach enhances readability by explicitly separating input capture and output timing stages. It also removes the inline clearing of pipeline flags by having dedicated output-registering always block. The pipeline registers ensure outputs are delayed exactly one clock cycle after receiving the second byte.
+
+No combinational `assign` statements for output signals since they are synchronous outputs registered on clock edges, keeping the design fully synchronous and predictable.

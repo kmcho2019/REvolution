@@ -1,0 +1,14 @@
+An alternative approach is to detect 0-to-1 transitions directly within a single clocked process, by storing the previous input state and computing the positive edges on the fly without separate combinational logic and without registering the edge detection result. Instead of generating the output pulse one cycle after the transition via a registered `edge_detect` signal, the output `pedge` can be produced combinationally from the registered previous input and the current input at every clock cycle, synchronized with the clock.
+
+To ensure the output pulse is delayed by one cycle after the 0-to-1 transition, the module registers the previous input and outputs the detection based on the previous cycle’s inputs combined.
+
+Specifically, on every clock edge:
+
+- Save the current input as `prev_in`.
+- Compute `pedge` as those bits that transitioned from 0 to 1 between the previous cycle and the cycle before.
+
+This can be done by shifting the edge detection pipeline by one cycle: keep an extra register `prev_prev_in` to hold input from two cycles ago, and generate `pedge` by comparing `prev_prev_in` and `prev_in`, so that the output pedge appears exactly one cycle after the 0-to-1 transition.
+
+This architecture uses two registers to store prior input states with no combinational logic in the clocked block, making timing explicit, and avoids a separate combinational assign. It introduces a two-cycle delay from input transition to pedge assertion, satisfying the requirement to generate the pulse one cycle after the transition, while demonstrating a different architectural style from the original solution.
+
+This approach helps visualize pipelining the input samples over two registers and computing edge detection across these stages, with the output pedge registered synchronously.

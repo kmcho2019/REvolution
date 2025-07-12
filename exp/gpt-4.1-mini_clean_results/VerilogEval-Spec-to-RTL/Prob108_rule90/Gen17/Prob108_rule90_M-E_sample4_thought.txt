@@ -1,0 +1,16 @@
+I will implement the entire 512-bit Rule 90 cellular automaton as a single 512-bit shift register updated each clock cycle using vectorized bitwise operations. 
+
+Key points:
+- Instead of splitting into blocks, I will handle the entire vector at once with simple wire assignments.
+- To implement the neighbors, I will create two shifted versions of the state vector:
+  - left_shifted = {q[510:0], 0}
+  - right_shifted = {0, q[511:1]}
+- The next state q_next is simply the bitwise XOR of these two shifted vectors.
+- On each clock edge, if load is asserted, q is loaded with data; else, q updates to q_next.
+- Using a single register and vector operations reduces complexity and area compared to multiple blocks.
+- The boundaries are zero-padded naturally by the shift operations as specified.
+- This approach is simple, clean, and fast, with minimal combinational logic.
+
+Overall, this design is elegant and straightforward, with minimal code and no complicated clock enables or comparisons, relying on the FPGA/ASIC synthesis tool to optimize.
+
+This approach is also scalable and easy to maintain.

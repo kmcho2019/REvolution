@@ -1,0 +1,13 @@
+Fuse the two examples by adopting the compact 2-bit binary FSM encoding and clear state naming from both designs, using typedef enum for readability. Implement a Moore FSM with synchronous reset and a single done pulse that asserts for one cycle immediately after detecting a valid stop bit. 
+
+Incorporate clock-enable style gating for bit_count and data_shift updates only in the RECEIVE state to reduce toggling and power. Shift data right to place the incoming LSB serial bit into the LSB position, which simplifies the shifting logic and reduces critical path delay, improving timing (different from examples that put new bit at MSB). 
+
+Add a separate RECOVER/WAIT_STOP state to handle invalid stop bits and wait until the line returns to idle (stop bit=1) before restarting reception, ensuring robustness. Keep sequential and combinational logic cleanly separated for better timing and readability.
+
+Overall, this fused design achieves:
+- Minimal FSM size with 2-bit binary states using typedef enum.
+- Power-efficient register updates gated by state.
+- Simplified right-shift serial-to-parallel data reception consistent with LSB-first protocol.
+- Proper synchronous reset for all state and data registers.
+- Done signal and out_byte updated only on valid byte reception, pulsing one clock cycle.
+- Clear, maintainable code structure with explicit gating and state transitions.

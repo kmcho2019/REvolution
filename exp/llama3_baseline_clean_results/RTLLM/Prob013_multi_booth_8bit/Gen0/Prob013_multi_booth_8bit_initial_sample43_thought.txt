@@ -1,0 +1,7 @@
+To implement the 8-bit Radix-4 Booth multiplier, we can utilize a finite state machine (FSM) to control the multiplication process. The FSM will be responsible for checking the reset signal, initializing the registers, and performing the multiplication operation based on the Booth algorithm.
+
+The multiplier will consist of several registers: one for the multiplicand, one for the multiplier, one for the product, and one for the counter. The multiplicand and multiplier registers will be initialized with the input values on the positive edge of the reset signal. The product register will accumulate the result of the multiplication operation. The counter will be used to keep track of the current bit being processed in the multiplier register.
+
+We will use a 5-bit counter to iterate over the 8 bits of the multiplier register, as well as the 8 additional bits for the Booth encoding. When the counter reaches 16, the multiplication process will be completed, and the ready signal will be set to 1.
+
+The multiplicand register will be left-shifted by 1 bit on each clock cycle to simulate the Booth algorithm's shifting operation. If the current bit of the multiplier register is 1, indicating a positive Booth encoding, the product register will accumulate the value of the multiplicand register.

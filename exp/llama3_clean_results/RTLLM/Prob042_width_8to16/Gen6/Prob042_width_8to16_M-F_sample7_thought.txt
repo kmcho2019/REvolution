@@ -1,0 +1,13 @@
+To address the synthesizability and post-synthesis functional check failure, we need to focus on optimizing the logic for better synthesis results. This involves re-examining the conditions in the always block, improving the handling of the `data_valid` flag, and ensuring that the reset logic is correctly implemented.
+
+Firstly, we simplify the logic within the always block by minimizing the number of conditional statements. This can help the synthesis tool to generate more efficient combinational logic.
+
+Next, we revisit the reset logic to ensure that all registers are properly reset when the `rst_n` signal is low. This includes resetting `data_valid`, `valid_out_reg`, and `data_out_reg` to their initial states.
+
+Another area of focus is the generation of `valid_out` and `data_out`. Instead of setting `valid_out_reg` to 1 when the second valid data arrives and then resetting it when the input is not valid, we should only set `valid_out_reg` to 1 when the output data is valid and keep it at 1 until the next output is generated or the reset is asserted.
+
+Finally, we ensure that the `data_valid` flag is correctly handled. This flag should be set to 1 when the first valid data arrives and reset to 0 when the second valid data arrives or when the reset is asserted.
+
+By addressing these areas, we can improve the synthesizability of the code, reduce potential issues with the post-synthesis functional check, and optimize the design for better Power, Performance, and Area (PPA) metrics.
+
+Additionally, we can improve the code by adding comments to explain the purpose of each section and using more descriptive variable names to enhance readability.

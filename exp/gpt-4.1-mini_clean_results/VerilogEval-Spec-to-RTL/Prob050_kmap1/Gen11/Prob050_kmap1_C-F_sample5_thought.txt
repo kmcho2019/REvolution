@@ -1,0 +1,15 @@
+The function derived from the K-map simplifies directly to out = a | b | c, which is minimal in gate count, delay, and power.
+
+From Example 1, the explicit use of inverted signals clarifies the condition when 'a' matters, enhancing readability and debuggability without adding synthesis overhead, but at the cost of additional logic and power.
+
+From Example 2, the structural modular instantiation of 2-input OR gates improves clarity and reusability but adds gates and slight delay over a single OR3.
+
+To fuse the best of both:
+
+- Use a direct continuous assignment out = a | b | c for minimal gate count, area, and power.
+- Add concise comments highlighting the minimal nature of this expression and the original K-map logic to aid future maintainability.
+- Keep the code clean and synthesis-friendly to allow tools to optimize to the most efficient gate structure (single 3-input OR or less).
+- Avoid explicit intermediate signals or modular instantiations for minimal delay, power, and area.
+- This approach provides the clarity and PPA efficiency of Example 1's direct solution with the simplicity of Example 2's approach.
+
+Thus, the fused solution is a succinct, minimal expression with clear documentation to aid understanding, maximizing synthesis potential for optimal PPA.

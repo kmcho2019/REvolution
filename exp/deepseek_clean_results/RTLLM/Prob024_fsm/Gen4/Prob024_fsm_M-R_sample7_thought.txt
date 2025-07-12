@@ -1,0 +1,22 @@
+To refactor the FSM implementation while maintaining the same functionality, I'll make these key changes:
+
+1. State Encoding:
+   - Keep binary encoding but use localparam for better readability
+   - Remove the default case since synthesis tools handle unused states well
+
+2. Output Logic:
+   - Replace always block with continuous assign for MATCH
+   - This makes the Mealy output purely combinational
+
+3. State Transitions:
+   - Combine state register and next state logic into one always block
+   - This reduces code size while maintaining clarity
+
+4. Reset Handling:
+   - Keep synchronous reset but make it more explicit
+
+Key improvements:
+- More compact implementation with same functionality
+- Clear separation of combinational and sequential logic
+- Reduced code verbosity while maintaining readability
+- More efficient synthesis due to simpler structure

@@ -1,0 +1,55 @@
+module sequence_detector(
+    input clk,
+    input reset_n,
+    input data_in,
+    output sequence_detected
+);
+
+// Define the states of the FSM
+enum logic [1:0] {
+    IDLE = 2'b00,
+    S1   = 2'b01,
+    S2   = 2'b10
+} state, next_state;
+
+// Assign the output sequence_detected based on the state and input
+assign sequence_detected = (state == S2) && (data_in == 1'b1);
+
+// Define the FSM transition logic
+always_comb begin
+    case (state)
+        IDLE: begin
+            if (data_in == 1'b1) begin
+                next_state = S1;
+            end else begin
+                next_state = IDLE;
+            end
+        end
+        S1: begin
+            if (data_in == 1'b0) begin
+                next_state = S2;
+            end else begin
+                next_state = IDLE;
+            end
+        end
+        S2: begin
+            if (data_in == 1'b0) begin
+                next_state = IDLE;
+            end else begin
+                next_state = IDLE;
+            end
+        end
+        default: next_state = IDLE;
+    endcase
+end
+
+// Define the sequential logic for the state register
+always_ff @(posedge clk or negedge reset_n) begin
+    if (~reset_n) begin
+        state <= IDLE;
+    end else begin
+        state <= next_state;
+    end
+end
+
+endmodule

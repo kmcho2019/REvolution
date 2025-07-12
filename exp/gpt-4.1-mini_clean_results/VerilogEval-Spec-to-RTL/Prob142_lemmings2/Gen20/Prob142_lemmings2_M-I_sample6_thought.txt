@@ -1,0 +1,9 @@
+Optimize for better power and area by removing the unused `bump_any` signal and simplifying conditional checks to reduce logic gates. Specifically:
+
+- Remove `bump_any` since it is unused.
+- Combine bump conditions for flipping direction in one conditional to minimize logic depth.
+- Use explicit direction flip logic only when on the ground and bumped (on either side).
+- Keep asynchronous reset and Moore outputs as before for clarity.
+- Slightly rearranged next-state logic prioritizing conditions to help synthesis tools better optimize.
+
+These minor simplifications reduce unnecessary signals and logic, which can lead to lower dynamic power and smaller area without impacting functionality or timing.

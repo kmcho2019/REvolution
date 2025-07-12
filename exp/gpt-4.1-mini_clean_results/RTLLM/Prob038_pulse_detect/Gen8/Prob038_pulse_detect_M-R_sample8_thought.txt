@@ -1,0 +1,5 @@
+Refactor the pulse detection FSM by explicitly tracking the previous input value (`data_in`) to detect the 0->1->0 pattern spanning exactly three cycles. Instead of a multi-state FSM, use a small state counter that tracks which part of the pulse sequence is being detected. The states represent waiting for initial 0, detecting 1, and detecting the final 0.
+
+At every clock edge, compare the current and previous data_in to detect edges. The output `data_out` is asserted only for one cycle at the falling edge of the pulse (when the sequence completes). After outputting the pulse, reset to wait for the next pulse pattern.
+
+This structure reduces FSM complexity but maintains clear sequence detection, avoids combinational loops by using registers, and separates input sampling and output logic cleanly.

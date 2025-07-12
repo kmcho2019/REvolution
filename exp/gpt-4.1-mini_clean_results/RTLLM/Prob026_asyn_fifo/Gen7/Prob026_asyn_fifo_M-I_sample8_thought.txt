@@ -1,0 +1,17 @@
+The original code correctly implements an asynchronous FIFO with dual-port RAM and Gray-coded pointers with synchronization. The key issue reported is the module redeclaration conflict for `dual_port_RAM` in the simulation environment. To fix this, the FIFO module should instantiate the `dual_port_RAM` submodule without redefining it inside the same source file, assuming the submodule is already provided by the environment.
+
+For better PPA (Performance, Power, Area) optimization:
+- Remove the dual-port RAM definition from this file.
+- Keep only the asynchronous FIFO logic.
+- Optimize Gray code conversions by implementing them as inline combinational functions.
+- Maintain two-stage synchronization for metastability reduction.
+- Use non-blocking assignments consistently for sequential logic.
+- Use localparams for clarity and to avoid magic numbers.
+- Ensure minimal register width in pointers for area optimization.
+- Keep control signals simple and synchronous resets clean.
+
+This approach solves the redefinition issue and keeps the design clean and efficient.
+
+The user or environment should provide the dual-port RAM module separately, matching the specified interface.
+
+Hence, the final code below only contains the `asyn_fifo` module and instantiates the `dual_port_RAM` as a submodule without defining it here.

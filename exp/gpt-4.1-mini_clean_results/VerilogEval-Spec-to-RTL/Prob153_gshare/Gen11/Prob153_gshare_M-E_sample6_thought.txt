@@ -1,0 +1,19 @@
+I propose to implement the gshare predictor with a modular pipeline-style approach, explicitly separating prediction and training updates with dedicated registers to hold the prediction-time global history and predicted outcome for consistent outputs. The key idea:
+
+- Maintain a single global history register (`ghr`) that holds the *committed* global history, updated only on the clock edge.
+
+- On prediction requests (`predict_valid`), compute the index using the stable `ghr` XOR `predict_pc`. Read the PHT entry and latch both the predicted taken bit and the `ghr` into dedicated registers (`predict_taken_reg` and `predict_history_reg`) at the clock edge.
+
+- Outputs (`predict_taken`, `predict_history`) are driven from these registers, ensuring stable output values corresponding to the *time* the prediction was made.
+
+- For training (`train_valid`), update the PHT entry at the clock edge based on `train_pc ^ train_history` and update `ghr` as follows:
+   - If `train_mispredicted` is asserted, restore `ghr` to `train_history` (correcting global history after flushing).
+   - Else, shift in the actual `train_taken` bit to update global history.
+
+- Priority handling:
+   - Training updates have priority over predictions on `ghr` updates when a misprediction occurs.
+   - This architecture cleanly isolates prediction outputs from concurrent training updates, preventing timing ambiguities.
+
+- Initial PHT state is set to weakly taken (2'b10) to bias slightly towards taken, a common default.
+
+This architecture ensures outputs align with the exact cycle predictions are made, decoupled from training and ghr updates, and cleanly adheres to the spec and timing requirements.

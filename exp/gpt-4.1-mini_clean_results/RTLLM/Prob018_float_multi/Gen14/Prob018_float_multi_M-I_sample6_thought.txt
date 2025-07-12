@@ -1,0 +1,22 @@
+To improve the given float_multi design in terms of power, performance, and area (PPA), the strategy is:
+
+1. **Power:**
+   - Introduce operand gating at the earliest stage to prevent unnecessary switching in downstream pipeline stages.
+   - Optimize sticky bit calculation by hierarchical OR tree to reduce switching activity and combinational delay.
+   - Apply clock gating to pipeline registers when no valid operation is in progress.
+
+2. **Performance:**
+   - Reduce critical path in normalization by splitting sticky bit OR reduction into a balanced tree.
+   - Minimize combinational logic in the rounding stage by simplifying the rounding decision logic.
+
+3. **Area:**
+   - Use 24x24 multiplier instead of 48x48 by shifting mantissa multiplication and normalization logic.
+   - Reduce internal exponent width from 9 to 8 bits since max exponent is 255 + 255 -127 = 383 which fits in 9 bits, but by carefully checking the operations, 8 bits + 1 bit carry is sufficient with intermediate carry signals, simplifying some logic.
+   - Remove duplicated special case signals by propagating them more efficiently.
+
+4. **Pipeline and Code style:**
+   - Keep the 4-stage pipeline for timing balance.
+   - Use non-blocking assignments only in sequential blocks.
+   - Add clear comments for each pipeline stage.
+
+These improvements aim to reduce switching activity, balance combinational logic for better timing, and reduce area by optimizing datapath width and logic. Overall correctness and IEEE-754 compliance will be maintained.

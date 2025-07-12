@@ -1,0 +1,5 @@
+Fuse the strengths of both examples by using a single always block with a full 16-bit mask derived from the two byte enables to selectively update only the bytes that need modification. This approach minimizes the multiplexing logic depth by applying a bitwise mask and combines the clarity and simplicity of the single-block design. 
+
+Implement a 16-bit write mask where upper byte is enabled when byteena[1] is set and lower byte when byteena[0] is set. Use this mask to generate the next register value by merging the input data with the current output, preserving unchanged bits without unnecessary toggling.
+
+Keep the synchronous active-low reset on the positive clock edge to maintain timing consistency. This fusion achieves both power savings—by avoiding toggling unchanged bits—and potentially better timing by reducing mux logic depth and complexity. It remains area efficient and clean for easy synthesis.

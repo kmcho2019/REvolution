@@ -1,0 +1,13 @@
+Fuse the best features from both examples to create a clear, minimal, and well-documented FSM:
+
+- Keep the 2-bit state encoding with bit1=falling, bit0=direction, which is succinct and easy to decode.
+- Use named localparams for all four states for readability and maintainability.
+- Implement next_state in a single combinational always block with a default assignment to avoid latches.
+- Explicitly separate walking and falling conditions and handle ground transitions precisely.
+- Ignore bumps during falling or ground transitions as required.
+- Flip direction appropriately when bumped on either or both sides only when walking and on ground.
+- Use asynchronous active-high reset to initialize to WALK_LEFT.
+- Moore outputs decode directly from state bits, ensuring minimal combinational logic.
+- Add comments explaining each step for clarity and ease of verification.
+- Use consistent and synthesis-friendly non-blocking assignments in sequential block.
+- Overall, prioritize clarity, correctness, and minimal resource usage with straightforward logic conducive to optimization in synthesis tools.

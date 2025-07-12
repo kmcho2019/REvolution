@@ -1,0 +1,5 @@
+To optimize for better PPA, I will reduce the pipeline stages by combining the edge detection and output registering into a single clock cycle. Instead of having a separate wire for combinational edge detection and then registering it in the next cycle, I will detect the rising edge and directly update the output pedge in the same always block. This removes one register stage and reduces latency, potentially improving timing (lower logic depth and fewer registers). 
+
+Since pedge must be asserted one cycle after the positive edge occurs, we need to register the previous input first to detect edges from the last cycle's value. However, the final pulse output pedge can be produced in the same clock cycle when we update the previous input register by comparing the previous and current input. This approach reduces area by removing an intermediate wire and register, cuts dynamic power slightly by fewer toggling registers, and can improve timing by reducing logic levels. 
+
+Overall, this single always block approach achieves the same functionality (one cycle delayed pulse output) but with a simpler design and fewer registers.

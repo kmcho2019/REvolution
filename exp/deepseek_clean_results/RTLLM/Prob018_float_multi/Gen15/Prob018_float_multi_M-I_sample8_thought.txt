@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Critical Path Optimization: Pipeline the 24x24 multiplier into two stages to improve timing (TNS/WNS)
+2. Power Reduction: Implement clock gating for the product register when not in MULTIPLY state
+3. Area Optimization: Reduce product register to 47 bits and use more efficient exponent handling
+4. State Machine: Convert to one-hot encoding for better FPGA timing
+5. Rounding Logic: Pre-compute rounding conditions earlier in the pipeline
+6. Output Selection: Pipeline the output mux to break the long combinatorial path
+
+Key Changes:
+- Split multiplier into two pipeline stages (partial products and final sum)
+- Added clock gating control
+- Reduced register sizes where possible
+- One-hot state encoding
+- Early rounding condition computation
+- Pipelined output selection

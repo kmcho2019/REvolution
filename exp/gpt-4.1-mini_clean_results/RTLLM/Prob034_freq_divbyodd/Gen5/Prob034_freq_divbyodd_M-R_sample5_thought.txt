@@ -1,0 +1,14 @@
+To implement the frequency divider by an odd number as originally requested, the approach involves using two counters: one operating on the positive clock edge and another on the negative clock edge. Each counter counts up to NUM_DIV - 1. Two internal signals, clk_div1 and clk_div2, toggle when their respective counters reach half of NUM_DIV (integer division). By combining these two signals using a logical OR, the output clock clk_div has a frequency division by the odd number NUM_DIV and achieves an improved 50% duty cycle.
+
+For refactoring, I will:
+
+- Use two counters (cnt1 and cnt2) clocked on posedge and negedge respectively.
+- For each counter, toggle a corresponding internal clock divider signal (clk_div1 or clk_div2) when the count reaches half of NUM_DIV.
+- The counters reset when reaching NUM_DIV - 1.
+- The combined output clk_div = clk_div1 | clk_div2.
+- Implement the reset synchronously to each clock domain but triggered asynchronously via rst_n.
+- Use nonblocking assignments and localparams for half count and counter width.
+- Provide a compile-time check to ensure NUM_DIV is odd.
+- Use continuous assign for clk_div output from registers clk_div1 and clk_div2.
+
+This structure respects the original problem statement and provides a clean dual-edge counter-based odd frequency divider.

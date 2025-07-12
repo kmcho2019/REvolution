@@ -1,0 +1,22 @@
+Here's a novel approach using a shift register-based state machine implementation:
+
+1. Key Idea:
+   - Instead of traditional state encoding, use a shift register where each bit represents a state
+   - Only one bit is '1' at any time (one-hot encoding)
+   - Next state transitions are implemented by shifting and setting specific bits based on input
+
+2. Advantages:
+   - Simplified decoding logic since each state is directly represented by a single bit
+   - Output logic becomes trivial (just OR of relevant state bits)
+   - Potentially better timing as there's no binary state decoding
+
+3. Implementation Details:
+   - 5-bit shift register for 5 states (00000 represents invalid/reset state)
+   - Reset sets the first state (00001)
+   - Each clock cycle, the register is updated based on current state and input
+   - Output z is simply the OR of states that should output 1 (S3 and S4 in original encoding)
+
+4. Novelty:
+   - Uses shift register properties for state transitions
+   - Eliminates binary state decoding completely
+   - More intuitive mapping between physical flip-flops and states

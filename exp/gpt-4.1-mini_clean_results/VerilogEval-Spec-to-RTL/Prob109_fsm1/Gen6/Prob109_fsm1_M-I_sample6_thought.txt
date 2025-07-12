@@ -1,0 +1,16 @@
+To improve the existing design for better power and slight area optimization while maintaining the same minimal critical path delay, I will simplify the combinational logic expression for next_state by replacing nested ternaries with direct Boolean expressions. This reduces the gate count and switching activity slightly by avoiding redundant comparisons.
+
+Specifically:
+- next_state = (state == B && in == 0) ? A : (state == A && in == 0) ? B : current state if input is 1 (as per diagram).
+Since from the diagram:
+  - From B: 0->A, 1->B
+  - From A: 0->B, 1->A
+This can be expressed as: next_state = state ^ ~in; (because when in=0, next state flips, when in=1, stays same)
+
+- Also, use continuous assignments for both next_state and output to maintain clean separation.
+
+- Keep asynchronous reset and state update in the same always block.
+
+This reduces logic, lowers power by fewer gate toggles, and simplifies the critical path without affecting functionality or increasing area.
+
+This approach maintains the minimal area and timing benefits while improving power and slightly cleaning up the combinational logic.

@@ -1,0 +1,15 @@
+Implement the ALU as a fully combinational module that computes all possible operations in parallel using internal wires, then selects the final output based on the `aluc` opcode. This parallel computation approach simplifies control flow, reduces conditional logic, and enables easier pipelining or optimization by synthesis tools. 
+
+To determine flags: 
+- `zero` is assigned combinationally by checking if the final result is zero.
+- `negative` is simply the MSB of the result.
+- `carry` and `overflow` are only meaningful for arithmetic operations (ADD, ADDU, SUB, SUBU) and computed from corresponding internal adders/subtractors.
+- The `flag` output is explicitly set only for SLT and SLTU and is high impedance otherwise.
+
+Shift amounts come from `a[4:0]` or immediate zero shift for fixed shift instructions.
+
+This approach avoids multiple procedural blocks and assignments by precomputing results of all instructions and flags, then multiplexing at the output stage. It reduces complexity and increases clarity.
+
+High-impedance outputs are avoided; all outputs are always driven explicitly to stable values, enhancing synthesis friendliness and reducing power.
+
+All operations and flags follow MIPS semantics precisely.

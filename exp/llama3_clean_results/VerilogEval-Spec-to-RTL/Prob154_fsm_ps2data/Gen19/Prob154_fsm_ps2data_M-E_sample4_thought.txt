@@ -1,0 +1,11 @@
+Our novel architectural idea is to use a counter-based approach to implement the finite state machine. We will use a 2-bit counter to keep track of the number of bytes received. The counter will be reset to 0 when the reset signal is high or when a message boundary is detected.
+
+When the counter is 0, we will check the input byte to see if it has the message boundary flag (in[3] = 1) set. If it does, we will increment the counter and store the input byte in the most significant byte position of the out_bytes register.
+
+When the counter is 1 or 2, we will store the input byte in the corresponding byte position of the out_bytes register and increment the counter.
+
+When the counter reaches 3, we will assert the done signal and reset the counter to 0.
+
+This approach simplifies the state machine logic and reduces the number of combinational logic levels, resulting in improved timing performance. Additionally, it minimizes the switching activity in the out_bytes register, reducing power consumption.
+
+To further optimize the design, we can use clock gating to reduce unnecessary switching in downstream modules.

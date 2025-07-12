@@ -1,0 +1,16 @@
+To improve performance and area over the initial flat combinational sum of all partial products, implement a balanced adder tree to sum the partial products pairwise. This reduces the critical path by distributing the addition into multiple levels, shortening the longest chain of adders.
+
+The approach:
+- Generate the partial products the same way (each partial shifted A masked by B[i]).
+- Sum them pairwise in stages:
+  - Stage 1: sum pairs of partials to get 4 sums.
+  - Stage 2: sum pairs of those 4 sums to get 2 sums.
+  - Stage 3: sum the final two to get the product.
+
+This balanced tree reduces delay compared to adding all eight partials in one step and also slightly reduces switching activity per adder by limiting fan-in.
+
+The design remains fully combinational but with more balanced logic. This yields better timing (lower WNS) and slightly reduced area due to smaller adders or less complex combinational logic compared to a single wide multi-operand adder.
+
+No sequential elements are added; the module retains a purely combinational interface.
+
+This approach balances performance and area with minimal code complexity changes.

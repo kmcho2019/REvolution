@@ -1,0 +1,9 @@
+Fuse the compact and optimized single combinational next state mux from Example 1 with the correct interpretation of the "most-significant-bit first" shift direction from the problem statement, which implies shifting right and shifting `data` into the MSB. This means the shift operation should be `{data, q[3:1]}` (shift right by 1, data at MSB).
+
+Avoid any unnecessary intermediate registers as in Example 1, so we keep a single always block triggered on the clock to update the shift register.
+
+This design prioritizes shift_ena over count_ena because simultaneous assertion is unspecified and this priority is consistent with Example 1, simplifying logic.
+
+Using a wire combinationally computing the shifted and decremented values and then selecting the next state based on the enables yields minimal area, power, and delay.
+
+Thus, the final design combines the clear, minimal logic and proper shift direction semantics for a clean, optimal implementation.

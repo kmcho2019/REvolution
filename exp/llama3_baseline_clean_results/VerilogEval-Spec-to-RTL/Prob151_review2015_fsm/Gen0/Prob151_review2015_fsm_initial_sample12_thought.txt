@@ -1,0 +1,16 @@
+To implement the finite-state machine (FSM) that controls the timer, we will define a set of states that the FSM can be in, based on the requirements provided. The states will be: 
+- Idle: waiting for the pattern 1101 to start the timer
+- Pattern_Detected: detected the pattern, about to shift in duration bits
+- Shifting: shifting in the 4 bits for the duration
+- Counting: waiting for the counters to finish counting
+- Done: waiting for the user acknowledgement
+
+We will use a binary encoding for the states, and we will implement the logic for transitioning between these states based on the current state and the inputs. The FSM will also drive the outputs (shift_ena, counting, done) based on the current state.
+
+The sequence detection can be implemented using a separate state machine or by checking the data bits directly in the Idle state and transitioning to the next state if the pattern is detected. Given the simplicity of the pattern and the requirement, we'll check the pattern directly.
+
+The shifting process involves asserting shift_ena for 4 clock cycles after the pattern is detected. This can be implemented using a counter that counts 4 cycles after entering the Shifting state.
+
+The Counting state waits for the counters to finish, indicated by the done_counting signal going high.
+
+In the Done state, the FSM asserts the done signal and waits for the ack signal to go high before resetting back to the Idle state.

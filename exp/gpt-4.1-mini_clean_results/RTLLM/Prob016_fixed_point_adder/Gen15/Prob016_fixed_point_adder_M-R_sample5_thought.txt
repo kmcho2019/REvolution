@@ -1,0 +1,18 @@
+Refactor the fixed-point adder to simplify the structure by leveraging signed two's complement arithmetic directly, avoiding explicit sign and magnitude extraction. Instead, treat inputs as signed fixed-point numbers and perform addition/subtraction using built-in signed operators. To keep the required behavior of addition when signs match and subtraction when signs differ, exploit the fact that adding signed numbers directly accomplishes this inherently.
+
+However, since the requirement specifies handling sign explicitly and constructing results based on the absolute value logic, we can emulate this by:
+
+- Defining signed versions of inputs.
+- Perform direct signed addition: `signed_result = signed_a + signed_b`.
+- Saturate or truncate to N bits, matching output width.
+- Assign the final output accordingly.
+
+This approach reduces complexity, avoids multiple magnitude computations, and implicitly manages overflow as per two's complement rules.
+
+Therefore, the refactoring removes manual magnitude extraction and sign logic and uses native signed arithmetic, making the design clearer, synthesizable, and potentially smaller and faster.
+
+This complies with the requirements: the inputs/outputs remain N-bit fixed-point values with Q fractional bits, and signed arithmetic ensures correct handling of sign and magnitude.
+
+We will keep parameters `Q` and `N`, but `Q` is unused explicitly in arithmetic because fixed-point addition is just signed addition. It remains for clarity/documentation and for users to interpret the fixed-point scaling.
+
+The output is directly the sum of the two signed inputs, truncated or extended as necessary, naturally handling positive and negative values and overflow by two's complement wrap-around.

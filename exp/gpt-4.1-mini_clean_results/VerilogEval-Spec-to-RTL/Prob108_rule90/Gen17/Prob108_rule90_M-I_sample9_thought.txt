@@ -1,0 +1,13 @@
+To optimize the existing design for better Power, Performance, and Area (PPA), I will take the following steps:
+
+1. **Reduce switching activity by clock gating the registers:** Instead of updating the entire 64-bit register every clock cycle, I will use an enable signal that activates only when `load` is asserted or when the next state differs from the current state, thus preventing unnecessary toggling. Although the previous approach avoided clock enable to reduce logic, the synthesis tools usually implement clock gating efficiently, and it significantly saves power by stopping clock toggling on registers if their input is not changing.
+
+2. **Optimize boundary wiring and logic:**
+   - Flatten the left and right boundary signals to a single vector for simpler and more compact wiring.
+   - Eliminate redundant wires by directly connecting boundaries through the hierarchical generate loop.
+
+3. **Use non-blocking assignments consistently and keep the modular 64-bit blocks for scalability and manageable synthesis.
+
+4. **Slightly refactor the next state calculation to prevent potential glitches and to help synthesis tools optimize combinational paths by ensuring the neighbors are stable signals.
+
+This approach balances the additional clock gating logic overhead with significant power savings by reducing unnecessary register toggling, which often outweighs the cost of added clock enable signals. It also cleans up boundary wiring for better area and timing. Overall, these changes should improve power and area while keeping or improving performance.

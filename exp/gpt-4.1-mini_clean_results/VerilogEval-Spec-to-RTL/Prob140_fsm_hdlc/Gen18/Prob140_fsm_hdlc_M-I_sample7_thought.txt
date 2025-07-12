@@ -1,0 +1,7 @@
+Optimize the FSM by separating the count update and output logic into two pipeline stages to reduce critical path delay. Specifically, update the count in one clock cycle and generate outputs based on the previous count and current input in the next cycle. This pipeline breaks the dependency chain and improves timing (wns and tns) while keeping the one-cycle pulse outputs correct for a Moore FSM.
+
+Additionally, simplify the next count logic by using a case statement and avoid saturating arithmetic for clarity and potentially better synthesis results.
+
+Keep the synchronous reset and maintain minimal area with a 3-bit counter. Outputs remain asserted for exactly one cycle on the cycle after detection, satisfying the problem statement.
+
+This approach balances improving timing without increasing area or power significantly.

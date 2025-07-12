@@ -1,0 +1,10 @@
+Simplify the 16-bit combinational division by an 8-bit divisor by replacing the generate loop and remainder array with a single always block using a straightforward iterative approach. 
+
+The always block will simulate the division bit-by-bit from MSB to LSB:
+- Use a register to hold the remainder (width 9 bits to accommodate subtraction).
+- For each bit of the dividend (from bit 15 down to 0), shift the remainder left by one and bring in the current dividend bit.
+- Compare remainder with divisor: if greater or equal, subtract divisor and set quotient bit to 1; otherwise, quotient bit is 0.
+- This sequential style in a single combinational always block reduces code complexity and improves readability while still being purely combinational.
+
+Also, register the inputs combinationally in a separate always block as requested. 
+This approach keeps two always blocks (one for input assignment, one for division logic) as per the specification, and is easy to understand and synthesize.

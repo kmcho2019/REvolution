@@ -1,0 +1,11 @@
+The original solution is already quite efficient, but we can refactor it to:
+1. Use more explicit bit indexing for clarity
+2. Separate the logic for edge cases (MSB and LSB) from the main computation
+3. Use intermediate signals to make the logic more readable
+4. Maintain the same functionality while making the code structure more modular
+
+The key changes are:
+- Create separate assignments for edge bits (out_both[99] and out_any[0])
+- Use intermediate signals for the shifted versions of 'in'
+- Make the wrap-around logic for out_different more explicit
+- Keep all operations as parallel bitwise operations for optimal performance

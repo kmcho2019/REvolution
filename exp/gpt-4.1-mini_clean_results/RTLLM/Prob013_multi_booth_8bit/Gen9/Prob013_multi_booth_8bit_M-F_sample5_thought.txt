@@ -1,0 +1,19 @@
+To fix the synthesis issues, avoid complex variable shift operations and enumerated types unsupported by some synthesis tools.
+
+- Replace the `typedef enum` states with localparams for state encoding.
+- Implement the state machine with reg [1:0] state and localparam values.
+- Replace variable shifts `multiplicand <<< (2*ctr)` and `multiplier_reg >>> 2` with shift by fixed 2 bits per cycle and accumulate shifted multiplicand by controlling accumulator updates without variable shifts.
+- Instead of shifting multiplicand by a variable amount each cycle, accumulate partial sums by shifting the accumulator and multiplier registers stepwise.
+- The Radix-4 Booth algorithm processes 2 bits per cycle over 4 cycles, so we can:
+
+  - Keep the multiplier extended by one bit appended zero.
+  - Extract 3 bits each cycle (lowest bits of multiplier_reg).
+  - Compute the Booth factor.
+  - Apply multiplicand multiplied by Booth factor (which is -2, -1, 0, 1, 2).
+  
+- To avoid variable shifts, shift the multiplicand by 1 or 0 (for factor ±2 multiply multiplicand by 2 by shifting by 1 fixed bit), and accumulate directly into a signed accumulator.
+- Implement arithmetic right shifts on multiplier_reg by 2 bits each cycle using a fixed shift operation.
+- Avoid use of $signed() casts in always block, declare registers as signed.
+- Keep accumulator as a large signed register and add/subtract shifted multiplicand as per factor each cycle without shifting the multiplicand by variable amounts.
+
+This approach keeps shifts fixed per cycle and avoids synthesizer generating unsupported variable shift cells or latches, improving synthesis compatibility while preserving correct Radix-4 Booth algorithm behavior.

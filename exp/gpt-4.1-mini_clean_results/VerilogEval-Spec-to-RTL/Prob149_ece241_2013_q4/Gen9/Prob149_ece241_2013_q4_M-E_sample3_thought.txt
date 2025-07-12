@@ -1,0 +1,25 @@
+A new architectural approach is to simplify the water level tracking by encoding the water level directly from the sensor bits into a 2-bit numeric value representing the level from 0 (below s[0]) to 3 (above s[2]). This encoding enforces a rule that sensors must be contiguous from the bottom up; invalid patterns will be normalized to the highest valid contiguous sensor level.
+
+We track two registers:
+
+1. `current_level` — the water level decoded from sensors each clock cycle.
+
+2. `last_level_on_change` — the water level recorded at the last sensor state change.
+
+On each clock, we compare `current_level` to the previous clock's `current_level`. If the level changed, we update `last_level_on_change` to the previous `current_level` (before the change).
+
+The output nominal flow valves `fr0`, `fr1`, `fr2` are driven purely from `current_level` according to the table:
+
+- LEVEL3 (3): No flow valves open.
+
+- LEVEL2 (2): Only fr0 open.
+
+- LEVEL1 (1): fr0 and fr1 open.
+
+- LEVEL0 (0): fr0, fr1, fr2 all open.
+
+The supplemental flow valve `dfr` is asserted only if the current water level is strictly greater than `last_level_on_change`, i.e., the water level has risen since the last sensor change.
+
+On synchronous reset, all outputs go to maximum flow (all valves open) and the internal state initializes to the lowest level (0).
+
+This design separates sensor decoding, level-change detection, and valve output generation clearly and uses simple numeric comparisons to meet the specification, ensuring clean and glitch-free outputs.

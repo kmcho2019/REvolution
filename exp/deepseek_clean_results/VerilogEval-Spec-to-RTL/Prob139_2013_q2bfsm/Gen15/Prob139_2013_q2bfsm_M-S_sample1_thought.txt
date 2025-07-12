@@ -1,0 +1,16 @@
+Here's a simplified approach that maintains all functionality while reducing complexity:
+
+1. **State Reduction**: Instead of using 4 states, we can use just 3 states:
+   - IDLE: Wait for reset release
+   - PULSE_F: Generate the f pulse (1 cycle)
+   - ACTIVE: Handle both pattern matching and y monitoring
+
+2. **Pattern Detection**: Use a simple 3-bit shift register to detect the 1-0-1 sequence on x.
+
+3. **Timeout Handling**: Instead of a counter, use a 2-bit flag to track the two-cycle timeout for y.
+
+4. **Output Logic**: Simplify output generation by:
+   - f is high only in the cycle after reset
+   - g is set when pattern is matched and remains based on y condition
+
+This approach reduces state transitions and simplifies control logic while maintaining all specified behavior.

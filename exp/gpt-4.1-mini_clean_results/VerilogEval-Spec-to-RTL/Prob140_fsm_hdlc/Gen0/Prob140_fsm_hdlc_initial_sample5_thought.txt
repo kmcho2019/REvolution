@@ -1,0 +1,62 @@
+Implement a Moore FSM that tracks how many consecutive 1s have been seen. The states represent the count of consecutive 1s so far: from 0 to 6, with a special error state for 7 or more ones. On each clock cycle, input bit is examined:
+
+- If input bit is 0, reset the count to 0.
+- If input bit is 1, increment the count (state).
+- If the count reaches 5 ones and the next bit is 0, output disc=1 next cycle (this zero is discarded).
+- If the count reaches 6 ones followed by a 0, output flag=1 next cycle (the sequence 01111110 is detected).
+- If 7 or more consecutive 1s are detected, output err=1 next cycle.
+
+Since this is a Moore FSM, the outputs depend only on the current state.
+
+We need to be careful to output disc, flag, and err signals for exactly one cycle after the condition is met, so we'll add outputs based on the next state transitions.
+
+On reset, state is 0 (as if previous bit was zero). Outputs disc, flag, err default to 0.
+
+State encoding:
+S0: 0 consecutive 1s
+S1: 1 consecutive 1
+S2: 2 consecutive 1s
+S3: 3 consecutive 1s
+S4: 4 consecutive 1s
+S5: 5 consecutive 1s
+S6: 6 consecutive 1s
+S7: error state (7 or more ones)
+
+Transitions:
+- From S0 to S0 if in=0 else S1
+- S1 to S0 if in=0 else S2
+- ...
+- S5 to S0 if in=0 else S6
+- S6 to S0 if in=0 else S7
+- S7 stays S7 until reset or input=0 (then reset to S0)
+
+Outputs (based on current state):
+- disc=1 when current state is S5 and input=0 next cycle (since the zero after five 1s is discarded)
+- flag=1 when current state is S6 and input=0 next cycle (6 consecutive 1s followed by 0)
+- err=1 when in state S7 (error state)
+
+To keep outputs Moore type (depending only on current state), we can define output signals to be asserted in states corresponding to detection:
+
+Since outputs must be asserted for one full clock cycle *after* the condition occurs, we should assert outputs in the state after detecting the sequence.
+
+So to do this cleanly, we can expand states or include output logic accordingly.
+
+One approach:
+Add extra states for output assertion:
+
+For example:
+
+- When in S5 and input=0, next state is S0 but disc must be asserted next cycle. So after transition to S0, assert disc for one cycle.
+
+- Similarly for flag: after detecting 6 ones and then 0 (S6 + 0), next state is S0 but flag asserted.
+
+To handle this, add output flag registers that are set on the cycle following detection.
+
+Implementation plan:
+- Keep FSM states as 0..7.
+- Use an output register for each output signal.
+- On state transitions that detect conditions, set the corresponding output register to 1 for one cycle.
+- Otherwise output signals are zero.
+- On reset output signals are zero.
+
+This way outputs are asserted one clock cycle after detection, matching requirement.

@@ -1,0 +1,7 @@
+To improve power and possibly timing without changing the FSM's minimal state structure, avoid resetting cycle_cnt and w_accum every clock cycle while in state A. Instead, hold their values constant to reduce unnecessary toggling. Also, update output z only when its value changes to minimize output switching. 
+
+Maintain the same logic and synchronous reset behavior, but implement conditional register updates to lower dynamic power and reduce combinational load. This reduces toggling in state A and ensures z transitions only occur on output changes, which also helps downstream loads.
+
+The 2-bit counters remain small and simple, so the overall impact on area is minimal but power can be improved notably by reducing unnecessary register toggling.
+
+No changes in state encoding or functional behavior are needed.

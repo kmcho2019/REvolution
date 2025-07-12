@@ -1,0 +1,5 @@
+Refactor the D latch by using a continuous assignment with a ternary operator instead of an always block. To preserve the latch behavior (hold previous value when `ena` is low), declare an internal `reg` to hold the state and update it on changes of `ena` or `d`.
+
+- Use a combinational always block to update the internal state: when `ena` is high, latch input `d`; otherwise, keep previous state.
+- Then assign output `q` to the internal state.
+This structure separates storage (the internal reg) from the output, and the latch is still inferred through the combinational always block with blocking assignments. This style can help synthesis tools better identify the latch and might improve tool compatibility while keeping the same functionality.

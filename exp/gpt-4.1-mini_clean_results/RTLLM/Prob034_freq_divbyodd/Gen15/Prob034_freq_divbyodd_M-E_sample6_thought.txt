@@ -1,0 +1,10 @@
+To implement an odd frequency divider differently, I will use a single counter that counts from 0 to NUM_DIV-1 on the positive clock edge. The divided clock output toggles at two specific counter values that evenly split the division period, achieving a 50% duty cycle as close as possible for an odd division.
+
+Specifically:
+- The counter increments every clk rising edge and wraps to 0 after reaching NUM_DIV-1.
+- clk_div toggles when the counter reaches two toggle points: first toggle point at 0 and second toggle point at (NUM_DIV-1)/2.
+- This produces an output clock with a period of NUM_DIV input clocks.
+- Active low reset initializes the counter and output clock.
+- This method requires only one counter and one register for the output clock, and toggling is done synchronously on the positive edge.
+- This architecture avoids using negedge clocks and extra synchronization logic, simplifying timing and reducing complexity.
+- The output clock frequency is input clock divided by NUM_DIV (an odd number).

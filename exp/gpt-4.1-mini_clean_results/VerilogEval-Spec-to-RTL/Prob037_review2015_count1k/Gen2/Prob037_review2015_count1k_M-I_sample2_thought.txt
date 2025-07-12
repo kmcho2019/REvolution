@@ -1,0 +1,19 @@
+To improve timing and power, replace the equality comparator (q == 999) with arithmetic logic using a subtraction or less complex condition. Since 999 decimal is 10'b1111100111, it can be detected by a less complex check. A simple approach is to compare q + 1 with 1000 (decimal), using addition overflow or by using the fact that the counter should reset after reaching 999, so we can check if q == 999 by checking if q is 999 using a smaller logic expression.
+
+Alternatively, since 999 = 0x3E7, we can implement the terminal count check by comparing q against 1000 using a carry-out from addition: when q + 1 == 1000, reset to zero.
+
+So we can implement the counter as a modulo-1000 counter by incrementing q every clock cycle and resetting to zero when q reaches 999, using the addition result's carry out as a simpler condition. Using a 10-bit adder and checking if the sum >= 1000 is equivalent to checking if the sum's 11th bit (carry-out) is 1.
+
+Hence, we can implement the counter increment with a 10-bit adder and use the carry-out bit to detect overflow, which is simpler than a comparator and likely results in better timing.
+
+Specifically:
+
+- Compute {carry_out, next_val} = q + 1.
+- If carry_out is 1 (i.e., next_val == 1000), reset counter to 0.
+- Else, q <= next_val.
+
+This reduces comparator complexity and leverages ripple carry or carry-lookahead adder structures in synthesis tools.
+
+This approach simplifies timing-critical comparison and may reduce power by minimizing logic toggling for comparison.
+
+The synchronous reset logic remains the same.

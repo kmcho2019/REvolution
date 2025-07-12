@@ -1,0 +1,10 @@
+To develop a novel solution for the 8-bit Radix-4 Booth multiplier, we'll adopt a more modular and scalable approach. This will involve breaking down the multiplier into smaller, more manageable components, each responsible for a specific part of the Booth multiplication process. The core idea is to use a combination of data path components (for the multiplication and accumulation operations) and control logic (to manage the Booth algorithm's sequence and conditional additions). This modular approach not only improves readability and maintainability but also allows for easier optimization and potential reuse of components in other designs.
+
+The key components of this new architecture will include:
+1. **Multiplicand Shift Register (MSR):** A 16-bit shift register that holds the multiplicand and shifts it left by one bit in each clock cycle to align with the Booth algorithm's requirement.
+2. **Multiplier Register (MR):** An 8-bit register holding the multiplier. It will be extended to 16 bits by sign-extending the most significant bit of the multiplier for the Booth algorithm.
+3. **Product Accumulator (PA):** A 16-bit register that accumulates the product. It will be updated based on the Booth encoding of the current multiplier bit and the value of the multiplicand.
+4. **Control Unit (CU):** Manages the sequence of operations, including determining when to shift the multiplicand, when to perform additions based on the Booth encoding, and when the multiplication process is complete.
+5. **Booth Encoder (BE):** Converts each pair of bits from the multiplier into a Booth encoding, determining whether to add, subtract, or do nothing based on the encoding.
+
+By modularizing the design into these components, we can optimize each part separately, leading to a more efficient overall design in terms of area, power, and performance.

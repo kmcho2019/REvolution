@@ -1,0 +1,11 @@
+To improve PPA (performance, power, area), I will simplify the design by using two counters that increment on posedge and negedge clk respectively, each counting up to NUM_DIV - 1 and toggling their respective clock dividers at count zero. This reduces the need for a delayed counter and cross-domain synchronization, lowering power and area. Each counter runs independently on its respective edge, toggling clk_div1 and clk_div2 when count reaches zero. The OR of clk_div1 and clk_div2 produces a 50% duty cycle output frequency divided by the odd NUM_DIV.
+
+Key improvements:
+- Eliminate delayed counter register to save area and reduce power.
+- Use independent counters on posedge and negedge clk to keep edge-aligned counters.
+- Toggle clk_div1 and clk_div2 at count zero to produce symmetrical toggling and better duty cycle.
+- Use non-blocking assignments consistently.
+- Maintain asynchronous active-low reset.
+- Keep parameter checking for odd NUM_DIV.
+- Minimal combinational logic on clock edges to improve timing.
+- This approach reduces complexity, area, and toggling activity, improving power and timing margins.

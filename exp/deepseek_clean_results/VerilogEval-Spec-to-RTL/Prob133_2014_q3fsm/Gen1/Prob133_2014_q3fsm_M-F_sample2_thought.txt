@@ -1,0 +1,13 @@
+To fix the issues identified in the feedback:
+1. **Cycle Counting**: We'll modify the cycle counting to properly capture all 3 cycles (0,1,2) in state B. The first 'w' sample should be captured when cycle_count=0.
+2. **Output Timing**: We'll introduce a registered version of the result (z_next) that gets evaluated at the end of the 3-cycle window (cycle_count=2) but is assigned to z in the following cycle.
+3. **State Logic**: Maintain the same state transitions but ensure proper timing of all operations:
+   - Count 'w=1' occurrences during cycles 0,1,2
+   - Evaluate the count at cycle_count=2
+   - Output the result (z) in the next cycle
+4. **Reset**: Keep the synchronous reset functionality that initializes all registers.
+
+The key changes are:
+- Proper cycle counting starting from 0
+- Delayed output by one cycle using z_next
+- Correct timing of w counting and result evaluation

@@ -1,0 +1,7 @@
+The key issue with the provided solution is its incorrect logic for capturing the transition from 1 to 0 in the input signal. To improve this, we can maintain a separate register to store the previous state of the input signal. At each clock cycle, we compare the current input state with the previous state to detect any transitions from 1 to 0. If such a transition is detected for any bit, we set the corresponding bit in the output register to 1. This bit will remain 1 until the reset signal is asserted, at which point the entire output register is reset to 0.
+
+To optimize the solution for better Power, Performance, and Area (PPA) metrics, we should aim for simplicity and minimize the use of complex logic operations. The improved solution should directly compare the current and previous states of each input bit to detect the desired transition, and then update the output accordingly.
+
+Furthermore, to reduce area and potentially improve performance, we can eliminate unnecessary comparisons and logic operations within the always block. The code should focus solely on the essential operations required to detect the transition and update the output register.
+
+Lastly, ensuring that the solution adheres to best practices for Verilog coding, such as using non-blocking assignments within always blocks and correctly handling the reset condition, is crucial for maintaining readability, synthesizability, and overall efficiency.

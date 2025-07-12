@@ -1,0 +1,5 @@
+To improve PPA, I will add clock enables to the registers (byte1, byte2, out_bytes, and done) so they only toggle on required cycles, reducing dynamic power. The FSM uses binary encoding (2 bits) which is area-efficient and straightforward.
+
+By gating writes to the byte registers and output only on load cycles, we reduce unnecessary toggling. Also, done is asserted only one cycle when the third byte is loaded, as before.
+
+The synchronous reset remains active high on the clock edge. This small refinement will reduce power without increasing area or impacting performance.

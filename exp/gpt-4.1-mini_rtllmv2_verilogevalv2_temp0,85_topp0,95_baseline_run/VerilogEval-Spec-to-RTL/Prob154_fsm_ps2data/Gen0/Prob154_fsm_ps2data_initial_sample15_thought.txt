@@ -1,9 +1,0 @@
-Implement a simple FSM with three states:
-  IDLE: discard bytes until a byte with bit 3 set is seen. When found, store it as byte 1, move to BYTE2 state.
-  BYTE2: store the next byte as byte 2, move to BYTE3 state.
-  BYTE3: store the next byte as byte 3, assert done next cycle, output the 3-byte message, then return to IDLE.
-
-Use synchronous reset. Capture bytes in a 24-bit register, with byte1 at [23:16], byte2 at [15:8], byte3 at [7:0].
-Signal done is asserted for one clock cycle immediately after byte 3 is stored.
-
-This meets the spec: done is asserted immediately after the third byte, out_bytes valid at done.

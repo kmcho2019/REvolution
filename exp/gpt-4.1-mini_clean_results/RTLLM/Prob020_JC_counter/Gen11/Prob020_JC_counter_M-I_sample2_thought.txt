@@ -1,0 +1,18 @@
+The original design is already minimal and efficient for a Johnson counter: a single 64-bit shift register with MSB assigned as the inverted LSB, and asynchronous active-low reset. To improve PPA (timing, power, and area) further, we can consider the following refinements:
+
+1. Convert asynchronous reset to synchronous reset:
+   - Asynchronous reset adds complexity to timing closure and may increase area due to reset trees.
+   - Synchronous reset simplifies timing analysis and can allow higher frequency operation.
+   - This change may increase reset latency by one clock cycle, but it improves timing and potentially reduces area.
+
+2. Use non-blocking assignments consistently (already done).
+
+3. To reduce switching activity:
+   - We can gate the counter update such that if the counter is not enabled or not used, the register does not toggle unnecessarily.
+   - Since no enable input is provided, skipping this step.
+
+4. Since the logic is simple, no further structural optimization is needed.
+
+Thus, the main improvement is switching the reset from asynchronous active-low to synchronous active-low reset. This should yield better timing and area without changing functional behavior.
+
+Below is the improved code implementing synchronous active-low reset.

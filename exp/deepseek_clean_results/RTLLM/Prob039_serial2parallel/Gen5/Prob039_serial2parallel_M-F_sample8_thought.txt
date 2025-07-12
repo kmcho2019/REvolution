@@ -1,0 +1,21 @@
+The key issues identified in the feedback are related to output generation timing and data composition. Here's the improved approach:
+
+1. Output Generation Fix:
+   - Store incoming bits in a shift register (buffer) that shifts left with each valid input
+   - The MSB (leftmost bit) will contain the first received bit, LSB the last
+   - Output the complete buffer when 8 bits are collected
+
+2. Timing Correction:
+   - Separate the shift operation and output generation
+   - Update the buffer first, then generate output based on the updated value
+   - This avoids race conditions between reading and writing the buffer
+
+3. Data Composition:
+   - Maintain proper bit ordering (MSB first) by shifting new bits to the right
+   - When 8 bits are collected, output the entire buffer contents
+
+4. Validation Signal:
+   - Generate dout_valid only when exactly 8 bits have been received
+   - Keep it synchronous with the parallel output
+
+The improved design ensures correct timing and proper data composition while maintaining all original specifications.

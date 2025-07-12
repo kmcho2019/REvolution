@@ -1,0 +1,25 @@
+Optimized Fusion Strategy:
+
+1. State Representation: Combine the minimal single-bit state from Example 1 with the parameterized state names from Example 2 for better readability while maintaining efficiency.
+
+2. Output Logic: Use direct registered output assignment (from both examples) for optimal timing, but implement the inversion more efficiently with direct bitwise NOT (~) operation.
+
+3. Reset Handling: Maintain asynchronous reset (from both examples) for proper initialization, with synchronous output clearing.
+
+4. State Transitions: Simplify the state machine to have only two states (PASS and INVERT) with clear transition conditions, eliminating unnecessary complexity.
+
+5. Moore Machine: Pure Moore behavior where output depends only on current state, with all sequential logic in a single always block for better timing.
+
+Key Improvements:
+- Clear state names improve readability without sacrificing performance
+- Single always block reduces logic levels and improves timing
+- Direct inversion (~x) is more power-efficient than XOR-based inversion
+- Minimal state representation (1 bit) maintains smallest possible area
+- Simplified state transition logic (only changes on first '1') reduces switching activity
+- Asynchronous reset ensures clean initialization while synchronous output update maintains timing
+
+Expected Benefits:
+- Better timing than both examples due to simplified logic path
+- Same minimal area as best existing solution
+- Lower power than Example 1 due to more efficient inversion
+- Cleaner code structure than Example 2 while maintaining all optimizations

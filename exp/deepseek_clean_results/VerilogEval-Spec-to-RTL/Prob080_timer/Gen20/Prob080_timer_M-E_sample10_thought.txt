@@ -1,0 +1,9 @@
+Novel architectural idea: Zero-skip counter with early termination detection
+1. Instead of decrementing every cycle, implement a counter that jumps directly to zero when the remaining count is small
+2. Use a priority encoder to detect the leading '1' bit in the counter value
+3. When the remaining count is <= 1, set next value to zero immediately
+4. This reduces the critical path by:
+   - Eliminating the full 10-bit comparator
+   - Using simpler priority logic for early termination
+   - Reducing the number of decrement operations needed
+5. Maintain same interface and functionality while improving timing

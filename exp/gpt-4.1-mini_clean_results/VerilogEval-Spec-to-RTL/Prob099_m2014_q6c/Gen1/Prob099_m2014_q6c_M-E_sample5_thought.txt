@@ -1,0 +1,7 @@
+Instead of deriving the next-state logic by direct inspection of transitions, I will implement a small combinational next-state decoder that explicitly encodes the FSM transitions for all states in a case statement. 
+
+Given the current one-hot state input `y[5:0]` and input `w`, I will produce the entire next-state vector as a 6-bit signal `next_y`. Then I will assign `Y2` and `Y4` from the bits of `next_y` that correspond to states B (bit 1) and D (bit 3) respectively.
+
+This approach makes the design very clear and easy to verify by mapping all transitions explicitly in a combinational always block. The output signals `Y2` and `Y4` will be the respective bits in the computed next state vector.
+
+This method also makes it easy to extend the FSM or change encoding later and avoids error-prone manual expression derivation.

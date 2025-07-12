@@ -1,0 +1,13 @@
+I will design a superior 4-bit sequence detector for "1001" by merging the clarity, robustness, and output stability of Example 1 with the concise and clean FSM design of Example 2. The fusion approach includes:
+
+- Using a Moore FSM approach with a 5-state binary encoding (IDLE, S1, S2, S3, S4) for explicit representation of each matched bit, improving readability and deterministic output.
+- Implementing a synchronous active-low reset named `rst_n` for consistency and safe timing.
+- Separating combinational next-state logic from sequential state and output registers to aid synthesis tools and improve timing.
+- Generating the output `sequence_detected` as a registered Moore output that is asserted for exactly one clock cycle upon entering the detection state (S4), ensuring glitch-free and stable signaling.
+- Handling overlapping sequences by carefully structuring transitions from S4, allowing immediate detection of back-to-back occurrences.
+- Retaining binary encoding for low area and simplicity given the small number of states.
+- Using non-blocking assignments consistently to avoid timing races and improve design clarity.
+- Keeping clear, well-commented code with uniform naming and structure, facilitating maintainability.
+- This combined approach optimizes for functional correctness, timing, area, and power, while providing a robust, easy-to-understand sequence detector module.
+
+The FSM transitions and output timing align with the high-quality Moore design from Example 1 but with the simplified, direct reset and output style that proved effective in Example 2.

@@ -1,0 +1,5 @@
+Simplify the combinational division by directly performing a bit-by-bit shift-subtract algorithm without extra wide remainder registers. Use registers a_reg and b_reg to latch inputs combinationally as requested. 
+
+At each iteration from MSB to LSB of dividend bits, combine the current remainder (initially zero) shifted left by one bit with the current dividend bit. Compare this with divisor b_reg: if greater or equal, subtract divisor and set the quotient bit; else quotient bit zero. 
+
+Collect the quotient bits from MSB to LSB. At the end, the remainder is the last computed remainder. Zero-extend remainder to 16 bits as output. This approach is straightforward and matches the problem's step-by-step method without excess shifting or wide registers.

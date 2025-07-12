@@ -1,0 +1,21 @@
+Fixed Lemming State Machine Design:
+
+1. Key Fixes:
+   - Removed dependency on SystemVerilog's $past() function
+   - Added direction tracking register to remember walking direction before falling
+   - Simplified fall state transition logic using the stored direction
+
+2. Enhanced State Management:
+   - Maintain separate direction tracking for walking/digging states
+   - Store previous walking direction when entering fall state
+   - Use stored direction when returning from fall to walking
+
+3. Improved Counter Handling:
+   - Clear fall counter when not in fall state
+   - Reset counter properly when exiting fall state
+
+4. Output Logic:
+   - Maintained direct state-to-output mapping
+   - Kept Moore machine properties
+
+The fix involves adding a direction register to track the walking direction before falling, eliminating the need for $past(). This makes the design fully compatible with standard Verilog while maintaining all required functionality.

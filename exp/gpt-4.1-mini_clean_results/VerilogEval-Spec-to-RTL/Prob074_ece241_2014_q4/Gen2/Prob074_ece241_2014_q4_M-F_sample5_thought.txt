@@ -1,0 +1,19 @@
+The main issue stems from the reset behavior and how flip-flop initial states are handled. The problem states all flip-flops are initially zero before the machine begins, implying an asynchronous reset or an explicit reset signal. Since the interface does not provide a reset input, using an asynchronous power-on reset is the clearest and simplest approach for synthesis and simulation consistency. 
+
+We'll implement an asynchronous active-low reset `rst_n` generated internally using an initial block or a power-on-reset flip-flop synchronized to the clock, which can be implemented with a shift-register based reset release sequence. This ensures that flip-flops start from zero at time zero, matching the problem statement.
+
+For simulation simplicity and synthesis compatibility, we implement an asynchronous reset signal that is held active for a few clock cycles on power-up, then released.
+
+Next, we clarify the combinational logic feeding the flip-flops:
+
+- XOR D input: x ^ q_xor (q_xor is the current flip-flop output)
+- AND D input: x & (~q_and) (using the complement of current flip-flop output)
+- OR D input: x | (~q_or) (using the complement of current flip-flop output)
+
+These should be evaluated combinationally outside the flip-flop update to avoid timing mismatches.
+
+By separating combinational logic (to compute D inputs) and sequential logic (flip-flop state update), and using an asynchronous reset, we get a clean, functionally correct, and synthesis-friendly design with proper initialization matching the problem requirements.
+
+Finally, the output z is simply a combinational NOR of the three flip-flop outputs.
+
+This structure guarantees the initial flip-flop states are zero, the logic aligns exactly with the problem's gate and flip-flop connections, and the timing and initialization issues causing previous mismatches are resolved.

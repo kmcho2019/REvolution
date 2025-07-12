@@ -1,0 +1,9 @@
+To provide a novel architecture, instead of using a single register for all 8 bits, I will implement the TopModule by instantiating a generate block that creates 8 identical D flip-flop modules, one per bit of input and output. Each DFF will be triggered on the positive edge of clk. This approach uses structural hierarchy with a separate DFF module to encapsulate the flip-flop behavior, and the TopModule simply wires them together via a generate loop. This provides modularity and clear bit-wise instantiation, differing from a monolithic always block.
+
+This also keeps the interface exactly as specified (clk, d[7:0], q[7:0]) without reset.
+
+Summary:
+- Define a single-bit D flip-flop module (DFF).
+- Use a generate block in TopModule to instantiate 8 DFFs.
+- Each DFF takes clk, one bit of d, outputs one bit of q.
+- No reset or other signals.

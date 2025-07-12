@@ -1,0 +1,14 @@
+Implement the FSM by separately tracking direction and mode as two state registers: a 1-bit direction flag (0=left, 1=right) and a 2-bit mode encoding {walking=0, falling=1, digging=2}. This decouples behavior from direction, simplifying next-state logic and output generation.
+
+On asynchronous reset, direction = left and mode = walking. On each clock edge, update mode and direction according to inputs with priority: falling > digging > bump direction changes.
+
+- Falling: when ground=0, mode becomes falling, direction unchanged.
+- Digging: when dig=1 and ground=1 and walking, mode becomes digging.
+- Bumping: when walking on ground, bumps cause direction flip appropriately.
+- Falling and digging states ignore bumps and dig commands.
+- When falling and ground=1, return to walking with same direction.
+- When digging and ground=0, start falling with same direction.
+
+Outputs generated combinationally from mode and direction: walk_left/right, aaah, digging.
+
+This approach uses minimal bits, cleanly separates concerns, and leads to straightforward priority encoding and output logic. It provides a novel state separation compared to combined encoding.

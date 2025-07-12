@@ -1,0 +1,15 @@
+To implement the Moore state machine, we'll define two main states: walking left and walking right. We'll also include an additional state for falling. 
+
+The state transitions are as follows:
+- If the Lemming is walking left and bump_left is 1, it will transition to walking right.
+- If the Lemming is walking right and bump_right is 1, it will transition to walking left.
+- If the Lemming is walking left or right and bump_left and bump_right are both 1, it will switch direction.
+- If the Lemming is walking and ground becomes 0, it will transition to the falling state.
+- If the Lemming is falling and ground becomes 1, it will transition back to the previous walking state.
+
+The outputs will be determined by the current state:
+- If the Lemming is walking left, walk_left will be 1 and walk_right will be 0.
+- If the Lemming is walking right, walk_right will be 1 and walk_left will be 0.
+- If the Lemming is falling, aaah will be 1, and walk_left and walk_right will be 0.
+
+We'll use a 2-bit state variable to represent the three states (walking left, walking right, and falling).

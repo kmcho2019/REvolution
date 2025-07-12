@@ -1,5 +1,0 @@
-The FSM implementation seems to have an issue with identifying the correct message boundaries. The primary error seems to be in the state transition logic:
-1. The transition from `FIRST_BYTE` to `SECOND_BYTE` state is correctly set to always move to the next state. However, the transition from `SECOND_BYTE` to `DONE` state is solely based on the value of `in[3]`. This logic does not account for verifying the beginning of a new message correctly.
-2. The FSM should be able to backtrack and look for the start condition `in[3] == 1` to correctly identify the beginning of the next message. The current implementation does not handle this scenario, potentially leading to misaligned message boundaries and premature signaling of message receipt.
-3. These incorrect state transitions might result in the 'done' signal being asserted at the wrong time or not asserted at all in some cases, causing mismatches in the simulation output. This is evident from the high number of mismatches observed during the simulation.
-Overall, revisiting the state transition logic to ensure accurate detection and handling of message boundaries is crucial for the correct operation of the FSM.

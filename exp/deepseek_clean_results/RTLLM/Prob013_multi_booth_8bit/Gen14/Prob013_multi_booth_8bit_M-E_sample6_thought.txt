@@ -1,0 +1,21 @@
+Parallel-Serial Hybrid Booth Multiplier Architecture:
+
+1. Key Innovation:
+   - Combines parallel preprocessing with serial execution
+   - Precomputes all possible partial products in first cycle
+   - Uses multiplexer tree for efficient selection
+
+2. Architectural Features:
+   - Phase 1 (Precompute): Generates 4 partial products (0×, 1×, 2×, -1×, -2×)
+   - Phase 2 (Select): Uses Booth encoding to select appropriate partial product
+   - Phase 3 (Accumulate): Shifts and accumulates selected products
+
+3. Performance Benefits:
+   - Reduces critical path by separating computation stages
+   - Enables faster clock speeds through pipelining
+   - Minimizes arithmetic operations during accumulation phase
+
+4. Control Logic:
+   - 3-stage state machine (PREPARE, SELECT, ACCUMULATE)
+   - Smart counter tracks both booth encoding and shift position
+   - Early termination detection for power savings

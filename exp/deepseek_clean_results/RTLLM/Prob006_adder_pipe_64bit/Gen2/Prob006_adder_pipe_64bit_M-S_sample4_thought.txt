@@ -1,0 +1,13 @@
+To simplify the 64-bit pipelined adder while maintaining correct functionality:
+1. Use a single carry chain through all stages rather than separate carry registers
+2. Reduce pipeline stages to just input and output registers for simplicity
+3. Perform the full 64-bit addition in one clock cycle, then register the result
+4. Pipeline the enable signal to match the result latency
+5. This approach maintains correct addition while significantly reducing complexity
+
+The simplified version will:
+- Register inputs on first clock
+- Perform full addition in combinational logic
+- Register output on next clock
+- Pipeline enable signal to match output timing
+- Still provide correct 65-bit result with proper o_en timing

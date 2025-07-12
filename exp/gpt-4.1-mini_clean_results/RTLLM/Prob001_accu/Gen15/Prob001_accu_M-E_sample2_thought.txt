@@ -1,0 +1,9 @@
+Instead of accumulating sequentially with a single accumulator and counter, use a small FIFO buffer to store the four incoming data values, then perform the addition in a combinational adder at the cycle when the 4th valid input is received. This approach decouples data collection and summation, potentially enabling parallelism or pipelining in an extended design.
+
+The FIFO will store each valid data_in until we have four entries. When the count reaches 4, the module sums all four stored values together combinationally, outputs the result, pulses valid_out for one cycle, and resets the buffer for the next batch.
+
+This method uses a 2D register array (4 x 8 bits) for storage, a counter to track input number, and combinational logic to add all four values at once, reducing the critical path during accumulation cycles.
+
+The accumulator is implicit by summation of stored inputs only at the output cycle. This may slightly increase combinational logic at output but reduces toggling during data accumulation cycles, possibly improving power by avoiding addition every cycle.
+
+The design maintains one-cycle valid_out pulse at the 4th data input, and no output otherwise.

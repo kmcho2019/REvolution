@@ -1,0 +1,9 @@
+To simplify the frequency divider for an odd divisor while maintaining correct functionality, I will:
+
+- Use two separate counters cnt1 and cnt2, each running on positive and negative edges of clk respectively, simplifying clock domain concerns by keeping counters local to each edge.
+- Each counter counts from 0 to NUM_DIV-1 and toggles its corresponding clock divider bit (clk_div1 for posedge, clk_div2 for negedge) at the half divisor point (NUM_DIV/2).
+- This eliminates the need for a delayed counter and cross-edge synchronization logic.
+- Reset logic asynchronously clears counters and outputs.
+- The final output clk_div is the logical OR of clk_div1 and clk_div2, covering both edges.
+- Keep parameter checks for odd NUM_DIV and minimal counter widths.
+- The resulting code is straightforward, easy to follow, and fulfills the functional requirements efficiently.

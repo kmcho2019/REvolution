@@ -1,0 +1,11 @@
+Novel approach using a shift register instead of a counter:
+1. Instead of a counter, use a 4-bit shift register initialized to 4'b1111
+2. Right-shift the register each clock cycle, inserting 0 from the left
+3. The shift_ena is simply the OR of all shift register bits
+4. On reset, reload the shift register with 4'b1111
+5. Advantages:
+   - Naturally counts exactly 4 cycles (one for each '1' bit)
+   - Simple implementation with no arithmetic operations
+   - Clear visual representation of remaining cycles
+   - Automatically stops after 4 cycles without extra done flag
+   - Each bit position directly represents one enable cycle

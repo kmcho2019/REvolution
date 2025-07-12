@@ -1,0 +1,18 @@
+Corrected approach for proper falling edge detection:
+
+1. The key issue was premature evaluation of falling edges - we need to compare consecutive registered values
+2. Solution involves adding one more register stage to properly capture the input history:
+   - First register stores input from cycle N-1
+   - Second register stores input from cycle N
+3. Falling edge is detected when:
+   - Previous cycle (N-1) value was 1 (prev_in)
+   - Current cycle (N) value is 0 (curr_in)
+4. This ensures proper synchronous operation:
+   - All comparisons are between registered values
+   - No combinational paths from input to output
+   - Clear one-cycle delay between input change and detection
+5. Output memory remains set until reset, as specified
+6. Benefits:
+   - Properly synchronized edge detection
+   - Meets timing requirements
+   - Maintains simple parallel architecture

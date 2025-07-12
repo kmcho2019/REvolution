@@ -1,0 +1,9 @@
+To improve the existing solution for better performance and power efficiency, I will replace the wide 32-bit shift operation with a circular buffer implemented as a 32-bit register and an index pointer. Instead of shifting all bits every clock cycle, the history bits will be stored in a circular manner, and the current position for the youngest bit will be tracked by a 5-bit pointer. This reduces the critical path by avoiding large multiplexers or long shift chains, thereby improving timing. 
+
+The predict_history output will be formed by realigning the circular buffer with the pointer on read, creating a combinational rotation that reconstructs the correctly ordered history with the youngest bit at LSB. Since the pointer update and buffer write happen synchronously, the combinational output logic can be simple and efficient.
+
+The pipeline flush (misprediction) handling will overwrite the entire buffer and reset the pointer to zero, reflecting the updated history. This avoids shifting or complex operations on the history on misprediction.
+
+This approach reduces toggling inside the register array because only one bit is overwritten per prediction, and the pointer increments; thus dynamic power in flip-flops decreases. The asynchronous reset remains as required. Overall, the circular buffer plus pointer design optimizes timing, power, and area without adding significant complexity.
+
+Note: The combinational rotation for output is a barrel shifter implemented by concatenations and bit slicing, which synthesis tools handle efficiently.

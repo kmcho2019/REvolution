@@ -1,0 +1,21 @@
+Novel Architecture: Speculative Carry-Select Prefix Adder (SCSPA)
+1. **Hybrid Structure**:
+   - Combines carry-select for coarse-grained parallelism
+   - Uses Kogge-Stone prefix network for fine-grained carry propagation
+   - Implements speculative computation to predict carry chains
+
+2. **Key Innovations**:
+   - Divides 64-bit operation into 8x8-bit carry-select blocks
+   - Each 8-bit block uses Kogge-Stone for internal carry
+   - Speculatively computes both carry-in scenarios (0 and 1) for each block
+   - Final mux selection happens in parallel with block computation
+
+3. **Overflow Detection**:
+   - Enhanced detection using carry-out from MSB and speculative results
+   - Additional early overflow prediction based on sign analysis
+
+Advantages:
+- Faster than traditional designs due to speculative execution
+- Balanced pipeline stages for better timing closure
+- Lower power from reduced glitching in speculative paths
+- Scalable to wider datapaths

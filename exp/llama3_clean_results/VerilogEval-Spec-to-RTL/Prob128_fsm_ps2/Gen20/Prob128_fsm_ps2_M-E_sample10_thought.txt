@@ -1,0 +1,11 @@
+To create a novel solution, we will introduce a pipeline-based architecture that processes the input byte stream in stages. Each stage will handle a specific task, such as detecting the start of a message, counting the bytes, and signaling the completion of a message. This approach will allow us to break down the complex logic into simpler, more manageable components, potentially improving performance and reducing area utilization.
+
+The pipeline will consist of three stages: 
+
+1. Message Start Detector (MSD): This stage will detect the start of a message by checking if the input byte has in[3]=1. If a start is detected, it will set a flag to indicate the beginning of a message.
+
+2. Byte Counter (BC): This stage will count the number of bytes received after the start of a message. It will reset the count when a new message starts or when the count reaches 3.
+
+3. Message Completion Detector (MCD): This stage will check if the byte count has reached 3, indicating the completion of a message. If so, it will set the done signal.
+
+By pipelining these stages, we can process the input byte stream more efficiently, reducing the complexity of the combinational logic and potentially improving the overall performance of the design.

@@ -1,0 +1,16 @@
+To improve the existing LIFObuffer design's PPA, I will focus on reducing switching power and slightly improving timing without altering the core functionality. Key improvements:
+
+1. Clock Gating:
+   Add a local enable signal that gates the push/pop operations only when an actual data transaction is possible (EN is high and buffer not full when writing or not empty when reading). This avoids unnecessary toggling of the stack pointer and memory registers when no valid operation occurs.
+
+2. Simplify SP pointer arithmetic by directly using non-blocking assignments with minimal intermediate variables.
+
+3. Avoid clearing stack memory on reset via loop (depending on synthesis tool, this can be synthesized efficiently anyway, but here retain loop for clarity). However, optimize to use a simple synchronous reset.
+
+4. Since SP spans from 0 to 4, use a 3-bit pointer but keep all calculations consistent without unnecessary signals.
+
+5. Keep EMPTY and FULL flags as combinational outputs to avoid flip-flop overhead.
+
+6. Only update dataOut on pop, hold its value otherwise.
+
+This strategy improves power by reducing register toggling during idle cycles, potentially improves timing by removing redundant logic, and maintains area efficiency.

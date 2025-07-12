@@ -1,0 +1,16 @@
+The previous design correctly pipelined the partial product generation and summation in three pipeline stages but caused output timing misalignment because the output `mul_out` was assigned from a register `final_sum` in the same clock cycle that `final_sum` was updated, introducing an unexpected one cycle latency.
+
+To fix this, we will:
+
+- Maintain two pipeline stages as required (partial product registers and sum registers).
+- Combine the final summation into the second pipeline stage instead of adding a third register stage.
+- Register the final product output directly from the second stage sum to ensure output latency matches two pipeline stages as specified.
+- Carefully perform partial product generation and register them in the first stage.
+- Sum the pairs of partial products and then sum those two results combinationally in the second stage, registering only the final product in the second stage pipeline register (instead of three stages).
+- This satisfies the requirement of two register levels (stage 1: partial products, stage 2: sum and output).
+- Reset all registers asynchronously with active-low reset.
+- Keep input extension and partial product generation as specified.
+- This reduces latency to two clock cycles:
+  - Cycle 1: register partial products.
+  - Cycle 2: register sum of partial products and update output.
+- This aligns output timing better with typical testbench expectations and the problem description.

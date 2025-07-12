@@ -1,0 +1,7 @@
+To optimize the JK flip-flop further for better power and area, I will minimize toggling by enabling the flip-flop only when the output changes. I can add an enable condition that checks if the next state differs from the current state. This clock enable approach prevents unnecessary register toggling and reduces dynamic power.
+
+I will compute the next state in a combinational block and only update Q on the clock edge if the new state differs from Q. This approach does not add extra hardware registers and may help the synthesis tool insert clock gating or reduce toggling.
+
+Also, the next state logic remains the same minimal form: Q_next = (J & ~Q) | (~K & Q).
+
+This small change aims to improve power by preventing unnecessary toggling without increasing area or latency, keeping the design synchronous and simple.

@@ -1,0 +1,13 @@
+Remove the 'initialized' flag and initial block since there is no reset signal; in synthesizable hardware, registers start with an undefined state but will hold their value afterward. This is acceptable because the problem statement does not require a reset or a defined initial value.
+
+Keep the logic simple and synchronous on the posedge of clk:
+
+- If shift_ena is asserted, shift data into the MSB by shifting q right by one bit and inserting 'data' at q[3].
+- Else if count_ena is asserted, decrement q by one (4-bit wrap-around).
+- Else hold the current value of q.
+
+This approach aligns directly with the problem statement, removing any ambiguous initialization and improving simulation-synthesis consistency.
+
+Prioritize shift_ena over count_ena, as allowed by the spec.
+
+The corrected code is fully synchronous, simple, and synthesizable without relying on initial blocks or flags.

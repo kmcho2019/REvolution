@@ -1,0 +1,7 @@
+Refactoring idea:
+- Instead of instantiating eight single-bit DFF modules in a generate loop, implement a single always block with a vector register to store all eight bits.
+- Use a negative edge triggered always block with synchronous reset.
+- On reset, load the entire 8-bit register with the fixed reset value 0x34.
+- On the negative edge of clk without reset, load the input d into the register.
+- This approach reduces the module count, improves area and potentially power.
+- The behavior and interface remain identical.

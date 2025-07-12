@@ -1,0 +1,9 @@
+To optimize the given FSM design for better power and area while maintaining the same timing performance, we can introduce clock enables on the registers to prevent unnecessary toggling in state A where no counting or accumulation occurs. Specifically, cycle counter and w accumulator should only update in state B, avoiding spurious toggles in idle state A. We also combine the addition and condition checks carefully in combinational logic to keep it simple.
+
+Additionally, we can pack the cycle count and w accumulator into a single 4-bit register to reduce flip-flop count slightly, since cycle_cnt is 2 bits and w_accum is 2 bits. This can reduce area and possibly power with a single register and extracted fields.
+
+The output register z is only updated at the 3rd cycle, so it toggles minimally already.
+
+We maintain synchronous reset and simple 2-state FSM structure for minimal complexity.
+
+This clock enable approach and register packing will reduce switching activity and flip-flop count, improving power and area, without affecting timing or functionality.

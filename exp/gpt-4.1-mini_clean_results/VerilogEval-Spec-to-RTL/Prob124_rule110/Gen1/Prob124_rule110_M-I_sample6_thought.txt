@@ -1,0 +1,20 @@
+To optimize the original design for better PPA (performance, power, and area):
+
+1. **Reduce combinational critical path**: Instead of computing all 512 next states combinationally each cycle, pipeline the next-state logic by splitting the calculation into multiple cycles or by using a more efficient combinational expression. However, to keep the design synchronous and simple, we maintain a single-stage next state update but optimize the rule implementation.
+
+2. **Simplify Rule 110 computation**: Replace the 8-case function with a simple boolean expression derived from the rule. Rule 110 can be expressed as:
+   next = (left & ~center) | (center ^ right) | (center & ~right)
+   or equivalently:
+   next = (left & ~center) | (center & ~right) | (~center & right)
+
+   This boolean logic uses fewer gates and no case statements, reducing area and delay.
+
+3. **Handle boundary conditions by zero-padding q**: To avoid boundary muxes inside the loop, internally extend q with zero bits at indices -1 and 512. Do this by creating a 514-bit wire with zeros padded at the ends. Then, neighbors can be accessed as q_ext[i+2], q_ext[i+1], q_ext[i], where i in [0..511]. This removes if-else muxes for boundary, simplifying combinational logic.
+
+4. **Use a generate block for combinational logic**: A generate-for or for-loop block unrolled by synthesis will efficiently build the next_state, now simpler due to no boundary mux and simple boolean function.
+
+5. **Maintain synchronous load and update**: On load high, load input data; otherwise, update q with next_state.
+
+Overall, these changes reduce mux complexity at boundaries, simplify combinational logic (no function case statement), reduce critical path delay, and reduce area and power.
+
+This approach balances clarity and efficiency without changing the overall one-cycle next-state update behavior.

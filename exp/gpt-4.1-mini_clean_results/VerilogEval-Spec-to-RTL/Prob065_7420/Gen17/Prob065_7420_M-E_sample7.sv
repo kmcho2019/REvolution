@@ -1,0 +1,20 @@
+// Module: TopModule
+// Description: Implements the 7420 chip functionality as two independent 4-input NAND gates
+module TopModule(
+    input  p1a,
+    input  p1b,
+    input  p1c,
+    input  p1d,
+    input  p2a,
+    input  p2b,
+    input  p2c,
+    input  p2d,
+    output p1y,
+    output p2y
+);
+
+    // Direct 4-input NAND assignments for both outputs
+    assign p1y = ~(p1a & p1b & p1c & p1d);
+    assign p2y = ~(p2a & p2b & p2c & p2d);
+
+endmodule

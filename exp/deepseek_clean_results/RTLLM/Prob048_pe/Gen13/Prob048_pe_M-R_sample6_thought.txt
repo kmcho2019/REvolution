@@ -1,0 +1,8 @@
+The refactored design will maintain identical functionality but optimize the implementation by:
+1. Moving all combinational logic to continuous assignments for clarity
+2. Removing redundant operand isolation since reset already handles clearing
+3. Using explicit truncation of the multiplication result
+4. Separating the multiplier and adder into distinct operations for better synthesis
+5. Using blocking assignments for combinational logic and non-blocking for sequential
+
+This structure makes the datapath more visible to synthesis tools while maintaining the same MAC behavior. The reset remains synchronous and the accumulation is performed in a single cycle.

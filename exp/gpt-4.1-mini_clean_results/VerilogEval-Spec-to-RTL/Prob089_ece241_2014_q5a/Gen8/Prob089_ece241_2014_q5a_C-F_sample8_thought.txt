@@ -1,0 +1,11 @@
+Fuse the explicit inversion bit state from Example 1 with the cleaner code style and input sampling of Example 2 to produce a robust, strictly Moore FSM with clean separation of concerns:
+
+- Maintain a single-bit state encoding that directly indicates whether inversion is active.
+- Sample input x in a separate register (x_reg) at each clock cycle for stable outputs and correct Moore behavior.
+- Implement the state and inversion_bit logic combined into one state register (since inversion_bit is the state).
+- Use asynchronous reset as specified.
+- Generate output combinationally as z = x_reg XOR inversion_bit_state, ensuring output depends only on registered state and sampled input, preserving Moore output characteristics.
+- This approach combines Example 1’s clear and minimal logic for inversion with Example 2’s input sampling for stability and simplicity.
+- It avoids separate next_state registers by doing state updates and input sampling together.
+- Output is purely combinational, derived from registered state and input, improving timing by avoiding extra registered output stage.
+- Overall, this balances performance, power, and area with clarity and correctness.

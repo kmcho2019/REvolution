@@ -1,0 +1,15 @@
+To fix the 8-bit multiplier implementation, we need to address the accumulation logic issues in the shift-and-add algorithm. The key improvements are:
+
+1. Proper initialization of all variables at the start of the always block
+2. Correct handling of the multiplicand's position by using a 16-bit temporary variable for shifting
+3. Maintaining the full 16-bit width throughout all operations to prevent overflow
+4. Ensuring the multiplicand is properly shifted left before each potential addition
+5. Using a temporary product register to accumulate results correctly
+
+The fixed algorithm will:
+- Start with a 16-bit product initialized to 0
+- Use a 16-bit multiplicand (A extended to 16 bits) for proper shifting
+- Iterate through each bit of B (multiplier)
+- For each set bit in B, add the current multiplicand value to the product
+- Shift the multiplicand left by 1 bit after each iteration
+- The final product will correctly represent A × B

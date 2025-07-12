@@ -1,0 +1,21 @@
+To refactor the code while maintaining the same functionality, I'll make these key changes:
+
+1. State Machine Restructuring:
+   - Use one-hot encoding for states (8 bits) instead of binary encoding
+   - This simplifies state transitions to bit shifts when 'in' is 1
+   - Reset initializes to S0 (0b00000001)
+
+2. Output Logic:
+   - Use continuous assignments (assign) for outputs instead of registered outputs
+   - This makes the outputs purely combinational from current state and input
+   - Still meets timing as outputs are valid by next clock edge
+
+3. Error Detection:
+   - Detect error when in S6 and input is 1 (transition to S7)
+   - This matches the original behavior but with simpler logic
+
+4. Advantages:
+   - One-hot encoding reduces power (fewer bit transitions)
+   - Continuous assignments simplify output logic
+   - Maintains same Moore machine behavior
+   - More readable state transitions

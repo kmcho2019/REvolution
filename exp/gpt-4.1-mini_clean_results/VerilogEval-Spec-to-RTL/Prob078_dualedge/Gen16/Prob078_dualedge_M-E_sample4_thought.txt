@@ -1,0 +1,9 @@
+Implement a dual-edge triggered flip-flop using a single positive-edge triggered flip-flop clocked at twice the clock frequency generated internally.
+
+Specifically:
+- Generate an internal clock signal (`clk_x2`) that toggles on both edges of the input clock, effectively running at twice the frequency.
+- Use a simple flip-flop triggered on the positive edge of this `clk_x2` clock to capture input `d`.
+- Synchronize the output `q` with the original clock `clk` by using a transparent latch controlled by the original clock, which holds the value of the flip-flop output stable during each half clock cycle.
+- This approach avoids any illegal sensitivity lists and uses only positive-edge triggered flip-flops.
+- This approach mimics dual-edge triggering by sampling at every half cycle via the doubled clock.
+- This design assumes ideal conditions or that the `clk_x2` generator is implemented outside or with appropriate constraints; for FPGA synthesis, a PLL or DLL to generate `clk_x2` might be necessary, but here it's done using `clk` and `clk_n` signals for conceptual clarity.

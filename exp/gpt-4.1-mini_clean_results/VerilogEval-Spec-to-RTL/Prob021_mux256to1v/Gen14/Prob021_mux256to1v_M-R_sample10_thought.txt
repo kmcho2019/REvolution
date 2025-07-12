@@ -1,0 +1,10 @@
+Refactor the 256-to-1 4-bit wide multiplexer into a fully combinational, single-level mux using a direct bit-slicing method. Instead of hierarchical mux blocks and nested case statements, use a single continuous assignment where the output is directly indexed from the input vector based on sel.
+
+- Use the Verilog indexed part-select feature: out = in[sel*4 +: 4].
+- This approach drastically reduces code complexity, logic depth, and area.
+- Avoid intermediate wires and multiple mux modules.
+- The design is purely combinational using assign, no reg or always blocks needed.
+- Maintains full functionality while improving timing, area, and power.
+- Ensures synthesis tools will infer an optimized multiplexer with minimal logic.
+
+This approach aligns with best practice for packed input vectors and multiplexer implementations in RTL code.

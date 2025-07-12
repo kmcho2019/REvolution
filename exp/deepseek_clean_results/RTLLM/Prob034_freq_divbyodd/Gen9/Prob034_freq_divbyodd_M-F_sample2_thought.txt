@@ -1,0 +1,9 @@
+Revised odd frequency divider using dual counters:
+1. Use two separate counters for rising and falling edges to achieve odd division
+2. Counter1 (pos_cnt) counts on rising edges, Counter2 (neg_cnt) counts on falling edges
+3. Each counter counts up to (NUM_DIV-1)/2 before toggling its respective clock
+4. Generate two intermediate clocks (clk_div1 from rising, clk_div2 from falling)
+5. Combine the intermediate clocks with OR operation for final 50% duty cycle output
+6. Reset initializes both counters and clock signals
+7. More reliable than state machine approach with proper edge handling
+8. Maintains precise timing by tracking both clock edges separately

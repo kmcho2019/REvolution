@@ -1,0 +1,10 @@
+To simplify the barrel shifter implementation while maintaining functionality:
+
+1. Use a more structured approach with intermediate signals for each shift stage
+2. Implement the shifts sequentially:
+   - First apply 4-bit shift if ctrl[2] is set
+   - Then apply 2-bit shift to the intermediate result if ctrl[1] is set
+   - Finally apply 1-bit shift to the previous result if ctrl[0] is set
+3. Each shift operation is clearly separated into its own step
+4. The final output is the result after all requested shifts have been applied
+5. This approach is more readable and maintainable while keeping the same functionality

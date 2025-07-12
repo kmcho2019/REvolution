@@ -1,0 +1,20 @@
+Fusion Strategy:
+1. Maintain the core functionality of both examples (32-bit MAC with synchronous reset)
+2. Optimize the multiplier implementation by:
+   - Using only 32-bit product since we don't need full 64-bit precision
+   - Explicitly declaring signed arithmetic for better synthesis control
+3. Improve timing by:
+   - Registering the product before accumulation to break the critical path
+   - This creates a 2-stage pipeline (multiply then accumulate)
+4. Power optimization:
+   - Remove unused 64-bit product calculation
+   - Keep clean synchronous reset implementation
+5. Area optimization:
+   - Use only necessary bit-widths
+   - Maintain simple, efficient structure
+
+The new design will:
+1. First stage: Register inputs and compute 32-bit product
+2. Second stage: Accumulate product with previous result
+3. Maintain synchronous reset functionality
+4. Optimize PPA by balancing pipeline stages

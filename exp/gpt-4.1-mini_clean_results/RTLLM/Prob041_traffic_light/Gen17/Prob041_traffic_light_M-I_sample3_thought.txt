@@ -1,0 +1,9 @@
+The original design is correct and meets functional requirements. To optimize power and area, I will:
+1. Use a 2-bit state register as before.
+2. Keep the timer width as 7 bits since max timer count is 60.
+3. Replace the multiple next_state and next_timer assignments with a single always block combining state transitions and timer updates to avoid redundant signals.
+4. Use a timer enable signal to prevent unnecessary counter toggling when the timer is zero, reducing dynamic power.
+5. Implement the pedestrian button shortening behavior with a combinational check on the timer to reduce registers.
+6. Output signals directly from the state combinationally, avoiding registers for outputs.
+7. Rename the output clock width to 8 bits to match the specification (extend from 7 bits internally).
+This will streamline the FSM, reduce register toggling, and cleanly implement the pedestrian request shortening while meeting the original interface and timing constraints.

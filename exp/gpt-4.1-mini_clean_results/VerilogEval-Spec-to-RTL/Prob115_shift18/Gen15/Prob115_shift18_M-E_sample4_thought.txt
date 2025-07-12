@@ -1,0 +1,9 @@
+Implement the 64-bit arithmetic shift register as a single 64-bit register updated synchronously on the clock. On load, the register is set to data input. On shift, depending on the direction and amount, the new value is computed by using variable concatenations and replicating bits for arithmetic right shifts.
+
+This design uses direct bit-slicing and concatenations to form the shifted output without segmenting the register, simplifying logic and avoiding multiple small segments and complicated carry signals between them.
+
+For left shifts by 1 and 8 bits, zeros are shifted in from LSB side. For arithmetic right shifts by 1 and 8 bits, the MSB (sign bit) is replicated on the MSB side.
+
+This approach reduces intermediate wires and parallel shift computations by directly multiplexing on the output shifted value based on amount signals. It uses one level of multiplexing and straightforward shift constructs, potentially improving area and power by avoiding the generation of all shift variants simultaneously.
+
+The synchronous load and enable control the update of the shift register, and the output is continuously assigned from the register value.

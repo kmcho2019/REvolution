@@ -1,0 +1,17 @@
+Fuse the two given examples by combining the compact, clear FSM structure and stable output signaling from Example 2 with the well-structured radix-4 Booth encoding and partial product accumulation from Example 1. 
+
+Key improvements and fusion points:
+- Use Example 2’s FSM (IDLE, RUN, DONE) with synchronous reset, ensuring clean state transitions and output stability.
+- Maintain the multiplicand sign-extended to 9 bits and the multiplier extended with one LSB zero bit for Booth recoding.
+- Implement Booth recoding with a dedicated function like Example 1, but modify it to output a signed multiplier factor (-2, -1, 0, 1, 2) to enable simpler and uniform partial product computation.
+- Precompute the partial product by multiplying multiplicand by the Booth factor via shifts and sign extension instead of concatenation tricks, which is clearer and synthesis-friendly.
+- Accumulate the partial product shifted by 2 * step bits into an 18-bit signed accumulator.
+- Arithmetic right shift the multiplier register by 2 bits each cycle, extending sign bits properly.
+- After 4 cycles (processing 8 bits in radix-4), assert ready and output the lower 16 bits of accumulator as product.
+- Use consistent non-blocking assignments in sequential logic for better timing and simulation accuracy.
+- Keep combinational Booth decoding and partial product computation separate from sequential logic for clarity.
+- This fusion balances clarity, timing, and area: the counter runs from 0 to 3 (four cycles) because 8 bits / 2 bits per cycle = 4 cycles.
+- The output is held stable after completion, and ready signals completion.
+- Reset initializes all registers, enabling restarting multiplication cleanly.
+
+This design is synthesizable, efficient, and clear while preserving correctness and leverages the strengths of both examples.

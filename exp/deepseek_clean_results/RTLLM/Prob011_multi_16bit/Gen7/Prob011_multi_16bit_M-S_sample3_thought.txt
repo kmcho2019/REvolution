@@ -1,0 +1,13 @@
+The simplified design maintains the same shift-and-accumulate multiplication algorithm but with these optimizations:
+1. Eliminates explicit state machine - uses just a counter and start/done signals for control
+2. Reduces register usage by directly using input operands during calculation
+3. Simplifies the shift operation by using a fixed shift amount per cycle
+4. Combines control and datapath logic into a single always block
+5. Uses minimal registers (just counter and accumulator) to reduce area
+
+Key changes:
+- Single always block for all sequential logic
+- Counter directly controls the operation flow (0-16 cycles)
+- Done signal generated combinatorially
+- No separate operand registers - uses inputs directly
+- Simplified shift operation (fixed shift per cycle)

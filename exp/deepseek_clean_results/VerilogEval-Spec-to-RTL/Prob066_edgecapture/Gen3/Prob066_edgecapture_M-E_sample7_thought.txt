@@ -1,0 +1,9 @@
+New approach using parallel edge detectors with persistent memory:
+1. Instead of storing previous input, we'll use XOR-based edge detection combined with input sampling
+2. Create 32 independent edge detectors (one per bit) that:
+   - Sample input at clock edges
+   - Compare current and next state using a small delay buffer
+   - Use combinatorial logic to detect falling edges
+3. Each detected edge sets a persistent latch (flip-flop) for that bit
+4. Reset clears all latches simultaneously
+5. Key innovation: Uses immediate edge detection without needing to store full previous state

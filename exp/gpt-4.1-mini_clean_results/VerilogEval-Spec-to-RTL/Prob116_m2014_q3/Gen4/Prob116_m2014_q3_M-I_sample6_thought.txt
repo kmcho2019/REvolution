@@ -1,0 +1,21 @@
+The key problem in the original design is confusion about the input bit indexing relative to the Karnaugh map axes. The Karnaugh map is given in terms of bits x[1], x[2] for columns and x[3], x[4] for rows, but the input vector is 4 bits: x[3:0], so x[4] doesn't exist.
+
+Assuming the input bits correspond to x[3:0], the map's row bits should be mapped to x[3] and x[0], and column bits to x[1] and x[2] as the problem example shows. This matches the example's addressing: row = {x[3], x[0]}, column = {x[1], x[2]}.
+
+We'll keep that addressing to preserve the Karnaugh map structure.
+
+To improve:
+
+1. Use a direct LUT implemented via a 16-element case statement for clarity and synthesis efficiency, avoiding reliance on a LUT binary vector and complicated indexing.
+
+2. Use the same bit reordering {x[3], x[0], x[1], x[2]} for LUT indexing as the example for correctness.
+
+3. Fill don't-cares (d) consistently with zeros, as in the example.
+
+4. Optionally, since the function is fully specified in the 16-entry truth table, the case statement is straightforward and easy for synthesis to optimize.
+
+This approach simplifies debugging and guarantees correctness, while synthesis tools often produce optimized logic for such case statements. The LUT binary vector is less readable and prone to indexing errors.
+
+Additionally, I will include comments on the Karnaugh map row and column bit correspondence.
+
+This will fix the previous indexing confusion and improve readability and maintainability.

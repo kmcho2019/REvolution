@@ -1,0 +1,27 @@
+The problem specifies the output should be logic-1 for inputs encoding decimal 2, 7, or 15, and logic-0 for certain other values; 3,8,11,12 never occur. The decimal-to-binary mappings for inputs (a,b,c,d) as bits can be considered as a=MSB, d=LSB.
+
+Decimal values:
+- 2  = 0010 (a=0,b=0,c=1,d=0)
+- 7  = 0111 (a=0,b=1,c=1,d=1)
+- 15 = 1111 (a=1,b=1,c=1,d=1)
+
+We can write out the minterms and simplify them:
+
+Minterms for outputs=1:
+m2: 0 0 1 0 → ~a & ~b & c & ~d
+m7: 0 1 1 1 → ~a & b & c & d
+m15:1 1 1 1 → a & b & c & d
+
+Minimal SOP is just the OR of these minterms since they don't overlap and minimal further simplification is not possible:
+out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+
+For POS, take the complement of the function (where output=0), find maxterms for zeros (0,1,4,5,6,9,10,13,14), then simplify to minimal POS:
+
+The minimal POS expression corresponds to:
+out_pos = (a + b + d) & (a + c + d) & (~a + ~b + c + ~d)
+
+This matches the minimal POS form covering all zeros.
+
+Thus, the simplest solution is to implement out_sop directly as the sum of three minterms, and out_pos as the product of three sum terms, matching the minimal expressions.
+
+Using continuous assignments is simpler and clearer. This greatly reduces complexity while maintaining full correctness.

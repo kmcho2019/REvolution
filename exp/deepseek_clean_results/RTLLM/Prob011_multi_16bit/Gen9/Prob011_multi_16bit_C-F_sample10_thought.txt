@@ -1,0 +1,13 @@
+Fusion Strategy:
+1. Control Logic: Adopt Example 1's cleaner state machine approach with explicit conditions for each operation phase (load, compute, done)
+2. Counter Optimization: Use 4-bit counter (0-15) instead of 5-bit since we only need 16 iterations
+3. Shift Operation: Pre-compute shifted versions of multiplier (breg) to avoid variable shift complexity
+4. Done Flag: Simplify to assert only when i=15 (last iteration) and clear next cycle
+5. Power Optimization: Stop counter after completion (i=15) until next start
+6. Area Reduction: Remove redundant registers by combining control signals
+
+Key Improvements:
+- Better timing by eliminating variable shift operation
+- Lower power by minimizing unnecessary transitions
+- Reduced area through counter optimization and simplified done logic
+- Clearer state machine flow for maintainability

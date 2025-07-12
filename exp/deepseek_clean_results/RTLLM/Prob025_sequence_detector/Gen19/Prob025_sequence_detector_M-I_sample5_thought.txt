@@ -1,0 +1,19 @@
+The current implementation is functionally correct but can be optimized for better PPA metrics. Here's my improvement strategy:
+
+1. Timing Optimization:
+- Register the output to break the critical path from shift_reg to sequence_detected
+- This will improve WNS by removing the combinational path from the timing analysis
+
+2. Power Optimization:
+- Keep the shift register implementation as it's power efficient
+- Add clock gating for the output register when not in detection state
+
+3. Area Optimization:
+- Maintain the current compact shift register structure
+- The output register adds minimal area overhead
+
+Key improvements:
+- Registered output for better timing closure
+- Maintains all advantages of shift-register approach
+- Slightly increases area but significantly improves timing
+- Power impact is minimal due to clock gating

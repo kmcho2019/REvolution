@@ -1,0 +1,11 @@
+To implement a novel solution for the finite-state machine controlling the timer, we can utilize a hybrid approach combining a Mealy machine for the pattern detection and state transitions with a Moore machine for the output signal control. This approach allows for efficient pattern detection, accurate state transitions, and clear output signal management.
+
+The design will consist of three main components:
+
+1.  **Pattern Detection Unit**: This unit will be responsible for detecting the pattern '1101' in the input data stream. It will use a 4-bit shift register to capture the last four input bits and compare them to the desired pattern.
+2.  **State Transition Unit**: This unit will manage the state transitions based on the output from the pattern detection unit and other input signals like `done_counting` and `ack`. It will use a finite-state machine to transition between the different states (IDLE, SHIFT, COUNT, WAIT_ACK).
+3.  **Output Signal Control Unit**: This unit will manage the output signals `shift_ena`, `counting`, and `done` based on the current state of the finite-state machine.
+
+The state machine will be designed to ensure that the `shift_ena` signal is asserted for exactly 4 clock cycles after detecting the pattern '1101', and then it will transition to the COUNT state, where it waits for `done_counting` to go high. After that, it will transition to the WAIT_ACK state, where it asserts `done` and waits for `ack` to go high before returning to the IDLE state.
+
+The use of a hybrid Mealy-Moore machine approach allows for efficient and clear management of both the state transitions and output signal control, making the design more readable and maintainable.

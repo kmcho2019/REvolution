@@ -1,0 +1,13 @@
+Improvement strategy:
+1. Increase counter width to 3 bits to properly count 4 cycles (0-3)
+2. Add a 'done' flag to track when 4 cycles are complete
+3. Only increment counter when not done and not in reset
+4. Set shift_ena when counter is counting (0-3) and not done
+5. Reset synchronously clears both counter and done flag
+6. More precise control over the 4-cycle window
+
+Key improvements:
+- Correct cycle count (4 instead of 3)
+- Proper one-time behavior after reset
+- Clear state machine with explicit done condition
+- Minimal additional logic (just one extra bit for done flag)

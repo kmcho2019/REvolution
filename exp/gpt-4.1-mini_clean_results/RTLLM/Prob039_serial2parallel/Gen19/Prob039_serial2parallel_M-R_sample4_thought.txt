@@ -1,0 +1,15 @@
+Refactor the design by splitting the shift register update and the output logic clearly, and use a state to manage when dout_valid is asserted. Specifically, keep the shift register updated on every din_valid clock cycle by shifting in the new bit at MSB. Use a counter to track how many bits have been collected. When the counter reaches 8 (meaning 8 bits received), latch the current shift register to the output register, assert dout_valid for one cycle, and reset the counter for the next word.
+
+This time, separate the output register (dout_parallel) from the shift register to avoid combinational dependencies on the updated shift register. Also, generate dout_valid as a one-cycle pulse controlled by a small state variable or flag.
+
+This approach improves clarity by:
+
+- Using a shift register to collect bits serially.
+- Using a counter to count received bits.
+- On receiving the 8th bit, latch shift register to output and assert dout_valid.
+- Keep dout_valid asserted only one cycle.
+- Reset shift register and counter after output is generated.
+
+Use synchronous active-low reset to initialize all registers.
+
+This structure avoids the subtle timing issue of assigning output directly from the updated shift register in the same clock cycle and aligns well with synthesizable FSM-style logic.

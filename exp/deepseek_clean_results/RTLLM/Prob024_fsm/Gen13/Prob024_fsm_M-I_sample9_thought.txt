@@ -1,0 +1,23 @@
+To optimize this FSM further while maintaining functionality, I'll implement these improvements:
+
+1. Timing Optimization:
+   - Remove the output register to eliminate 1-cycle latency (pure Mealy machine)
+   - This reduces the critical path since we don't need to meet both state transition and output timing in one cycle
+
+2. Power Optimization:
+   - Add input change detection to prevent unnecessary state transitions
+   - Only update state when input changes or after reset
+
+3. Area Optimization:
+   - Remove default case since all states are explicitly covered
+   - Simplify state encoding comments for better readability
+
+4. Reset Strategy:
+   - Keep synchronous reset for consistency
+   - Ensure all signals are properly initialized
+
+Key Benefits:
+- Eliminates timing violations by removing output register
+- Reduces power by minimizing unnecessary transitions
+- Maintains small area footprint
+- Preserves exact same functionality

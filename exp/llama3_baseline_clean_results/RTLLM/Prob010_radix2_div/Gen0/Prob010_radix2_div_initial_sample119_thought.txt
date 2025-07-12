@@ -1,0 +1,7 @@
+To implement the simplified radix-2 divider, we first need to determine whether the operation is signed or unsigned based on the 'sign' input. We then proceed to perform the division process. 
+
+We will use a shift register SR to hold the dividend and perform the division by iteratively subtracting the divisor (or its negation for signed operations) and shifting the result. The NEG_DIVISOR is used to simplify the subtraction process by using a multiplexer to select the correct result based on the carry-out.
+
+The counter 'cnt' will track the number of iterations performed, and 'start_cnt' will indicate whether the division process has started. Once the counter reaches 8, the division is complete, and the result (quotient and remainder) is made available at the output.
+
+We will manage the 'res_valid' signal to indicate when the result is ready and has not been consumed yet. This will be based on the reset signal, the counter, and whether the result has been consumed.

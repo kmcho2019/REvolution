@@ -1,0 +1,10 @@
+Simplify the 16-bit by 8-bit combinational divider by using only two always blocks as requested:
+
+1. The first always block stores inputs A and B into registers (a_reg and b_reg).
+2. The second always block performs the division sequentially inside the combinational block using a loop:
+   - Initialize remainder to zero.
+   - For each bit of the dividend from MSB to LSB, shift the remainder left and bring in the next dividend bit.
+   - Compare the remainder with divisor; if greater or equal, subtract divisor and set quotient bit to 1, else 0.
+3. Store quotient and remainder into outputs.
+4. Keep all logic combinational (use `always @(*)` blocks).
+5. Avoid complicated wire arrays and generate loops, making the code easier to read and maintain while meeting the problem requirements.

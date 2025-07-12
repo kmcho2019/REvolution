@@ -1,0 +1,18 @@
+Fusion Strategy:
+1. Combine the combinational read path from Example 1 (lower power and area) with the synchronous write from both examples
+2. Keep the simplified reset logic using for-loop from both examples for better scalability
+3. Remove the forced zero output when read_en is low (from Example 2) to reduce unnecessary switching
+4. Maintain separate read/write ports for true dual-port operation
+5. Add output register for read_data to improve timing (better than both examples)
+6. Benefits:
+   - Better timing: Registered read output improves timing closure
+   - Lower power: No unnecessary clearing of read_data when not reading
+   - Cleaner reset: Single for-loop for memory initialization
+   - More natural behavior: Output maintains last read value when not enabled
+
+Key Improvements:
+- Uses registered read_data (better timing than both examples)
+- Keeps combinational read path to register (lower latency than Example 2)
+- Simplified reset with for-loop (like both examples)
+- No unnecessary output clearing (better than Example 2)
+- Clear separation of read and write paths (like both examples)

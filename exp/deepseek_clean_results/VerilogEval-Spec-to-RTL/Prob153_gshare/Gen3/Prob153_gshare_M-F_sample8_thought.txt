@@ -1,0 +1,22 @@
+To fix the issues identified in the feedback, we need to:
+
+1. Correct GHR update logic:
+   - Always update GHR with training outcome when train_valid is true
+   - Only roll back to train_history when mispredicted
+   - Update GHR with prediction only when no training occurs
+
+2. Fix PHT update timing:
+   - Make PHT updates strictly sequential (next clock edge)
+   - Ensure predictions see pre-update PHT state
+   - Use shadow registers for pending updates
+
+3. Maintain proper priority:
+   - Training always takes precedence over prediction
+   - Concurrent operations on same PHT entry handled correctly
+   - Prediction sees state before any training updates
+
+Key changes:
+- Remove immediate PHT updates during training
+- Fix GHR update priority and conditions
+- Add shadow registers for pending PHT updates
+- Ensure all state changes happen at clock edges

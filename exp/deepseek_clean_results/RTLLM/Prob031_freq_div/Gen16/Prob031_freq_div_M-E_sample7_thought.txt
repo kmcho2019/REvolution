@@ -1,0 +1,14 @@
+Novel Architectural Idea:
+1. Use a cascaded counter approach where each stage divides the previous clock
+2. First stage divides by 2 (100MHz → 50MHz)
+3. Second stage divides the 50MHz clock by 5 (50MHz → 10MHz)
+4. Third stage divides the 10MHz clock by 10 (10MHz → 1MHz)
+5. Benefits:
+   - Natural clock tree structure matches frequency hierarchy
+   - Each stage operates at lower frequency, reducing power
+   - Clear separation of timing domains
+   - Smaller counters needed at each stage
+6. Implementation:
+   - Three separate always blocks for each divider stage
+   - Synchronous reset for all registers
+   - Minimal counter sizes for each division

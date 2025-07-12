@@ -1,0 +1,74 @@
+From the waveform, the state is a 1-bit stored value updated at each rising clock edge. The output q changes combinationally based on the inputs a, b, and the current state.
+
+Re-examining the waveform focusing on the q output at each clock edge:
+
+- At time 15ns, clk posedge, state=0, q=0
+- At time 45ns, clk posedge, state=0, q=1 (a=0,b=1)
+- At time 65ns, clk posedge, state=0, q=0 (a=1,b=1)
+- At time 75ns, clk posedge, state=1, q=1 (a=0,b=0)
+- At time 95ns, clk posedge, state=1, q=1 (a=1,b=1)
+- At time 115ns, clk posedge, state=1, q=0 (a=1,b=0)
+- At time 135ns, clk posedge, state=1, q=1 (a=0,b=0)
+- At time 145ns, clk posedge, state=0, q=0 (a=0,b=0)
+
+Checking patterns, note:
+
+1. When state=0, q seems to equal b (because at 45ns, b=1,q=1; 65ns, b=1,q=0 (conflicts)) no.
+
+2. When state=1, q seems to equal a NOR b: At 75ns, a=0,b=0,q=1 (matches NOR), at 115ns, a=1,b=0,q=0 (matches NOR=0).
+
+So for state=1, q = ~(a|b)
+
+For state=0, test if q = a & ~b:
+
+- At 45ns: a=0,b=1 => 0 & ~1=0; q=1 no
+
+Try q = a | b for state=0:
+
+- 45ns: 0|1=1 q=1 good
+
+- 65ns: 1|1=1 q=0 no
+
+Try q = a & b:
+
+- 45ns: 0&1=0 q=1 no
+
+Try q = ~a & b:
+
+- 45ns: ~0 & 1 = 1 q=1 good
+
+- 65ns: ~1 & 1=0 q=0 good
+
+- 55ns: a=1,b=0,state=0 q=1 in waveform, ~a&b=0 no
+
+Try q = (a & ~b) | (~a & b) = a XOR b when state=0
+
+At 45ns: 0^1=1 q=1 good
+
+At 65ns: 1^1=0 q=0 good
+
+At 55ns: 1^0=1 q=1 good
+
+That matches for state=0.
+
+For state=1 q=~(a|b)
+
+So we can express q as:
+
+q = (state) ? ~(a | b) : (a ^ b);
+
+Next state updates to q on clock edge.
+
+This fits waveform samples well.
+
+Implementing:
+
+- State stored in flip-flop.
+
+- On posedge clk: state <= q
+
+- Output q combinational as above
+
+- Output state is flip-flop content.
+
+This design implements a Moore-type machine with state stored and q as output and next state function.

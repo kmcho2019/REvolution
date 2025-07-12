@@ -1,0 +1,15 @@
+Refactored Design Approach:
+1. Simplified state machine with clear two-phase operation (capture first byte, then second byte)
+2. Direct register storage instead of ping-pong buffers for clarity
+3. Explicit data path using continuous assignments where possible
+4. Synchronous reset for consistent behavior
+5. Clear state transitions based strictly on valid_in pulses
+6. Output generation only after both bytes are captured
+7. Minimalist design focusing on core requirements
+
+Key Changes:
+- Removed ping-pong buffers in favor of simple first/second byte registers
+- Simplified state machine to just track capture progress
+- Used blocking assignments for combinational logic
+- Made output generation explicitly dependent on having both bytes
+- Improved reset handling for all registers

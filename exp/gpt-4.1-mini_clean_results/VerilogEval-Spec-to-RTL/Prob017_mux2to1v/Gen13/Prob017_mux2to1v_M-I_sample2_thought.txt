@@ -1,0 +1,7 @@
+To improve power and area while maintaining timing, we can implement the 100-bit 2-to-1 mux as a hierarchical tree of smaller multiplexers. Instead of one large 100-bit wide masking operation, breaking the mux into a cascade of smaller muxes (e.g., 10 muxes of 10 bits each) allows synthesis tools to exploit mux packing and reduces switching load on long wide buses of replicated select signals.
+
+This hierarchical approach reduces the fanout and capacitance per mux instance, potentially lowering dynamic power and area due to better mux resource utilization and less wide fanout nets. It also keeps the implementation fully combinational and parameterized for reuse.
+
+We maintain a parameterized Mux2to1 for 10-bit slices and instantiate it 10 times inside TopModule. This balances modularity and power-area efficiency without introducing complex generate constructs or technology-specific primitives, ensuring clean, portable RTL that synthesizes efficiently.
+
+This approach trades minimal extra code for potential PPA gains by leveraging hierarchical mux decomposition.

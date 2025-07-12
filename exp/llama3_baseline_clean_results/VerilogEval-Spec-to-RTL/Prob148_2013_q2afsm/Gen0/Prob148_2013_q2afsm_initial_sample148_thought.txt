@@ -1,0 +1,25 @@
+To implement the given FSM, we will use a 2-bit state variable to represent the four states A, B, C, and D. State A will be the initial state and the reset state. The state table will determine the next state based on the current state and the input values. The state flip-flops will update the current state on the positive edge of the clock. The outputs g[i] will be determined by the current state and the input values. We will use an always block to describe the state table and another always block to describe the state flip-flops. The outputs g[i] will be described using continuous assignment statements.
+
+State codes:
+- A: 2'b00
+- B: 2'b01
+- C: 2'b10
+- D: 2'b11 (not actually needed in the given FSM)
+
+The state table will be implemented as follows:
+- If the current state is A and r[0] = 1, then the next state is B.
+- If the current state is A and r[0] = 0 and r[1] = 1, then the next state is C.
+- If the current state is A and r[0] = 0 and r[1] = 0 and r[2] = 1, then the next state is not needed as per the given FSM.
+- If the current state is B and r[0] = 1, then the next state is B.
+- If the current state is B and r[0] = 0, then the next state is A.
+- If the current state is C and r[1] = 1, then the next state is C.
+- If the current state is C and r[1] = 0, then the next state is A.
+
+The state flip-flops will be updated as follows:
+- If resetn is 0, then the current state is A.
+- If resetn is 1, then the current state is updated based on the next state.
+
+The outputs g[i] will be determined as follows:
+- g[0] is 1 if the current state is B.
+- g[1] is 1 if the current state is C.
+- g[2] is 1 if the current state is not needed as per the given FSM.

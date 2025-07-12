@@ -2,18 +2,18 @@
 
 # =============================================================================
 #
-# Script Name: generate_variants.sh
+# Script Name: generate_cutoff_compile_result_variants.sh
 # Description: This script automates the process of generating tables and
 #              compiling results based on a specified cutoff type and value.
 #              It supports both area and gate count cutoffs, aligning with
 #              the updated table generation script. It also handles the
 #              special 'no_cutoff' case when the value is < 0.
 #
-# Usage:       ./generate_variants.sh <type> <value>
+# Usage:       ./script/generate_cutoff_compile_result_variants.sh <type> <value>
 #
-# Example:     ./generate_variants.sh --area 1000
-#              ./generate_variants.sh --gate 500
-#              ./generate_variants.sh --gate -1  # For no cutoff
+# Example:     ./script/generate_cutoff_compile_result_variants.sh --area 1000
+#              ./script/generate_cutoff_compile_result_variants.sh --gate 500
+#              ./script/generate_cutoff_compile_result_variants.sh --gate -1  # For no cutoff
 #
 # =============================================================================
 
@@ -26,7 +26,7 @@ set -e
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <type> <value>"
     echo "Error: You must provide a type (--area or --gate) and a cutoff value."
-    echo "Example: $0 --area 1000"
+    echo "Example: $0 --gate 50"
     exit 1
 fi
 
@@ -71,10 +71,10 @@ echo "--------------------------------------------------"
 
 # Define experiment paths in an array to avoid repetition and improve maintainability.
 declare -a experiment_paths=(
-    "gpt-4.1-mini_final_log_only/"
-    "meta-llama_llama-3.3-70b-instruct_final_log_only/"
-    "deepseek_final_log_only/"
-    "meta-llama_llama-3.3-70b-instruct_baseline_oneshot200run_log_only/"
+    "./exp/gpt-4.1-mini_clean_results/"
+    "./exp/deepseek_clean_results/"
+    "./exp/llama3_clean_results/"
+    "./exp/llama3_baseline_clean_results/"
 )
 
 # --- Steps 1-3: Generate tables for all models in a loop ---
@@ -92,10 +92,10 @@ done
 echo "Compiling results into a single markdown file..."
 
 # Construct the paths to the generated CSV files dynamically using the identifier.
-csv_file_1="./gpt-4.1-mini_final_log_only/ppa_summary_${filename_identifier}_abridged.csv"
-csv_file_2="./deepseek_final_log_only/ppa_summary_${filename_identifier}_abridged.csv"
-csv_file_3="./meta-llama_llama-3.3-70b-instruct_final_log_only/ppa_summary_${filename_identifier}_abridged.csv"
-csv_file_4="./meta-llama_llama-3.3-70b-instruct_baseline_oneshot200run_log_only/ppa_summary_${filename_identifier}_abridged.csv"
+csv_file_1="./exp/gpt-4.1-mini_clean_results/ppa_summary_${filename_identifier}_abridged.csv"
+csv_file_2="./exp/deepseek_clean_results/ppa_summary_${filename_identifier}_abridged.csv"
+csv_file_3="./exp/llama3_clean_results/ppa_summary_${filename_identifier}_abridged.csv"
+csv_file_4="./exp/llama3_baseline_clean_results/ppa_summary_${filename_identifier}_abridged.csv"
 output_file="compile_results_${filename_identifier}.md"
 
 python script/generate_compiled_table.py \

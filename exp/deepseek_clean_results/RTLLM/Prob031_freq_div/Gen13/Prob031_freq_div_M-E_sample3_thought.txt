@@ -1,0 +1,16 @@
+Novel Architecture Idea: Hierarchical Clock Division with Cascaded Counters
+
+Key Concepts:
+1. Instead of independent counters, use a cascaded approach where higher frequency clocks generate lower frequency ones
+2. The 50MHz clock (div-by-2) is generated first
+3. The 10MHz clock (div-by-5) is derived from the 50MHz clock
+4. The 1MHz clock (div-by-10) is derived from the 10MHz clock
+5. This reduces total flip-flop count and power consumption
+6. Uses synchronous reset for all registers
+7. Implements minimal-width counters for each division stage
+
+Advantages:
+- Reduced logic since higher frequency clocks are reused
+- Lower power due to fewer toggling flip-flops
+- Natural phase relationship between clocks
+- Easier timing closure with staged clock domains

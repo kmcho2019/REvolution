@@ -1,0 +1,10 @@
+Simplify the design by directly implementing shifts using a single shift amount (1 or 8) combined with direction without separate intermediate wires for each shift variant. Use a single combinational shift operation that depends on direction and amount, handling arithmetic right shift sign extension inline. This reduces the number of wires and mux stages.
+
+Specifically:
+- Compute the actual shift amount (1 or 8).
+- For left shifts, use `q << shift_val`.
+- For right shifts, perform arithmetic shift by replicating sign bit accordingly.
+- Combine direction and amount into a single logic path for shifted value.
+- Keep synchronous load and enable logic unchanged.
+
+This approach minimizes code complexity and logic duplication while preserving the exact functionality.

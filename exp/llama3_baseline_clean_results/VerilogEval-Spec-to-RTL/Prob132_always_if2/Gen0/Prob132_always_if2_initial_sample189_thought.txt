@@ -1,0 +1,5 @@
+The bug in the original module is that the `shut_off_computer` and `keep_driving` signals are not properly reset when the conditions are not met. For example, if `cpu_overheated` is 1, `shut_off_computer` is set to 1, but if `cpu_overheated` becomes 0, `shut_off_computer` remains 1. To fix this bug, we need to add an else clause to reset the signals when the conditions are not met.
+
+Additionally, it seems like the `cpu_overheated` signal should take priority over the `arrived` and `gas_tank_empty` signals. If the CPU is overheated, the computer should shut off, and the driving decision should be invalid. We can implement this by using a priority encoder-like approach, where the `cpu_overheated` condition is checked first, and if it's not met, then the `arrived` condition is checked.
+
+We also need to consider the case when `cpu_overheated` is 1, in which case `keep_driving` should be 0, because the computer is shut off and driving is not possible.

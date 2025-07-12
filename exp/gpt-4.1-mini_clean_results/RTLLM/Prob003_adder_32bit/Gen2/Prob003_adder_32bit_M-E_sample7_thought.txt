@@ -1,0 +1,8 @@
+To design a 32-bit carry-lookahead adder with improved carry generation, I'll implement a hierarchical CLA architecture using four 8-bit CLA blocks. Each 8-bit block computes sum and block generate/propagate signals. A higher-level 4-bit CLA unit will then quickly compute carry-ins for each 8-bit block using the block generates and propagates. This reduces carry delay compared to ripple carry through 16-bit blocks.
+
+Specifically:
+- Implement an 8-bit CLA module that outputs sum and block generate/propagate.
+- Implement a 4-bit CLA module for block carry lookahead using block generates and propagates from 8-bit blocks.
+- The top 32-bit adder instantiates four 8-bit CLA modules and one 4-bit CLA block CLA to generate carries between blocks.
+- This hierarchical approach improves timing by reducing carry chain length and allows parallel carry computation in blocks.
+- Inputs and outputs remain consistent with [32:1] indexing.

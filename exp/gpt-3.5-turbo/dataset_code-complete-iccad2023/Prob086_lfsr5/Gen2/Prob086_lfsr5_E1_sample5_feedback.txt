@@ -1,3 +1,0 @@
-The primary issue in the code lies in the incorrect implementation of the Galois LFSR shifting logic. In the line `q <= {q[4] ^ q[2], q[4:1]};`, the feedback polynomial is not constructed correctly based on the design intent. The feedback polynomial for a Galois LFSR with taps at bit positions 5 and 3 should be such that the outputs of these tap positions are XORed to generate the next state. However, in the given code, the XOR operation is mistakenly between bits 4 and 2.
-
-This error leads to incorrect feedback calculation, causing the LFSR to deviate from the expected sequence, resulting in a large number of mismatches during simulation. As a result, the LFSR does not function as intended with taps at bit positions 5 and 3, leading to the observed simulation failures.

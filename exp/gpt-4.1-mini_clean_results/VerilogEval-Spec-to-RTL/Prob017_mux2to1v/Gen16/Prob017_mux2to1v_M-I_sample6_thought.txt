@@ -1,0 +1,9 @@
+The existing solution uses a single-level combinational mux implemented with a ternary operator, which is already optimal for area and performance as synthesis tools directly map it to hardware multiplexers. The main power consideration is switching activity. To reduce dynamic power, a common technique is to gate the outputs only when the selected input actually changes, which is complex and typically handled at a system level.
+
+At the RTL level and given the problem constraints, we can slightly improve the power by splitting the 100-bit mux into smaller chunks (e.g., 10 chunks of 10 bits each) to help synthesis tools optimize logic trees better. This can potentially reduce the fanout on control signals and improve the critical path and switching patterns.
+
+Also, since the bit width is fixed to 100 bits, we can unroll the mux into multiple smaller muxes instead of a large vector mux. This might allow better optimization in some synthesis tools.
+
+I will implement the mux as a generate loop of 10 10-bit muxes and instantiate the simple ternary operator mux per chunk. This keeps the simplicity but potentially improves routing, timing, and dynamic power slightly.
+
+Functional correctness remains unchanged.

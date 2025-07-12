@@ -1,0 +1,10 @@
+Here's a novel approach using a two-stage pipeline for accurate edge detection:
+
+1. Instead of storing just the previous input, we'll create a pipeline that tracks the input history more explicitly
+2. First stage: Capture current input in a register (stage1)
+3. Second stage: Capture stage1 value (now becomes previous input)
+4. Edge detection compares stage2 (previous value) with stage1 (current value)
+5. Output uses OR operation to maintain sticky detection
+6. This ensures proper temporal sequencing and eliminates race conditions
+7. Reset clears all pipeline stages and output
+8. The pipeline guarantees we're always comparing values from consecutive cycles

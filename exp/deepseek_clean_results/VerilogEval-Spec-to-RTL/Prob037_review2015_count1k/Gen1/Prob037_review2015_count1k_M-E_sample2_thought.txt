@@ -1,0 +1,10 @@
+Instead of using a single 10-bit counter, we can decompose the counting into three parallel counters:
+1. A modulo-10 counter (units digit)
+2. A modulo-10 counter (tens digit)
+3. A modulo-10 counter (hundreds digit)
+
+Each counter increments the next when it rolls over. This approach:
+- Reduces comparison logic complexity (only need to compare against 9 for each digit)
+- Potentially improves timing by breaking the critical path into smaller segments
+- Makes the terminal condition detection simpler (just check when all digits are 9)
+- Maintains the same functionality but with a different internal structure

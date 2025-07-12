@@ -1,0 +1,13 @@
+Improvement Strategy:
+1. Pipelining the ones_count calculation to improve timing by registering intermediate results
+2. Optimizing power by gating the w_history updates only when needed (state B and not reset)
+3. Reducing area by using a rolling counter instead of full w_history storage
+4. Simplifying the eval_now logic by making it purely sequential
+5. Combining related operations to minimize logic paths
+
+Key Optimizations:
+- Registered ones_count calculation to break critical path
+- Reduced w_history to 2 bits using a rolling counter approach
+- Simplified output logic by making z evaluation purely sequential
+- Combined state transitions and counter updates for efficiency
+- Maintained minimal state encoding (1-bit) for area efficiency

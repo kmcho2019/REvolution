@@ -1,0 +1,12 @@
+Refactor the Moore FSM by separating the state register, next-state logic, and output logic more explicitly using continuous assignments (`assign`) for outputs, and use a separate combinational always block for next state calculation. Instead of encoding output assertion states explicitly, encode the outputs as functions of the current state only. This reduces the number of explicit states and makes the FSM cleaner. The core counting states remain the same, but outputs are derived directly from state and input combinations, adhering to the one-cycle delayed output assertion requirement.
+
+The approach:
+- Define states s0 to s6 for counting consecutive ones.
+- Use one extra state err_out for continuous err assertion after detecting 7+ ones.
+- No explicit disc_out or flag_out states; instead, outputs are asserted for one cycle via registered signals updated after next state transitions.
+- Outputs are registered to implement the Moore FSM outputs one clock cycle after detection.
+- Use a synchronous process for state transitions and output registers.
+- Use combinational logic to determine next_state from curr_state and input.
+- Use combinational logic to determine outputs from curr_state and input (using a state machine output register to achieve Moore FSM output timing).
+
+This reduces explicit states and moves disc and flag outputs to registers updated synchronously, simplifying state transitions and improving clarity.

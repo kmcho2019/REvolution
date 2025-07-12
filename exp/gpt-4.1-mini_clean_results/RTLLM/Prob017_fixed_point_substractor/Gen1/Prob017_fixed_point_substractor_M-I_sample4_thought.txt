@@ -1,0 +1,11 @@
+To optimize the fixed-point subtractor for better synthesis and clarity:
+
+1. Use explicit signed types for inputs, outputs, and intermediate signals to leverage Verilog's signed arithmetic and simplify sign and magnitude handling.
+2. Avoid manual sign bit extraction and two's complement manipulation; instead, rely on signed arithmetic directly.
+3. Perform subtraction as signed subtraction, which naturally handles signs.
+4. Handle zero result explicitly by checking if the result is zero and then setting sign bit to zero.
+5. Combine all combinational logic in a single always_comb block for simplicity and synthesis friendliness.
+6. Use parameters to specify total width (N) and fractional bits (Q), but they do not affect arithmetic directly as the numbers are in fixed-point two's complement representation.
+7. The result c is assigned directly from the signed subtraction result, with manual correction of zero sign bit.
+
+This approach improves synthesis by letting tools treat values as signed rather than manual bitwise operations, reduces code complexity, and clarifies intent.

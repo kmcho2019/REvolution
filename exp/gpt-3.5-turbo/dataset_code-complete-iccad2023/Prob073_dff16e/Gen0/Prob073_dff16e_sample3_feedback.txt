@@ -1,5 +1,0 @@
-The main issue in the code lies within the always block which handles updating the q_reg values based on the byte enables. The conditions `byteena[1]` and `byteena[0]` are used both for checking if the byte is enabled and for selecting values, which leads to incorrect results. The same incorrect logic is present in both conditions, causing undesired behavior.
-
-Moreover, the reset implementation with `~resetn` is not synchronous, violating the design requirements. This can lead to metastability issues. To address this, the reset condition should trigger only on the positive edge of the clock signal.
-
-These issues culminate in a mismatch during simulation where the output 'q' does not behave as expected due to incorrect handling of byte enables and the asynchronous reset implementation.

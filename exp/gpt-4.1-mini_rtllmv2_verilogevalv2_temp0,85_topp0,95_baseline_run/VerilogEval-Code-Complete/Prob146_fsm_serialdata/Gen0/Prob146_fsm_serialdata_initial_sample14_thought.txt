@@ -1,8 +1,0 @@
-The FSM will have the following states: IDLE (waiting for start bit), RECEIVING (reading 8 data bits), STOP (checking stop bit), and WAIT_STOP (waiting to see a stop bit after an error). 
-- In IDLE, when input goes low (start bit), move to RECEIVING.
-- In RECEIVING, shift in the 8 data bits LSB first.
-- After 8 bits, move to STOP and check if the input is high (stop bit).
-- If stop bit is correct, output the byte and assert done, then go back to IDLE.
-- If stop bit is incorrect, go to WAIT_STOP and stay there until the input line goes high (stop bit), then return to IDLE.
-- done is asserted only for one clock cycle when a valid stop bit is detected.
-- Use synchronous reset to go to IDLE and clear outputs.

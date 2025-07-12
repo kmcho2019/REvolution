@@ -1,0 +1,11 @@
+To improve PPA (timing, power, and area) while preserving functionality and simplicity, I will implement the output as a registered output in the sequential always block instead of a combinational assign. This makes the FSM fully synchronous and can improve timing predictability by avoiding combinational logic on the output path.
+
+Additionally, merging next_state and output computation into a single always block reduces logic duplication and allows the synthesis tool to optimize better. Using non-blocking assignments throughout ensures correct sequential semantics.
+
+The asynchronous reset remains as specified. This design yields potentially better timing as the output transitions are synchronized to clock edges, can reduce glitches on the output line (improving power), and minimal additional area cost as the output is registered.
+
+Thus, the improved design has:
+- One always block for state and output
+- Non-blocking assignments
+- Registered output (Moore output still depends only on current state)
+- Asynchronous active-high reset

@@ -1,0 +1,21 @@
+The original design uses a right-shift and add approach controlled by a state machine with a product register holding both the partial sum and multiplier. This approach is area-efficient but the critical path through the adder and shifter every cycle may limit timing, and the product register toggles extensively, impacting power.
+
+To optimize PPA:
+
+1. Shift left the multiplier instead of right shifting the product register to reduce toggling in the product register.
+
+2. Separate the multiplier and product registers: keep the multiplier in a dedicated 16-bit shift register shifted right each cycle; keep an accumulator register for the partial product which only updates on add operations, reducing toggling.
+
+3. Only perform addition when the LSB of the multiplier is 1; otherwise, skip addition and just shift.
+
+4. Use a simple 5-bit counter to control the number of shift-accumulate cycles (0 to 16).
+
+5. Generate done flag exactly when count reaches 16.
+
+6. Implement synchronous reset with active-low reset, and load multiplicand and multiplier registers on start.
+
+This approach reduces the size of registers toggled every cycle and localizes additions to accumulator only when needed, potentially improving timing and lowering dynamic power.
+
+The implementation still uses non-blocking assignments and synchronous reset, meets the original interface and functionality requirements.
+
+This design implements a classic shift-and-add multiplication algorithm with clear control and optimized register usage for better PPA.

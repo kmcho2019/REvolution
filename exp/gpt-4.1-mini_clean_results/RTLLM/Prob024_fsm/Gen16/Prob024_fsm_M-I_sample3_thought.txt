@@ -1,0 +1,15 @@
+To optimize the existing Mealy FSM for better PPA:
+
+1. State Encoding: Use one-hot encoding since we only have 5 states (including idle). This can reduce the combinational logic complexity in the next state logic, potentially improving timing and power by reducing glitches on fewer bits toggling.
+
+2. Registered Output: Convert the output MATCH to a registered (Moore) style output by asserting it for one clock cycle after detecting the sequence. This reduces glitches on the output and lowers dynamic power at the cost of one clock cycle latency, generally acceptable in sequence detectors.
+
+3. Clock Enable: Add a simple clock enable by comparing input to reduce unnecessary state transitions when input does not change state. (Given input changes continuously, this is minor, so omit for simplicity.)
+
+4. Simplify next-state logic by exploiting one-hot encoding and direct assignments, which synthesis tools map efficiently.
+
+5. Maintain the synchronous reset and nonblocking assignments for good synthesis and robustness.
+
+Overall, one-hot encoding trades a few more flip-flops for simpler combinational logic and fewer glitches, improving timing and power, especially in FPGA implementations. Registering MATCH output further reduces glitches and power.
+
+I will implement these improvements clearly with comments.

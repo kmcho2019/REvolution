@@ -1,0 +1,19 @@
+After carefully analyzing the waveform and the feedback, here's the improved design strategy:
+
+1. Key behavior observations:
+   - p mirrors 'a' on rising clock edges when q=0
+   - q becomes 1 in the cycle after p was 1 (one-cycle delayed version of p)
+   - Both outputs reset to 0 when 'a' is high during clock low phase
+   - p and q maintain their values until these conditions occur
+
+2. Improvements over previous solution:
+   - Simplified state tracking using just q register
+   - Correct timing for q update (exactly one cycle after p=1)
+   - Proper reset condition when 'a' is high during clock low
+   - Clear synchronous behavior with all changes on clock edges
+
+3. Implementation approach:
+   - Use q as the main state indicator
+   - Generate p directly from 'a' when q=0
+   - Set q in the next cycle when p was 1
+   - Reset both outputs when 'a' is high during clock low phase

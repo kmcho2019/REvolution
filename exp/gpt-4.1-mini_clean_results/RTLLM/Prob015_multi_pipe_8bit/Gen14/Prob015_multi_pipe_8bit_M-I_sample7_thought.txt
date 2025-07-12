@@ -1,0 +1,29 @@
+To improve timing and reduce critical path delay, I will balance the addition tree more by splitting the sums into pairwise 2-input additions instead of summing 3 inputs directly. This approach reduces the longest carry chain per cycle.
+
+Specifically:
+
+- Generate partial products as before.
+
+- Stage 1: sum partial_products[0] + partial_products[1] -> sum0_0  
+  sum partial_products[2] + partial_products[3] -> sum0_1  
+  Store both sums in registers.
+
+- Stage 2: sum partial_products[4] + partial_products[5] -> sum1_0  
+  sum partial_products[6] + partial_products[7] -> sum1_1  
+  Store both sums in registers.
+
+- Stage 3: sum sum0_0 + sum0_1 -> sum2_0  
+  sum sum1_0 + sum1_1 -> sum2_1  
+  Store both sums in registers.
+
+- Final Stage: sum sum2_0 + sum2_1 -> mul_out_reg
+
+This pipeline adds an extra stage compared to the original but reduces adder size per stage and carry propagation length, improving maximum frequency (TNS and WNS). The latency increases to 5 cycles, so the enable pipeline is extended accordingly.
+
+Also, registers update only when enable signals indicate valid data to save power. The output enable is derived from the MSB of the enable pipeline register.
+
+This balanced 5-stage pipeline significantly improves timing, and register enable gating reduces switching activity. Area impact is modest given smaller adders per stage.
+
+The output logic remains combinational and enabled only when output is valid.
+
+This design balances timing, area, power, and latency better than the original 4-stage version.

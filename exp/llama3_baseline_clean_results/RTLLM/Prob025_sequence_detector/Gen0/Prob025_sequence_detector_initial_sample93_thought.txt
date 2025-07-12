@@ -1,0 +1,10 @@
+To implement the sequence detector, we will design a finite state machine (FSM) that transitions through five states: IDLE, S1, S2, S3, and S4. Each state represents a stage in the detection of the specific 4-bit binary sequence 1001. 
+
+- The FSM starts in the IDLE state, waiting for the start of the sequence.
+- When the first bit of the sequence (1) is detected, the FSM transitions to S1.
+- If the next bit is 0, the FSM transitions to S2; otherwise, it returns to IDLE.
+- From S2, if the next bit is 0, the FSM transitions to S3; otherwise, it returns to IDLE.
+- From S3, if the next bit is 1, the FSM transitions to S4 and sets sequence_detected high; otherwise, it returns to IDLE.
+- On reset, the FSM returns to the IDLE state, resetting the detection process.
+
+We will use a parameterized state type to represent the states and a case statement to handle state transitions.

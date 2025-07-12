@@ -1,0 +1,6 @@
+The current solution uses a shift register approach with two flip-flops (prev1, prev2) to track the last two bits. While functional, we can simplify this further by:
+1. Using a minimal 3-state FSM (IDLE, GOT1, GOT10) to explicitly track the sequence detection progress
+2. Making the output purely combinatorial based on current state and input (Mealy behavior)
+3. Maintaining the negative-edge asynchronous reset
+4. Reducing the number of flip-flops from 2 to 1 (state register) while keeping the same functionality
+5. The FSM will naturally handle overlapping sequences by properly transitioning between states

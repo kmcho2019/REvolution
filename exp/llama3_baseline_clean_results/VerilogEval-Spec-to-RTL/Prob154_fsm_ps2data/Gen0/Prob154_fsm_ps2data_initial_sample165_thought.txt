@@ -1,0 +1,5 @@
+To solve this problem, we need to design a finite state machine (FSM) that can identify message boundaries in a byte stream. The FSM will have three states: 
+1. IDLE: In this state, the FSM will discard incoming bytes until it finds a byte with in[3] = 1.
+2. BYTE_1: Once a byte with in[3] = 1 is found, the FSM will transition to this state and store the current byte as the first byte of the message.
+3. BYTE_2 and BYTE_3: The FSM will then transition to these states to store the next two bytes as the second and third bytes of the message.
+After the third byte is received, the FSM will signal 'done' and output the 24-bit message.

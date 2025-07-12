@@ -1,0 +1,16 @@
+Simplified Design Strategy:
+1. Use a single register to store the first byte when it arrives
+2. Use a valid flag to track if we have a stored byte waiting
+3. When next valid input arrives, if we have a stored byte:
+   - Combine stored byte (MSB) with new byte (LSB) to form 16-bit output
+   - Assert valid_out for one cycle
+   - Clear the stored byte flag
+4. Reset clears all registers synchronously
+5. No explicit state machine needed - just a flag and data register
+
+Key Simplifications:
+- Removed separate pipeline stages
+- Single flag controls the entire operation
+- Clean synchronous reset
+- Minimal registers (8-bit data + 1-bit flag)
+- Clear and concise control logic

@@ -1,0 +1,43 @@
+The problem requires creating the four inputs mux_in[3:0] for the 4-to-1 multiplexer (select inputs a,b) such that the final circuit implements the given 4-variable function f(a,b,c,d) with the provided Karnaugh map.
+
+Each mux_in[i] corresponds to the function when ab = i (00,01,11,10). These outputs depend only on c and d.
+
+First, we analyze the K-map columns:
+
+- ab=00 (mux_in[0]): cd=00:0, 01:1, 11:1, 10:1  
+  Simplify this: The output is 0 only when cd=00, else 1.  
+  So f_0 = ~(~c & ~d) = c + d (in logic), but must confirm using only 2-to-1 muxes.
+
+- ab=01 (mux_in[1]): all 0 (00:0, 01:0, 11:0, 10:0)  
+  f_1 = 0 (constant zero)
+
+- ab=11 (mux_in[2]): cd=00:0, 01:0, 11:1, 10:0  
+  f_2 = c & d
+
+- ab=10 (mux_in[3]): cd=00:1, 01:0, 11:1, 10:1  
+  For cd=00,10,11 output=1; only cd=01 outputs 0. So  
+  f_3 = ~(~c & d) = c + ~d
+
+The original attempt to implement these functions used incorrect mux input assignments.
+
+Let's rewrite each function strictly using 2-to-1 muxes:
+
+- f_0 = c + d = d ? 1 : c  
+  Implement: mux2to1(sel=d, in0=c, in1=1)
+
+- f_1 = 0
+
+- f_2 = c & d = d ? c : 0  
+  mux2to1(sel=d, in0=0, in1=c)
+
+- f_3 = c + ~d = c ? 1 : ~d  
+  To get ~d: mux2to1(sel=d, in0=1, in1=0)  
+  Then f_3 = mux2to1(sel=c, in0=not_d, in1=1)
+
+Check carefully input and output assignments, ensuring the signal names and bits match.
+
+Assign mux_in = {f3, f2, f1, f0}.
+
+This corrected logic and mux wiring will match the K-map exactly.
+
+The fix involves correctly wiring the 2-to-1 multiplexers to implement the proper logic expressions.

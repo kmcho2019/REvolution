@@ -1,0 +1,11 @@
+The original implementation is already quite efficient, but we can restructure it to:
+1. Make the mutual exclusivity more explicit in the implementation
+2. Potentially reduce switching power by computing intermediate signals
+3. Use a hierarchical comparison approach (MSB first) which might be more intuitive
+4. Still maintain the simplicity of continuous assignments
+
+The new approach will:
+- First check for equality (A == B)
+- Then only compute greater/less if not equal
+- Use the equality result to gate the other outputs
+This ensures only one output can ever be active at a time, even during transitions

@@ -1,0 +1,40 @@
+module TopModule (
+    input clk,
+    input x,
+    input [2:0] y,
+    output Y0,
+    output z
+);
+
+    // ROM definition for FSM (address is {y[2:0],x})
+    reg [3:0] rom [0:15];
+    
+    initial begin
+        // Address format: {y[2:0],x}
+        // ROM data format: {next_state[2:0],z}
+        rom[4'b0000] = 4'b0000; // y=000, x=0
+        rom[4'b0001] = 4'b0010; // y=000, x=1
+        rom[4'b0010] = 4'b0010; // y=001, x=0
+        rom[4'b0011] = 4'b1000; // y=001, x=1
+        rom[4'b0100] = 4'b0100; // y=010, x=0
+        rom[4'b0101] = 4'b0010; // y=010, x=1
+        rom[4'b0110] = 4'b0011; // y=011, x=0
+        rom[4'b0111] = 4'b0101; // y=011, x=1
+        rom[4'b1000] = 4'b0111; // y=100, x=0
+        rom[4'b1001] = 4'b1001; // y=100, x=1
+        // Default cases (shouldn't occur in normal operation)
+        rom[4'b1010] = 4'b0000;
+        rom[4'b1011] = 4'b0000;
+        rom[4'b1100] = 4'b0000;
+        rom[4'b1101] = 4'b0000;
+        rom[4'b1110] = 4'b0000;
+        rom[4'b1111] = 4'b0000;
+    end
+
+    wire [3:0] rom_out = rom[{y,x}];
+    wire [2:0] next_state = rom_out[3:1];
+    
+    assign Y0 = next_state[0];
+    assign z = rom_out[0];
+
+endmodule

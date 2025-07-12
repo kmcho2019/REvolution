@@ -1,0 +1,16 @@
+To implement this logic more efficiently, we can use a hybrid approach that combines both SOP and POS optimizations while properly handling don't-care conditions. Here's the novel approach:
+
+1. For out_sop (Sum of Products):
+   - Directly implement the minterms for outputs that must be 1 (2,7,15)
+   - All other cases (except don't-cares) will naturally be 0
+   - Don't-care conditions can be optimized away since they never occur
+
+2. For out_pos (Product of Sums):
+   - Instead of listing all maxterms for 0-output cases, we can implement the complement of the SOP form
+   - This gives us a more compact representation since we only have three 1-output cases
+   - The POS form becomes the AND of OR terms that cover all cases where the output should be 0
+
+3. Key innovation:
+   - Use the observation that out_pos can be derived as the complement of a modified SOP form that covers all 0-output cases
+   - This reduces the number of terms needed in the POS implementation
+   - The don't-care conditions are naturally optimized out in this approach

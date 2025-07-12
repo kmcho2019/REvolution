@@ -1,0 +1,9 @@
+To refactor the design while preserving the core idea of combinational decoding and valid detection, I will replace the multiple intermediate match signals with a single combinational function using a case statement. This function will:
+
+- Use a combinational always block to decode the 8-bit scancode to a 4-bit digit.
+- Output the decoded digit and assert valid if the scancode matches one of the known codes.
+- This approach uses a case statement inside an always_comb block for clear, compact mapping without intermediate signals.
+- The outputs `out` and `valid` will be driven by registers updated combinationally.
+- This maintains full combinational logic with no state or clock, but simplifies logic and may improve readability and synthesis mapping.
+
+Thus, the design remains fully combinational, easy to verify, and synthesizable, but structures the mapping differently using a case statement instead of multiple equality checks.

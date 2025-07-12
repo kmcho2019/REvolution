@@ -1,0 +1,7 @@
+The original buggy module has a single-bit output while inputs `a` and `b` are 8-bit vectors, leading to a mismatch in mux width. The provided fixed version corrected the output width but used an always block with a reg output, which is functionally correct but less optimal for simple combinational muxes. 
+
+A more optimal, clear, and concise implementation uses a continuous assign statement with a ternary operator, which infers a 2-to-1 mux efficiently in hardware. This also explicitly declares the output as an 8-bit vector, fixing the original bug. This approach improves power, performance, and area (PPA) compared to an always block, and is cleaner for such simple mux logic.
+
+Thus, the fix is to:
+- Correct the output port width to 8 bits.
+- Use a continuous assignment with a ternary expression for mux selection.

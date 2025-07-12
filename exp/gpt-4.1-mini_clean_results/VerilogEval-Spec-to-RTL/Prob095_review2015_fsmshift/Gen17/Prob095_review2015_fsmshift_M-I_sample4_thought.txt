@@ -1,0 +1,12 @@
+To ensure shift_ena is asserted for exactly 4 clock cycles immediately following a synchronous active-high reset, I will simplify the design by removing the explicit FSM state and relying solely on a 3-bit counter.
+
+On reset, load the counter with 4. On each clock cycle thereafter, decrement the counter if it is not zero. shift_ena is asserted whenever the counter is nonzero.
+
+This approach guarantees:
+- shift_ena is high for 4 consecutive cycles immediately after reset.
+- No state machine overhead, minimizing area and complexity.
+- The output shift_ena is registered and stable throughout each clock cycle (since counter is updated on clock edge).
+
+This method improves timing clarity and PPA by reducing logic and avoids off-by-one errors associated with state transitions. It cleanly implements the synchronous active-high reset requirement.
+
+The output shift_ena is directly derived from the counter, and all logic is synchronous, ensuring predictable timing behavior.

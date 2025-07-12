@@ -1,0 +1,17 @@
+Observing the truth table, q becomes 1 whenever at least one of (a or b) is 1 and at least one of (c or d) is 1. This was previously implemented as q = (a | b) & (c | d). For a novel architectural approach, I can build the circuit using only NAND gates, which are universal gates, and reconstruct the same logic from them. This approach may be useful for certain technology mappings where NAND gates are optimized.
+
+The expression (a | b) can be rewritten using De Morgan's law as ~(~a & ~b), and similarly for (c | d). Then the AND of these two OR results is q = (a | b) & (c | d) = ~(~(a | b) | ~(c | d)) = ~(~(~a & ~b) | ~(~c & ~d)) = (~~a & ~~b) & (~~c & ~~d), but this complicates the expression.
+
+A cleaner way is to use NAND gates for the OR by inverting inputs first, then NAND for AND.
+
+Thus,
+- temp1 = ~(a & b) gives NAND
+- temp2 = ~(c & d) gives NAND
+Then q = ~(temp1 & temp2), which is NAND of temp1 and temp2.
+
+Expressed in Verilog:
+temp1 = ~(a & b)
+temp2 = ~(c & d)
+q = ~(temp1 & temp2)
+
+This is logically equivalent to q = (a | b) & (c | d), but implemented using NAND logic for the sake of a different architectural approach.

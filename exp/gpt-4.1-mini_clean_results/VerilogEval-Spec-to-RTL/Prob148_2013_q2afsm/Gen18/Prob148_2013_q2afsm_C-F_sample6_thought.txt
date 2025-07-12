@@ -1,0 +1,11 @@
+Use a binary-encoded state FSM with four states (A=2'b00, B=2'b01, C=2'b10, D=2'b11) to reduce flip-flop count from 3 to 2 compared to one-hot encoding, improving area and power.
+
+Implement synchronous active-low reset to state A.
+
+In the combinational next-state block, use clear priority checks (r[0], then r[1], then r[2]) only in state A. For grant states (B, C, D), hold grant if the corresponding request is asserted, else return to idle (A).
+
+Output grants g[2:0] are decoded combinationally from the state: grant device 0 when state=B, grant device 1 when state=C, grant device 2 when state=D; all zeros in idle (A).
+
+Use separate always blocks for state register and next-state logic for clarity and good synthesis results.
+
+This fusion retains Example 1 and 2’s priority logic clarity and synchronous reset, but optimizes flip-flop usage and output decoding to reduce area and power while maintaining performance and readability.

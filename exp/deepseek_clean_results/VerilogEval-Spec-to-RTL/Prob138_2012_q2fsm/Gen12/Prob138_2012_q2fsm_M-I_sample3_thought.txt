@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. State Encoding Optimization: Use Gray coding for adjacent states to minimize bit transitions and reduce power consumption. This is particularly important for states that frequently transition between each other (like D↔F↔C).
+
+2. Timing Improvement: Replace the nested ternary operators with a case statement for better synthesis optimization and timing path balancing. Case statements often synthesize more efficiently in FPGAs/ASICs.
+
+3. Output Logic: Maintain the simple bit-check but verify it still works with the new encoding scheme.
+
+4. Unused State Handling: Explicitly handle unused states by directing them to state A (reset state) for robustness.
+
+5. Power Reduction: The new Gray coding will reduce switching activity between frequently transitioning states, directly impacting dynamic power.
+
+New State Encoding:
+A: 000
+B: 001
+C: 011
+D: 010
+E: 110
+F: 111
+(Note: This maintains the same number of bits but orders states to minimize bit changes between transitions)

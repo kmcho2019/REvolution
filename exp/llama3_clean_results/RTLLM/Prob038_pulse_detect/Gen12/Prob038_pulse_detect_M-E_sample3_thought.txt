@@ -1,0 +1,13 @@
+To implement a pulse detection module, we can utilize a finite state machine (FSM) architectural approach that focuses on tracking the sequence of the input signal and detecting the pulse pattern. The key idea here is to use a combination of states and transitions to identify the pulse condition.
+
+The new architectural idea involves the following steps:
+
+1. **Finite State Machine (FSM) Design**: Design a finite state machine with three states: IDLE, PULSE_START, and PULSE_END. The IDLE state represents the initial condition, the PULSE_START state indicates the start of a pulse, and the PULSE_END state indicates the end of a pulse.
+
+2. **State Transitions**: Define the state transitions based on the current state and the input signal data_in. When in the IDLE state and data_in is 1, transition to the PULSE_START state. When in the PULSE_START state and data_in is 0, transition to the PULSE_END state. When in the PULSE_END state and data_in is 0, return to the IDLE state.
+
+3. **Output Generation**: Generate the output signal data_out based on the current state. When in the PULSE_END state, set data_out to 1, indicating the end of a pulse. Otherwise, set data_out to 0.
+
+4. **Reset Mechanism**: Incorporate a reset mechanism that resets the FSM to the IDLE state and sets the data_out signal to 0 when the rst_n signal is low.
+
+By using this approach, we can efficiently detect pulses in the data_in signal and generate the corresponding output signal data_out.

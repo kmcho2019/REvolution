@@ -1,0 +1,7 @@
+To address the synthesis and initialization concerns, we introduce an explicit synchronous reset signal internally to initialize all flip-flops to zero. Since the original interface does not have a reset input, we'll implement a power-on reset through a simple counter that holds a reset state for a few clock cycles after startup to guarantee all flip-flops start at zero. 
+
+This approach avoids using `initial` blocks and ensures proper, synthesizable initialization. We'll also restructure the flip-flop logic into one always block triggered on the positive edge of clk and the synchronous reset signal to cleanly handle reset and state update.
+
+The combinational logic for the D inputs remains the same but is computed inside the sequential block to keep logic together and reduce timing issues. The output z is assigned combinationally as the NOR of the three flip-flops.
+
+This structure improves synthesis friendliness, ensures deterministic initial states, and maintains the original FSM behavior.

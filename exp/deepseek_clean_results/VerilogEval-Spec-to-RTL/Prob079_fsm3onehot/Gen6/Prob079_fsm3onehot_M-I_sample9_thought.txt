@@ -1,0 +1,19 @@
+The current implementation is already quite efficient, but we can make some targeted improvements for better PPA:
+
+1. Timing Optimization:
+- Eliminate the intermediate wires ('from_A_or_C', 'from_B_or_D') to reduce fanout and potential routing delays
+- Simplify the next_state[1] logic by recognizing it can be expressed as (in & ~state[2])
+
+2. Power Optimization:
+- Reduce switching activity by minimizing logic operations
+- Use more direct expressions that don't require intermediate computations
+
+3. Area Optimization:
+- Leverage one-hot encoding properties more effectively
+- Simplify logic expressions to use fewer gates
+
+Key improvements:
+- Remove intermediate wires to reduce fanout
+- Simplify next_state[1] logic using one-hot properties
+- Maintain minimal output logic
+- All next_state assignments now use only 2-input operations

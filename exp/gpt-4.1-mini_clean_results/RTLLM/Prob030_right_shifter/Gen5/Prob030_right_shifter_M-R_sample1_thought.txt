@@ -1,0 +1,9 @@
+I will refactor the design by splitting the shift operation and the loading of the new bit into two separate always blocks to demonstrate an alternative structural approach:
+
+1. One always block will perform the right shift on the register q on each clock edge.
+2. Another always block (also clocked) will load the new input bit d into the MSB after the shift is performed.
+3. The register q will be split into two registers internally: one holding the shifted value and the other holding the new MSB bit, combined at output.
+4. I will use a non-blocking assignment for shifting in the first always block, and a blocking assignment for loading the new bit in the second always block.
+5. Initialize q with an initial block to maintain the initial zero state.
+
+This separation is less common and slightly more verbose, but it clarifies and isolates the shifting and bit loading operations, showing an alternative way to structure sequential logic that might help in certain pipeline or multi-stage designs.

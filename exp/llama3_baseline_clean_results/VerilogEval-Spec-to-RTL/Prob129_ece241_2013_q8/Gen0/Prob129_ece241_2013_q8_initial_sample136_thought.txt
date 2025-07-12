@@ -1,0 +1,10 @@
+To implement a Mealy-type finite state machine (FSM) that recognizes the sequence "101" on the input signal x, we will need to define three states: S0 (initial state), S1 (state after detecting '1'), and S2 (state after detecting '0' after '1'). The FSM will have a negative edge triggered asynchronous reset. The output signal z will be asserted to logic-1 when the sequence "101" is detected.
+
+Here's a step-by-step breakdown of the thought process:
+- Start in S0. If x is '1', move to S1. Otherwise, stay in S0.
+- In S1, if x is '0', move to S2. Otherwise, stay in S1.
+- In S2, if x is '1', output z is asserted to '1' (because we have detected '101') and move back to S1. Otherwise, move back to S0.
+
+We will use a 2-bit state register to encode these three states. We can assign S0 = 2'b00, S1 = 2'b01, and S2 = 2'b10. The output z is a Mealy output, meaning it depends on both the current state and the input x.
+
+Given the asynchronous reset, the FSM will return to S0 whenever aresetn is '0'.

@@ -1,0 +1,5 @@
+To refactor the design while keeping the same functionality, we can separate the storage and combinational logic more explicitly by defining the output as the registered state and using a continuous assignment for the XOR operation. Instead of using a wire for next_state, we'll directly compute the XOR inside the always block before updating the state. This avoids the explicit combinational feedback wire and makes the data flow easier for synthesis tools.
+
+Additionally, we can implement the flip-flop output as a separate reg and assign the module output to this reg, emphasizing output registration. Initialization is kept only if needed for simulation, but the logic is simplified to improve clarity and synthesis friendliness.
+
+No reset is added as per specification. This approach retains the same D flip-flop feeding from XOR(in, state) but uses a single always block for both the XOR calculation and the update, which might help synthesis tools with feedback loops.

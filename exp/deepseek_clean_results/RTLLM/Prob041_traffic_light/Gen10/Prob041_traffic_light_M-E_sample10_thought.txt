@@ -1,0 +1,14 @@
+Here's a novel approach using a time-based state machine with parallel counters:
+
+1. Instead of a single counter, maintain three parallel counters (red_cnt, yellow_cnt, green_cnt) that count down independently
+2. Use a priority encoder to determine the active light based on which counter is non-zero
+3. Implement pedestrian request handling by directly modifying the green counter when needed
+4. State transitions become implicit based on counter expirations
+5. This architecture eliminates explicit state registers and reduces control logic
+
+Key advantages:
+- Parallel counters allow simpler transition logic
+- More intuitive timing control as each light has its own timer
+- Easier to modify individual light durations
+- Reduced state machine complexity
+- Better scalability for adding more lights or modes

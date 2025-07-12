@@ -1,0 +1,12 @@
+To improve the PPA metrics of the dual-edge triggered flip-flop implementation, I will focus on reducing glitching and mux delay in the output stage, which can limit performance and increase power.
+
+Key improvements:
+- Replace the continuous assign mux with a registered output stage that samples the mux output on a single clock edge, reducing glitching on the output and improving timing.
+- Use a small 1-bit synchronizer flip-flop clocked on the positive edge to register the mux output, thereby smoothing output transitions and easing downstream timing constraints.
+- This approach keeps the modular dual-edge sampling but ensures output changes only at a single clock edge, helping reduce dynamic power and timing closure challenges.
+- Remove clock inversions to remain FPGA-friendly.
+- Keep the EdgeFF module and two instantiated flip-flops for clarity and synthesis compatibility.
+
+Overall, this solution trades a single extra flip-flop for better glitch suppression, improved timing, and reduced power due to less mux switching noise, with minimal area overhead.
+
+This is a practical compromise that improves performance and power while maintaining correctness and synthesis friendliness.

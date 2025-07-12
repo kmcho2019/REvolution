@@ -1,0 +1,7 @@
+I will implement the FSM using 3-bit binary encoding for the six states, which keeps the design area-efficient and simple. The state register uses synchronous active-high reset on the positive clock edge, ensuring proper initialization. I will keep separate always blocks for state flip-flops (sequential) and next-state logic (combinational), as required.
+
+For output logic, I will use an always @(*) combinational block that simultaneously computes next_state and output z, as done in Example 1, to reduce the number of always blocks and minimize output glitches by ensuring output is purely Moore (dependent only on current_state). This fusion optimizes code clarity, reduces possible glitches in output, and slightly reduces hardware compared to separate output logic.
+
+This approach leverages the clean encoding and structure of Example 2 with the output and next-state logic fusion of Example 1, producing a neat, efficient FSM implementation.
+
+Additionally, output z is assigned as reg to hold stable values synchronized with the next_state block, minimizing glitch potential and aligning output tightly with state transitions.

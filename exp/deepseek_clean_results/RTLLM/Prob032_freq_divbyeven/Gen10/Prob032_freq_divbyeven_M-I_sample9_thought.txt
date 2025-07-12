@@ -1,0 +1,11 @@
+The main issue with the original implementation is the timing mismatch caused by using the toggle signal in the same clock cycle it's set. Here's the improved strategy:
+
+1. Remove the separate toggle signal and directly toggle clk_div when the counter wraps around
+2. Simplify the logic by combining the counter and clock toggle operations
+3. Maintain the same division ratio but ensure correct timing by:
+   - Toggling clk_div immediately when counter reaches CNT_MAX
+   - Using non-blocking assignments properly for sequential logic
+4. Keep the parameter validation and counter width calculation
+5. Ensure reset behavior remains correct
+
+This approach eliminates the one-cycle delay by removing the intermediate toggle signal and directly controlling the clock output based on the counter value.

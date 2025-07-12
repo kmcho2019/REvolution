@@ -1,0 +1,16 @@
+To implement a dual-edge triggered flip-flop without using illegal sensitivity lists and without using two separate flip-flops for posedge and negedge, we can sample the input at every clock edge by leveraging a faster internal clock derived from the original clock.
+
+Specifically:
+- Generate a clock signal at twice the frequency of the input clock by XORing the clock with a delayed version of itself. This effectively creates a clock toggling at both edges of the original clock.
+- Use a single positive-edge triggered flip-flop clocked by this doubled frequency clock to sample the input.
+- To synchronize the output back to the original clock domain, double-buffer the sampled value using two flip-flops clocked by the original clock.
+- The output is updated on the original clock domain at each edge, reflecting the latest sampled data from the doubled frequency clock.
+
+This method avoids illegal sensitivity lists and uses a single flip-flop for sampling data on both edges, with synchronization back to the original clock domain. It relies on a generated clock doubling circuit, which can be mapped efficiently in FPGA logic using combinational gates and flip-flops.
+
+Note: Since FPGAs typically do not allow direct clock doubling this way for global clocks, this is a conceptual approach suited for modeling dual-edge triggering functionally inside logic. In ASIC or simulation environments, this works well. For FPGA, the double frequency clock should be implemented carefully using dedicated resources or use DDR primitives if available.
+
+Advantages:
+- Uses only one flip-flop for sampling input on both edges.
+- Avoids using both posedge and negedge sensitivity in a single always block.
+- Provides clean timing using a doubled frequency clock.

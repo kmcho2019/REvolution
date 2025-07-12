@@ -1,0 +1,21 @@
+After analyzing the waveform and the issues in the previous implementation, here's a corrected approach:
+
+1. Key Observations:
+   - All state changes occur only on positive clock edges (no negedge behavior needed)
+   - p directly follows 'a' when q is 0 (sampled at posedge clock)
+   - q becomes 1 one cycle after p was 1
+   - q resets to 0 when 'a' is 1 at the clock edge
+   - p stays 0 when q is 1
+
+2. Corrected Architecture:
+   - Single always block sensitive only to posedge clock
+   - Track previous p value to determine q's next state
+   - Clear q immediately when a is 1 at clock edge
+   - Update p only when q is 0
+   - Simple state machine with clear priority rules
+
+3. Improvements:
+   - Proper edge-sensitive behavior
+   - Correct state transitions matching waveform
+   - Clear separation of reset condition and normal operation
+   - No unnecessary negedge sensitivity

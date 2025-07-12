@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Register the hour BCD conversion to break critical path
+   - Simplify PM toggle logic by making it dependent only on hour value
+   - Move enable conditions into clock gating to reduce combinational paths
+
+2. Power Optimization:
+   - Gate clock enables to prevent unnecessary switching
+   - Only update BCD conversion when hour changes
+   - Use registered outputs to minimize glitching
+
+3. Area Optimization:
+   - Implement hour counter directly in BCD format
+   - Share BCD increment logic between seconds and minutes
+   - Simplify PM indicator logic
+
+Key Changes:
+- Direct BCD hour counter eliminates conversion logic
+- Registered BCD outputs improve timing
+- Simplified PM indicator with reduced logic
+- Clock gating for power efficiency
+- Shared BCD increment module for area savings

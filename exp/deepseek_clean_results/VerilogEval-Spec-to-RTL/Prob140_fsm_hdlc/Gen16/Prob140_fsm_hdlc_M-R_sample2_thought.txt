@@ -1,0 +1,23 @@
+To improve the design, I'll refactor using these key changes:
+
+1. State Machine Approach:
+   - Replace the counter with explicit states for better readability and control
+   - Each state represents the number of consecutive 1s seen (0-7)
+   - This eliminates the need for comparators in the output logic
+
+2. Output Generation:
+   - Use continuous assignments (`assign`) for outputs
+   - This makes the output logic purely combinational and more transparent
+   - Outputs are directly derived from current state and input
+
+3. Reset Handling:
+   - Maintain synchronous reset to initialize state to S0 (no 1s seen)
+   - Clear outputs during reset as specified
+
+4. Optimization Benefits:
+   - More explicit state transitions (easier to verify)
+   - Reduced comparator logic (outputs directly tied to states)
+   - Clear separation between state transitions and output generation
+   - Potentially better timing as state decoding is simpler
+
+The state machine will have 8 states (S0-S7) representing 0-7 consecutive 1s. Outputs are generated combinationally based on current state and input.

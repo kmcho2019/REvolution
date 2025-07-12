@@ -1,0 +1,5 @@
+Implement the counter using a one-hot encoding internally with a 12-bit shift register to represent counts from 0 to 11, where only one bit is set at a time. On each clock cycle when valid_count is high, the '1' bit shifts to the next position, effectively incrementing the count. When the '1' reaches bit 11, the next increment wraps it back to bit 0. The output 'out' is decoded from the position of the '1' bit in the shift register.
+
+This approach avoids explicit numerical comparison for terminal count detection, potentially simplifying logic for small count ranges, and can result in fast and glitch-free counting logic. It also provides clear enable behavior and synchronous active-low reset, which initializes the one-hot register to position 0. The decoding from one-hot to binary count output is done combinationally.
+
+Advantages include inherent terminal count wrapping due to the circular shift, no explicit arithmetic needed, and clear enable control. The design is different architecturally from a binary counter approach.

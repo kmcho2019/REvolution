@@ -1,0 +1,14 @@
+To address the feedback and fully meet the specification with clean synthesis compatibility, I will:
+
+1. Clearly separate the sign bit and magnitude bits in all operations to avoid sign bit duplication or confusion.
+2. Represent the absolute values strictly as unsigned values without the sign bit included.
+3. Use blocking assignments in combinational always block for clear data flow.
+4. Avoid the function for absolute value; instead, implement inline absolute value extraction to aid synthesis.
+5. Handle the sign logic explicitly, ensuring the sign bit in the output is correctly assigned, and the magnitude fits in (N-1) bits.
+6. For addition of absolute values, since maximum sum may require (N) bits magnitude, add an extra bit for carry and saturate if overflow occurs.
+7. For subtraction, since the result fits in (N-1) bits magnitude, no extra bit is needed.
+8. On zero result, force sign to 0 (positive zero).
+9. Parameters `N` and `Q` remain as module parameters with defaults to ensure parameter passing from testbench works without errors.
+10. Maintain saturation logic on overflow: saturate to max positive or min negative fixed-point value accordingly.
+11. The output `c` is `reg` assigned in combinational block.
+12. Overall, produce a synthesizable and clear code that meets fixed-point addition with sign handling, absolute value math, and saturation.

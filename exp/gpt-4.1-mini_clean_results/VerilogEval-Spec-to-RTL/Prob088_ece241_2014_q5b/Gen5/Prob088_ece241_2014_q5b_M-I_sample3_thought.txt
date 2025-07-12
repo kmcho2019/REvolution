@@ -1,0 +1,15 @@
+To further optimize the design for performance and simplicity while maintaining correctness and the required one-hot encoding style, I will explicitly implement the states as one-hot encoded bits (two flip-flops) rather than a single bit state. This matches the problem requirement exactly ("implement using a one-hot encoding") which was slightly violated in the original solution.
+
+I will use two flip-flops for states A and B: state_A and state_B. At reset, state_A is set high and state_B low. The state transitions follow the FSM diagram, where from A, if x=1, go to B; else stay at A; from B, always stay at B.
+
+The Mealy output z depends on the current state and input x:
+- In A: z = 0 if x=0, 1 if x=1 => z = x
+- In B: z = 1 if x=0, 0 if x=1 => z = ~x
+
+This encoding increases register count by one flip-flop but strictly adheres to one-hot style, making state decoding very simple (each state bit represents a state) and output logic is straightforward.
+
+Asynchronous active-high reset is preserved on both flip-flops, initializing to state A.
+
+I will also simplify next-state logic with combinational assignments outside the sequential block for clarity, improving synthesis friendliness and potentially timing.
+
+This strictly follows the one-hot encoding requirement, improves code clarity, and may provide better synthesis optimization opportunities without adding complexity.

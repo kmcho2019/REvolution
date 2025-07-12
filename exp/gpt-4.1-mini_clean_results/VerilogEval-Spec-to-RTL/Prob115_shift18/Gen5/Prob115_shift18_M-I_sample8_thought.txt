@@ -1,0 +1,9 @@
+To optimize the original design for better performance, power, and area, simplify the combinational shifting logic by removing redundant intermediate wires and multiplexers. 
+
+Since the shift amount is limited to 1 or 8 bits and the direction is only left or arithmetic right, implement shift operations using case statements with synthesis-friendly conditional operators. This eliminates multiple explicit wires and muxing, allowing the synthesis tool to generate optimal barrel shifting logic.
+
+Also, since shifting is only performed when ena is high, isolate shifting computations to avoid unnecessary toggling when ena is low, by gating the shifted value generation inside the always block.
+
+This approach reduces combinational logic depth, limits toggling to when shifting is enabled, and simplifies RTL for better area and timing without changing functional behavior.
+
+The synchronous load logic and arithmetic right shift sign extension remain as before, preserving correctness.

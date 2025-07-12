@@ -1,0 +1,17 @@
+To optimize the provided dual-port RAM implementation for better PPA:
+
+1. Use synchronous reset for clearing RAM contents at reset to ensure deterministic initialization in hardware rather than relying on the initial block (which is often ignored by synthesis tools). This avoids uncertainty about RAM content after reset.
+
+2. Since the RAM depth is only 8, we can safely implement synchronous reset by clearing all entries in a for-loop inside the clocked block on reset, minimizing uncertainty and ensuring stable initial state.
+
+3. Register the read data output to avoid glitches from asynchronous combinational reads. This adds one clock cycle latency but improves signal integrity and timing, especially in ASIC implementations.
+
+4. To minimize unnecessary toggling in the read output register, only update read_data when read_en is high; otherwise, output zero.
+
+5. To avoid combinational read address mux glitches and improve timing, the read address can be registered on clock edge when read_en is high and then used to index RAM synchronously. However, since the problem specification wants simultaneous read/write, and reading simultaneously at clock edge is standard, we will keep read synchronous.
+
+6. By implementing both read and write ports synchronously on clock edges with enable signals and synchronous reset, the design will be robust, glitch-free, and have deterministic behavior on reset.
+
+7. The tradeoff is one cycle read latency, but this is acceptable for stable and power-optimized operation.
+
+Overall, the updated design uses synchronous reset for RAM initialization, synchronous read with output registered, and synchronous write, improving power and timing stability while meeting all problem requirements.

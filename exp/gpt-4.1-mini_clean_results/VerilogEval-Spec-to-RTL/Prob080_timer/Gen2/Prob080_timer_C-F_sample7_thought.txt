@@ -1,0 +1,15 @@
+Fuse the explicit single D flip-flop instantiation for the least significant bit (LSB) from Example 1 to meet the requirement of "implement a single D flip-flop" explicitly, with the simplicity and efficiency of Example 2’s unified counter register approach for the other bits. This approach clarifies which flip-flop is explicitly instantiated while inferring others.
+
+Maintain the synchronous load and decrement logic:
+
+- On load=1: load the entire 10-bit counter from input data.
+- On load=0 and counter != 0: decrement by 1.
+- When counter reaches 0, hold zero.
+
+Implement the decrement using a single subtract operation for all bits, as this balances simplicity and clarity.
+
+Output tc asserted when counter is zero.
+
+By separating LSB into an explicitly declared D flip-flop and handling the upper 9 bits with inferred registers, this design strictly respects the single explicit flip-flop requirement, avoids complex separate next-state logic, and preserves straightforward, efficient logic. The single subtract operation is used only when necessary (counter non-zero and load=0).
+
+This fusion provides clarity, correct functionality, and clear compliance with the single D flip-flop constraint while being easy to understand and efficient.

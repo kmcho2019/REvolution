@@ -1,0 +1,12 @@
+The original code implements a simple combinational logic circuit using an `assign` statement, which is a straightforward and efficient way to describe the required logic in Verilog. To refactor this code with a different structure, we can use an `always` block instead of the `assign` statement. The `always` block is typically used for sequential logic but can also be used for combinational logic when the `@(*)` sensitivity list is used, which indicates that the logic inside the block should be evaluated whenever any of the inputs change.
+
+The key to this refactoring is understanding that the logic operation required is the same - an AND operation between `in1` and the inverted `in2`. This operation can be encapsulated within an `always` block with the `@(*)` sensitivity list to ensure it behaves like a combinational logic circuit.
+
+By using an `always` block, we can maintain the same functionality while structuring the code differently. This approach can be beneficial in scenarios where the logic needs to be more complex or when integrating this module with other parts of a design that might use `always` blocks for their implementation.
+
+The refactoring strategy involves:
+1. **Replacing `assign` with `always`:** Use an `always` block with the `@(*)` sensitivity list to describe the combinational logic.
+2. **Maintaining the Logic Operation:** Ensure that the AND operation with the inversion of `in2` remains unchanged within the `always` block.
+3. **Non-blocking vs. Blocking Assignments:** In this case, since we are dealing with a combinational logic circuit and there are no sequential elements involved, either blocking (`=`) or non-blocking (`<=`) assignments could be used. However, for consistency with typical combinational logic descriptions and to avoid potential issues in more complex designs, blocking assignments are preferred.
+
+Given the simplicity of the circuit and the direct correspondence between the original `assign` statement and the refactored `always` block, the functionality and efficiency of the design are expected to remain similar.

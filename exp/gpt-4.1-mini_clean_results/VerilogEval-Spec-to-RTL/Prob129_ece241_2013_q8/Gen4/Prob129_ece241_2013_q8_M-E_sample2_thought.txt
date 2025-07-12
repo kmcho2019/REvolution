@@ -1,0 +1,10 @@
+Design a Mealy FSM with three states tracking partial matches of "101": IDLE (no match), GOT1 (matched '1'), and GOT10 (matched "10"). The FSM transitions on input x: from IDLE to GOT1 if x=1, stays in IDLE if x=0; from GOT1 to GOT10 if x=0, stays in GOT1 if x=1; from GOT10 to GOT1 if x=1 with output z=1 (detected "101"), else returns to IDLE if x=0.
+
+Implement the FSM with:
+
+- State flip-flops updated on posedge clk and asynchronously reset on negedge aresetn.
+- A combinational block calculating next state and output z, using non-blocking assignments to separate combinational and sequential logic.
+- Use one-hot encoding to represent the 3 states for clearer state decoding and easy scalability.
+- Output z is 1 only on the transition from GOT10 state with input x=1.
+
+This approach uses one-hot encoding to simplify state decoding logic, and ensures overlapping sequences are recognized.

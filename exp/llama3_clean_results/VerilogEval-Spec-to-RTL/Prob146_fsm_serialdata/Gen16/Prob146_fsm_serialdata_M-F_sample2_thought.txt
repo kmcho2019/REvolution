@@ -1,0 +1,13 @@
+To address the issues in the provided Verilog code, we need to revise the finite state machine to correctly handle the start bit, data bits, and stop bit of the serial communication protocol. Here's a step-by-step approach to fix the code:
+
+1. **Start Bit Detection**: Modify the state transition from IDLE to START to check for the start bit condition (in = 0). This ensures that the state machine only moves to the START state when a valid start bit is detected.
+
+2. **Data Bit Reception**: Update the state machine to correctly handle the reception of data bits. This includes shifting the incoming bits into the 'byte_reg' and incrementing the 'bit_counter' for each received bit.
+
+3. **Stop Bit Verification**: Modify the state machine to correctly handle the stop bit verification. When all data bits have been received, check if the next bit is a stop bit (in = 1). If it is, assert the 'done' signal and output the received byte. If not, wait for a stop bit before attempting to receive the next byte.
+
+4. **State Machine Optimization**: Refine the state machine to minimize the number of states and signals, reducing the complexity of the sequential logic.
+
+5. **Bit Counter and Byte Registration**: Ensure that the 'bit_counter' and 'byte_reg' are correctly updated to reflect the reception of each bit.
+
+By addressing these issues, we can create a more accurate and efficient finite state machine for receiving bytes in the serial communication protocol.

@@ -1,0 +1,12 @@
+The original implementation directly computes the parity using a single XOR chain, which is already optimal for area, power, and delay at the RTL level. However, to potentially improve power by reducing glitching and unnecessary toggling, a possible optimization is to implement the parity function using a hierarchical XOR structure with registered or gated intermediate signals, or by restructuring the XOR chain to balance the logic tree.
+
+Since the given implementation uses a flat XOR chain (a ^ b ^ c ^ d), it could be rewritten as ((a ^ b) ^ (c ^ d)) to reduce the logic depth (balanced XOR tree), which can reduce propagation delay and glitches, thereby potentially improving dynamic power and timing metrics.
+
+This minor restructuring can help synthesis tools create a more balanced XOR tree, thus possibly improving both timing and power slightly without increasing area.
+
+Therefore, the improvement strategy is:
+- Implement the output as the XOR of two intermediate XOR signals: ab_xor = a ^ b, cd_xor = c ^ d, and then out = ab_xor ^ cd_xor.
+- This approach produces a balanced XOR tree with equal depth on both sides.
+- It may reduce glitches and propagation delay, improving PPA marginally.
+
+This will still be simple, synthesizable, and may give subtle improvements in power and timing.

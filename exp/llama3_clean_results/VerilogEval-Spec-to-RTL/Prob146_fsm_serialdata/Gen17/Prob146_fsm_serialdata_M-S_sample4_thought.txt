@@ -1,0 +1,11 @@
+To simplify the provided code, we can focus on reducing the complexity of the finite state machine (FSM) logic while maintaining its functionality. We will correct the state transitions to handle the start bit, data bits, and stop bit correctly. 
+
+The main simplification strategy is to minimize the number of states and logic operations. We can achieve this by directly transitioning from the IDLE state to the DATA state when a start bit is detected, and then from the DATA state to the STOP state after receiving 8 data bits.
+
+We will also simplify the logic for handling the stop bit by asserting the `done` signal and updating the `out_byte` output only when the stop bit is correct. If the stop bit is incorrect, the FSM will wait until it finds a stop bit before attempting to receive the next byte.
+
+Additionally, we will use a single `always` block to handle both the sequential and combinational logic, reducing the number of times the `done` signal is assigned. We will also use a simpler condition to check for the stop bit, eliminating the need for explicit state transitions based on the stop bit value.
+
+The simplified FSM logic should handle the situation when the stop bit is not received as expected. According to the problem description, the FSM should wait until it finds a stop bit before attempting to receive the next byte.
+
+By simplifying the FSM logic and reducing the number of states and logic operations, we can improve the code's readability and maintainability while ensuring its functionality.

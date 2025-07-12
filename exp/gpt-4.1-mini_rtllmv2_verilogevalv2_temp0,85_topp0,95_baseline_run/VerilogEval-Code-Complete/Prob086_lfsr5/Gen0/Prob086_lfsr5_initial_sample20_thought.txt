@@ -1,8 +1,0 @@
-Implement a 5-bit Galois LFSR with taps at bits 5 and 3, which correspond to q[4] and q[2] in zero-based indexing. On each clock edge, if reset is asserted, set q to 5'b00001. Otherwise, shift q right by one bit. The new bit entering q[4] is the XOR of q[0] (LSB) with q[2] (tap at bit 3). Other bits update either by XOR with q[0] if tapped or shift right without XOR if not tapped. For a Galois LFSR, taps modify the bits shifted into by XOR with q[0]. According to the Galois form, the bits that are taps get XORed with q[0] as they shift right. So for bit 4 and bit 2 (q[4] and q[2]), their next value is q[4] XOR q[0] and q[2] XOR q[0], respectively; other bits just shift right. But since the shift is right, the bits are updated simultaneously as follows:
-- q[0] <= q[1]
-- q[1] <= q[2]
-- q[2] <= q[3] XOR q[0] (tap)
-- q[3] <= q[4]
-- q[4] <= q[0] XOR q[4] (tap)
-
-This matches the standard Galois LFSR feedback logic for taps at 5 and 3. The output q is updated synchronously on the rising edge of clk.

@@ -1,0 +1,10 @@
+To implement the finite-state machine that controls the timer, we need to break down the problem into distinct states and design the state transitions based on the given conditions. The states we can identify are:
+- Idle: Waiting for the pattern 1101 to start the timer.
+- Shift: After detecting the pattern, shift in 4 more bits to determine the duration.
+- Count: Wait for the counters to finish counting.
+- Done: Notify the user that the timer has timed out and wait for acknowledgment.
+We will use a counter to keep track of the number of bits shifted in during the Shift state.
+
+The state machine starts in the Idle state, searching for the pattern 1101 on the data input. Once the pattern is detected, it transitions to the Shift state and asserts shift_ena for exactly 4 clock cycles to shift in the duration bits. After shifting the required bits, it moves to the Count state, asserting counting and waiting for done_counting to go high. When done_counting is high, it transitions to the Done state, asserting done to notify the user. It then waits for ack to go high before transitioning back to the Idle state, ready to look for the next occurrence of the start sequence.
+
+We'll use a 2-bit or 4-state encoding for the states (00 - Idle, 01 - Shift, 10 - Count, 11 - Done), and design the state transitions based on the current state and input conditions.

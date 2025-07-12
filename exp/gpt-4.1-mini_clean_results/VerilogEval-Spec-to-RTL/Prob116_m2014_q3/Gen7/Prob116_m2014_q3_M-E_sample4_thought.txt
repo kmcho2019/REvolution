@@ -1,0 +1,60 @@
+To implement the function f from the Karnaugh map, I will take a different approach by defining f as a combinational logic expression derived by analyzing and grouping the 1s and don't-cares from the Karnaugh map using the original variable labels as much as possible.
+
+First, note the variables from the problem statement:
+- Rows are labeled by x[3]x[4]
+- Columns by x[1]x[2]
+
+Since the input vector is 4 bits: x[3:0], I will map them as follows for clarity and to match the problem variables:
+
+- x[3] input → x4 (MSB of rows)
+- x[2] input → x3 (LSB of rows)
+- x[1] input → x2 (MSB of columns)
+- x[0] input → x1 (LSB of columns)
+
+This mapping matches:
+
+| input bit | problem variable |
+|-----------|------------------|
+| x[3]      | x4 (row MSB)     |
+| x[2]      | x3 (row LSB)     |
+| x[1]      | x2 (col MSB)     |
+| x[0]      | x1 (col LSB)     |
+
+I will rewrite the Karnaugh map with these variable names for rows and columns:
+
+| x4 x3 \ x2 x1 | 00  | 01  | 11  | 10  |
+|---------------|-----|-----|-----|-----|
+| 00            | d   | 0   | d   | d   |
+| 01            | 0   | d   | 1   | 0   |
+| 11            | 1   | 1   | d   | d   |
+| 10            | 1   | 1   | 0   | d   |
+
+Next, I will identify prime implicants based on the Karnaugh map, taking advantage of don't-cares (d) to simplify:
+
+1. The block of four 1's at positions:
+   - Rows 11 and 10 (x4 x3 = 11, 10)
+   - Columns 00 and 01 (x2 x1 = 00, 01)
+   This block covers positions (11,00), (11,01), (10,00), (10,01) which are all 1.
+
+2. The single 1 at (01,11).
+
+From these:
+
+- The 4-cell block implies: x3 (because rows 10 and 11 => x4=1 or 0, x3=1) and x1'=1 (because columns 00 and 01 => x2=0, x1=don't care or 0/1)
+- The single 1 at (01,11) is (x4=0, x3=1, x2=1, x1=1)
+
+From the block:
+
+- For rows 11 and 10, x3=1 (both have x3=1)
+- For columns 00 and 01, x2=0
+- x1 can be 0 or 1
+
+So one product term is: x3 & ~x2
+
+The other one is the singleton minterm at (01,11): x4=0, x3=1, x2=1, x1=1 → ~x4 & x3 & x2 & x1
+
+Therefore, f = (x3 & ~x2) + (~x4 & x3 & x2 & x1)
+
+I will implement this expression directly, using the bit mapping above.
+
+This approach produces minimal logic, is straightforward, and matches the Karnaugh map closely.

@@ -1,0 +1,23 @@
+To fix the timing and update ordering issues, explicitly separate the combinational prediction generation from the registered outputs and GHR updates:
+
+- Compute `predict_taken_wire` combinationally from the current speculative GHR and PHT.
+
+- Register the prediction outputs (`predict_taken_reg` and `predict_history_reg`) on the positive clock edge *only if* `predict_valid` is high, so they reflect the exact GHR and PHT state at the prediction moment (before any updates).
+
+- Update the speculative GHR *after* registering the outputs, by shifting in the predicted bit, only if no training misprediction recovery occurs.
+
+- On a training cycle with misprediction, the committed and speculative GHRs are recovered from the provided `train_history`, overriding speculative updates.
+
+- On training without misprediction, committed GHR is updated with the actual branch outcome, and speculative GHR is synchronized to it (flushing speculative updates).
+
+- When both training and prediction happen in the same cycle:
+
+  - The prediction outputs correspond to the pre-update PHT and speculative GHR state (already captured in registers).
+
+  - Training recovery overwrites speculative GHR, taking priority.
+
+- Maintain output registers stable when `predict_valid` is low to hold last valid outputs.
+
+- This explicit staging ensures prediction outputs are always consistent with the pre-update PHT and GHR states, training updates and recovery take precedence, and speculative history advances only on predictions (unless flushed by training recovery), matching the exact problem spec and eliminating timing mismatches.
+
+This approach cleanly separates combinational prediction from sequential state updates and output registration, fixing the mismatches in the original code.

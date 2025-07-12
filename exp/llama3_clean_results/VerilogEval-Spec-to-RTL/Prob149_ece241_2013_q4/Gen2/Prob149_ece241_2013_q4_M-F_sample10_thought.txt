@@ -1,0 +1,9 @@
+To address the issues identified in the feedback, we will revisit the logic for determining when to open the Supplemental flow valve (`dfr`). We recognize that the current implementation has limitations in accurately detecting all possible scenarios of water level changes and their impact on the `dfr` output.
+
+First, we need to enhance the logic to compare the current sensor values (`s`) with the previous ones (`prev_s`) more effectively. This involves examining each bit of `s` and comparing it with the corresponding bit of `prev_s` to accurately determine if the water level has increased or decreased.
+
+To accurately determine when to set `dfr` to 1'b1, we should focus on the transitions where the water level is increasing. This means we need to identify conditions where any bit in `s` is higher than the corresponding bit in `prev_s`, indicating a rise in the water level. Conversely, if the water level is decreasing or remaining the same, `dfr` should be 1'b0.
+
+Additionally, to improve the design's efficiency and reduce potential errors, we can simplify the conditional statements by using a more systematic approach to encode the logic for the state machine. This might involve reducing the number of explicit comparisons and focusing on the essential conditions that determine the flow rate outputs based on the sensor inputs and their transitions.
+
+By refining the logic for controlling `dfr` and simplifying the conditional statements, we aim to improve the accuracy of the flow rate control based on the water level sensors' inputs, ensure compliance with the specified requirements, and potentially enhance the design's performance and area efficiency.

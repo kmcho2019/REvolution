@@ -1,0 +1,7 @@
+The original design uses a conditional state update that prevents unnecessary toggling of the state register, which can save some power but adds comparator logic and a conditional branch in the clocked always block. Given the simple FSM and the metrics, this comparator likely adds slightly to area and timing penalty without substantial power benefit.
+
+To optimize PPA, I propose removing the conditional update and always updating the state register on every clock cycle (except reset). This simplifies the sequential logic, removing the comparator and condition, likely improving timing and area, with negligible power penalty due to the very simple FSM.
+
+The output assignment remains a direct mapping from state. The synchronous active-high reset is retained as required.
+
+This approach prioritizes minimal combinational complexity and cleaner sequential logic for overall improved PPA trade-offs.

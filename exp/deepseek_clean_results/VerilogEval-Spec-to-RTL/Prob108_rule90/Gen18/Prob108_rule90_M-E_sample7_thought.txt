@@ -1,0 +1,20 @@
+Novel Architectural Idea:
+1. Instead of processing all 512 bits in parallel, implement a serial processing approach using a shift register and a single XOR unit
+2. Use a finite state machine to control the serial processing of each cell
+3. Store the current state in a shift register that can rotate to access neighbors
+4. Process one cell per clock cycle, requiring 512 cycles to update all cells
+5. Maintain the same boundary conditions (0 for out-of-bounds neighbors)
+6. Include a shadow register to store intermediate results during serial processing
+7. Load functionality remains parallel for quick initialization
+
+Advantages:
+- Significantly reduces area by using a single XOR unit instead of 512
+- Lower power consumption due to reduced switching activity
+- Easier timing closure with simpler critical path
+- Scalable to larger arrays without increasing combinational logic depth
+- Clear separation of processing phases (load vs compute)
+
+Trade-offs:
+- Throughput reduced from 1 full update per cycle to 1 full update per 512 cycles
+- Requires additional control logic (FSM)
+- Slightly more complex implementation

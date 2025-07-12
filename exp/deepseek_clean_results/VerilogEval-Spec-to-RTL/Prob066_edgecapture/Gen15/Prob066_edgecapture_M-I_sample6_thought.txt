@@ -1,0 +1,11 @@
+To fix the timing issue in the edge detection, we need to properly align the comparison between consecutive input values. Here's the improved approach:
+
+1. **Correct Edge Detection**: Store the current input in a register before using it for comparison in the next cycle. This ensures we're comparing the true previous cycle's value with the current input.
+
+2. **Two-Stage Pipeline**: Use two registers to properly capture the input values from two consecutive cycles (prev_in and current_in). This guarantees correct temporal alignment for edge detection.
+
+3. **Sticky Capture Logic**: Maintain the same sticky capture behavior where any detected falling edge sets the corresponding output bit until reset.
+
+4. **Reset Synchronization**: Clear all registers synchronously on reset to ensure clean initialization.
+
+This solution ensures accurate falling edge detection while maintaining the required sticky capture behavior.

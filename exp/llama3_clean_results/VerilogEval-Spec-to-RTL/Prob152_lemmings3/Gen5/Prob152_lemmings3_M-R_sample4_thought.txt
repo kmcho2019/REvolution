@@ -1,0 +1,11 @@
+To refactor the given code, we can simplify the state machine by removing the `IDLE` state, which seems redundant, and assign explicit values to the states in the `enum` definition. We will also restructure the code to use `assign` statements for the output signals and simplify the combinational logic. Additionally, we will introduce a `prev_direction` variable to keep track of the previous walking direction when the Lemming is falling or digging.
+
+The state transitions will remain the same:
+- If the Lemming is walking and encounters a bump, it changes direction.
+- If the Lemming is walking and the ground disappears, it falls.
+- If the Lemming is walking and it's told to dig, it starts digging.
+- If the Lemming is digging and the ground disappears, it falls.
+- If the Lemming is falling and the ground appears, it resumes walking in the previous direction.
+- If the Lemming is falling and it's bumped, the bump is ignored.
+
+By refactoring the code, we can make it more efficient, easier to read, and maintain.

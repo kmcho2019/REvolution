@@ -1,0 +1,11 @@
+To improve PPA based on the previous correct implementation, I will reduce switching activity by gating the adder operation such that the addition occurs only when the LSB of the product register is 1, avoiding unnecessary addition and related toggling. This can reduce power consumption.
+
+Also, rather than shifting the product register by one bit and then adding the shifted multiplicand, I will explicitly separate the shift and add steps to minimize combinational logic per cycle and keep non-blocking updates clear.
+
+I will add a data valid flag to better control when addition is performed and to simplify the control signal generation.
+
+The FSM remains simple with two states (IDLE and BUSY). The done signal is generated when the count reaches 16 in the BUSY state.
+
+This refined logic keeps the core shift-and-accumulate operation intact, but minimizes unnecessary switching by performing addition only when needed, improving power and possibly timing.
+
+Non-blocking assignments and synchronous reset are maintained. The design uses minimal registers and resources.

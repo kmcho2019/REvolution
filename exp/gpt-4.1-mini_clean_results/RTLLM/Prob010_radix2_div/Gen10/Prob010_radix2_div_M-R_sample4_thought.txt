@@ -1,0 +1,15 @@
+Refactor the radix-2 divider by separating combinational and sequential logic more cleanly and restructuring the FSM as a one-hot encoded style for clarity. Use an explicit division datapath with combinational subtraction and next-state calculation via assign statements, and keep state registers simple. Also, instead of holding the entire remainder and quotient in a single shift register, split them into separate registers for clearer datapath control. This structure enhances clarity and may improve synthesis tool optimization.
+
+Key points of refactoring:
+1. One-hot FSM states (`IDLE`, `RUN`, `DONE`) implemented as separate signals.
+2. Use separate registers for quotient and remainder instead of a 16-bit shift register.
+3. Perform subtraction combinationally using remainder and divisor.
+4. Use a next-state logic with continuous assignment.
+5. Register inputs on operation start, including sign and absolute values.
+6. Control `res_valid` as a simple registered pulse after operation completes.
+7. Result formation and sign correction performed combinationally after done.
+8. Handle divisor zero case by outputting zero quotient and remainder.
+9. Make the design fully synchronous, only combinational logic for subtraction and corrections.
+10. Clear comments and organized logic for easy understanding and maintenance.
+
+This refactor maintains the radix-2 division principle and signed/unsigned support but offers a cleaner, more modular code structure improving readability and potential tool friendliness.

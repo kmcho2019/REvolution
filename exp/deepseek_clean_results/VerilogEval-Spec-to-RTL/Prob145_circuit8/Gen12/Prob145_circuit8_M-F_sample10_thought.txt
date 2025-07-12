@@ -1,0 +1,19 @@
+After carefully analyzing the feedback and waveform, here's the corrected approach:
+
+1. Key Observations:
+   - p should mirror 'a' at rising clock edges only when q is 0
+   - q becomes 1 only after p has been 1 for one full clock cycle (both edges)
+   - q resets to 0 when 'a' is high during a falling clock edge
+   - p remains 0 when q is 1
+
+2. Corrected Architecture:
+   - Use two always blocks: one for rising edge, one for falling edge
+   - Rising edge block handles p and sets q if p was 1
+   - Falling edge block handles q reset condition
+   - Add a register to track if p was 1 in previous cycle
+
+3. Implementation Improvements:
+   - Clear separation of rising/falling edge behaviors
+   - Proper timing for q transitions
+   - Accurate reset condition for q
+   - Matches all waveform transitions precisely

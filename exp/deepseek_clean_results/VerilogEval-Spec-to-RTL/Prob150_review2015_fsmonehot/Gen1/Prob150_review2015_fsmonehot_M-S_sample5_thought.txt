@@ -1,0 +1,11 @@
+The key simplifications are:
+1. Remove unused S11_next output since it's not required in the interface
+2. Simplify next-state logic by focusing only on required outputs (B3_next, S_next, S1_next, Count_next, Wait_next)
+3. Maintain direct one-hot state decoding for clarity
+4. Keep output logic minimal by only activating when in specific states
+
+The state transitions can be expressed more concisely by:
+- S_next activates when returning to start state from various conditions
+- S1_next only needs the two valid transition cases
+- B3_next simply follows B2 state
+- Count_next and Wait_next follow their single transition conditions

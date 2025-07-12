@@ -1,0 +1,9 @@
+Fuse the explicit, minimal-state pattern detection FSM from Example 1 with the compact and power-aware control logic of Example 2 by:
+
+- Using the state machine to explicitly and robustly detect the 1101 pattern through sequential states (S_SEARCH0 to S_SEARCH3), avoiding continuous shifting of data and reducing toggle activity in a shift register.
+- Expanding the SHIFT phase into 4 distinct substates (S_SHIFT0 to S_SHIFT3) to eliminate a separate shift counter, lowering area and simplifying the next-state logic.
+- Ensuring the pattern detection only uses state encoding (no 4-bit data shift register) to minimize switching, and transitions explicitly on input data bits.
+- Using a Moore machine style outputs decoded from the current state for stable, glitch-free control signals.
+- Updating the state synchronously on clock with active-high reset for predictable timing.
+- Avoiding unnecessary data shifting or counting registers; the FSM alone fully sequences the timer.
+This fusion maximizes power efficiency by avoiding continuous data shifting, improves timing via straightforward combinational next-state logic and Moore outputs, and reduces area by eliminating the counter and data shift register. It ensures precise timing of shift enable, counting, and done signals through well-defined states and deterministic transitions.

@@ -1,0 +1,11 @@
+Simplified serial-to-parallel converter design:
+1. Use a single 8-bit shift register to accumulate bits
+2. Track received bits with a 3-bit counter (0-7)
+3. Output is valid when counter reaches 7 (all 8 bits received)
+4. Reset clears all registers
+5. Key improvements:
+   - Single always block for all sequential logic
+   - Clear state tracking with counter
+   - Direct assignment of completed byte
+   - Minimal control logic
+   - Correct timing by capturing on last valid cycle

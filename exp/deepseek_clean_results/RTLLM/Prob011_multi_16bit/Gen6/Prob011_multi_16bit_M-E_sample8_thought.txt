@@ -1,0 +1,12 @@
+This design implements a modified Booth's algorithm (Radix-4) for 16-bit unsigned multiplication, which:
+1. Encodes the multiplier (bin) in groups of 3 bits (overlapping) to reduce the number of addition steps from 16 to 8
+2. Uses a state machine to control the multiplication process
+3. Implements pre-computed partial products for each Booth encoding case
+4. Includes optimized shift operations by fixed amounts (0,1,2 bits)
+5. Generates the done flag immediately after the last addition
+
+Key advantages:
+- Fewer addition steps (8 vs 16) reduces total computation time
+- Fixed shift amounts simplify the shifter implementation
+- State machine provides clear control flow
+- Booth encoding handles runs of 1s more efficiently

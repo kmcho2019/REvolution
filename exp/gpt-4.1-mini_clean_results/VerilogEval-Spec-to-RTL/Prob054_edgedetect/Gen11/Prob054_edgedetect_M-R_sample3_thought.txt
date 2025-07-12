@@ -1,0 +1,5 @@
+Refactor the design to use a single 8-bit register to store the previous input vector instead of arrays of 2-bit shift registers. This simplifies storage and reduces flip-flop count from 16 to 8. Use a registered version of the input to hold the previous cycle's input. Then, generate pedge output combinationally by checking for a bitwise transition from 0 to 1 (previous bit = 0 and current bit = 1). This maintains functionality while reducing area and power.
+
+Additionally, register the pedge output to align with the requirement that the output bit is set the cycle *after* a 0 to 1 transition occurs, by generating pedge combinationally and then registering it on the next clock edge. This pipelining may improve timing and clarify output timing behavior.
+
+This approach avoids arrays and shift registers, uses simple vector registers and bitwise operations, making the code cleaner and more efficient.

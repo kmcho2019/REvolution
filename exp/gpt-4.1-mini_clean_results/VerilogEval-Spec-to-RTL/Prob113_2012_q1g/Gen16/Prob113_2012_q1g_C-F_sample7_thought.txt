@@ -1,0 +1,18 @@
+To fuse the best ideas from both examples, we aim for a design that balances clarity, minimal logic depth, and minimal redundant logic.
+
+From Example 1:
+- Explicit intermediate wires for complemented signals are good practice to avoid repeated inversion.
+- Factoring the expression into two main groups clearly reflects the K-map grouping, aiding readability.
+- Reusing inverted signals reduces gate count and power.
+
+From Example 2:
+- Assigning the final output in a single expression reduces net count.
+- Avoiding unnecessary intermediate wires except for complements keeps the code concise.
+
+Fusion strategy:
+- Generate complemented signals once and reuse them (from Example 1).
+- Express f as a single assign statement combining the two main terms, factoring common subexpressions as in Example 1, but inline them to reduce intermediate wires.
+- Use minimal wires only for complements (nx3, nx1, nx0) to minimize inversions and maintain readability.
+- This approach improves power by limiting toggling on intermediate nets, reduces area by fewer nets, and maintains or improves timing by limiting logic depth.
+
+This results in clear, concise, and power/area optimized code that matches the functionality exactly.

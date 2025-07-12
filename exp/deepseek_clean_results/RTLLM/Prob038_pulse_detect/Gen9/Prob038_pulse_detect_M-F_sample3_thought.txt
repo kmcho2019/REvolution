@@ -1,0 +1,17 @@
+To fix the pulse detection module, we need to:
+1. Track the exact 3-cycle sequence (0-1-0) by shifting data_in every clock cycle
+2. Only assert data_out for one cycle when the complete pulse is detected
+3. Ensure proper reset behavior
+4. Remove the data_changed optimization since we need to monitor every cycle
+
+The solution uses:
+- A 3-bit shift register that updates on every clock cycle
+- Combinational logic to detect the 010 pattern
+- Registered output to ensure clean timing
+- Proper reset initialization
+
+Key improvements:
+- Shift register updates unconditionally every cycle
+- Exact pattern matching for the required sequence
+- Output only asserted for one cycle at pattern completion
+- Maintains all original functionality while fixing the detection logic

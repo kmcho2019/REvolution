@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace bit_count comparison with state transition after fixed cycles
+   - Pre-compute the stop bit check condition to reduce critical path
+
+2. Power Optimization:
+   - Remove ERROR state and handle missing stop bit in STOP state itself
+   - Gate the shift register updates to only occur in RECEIVE state
+
+3. Area Optimization:
+   - Reduce state encoding to 2 states (combining STOP functionality)
+   - Eliminate bit_count by using shift register position as counter
+   - Merge shift_reg and out_byte registers when possible
+
+Key Changes:
+- Combine STOP and ERROR states into a single STOP_WAIT state
+- Use shift_reg[7] as implicit counter (when it shifts out, we're done)
+- Simplify state transitions and reduce logic operations
+- Optimize register usage and update conditions

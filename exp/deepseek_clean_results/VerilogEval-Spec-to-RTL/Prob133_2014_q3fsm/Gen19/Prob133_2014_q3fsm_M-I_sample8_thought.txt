@@ -1,0 +1,25 @@
+Improvement Strategy:
+1. State Encoding Optimization:
+   - Keep 1-bit state encoding (A/B) for minimal area
+   - Simplify next_state logic by removing redundant reset check (handled in always block)
+
+2. Phase Counter Optimization:
+   - Replace binary counter with one-hot encoding (3 bits) for faster phase detection
+   - Eliminate phase comparison logic by directly using one-hot bits
+
+3. w History Processing:
+   - Implement clock gating for w_history updates (only when in state B)
+   - Replace adder-based popcount with optimized combinational logic (8-case check)
+
+4. Output Logic Optimization:
+   - Precompute all valid patterns (011, 101, 110) for exact two 1's
+   - Gate output computation to only when needed (phase0 in state B)
+
+5. Reset Optimization:
+   - Only reset w_history when leaving state B to reduce reset fanout
+
+Key Improvements:
+- Faster timing with one-hot phase counter and direct pattern matching
+- Lower power with clock-gated w_history updates
+- Reduced area by eliminating adders and simplifying logic
+- Cleaner reset implementation

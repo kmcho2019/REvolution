@@ -1,0 +1,14 @@
+To improve the original ALU design's power, performance, and area (PPA), the strategy is to eliminate redundant arithmetic computations and reduce unnecessary parallel operation evaluation. Specifically:
+
+1. Share add and subtract units for signed and unsigned operations since the core operation is the same, just interpretation differs.
+2. Use a single 33-bit adder/subtractor block for all add/sub operations, selecting operands accordingly, instead of separate adders for ADD, ADDU, SUB, SUBU.
+3. Implement gating so that only the required operation logic is computed by evaluating only the required inputs for each operation rather than all in parallel.
+4. Minimize signed conversions by only sign-extending when necessary and using the native Verilog signed arithmetic carefully.
+5. For the flags, compute carry only for ADD/SUB using the shared adder/subtractor, overflow only for signed add/sub, and zero/negative from the final output.
+6. Use a single combinational always block to handle operations to avoid duplication in wiring and make logic more compact for synthesis.
+7. Use consistent shift amount selection for shift operations from a[4:0], either from the immediate or variable operand based on opcode.
+8. For LUI, align with typical MIPS semantics (shift immediate to upper 16 bits, zero lower half) using b[15:0] (assuming b holds immediate for LUI), not a.
+9. Default the outputs to zero (rather than 'z') for robustness.
+10. Use a parameterized operation decoding to improve clarity and enable optimizations by synthesis tools.
+
+This restructuring will reduce combinational overhead by evaluating fewer parallel operations, share arithmetic units, and keep flag logic tight, improving overall PPA without changing functionality.

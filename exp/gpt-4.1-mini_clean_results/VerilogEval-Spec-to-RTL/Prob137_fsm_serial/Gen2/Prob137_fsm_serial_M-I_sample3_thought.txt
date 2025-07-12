@@ -1,0 +1,16 @@
+The original solution mostly works but has a critical issue with the bit shifting direction. It shifts data left with the new bit going to the MSB, reversing the received LSB-first bit order.
+
+To fix this, we will shift the data register right and put the incoming bit in the MSB, or alternatively shift left and put the bit in LSB — but to store LSB-first bits in data_reg[0], the simplest is to shift right and place the incoming bit at MSB (bit 7). After receiving all bits, the data_reg[0] will hold the first received bit (LSB), which matches the serial protocol LSB-first order.
+
+We will:
+
+- Shift the data register right on each RECEIVE bit, inserting 'in' at bit 7.
+- Keep incrementing bit_count after each bit received; when bit_count == 7, we move to STOP_WAIT.
+- In STOP_WAIT, wait for stop bit = 1, then assert done for one cycle.
+- Use synchronous reset.
+- Assert done only one cycle exactly after successful stop bit reception.
+- Use a one-hot state encoding for slightly better PPA.
+- To reduce power, gate bit_count and data_reg updates only in RECEIVE state.
+- Keep done output registered, asserted one cycle only.
+
+This fixes the data bit ordering mismatch, aligns counters correctly, and maintains clean FSM operation.

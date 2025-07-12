@@ -1,0 +1,33 @@
+We implement a Moore FSM for the Lemming with explicit three states: WALK_LEFT, WALK_RIGHT, and FALLING/DIGGING combined with a flag. Instead of encoding direction separately, we encode walking direction as states WALK_LEFT and WALK_RIGHT, falling as FALL, and digging as DIG states with explicit states for each direction.
+
+The FSM states:
+
+- WALK_LEFT
+- WALK_RIGHT
+- DIG_LEFT
+- DIG_RIGHT
+- FALL_LEFT
+- FALL_RIGHT
+
+Transitions:
+- From any walking state (WALK_LEFT/RIGHT):
+  - If ground=0 -> fall (FALL_LEFT/RIGHT)
+  - Else if dig=1 -> dig (DIG_LEFT/RIGHT)
+  - Else if bumped:
+    - bump_left: switch to walking right
+    - bump_right: switch to walking left
+    - both bumps: toggle walking direction
+- From DIG states:
+  - If ground=0 -> fall (FALL state with same direction)
+  - Else remain digging
+- From FALL states:
+  - If ground=1 -> resume walking in same direction
+  - Else remain falling
+
+Bump signals only affect direction when on ground and walking, not when falling or digging.
+
+This state-encoded approach avoids separate direction bits, making output assignment simpler and FSM transitions more explicit. The FSM is Moore, with output signals derived directly from states.
+
+areset asynchronously resets to WALK_LEFT.
+
+This approach separates direction fully as part of the state, improving code readability and simplifying logic around direction changes.

@@ -1,0 +1,17 @@
+Refactor the Radix-4 Booth multiplier to use a clear state machine with distinct IDLE, CALC, and DONE states for better control and clarity.
+
+- On reset or IDLE, sign-extend inputs `a` and `b` to 16 bits, extend the multiplier by 1 bit appended zero for Booth encoding (17 bits total), initialize the accumulator, counter, and ready signal.
+
+- In CALC state, at each clock cycle:
+  - Extract the lowest 3 bits of multiplier_reg to decode Booth encoding.
+  - Calculate the Booth factor combinationally.
+  - Update the accumulator with multiplicand multiplied by the Booth factor (shifted by 2*counter).
+  - Arithmetic right shift the multiplier_reg by 2 bits to move to next Booth group.
+  - Increment counter.
+- After 4 cycles, move to DONE state, set ready and output the lower 16 bits of accumulator as product.
+
+- In DONE state, wait for reset or new start.
+
+Use separate combinational logic for Booth decoding and factor calculation, avoiding partial assignments inside the clocked block.
+
+This clear state machine and separation of combinational Booth decoding make the design more reliable and maintainable, fulfilling the problem's requirements precisely.

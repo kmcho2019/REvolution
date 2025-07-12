@@ -1,0 +1,10 @@
+To implement the gshare branch predictor, we need to follow these steps:
+1. Create a module named TopModule with the specified interface.
+2. Implement the 7-bit global branch history register.
+3. Create a 128-entry table of two-bit saturating counters (Pattern History Table, PHT) to store the prediction outcomes.
+4. When a prediction is requested (predict_valid = 1), use the current pc and branch history register to index into the PHT, and produce the predicted branch direction.
+5. Update the branch history register at the next positive clock edge based on the predicted branch direction.
+6. When training is requested (train_valid = 1), update the PHT to reflect the actual branch outcome and recover the branch history register if the branch was mispredicted.
+7. Handle cases where training and prediction occur in the same cycle, giving precedence to training.
+
+The prediction and training logic will be implemented using always blocks in Verilog, with the clock and reset logic handled accordingly.

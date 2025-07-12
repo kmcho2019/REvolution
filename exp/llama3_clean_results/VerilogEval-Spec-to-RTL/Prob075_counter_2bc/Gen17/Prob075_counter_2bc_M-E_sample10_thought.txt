@@ -1,0 +1,11 @@
+To implement a two-bit saturating counter, a novel approach could involve using a Finite State Machine (FSM) with explicitly defined states. This FSM can be designed to handle the increment, decrement, and hold operations based on the `train_valid` and `train_taken` signals. By defining the states and transitions explicitly, we can ensure that the counter behaves as expected while also providing a clear and understandable implementation.
+
+The states can be defined as follows:
+- State 0 (2'b00): The counter is at its minimum value.
+- State 1 (2'b01): The counter is at its intermediate value (weakly not-taken).
+- State 2 (2'b10): The counter is at its intermediate value (weakly taken).
+- State 3 (2'b11): The counter is at its maximum value.
+
+The transitions between these states can be defined based on the `train_valid` and `train_taken` signals. When `train_valid` is high, the FSM transitions to the next state if `train_taken` is high, or to the previous state if `train_taken` is low. If `train_valid` is low, the FSM remains in its current state.
+
+This approach allows for a clear and explicit definition of the counter's behavior, making it easier to understand and modify if needed.

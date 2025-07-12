@@ -1,0 +1,7 @@
+The TopModule will implement a finite state machine (FSM) with the following states:
+1. IDLE: The initial state where the module waits for a byte with in[3] = 1 to start a new message.
+2. BYTE1: After receiving the first byte with in[3] = 1, the module moves to this state and waits for the second byte.
+3. BYTE2: After receiving the second byte, the module moves to this state and waits for the third byte.
+4. DONE: After receiving the third byte, the module signals done in the next cycle and then moves back to the IDLE state to search for the next message boundary.
+
+The FSM will use a counter to keep track of the current state (byte position in the message). When reset is asserted, the FSM will be reset to the IDLE state.

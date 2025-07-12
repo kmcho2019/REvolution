@@ -1,0 +1,10 @@
+To solve this problem, we need to design a finite state machine (FSM) that follows the specified behavior. The FSM can be broken down into several states:
+
+- State A: Initial state, reset state. The FSM stays in this state as long as the reset input is asserted.
+- State B: Temporary state where output f is set to 1 for one clock cycle after reset is de-asserted.
+- State C: Monitoring state where the FSM monitors the x input for the sequence 1, 0, 1.
+- State D: State where output g is set to 1 and the FSM monitors the y input.
+- State E: Final state where g is maintained as 1 permanently if y becomes 1 within two clock cycles.
+- State F: Final state where g is set to 0 permanently if y does not become 1 within two clock cycles.
+
+We will use a parameterized enum to define these states. The FSM's behavior will be implemented using always blocks and conditional statements to transition between states based on inputs and current state.

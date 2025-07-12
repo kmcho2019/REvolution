@@ -1,0 +1,15 @@
+Optimized fusion strategy combining the best aspects of both examples:
+1. Maintain minimal state representation (single bit) for area efficiency
+2. Eliminate explicit state parameters since they don't provide significant benefit in this simple case
+3. Combine state transition and output logic in a single always block for better timing
+4. Use direct inversion for power efficiency (better than XOR approach)
+5. Remove default case since we only have two states and synthesis tools can optimize better
+6. Use non-blocking assignments consistently for all sequential elements
+7. Optimize state transitions to occur only when needed (first '1' detection)
+
+Key improvements:
+- Simpler than Example 2 by removing state parameters and default case
+- More power efficient than Example 1 by using direct inversion
+- Better timing than both by having all logic in one always block
+- Smaller area than both by using minimal state representation
+- Cleaner than Example 1 by using proper state machine structure

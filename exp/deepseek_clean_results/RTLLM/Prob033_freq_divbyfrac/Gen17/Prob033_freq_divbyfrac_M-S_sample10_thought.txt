@@ -1,0 +1,16 @@
+Simplified and corrected design for 3.5x fractional divider:
+
+1. Core concept: Use a single counter (0-6) to track the division cycle
+2. Key improvements:
+   - Generate main clock (clk_main) high for 4 cycles (0-3) and low for 3 cycles (4-6)
+   - Create phase-shifted version (clk_shift) by toggling on negative edges
+   - Combine both clocks with OR to get final output
+3. Advantages:
+   - Single counter simplifies control logic
+   - Proper phase relationship achieved through edge-triggered flip-flop
+   - Correct duty cycle maintained (50% target)
+   - Minimal hardware implementation
+4. Behavior:
+   - Original period = T
+   - Divided period = 3.5T (exactly)
+   - Smooth transitions between high and low phases

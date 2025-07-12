@@ -1,0 +1,5 @@
+To implement the finite state machine (FSM) described, we can use a Moore machine approach, where the output (done) is dependent on the state. The FSM will have several states: idle, start_bit, data_bits, and stop_bit. When the FSM is in the idle state, it waits for a start bit (0). Once a start bit is detected, it transitions to the start_bit state. Then, it waits for 8 clock cycles to collect the 8 data bits in the data_bits state. After collecting all 8 data bits, it transitions to the stop_bit state to check for the stop bit (1). If the stop bit is correct, it sets the done output high for one clock cycle and returns to the idle state. If the stop bit is incorrect, it stays in the stop_bit state until a stop bit (1) is detected, then it returns to the idle state.
+
+We will use a counter to keep track of the number of data bits collected and a shift register to store the collected data bits. However, since the problem doesn't require storing the received data, we won't implement the shift register.
+
+The FSM will also have an active-high synchronous reset input. When the reset is high, the FSM will be reset to the idle state.

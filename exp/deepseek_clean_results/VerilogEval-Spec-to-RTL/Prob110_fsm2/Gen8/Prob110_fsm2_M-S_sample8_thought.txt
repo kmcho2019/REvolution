@@ -1,0 +1,7 @@
+The state machine can be simplified by recognizing it's essentially a JK flip-flop with asynchronous reset. We can:
+1. Remove the explicit state encoding since the output directly represents the state
+2. Simplify the transition logic to a single expression that captures both cases:
+   - When in OFF state (0), transition to ON (1) only if j=1
+   - When in ON state (1), transition to OFF (0) only if k=1
+3. The output is simply the state register value
+This reduces the logic to a single conditional assignment without needing a case statement.

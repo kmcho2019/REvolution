@@ -1,0 +1,9 @@
+To optimize for better power, performance, and area (PPA) while maintaining the single-register constraint, we can apply clock gating to stop the counter from updating when it is already zero and load is not asserted. This reduces unnecessary toggling, lowering dynamic power consumption without affecting functionality.
+
+Additionally, the zero detection (tc output) can be implemented as a simple wire with minimal logic, and the decrement logic remains simple.
+
+By gating the clock to the counter register when counting is not needed, we reduce switching activity and possibly improve timing by reducing the load on the clock tree.
+
+The implementation adds a gated clock enable signal derived from the load input and counter being non-zero.
+
+This approach keeps the design clean and synthesizable while enhancing PPA, especially power, without changing the functional behavior.

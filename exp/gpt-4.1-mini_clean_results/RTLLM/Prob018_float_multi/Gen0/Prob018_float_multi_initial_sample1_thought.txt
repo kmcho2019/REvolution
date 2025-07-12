@@ -1,0 +1,13 @@
+Implement a multi-cycle IEEE-754 single-precision floating-point multiplier with a 3-bit counter to step through:
+1. Extract inputs (sign, exponent, mantissa) on cycle 0.
+2. Handle special cases (zero, infinity, NaN) on cycle 1.
+3. Multiply mantissas (including implicit leading 1) and add exponents - bias on cycle 2.
+4. Normalize the product mantissa and adjust exponent if needed on cycle 3.
+5. Perform rounding using guard, round, sticky bits, adjust exponent if rounding overflow occurs on cycle 4.
+6. Handle exponent overflow (set to infinity) or underflow (set to zero), compose final IEEE 754 result, and output on cycle 5.
+
+Reset initializes the counter and output. Throughout, handle sign as XOR of input signs.
+
+All intermediate registers (mantissas, exponents, signs, product, rounding bits) stored in regs. Output z updated on final cycle.
+
+This approach balances complexity and correctness within the multi-cycle structure and given internal signals.

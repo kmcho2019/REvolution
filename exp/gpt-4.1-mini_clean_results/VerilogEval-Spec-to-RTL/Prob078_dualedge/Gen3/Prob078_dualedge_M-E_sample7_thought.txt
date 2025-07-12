@@ -1,0 +1,21 @@
+An alternative approach to implement a dual-edge triggered flip-flop without using an inverted clock is to leverage a faster internal clock domain and synchronize the input data accordingly.
+
+Specifically, we use a positive-edge triggered flip-flop clocked by the input clock (clk) to sample the input data at the rising edge. Then, we create a derived enable signal that pulses at every clock edge (both rising and falling) by XOR-ing the current clock with its delayed version.
+
+We then use a second register clocked by the same clk but enabled by this edge-detect pulse to capture the input data on both edges effectively.
+
+Another way is to use a double-data-rate style sampling inside one clock domain by capturing the input at clk edge and between clk edges (using an enable triggered by a clock toggle). The output toggles accordingly.
+
+The implementation detail:
+
+- Use a register to store the previous clk value, call it clk_d.
+- Generate a pulse (edge_detect) when clk differs from clk_d (meaning an edge occurred).
+- On the rising edge of clk, update clk_d.
+- Also, on the rising edge of clk and when edge_detect is high, capture d into a register q_int.
+- Output q_int as q.
+
+Since this only triggers on the rising edge of clk, we need to guarantee capturing d on both edges. To do that, we will clock the second flip-flop by clk but sample the input d when the edge_detect is high, which corresponds to either edge of clk.
+
+In effect, by generating an enable pulse on every edge and sampling d accordingly in a single clock domain, we emulate a dual-edge flip-flop.
+
+This technique avoids using an inverted clock and fits FPGA-friendly design practices.

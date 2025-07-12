@@ -1,0 +1,10 @@
+The root cause of the bug is that the output `out` is declared as a single bit, while inputs `a` and `b` are 8-bit vectors. A proper 2-to-1 mux for 8-bit vectors should output all 8 bits from either `a` or `b` depending on `sel`. To fix this, the output port should be declared as an 8-bit vector matching the width of the inputs.
+
+Architecturally, instead of using bitwise AND and OR on vectors, a cleaner approach is to use a conditional (ternary) operator at the vector level to select between `a` and `b`. This eliminates the need for bitwise operations and avoids width mismatches.
+
+So the new implementation will:
+- Change `out` to be an 8-bit vector.
+- Use the ternary operator `assign out = sel ? b : a;` to select entire vectors.
+- This keeps the design clear, concise, and synthesizable.
+
+This approach addresses the fundamental bug, aligns port widths, and provides a clean, readable 2-to-1 mux for 8-bit inputs.

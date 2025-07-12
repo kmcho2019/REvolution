@@ -1,0 +1,7 @@
+Simplify the design by eliminating explicit per-bit assignments of fixed zeros and leveraging concatenation and vector shifts to handle neighbor relationships uniformly. This reduces special-casing and makes the code more concise without changing functionality:
+
+- For out_both, shift the input left by one (in << 1) and AND with in, then zero the MSB by setting out_both[99] = 0.
+- For out_any, shift input right by one (in >> 1) and OR with in, then zero the LSB by setting out_any[0] = 0.
+- For out_different, create a rotated version of input where in[99] becomes in[0]'s neighbor, and XOR with in.
+
+This approach reduces indexing complexity and special cases, simplifies code, and keeps combinational logic minimal.

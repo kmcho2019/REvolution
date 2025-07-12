@@ -1,0 +1,17 @@
+To implement this Moore state machine, we'll define the following states:
+- Walking: The Lemming is walking left or right.
+- Falling: The Lemming has fallen and is in mid-air.
+- Digging: The Lemming is digging into the ground.
+- Splattered: The Lemming has fallen for too long and has splattered.
+
+We'll use a 2-bit state register to encode these states. The next state will be determined by the current state and the input signals. 
+
+We'll use a 5-bit counter to count the number of clock cycles the Lemming has been falling.
+
+The output signals walk_left, walk_right, aaah, and digging will be generated based on the current state.
+
+In the Walking state, if the ground signal goes low, the Lemming will transition to the Falling state. If the dig signal is high, the Lemming will transition to the Digging state. If the bump_left or bump_right signals are high, the Lemming will switch direction.
+
+In the Falling state, if the ground signal goes high, the Lemming will transition to the Splattered state if it has been falling for more than 20 clock cycles. Otherwise, it will transition to the Walking state and resume walking in the same direction.
+
+In the Digging state, if the ground signal goes low, the Lemming will transition to the Falling state. If the ground signal is still high, the Lemming will continue digging.

@@ -1,0 +1,12 @@
+The original solution had two main issues:
+1. Output port names didn't match requirements (Y2/Y4 vs Y1/Y3)
+2. Only implemented partial next-state logic (missing Y2/Y4)
+
+Improvement strategy:
+1. Correct port names to match specification (Y2 for y[1], Y4 for y[3])
+2. Complete the next-state logic by:
+   - Y2 (next state B) = current state A (y[0]) AND w=0
+   - Y4 (next state D) = w=1 AND (current state B/C/E/F)
+3. Maintain one-hot encoding assumption
+4. Keep direct bit references for clarity
+5. Optimize logic by factoring common terms

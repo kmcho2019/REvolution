@@ -1,0 +1,11 @@
+To simplify the 32-bit carry-lookahead adder implementation, I will keep the same top-level structure of using two 16-bit CLA blocks but will remove the explicit group propagate/generate outputs and higher-level carry calculation.
+
+Instead, the lower 16-bit CLA will have carry-in 0, and its carry-out will be directly fed as carry-in to the upper 16-bit CLA block.
+
+This eliminates the need for extra propagate/generate signals and top-level carry logic, reducing complexity while maintaining correct functionality.
+
+Also, I will consistently use zero-based indexing internally and properly map the [32:1] input/output ports to [31:0] internally for clarity.
+
+The 16-bit CLA block will implement the carry-lookahead logic internally with the generate and propagate signals and carry computations done via a simple ripple carry chain of carries computed from G and P signals for clarity and simplicity.
+
+This approach maintains the CLA structure, reduces signal overhead, and remains fully functional as a 32-bit CLA adder.

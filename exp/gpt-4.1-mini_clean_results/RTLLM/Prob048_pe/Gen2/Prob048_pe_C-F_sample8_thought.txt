@@ -1,0 +1,17 @@
+I will combine the advantages of both example designs into an improved multiplying accumulator (MAC_PE) as follows:
+
+1. Use synchronous reset only (remove asynchronous reset) for easier timing closure and design predictability, as in Example 1.
+
+2. Implement a 64-bit internal accumulator register to store the full 64-bit product sum, preventing overflow and preserving precision during accumulation, as in Example 1.
+
+3. Output only the lower 32 bits of the accumulator to meet the 32-bit output port requirement, avoiding truncation during accumulation and only truncating at the output stage.
+
+4. Keep the multiplication and accumulation in a single always @(posedge clk) block for synchronous operation.
+
+5. Use non-blocking assignments consistently for proper sequential logic behavior.
+
+6. Use wire for the 64-bit product and a 64-bit register for the accumulator.
+
+This fusion ensures functional correctness, better precision (no silent overflow), clean synchronous reset logic, and a straightforward design. It improves on Example 2 by avoiding the overflow problem and on Example 1 by clarifying reset behavior and coding style. It is synthesis-friendly and suitable for timing closure in typical FPGA/ASIC flows.
+
+Optional PPA optimizations (pipelining, clock gating) can be considered later but are out of scope for this base design.

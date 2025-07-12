@@ -1,0 +1,15 @@
+Novel approach using dual-stage edge detection with delayed sampling:
+
+1. **Dual-Stage Pipeline**: Implement two stages of input sampling to ensure proper edge detection timing. The first stage captures the input, and the second stage uses this captured value for edge detection.
+
+2. **Edge Detection Window**: Instead of comparing current and previous inputs directly, we create a detection window where we look for a '1' followed by '0' across two consecutive clock cycles.
+
+3. **Sticky Capture with Priority**: The capture register has priority over new detections - once a bit is captured, it stays set regardless of new transitions until reset.
+
+4. **Explicit Timing Control**: The two-stage pipeline ensures clean timing separation between sampling and edge detection, eliminating race conditions.
+
+Key advantages:
+- More robust edge detection with proper timing
+- Clear separation between sampling and detection phases
+- Maintains all required functionality
+- Easier to verify timing behavior

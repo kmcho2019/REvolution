@@ -1,0 +1,15 @@
+Refactored approach:
+1. Maintain the same 2-bit counter concept but prevent rollover
+2. Add a 'done' flag to track when we've completed the 4 cycles
+3. shift_ena should be high only when:
+   - We're in reset (immediate assertion)
+   - OR counter is <3 and we're not done yet
+4. The done flag gets set after 4 cycles and remains set until reset
+5. This ensures:
+   - Exactly 4 cycles of shift_ena after reset
+   - No unwanted reassertions
+   - Minimal hardware (still just 2-bit counter plus 1-bit flag)
+6. Key improvements:
+   - Explicit done condition prevents rollover issues
+   - Clear state tracking
+   - Still synchronous reset

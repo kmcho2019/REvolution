@@ -1,0 +1,5 @@
+Refactor the FSM by using binary-encoded states instead of one-hot encoding to reduce flip-flop count and slightly lower area and power. Also, separate the next state logic and output logic using combinational functions for clarity. The FSM remains Mealy-type, where MATCH depends on the current state and input.
+
+Use a single always_ff block with non-blocking assignments for state update and a combinational always_comb block for next state and output logic. Implement states with localparam encoded as 3-bit values for compactness.
+
+This structure improves readability and maintainability by cleanly separating combinational and sequential logic and reduces resource usage while preserving the original behavior including overlapping sequence detection.

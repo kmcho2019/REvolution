@@ -1,0 +1,11 @@
+Refine the FSM and output logic to ensure `valid_out` and `data_out` are held stable for exactly one clock cycle after the second valid input, and that no premature or partial outputs occur. Use a simple 1-bit flag (data_lock) to indicate when the first valid 8-bit input is stored, and hold it until the second input arrives. On the clock edge where the second valid input arrives, latch both inputs and assert `valid_out` and `data_out` in the following clock cycle, thus delaying output by one cycle as required.
+
+Specifically:
+- Use a `data_lock` flag to remember if first data is stored.
+- Store first 8-bit input on first valid_in with data_lock cleared.
+- When a second valid_in arrives and data_lock is set, concatenate stored first data and new second data in a register (`data_out`), and assert `valid_out` in the next cycle.
+- Clear data_lock after output generation to prepare for the next pair.
+- `valid_out` is asserted for exactly one cycle, only in the cycle after second input.
+- On reset, all registers including data_lock, data_out, and valid_out clear.
+
+This method avoids multi-cycle FSMs, keeps timing clean and predictable, and fully meets the problem spec and testbench expectations.

@@ -1,0 +1,21 @@
+Novel Architecture Idea:
+1. Carry-Select Adder-Subtractor:
+   - Implement parallel adders for both possible carry-in scenarios (0 and 1)
+   - Use do_sub to select between addition and subtraction modes
+   - Mux the correct result based on actual carry-out
+
+2. Early Zero Detection:
+   - Compute zero flags for both possible results in parallel
+   - Combine with carry-out to determine final zero flag
+   - This allows zero detection to happen concurrently with sum computation
+
+3. Benefits:
+   - Potentially better timing due to parallel computation paths
+   - Early zero detection reduces critical path
+   - Power-efficient since only one adder path is active per operation
+   - Clean implementation with no intermediate registers
+
+Key Innovations:
+- Parallel computation of both possible results
+- Carry-based selection reduces final mux complexity
+- Zero detection integrated into adder structure

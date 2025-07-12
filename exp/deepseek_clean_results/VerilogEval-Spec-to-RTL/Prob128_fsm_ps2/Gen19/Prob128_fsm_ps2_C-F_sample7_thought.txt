@@ -1,0 +1,19 @@
+Fusion Strategy:
+1. Combine the counter-based approach from Example 1 with the shift register concept from Example 2
+2. Use a 2-bit counter for state tracking (simpler than shift register for this specific case)
+3. Maintain the direct 'done' assignment from Example 1 for better timing
+4. Keep the synchronous reset behavior from both examples
+5. Optimize state transitions by:
+   - Only incrementing counter when in message (like Example 1)
+   - Clear counter after full message (like both examples)
+6. Resulting benefits:
+   - Clear state progression (0=idle, 1=byte1, 2=byte2, 3=byte3)
+   - Minimal logic depth for better timing
+   - Efficient power usage with conditional counting
+   - Small area footprint (2-bit counter + 1-bit output)
+
+Key Improvements:
+- More intuitive state representation than shift register
+- Fewer state transitions than pure counter approach
+- Clean separation of reset, idle, and counting logic
+- Optimal PPA balance from both examples

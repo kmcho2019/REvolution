@@ -1,0 +1,11 @@
+To implement a 16-bit divider module, we can utilize a Restoring Division algorithm. This approach involves iteratively subtracting the divisor from the dividend and shifting the result to perform the division. The key to this algorithm is restoring the dividend after each subtraction if the result is negative, hence the name Restoring Division.
+
+Our novel architectural idea is to use a combination of shifters and subtractors to perform the division operation in a series of stages. Each stage will involve subtracting the divisor from the current dividend (or the remainder from the previous stage), checking the sign of the result, and shifting the result accordingly to perform the division.
+
+We will use two main components in our design: a subtractor to perform the subtraction and a shifter to perform the shifting. The subtractor will take the current dividend (or remainder) and the divisor as inputs and produce the result of the subtraction. The shifter will shift the result of the subtraction to the left or right based on the sign of the result.
+
+To perform the division, we will iterate through the bits of the dividend from most significant to least significant, performing the subtraction and shifting at each stage. If the result of the subtraction is positive, we will set the corresponding bit in the quotient to 1; otherwise, we will set it to 0.
+
+Our design will utilize a for loop to iterate through the bits of the dividend and perform the division operation at each stage. The final result will be the quotient and the remainder after the last stage.
+
+This approach will allow us to efficiently perform the division operation in a series of stages, making it suitable for implementation in combinational logic.

@@ -1,0 +1,10 @@
+To refactor the clock generator while preserving the periodic toggling every half PERIOD without using recursive tasks or forever loops, I will implement the clock as a simple free-running oscillator driven by a non-blocking always block with a delay. 
+
+Specifically:
+- Declare clk as reg output initialized to 0.
+- Use an initial block to initialize clk.
+- Use an always block with a delay #(PERIOD/2) to toggle clk continuously.
+  
+This approach uses a standard Verilog idiom for clock generation, avoids recursion, and is clear and synthesizable in some simulators (though delays are generally simulation-only). 
+
+It maintains the same behavior—clk toggles every half PERIOD—using a more robust structure.

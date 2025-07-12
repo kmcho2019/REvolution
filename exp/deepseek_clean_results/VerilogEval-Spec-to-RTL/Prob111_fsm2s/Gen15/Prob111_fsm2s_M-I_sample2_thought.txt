@@ -1,0 +1,16 @@
+To optimize the design based on the PPA metrics, I'll focus on improving timing while maintaining minimal area and power. The negative slack suggests the critical path needs attention. My strategy:
+
+1. **Timing Improvement**:
+   - Remove the inversion operation (~k) from the state transition logic to simplify the critical path
+   - Use positive logic comparisons which typically synthesize more efficiently
+
+2. **Power and Area**:
+   - Maintain the minimal binary state encoding
+   - Keep the direct output assignment (state-to-output)
+   - Use simple if-else structure that synthesizes cleanly
+
+3. **Reset Handling**:
+   - Keep synchronous reset for consistency with original spec
+   - Maintain reset-to-OFF behavior
+
+The improved version will use explicit state transitions without bitwise operations, which should help with timing while keeping the same functionality.

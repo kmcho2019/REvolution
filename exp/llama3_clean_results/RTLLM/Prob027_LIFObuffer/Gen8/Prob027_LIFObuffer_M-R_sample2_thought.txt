@@ -1,0 +1,11 @@
+To refactor the given LIFO buffer code, we will maintain its core functionality but restructure it for improved readability and efficiency. The main changes include using combinational logic for flag updates and optimizing the handling of the reset condition. We will also ensure correct initialization of the buffer array.
+
+First, we recognize that the buffer array cannot be initialized at declaration time as attempted in the original code. Instead, we'll initialize it within an always block under the reset condition. This ensures that the buffer is correctly reset to zero when the Rst signal is high.
+
+Second, we maintain the use of a write counter (WC) and a read counter (RC) to track the positions in the buffer for write and read operations, respectively. These counters will still be updated based on the RW signal and the buffer's full and empty states.
+
+Third, to improve the code's structure, we use separate always blocks for handling the reset condition and the write and read operations. This separation makes the code more modular and easier to understand.
+
+Lastly, we keep the combinational logic for updating the EMPTY and FULL flags, as it simplifies the design and potentially reduces complexity.
+
+By refactoring the code in this manner, we aim to enhance its maintainability and readability while preserving its original functionality.

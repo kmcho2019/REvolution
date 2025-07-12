@@ -1,0 +1,14 @@
+Novel Handshake Synchronization Architecture:
+1. Toggle Signal Generation: Create a toggle signal in clk_a domain that flips every time new valid data arrives (data_en high)
+2. Dual Synchronizer Path: Synchronize both the data and toggle signal independently to clk_b domain
+3. Edge Detection: Detect transitions of the synchronized toggle signal to identify valid data windows
+4. Data Sampling: Capture data only during valid windows when the toggle signal has changed
+5. Power Optimization: Use the infrequent data changes (≥10 clk_b cycles) to minimize switching activity
+
+Key Advantages:
+- Robust handshake mechanism ensures data integrity
+- Clear indication of valid data periods through toggle transitions
+- Reduced metastability risk through independent synchronization paths
+- Power efficient due to infrequent data changes
+- Simple edge detection logic in clk_b domain
+- No need for explicit enable signal synchronization

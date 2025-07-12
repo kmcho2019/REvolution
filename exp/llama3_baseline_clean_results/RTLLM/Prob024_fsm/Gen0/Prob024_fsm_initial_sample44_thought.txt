@@ -1,0 +1,12 @@
+To implement a Mealy FSM detection circuit in Verilog, we need to define the states and their corresponding transitions based on the input sequence. The sequence to be detected is 10011. We will use a state machine with six states: S0 (initial state), S1, S2, S3, S4, and S5. 
+
+- In the initial state (S0), if the input is 1, we transition to S1; otherwise, we stay in S0.
+- In state S1, if the input is 0, we transition to S2; otherwise, we go back to S0.
+- In state S2, if the input is 0, we transition to S3; otherwise, we go back to S0.
+- In state S3, if the input is 1, we transition to S4; otherwise, we go back to S0.
+- In state S4, if the input is 1, we transition to S5; otherwise, we go back to S0.
+- In state S5, the MATCH signal is set to 1 because we have detected the sequence 10011. If the input is 1, we stay in S5 (since we are detecting continuous input and loop detection), and if the input is 0, we go back to S0 but set MATCH to 0 because the sequence has ended.
+
+We use a parameter to define the number of states, an enum to define the states themselves, and a reg to hold the current state. The MATCH output is determined based on the current state (S5 for a match).
+
+We also need to handle the reset condition. When RST is active, the FSM should reset to the initial state S0, and the MATCH signal should be set to 0.

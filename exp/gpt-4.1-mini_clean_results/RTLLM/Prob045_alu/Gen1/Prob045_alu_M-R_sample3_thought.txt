@@ -1,0 +1,9 @@
+Refactor the ALU to a fully combinational design using continuous assignments instead of an always block. Compute all intermediate results (add, sub, shifts, logical ops) as wires upfront. Then use a combinational multiplexer (case expression in an assign) to select the final output 'r' based on 'aluc'. This eliminates the procedural always block and registers for intermediate results, thus simplifying the logic and potentially improving synthesis by enabling more parallelism.
+
+Carry and overflow signals will also be computed as combinational wires derived from the intermediate results corresponding to addition and subtraction, and zero/negative flags from the result.
+
+The flag output will be assigned using a conditional expression to '1' for SLT and SLTU, and high-impedance ('z') otherwise, consistent with original spec.
+
+This structure provides a clean separation of all possible operations, avoids procedural assignments, and clarifies combinational dependencies. It is easier to analyze for timing and optimization by synthesis tools.
+
+The default output for unknown aluc is zero (instead of high-impedance) to avoid potential synthesis issues with tri-states in combinational logic.

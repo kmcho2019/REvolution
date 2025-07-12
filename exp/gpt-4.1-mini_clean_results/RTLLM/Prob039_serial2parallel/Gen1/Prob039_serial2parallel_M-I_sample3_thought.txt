@@ -1,0 +1,7 @@
+The main correction is to ensure the first received serial bit is stored in the most significant bit (MSB) of the shift register, shifting the register left on each new bit. This matches the requirement that the output parallel data places the first bit at MSB and the last bit at LSB.
+
+Also, optimize by avoiding unnecessary assignments to dout_valid every clock cycle; only update it when outputting valid data.
+
+Keep the synchronous active-low reset and 4-bit counter. On receiving 8 valid bits, output the parallel data, set dout_valid high for one cycle, and reset the counter.
+
+This approach improves functional correctness and slightly reduces switching activity, optimizing for power without adding area or performance overhead.

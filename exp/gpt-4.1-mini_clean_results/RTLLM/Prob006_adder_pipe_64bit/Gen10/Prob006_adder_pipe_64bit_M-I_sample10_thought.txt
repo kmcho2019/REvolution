@@ -1,0 +1,15 @@
+The original design attempts to pipeline a 64-bit ripple carry adder by processing one bit addition per clock cycle stage, resulting in 65 pipeline stages (64 bits + 1 carry out), which ensures one addition per clock cycle after initial latency. However, the implementation uses unusual and inefficient constructs, such as 2D arrays for pipelined operands and bitwise indexing, which complicates readability and may cause synthesis or simulation issues.
+
+My improvement strategy is:
+1. Use a one-dimensional pipeline register array for the operands, where each stage holds the entire 64-bit operand vector aligned with the carry and sum bit for that stage.
+2. Instead of storing entire 64-bit operands at each stage (which is redundant because only one bit is needed per stage), keep only the bits necessary for each stage (bit i of A and B at pipeline stage i). This drastically reduces the storage needed.
+3. Use shift registers or small registers to hold bits of operands at each stage.
+4. Maintain carry bits across pipeline stages.
+5. Pipeline the input enable signal as a 65-bit shift register to generate the output enable (o_en).
+6. Assemble the final 65-bit result from the sum bits and final carry out after the last stage.
+7. Reset all pipeline registers asynchronously with active-low reset.
+8. This approach reduces memory usage and avoids unusual indexing, simplifies the design, and improves clarity.
+
+This refined design pipelines each bit addition over 65 clock cycles with one addition accepted each clock cycle, and the output valid after 65 cycles.
+
+Note: This approach is consistent with a classic "ripple carry adder" broken into a bitwise pipeline. The latency is 65 cycles, throughput is one sum per cycle after warm-up, and the design efficiently uses registers and control signals.

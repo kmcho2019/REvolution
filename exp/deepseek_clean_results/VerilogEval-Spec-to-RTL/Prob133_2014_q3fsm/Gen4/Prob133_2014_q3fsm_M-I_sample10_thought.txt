@@ -1,0 +1,19 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. **Timing Optimization**:
+   - Replace the 3-bit adder with a more efficient population count circuit using LUT-based counting
+   - Merge the modulo-3 counter logic with the state transition logic to reduce path delays
+
+2. **Power Optimization**:
+   - Add clock gating for the w_shift register when in state A
+   - Only update the evaluate flag when needed (at window boundaries)
+
+3. **Area Optimization**:
+   - Combine the counter and w_shift register into a single 3-bit register that tracks both
+   - Use a more compact encoding for the ones_count calculation
+
+Key changes:
+- New combined counter/shift register structure
+- Optimized population count logic
+- Reduced switching activity through conditional updates
+- More efficient state encoding and transitions

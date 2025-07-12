@@ -1,0 +1,19 @@
+To improve the original design's PPA metrics:
+
+1. Simplify equality detection by directly using a single 4-bit XNOR reduction with the & operator instead of intermediate signals. This slightly reduces gate count and wiring complexity.
+
+2. Use a ripple borrow approach instead of a full carry-lookahead borrow logic. This reduces logic complexity and area at the expense of slightly increased worst-case delay, which for a 4-bit comparator is acceptable.
+
+3. Optimize internal signal usage by combining borrow computations inline without intermediate wires.
+
+4. Remove redundant intermediate wires to save area and power.
+
+5. Retain mutual exclusivity of outputs and fully combinational logic.
+
+Overall, this yields a simpler and smaller design with lower power and area, with only modest timing impact acceptable at this scale.
+
+The design will:
+- Compute bitwise borrow (g) and propagate (p).
+- Ripple borrow from LSB to MSB.
+- Compute equality using a direct bitwise reduction of XNORed A and B.
+- Outputs mutually exclusive signals based on borrow_out and equality.

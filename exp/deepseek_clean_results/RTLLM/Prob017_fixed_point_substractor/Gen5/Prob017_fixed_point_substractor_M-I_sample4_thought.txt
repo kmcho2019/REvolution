@@ -1,0 +1,17 @@
+The original solution is functionally correct but can be improved for better PPA (Power, Performance, Area) metrics. Here's the improvement strategy:
+
+1. **Parameter Validation**: Move to a more synthesis-friendly approach using `ifdef for simulation checks
+2. **Zero Detection**: Optimize the zero detection logic by:
+   - Using a simple equality comparator instead of bitwise OR reduction
+   - Moving the zero check to only examine the magnitude bits (N-1:0)
+3. **Sign Handling**: Simplify the sign logic by relying on Verilog's built-in signed arithmetic
+4. **PPA Optimization**:
+   - Performance: The equality comparator will have better timing than OR reduction
+   - Power: Reduced switching activity in the zero detection logic
+   - Area: Simpler comparator uses less resources than OR reduction tree
+
+Key changes:
+- Replace OR reduction with equality comparator
+- Remove redundant sign handling (Verilog signed arithmetic handles it)
+- Cleaner parameter validation
+- Maintain same Q.N fixed-point format

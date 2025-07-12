@@ -1,0 +1,12 @@
+Novel Architectural Idea:
+1. State Encoding Optimization: Use a 2-bit state register to encode all possible states (LEFT, RIGHT, FALL_LEFT, FALL_RIGHT) instead of separate state and direction registers. This reduces register count and simplifies transitions.
+2. Edge-Triggered Bump Handling: Only respond to bump signals on their rising edges to prevent multiple direction changes in a single clock cycle.
+3. Predictive Direction Handling: When falling, remember the last walking direction in the state itself, eliminating the need for a separate direction register.
+4. Output Encoding: Use a simple decoder for outputs based on the current state, making the output logic more regular and potentially smaller.
+5. Reset Optimization: Initialize to LEFT state directly in the state encoding.
+
+Key Benefits:
+- Reduced register count (2 bits vs previous 1+1 bits)
+- More deterministic bump handling
+- Clearer state transitions
+- Potential for better timing due to simpler output logic

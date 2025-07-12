@@ -1,0 +1,15 @@
+Novel Architecture: Hierarchical Neighbor Counting with Block RAM Optimization
+
+Key Innovations:
+1. Block RAM Utilization: Store the game state in a 16x16 block RAM (256 bits) to reduce register usage and improve area efficiency.
+2. Hierarchical Counting: Divide the grid into 4x4 blocks (16 blocks total). First count neighbors within each block, then combine counts across adjacent blocks.
+3. Pipelined Processing: Process neighbor counts in two pipeline stages to improve timing:
+   - Stage 1: Calculate intra-block neighbor counts
+   - Stage 2: Combine inter-block neighbor counts and compute next state
+4. Address Generation Unit: Use a dedicated unit to generate wrapped addresses for neighbor access patterns.
+
+Advantages:
+- Reduced area through BRAM usage
+- Better timing through pipelining
+- Lower power consumption by processing blocks sequentially
+- Maintains full parallelism within each processing stage

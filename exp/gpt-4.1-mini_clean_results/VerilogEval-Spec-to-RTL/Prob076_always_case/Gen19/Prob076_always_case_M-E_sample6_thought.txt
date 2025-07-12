@@ -1,0 +1,7 @@
+Implement the 6-to-1 multiplexer by concatenating all data inputs into a single wide vector and using the sel input to index into this vector with bit slicing. Since each data input is 4 bits and there are 6 inputs, concatenate them into a 24-bit vector. Then, use sel as an index to select the correct 4-bit segment.
+
+To handle invalid sel values (6 or 7), first check if sel is within range (0 to 5) and only then output the corresponding segment; otherwise, output zero.
+
+This approach avoids case statements or functions and relies on vector slicing, which can be more succinct and allow the synthesis tool to infer a wide mux, potentially optimizing the mux logic.
+
+The output is assigned via a continuous assignment, so out is declared as a wire (not reg). This purely combinational approach is clean and efficient.

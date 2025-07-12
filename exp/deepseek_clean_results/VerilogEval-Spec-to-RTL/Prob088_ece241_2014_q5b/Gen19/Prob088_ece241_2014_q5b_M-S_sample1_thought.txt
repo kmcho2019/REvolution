@@ -1,0 +1,18 @@
+Simplification Strategy:
+1. State Representation:
+   - Since this is a one-hot encoded FSM with only 2 states, we can represent it with a single flip-flop (state_A)
+   - State B is implicitly represented by ~state_A
+
+2. Output Logic:
+   - The output z is simply the XOR of state_A and x, which matches the truth table:
+     - In state A (state_A=1): z = x
+     - In state B (state_A=0): z = ~x
+
+3. Next State Logic:
+   - Only need to transition from A to B when x=1
+   - Once in B, stay in B (next_state_A = 0)
+
+Key Improvements:
+- Eliminated separate next_state logic by directly using x and current state
+- Simplified output to a single XOR operation
+- Maintained minimal state representation and asynchronous reset

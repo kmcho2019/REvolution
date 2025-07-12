@@ -1,0 +1,5 @@
+To simplify the existing pulse detection module, we will focus on reducing the number of states in the state machine. We can achieve this by removing the separate state for the falling edge and instead, directly transition from the high state to the initial state when a pulse is detected. This simplification reduces the complexity of the state machine and minimizes the required logic.
+
+The simplified state machine will have two main states: an initial state (IDLE) and a high state (HIGH). The IDLE state will be the default state where the module waits for a rising edge on the data_in signal. When a rising edge is detected, the module transitions to the HIGH state. The HIGH state will check for a falling edge on the data_in signal, and upon detection, it will assert the data_out signal for one clock cycle to indicate a pulse and then return to the IDLE state.
+
+By simplifying the state machine, we reduce the area utilization and improve the timing of the design, making it more efficient and easier to implement.

@@ -1,0 +1,11 @@
+To improve PPA while preserving functionality, I will implement a one-hot FSM encoding to reduce combinational complexity and improve timing by simplifying next_state logic. One-hot encoding often leads to faster state decoding at the expense of a few more flip-flops, which is acceptable here given the small number of states.
+
+I will add enable signals to the bit counter and shift register updates to minimize switching activity, updating them only in the RECEIVE state. This avoids unnecessary toggling when idle, improving power.
+
+The shift register will shift right on each RECEIVE clock edge, loading the new input bit into the MSB, maintaining LSB-first reception. When not in RECEIVE, shift_reg holds value to reduce toggling.
+
+The done signal pulses high one cycle in the STOP state only when the stop bit is valid (in == 1). out_byte updates at the same time.
+
+The FSM will transition from ERROR_WAIT to IDLE only when in == 1 (valid stop bit recovered), waiting otherwise.
+
+Overall, the one-hot FSM combined with gated enables reduces critical path complexity and switching, improving timing and power while keeping area increase minimal and functionality intact.

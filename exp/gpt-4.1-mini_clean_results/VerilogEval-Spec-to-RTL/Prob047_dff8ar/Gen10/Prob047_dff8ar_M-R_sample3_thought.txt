@@ -1,0 +1,8 @@
+I will refactor the code by explicitly instantiating eight individual D flip-flops with asynchronous resets rather than using a parameterized vector module. This approach will:
+
+- Maintain the same functional behavior with positive edge clock and async reset.
+- Enhance clarity by explicitly showing the per-bit flip-flop structure.
+- Avoid vector operations and use separate always blocks for each bit.
+- Provide an alternative style emphasizing modularity at the bit level rather than vectorization.
+
+Each bit's flip-flop will have its own always block triggered by posedge clk or posedge areset, setting q[i] to 0 on reset or d[i] on clock. The TopModule will then instantiate these eight flip-flops within a generate loop for succinctness but retaining per-bit always blocks.

@@ -1,0 +1,26 @@
+The previous solution was mostly correct in concept but had subtle issues:
+
+- The use of `prev_a` updated on every clock edge is correct.
+- The output `q` must be explicitly initialized to a known state at the beginning (e.g., 0), avoiding unknown start.
+- The order of non-blocking assignments ensures that the previous `prev_a` is used to decide on `q`.
+- The condition to set `q=1` when `a=0` and reset `q=0` only when `a=1` for two consecutive cycles (`a==1 && prev_a==1`) is the core behavior.
+- If none of these conditions apply, `q` remains unchanged.
+
+To optimize for PPA:
+
+- Use minimal logic with only two registers `q` and `prev_a`.
+- Simple synchronous logic without extra combinational gates.
+- No complex conditions or unnecessary else statements.
+
+Adding an explicit initial condition to `q` and `prev_a` helps simulations and synthesis tools to avoid X states on startup.
+
+The improved solution will:
+
+- Initialize `q` and `prev_a` to 0.
+- On posedge `clk`, update `prev_a` first (non-blocking).
+- Then update `q` according to conditions:
+  - If `a`==0, set `q`=1.
+  - Else if `a`==1 and `prev_a`==1, set `q`=0.
+  - Else hold `q` (no else needed as `q` is reg).
+  
+This matches exactly the waveform and the intended behavior.

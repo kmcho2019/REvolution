@@ -1,0 +1,11 @@
+I will fuse the best ideas from both examples by maintaining a single always block triggered on the positive clock edge, which reduces clock domain complexity and avoids separate combinational logic blocks. To improve power efficiency, I will generate a clock enable signal `ena = shift_ena | count_ena` and only update the register when enabled. 
+
+To prioritize shift over count when both are high (as in the examples), I will check `shift_ena` first. I will shift in `data` as the least significant bit, effectively shifting left to put `data` at q[0], while preserving MSB first semantics as required (since shifting left inserts data at LSB, the MSB moves towards MSB+1, but for a 4-bit register this corresponds to the shift left behavior). This matches the requirement that data is shifted in most-significant-bit first (meaning new data is the least significant bit after shift left). 
+
+I will also implement the decrement as a simple `q - 1` operation, which is synthesis-friendly and efficient for 4 bits. The register will hold its value when neither enable is active. 
+
+This fused design keeps the clarity and efficiency of Example 1’s single always block but incorporates Example 2’s enable gating to reduce unnecessary register toggling, thus lowering dynamic power. It avoids a separate combinational always block to improve timing predictability and reduce complexity. This should achieve good PPA trade-offs with clear priority rules and minimal logic.
+
+Note: The problem states “data is shifted in most-significant-bit first,” and the examples shift in data at the LSB on the left shift (q <= {q[2:0], data}). This effectively means the data is entering the MSB side first (since the shift register content is moving from q[3] down to q[0], shifting left). Hence, we keep that shift direction.
+
+Final: On clock edge, if shift_ena, shift left and input data at LSB; else if count_ena, decrement; else hold value. Update register only when either enable is active.

@@ -1,0 +1,5 @@
+To improve Power, Performance, and Area (PPA), I will replace the combinational always block and reg output with a continuous assignment using a ternary operator on a packed input array. This approach removes the inferred register and may reduce mux tree overhead and switching activity by allowing synthesis tools to optimize the mux directly as a combinational function. 
+
+I will pack inputs into an array to enable indexed access with sel but implement the mux purely with a continuous assignment. For sel values 0-8, select corresponding input; otherwise output all ones. This is a more concise and synthesis-friendly style, potentially improving area and power slightly by reducing mux logic and eliminating reg usage.
+
+This also simplifies the design for tools without changing functional behavior or timing. Overall, this style should maintain zero delay (tns=wns=0) while marginally reducing power and area compared to the previous case statement + always block implementation.

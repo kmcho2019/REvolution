@@ -1,0 +1,15 @@
+The current implementation is correct but can be optimized further for better PPA metrics. Here's the improvement strategy:
+
+1. **Parallel Comparison:** Instead of the priority encoder structure, use parallel comparisons to eliminate the dependency chain and improve timing.
+
+2. **Shared Prefix Check:** Maintain the shared extended key prefix check (0xE0) to reduce redundant logic.
+
+3. **One-Hot Encoding:** Keep the one-hot output format but implement it through direct parallel comparisons rather than priority logic.
+
+4. **Mutual Exclusivity:** The nature of keyboard inputs ensures only one arrow key can be pressed at a time, so we don't need explicit mutual exclusion logic.
+
+This approach will:
+- Improve timing by removing the priority chain
+- Maintain similar area efficiency
+- Keep power consumption low by using simple equality comparators
+- Preserve the correct functionality

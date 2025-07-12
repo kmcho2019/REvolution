@@ -1,0 +1,18 @@
+The original solution mostly works but misinterprets bump logic: bumps affect walking direction only when bumped on the side the Lemming is facing. Specifically, if walking left and bump_left=1, switch to walking right; if walking right and bump_right=1, switch to walking left; bumps on the opposite side do nothing. When both bumps are present simultaneously, the FSM should always switch directions (as both sides are bumped). 
+
+To fix, refine the bump condition to:
+
+- Walking left: switch direction if bump_left is 1 (or both bumps, since bump_left=1 in that case).
+- Walking right: switch direction if bump_right is 1 (or both bumps, since bump_right=1).
+
+Therefore, the bump check must explicitly verify bumps on the side facing the Lemming, not any bump. 
+
+No change needed to fall/dig logic or state encoding.
+
+This fix corrects direction transitions and thus resolves simulation mismatches.
+
+For slight optimization, use explicit bump conditions instead of broad OR conditions.
+
+The state machine remains Moore with asynchronous reset; outputs come purely from state, preserving clarity and correctness.
+
+This approach fixes functionality without increasing logic or complexity, maintaining good PPA.

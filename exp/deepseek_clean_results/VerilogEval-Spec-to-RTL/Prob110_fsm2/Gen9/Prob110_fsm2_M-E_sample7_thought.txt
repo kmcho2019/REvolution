@@ -1,0 +1,17 @@
+This solution implements a unique edge-triggered state machine that:
+1. Uses edge detection on input signals to trigger state transitions
+2. Implements a "lazy" state update that only occurs when necessary
+3. Combines both synchronous and asynchronous behaviors for efficiency
+4. Uses a clever encoding where the state directly represents the output
+
+Key innovations:
+- Instead of checking inputs every cycle, we detect rising edges of j/k
+- State transitions only occur when relevant edges are detected
+- Output is simply the state bit, eliminating separate output logic
+- Asynchronous reset maintains its priority while edge detection handles normal operation
+
+This approach is interesting because:
+- Reduces unnecessary state transitions when inputs don't change
+- Minimizes switching activity and power consumption
+- Demonstrates how edge detection can simplify state machine logic
+- Maintains all functionality while being more power-efficient

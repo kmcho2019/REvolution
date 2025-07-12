@@ -1,0 +1,16 @@
+module TopModule (
+    input        sel,
+    input  [7:0] a,
+    input  [7:0] b,
+    output [7:0] out
+);
+
+    // Generate one 2-to-1 mux for each bit position
+    genvar i;
+    generate
+        for (i = 0; i < 8; i = i + 1) begin : bit_mux
+            assign out[i] = sel ? b[i] : a[i];
+        end
+    endgenerate
+
+endmodule

@@ -1,0 +1,8 @@
+The original solution is clean and functionally correct, using explicit per-bit equality signals and hierarchical comparison to produce mutually exclusive outputs. To improve PPA (timing, power, and area):
+
+- Simplify the equality detection by using an XNOR reduction operator rather than three separate eq_bit wires, reducing gate count and toggling activity.
+- Express the greater-than logic with a priority encoder style using simple conditions chained by OR, minimizing logic depth and enhancing timing.
+- Derive less-than output directly as ~(A_equal | A_greater) to ensure mutual exclusivity and reduce logic gates.
+- Avoid intermediate wires unless they significantly improve readability; here, the logic can be compact and clear without them.
+- Use continuous assignments (assign) with simple boolean expressions for combinational logic.
+- These changes reduce the number of XOR/XNOR gates and logic levels, thereby improving power and area while maintaining correctness and clarity.

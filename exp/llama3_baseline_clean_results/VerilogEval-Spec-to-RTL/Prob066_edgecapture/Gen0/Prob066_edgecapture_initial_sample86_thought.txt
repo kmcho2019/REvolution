@@ -1,0 +1,12 @@
+To solve this problem, we need to implement a module that examines each bit of the 32-bit input vector and captures the transition from 1 to 0 in consecutive clock cycles. This can be achieved by using a combination of registers to store the current and previous state of the input vector, and comparing these states to detect the desired transition. Once the transition is detected, the corresponding bit in the output vector should be set to 1 and remain so until the module is reset.
+
+We can break down the solution into the following steps:
+
+1. Store the current input vector in a register on each clock cycle.
+2. Store the previous input vector in another register.
+3. Compare the current and previous input vectors bit by bit to detect the transition from 1 to 0.
+4. Update the output vector based on the detection result.
+
+The module will also need to handle the reset signal, which should reset all bits of the output vector to 0 when asserted.
+
+To implement this in Verilog, we will use two 32-bit registers: one for the current input state (`curr_state`), one for the previous input state (`prev_state`), and one for the output vector (`out`). We will use a clocked always block to update these registers and perform the transition detection.

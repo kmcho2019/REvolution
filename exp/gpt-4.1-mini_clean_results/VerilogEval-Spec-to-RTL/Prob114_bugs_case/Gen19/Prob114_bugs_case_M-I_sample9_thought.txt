@@ -1,0 +1,9 @@
+The original design is clean and fully combinational, but we can optimize it to further reduce area and power by:
+
+- Using a `case` statement inside a combinational always block instead of multiple equality checks. This approach typically synthesizes into a compact multiplexed logic or a small ROM, which is efficient in area and power.
+- This removes redundant replicated bit masking and the large OR tree for `valid`.
+- The `valid` signal is set based on whether the `code` matches any listed scancode by setting `out` to non-zero only on valid inputs. We can use a default output of zero and a valid flag set alongside the output inside the case.
+- This also improves readability and synthesis friendliness.
+- Overall, the case statement reduces comparator count and logic fanout, improving PPA.
+
+This approach keeps all logic combinational, makes valid and out derived together, and yields efficient hardware.

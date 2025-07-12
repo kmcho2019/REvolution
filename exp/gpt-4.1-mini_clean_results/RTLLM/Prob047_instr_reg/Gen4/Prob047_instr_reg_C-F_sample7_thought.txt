@@ -1,0 +1,7 @@
+Fuse the two example designs by using a single always block with asynchronous active-low reset and non-blocking assignments, but separate the fetch condition checks via if-else for clarity and priority. This keeps the simplicity and efficiency of one clocked process with reset, reduces duplicated reset logic, and avoids multiple always blocks for minimal area and improved power.
+
+Maintain combinational assignments for outputs derived directly from registers for timing clarity.
+
+Use a single always block triggered on posedge clk and negedge rst to combine the asynchronous reset and synchronous data updates cleanly. Within the always block, update ins_p1 only when fetch==2'b01, ins_p2 only when fetch==2'b10, otherwise retain the previous values.
+
+This fusion preserves all functional requirements and optimizes for minimal area, reasonable timing, and lower power by avoiding duplicate reset and clock domain logic while maintaining code readability and synthesis friendliness.

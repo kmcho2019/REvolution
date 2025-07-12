@@ -1,0 +1,11 @@
+To simplify the solution, we can directly derive the next-state signals Y1 and Y3 by understanding the state machine's transitions and applying the one-hot encoding principle. Since each state is represented by a unique binary pattern, we can use a more straightforward approach to determine the next states based on the current state and input w. 
+
+The next-state signal Y1 (corresponding to state A or y[0]) is set when the current state is A (000001) and w is 0, or when the current state is D (001000) and w is 1. Similarly, Y3 (corresponding to state C or y[2]) is determined based on transitions leading to state C.
+
+By analyzing the state machine, we can see that the next state for Y1 and Y3 can be directly determined based on the current state and the input w, without needing complex logic equations. We can use the `always` block with a `case` statement to directly implement these transitions in Verilog.
+
+However, a more efficient approach is to directly use the combinational logic derived from the state machine's transitions. This involves identifying the conditions under which Y1 and Y3 are set to 1, based on the current state (encoded in y) and the input w. 
+
+For Y1, this involves the transitions from states A (y[0]=1) with w=0, and from state D (y[3]=1) with w=1. For Y3, it involves transitions to state C, which can be directly determined from the state machine's diagram.
+
+By directly applying these conditions in a combinational logic manner, we can simplify the code and make it more efficient.

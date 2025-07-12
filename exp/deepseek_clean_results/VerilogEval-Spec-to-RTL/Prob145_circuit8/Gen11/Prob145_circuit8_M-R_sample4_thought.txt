@@ -1,0 +1,21 @@
+Refactored approach based on the same core idea:
+
+1. Key Changes:
+   - Replace sequential always blocks with a single clocked always block for synchronous behavior
+   - Use combinational assign for asynchronous reset of q
+   - Implement proper state tracking for q's behavior
+   - Maintain the same functional requirements:
+     * p copies 'a' at rising edges only when q is 0
+     * q latches to 1 after seeing p=1
+     * q resets asynchronously when 'a' is high during clock low
+
+2. Structural Improvements:
+   - Single always block for synchronous elements (cleaner timing)
+   - Combinational logic separated for clarity
+   - Explicit state tracking for q's behavior
+   - More precise edge-triggered behavior
+
+3. Implementation Notes:
+   - p is updated synchronously only when q is 0
+   - q's set condition is properly sequenced after p
+   - Asynchronous reset of q remains but with cleaner implementation

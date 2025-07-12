@@ -1,0 +1,19 @@
+Implement the population count using a parallel prefix adder approach specialized for population counting. Instead of splitting into fixed 8-bit chunks, partition the 255-bit input into 15 segments of 17 bits each.
+
+Each 17-bit segment is popcounted by a dedicated "popcount17" module that uses a straightforward combinational adder tree to add all bits.
+
+Then, the 15 partial counts (each needing 5 bits, since max 17 ones fit in 5 bits) are summed using a simple hierarchical binary adder tree made of parameterized adders.
+
+The final sum is guaranteed to fit in 8 bits (max 255).
+
+Advantages:
+
+- Larger chunk size reduces number of partial counts (15 vs 32) reducing the height of the summation tree.
+
+- Using explicit adders for partial counts simplifies the design, making it easy to pipeline or optimize later.
+
+- The hierarchical adder tree is explicitly coded as a generate loop summing pairs, maintaining clarity and balanced depth.
+
+- The final module is fully combinational but modular.
+
+This approach balances between chunk size and complexity while offering a fresh modular summation architecture.

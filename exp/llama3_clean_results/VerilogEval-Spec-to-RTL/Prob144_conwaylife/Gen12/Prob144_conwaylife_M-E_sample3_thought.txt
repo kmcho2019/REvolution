@@ -1,0 +1,7 @@
+To implement the game, we can divide the problem into smaller sub-problems. First, we need to calculate the number of alive neighbors for each cell. This can be achieved by creating a separate module, `NeighborCounter`, which takes the current state of the grid and the coordinates of a cell as input and outputs the number of alive neighbors. Then, we can use this module to calculate the next state of the grid based on the rules of the game.
+
+We can use a clock-driven approach to update the grid at each time step. The `TopModule` will contain the `NeighborCounter` module and use it to update the grid at each clock cycle. This approach allows us to separate the logic for calculating the number of alive neighbors from the logic for updating the grid, making the code more modular and easier to understand.
+
+To simplify the implementation, we can use a parameterized module for the `NeighborCounter` to make it easier to modify the grid size if needed. We can also use a `always @(*)` block to update the next state of the grid based on the current state and the number of alive neighbors.
+
+To handle the toroidal grid, we can use modular arithmetic to calculate the coordinates of the neighbors. This allows us to wrap around the edges of the grid seamlessly.

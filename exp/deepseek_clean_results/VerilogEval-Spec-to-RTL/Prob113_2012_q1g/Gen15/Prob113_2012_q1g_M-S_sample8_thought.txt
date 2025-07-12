@@ -1,0 +1,18 @@
+To simplify the implementation while maintaining correct functionality:
+
+1. Analyze the Karnaugh map to identify prime implicants:
+   - Notice that f=1 forms three clear groups:
+     a) When x[3:2]=00 and x[1:0]=00 or 10
+     b) When x[3:2]=11 and x[1:0] is anything but 10
+     c) When x[3:2]=10 and x[1:0]=00 or 10
+
+2. Key simplifications:
+   - Group a) can be expressed as ~x[3] & ~x[2] & (x[1]^x[0])
+   - Group b) simplifies to x[3] & x[2] & ~(~x[1] & x[0])
+   - Group c) simplifies to x[3] & ~x[2] & ~(x[1] & x[0])
+
+3. Final expression:
+   - OR these three simplified conditions together
+   - This reduces the logic to just a few terms while perfectly matching the map
+
+This approach is more efficient than listing all minterms and correctly implements the Karnaugh map.

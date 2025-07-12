@@ -1,0 +1,5 @@
+Refactor by leveraging the property that Rule 90 next state is the XOR of left-shifted and right-shifted current states, with zero padding at boundaries. Instead of per-bit generates, use vector concatenations and shifts to produce next_state in one vector expression, simplifying and reducing logic and area significantly.
+
+Use a simple sequential always block triggered by clk to update q on load or advance state otherwise, removing unnecessary clock gating complexity. The boundary zeros are implicitly handled by concatenating zeros to q when shifting.
+
+This compact approach improves timing by minimizing routing and logic depth, reduces power by simpler combinational logic, and saves area by avoiding explicit per-bit wiring.

@@ -1,0 +1,13 @@
+Here's a novel approach using a ring counter with parallel load capability:
+1. Instead of a binary counter, implement a circular shift register that cycles through 10 specific states (1-10)
+2. Use a ROM-like combinational logic to generate the next state pattern
+3. Advantages:
+   - Eliminates the need for an adder, reducing critical path
+   - State transitions are simple shifts with parallel load
+   - Reset handling is straightforward
+   - Power-efficient as only one bit changes per transition (except wrap-around)
+4. Implementation:
+   - Store current count in a 4-bit register
+   - Use combinational logic to generate next state based on current state
+   - Special case for wrap-around (10→1 transition)
+   - Synchronous reset loads initial value of 1

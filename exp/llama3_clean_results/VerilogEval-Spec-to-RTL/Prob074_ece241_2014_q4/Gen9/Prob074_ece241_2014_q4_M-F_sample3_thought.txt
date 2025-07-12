@@ -1,0 +1,7 @@
+To address the issues with the original design, we need to consider a different approach that avoids the feedback loop and ensures proper initialization of the D flip-flops. The key insight here is to recognize that the design involves a finite state machine with feedback from the flip-flop outputs to the gate inputs. However, the current implementation causes issues due to the direct feedback loop. 
+
+A revised approach involves breaking the feedback loop by introducing a temporal delay in the feedback path. This can be achieved by using the outputs of the flip-flops from the previous clock cycle as inputs to the gates. Since the flip-flops update on the positive edge of the clock, their outputs are stable during the entire clock cycle, allowing us to use these stable outputs as inputs to the gates without causing any timing issues or oscillations.
+
+Furthermore, to improve synthesizability, we should ensure that the design adheres to standard synthesis guidelines, which typically recommend avoiding complex feedback loops and ensuring that all sequential elements (like D flip-flops) are properly reset or initialized. 
+
+Given these considerations, the revised design should explicitly define the reset conditions for the D flip-flops and ensure that the combinational logic does not introduce any potential hazards or races that could complicate synthesis or functional correctness.

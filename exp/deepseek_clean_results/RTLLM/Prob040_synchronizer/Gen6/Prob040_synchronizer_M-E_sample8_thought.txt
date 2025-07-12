@@ -1,0 +1,14 @@
+Novel Architecture: Pulse-Capturing Synchronizer with Data Stability Window
+
+Key Innovations:
+1. Instead of traditional handshake, use a pulse-capture mechanism that leverages the guaranteed 3-cycle data_en window
+2. Implement a stability window detector in clk_b domain to ensure data is only captured during stable periods
+3. Use a dual-register approach where data is captured on both clock domains for redundancy
+4. Add a metastability filter that requires 3 consecutive same values before updating output
+
+Advantages:
+- Eliminates handshake overhead while maintaining reliability
+- Exploits the known timing constraints (3-cycle enable, 10-cycle data stability)
+- Provides additional protection against metastability through voting
+- Reduces power by minimizing unnecessary updates
+- Simpler state machine compared to traditional handshake

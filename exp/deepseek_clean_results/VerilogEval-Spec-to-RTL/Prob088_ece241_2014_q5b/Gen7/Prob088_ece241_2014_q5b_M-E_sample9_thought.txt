@@ -1,0 +1,20 @@
+Here's a novel approach using a shift register implementation instead of traditional state encoding:
+
+1. **Shift Register Concept**:
+   - Instead of explicit state variables, use a 2-bit shift register where the current state is represented by the register's content.
+   - The leftmost bit indicates if we've seen a '1' (state B), while the rightmost bit tracks the current input.
+
+2. **Dynamic State Representation**:
+   - The shift register naturally captures the state transition history.
+   - State A is represented by 00 or 01 (no leading 1 seen)
+   - State B is represented by 1x (leading 1 seen)
+
+3. **Output Generation**:
+   - The output z is simply the XOR of the current input and the leftmost register bit.
+   - This matches the Mealy machine specification where output depends on both state and input.
+
+Advantages:
+- Eliminates explicit state transition logic
+- Naturally implements the "wait for first 1" behavior
+- Simple, regular structure that scales well
+- Reduced combinational logic complexity

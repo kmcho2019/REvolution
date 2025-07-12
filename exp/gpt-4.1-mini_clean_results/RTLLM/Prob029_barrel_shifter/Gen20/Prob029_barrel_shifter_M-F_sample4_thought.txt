@@ -1,0 +1,10 @@
+To address the feedback, the design must explicitly use the `mux2X1` modules to implement the shifting stages as specified. Each stage shifts by a fixed amount (4, 2, or 1 bit) when the corresponding control bit is high, and the output for each bit is selected by a 2-to-1 multiplexer choosing between the shifted bit and the original bit. The direction of rotation should be carefully implemented as a **right rotate** since the failure could be due to direction mismatch (the original code did left rotates). This means, for a 4-bit shift, bit 0 comes from bit 4, bit 1 from bit 5, ..., bit 7 from bit 3, etc.
+
+Hence, the barrel shifter will be implemented as a 3-stage cascade:
+- Stage 1: 4-bit right rotate controlled by `ctrl[2]`
+- Stage 2: 2-bit right rotate controlled by `ctrl[1]`
+- Stage 3: 1-bit right rotate controlled by `ctrl[0]`
+
+Each stage uses 8 instances of `mux2X1` to select between shifted and unshifted bits accordingly.
+
+This fulfills the structural requirement, aligns with expected rotation direction, and uses mux2X1 explicitly as requested.

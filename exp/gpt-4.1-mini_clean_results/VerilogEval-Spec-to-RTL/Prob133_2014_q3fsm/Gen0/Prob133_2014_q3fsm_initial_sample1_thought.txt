@@ -1,0 +1,14 @@
+We start in state A, where we wait for s=1 to move to state B. Once in state B, we examine the next three clock cycles of w and count how many times w=1 occurs. We keep a 2-bit counter for the number of w=1's in the current 3-cycle window and a cycle counter (0 to 2) for how many w samples have been counted so far.
+
+After counting three cycles in state B, on the next clock cycle we output z=1 if the count of w=1's is exactly 2, else 0, then reset the counters and continue with the next three cycles in state B.
+
+We can implement this with two states: A and B.
+
+- In state A: wait for s=1 to transition to B. z=0.
+- In state B: count w=1's over 3 cycles using counters. After 3 samples, set z accordingly on the next clock cycle. Then repeat.
+
+Because z depends on the count after the 3rd cycle, we produce z one cycle after counting. This means z can be registered using a delayed signal.
+
+Use synchronous reset to initialize to state A and zero counters and output.
+
+This implementation uses minimal states and stores counters as internal registers.

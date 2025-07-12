@@ -1,0 +1,25 @@
+A clean and robust way to implement a frequency divider by an odd number is to generate a clock output that toggles every (NUM_DIV) half cycles, but since NUM_DIV is odd, the high and low phases cannot be exactly equal.
+
+To approach this:
+
+- Use a single counter that increments on every positive edge of the input clock.
+
+- The counter counts from 0 up to (NUM_DIV - 1).
+
+- When the counter reaches (NUM_DIV - 1), it resets to zero and toggles the output clock.
+
+- To handle the odd division with best duty cycle, the output clock toggles every NUM_DIV input clock cycles, meaning its period is 2*NUM_DIV input clocks.
+
+- The output clock will have an approximate 50% duty cycle by toggling on the count wrap-around only.
+
+- This approach uses only the positive edges, ensuring simpler timing and no need to sample on negative edges.
+
+- To improve duty cycle accuracy for odd division, the output clock toggling is done strictly on the counter wrap-around, giving a well-defined divided clock with frequency = input frequency / NUM_DIV.
+
+This is a conventional and reliable way to implement an odd frequency divider with a single counter and output toggle.
+
+Additionally, the code checks that NUM_DIV is odd at compile time.
+
+The reset logic asynchronously resets the counter and output clock.
+
+This design is straightforward and stable without relying on separate half-period counters or dual-edge triggers.

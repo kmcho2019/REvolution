@@ -1,0 +1,15 @@
+Improvement strategy:
+
+To optimize the given design for better PPA (Performance, Power, and Area), we will:
+
+1. Merge the state and wave registers' update logic into a single always block to reduce register-to-register delay and simplify the control path, improving timing.
+
+2. Eliminate redundant assignments that hold the wave value explicitly at boundaries; instead, update wave only when incrementing or decrementing is valid. This reduces unnecessary toggling and switching power.
+
+3. Use a minimal if-else structure instead of a case statement for state transitions to simplify logic.
+
+4. Keep the asynchronous active-low reset as specified.
+
+5. The single-bit state will toggle at boundaries to switch direction, keeping the state logic minimal and efficient.
+
+This refined approach preserves original functionality, simplifies control flow, reduces logic complexity, and thus should improve critical path, power consumption, and gate count.

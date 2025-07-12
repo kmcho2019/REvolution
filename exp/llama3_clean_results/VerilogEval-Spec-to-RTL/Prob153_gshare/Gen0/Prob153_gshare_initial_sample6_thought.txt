@@ -1,0 +1,5 @@
+To implement the TopModule with the specified interface, we need to create a module that can handle both prediction and training of branches. The module will use a 7-bit global branch history register and a 128-entry table of two-bit saturating counters. The 7-bit pc and 7-bit global history will be hashed using xor to create a 7-bit index for accessing the table.
+
+We will use a register to store the branch history and another register to store the pattern history table (PHT). The prediction interface will use the current state of the branch history and PHT to make predictions. The training interface will update the PHT and recover the branch history register if a misprediction occurs.
+
+We will use always blocks to handle the sequential logic, and we will ensure that the training takes precedence over prediction when both occur in the same cycle.

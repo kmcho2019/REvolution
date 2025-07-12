@@ -1,0 +1,12 @@
+Fuse the clean modular indexing and clear nested loops from both examples, replacing multiplication-based indexing with bit shifts for area and timing improvements (since 16=2^4, use `index << 4` instead of `index*16`). Replace the wrap_index function's conditional logic with efficient modulo 16 via masking (`& 4'hF`), which synthesis tools will optimize to simple wiring. Keep combinational neighbor counting in a single always block with blocking assignments for clarity, but use bit-shifting indexing and minimal arithmetic.
+
+Maintain synchronous load functionality as is. This fusion keeps code clarity and correctness while reducing arithmetic complexity and area cost from multipliers. It also minimizes delay in indexing logic, potentially improving critical path and power by reducing logic depth.
+
+No pipeline added here to keep single-cycle update as requested. The code is fully synthesizable, easy to understand, and slightly more efficient in indexing and wrapping operations than both original examples.
+
+Summary of improvements:
+- Use bitwise mask (`& 4'hF`) for modulo 16 instead of conditional wrap_index function.
+- Replace multiplications by 16 with left shifts (`<< 4`).
+- Preserve combinational all neighbor sum logic.
+- Keep synchronous load.
+- Use clear nested loops for easy verification and maintenance.

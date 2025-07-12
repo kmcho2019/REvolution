@@ -1,0 +1,12 @@
+Fuse the power-efficient conditional updates of example 1 with the clear CDC domain separation and register staging from example 2:
+
+1. In clk_a domain, update data_reg only when data_en is high, minimizing toggling and power (from Ex1).
+2. Register en_data_reg in clk_a domain directly with data_en without conditional clearing to reduce spurious toggles and improve clarity (from Ex2).
+3. In clk_b domain, implement a two-stage synchronizer chain for en_data_reg (from both examples).
+4. Use en_clap_two as a clock enable to update a single data_sync register from data_reg in clk_b domain, which helps timing by avoiding two chained registers updating on same condition (merged Ex2 approach).
+5. Drive dataout register directly from data_sync in clk_b domain on the same enable signal, simplifying control logic and reducing latency and critical path.
+6. Maintain asynchronous active-low resets on both domains as specified, but reset all registers coherently.
+7. By gating updates with en_clap_two and data_en conditions, reduce unnecessary switching, improving power and robustness.
+8. This approach achieves minimal toggling, clear domain crossing with proper synchronization, and optimized pipeline stages for output.
+
+This fusion balances power savings, timing clarity, and area efficiency, while meeting functional and CDC requirements.

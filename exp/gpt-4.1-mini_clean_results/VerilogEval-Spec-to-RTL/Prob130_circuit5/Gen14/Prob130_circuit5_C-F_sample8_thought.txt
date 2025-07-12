@@ -1,0 +1,10 @@
+To combine the strengths of both examples, I will use a small fixed array (ROM-like) of five 4-bit elements indexed by c (capped at 4): elements 0 to 3 correspond to {b, e, a, d} and index 4 is 4'hF. Instead of using a shift-based selection which introduces a variable-shift operator and possible larger logic, I will use an explicit case statement to select q based on c. This ensures minimal logic depth, straightforward multiplexing, and no dynamic shifting, reducing power and area. 
+
+This approach preserves the concise mapping and the constant default (4'hF) for c≥4, while enabling synthesis to infer a clean multiplexer without barrel shifters, improving performance and power compared to shifting a concatenated vector.
+
+Hence, the fused solution:
+- Uses a 5-entry vector of inputs + default 4'hF as in Example 1,
+- Replaces shifting with a case statement for explicit indexing as in Example 2,
+- Clamps c index to 4 for default output,
+- Implements a combinational mux with clearly defined outputs for all c values,
+- Maintains simplicity and optimal PPA.

@@ -1,0 +1,93 @@
+module TopModule(
+    input clk,
+    input areset,
+
+    input predict_valid,
+    input [6:0] predict_pc,
+    output reg predict_taken,
+    output reg [6:0] predict_history,
+
+    input train_valid,
+    input train_taken,
+    input train_mispredicted,
+    input [6:0] train_history,
+    input [6:0] train_pc
+);
+
+reg [6:0] global_history;
+reg [1:0] pht [127:0];
+
+wire [6:0] predict_index;
+wire [6:0] train_index;
+
+assign predict_index = predict_pc ^ global_history;
+assign train_index = train_pc ^ train_history;
+
+// State machine to manage the branch prediction and training
+reg [1:0] state;
+always @(posedge clk or posedge areset) begin
+    if (areset) begin
+        state <= 2'b00;
+        global_history <= 7'b0;
+        predict_taken <= 1'b0;
+        predict_history <= 7'b0;
+        for (int i = 0; i < 128; i++) begin
+            pht[i] <= 2'b00;
+        end
+    end else begin
+        case (state)
+            2'b00: begin // Idle state
+                if (predict_valid) begin
+                    predict_taken <= (pht[predict_index] >= 2'b10)? 1'b1 : 1'b0;
+                    predict_history <= global_history;
+                    state <= 2'b01;
+                end else if (train_valid) begin
+                    state <= 2'b10;
+                end
+            end
+            2'b01: begin // Prediction state
+                if (train_valid) begin
+                    state <= 2'b11;
+                end else begin
+                    global_history <= {global_history[5:0], predict_taken};
+                    state <= 2'b00;
+                end
+            end
+            2'b10: begin // Training state
+                if (train_mispredicted) begin
+                    global_history <= train_history;
+                end
+                if (pht[train_index] == 2'b00 && ~train_taken) begin
+                    pht[train_index] <= 2'b01;
+                end else if (pht[train_index] == 2'b11 && train_taken) begin
+                    pht[train_index] <= 2'b10;
+                end else if (~train_taken) begin
+                    pht[train_index] <= pht[train_index] - 1'b1;
+                end else begin
+                    pht[train_index] <= pht[train_index] + 1'b1;
+                end
+                state <= 2'b00;
+            end
+            2'b11: begin // Prediction and training state
+                if (train_mispredicted) begin
+                    global_history <= train_history;
+                end
+                predict_taken <= (pht[predict_index] >= 2'b10)? 1'b1 : 1'b0;
+                predict_history <= global_history;
+                if (pht[train_index] == 2'b00 && ~train_taken) begin
+                    pht[train_index] <= 2'b01;
+                end else if (pht[train_index] == 2'b11 && train_taken) begin
+                    pht[train_index] <= 2'b10;
+                end else if (~train_taken) begin
+                    pht[train_index] <= pht[train_index] - 1'b1;
+                end else begin
+                    pht[train_index] <= pht[train_index] + 1'b1;
+                end
+                global_history <= {global_history[5:0], predict_taken};
+                state <= 2'b00;
+            end
+        endcase
+    end
+end
+
+endmodule

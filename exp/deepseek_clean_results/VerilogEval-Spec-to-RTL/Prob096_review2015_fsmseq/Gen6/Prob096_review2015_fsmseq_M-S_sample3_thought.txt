@@ -1,0 +1,12 @@
+Simplification Strategy:
+1. State Encoding: Use minimal 2-bit binary encoding (4 states) since we only need 5 states (including reset). This reduces area and improves timing.
+2. State Machine: Combine GOT11 and GOT110 states since they both lead to FOUND on next correct bit. This reduces state count.
+3. Output Logic: Keep combinational assignment for simplicity and better timing.
+4. Reset Handling: Maintain synchronous reset for consistency.
+5. Found State: Keep permanent output behavior until reset as specified.
+
+Key Changes:
+- Reduce state encoding from 3 bits to 2 bits
+- Merge GOT11 and GOT110 states into single GOT110 state
+- Remove default case since all states are explicitly handled
+- Maintain same functionality with fewer states and less logic

@@ -1,0 +1,20 @@
+Innovative Approach: Shift Register State Machine with Parallel Output
+1. Core Idea: Implement the state machine using a circular shift register where each state is represented by a single bit position. This eliminates the need for binary state encoding and simplifies transitions to simple shift operations.
+
+2. State Representation:
+   - Each state corresponds to a unique bit position in a 6-bit register
+   - Active state is indicated by a single '1' in the register (one-hot like but with shifting)
+
+3. Transition Logic:
+   - Instead of case statements, use shift operations with conditional masking
+   - Transitions become simple: shift left (with wrap-around) for w=1, special patterns for w=0
+
+4. Output Logic:
+   - z is simply the OR of the bits representing E and F states
+   - No need for state decoding as output directly maps to register bits
+
+Advantages:
+- Eliminates complex state encoding
+- Potentially lower power due to single-bit transitions
+- Simple output logic
+- Naturally handles all state transitions with minimal logic

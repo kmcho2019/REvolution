@@ -1,0 +1,5 @@
+To implement the perpetual calendar module in Verilog, we need to design three always blocks that update the values of seconds, minutes, and hours based on the clock signal and reset signal. 
+The first always block will handle the seconds value (Secs), wrapping it around to 0 when it reaches 59 and incrementing it by 1 otherwise, unless the reset signal is active, in which case it sets Secs to 0.
+The second always block will handle the minutes value (Mins), wrapping it around to 0 when both minutes and seconds are 59, incrementing it by 1 when seconds is 59, and keeping it unchanged otherwise, unless the reset signal is active, in which case it sets Mins to 0.
+The third always block will handle the hours value (Hours), wrapping it around to 0 when hours, minutes, and seconds are all at their maximum (23, 59, and 59 respectively), incrementing it by 1 when minutes and seconds are both 59, and keeping it unchanged otherwise, unless the reset signal is active, in which case it sets Hours to 0.
+We use non-blocking assignments (<=) inside the always blocks to avoid race conditions and ensure that the values are updated correctly.

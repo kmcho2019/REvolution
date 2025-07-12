@@ -1,0 +1,13 @@
+To address the issues identified in the feedback, we will correct the reset logic, BCD encoding, and the condition checks in the always block.
+
+1. **Correct Reset Logic**: The reset logic should initialize the 'hours', 'minutes', and 'seconds' variables to the correct values for a 12-hour clock. For "12:00:00 AM", 'hours' should be set to 4'b0001 (12 in BCD for the ones place, but considering our design, we need 4'b0001 for 1 and another 4'b0001 for the tens place), 'minutes' to 6'b000000 (00 in BCD), and 'seconds' to 6'b000000 (00 in BCD).
+
+2. **Improved BCD Encoding**: The BCD encoding logic should be corrected to handle the 'hh', 'mm', and 'ss' signals accurately. This involves separating the tens and units digits of each value and representing them in binary. For 'hh', we need to correctly represent 12 in BCD, which is 0001 for the ones place and 0001 for the tens place.
+
+3. **Corrected Condition Checks**: The condition checks in the always block should be updated to handle the BCD representation correctly. For 'seconds' and 'minutes', we need to check for 6'b001001 (59 in BCD).
+
+4. **Corrected pm_flag Update**: The 'pm_flag' should be updated correctly based on the value of 'hours'. When 'hours' reaches 12 (4'b0001 for the ones place and 4'b0001 for the tens place), 'pm_flag' should toggle.
+
+5. **Simplified Logic**: The code can be simplified by reducing the number of always blocks and using more efficient logic structures. Assign statements can be used for combinational logic, and the always block can be reserved for sequential logic.
+
+By addressing these issues, we can ensure that the reset logic and BCD encoding are correct, and the condition checks in the always block are updated to handle the BCD representation accurately.

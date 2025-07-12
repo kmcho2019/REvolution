@@ -1,0 +1,11 @@
+The original implementation sums the three input bits directly, which is already minimal and clear. However, since the input width is fixed at 3 bits, another approach is to use a small combinational logic or a lookup table to compute the population count. A LUT-based approach can reduce gate count because the synthesis tool might implement the sum as a small ROM rather than three separate adders.
+
+The improvement strategy is:
+- Use a combinational logic "case" statement that enumerates all possible 3-bit inputs and maps them to the correct population count.
+- This allows synthesis to generate a simple lookup table with minimal logic and potentially less switching.
+- It reduces the critical path further by avoiding addition logic in favor of a constant assignment based on input patterns.
+- This approach may slightly reduce power by eliminating addition toggles.
+- The combinational logic depth is minimal (just a multiplexer or equivalent).
+- The output width remains 2 bits to accommodate counts from 0 to 3.
+
+This design trades a few lines of code for potentially improved PPA without changing the interface or functionality.

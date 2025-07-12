@@ -1,0 +1,12 @@
+Instead of computing each comparison individually, we can leverage the fact that there are only 32 possible input combinations (2^5) and precompute all possible output vectors. This creates a ROM-like structure where the concatenated inputs {a,b,c,d,e} serve as the address, and the precomputed 25-bit comparison results are stored.
+
+Key advantages:
+1. Eliminates all comparison logic gates
+2. Single-cycle lookup operation
+3. Scales well to more inputs (though ROM size grows exponentially)
+4. Potentially better power characteristics since it avoids switching in comparison logic
+
+The implementation:
+1. Create a 32x25 bit ROM storing all possible output patterns
+2. Use input concatenation as the ROM address
+3. Output the corresponding precomputed pattern

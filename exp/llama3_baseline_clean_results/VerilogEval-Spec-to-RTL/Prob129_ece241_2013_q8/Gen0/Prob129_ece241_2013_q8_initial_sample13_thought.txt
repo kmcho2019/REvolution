@@ -1,0 +1,10 @@
+To implement the Mealy-type finite state machine, we need to define three states to recognize the sequence "101". Let's denote these states as S0 (initial state), S1 (after seeing '1'), and S2 (after seeing '01'). We will use a 2-bit state variable to encode these states. The state machine transitions and output are determined based on the current state and the input signal x. On the negative edge of the reset signal aresetn, the state machine should reset to the initial state S0.
+
+We'll implement the logic as follows:
+- When in S0 and x = 1, transition to S1.
+- When in S1 and x = 0, transition to S2.
+- When in S2 and x = 1, recognize the sequence "101" and assert z to 1; transition back to S1 because we're looking for overlapping sequences.
+- For all other cases, either stay in the same state or transition back to a previous state based on the input x, ensuring the recognition of overlapping sequences.
+- On the negative edge of aresetn, reset to S0.
+
+The output z is 1 only when the FSM is in state S2 and the input x is 1, indicating the sequence "101" has been detected.

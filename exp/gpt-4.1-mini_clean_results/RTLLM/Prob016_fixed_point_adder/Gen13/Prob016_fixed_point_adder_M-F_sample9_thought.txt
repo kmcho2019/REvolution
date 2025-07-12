@@ -1,0 +1,12 @@
+To fix the issues and improve the fixed-point adder module:
+
+- Use Verilog signed types for inputs and outputs, leveraging built-in signed arithmetic to simplify sign and magnitude handling. This avoids manually extracting sign bits and computing magnitudes.
+- Perform addition or subtraction directly on signed values, ensuring the precision of fractional bits (Q) is preserved because inputs and outputs use the same fixed-point format.
+- Use a combinational continuous assignment for the output `c` to improve synthesis friendliness and clarity.
+- Internally, use extended bit width (N+1) for the addition result to detect overflow if needed, then truncate or saturate accordingly; however, since the spec wants result of width N, we assign the lower N bits (including sign).
+- Ensure the output is N bits two's complement fixed-point.
+- Maintain the parameterization of Q and N for flexibility.
+- This approach removes the need for manual sign/magnitude conversion and zero checks, simplifying the code and improving synthesis results.
+- Note: Overflow detection or saturation is not explicitly required, but the signed addition inherently handles wrap-around consistent with two's complement arithmetic.
+
+This refactoring results in a simpler, synthesizable, and easily testable fixed-point adder.

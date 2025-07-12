@@ -1,0 +1,7 @@
+Refactor the pipeline multiplier by explicitly separating pipeline stages with registers, handling partial product generation in a dedicated pipeline stage, and pipelining the summation in two steps rather than summing all partial products combinationally at once. Use separate pipeline registers for partial products and partial sums to balance timing and maintain pipeline throughput.
+
+Propagate the enable signal as a shift register as before to maintain data validity. Input registers update only when `mul_en_in` is asserted. Stage 1 pipeline registers store inputs, stage 2 registers store partial products, and stage 3 registers store the accumulated sum (final product). 
+
+Use `always @(posedge clk or negedge rst_n)` blocks for pipeline registers. Combinational partial product generation is separated from addition, with the addition pipelined in two steps: sum four partial products at a time, then sum those two partial sums. This reduces combinational path delay, enhancing performance. Output is gated by `mul_en_out`.
+
+This restructuring keeps the same overall three-stage pipeline latency but improves the critical path distribution and clarifies data flow, making the code more modular and easier to extend or optimize further.

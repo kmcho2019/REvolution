@@ -1,0 +1,17 @@
+Here's a novel approach using a binary search algorithm for division, which reduces the number of comparisons needed:
+
+1. Instead of bit-serial division, we'll implement a binary search to find the quotient
+2. For each bit position in the quotient (starting from MSB), we'll:
+   - Tentatively set the bit to 1
+   - Multiply the divisor by this partial quotient
+   - Compare with the dividend
+   - Keep the bit as 1 if product <= dividend, else set to 0
+3. This approach requires fewer comparisons (logarithmic in quotient bits)
+4. We'll use a tree of comparators rather than a linear chain
+5. Remainder is calculated as dividend - (quotient * divisor)
+
+Advantages:
+- Reduced critical path due to parallel comparisons
+- Logarithmic complexity in number of bits
+- More efficient for larger bit widths
+- Easier to pipeline if needed

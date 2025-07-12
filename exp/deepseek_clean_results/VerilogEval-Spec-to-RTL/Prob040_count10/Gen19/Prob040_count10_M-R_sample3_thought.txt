@@ -1,0 +1,20 @@
+Refactoring approach:
+
+1. Structural Changes:
+   - Move the combinational logic (terminal count detection and next state calculation) outside the always block using continuous assignments
+   - Keep the sequential logic (register update) in a separate always block
+   - This separates combinational and sequential logic clearly
+
+2. Key Improvements:
+   - Explicit terminal_count signal improves readability
+   - Next state calculation is now purely combinational
+   - Register update is simplified to just handling reset and loading next state
+   - Potentially better for synthesis as combinational and sequential paths are clearly separated
+
+3. Maintained Features:
+   - Same efficient terminal count detection (q[3] & q[0])
+   - Same synchronous reset behavior
+   - Same counting sequence (0-9)
+   - Same minimal area approach (no extra registers)
+
+This approach may offer better timing characteristics as the combinational path is more clearly defined and could be optimized separately.

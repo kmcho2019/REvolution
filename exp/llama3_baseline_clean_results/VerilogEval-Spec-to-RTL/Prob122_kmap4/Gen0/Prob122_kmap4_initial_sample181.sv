@@ -1,0 +1,10 @@
+module TopModule(a, b, c, d, out);
+    input a;
+    input b;
+    input c;
+    input d;
+    output out;
+
+    assign out = (!c & !d & b) | (c & !d & a) | (!c & d & a) | (c & d & b);
+
+endmodule

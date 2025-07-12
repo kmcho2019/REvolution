@@ -1,0 +1,7 @@
+Implement the entire 512-bit Rule 90 automaton as a single shift-register-like state vector updated synchronously each clock cycle. To avoid complex boundary management between sub-blocks, treat the entire 512-bit vector as one state. For each bit's next state, calculate XOR of its immediate left and right neighbors, with boundaries fixed at zero.
+
+To efficiently compute next state simultaneously for all bits, perform bitwise left and right shifts of the entire 512-bit state padded with zero at boundaries, then XOR the shifted versions. This creates a fully combinational next state vector computed in parallel from current state.
+
+On the positive clock edge, load new data if `load` is asserted, else update the state to the newly computed next state.
+
+This single-register approach avoids complicated inter-block wiring, simplifies boundary conditions, and uses native Verilog vector shifts and concatenation for concise logic. It should yield clear and compact RTL with parallel next-state calculation for all cells in one step, suitable for synthesis with straightforward timing and area characteristics.

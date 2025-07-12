@@ -1,0 +1,9 @@
+To correctly implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3 (1-based indexing):
+1. Use 0-based indexing where taps are at bits 4 and 2 (q[4] and q[2])
+2. The Galois LFSR structure should:
+   - XOR the tap bits with the output bit (q[0])
+   - Shift right by 1 position
+   - The new MSB (q[4]) becomes the XOR of q[0] with the original q[3] (next tap)
+3. The correct feedback polynomial for maximal-length is: q[4] ^ q[2] ^ q[0]
+4. Reset should initialize to 1 (00001) as specified
+5. This will generate the correct 31-state sequence before repeating

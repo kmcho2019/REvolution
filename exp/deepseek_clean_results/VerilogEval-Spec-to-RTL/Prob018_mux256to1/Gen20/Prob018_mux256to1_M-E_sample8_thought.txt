@@ -1,0 +1,24 @@
+Novel Approach: Hierarchical Decoder with Enable Propagation
+
+1. **Decoder-Based Architecture**:
+   - Instead of a traditional mux tree, use a decoder to generate 256 enable signals
+   - Only the selected input drives the output, all others are disabled
+   - This eliminates unnecessary switching activity in unselected paths
+
+2. **Hierarchical Decoding**:
+   - Split the 8-bit sel into two 4-bit fields (upper and lower nibble)
+   - First decode the upper nibble to enable one of 16 groups
+   - Then decode the lower nibble within the enabled group
+   - This reduces decoder fanout and improves timing
+
+3. **Power Gating**:
+   - Each group has its own enable signal
+   - Only the selected group's decoder is active
+   - Unselected groups are completely power-gated
+
+4. **Output Stage**:
+   - Use a wired-OR structure with tri-state buffers
+   - Only the selected input drives the output
+   - Eliminates need for final mux stage
+
+This approach minimizes dynamic power by only activating the necessary decoding logic and provides better timing through hierarchical decoding.

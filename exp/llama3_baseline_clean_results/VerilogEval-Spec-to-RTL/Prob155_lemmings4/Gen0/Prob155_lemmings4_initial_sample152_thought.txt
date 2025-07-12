@@ -1,0 +1,10 @@
+To implement the Lemmings' behavior using a Moore state machine, we can break down the design into several key components: 
+
+1. **State Machine:** Define the states the Lemming can be in (e.g., walking left, walking right, falling, digging, and splattered).
+2. **State Transition Logic:** Implement the rules for transitioning between these states based on the input signals (bump_left, bump_right, ground, dig).
+3. **Output Logic:** Determine the output values (walk_left, walk_right, aaah, digging) based on the current state.
+4. **Counter for Falling Duration:** To implement the splatter condition, we need a counter that tracks how long the Lemming has been falling.
+
+Given the complexity, we'll use an enumerated type to define the states and a counter to track the duration of the fall. The machine will be reset asynchronously to the "walking left" state upon areset.
+
+We will implement the state machine using a case statement for the state transition logic and another case statement for the output logic, ensuring that the outputs are determined solely by the state, following the principles of a Moore machine.

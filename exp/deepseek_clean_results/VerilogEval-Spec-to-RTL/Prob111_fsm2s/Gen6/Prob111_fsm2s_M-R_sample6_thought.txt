@@ -1,0 +1,14 @@
+I'll refactor the solution by:
+1. Using continuous assignments (assign) instead of procedural blocks for the state transition logic
+2. Representing the state transitions as combinational logic equations
+3. Keeping the synchronous state register but moving the transition logic outside the always block
+
+The key insight is that the state transitions can be expressed as:
+next_state = (~state & j) | (state & ~k)
+
+This is derived from:
+- When in OFF state (state=0): next_state = j
+- When in ON state (state=1): next_state = ~k
+Which combines to the equation above.
+
+This approach eliminates the case statement and makes the transition logic more compact while maintaining the same functionality.

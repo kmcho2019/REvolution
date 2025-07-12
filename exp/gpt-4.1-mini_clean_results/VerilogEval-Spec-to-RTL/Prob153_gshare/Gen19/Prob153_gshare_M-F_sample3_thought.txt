@@ -1,0 +1,13 @@
+The main issue is the timing of updating `fetch_ghr` on a flush (misprediction). The current code assigns `fetch_ghr <= train_ghr;` before `train_ghr` is updated to `train_history` (flush recovery) in the same clock edge, causing `fetch_ghr` to recover from stale `train_ghr`.
+
+To fix this, we need to ensure that `fetch_ghr` recovers from the *new* flush history value (`train_history`) directly in the same clock edge instead of from `train_ghr`. This can be done by:
+
+- When `train_mispredicted` is high, update `fetch_ghr` directly with `train_history`.
+- When not a misprediction flush, update `fetch_ghr` by shifting in the predicted taken bit.
+- Keep `train_ghr` as the history register for training purposes, updated accordingly.
+
+This direct use of `train_history` on flush ensures `fetch_ghr` recovers correctly and immediately to the flush history state, consistent with the specification.
+
+The rest of the logic, including prioritizing training updates over prediction updates to `fetch_ghr` and PHT updates, remains unchanged.
+
+This fix resolves the subtle timing bug causing persistent prediction errors after flushes.

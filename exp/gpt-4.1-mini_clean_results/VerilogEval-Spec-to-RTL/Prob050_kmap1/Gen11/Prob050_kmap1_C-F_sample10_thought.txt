@@ -1,0 +1,18 @@
+The K-map output is 0 only for (a,b,c)=000, and 1 otherwise. From example 1, the MUX approach is clean but uses a generic module with some redundant logic. Example 2 uses structural NOT and NAND gates but has separate inverter modules which add complexity and area.
+
+A superior design is to implement the simplified Boolean expression directly with built-in operators in a single module to minimize area and power while preserving clarity and performance.
+
+The logic can be expressed as:
+  out = (b | c) | (~b & ~c & a)
+
+This covers:
+- When b=1 or c=1, out=1
+- When b=c=0, out=a
+
+This is exactly the K-map behavior.
+
+This expression requires only one OR gate for (b|c), one AND gate for (~b & ~c & a), and one final OR combining those two results.
+
+Using Verilog operators directly avoids unnecessary gate instantiations, reduces routing overhead and switching, and minimizes logic depth for better timing.
+
+Hence, this implementation combines example 1's logic simplicity and example 2's structural minimalism in a clean behavioral style for superior PPA.

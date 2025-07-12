@@ -1,0 +1,17 @@
+To correctly implement the next-state logic for y[1], we need to:
+1. Carefully analyze each state transition from the given table and determine when y[1] should be 1 in the next state
+2. Note that y[1] is part of the state encoding (y[2:0]):
+   - A: 000 (y[1]=0)
+   - B: 001 (y[1]=0)
+   - C: 010 (y[1]=1)
+   - D: 011 (y[1]=1)
+   - E: 100 (y[1]=0)
+   - F: 101 (y[1]=0)
+3. Identify all transitions where next y[1] should be 1:
+   - B→D (y=001, w=1 → next y=011)
+   - C→E (y=010, w=0 → next y=100)
+   - D→F (y=011, w=0 → next y=101)
+   - E→D (y=100, w=1 → next y=011)
+   - F→D (y=101, w=1 → next y=011)
+4. All other transitions should result in y[1]=0 in next state
+5. Implement this as a clear combinational logic function that covers all cases

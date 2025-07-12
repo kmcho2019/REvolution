@@ -1,0 +1,9 @@
+Fuse the two examples by using a single nonblocking assignment for the entire 16-bit register update inside one always block triggered on clk's positive edge. Use synchronous active-low reset to clear q. Instead of separate if-else for each byte that redundantly reassigns unchanged bytes, construct the next state with a single multiplexed assignment combining byte enables and existing q. This avoids redundant self-assignments, reducing logic and potential glitching, improving timing and power.
+
+Specifically:
+- On resetn low, q <= 0 synchronously.
+- Else q <= {upper_byte, lower_byte} where each byte is chosen by:
+  - upper_byte = byteena[1] ? d[15:8] : q[15:8]
+  - lower_byte = byteena[0] ? d[7:0] : q[7:0]
+
+This reduces mux complexity by synthesizing a single 16-bit multiplexer, minimizes switching by avoiding explicit holding assignments, and keeps the design simple and efficient with clear byte-enable control over two 8-bit slices.

@@ -1,0 +1,7 @@
+Refactor the FSM implementation to use one-hot encoding for states, which can improve timing by reducing combinational logic complexity.  
+Separate the shift cycle counter logic more explicitly using a dedicated signal and synchronous clear.  
+Use explicit next_state registers and state registers with non-blocking assignments inside a single always_ff block.  
+Generate outputs using continuous assignments (assign) instead of always blocks to make output logic more transparent and reduce inferred latch risk.  
+Maintain the same pattern detection logic via state transitions, but encoded in one-hot style with individual bits for each state for clearer hardware mapping.  
+This structure facilitates easier timing closure and potentially lower toggle rates in the state register by spreading the logic across more flip-flops instead of a compact encoding.  
+The synchronous reset is preserved; the FSM transitions and outputs remain identical in behavior.

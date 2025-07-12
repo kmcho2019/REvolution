@@ -1,0 +1,11 @@
+Fuse the clarity and robustness of Example 1's well-structured FSM with localparam states and explicit case-based next-state logic, with the compactness and dataflow style of Example 2's combinational next_state assignment using ternary operators. Use a single always block for synchronous state update with active-high synchronous reset for reset reliability. Explicitly hold the final detected state (S4) to latch start_shifting indefinitely once the sequence 1101 is found. 
+
+Implement the next_state logic in a separate combinational block using a case statement for clear state transitions and easy future modifications, improving maintainability and synthesis friendliness. Derive start_shifting combinationally as a direct state equality check, enabling downstream optimization and minimizing glitch potential.
+
+This fusion balances:
+- Code clarity and maintainability from explicit case statements.
+- Compact combinational next_state logic from example 2's style.
+- Robust synchronous reset and output latching from example 1.
+- Minimal sequential logic and clear output assertion.
+
+This approach ensures good PPA: a minimal 3-bit FSM state register, simple logic for transitions and output, and no unnecessary toggling after detection, suitable for low power and efficient synthesis.

@@ -1,0 +1,13 @@
+Novel Architectural Idea:
+Instead of using the traditional XOR-based edge detection, we'll implement a state-based edge detector that tracks the previous state of each bit and compares it with the current state. This approach:
+1. Uses explicit state registers for each bit (0, 1, or edge detected)
+2. Implements a small state machine for each bit to detect transitions
+3. Provides potential for more complex edge detection in future extensions
+4. May offer better power characteristics when inputs are stable for long periods
+5. Uses one-hot encoding for the state machine to simplify transition logic
+
+The state transitions are:
+- If current state is 0 and input is 1 → move to edge state
+- If current state is 1 and input is 0 → move to edge state
+- Otherwise → stay in current state (0 or 1)
+- Edge state always transitions to the new stable state (0 or 1)

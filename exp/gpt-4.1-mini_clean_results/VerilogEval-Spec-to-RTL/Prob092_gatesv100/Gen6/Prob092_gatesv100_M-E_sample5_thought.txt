@@ -1,0 +1,11 @@
+Instead of primarily relying on vector slicing, this design will use explicit for-generate loops to calculate each bit individually for all outputs. This emphasizes clarity and step-wise bitwise logic, which might help in debugging and allow fine-grained control in future modifications.
+
+- For out_both, each bit (except the highest) checks if in[i] & in[i+1] are both 1; the highest bit is explicitly set to 0 since it has no left neighbor.
+
+- For out_any, each bit (except the lowest) checks if in[i] | in[i-1] is 1; the lowest bit is explicitly set to 0 due to no right neighbor.
+
+- For out_different, wrap-around is implemented by comparing each in[i] with in[(i+1)%100], using the modulo operation manually in the generate loop.
+
+- All assignments are done inside generate loops with individual bit assignments, ensuring each bit logic is clear and visible.
+
+This architectural change trades some conciseness for explicit per-bit logic clarity.

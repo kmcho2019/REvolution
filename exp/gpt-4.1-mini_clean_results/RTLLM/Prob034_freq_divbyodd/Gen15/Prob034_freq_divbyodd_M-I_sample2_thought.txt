@@ -1,0 +1,20 @@
+The original code tries to generate the divided clock by toggling a single clk_div based on toggle requests raised asynchronously between posedge and negedge clocks. This introduces synchronization issues and glitches due to crossing clock domains within a single clock.
+
+The problem statement specifies using two counters (cnt1 and cnt2) counting on posedge and negedge of clk, each toggling separate clock dividers (clk_div1 and clk_div2) at the half_div count. The final clk_div is the logical OR of clk_div1 and clk_div2, ensuring coverage of both edges and an even pulse width with no glitches.
+
+To fix the issues, I will:
+
+- Implement cnt1 and clk_div1 updated on posedge clk.
+- Implement cnt2 and clk_div2 updated on negedge clk.
+- On each respective clock edge, when the counter reaches half_div, toggle the corresponding clk_div# signal and reset the counter at NUM_DIV-1.
+- Generate clk_div as the OR of clk_div1 and clk_div2, combinationally.
+- Reset all counters and clk_div# on rst_n asserted low.
+- Keep the initial check that NUM_DIV is odd.
+
+This strictly separates the posedge and negedge domains, avoids any crossing of registers between edges, and produces a glitch-free clk_div that is toggling at proper intervals. The design matches the problem description and should provide a stable odd divider output clock.
+
+This approach uses less complex synchronization logic, thus optimizing for power and timing, while fully fulfilling the requirement.
+
+Optional: The OR of clk_div1 and clk_div2 can be done with a continuous assign or inside always_comb if clk_div is reg, depending on style.
+
+I will implement clk_div as reg, updated combinationally from clk_div1 and clk_div2 for a synchronous output.

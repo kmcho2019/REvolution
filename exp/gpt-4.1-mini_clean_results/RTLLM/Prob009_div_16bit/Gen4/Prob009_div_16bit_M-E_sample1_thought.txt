@@ -1,0 +1,24 @@
+I will implement a combinational 16-bit by 8-bit divider using a shift-subtract approach that aligns with the problem description but structured differently:
+
+1. Use two always blocks as required:
+   - The first always block captures inputs into registers `a_reg` and `b_reg`.
+   - The second always block performs the division process.
+
+2. Conceptually, the division starts by loading the top 8 bits of the 16-bit dividend into an 8-bit remainder register. For each of the 16 iterations (corresponding to each quotient bit):
+
+   - Left-shift the remainder by 1 bit and shift in the next highest bit of the dividend (from bits 15 down to 0).
+   - Compare the remainder with the divisor:
+     - If remainder ≥ divisor, set the current quotient bit to 1, and subtract divisor from remainder.
+     - Else, quotient bit is 0, and remainder remains.
+     
+3. Store each quotient bit in order, from MSB to LSB, corresponding to processing bits from the highest dividend bit down to the lowest.
+
+4. At the end, the quotient is 16 bits, and the remainder is 8 bits. Zero-extend remainder to 16 bits for output.
+
+5. This approach directly simulates the classic restoring division algorithm in combinational logic, neatly mapping the problem's description.
+
+6. Variables will be declared outside always blocks to ensure synthesis compatibility.
+
+7. The indexing of dividend bits and quotient bits will be carefully done to avoid invalid indices.
+
+This method is standard, precise, and differs from the previous approach. It uses the iterative shift-subtract method respecting the problem's bit processing and two combinational always blocks.

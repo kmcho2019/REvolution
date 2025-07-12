@@ -1,0 +1,19 @@
+After carefully analyzing the K-map, here's a novel approach that minimizes multiplexer usage while correctly implementing the logic:
+
+1. Key observation: The K-map shows that mux_in[1] (ab=01) is always 0, so we can hardwire it to 0.
+
+2. For the remaining outputs (mux_in[0], mux_in[2], mux_in[3]):
+   - mux_in[0] (ab=00): Output is 1 when cd=01,11,10 → This is ~(c & ~d)
+   - mux_in[2] (ab=10): Output is 1 when cd=00,11,10 → This is ~d | ~c
+   - mux_in[3] (ab=11): Output is 1 when cd=11,10 → This is c & d
+
+3. Implementation strategy:
+   - Use a single 2-to-1 mux to generate both mux_in[0] and mux_in[2] by sharing the ~d term
+   - Use another 2-to-1 mux for mux_in[3]
+   - Total of only two 2-to-1 muxes required
+   - Properly order the outputs to match the ab selector mapping
+
+4. Novel aspects:
+   - Shared computation between mux_in[0] and mux_in[2] reduces hardware
+   - Correct output ordering ensures proper mapping to the 4-to-1 mux
+   - Minimal multiplexer usage while fully implementing the K-map

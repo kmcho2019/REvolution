@@ -1,0 +1,10 @@
+Fuse the clear and concise asynchronous reset design from both examples with explicit individual bit DFF instantiation using generate block. This approach improves readability and modularity by explicitly instantiating flip-flops per bit, ensuring the design clearly maps to eight separate DFF cells, each with asynchronous reset. This also aids potential tool flows that recognize cell-level structures for power and area optimization.
+
+The design will:
+- Use a generate loop to instantiate eight identical D flip-flop elements.
+- Each flip-flop will be sensitive to the positive edge of clk and asynchronous active-high reset.
+- Reset each output bit to 0 asynchronously.
+- On clk edge with no reset, latch the input bit.
+- Outputs are combined as an 8-bit vector q.
+
+This approach retains the asynchronous reset's benefits while showing explicitly the 8 parallel flip-flops, supporting clear structural mapping and potentially improving power/performance/area through explicit parallelism and modularity.

@@ -1,0 +1,14 @@
+Novel Architecture Idea: Pipeline-Staged Right Shifter with Parallel Load
+1. Instead of a single 8-bit register, use two 4-bit registers in a pipelined structure
+2. Each stage handles half of the shift operation
+3. First stage (upper 4 bits) gets the new input and shifts right
+4. Second stage (lower 4 bits) receives the overflow from first stage
+5. Benefits:
+   - Potential for higher clock speeds due to reduced critical path
+   - Clear separation of shift phases
+   - Easier timing closure with smaller register chunks
+   - More flexible for future width extensions
+6. Implementation:
+   - Two always blocks for each pipeline stage
+   - Explicit bit transfer between stages
+   - Same functionality but distributed logic

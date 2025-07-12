@@ -1,0 +1,9 @@
+Novel approach using a shift register pattern generator:
+1. Instead of a counter, use a 4-bit shift register initialized to '1111'
+2. On reset, load the shift register with '1111' (active high synchronous)
+3. Each clock cycle, right-shift the register with '0' as input
+4. shift_ena is the MSB of the shift register
+5. This naturally produces exactly 4 cycles of '1' followed by '0's
+6. No need for comparison operations - pattern is generated directly
+7. More hardware-like implementation that matches shift register control
+8. Clear reset behavior: loads pattern and shifts out exactly 4 enables

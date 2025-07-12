@@ -1,0 +1,15 @@
+To optimize the BCD adder for better power and area without impacting timing significantly, I will replace the 5-bit comparator with a simpler logic expression for the correction condition. The correction condition (sum > 9) can be implemented by checking if the sum is greater than 9 using a simple combinational logic based on the bits of raw_sum instead of a 5-bit comparator. This reduces gate count and switching activity.
+
+Specifically, the BCD correction is needed if:
+- The carry out from the addition (the 5th bit of raw_sum) is 1, or
+- The sum is greater than 9 (1001), which can be detected as:
+  raw_sum[4] = 1, or
+  (raw_sum[3] & (raw_sum[2] | raw_sum[1])) = 1 (which covers decimal sums 10-15)
+
+Also, since we add 6 only when correction_needed is true, the addition of 6 can be done via a conditional adder or using a 4-bit adder with carry. To keep the design simple and efficient, I will implement the sum addition and correction in a single 5-bit adder using the initial sum plus conditional addition of 6, but replacing the comparator with optimized logic.
+
+This reduces power by minimizing toggling in comparator logic and reduces area by avoiding a full 5-bit comparator.
+
+The Cout will remain driven by the correction condition logic.
+
+This approach keeps a single adder and simple combinational logic for correction detection, providing a cleaner and more power/area optimized BCD adder.

@@ -1,0 +1,7 @@
+Instead of using a single register to hold the count value and a combinational next_count logic, this design uses an up-counter with an internal enable signal derived from valid_count and the reset condition. To handle the count wrap-around from 11 to 0, a simple modular counter with a compare-and-reset logic inside the sequential always block is used.
+
+The reset is synchronous and active low, so on every clock edge, if reset is active (!rst_n), the count resets to 0. If valid_count is active, the counter increments by 1. When the count reaches 11, on the next increment it wraps back to 0. If valid_count is 0, the count holds its current value.
+
+This architecture uses only one always block and no intermediate combinational signals, which simplifies the logic and could lead to efficient synthesis results. The counting control is entirely inside the sequential block, making the logic compact and clean. The output is registered and updated synchronously.
+
+This style can be advantageous in environments where minimizing combinational logic before the flip-flop is desirable or where simple synchronous coding style is preferred. It also naturally allows for easy expansion or modifications without separating combinational and sequential logic.

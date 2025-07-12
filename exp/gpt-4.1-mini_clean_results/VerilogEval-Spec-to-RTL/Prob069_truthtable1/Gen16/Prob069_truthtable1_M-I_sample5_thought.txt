@@ -1,0 +1,10 @@
+The original solution uses separate AND2 and OR2 modules to implement the function f = (~x3 & x2) | (x3 & x1), which is clear but adds modular overhead and wiring complexity.
+
+To optimize for better power and area while maintaining the same performance (minimal logic levels), we can replace the modular gate instantiations with a single assign statement directly implementing the logic expression. This eliminates module instantiation overhead, reduces wiring, and simplifies the design, which typically improves power and area without affecting delay.
+
+We will implement TopModule with a direct assign statement:
+  assign f = (~x3 & x2) | (x3 & x1);
+
+This is a compact, efficient combinational implementation of the required truth table.
+
+No external modules are needed, further reducing code size and hierarchy complexity.

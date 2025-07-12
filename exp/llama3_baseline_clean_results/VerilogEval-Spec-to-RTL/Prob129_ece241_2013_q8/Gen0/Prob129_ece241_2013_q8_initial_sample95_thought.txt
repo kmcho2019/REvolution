@@ -1,0 +1,13 @@
+To implement the Mealy-type finite state machine, we need to define the states and transitions. Since we can only have 3 states, let's define them as follows:
+- State 0 (S0): Initial state, no sequence detected
+- State 1 (S1): "1" detected
+- State 2 (S2): "10" detected
+
+The transitions will be as follows:
+- From S0 to S1: when x is "1"
+- From S1 to S2: when x is "0"
+- From S2 to S0: when x is not "1"
+- From S2 to S0 and assert z: when x is "1" (sequence "101" detected)
+- From any state to S0: on negative edge triggered asynchronous reset
+
+The output z will be asserted to logic-1 when the sequence "101" is detected, i.e., when the state is S2 and x is "1".

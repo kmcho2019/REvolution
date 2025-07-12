@@ -1,0 +1,16 @@
+module TopModule (
+    input clk,
+    input reset,
+    output reg [3:0] q
+);
+
+always @(posedge clk) begin
+    if (reset || q == 4'b1010) begin
+        q <= 4'b0001;  // Reset to 1 or wrap around from 10
+    end
+    else begin
+        q <= q + 1;    // Increment count
+    end
+end
+
+endmodule

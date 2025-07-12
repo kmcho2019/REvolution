@@ -1,0 +1,5 @@
+The problem requires implementing a finite state machine (FSM) in Verilog to control a motor based on inputs x and y, with a clock and reset signal. The FSM starts in state A when reset is asserted. After reset is de-asserted, it sets output f to 1 for one clock cycle. Then, it monitors input x for the sequence 1, 0, 1 over three successive clock cycles. Once this sequence is detected, it sets output g to 1 and monitors input y. If y becomes 1 within two clock cycles, g remains 1; otherwise, g is set to 0. This behavior suggests a multi-state FSM that can track the sequence of inputs and adjust outputs accordingly.
+
+To implement this, we can use a state machine with several states: an initial state (A), a state to set f to 1, states to monitor the sequence of x (x1, x0, x1), and states to monitor y after g is set (y_wait1, y_wait2). We will use a case statement within an always block to define the next state logic based on the current state and inputs.
+
+We will use a parameter to define the number of states if needed and enumerate the states. We will also define the outputs f and g based on the current state.

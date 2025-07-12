@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples, we keep the simple and clean comparator `q == MAX_COUNT` from Example 2 for minimal logic depth and better timing, as a single equality check is often optimized well by synthesis tools.
+
+From Example 1, we adopt the parameterization of the terminal count (MAX_COUNT = 999) for readability and maintainability.
+
+Additionally, to optimize power and timing slightly, we'll implement a "next_q" signal to compute the next count value combinationally, and register only once in the always block, reducing redundant logic.
+
+The synchronous reset remains active high as specified.
+
+This fused solution achieves:
+- Clear, parameterized terminal count.
+- Simple, efficient equality comparator.
+- Clean sequential logic with one register update.
+- Slight improvement in combinational logic path by preparing next_q in combinational block.
+
+This approach maximizes clarity, maintainability, and synthesis friendliness, potentially improving PPA over the given examples.

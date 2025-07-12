@@ -1,0 +1,5 @@
+To implement the 5-bit maximal-length Galois LFSR, we first need to understand the tap positions and how they affect the next state of the shift register. The taps are at positions 5 and 3, which means the bits at these positions will be XORed with the least significant bit (q[0]) to produce the next value. Since the LFSR shifts right, the next state of each bit will be the current state of the bit to its left, except for the most significant bit, which will be the result of the XOR operation.
+
+We can use Verilog's always block to describe the sequential behavior of the LFSR, using a non-blocking assignment to update the state on the positive edge of the clock. The reset will be used to initialize the LFSR output to 1.
+
+To ensure the LFSR is maximal-length, we need to choose the correct tap positions, which are given as 5 and 3. However, since Verilog arrays are 0-indexed, we need to adjust these positions to 4 and 2, respectively.

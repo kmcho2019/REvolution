@@ -1,0 +1,7 @@
+To implement the Lemmings game as a finite state machine (FSM) in Verilog, we need to define the states and the state transitions based on the input conditions. The FSM has two states: walking left and walking right. We can use an enumeration or a binary representation for the states. In this case, let's use a binary representation where `00` represents the walking left state and `01` represents the walking right state. 
+
+The next state logic can be determined based on the current state and the input conditions. If the Lemming is walking left and receives a bump from the left, it should start walking right. If it's walking right and receives a bump from the right, it should start walking left. If it receives bumps from both sides, it should switch directions. This logic can be implemented using a combinational logic block.
+
+The output logic is straightforward since the output is directly dependent on the current state. If the current state is walking left, the `walk_left` output should be `1`, and if the current state is walking right, the `walk_right` output should be `1`.
+
+The module will be reset to the walking left state when `areset` is `1`, regardless of the clock. This can be achieved using an asynchronous reset.

@@ -1,0 +1,13 @@
+To develop a novel edge detection module, our strategy focuses on creating a more scalable and versatile architecture. The new approach will utilize a finite state machine (FSM) to detect rising and falling edges in the input signal `a`. This FSM-based design will not only detect edges but also provide a mechanism for easy extension to more complex signal processing tasks.
+
+1. **FSM States**: We define two main states for our FSM: `IDLE` and `EDGE_DETECT`. The `IDLE` state represents the default condition where no edge is being detected, and the `EDGE_DETECT` state is entered when an edge is detected.
+
+2. **Edge Detection Logic**: Within the `EDGE_DETECT` state, we implement the logic to detect rising and falling edges. This is achieved by comparing the current state of `a` with its previous state. If `a` has transitioned from 0 to 1, a rising edge is detected, and if `a` has transitioned from 1 to 0, a falling edge is detected.
+
+3. **Output Signals**: Based on the detected edge, we set the `rise` or `down` output signals accordingly. These signals are reset to 0 when the FSM returns to the `IDLE` state, ensuring they are only active for one clock cycle after an edge is detected.
+
+4. **Reset Mechanism**: The FSM includes a reset mechanism that sets it to the `IDLE` state when the reset signal `rst_n` is low. This ensures the module starts in a known state.
+
+5. **Clock Synchronization**: All state transitions and signal updates are synchronized with the positive edge of the clock signal `clk`, ensuring the module operates in a predictable and synchronous manner.
+
+By utilizing an FSM, this new edge detection module offers a flexible and scalable architecture that can be easily adapted for more complex tasks, such as detecting multiple types of edges or processing signals based on specific patterns.

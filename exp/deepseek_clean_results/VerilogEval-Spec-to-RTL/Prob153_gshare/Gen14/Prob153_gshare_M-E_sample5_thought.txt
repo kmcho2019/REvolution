@@ -1,0 +1,12 @@
+Novel Architecture Idea:
+1. Pipelined Prediction: Split the prediction into two stages (index calculation and PHT lookup) to improve clock frequency
+2. Speculative History Update: Maintain two GHR copies - one for current predictions and one speculative for future updates
+3. Early Misprediction Recovery: Add a bypass path to quickly correct the speculative GHR when mispredictions are detected
+4. Banked PHT: Split the PHT into two banks (odd/even indices) to allow concurrent read/write operations
+5. Precomputed Training: Calculate training index in parallel with PHT lookup to reduce critical path
+
+Key Benefits:
+- Higher clock frequency due to pipelining
+- Reduced penalty from mispredictions via speculative updates
+- Better throughput with banked PHT structure
+- Lower power from gated clock domains for inactive banks

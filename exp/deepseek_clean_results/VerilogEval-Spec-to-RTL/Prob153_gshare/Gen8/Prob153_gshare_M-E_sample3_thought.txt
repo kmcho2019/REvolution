@@ -1,0 +1,13 @@
+Novel Architecture: Segmented Adaptive GShare
+1. Split the 7-bit global history into two segments (3-bit recent, 4-bit older) for better pattern capture
+2. Implement adaptive prediction strength where frequently mispredicted branches get stronger updates
+3. Use separate PHTs for each history segment with weighted voting for final prediction
+4. Add a confidence bit to each PHT entry to control update strength
+5. Implement history recovery using a small buffer for misprediction cases
+
+Key Innovations:
+- Segmented history captures both short-term and long-term patterns better
+- Adaptive update strength reduces noise from weakly correlated branches
+- Weighted voting improves prediction accuracy
+- Confidence bits optimize PHT updates
+- History recovery buffer handles pipeline flushes efficiently

@@ -1,0 +1,17 @@
+module TopModule(
+    input a,
+    input b,
+    input c,
+    input d,
+    output reg q
+);
+
+always @(*) begin
+    if (b || c) begin
+        q = 1;
+    end else begin
+        q = (~a && d);
+    end
+end
+
+endmodule

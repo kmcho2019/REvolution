@@ -1,0 +1,5 @@
+The original implementation uses the reduction XOR operator on all inputs and negates it to achieve even parity, which is already optimal and minimal. However, since XOR gates tend to have higher switching activity leading to more dynamic power consumption, one minor power optimization is to reorder the inputs or implement the parity as a balanced tree of XOR gates to slightly reduce the critical path and power. For four inputs, explicitly constructing the balanced XOR tree might help synthesis tools generate slightly better hardware.
+
+Thus, I'll implement q as the negation of ((a ^ b) ^ (c ^ d)) instead of reduction XOR of all four inputs at once, which gives the synthesis tool explicit hint for balanced XOR tree, potentially lowering delay and power slightly while maintaining the same functionality.
+
+This approach does not increase area significantly, keeps the combinational logic simple, and may yield marginal improvements in timing and power by explicit balancing.

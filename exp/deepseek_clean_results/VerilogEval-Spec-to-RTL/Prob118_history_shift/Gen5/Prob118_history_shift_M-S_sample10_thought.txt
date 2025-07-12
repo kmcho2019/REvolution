@@ -1,0 +1,21 @@
+Here's a simplified approach that maintains functionality while reducing complexity:
+
+1. Use a single history register instead of two, since the speculative updates can be handled directly:
+   - During normal operation, shift in predictions
+   - On misprediction, roll back to train_history and append train_taken
+
+2. Key simplifications:
+   - Eliminate the dual-register approach (current/speculative)
+   - Handle misprediction with priority over prediction
+   - Output the history register directly
+
+3. Benefits:
+   - Reduced area (half the registers)
+   - Simpler control logic
+   - Same functionality since mispredictions override predictions anyway
+
+4. Operation:
+   - Reset clears the history
+   - Misprediction loads train_history + train_taken
+   - Prediction shifts in predict_taken (unless misprediction occurs)
+   - Output always shows current history state

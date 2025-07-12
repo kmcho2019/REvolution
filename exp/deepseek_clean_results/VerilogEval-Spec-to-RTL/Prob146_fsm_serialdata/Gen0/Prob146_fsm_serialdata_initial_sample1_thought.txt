@@ -1,0 +1,13 @@
+To implement a serial byte receiver with start and stop bits, we'll need a finite state machine (FSM) with the following states:
+1. IDLE: Wait for start bit (0)
+2. RECEIVE: Shift in 8 data bits (LSB first)
+3. STOP: Verify stop bit (1)
+4. ERROR: Wait for stop bit if missing
+
+The FSM transitions:
+- From IDLE to RECEIVE when start bit detected
+- Through RECEIVE for 8 clock cycles to collect data bits
+- To STOP if 8 bits received, back to IDLE if stop bit valid
+- To ERROR if stop bit missing, stay until stop bit found
+
+We'll use a 3-bit counter to track received bits and a shift register to accumulate the byte. The 'done' signal pulses when valid stop bit is detected.

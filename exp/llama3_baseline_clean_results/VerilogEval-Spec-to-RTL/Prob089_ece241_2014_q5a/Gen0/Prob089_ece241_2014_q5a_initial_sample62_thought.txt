@@ -1,0 +1,9 @@
+To implement a serial 2's complementer Moore state machine, we need to design a finite state machine that can handle inputs of arbitrary length. The machine should have at least two states: one for the normal operation (or calculation) and one for the inversion of the bits (after encountering the first '1' which signifies the end of the sign bit for 2's complement). 
+
+We'll use a sequential logic approach with a positive edge-triggered asynchronous reset. When the reset is released, the machine starts accepting the input series and starts calculating the 2's complement.
+
+To compute the 2's complement, we'll first accumulate the bits until we encounter the first '1', which indicates the end of the sign bit for 2's complement. After that, we'll invert the subsequent bits. We'll output the bits as we go, after the inversion phase has started.
+
+Our state machine will have two states: IDLE (or WAIT) for waiting for the first '1' and RUNNING for the inversion phase. We will also maintain a flag to indicate whether we've seen the first '1' or not.
+
+The state machine transitions from IDLE to RUNNING as soon as it encounters the first '1'. In the RUNNING state, it inverts all subsequent bits.

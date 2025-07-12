@@ -1,0 +1,6 @@
+Combine the explicit 2-bit FSM states from Example 1 with Example 2's byte-shift approach for message storage, but optimize for PPA by storing the three bytes in a small byte array (3 registers), indexed by the FSM state, avoiding repeated full 24-bit shifts.  
+On receiving the start byte (in[3]=1), store it in byte 0, then bytes 1 and 2 on subsequent states.  
+On the done cycle (after byte 3), concatenate the three stored bytes into out_bytes and assert done simultaneously.  
+This avoids shifting large 24-bit registers each cycle (reducing combinational delay and power), keeps clear FSM states, and maintains done assertion timing.  
+Also, out_bytes and done are registered and updated only when done is asserted, minimizing toggling.  
+Use synchronous active-high reset, positive-edge clock triggering, and non-blocking assignments for safe sequencing and clear timing.

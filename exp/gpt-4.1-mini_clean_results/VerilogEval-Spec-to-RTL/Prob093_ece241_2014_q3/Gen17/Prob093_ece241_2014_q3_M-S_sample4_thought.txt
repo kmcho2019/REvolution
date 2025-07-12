@@ -1,0 +1,24 @@
+The TopModule's purpose is to provide the 4 inputs (mux_in[3:0]) to a 4-to-1 mux selected by {a,b} that outputs the function defined by the Karnaugh map over variables a,b,c,d.
+
+Given the K-map indexed by ab (selector inputs) and cd (inputs c,d to the circuit), the mux_in[x] inputs must be functions of c and d only (since a,b select which mux_in is chosen).
+
+Since we can only use multiplexers (no logic gates except multiplexers), and only c and d are inputs here, each mux_in bit should be a simple function of c and d implemented only using 2-to-1 muxes (implemented via ternary operators).
+
+The simplest way is to directly assign each mux_in bit as the value from the table for each cd combination (cd=00,01,11,10), thus mux_in[x] is a function f_x(c,d).
+
+For example, to implement a function of c,d with values for cd = 00, 01, 11, 10, we do a nested 2-to-1 mux:
+
+- select by c: 
+   if c=0, output = f(0,d)
+   if c=1, output = f(1,d)
+
+- for each f(c,d), we select by d:
+   if d=0 or 1, output accordingly.
+
+We only use ternary operators to encode each mux_in bit.
+
+Following this, each mux_in bit is a pure function of c,d constructed from nested 2-to-1 muxes, respecting the K-map's values for each ab selector.
+
+This approach minimizes complexity, uses only muxes, and matches the required logic exactly.
+
+The code below implements this straightforward mux-based decoding for each mux_in bit, faithfully mapping the K-map entries.

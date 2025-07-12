@@ -1,0 +1,10 @@
+To solve this problem, we will design a finite state machine (FSM) with several states:
+- IDLE: waiting for the start bit (0)
+- START: start bit received, waiting for data bits
+- DATA: receiving data bits (8 bits)
+- STOP: waiting for the stop bit (1)
+- ERROR: invalid stop bit received, waiting for a stop bit (1) before going back to IDLE
+
+The FSM will transition between these states based on the input bit stream and the current state.
+It will also keep track of the received data byte and output it when a valid stop bit is received.
+If an invalid stop bit is received, the FSM will wait until a stop bit is received before going back to the IDLE state.

@@ -1,0 +1,8 @@
+Fuse the best qualities of both examples by:
+- Using a single next_q register to compute the next state, enhancing readability and helping synthesis tools optimize transitions.
+- Prioritizing synchronous load over rotation.
+- Implementing rotation via efficient vector concatenations (not loops) to keep logic simple and fast.
+- Omitting the explicit "q <= q;" assignment in the no-operation case to reduce toggling and power; the register naturally holds state if not assigned.
+- Using a compact case statement for ena that explicitly handles the two rotation directions and no rotation conditions.
+- Assigning q only once per clock cycle using non-blocking assignment, improving maintainability and synthesis friendliness.
+This fusion balances clarity, efficiency, minimal switching, and synthesis optimization for performance, power, and area.

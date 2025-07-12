@@ -1,0 +1,14 @@
+To simplify the Rule 90 implementation while maintaining functionality:
+
+1. Keep the core logic of XOR between left and right neighbors
+2. Instead of computing all 512 bits in parallel, use a single-bit processing approach
+3. For boundary conditions:
+   - Left neighbor of q[0] is always 0
+   - Right neighbor of q[511] is always 0
+4. Use a generate loop to create individual XOR gates for each bit position
+5. This approach:
+   - Reduces combinatorial complexity
+   - Makes synthesis easier by breaking down the large XOR operation
+   - Maintains clear boundary handling
+   - Still achieves the same functionality
+6. The implementation will use non-blocking assignments for all register updates

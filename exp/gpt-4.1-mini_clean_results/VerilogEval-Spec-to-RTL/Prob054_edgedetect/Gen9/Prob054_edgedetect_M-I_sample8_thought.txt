@@ -1,0 +1,13 @@
+The original design is already minimal and clear, using a single always block and simple combinational logic to detect positive edges per bit. To improve PPA (timing, power, and area), the best leverage here is to reduce unnecessary toggles by gating the output register update only when a positive edge is detected. This can reduce power by avoiding redundant writes to `pedge`. Similarly, we can do the same for the `prev_in` register update by only updating bits that have changed; however, partial register update is often not supported directly and can increase complexity. 
+
+Another straightforward optimization is to register `pedge` output bits only when a rising edge occurs, and otherwise hold the previous output (which is zero if no edge detected). This reduces toggling on the output register and can slightly improve power without adding complexity. 
+
+Timing-wise, the critical path is already minimal. Area-wise, no change since we keep just two registers.
+
+In summary, the improvement:
+- Update `pedge` only when a rising edge occurs; otherwise hold zero
+- Maintain single always block and non-blocking assignments
+- This reduces switching activity in `pedge`, improving power without impacting timing or area
+- Keep code clear and readable
+
+This is a slight power optimization with minimal risk or complexity increase.

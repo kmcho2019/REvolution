@@ -1,0 +1,13 @@
+We keep the core functionality that the state flip-flop holds one bit updated on posedge clk, and next_state depends on 'a' and 'b' as before.
+
+To improve clarity and possibly better match the waveform, we rewrite the logic using a clear combinational always block for next_state and q, and separate the sequential update of state. We'll use synchronous state update and combinational next_state and output logic based on the current state and inputs.
+
+The idea:
+- next_state = if b=1 then ~a else hold current state (same as before).
+- q = (state & ~b) | (~state & ~a & b), but expressed in an explicit combinational block.
+- Use non-blocking assignment to update state.
+- Output 'state' directly from the flip-flop reg.
+
+This structure often synthesizes cleaner FSMs and might help avoid misunderstandings or glitches from mixed assign and always.
+
+This approach follows the same logic but more explicitly and structurally separated.

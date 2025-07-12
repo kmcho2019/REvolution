@@ -1,0 +1,10 @@
+The original solution uses a manual ripple-carry full adder implementation for clarity and correctness, but this introduces a long carry chain, which can hurt timing and area. To optimize for better PPA (power, performance, area):
+
+- Replace the manual full adder logic with the built-in '+' operator, letting synthesis tools infer an optimal adder architecture or use vendor carry chains.
+- Implement subtraction by conditionally inverting b and adding do_sub as carry-in (two's complement), but do it implicitly via `a + (do_sub ? -b : b)`, or equivalently `a + b_xor + do_sub`.
+- Use continuous assignment for `out` and generate the zero flag using a reduction NOR on `out`.
+- Keep `out` and `result_is_zero` as outputs driven by combinational logic, not reg.
+- Parameterize width for flexibility.
+- This will significantly reduce gate count, power, and area, improve timing by relying on optimized adders, and maintain correctness and zero detection.
+
+This approach trades explicit gate-level clarity for synthesis-friendly, succinct code that lets the tool pick the best implementation, improving PPA.

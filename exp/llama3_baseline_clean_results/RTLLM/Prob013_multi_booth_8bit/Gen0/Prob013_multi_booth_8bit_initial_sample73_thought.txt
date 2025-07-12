@@ -1,0 +1,11 @@
+To implement an 8-bit Radix-4 Booth multiplier, we first need to understand the Booth algorithm, which is a multiplication algorithm that works by shifting and adding the multiplicand to the product based on the bits of the multiplier. In this case, we are implementing the Radix-4 variant, which involves considering two bits of the multiplier at a time. 
+
+The module multi_booth_8bit will be implemented with the following components: 
+- Two 16-bit registers (multiplier and multiplicand) to hold the multiplicand and the multiplier extended to 16 bits with the sign bit replicated.
+- A 5-bit counter (ctr) to keep track of the current bit being processed in the multiplier.
+- A 16-bit register (p) to accumulate the product.
+- A 1-bit register (rdy) to indicate when the multiplication is complete.
+
+The multiplier and multiplicand registers will be initialized on the positive edge of the reset signal. During normal operation (reset low), the multiplicand will be left-shifted by 1 on each clock cycle, and the product will accumulate the multiplicand based on the current bit of the multiplier register. 
+
+After 16 clock cycles, the counter will reach 16, and the ready signal will be set to 1, indicating the completion of the multiplication process.

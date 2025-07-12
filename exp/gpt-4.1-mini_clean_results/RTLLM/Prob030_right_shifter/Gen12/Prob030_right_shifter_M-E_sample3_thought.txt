@@ -1,0 +1,7 @@
+Implement the right shifter by explicitly performing the right shift and MSB insertion using two sequential non-blocking assignments within the clocked process: first shift the entire register to the right by one bit, then update the MSB bit with the input `d`. This stepwise approach clearly separates the shift and insertion operations, enhancing readability and making the RTL behavior explicit.
+
+Initialize the register `q` with zeros using an initial block for simulation determinism.
+
+This design uses multiple assignments but remains synthesis-friendly. It is slightly more verbose but helps in debugging and verification to clearly observe both the shift and the MSB insertion separately in simulation waveforms. It also allows easier insertion of additional logic between these operations in the future if needed.
+
+Overall, this design balances clarity and correctness without relying on concatenation tricks.

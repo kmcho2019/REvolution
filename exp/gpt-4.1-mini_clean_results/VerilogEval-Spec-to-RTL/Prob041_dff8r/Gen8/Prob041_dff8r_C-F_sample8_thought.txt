@@ -1,0 +1,9 @@
+Fuse the modular clarity of a dedicated single-bit DFF module with the area- and power-efficient vectorized register update inside TopModule, but enhance power efficiency by incorporating a simple data change detect to avoid redundant loading when inputs have not changed (optional optimization). 
+
+The approach:
+- Retain a clean single-bit DFF module with synchronous reset for modularity and reusability.
+- Implement the 8-bit register update in TopModule using a single always block clocked on the positive edge of clk with synchronous reset, assigning to a reg [7:0].
+- To merge modularity and efficiency, instantiate the single-bit DFF module only for verification or reuse purposes, but here, to maximize synthesis efficiency, avoid multiple instances for the actual 8-bit storage.
+- Add a data-gating mechanism in TopModule to update the register only when reset is asserted or input data differs from the current output. This reduces unnecessary toggling, improving power with minimal area/timing impact.
+- Provide clean, synthesizable, and modular code, explicitly commenting the power optimization and modular DFF reuse rationale.
+This fusion maximizes modular clarity, PPA improvements, and synthesis-friendly style.

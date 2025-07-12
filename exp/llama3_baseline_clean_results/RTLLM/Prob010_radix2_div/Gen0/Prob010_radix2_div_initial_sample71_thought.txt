@@ -1,0 +1,10 @@
+To implement a simplified radix-2 divider for 8-bit signed or unsigned integers, we need to follow a step-by-step approach. 
+1. First, we check if the operation is valid (opn_valid is high and res_valid is low) and then save the inputs (dividend and divisor) and determine if the operation is signed or unsigned.
+2. Next, we initialize the shift register SR with the absolute value of the dividend shifted left by one bit and set NEG_DIVISOR to the negated absolute value of the divisor.
+3. We then start the division process by setting the counter cnt to 1 and start_cnt to 1.
+4. During the division process, we perform the following steps: 
+    - Check if the counter cnt has reached 8 (most significant bit of cnt is set). If so, the division is complete, and we update the shift register SR with the final remainder and quotient, and clear cnt and start_cnt.
+    - Otherwise, increment the counter cnt, compute the subtraction of NEG_DIVISOR, use a multiplexer to select the appropriate result based on the carry-out, and update SR by shifting left and inserting the carry-out.
+5. Finally, we manage the res_valid signal based on the reset signal, the counter, and whether the result has been consumed.
+
+The Verilog code will implement the above steps using a finite state machine (FSM) or a combinational logic approach. We will use registers to store the inputs, outputs, and temporary results, and will use Verilog's arithmetic and logical operators to perform the necessary computations.

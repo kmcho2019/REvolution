@@ -1,0 +1,11 @@
+Refactor the implementation by separating the combinational next state calculation into a dedicated always_comb block and use a synchronous always_ff block for the register update. This improves clarity by clearly delineating combinational logic and sequential logic sections rather than mixing assign statements and synchronous code.
+
+Specifically:
+
+- Use a reg [511:0] next_q to hold the combinational next state.
+- Calculate next_q inside an always_comb block iterating over all cells.
+- Update q synchronously on clk using always_ff (or always @posedge clk).
+- Keep the zero-padded extended vector for boundary handling.
+- This style is often preferred for readability and some synthesis tools' best practices.
+
+This refactoring keeps the exact same logic but organizes the code into clear combinational and sequential blocks, making it easier to maintain and debug, while leaving synthesis results similar.

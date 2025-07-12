@@ -1,0 +1,8 @@
+To solve this problem, we can design a finite state machine (FSM) with the following states: 
+- IDLE: Initial state where the FSM waits for a start bit (0) to initiate the byte reception.
+- RECEIVE_DATA: After detecting the start bit, the FSM transitions to this state and receives the 8 data bits. The received bits are shifted into a register.
+- VERIFY_STOP: After receiving all 8 data bits, the FSM waits for the stop bit (1).
+- DONE: If the stop bit is correct, the FSM asserts the 'done' signal and outputs the received byte. 
+The FSM will also include a reset logic that resets the FSM to the IDLE state when the 'reset' signal is asserted.
+
+The FSM will have two counters: one to count the received data bits and another to store the received byte.

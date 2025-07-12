@@ -1,0 +1,13 @@
+The key improvements needed are:
+
+1. Clear prioritization of GHR updates - training (especially misprediction recovery) must take absolute precedence over prediction updates
+2. Simplify the GHR update logic to avoid any potential race conditions
+3. Ensure PHT updates only occur on clock edges while predictions use current state
+4. Maintain proper indexing for both prediction and training paths
+
+Main changes:
+- Restructure GHR update logic to have clear priority: misprediction recovery > normal training > prediction
+- Combine related conditions to avoid overlapping updates
+- Keep PHT update logic separate from GHR updates
+- Maintain the same indexing scheme (PC XOR GHR) for both paths
+- Ensure all state updates are properly synchronized to clock edges

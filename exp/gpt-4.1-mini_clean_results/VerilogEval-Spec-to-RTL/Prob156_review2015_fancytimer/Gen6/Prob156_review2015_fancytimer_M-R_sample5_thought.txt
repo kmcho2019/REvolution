@@ -1,0 +1,17 @@
+I will refactor the design with a Mealy-style FSM in a single always @(posedge clk) block, and use combinational assign statements for outputs where possible.
+
+Key changes:
+
+- Use a 4-bit shift register for the start pattern detection, shifting in serial `data` every clock in the IDLE state.
+- After detecting the start pattern (1101), enter DELAY_LOAD state and shift in 4 delay bits MSB first correctly by shifting left and inserting new bits at LSB.
+- When delay bits fully loaded, initialize a 14-bit down counter for (delay+1)*1000 cycles.
+- Use a 10-bit counter that counts from 999 down to 0 to count the 1000 clock cycles per block.
+- Use a 4-bit block counter initialized with delay to count down blocks of 1000 cycles, so the remaining block count (for output `count`) is exact.
+- The count output is directly the current block counter during counting.
+- When block counter and 1000-cycle counter expire, transition to DONE state.
+- Wait for `ack` to clear DONE and go back to IDLE.
+- Use synchronous reset to reset all regs to initial conditions.
+- Outputs `counting` and `done` are asserted in their respective states.
+- Avoid approximations by using explicit nested counters for exact timing.
+- Maintain a single always @(posedge clk) block for state and counters, and assign outputs combinationally.
+This clean structure ensures correct timing, exact counting, and avoids approximate arithmetic, resolving prior timing and counting inaccuracies.

@@ -1,0 +1,25 @@
+Simplified Fractional Divider Design:
+
+1. Core Concept:
+   - Use a single counter to track 7 clock cycles (for 3.5x division)
+   - Generate two complementary clock signals with 50% duty cycle
+   - Phase shift one signal by 180° (half period)
+   - Combine them with OR operation to create final output
+
+2. Simplifications:
+   - Single always block for all sequential logic
+   - Direct counter-based phase generation
+   - Eliminate intermediate registers for phases
+   - Simplified reset handling
+
+3. Implementation Approach:
+   - 3-bit counter cycles through 0-6 (7 states)
+   - First phase (clk_a) toggles every 3 or 4 cycles
+   - Second phase (clk_b) is inverted version of clk_a
+   - OR combination creates fractional division
+
+4. Advantages:
+   - Reduced logic complexity
+   - Clear state transitions
+   - Maintains precise 3.5x division ratio
+   - Better timing characteristics

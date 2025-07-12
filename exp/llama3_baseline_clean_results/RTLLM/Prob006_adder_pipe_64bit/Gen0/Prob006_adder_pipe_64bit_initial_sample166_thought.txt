@@ -1,0 +1,10 @@
+To design a 64-bit ripple carry adder with pipeline stages, we can break down the adder into smaller stages, each responsible for adding a portion of the input operands and a carry signal. We will use registers to synchronize the input enable signal (i_en) and output the result. The sum values for each pipeline stage will be calculated by adding the corresponding input operands and carry signals. The output enable signal (o_en) will be updated based on the pipeline stages and synchronized with the clock (clk) and reset (rst_n) signals.
+
+We will use a total of 5 pipeline stages: 
+1. Input stage: where the input operands and enable signal are registered.
+2. Stage 1: adds the low 16 bits of the input operands and the carry signal.
+3. Stage 2: adds the next 16 bits of the input operands and the carry signal from stage 1.
+4. Stage 3: adds the next 16 bits of the input operands and the carry signal from stage 2.
+5. Stage 4: adds the high 16 bits of the input operands and the carry signal from stage 3, and generates the final result and output enable signal.
+
+Each stage will be implemented using a separate always block, which will handle the logic for that stage.

@@ -1,0 +1,9 @@
+The existing solution is already quite minimal, using just two flip-flops to track state. However, we can simplify it further by:
+
+1. Eliminating the explicit state encoding and using direct bit tracking
+2. Maintaining the same Mealy machine behavior where output depends on current state and input
+3. Using only 3 states as specified (waiting for first 1, got 1, got 10)
+4. Still detecting overlapping sequences
+5. Keeping the negative edge async reset
+
+The key insight is that we only need to track our progress through the "101" sequence, which can be done with just 3 states. The output is purely combinational based on current state and input.

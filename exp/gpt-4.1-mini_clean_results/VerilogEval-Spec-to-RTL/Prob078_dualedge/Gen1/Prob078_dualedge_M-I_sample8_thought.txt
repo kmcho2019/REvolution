@@ -1,0 +1,12 @@
+The original solution correctly implements dual-edge triggered behavior using two flip-flops clocked on opposite edges and a combinational mux. However, this mux in the output introduces a combinational path on every clock edge, which could limit the maximum frequency and cause timing issues.
+
+To optimize for performance (reduce critical path delay) and power (avoid redundant toggling at the output), I will register the mux output with a third flip-flop clocked on the rising edge. This creates a synchronous output `q` with stable timing and reduces glitching.
+
+Also, to reduce toggling on the negedge flop (q_neg), I will gate its data capture by detecting changes in `d` or by enabling it only when clk is low. Since such clock gating is tricky in Verilog and may not be synthesizable or necessary, the main gain is from registering the output.
+
+This approach trades a 1-cycle latency for improved timing and power. This is generally acceptable in FPGA designs and improves overall PPA.
+
+Summary of changes:
+- Add a third flip-flop `q` clocked at posedge clk.
+- Drive the input of this flop from the mux selecting between `q_pos` and `q_neg`.
+- Remove combinational assignment of `q`.

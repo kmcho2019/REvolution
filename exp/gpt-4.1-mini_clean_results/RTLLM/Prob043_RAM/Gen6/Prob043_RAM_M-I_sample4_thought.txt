@@ -1,0 +1,36 @@
+The original design is functionally correct and clean, but we can optimize it for better PPA:
+
+1. Reset Strategy:
+   - Instead of synchronous reset zeroing all memory locations every reset event (which is costly in timing and power), use asynchronous reset with a reset_done signal to initialize RAM only once on system startup.
+   - Alternatively, remove the reset from RAM content and rely on the initial block to set RAM content to zero at elaboration time. Many synthesis tools support this for small memories and infer initialized RAM blocks, reducing reset logic and improving timing.
+   - Since the problem explicitly defines an active-low reset, but only needs RAM initialized to zero on reset, we can avoid looping inside reset by using initial block for zero-init (which is acceptable for small memories like 8 entries) and removing synchronous reset logic from RAM contents.
+
+2. Write Operation:
+   - Keep synchronous write with write_en.
+
+3. Read Operation:
+   - Use combinational read output gated by read_en to avoid read latency.
+   - Output zero when read_en is low to reduce toggling.
+
+4. Address Width:
+   - Use $clog2(DEPTH) for address width.
+
+5. Power:
+   - Since write_en gates write, no further gating needed here.
+   - Output gating by read_en reduces output switching.
+
+6. Area:
+   - Removing synchronous reset logic (the for loop) reduces logic and improves area and timing.
+
+Summary:
+- Remove the reset process zeroing RAM each reset.
+- Use initial block to set RAM contents to zero once (synthesis tools commonly support initial contents on block RAMs, especially for FPGA).
+- Keep synchronous write.
+- Read remains combinational gated by read_en.
+- This reduces reset-time path complexity and power, and improves timing without changing functionality.
+
+This meets the requirements: RAM contents initialized to zero at startup, dual-port read and write simultaneously, active-low reset to control external system reset but without expensive RAM clearing logic.
+
+If strict reset clearing of RAM on every reset is mandatory, a separate reset_done signal with a one-time initialization FSM would be needed, but that adds complexity and was not explicitly requested.
+
+Hence, this approach is a pragmatic and efficient improvement over the original.

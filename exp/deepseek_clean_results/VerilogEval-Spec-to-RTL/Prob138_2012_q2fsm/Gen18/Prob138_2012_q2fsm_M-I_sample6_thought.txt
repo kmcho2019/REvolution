@@ -1,0 +1,15 @@
+Improvement Strategy:
+1. Timing Optimization: The critical path (D->F transition) can be improved by simplifying the combinational logic. We'll use one-hot encoding which reduces logic depth for state transitions at the cost of slightly more flip-flops.
+
+2. Power Optimization: Maintain one-hot encoding's advantage of minimal switching activity (only one bit changes per transition). Add clock gating for stable states (E when w=1) to reduce dynamic power.
+
+3. Area Optimization: Despite one-hot using more flip-flops, we'll minimize combinational logic area by exploiting the one-hot property in the state transition logic.
+
+4. Output Logic: Keep simple direct assignment (z = current_state[5] | current_state[4]) since E and F are the only states with z=1.
+
+Key Improvements:
+- One-hot encoding for better timing (0.18ns target)
+- Clock gating for stable states reduces power
+- Simplified transition logic using one-hot properties
+- Maintain robust reset and default handling
+- Direct output assignment remains optimal

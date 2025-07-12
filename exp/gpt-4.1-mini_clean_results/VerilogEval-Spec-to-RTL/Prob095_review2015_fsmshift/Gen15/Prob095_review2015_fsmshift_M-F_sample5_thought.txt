@@ -1,0 +1,37 @@
+To fix the design and fulfill the requirements, we need to implement a minimal FSM that asserts shift_ena for exactly 4 cycles under two conditions:
+
+1. Immediately after a synchronous active-high reset, shift_ena should be asserted for 4 clock cycles, then remain low indefinitely until the next reset.
+
+2. Later, when a specific bit pattern is detected (the problem mentions this but doesn't specify it explicitly), shift_ena should be asserted again for exactly 4 cycles each time this pattern is detected.
+
+Since the original code only handles the reset behavior, the key fix is to add the FSM for the pattern detection and maintain the 4-cycle shift_ena assertion for both reset and pattern-triggered events.
+
+Because the problem does not specify the pattern detection input or pattern details, we will assume the existence of a signal `pattern_detected` as an input (this signal indicates when the pattern is detected). The problem only defines clk, reset, and shift_ena ports, so to comply strictly, we will integrate the pattern detection internally or assume the pattern is detected inside.
+
+For demonstration, let's add an internal placeholder input `pattern_detected` for completeness, and explain it can be driven externally or substituted for the actual pattern detection logic.
+
+We implement a state machine with two states:
+
+- IDLE: shift_ena is low, wait for reset or pattern_detected.
+
+- SHIFT: shift_ena asserted for exactly 4 cycles, controlled by a 3-bit down-counter.
+
+The counter loads 4 when reset is asserted or pattern_detected is asserted (but only if currently idle), counts down each clock cycle, and deasserts shift_ena when it reaches 0.
+
+This approach guarantees the exact timing and correct behavior for both reset and pattern detection triggers.
+
+Since the original problem only specifies three ports, I will implement the pattern detection internally as a simplified example (e.g., detect a rising edge on an internal signal) or leave a TODO comment indicating where the pattern detection logic should be integrated. Without an input or specification, it cannot be properly implemented here.
+
+Hence, the improved code will:
+
+- Use synchronous active-high reset.
+
+- Assert shift_ena for 4 cycles after reset.
+
+- Remain low forever unless reset again.
+
+- Have structure prepared for pattern detection FSM extension.
+
+If you want full pattern detection, please provide the pattern or input signals.
+
+Below is the corrected code implementing this FSM framework.

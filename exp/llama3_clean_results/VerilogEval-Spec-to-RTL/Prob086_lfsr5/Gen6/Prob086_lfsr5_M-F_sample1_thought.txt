@@ -1,0 +1,14 @@
+To fix the provided code, we need to correctly implement the 5-bit maximal-length Galois LFSR with taps at bit positions 5 and 3. This requires adjusting the next state logic to follow the typical pattern of a Galois LFSR, where only the tapped bits are XORed with the LSB. 
+
+The correct next state logic for the LFSR should be:
+- next_state[4] = current_state[4] ^ current_state[0]; (Tap at position 5)
+- next_state[3] = current_state[3] ^ current_state[0]; (Tap at position 3)
+- next_state[2] = current_state[2];
+- next_state[1] = current_state[1];
+- next_state[0] = current_state[4];
+
+This adjustment ensures that the tapped bits (positions 5 and 3) are XORed with the LSB (current_state[0]), while the non-tapped bits simply shift right unchanged.
+
+We will also keep the reset logic simple, setting the LFSR output to a valid non-zero state, such as 5'b10001. However, we should consider if this is the optimal initial state for a maximal-length LFSR.
+
+In terms of optimization, we will focus on correcting the functional errors first, and then consider any further optimizations for area and power consumption.

@@ -1,0 +1,11 @@
+The original bug stems from not properly handling the subtraction as two’s complement addition (a + ~b + 1). The existing solution uses a complicated carry-lookahead logic that is correct but more complex than necessary for an 8-bit adder-subtractor.
+
+A simpler approach is to:
+
+- XOR b with do_sub to conditionally invert b bits (for subtraction).
+- Use do_sub directly as the carry-in (carry_in = do_sub).
+- Compute the sum as a + b_invert + carry_in, which naturally handles addition or subtraction.
+- Use a straightforward ripple carry adder with 8 bits, since the bit width is small and complexity/performance trade-off favors simplicity.
+- Detect zero using a simple reduction NOR on the output.
+
+This approach fixes the bug, keeps code simple and readable, and keeps the design fully combinational with minimal overhead.

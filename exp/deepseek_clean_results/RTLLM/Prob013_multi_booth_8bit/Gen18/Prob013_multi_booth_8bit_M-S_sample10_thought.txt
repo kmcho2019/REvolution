@@ -1,0 +1,28 @@
+Simplified Radix-4 Booth Multiplier Design:
+
+1. Key Simplifications:
+   - Remove early zero detection to reduce logic complexity
+   - Use single arithmetic path with multiplexed operations
+   - Simplify multiplier bit selection logic
+   - Reduce register width where possible
+   - Eliminate separate pre-computation of mcand_x2
+
+2. Core Improvements:
+   - Single always block for all operations
+   - Basic Booth encoding with 3-bit window
+   - Direct shift operations without pre-computation
+   - Simplified counter logic
+   - Clear state transitions
+
+3. Trade-offs:
+   - Slightly longer critical path but simpler logic
+   - No power optimizations for zero case
+   - Fixed 4-cycle operation (predictable timing)
+   - Reduced area through resource sharing
+
+4. Implementation Approach:
+   - Maintain 16-bit precision
+   - Use 2-bit counter for Radix-4 operation
+   - Simple case statement for Booth encoding
+   - Registered outputs for clean timing
+   - Explicit reset values for all registers

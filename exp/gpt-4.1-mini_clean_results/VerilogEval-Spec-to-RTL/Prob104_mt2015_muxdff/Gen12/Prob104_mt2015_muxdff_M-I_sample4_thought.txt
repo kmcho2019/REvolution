@@ -1,0 +1,7 @@
+To improve the original TopModule, we focus on enhancing synthesizability and robustness without changing the interface. The initial block for Q initialization is generally not synthesizable in hardware and may cause mismatch issues in some tools or FPGA implementations. Instead, we introduce a synchronous reset via the existing load signal L, which acts like a synchronous load enable: when L=1, Q loads r_in synchronously; otherwise, Q shifts in q_in.
+
+This means Q is always initialized synchronously by the first assertion of L, avoiding unknown initial states and mismatches. We remove the initial block, improving synthesis compatibility.
+
+Additionally, the mux logic is kept simple and minimal to maintain a short critical path, which is optimal for performance and power. Since L functions as a synchronous load signal, we do not add any asynchronous resets or enables that could increase power or complexity.
+
+This preserves the intended design functionality, enhances robustness, and is suitable for synthesis in ASIC or FPGA flows.

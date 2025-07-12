@@ -1,0 +1,16 @@
+Simplified Design Approach:
+1. State Machine: Reduce to 3 states (IDLE, RECEIVE, WAIT) by merging STOP functionality into WAIT state
+2. Data Handling: Keep LSB-first shift but simplify bit counting by using a 3-bit counter
+3. Done Logic: Generate single-cycle pulse when valid stop bit is detected
+4. Reset: Maintain synchronous reset for all registers
+5. Optimizations:
+   - Eliminate separate STOP state by handling stop bit check in WAIT state
+   - Simplify next-state logic by combining conditions
+   - Reduce register updates to only necessary states
+   - Remove redundant default assignments
+
+Key Simplifications:
+- Fewer states (3 vs 4) with same functionality
+- More compact state transitions
+- Reduced register updates
+- Clearer state transition conditions

@@ -1,0 +1,8 @@
+The problem can be solved using a finite state machine with 4 states: idle, byte1, byte2, and done. 
+In the idle state, the machine waits for a byte with in[3]=1. When such a byte is received, 
+the machine transitions to byte1 and stores the byte in the most significant 8 bits of out_bytes. 
+In byte1, the machine waits for the next byte, which it stores in the middle 8 bits of out_bytes 
+and then transitions to byte2. In byte2, the machine waits for the next byte, stores it in the 
+least significant 8 bits of out_bytes, and transitions to done. In the done state, the machine 
+asserts the done signal and remains in this state until the next clock cycle. The reset signal 
+is used to reset the finite state machine to the idle state and to reset out_bytes to 0.

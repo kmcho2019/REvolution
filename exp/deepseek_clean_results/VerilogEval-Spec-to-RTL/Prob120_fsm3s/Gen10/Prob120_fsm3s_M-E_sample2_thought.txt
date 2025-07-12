@@ -1,0 +1,12 @@
+Here's a novel approach using a shift register implementation for the Moore FSM:
+1. Instead of traditional state encoding, represent states as positions in a circular shift register
+2. Use the input to control the shift direction (right for in=0, left for in=1)
+3. Implement state transitions by shifting bits in the register
+4. Output is simply the MSB of the shift register
+5. Reset initializes the shift register to '1000' (state A)
+
+This approach leverages the physical properties of shift registers for potentially better PPA characteristics:
+- Fewer logic levels for state transitions (just muxes for shift direction)
+- Output is directly tapped from a register bit
+- Simple control logic (just the input signal)
+- Natural circular state progression

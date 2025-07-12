@@ -1,0 +1,13 @@
+The current solution is already minimal for implementing dual-edge triggered behavior in FPGAs. Here's why we can't simplify further:
+
+1. Fundamental requirement: Need to capture data on both clock edges
+2. FPGAs only have single-edge triggered flip-flops
+3. Must use two flip-flops (one for posedge, one for negedge)
+4. Need a mux to select between them based on current clock state
+
+The implementation cannot be simplified because:
+- Removing either flip-flop would lose capture on one clock edge
+- Removing the mux would give incorrect output half the time
+- The mux selection logic is already minimal (just the clock signal)
+
+The current solution (2 flip-flops + 1 mux) is the minimal hardware needed to emulate dual-edge behavior using single-edge flip-flops in FPGAs.

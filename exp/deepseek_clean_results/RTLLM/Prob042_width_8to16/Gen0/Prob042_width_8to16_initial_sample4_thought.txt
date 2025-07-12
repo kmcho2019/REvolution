@@ -1,0 +1,11 @@
+The design requires a state machine that:
+1. Stores the first 8-bit input in a register when valid_in is high
+2. Waits for the second valid input to concatenate with the stored value
+3. Outputs the 16-bit concatenated data and valid_out signal
+4. Uses a flag to track whether we have the first half of data stored
+5. Resets all registers and flags when rst_n is low
+
+The key components are:
+- A data_lock register to store the first 8-bit input
+- A flag register to track if we have stored the first half
+- Synchronous logic to handle the state transitions and outputs

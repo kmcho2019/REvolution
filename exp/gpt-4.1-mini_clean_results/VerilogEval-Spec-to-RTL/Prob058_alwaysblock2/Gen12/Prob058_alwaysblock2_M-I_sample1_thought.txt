@@ -1,0 +1,5 @@
+The original implementation is already minimal and functionally correct, with simple XOR logic implemented in three ways. To optimize for PPA (Power, Performance, Area), we can unify the XOR logic into a single wire so the combinational logic is computed only once, reducing redundant XOR computations. Then, both combinational and sequential outputs will use that shared wire, which slightly reduces power and area by sharing the XOR result internally.
+
+Since the assign output must remain combinational, it will be driven by the wire directly. The combinational always block will simply assign from the same wire, avoiding recomputation. The sequential always block captures the wire value on the clock edge.
+
+This small change avoids duplicating the XOR logic three times, marginally reducing area and power, without affecting timing. It also keeps the outputs logically consistent and the code clean.

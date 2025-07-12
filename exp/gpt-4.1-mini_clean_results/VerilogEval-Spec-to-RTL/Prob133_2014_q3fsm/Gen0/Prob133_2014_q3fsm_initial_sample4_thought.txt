@@ -1,0 +1,25 @@
+We will implement a FSM with the following states:
+- A: initial state, waits for s=1 to move to B
+- B0, B1, B2, B3: four states to count the three clock cycles checking w, and track how many times w=1 occurs.
+
+Because we only need to remember how many times w=1 occurred in the last three clock cycles (exactly two times), we need to accumulate the count during three consecutive clocks in state B.
+
+However, to minimize states, we can use a counter (2-bit) to count the number of times w=1 in these three cycles. The FSM stays in B0 (count=0), B1 (count=1), B2 (count=2), B3 (cycle count done).
+
+At each clock in B states, we will:
+- increment cycle count
+- accumulate w count in a 2-bit register (w_count).
+
+After 3 cycles, the FSM will output z=1 if w_count == 2, else 0.
+
+Then the FSM restarts the 3-cycle counting in B (no s input checked anymore).
+
+Implementation detail:
+- Use an enumerated state for A and B.
+- For B, use two registers: cycle_counter (0 to 2) and w_count (0 to 3).
+- On entering B, cycle_counter = 0, w_count = 0.
+- On each clock in B, increment cycle_counter and add w to w_count.
+- When cycle_counter == 2, output z=1 if w_count + current w == 2 else 0, then reset cycle_counter and w_count to 0 to start next counting.
+- z is registered and valid one cycle after counting 3 cycles.
+
+Reset returns FSM to A and clears all counters and z.

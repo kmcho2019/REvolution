@@ -1,0 +1,7 @@
+I will implement the Mealy FSM using one-hot state encoding to potentially simplify the combinational logic and make state decoding for output straightforward. The FSM will have 5 states representing how many bits of "10011" have been matched so far. The output MATCH will be asserted combinationally when the FSM is in the state that has matched the first four bits (i.e., waiting for last '1'), and the input bit is '1'. This guarantees a Mealy output with minimal latency.
+
+To allow for continuous input and overlapping sequences, the next state transitions will be carefully designed so that after detecting a '1' that could be the start of a new pattern (including overlapping), the FSM transitions appropriately rather than resetting fully to the initial state.
+
+This approach leverages one-hot states for clarity, and the state transitions and output logic are implemented in a combinational always block with a synchronous state register update. The MATCH output is a combinational signal that directly depends on the current state and input IN, ensuring immediate response on the last input bit. The reset synchronously clears the FSM to the idle state.
+
+This design is easy to modify for other patterns and lends itself well to debugging and extension.

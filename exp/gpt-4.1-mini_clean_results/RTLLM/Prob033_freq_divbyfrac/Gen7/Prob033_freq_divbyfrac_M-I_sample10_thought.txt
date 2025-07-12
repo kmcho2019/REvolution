@@ -1,0 +1,15 @@
+The main issue arises from the synchronization and phase alignment between the posedge and negedge domains. Using a single counter updated only at posedge clk and then capturing it at negedge clk leads to uncertain alignment of toggle points, causing glitches or stuck outputs.
+
+Improvement strategy:
+- Use a single free-running modulo-7 counter that increments at posedge clk.
+- Instead of sampling the counter on negedge clk (which causes uncertain phase relation), generate the phase-shifted clock toggles for clk_neg in the same posedge clk domain but generate the clk_neg toggles with a half-clock delay using a flip-flop clocked on negedge clk.
+- Achieve this by creating two toggle signals for clk_pos and clk_neg from the counter on posedge clk, then synchronizing clk_neg toggle onto negedge clk via a dedicated flip-flop.
+- This keeps all combinational logic and counting in posedge clk domain (clean timing), while clk_neg output toggling happens synchronized at negedge clk, creating the half-cycle phase shift.
+- Finally, OR the clk_pos and clk_neg to get clk_div with uniform fractional division and better duty cycle.
+- Use synchronous reset for all registers.
+- This structure reduces metastability risks and keeps toggles well-defined and aligned.
+- The toggle points remain: clk_pos high at count 0, low at count 4; clk_neg high at count 1, low at count 5 — shifted by one count, which corresponds to half a clk cycle (on negedge clk).
+
+This method avoids sampling the counter on negedge clk and instead uses a toggle enable signal passed from posedge domain and synchronized on negedge clk, thus cleanly generating a half-cycle shifted clk_neg signal.
+
+This will fix the stuck clock problem and ensure a correct 3.5x fractional division output.

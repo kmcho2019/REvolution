@@ -1,0 +1,17 @@
+The Karnaugh map's output is 0 only when a=b=c=0, otherwise 1, so out = a OR b OR c.
+
+Example 1 uses explicit 2-input OR gate modules combined into a 3-input OR module, emphasizing modularity but adding extra gate delay and area.
+
+Example 2 uses a NOR gate followed by a NOT gate to realize an OR function with minimal logic depth but uses two primitive gates.
+
+To fuse their strengths:
+
+- Maintain a modular, gate-level structural style for clarity and educational purposes (like Example 1), showing instantiated gates.
+
+- Use the minimal logic depth from Example 2 by implementing a single 3-input OR gate, but define it with a 3-input OR primitive (in Verilog, 'assign out = a | b | c;') for minimal gates and delay.
+
+- Avoid intermediate signals and multiple gate levels to optimize PPA.
+
+Hence, the new design uses a single continuous assignment to implement the 3-input OR, combining the clarity of logic from both examples with optimized simplicity, minimal logic depth, area, and power.
+
+This represents the best tradeoff: gate-level clarity (direct OR) plus minimal gates/delay/power/area.

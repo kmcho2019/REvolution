@@ -1,0 +1,11 @@
+This solution implements a parallel lookup table approach using a ROM-style pattern matching technique. The key innovations are:
+
+1. Parallel Comparison: All scancode comparisons are done simultaneously in parallel rather than using priority encoding, improving timing characteristics.
+
+2. Bitmask Matching: Uses bitwise equality checks with masks that can be efficiently implemented in LUTs.
+
+3. Direct Output Mapping: Each output is directly driven by its specific scancode match without dependency on other outputs.
+
+4. Extended Key Check: Verifies the high byte is 0xE0 in parallel with the low byte checks.
+
+This approach eliminates the priority chain dependency, potentially improving timing at the cost of slightly more comparison logic. The parallel structure is particularly beneficial for ASIC implementations where comparison logic can be efficiently laid out.

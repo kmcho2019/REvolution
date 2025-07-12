@@ -1,0 +1,26 @@
+The key improvements needed are:
+
+1. **Precise Cycle Counting**:
+   - Use a single 14-bit cycle counter instead of separate main/sub counters
+   - Calculate exact (delay+1)*1000 cycles by proper initialization
+   - Decrement count output every 1000 cycles using modulo operation
+
+2. **State Machine Optimization**:
+   - Simplify state transitions with clearer conditions
+   - Move output assignments to combinational block for better timing
+   - Remove redundant registers where possible
+
+3. **Pattern Detection**:
+   - Reset pattern register only when needed (after ack or reset)
+   - Clear delay register after use to prevent interference
+
+4. **Output Timing**:
+   - Ensure counting is only active during S_COUNTING
+   - Make done only active in S_DONE state
+   - Keep count output valid only during counting phase
+
+The improved design will:
+- Count exactly (delay+1)*1000 cycles with precise timing
+- Have cleaner state transitions and output timing
+- Use fewer registers and simpler logic
+- Maintain all functional requirements

@@ -1,0 +1,11 @@
+To simplify the 5-bit maximal-length Galois LFSR:
+1. Maintain the same basic structure with clock and reset
+2. Keep the reset value as 5'b00001 (active high sync reset)
+3. For the LFSR operation:
+   - Only need to XOR the tap position (bit 3) with the output bit (q[0])
+   - The MSB (bit 4) becomes q[0]
+   - Other bits simply shift right
+4. This achieves the same maximal-length sequence with fewer operations:
+   - Only one XOR needed (bit 3 ^ q[0])
+   - Direct assignment for other bits
+5. The simplified operation reduces logic complexity while maintaining functionality

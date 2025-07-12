@@ -1,0 +1,28 @@
+Looking at the Karnaugh map again:
+
+1. First row (x[3:2]=00):
+   - f=1 when x[1:0]=00 (0000) or 10 (0010)
+
+2. Second row (x[3:2]=01):
+   - All zeros (no minterms)
+
+3. Third row (x[3:2]=11):
+   - f=1 when x[1:0]=00 (1100), 01 (1101), and 11 (1111)
+   - But according to the map, only 00 and 01 should be 1 (1111 is 0)
+
+4. Fourth row (x[3:2]=10):
+   - f=1 when x[1:0]=00 (1000), 01 (1001), and 10 (1010)
+
+The correct minterms are:
+- 0000 (x[3:0]=0000)
+- 0010 (x[3:0]=0010)
+- 1100 (x[3:0]=1100)
+- 1101 (x[3:0]=1101)
+- 1000 (x[3:0]=1000)
+- 1001 (x[3:0]=1001)
+- 1010 (x[3:0]=1010)
+
+We can optimize this by grouping adjacent 1s in the K-map:
+1. For x[3:2]=00: ~x[3]&~x[2]&~x[0] (covers both 0000 and 0010)
+2. For x[3:2]=11: x[3]&x[2]&~x[1] (covers 1100 and 1101)
+3. For x[3:2]=10: x[3]&~x[2]&(~x[1]|~x[0]) (covers 1000, 1001, 1010)

@@ -1,0 +1,7 @@
+Fuse the strengths of both examples by combining clear separation of combinational and sequential logic (as in Example 2) with the concise, synthesis-friendly next_state encoding (as in Example 1 using a continuous assignment). Use a combinational continuous assignment for next_state with a case statement implemented through a combinational always block for improved readability and synthesis friendliness.
+
+Also, implement a clock enable signal to only update the register when next_state differs from current state, reducing unnecessary toggling and saving dynamic power. This clock enable logic uses a simple equality check between q and next_state.
+
+The output q is updated synchronously on the posedge clk only when enabled, preserving the waveform behavior and functionality.
+
+This fusion improves clarity, reduces critical path in combinational logic, and optimizes power by reducing state register toggling when no state change occurs. Using a case statement for next state logic in a combinational always block makes the design more scalable and synthesizable than a chained ternary operator, while the continuous assignment pattern from Example 1 keeps the code compact and clean.

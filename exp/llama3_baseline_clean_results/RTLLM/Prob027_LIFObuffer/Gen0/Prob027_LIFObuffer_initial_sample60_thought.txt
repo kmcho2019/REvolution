@@ -1,0 +1,9 @@
+To design the LIFO buffer in Verilog, we need to follow these steps:
+1. Initialize the buffer and set up the stack memory array (stack_mem) to hold up to 4 entries of 4-bit data.
+2. Implement a stack pointer (SP) to track the current position in the stack, with initial value set to 4 to indicate an empty buffer.
+3. Use the rising edge of the clock (Clk) and the enable (EN) signal to control buffer operations.
+4. If the reset (Rst) signal is high, clear the stack, set the stack pointer to 4, and initialize all memory locations to 0.
+5. If the reset signal is low, check the RW signal to determine whether to perform a push (write) or pop (read) operation.
+6. During a push operation (RW is low), check if the buffer is not full. If so, push the data from dataIn onto the stack, decrement the stack pointer, and update the FULL flag accordingly.
+7. During a pop operation (RW is high), check if the buffer is not empty. If so, pop the data from the stack into dataOut, clear the corresponding stack memory, increment the stack pointer, and update the EMPTY flag accordingly.
+8. Update the EMPTY and FULL flags based on the stack pointer status.

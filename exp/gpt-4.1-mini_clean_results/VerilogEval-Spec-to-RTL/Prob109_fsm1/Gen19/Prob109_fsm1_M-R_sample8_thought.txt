@@ -1,0 +1,9 @@
+Refactor the design to use a two-bit state encoding and implement the Moore machine with an explicit `always @(*)` combinational block for next state logic. Instead of a one-bit state, define `localparam` states using two bits for clarity and potential extensibility.
+
+The asynchronous reset will be handled in the sequential block as before. The output is driven by a combinational assignment based on the state encoding. This style separates combinational next state logic clearly in an always block and the sequential state update, making the FSM structure more explicit.
+
+This approach emphasizes classical FSM coding style:
+- 2-bit state encoding with meaningful names
+- Separate combinational always block for next_state
+- Sequential always block for state update and async reset
+- Output defined combinationally from the current state

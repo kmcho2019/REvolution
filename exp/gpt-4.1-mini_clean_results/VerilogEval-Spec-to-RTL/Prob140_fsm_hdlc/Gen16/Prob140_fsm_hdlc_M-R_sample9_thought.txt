@@ -1,0 +1,7 @@
+Refactor the design into an explicit Moore FSM with named states representing the count of consecutive ones from 0 to 7+. Each state encodes how many consecutive ones have been seen. On input 'in', the FSM transitions either to the next higher count state on '1', or resets to zero count state on '0'. Outputs (disc, flag, err) are determined solely by the current state, making it a pure Moore machine with combinational next-state logic and synchronous state updates.
+
+This approach clarifies the FSM structure and logic, separating combinational state transition and output generation from sequential state updates. Using parameter-defined states and a case statement improves code readability and maintainability while retaining the synchronous output behavior (asserted for one cycle after detection).
+
+The outputs are registered in the state register block (Moore style), asserted based on the present state only, thus the outputs depend only on the state and update synchronously.
+
+This change improves code structure without changing functionality or output timing.

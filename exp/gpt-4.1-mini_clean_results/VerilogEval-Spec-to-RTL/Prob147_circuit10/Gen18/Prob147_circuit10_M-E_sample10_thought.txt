@@ -1,0 +1,30 @@
+Analyze the waveform carefully to deduce the state machine behavior:
+
+- `state` is a 1-bit register updated at posedge clk.
+- At time 15ns (clk rising edge), a=0, b=0 and state becomes 0.
+- At time 45ns (clk rising edge), a=0, b=1 and state=0 before clock, q=1 at that edge, so state transitions to 0 or 1? State remains 0 at 45ns, q=1 means q is not state alone.
+- Look at time 65ns rising edge: a=1, b=1, state=0 before clk, q=0 after clk -> state becomes 0.
+- Look at time 75ns rising edge: a=0,b=0, state=1 before clk, q=1 after clk, so q depends on state and inputs differently.
+
+To simplify:
+
+- Let's define the next_state as state XOR (a AND b). So toggling state when both a and b are 1.
+- Otherwise, state holds or resets based on inputs:
+  - if a=0 and b=1, state is set to 1
+  - if a=1 and b=0, state is reset to 0
+  - if a=0 and b=0, state holds
+
+Check `q`:
+- q = state OR (a AND b)
+
+This fits the waveform: q is high if state is 1 or both a and b are 1.
+
+Implementation plan:
+
+- Use a D flip-flop for `state`.
+- Compute next_state = (state XOR (a & b)) | (~state & ~a & b)
+- q = state | (a & b)
+
+This logic is sufficiently different from the previous approach and aligns better with the waveform's pattern of toggling and setting/resetting.
+
+Also, include synchronous reset of state at initial zero.

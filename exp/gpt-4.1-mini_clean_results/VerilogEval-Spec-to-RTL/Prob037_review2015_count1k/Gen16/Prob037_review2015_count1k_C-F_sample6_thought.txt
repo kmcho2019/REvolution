@@ -1,0 +1,10 @@
+Fuse the two examples by combining clarity, efficiency, and optimal PPA traits:
+
+- Use a single 10-bit equality comparator `q == MAX_COUNT` for terminal count detection instead of splitting bits, which simplifies logic, reduces area, and improves timing.
+- Retain a combinational next-state calculation (`next_q`) in an always_comb block to separate combinational logic from sequential, enhancing clarity and maintainability.
+- Implement synchronous active-high reset directly in the sequential block rather than in combinational logic to avoid reset glitches and improve timing.
+- Avoid unnecessary intermediate registers; keep `next_q` as a combinational wire rather than reg since its value depends purely on `q` and reset.
+- Use blocking assignment (`assign`) for `next_q` to emphasize combinational logic succinctly.
+- Overall, keep the design minimal, clear, and directly synthesizable with efficient increment and equality comparison, aligning with best synthesis tool optimizations.
+
+This fusion aims for the best PPA tradeoff: minimal comparator complexity, clean code structure, synchronous reset handling, and straightforward increment logic.

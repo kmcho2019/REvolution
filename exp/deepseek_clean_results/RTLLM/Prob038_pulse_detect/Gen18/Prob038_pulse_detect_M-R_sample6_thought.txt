@@ -1,0 +1,17 @@
+I'll refactor the solution to use a more explicit state machine approach while maintaining the same functionality. Here's the thought process:
+
+1. Instead of using a shift register, we'll implement a 3-state FSM:
+   - IDLE: Waiting for first 0
+   - GOT_0: Received first 0, waiting for 1
+   - GOT_1: Received 0->1, waiting for final 0
+
+2. The output will be generated combinationally based on current state and input
+3. This makes the state transitions more explicit and easier to modify if requirements change
+4. The FSM approach may be more intuitive for some designers to understand and maintain
+5. We'll use separate always blocks for state transition and output generation (Mealy machine style)
+
+Benefits:
+- More explicit state representation
+- Easier to modify state transitions if needed
+- Clear separation of state transition and output logic
+- Still maintains the same timing and functionality

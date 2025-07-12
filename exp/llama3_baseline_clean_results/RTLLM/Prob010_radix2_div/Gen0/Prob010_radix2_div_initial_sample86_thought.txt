@@ -1,0 +1,7 @@
+The design of the radix-2 divider module, 'radix2_div', will involve the following steps:
+1. On a valid operation request (opn_valid high and res_valid low), save the inputs, initialize the shift register SR with the absolute value of the dividend shifted left by one bit, set NEG_DIVISOR to the negated absolute value of the divisor, and start the counter.
+2. Perform the division process based on the start_cnt signal. In each iteration, compute the subtraction of NEG_DIVISOR from SR, and update SR by shifting left and inserting the carry-out based on the result.
+3. After 8 iterations (cnt reaches 8), clear the counter and start_cnt, and update the result with the final remainder and quotient.
+4. Manage the res_valid signal to indicate when the result is ready and valid.
+
+To implement this, we'll use Verilog's always_comb and always_ff blocks to handle combinational logic and sequential updates respectively.

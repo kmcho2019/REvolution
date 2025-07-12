@@ -1,0 +1,7 @@
+To optimize the design for better PPA, I will simplify and consolidate the next-state logic expressions to reduce the number of terms and gate fan-in, focusing particularly on the S_next and Count_next signals which currently combine multiple OR terms. For example, the S_next depends on three states with d=0 conditions plus Wait&ack, which can be merged by noting that S, S1, and S110 move to S on d=0; these can be grouped into a single "any of these states" with d=0. Similarly, Count_next can be expressed as B3 OR (Count AND ~done_counting), which is already minimal.
+
+This refactoring reduces logic complexity and therefore gates, potentially lowering delay and power. Also, I will replace multiple OR gates with fewer assignments by grouping terms to allow the synthesis tool to optimize better.
+
+No change in functionality; outputs remain combinational on current state bits only. The code remains fully synthesizable and aligned to the one-hot encoding scheme.
+
+Finally, I keep signal naming and coding style consistent and concise for readability and maintainability.

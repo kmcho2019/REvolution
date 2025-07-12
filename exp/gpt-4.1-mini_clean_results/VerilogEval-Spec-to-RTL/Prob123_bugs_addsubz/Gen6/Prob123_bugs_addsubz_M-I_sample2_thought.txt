@@ -1,0 +1,9 @@
+The existing solution correctly implements the adder-subtractor logic and zero flag using two's complement subtraction, which is optimal for area and power. However, it uses two separate always blocks with blocking assignments for `out` and `result_is_zero`, both combinational. Merging these into a single always block reduces duplicated combinational logic and synthesis complexity, potentially improving timing and power by reducing redundant mux and logic generation.
+
+Also, the original code uses `reg` for combinational outputs and blocking assignments, which is fine, but grouping all output assignments in one always block is cleaner and can avoid unintended latch inference or glitches.
+
+No registers are added here to keep zero latency and minimal area; outputs remain purely combinational.
+
+Hence, the primary improvement is to consolidate the output logic into a single combinational always block.
+
+This small change simplifies the design, reduces logic duplication, and can slightly improve PPA without sacrificing correctness or latency.

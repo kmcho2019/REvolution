@@ -1,0 +1,7 @@
+A novel approach to implementing the two-bit saturating counter is to utilize a finite state machine (FSM) with a single state variable. The FSM can have three states: IDLE (2'b00), COUNT (2'b01), and MAX_COUNT (2'b11). The counter increments when in the IDLE or COUNT states and train_valid = 1 and train_taken = 1. It decrements when in the COUNT or MAX_COUNT states and train_valid = 1 and train_taken = 0. When not training (train_valid = 0), the counter remains in its current state.
+
+To simplify the design, we can use a single always block to handle both the asynchronous reset and the sequential logic. The reset sets the state to COUNT (2'b01), which represents the weakly not-taken state.
+
+Additionally, instead of using separate signals for increment and decrement conditions, we can directly use the train_valid and train_taken signals within the always block to determine the next state.
+
+This approach minimizes the number of signals and combinational logic, potentially reducing area and power consumption.

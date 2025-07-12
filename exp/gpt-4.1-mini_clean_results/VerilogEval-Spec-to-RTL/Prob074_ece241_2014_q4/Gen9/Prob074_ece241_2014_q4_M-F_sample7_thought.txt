@@ -1,0 +1,8 @@
+To fix the functional mismatch, explicitly initialize the state register to zero before simulation begins, respecting the problem's assumption that flip-flops start reset to zero. Since no reset signal exists, use an initial block to assign zero to the state register, ensuring defined initial conditions.
+
+All other logic remains unchanged as it correctly implements the FSM behavior:
+- Three D flip-flops in a single vector with bits assigned to XOR, AND, and OR outputs.
+- The combinational logic feeding the flip-flops uses the current state bits with the specified polarities.
+- The output 'z' is the NOR of all flip-flop outputs.
+
+This approach guarantees the FSM starts in a known state with zeroed flip-flops, eliminating simulation mismatches caused by unknown initial states.

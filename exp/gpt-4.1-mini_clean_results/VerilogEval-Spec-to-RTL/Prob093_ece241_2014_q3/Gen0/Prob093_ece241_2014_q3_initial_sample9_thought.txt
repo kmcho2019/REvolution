@@ -1,0 +1,108 @@
+To implement the function defined by the K-map with a 4-to-1 mux controlled by inputs a and b, we need to generate the four 1-bit inputs mux_in[3:0] that the 4-to-1 mux will select among. The inputs are selected by ab, with mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, and mux_in[3] for ab=10.
+
+The function output for each (a,b) pair is a function of c and d as given by the K-map rows c,d.
+
+We must produce mux_in[0], mux_in[1], mux_in[2], mux_in[3] using only 2-to-1 muxes and constants, no other logic gates.
+
+Step 1: Extract the functions for each ab pair from the K-map:
+
+For ab=00 (mux_in[0]): entries are (c,d)=00:0, 01:1, 11:1, 10:1
+=> function_00 = c + d' (since all but 00 is 1)
+
+For ab=01 (mux_in[1]): entries 00:0, 01:0, 11:0, 10:0
+=> function_01 = 0 constant
+
+For ab=11 (mux_in[2]): entries 00:0, 01:0, 11:1, 10:0
+=> function_11 = c & d (since only 11=1)
+
+For ab=10 (mux_in[3]): entries 00:1, 01:0, 11:1, 10:1
+=> function_10 = d' + (c & d) (since 00:1, 11:1, 10:1 and 01:0)
+
+Since we cannot use logic gates, we need to build these functions with only muxes (2-to-1) and constants.
+
+We will implement each function by building mux_in[i] = function with 2-to-1 muxes using c and d as select or data.
+
+Use muxes of the form: out = sel ? in1 : in0
+
+- For function_00 = c + d'
+Rewrite: c + d' = 1 if c=1 or d=0
+
+Build with muxes:
+
+First, note d' = ~d, no inverter allowed.
+
+Implement d' via a mux:
+
+d' = mux(d, 0, 1)  // If d=0, output 1, else 0
+
+Then function_00 = c + d' = mux(c, 1, d') 
+
+Because if c=1 output 1, else output d'
+
+But since we can't use OR gate, we must use muxes only.
+
+Try to implement function_00 as mux with select c:
+
+function_00 = c ? 1 : d'
+
+So first implement d' as above, then function_00 = mux(c, 1, d')
+
+- For function_01 = 0 constant.
+
+mux_in[1] = 0
+
+- For function_11 = c & d
+
+Implement c & d with muxes:
+
+c & d = mux(c, d, 0)  // if c=1 output d, else 0
+
+- For function_10 = d' + (c & d)
+
+Note that (c & d) is function_11
+
+d' + (c & d) = 1 if d=0 or (c=1 and d=1)
+
+Equivalent to: function_10 = mux(d, (c & d), 1)
+
+Because if d=1 output c&d = c&1 = c, else output 1
+
+So function_10 = d ? c : 1
+
+But again no inverter, so d' needs to be built as above.
+
+Wait, rewriting function_10:
+
+function_10 = d' + (c & d) = (~d) + (c & d) = mux(d, c, 1)
+
+Thus:
+
+function_10 = mux(d, c, 1)
+
+Summary:
+
+- d' = mux(d, 0, 1)
+
+- function_00 = mux(c, 1, d')
+
+- function_01 = 0
+
+- function_11 = mux(c, d, 0)
+
+- function_10 = mux(d, c, 1)
+
+We implement d' only once to reuse.
+
+Then assign:
+
+mux_in[0] = function_00
+
+mux_in[1] = 0
+
+mux_in[2] = function_11
+
+mux_in[3] = function_10
+
+This approach uses only 2-to-1 muxes and constants as required.
+
+We will code a 2-to-1 mux as a function or module and then build the logic inside TopModule.

@@ -1,0 +1,5 @@
+The problem can be solved by creating a finite state machine with four states: IDLE, BYTE1, BYTE2, and DONE. The IDLE state is the initial state where the FSM waits for a byte with in[3] = 1. When such a byte is found, the FSM transitions to the BYTE1 state and stores the byte. Then, it transitions to the BYTE2 state and stores the next byte. Finally, it transitions to the DONE state and signals the receipt of a message. In the DONE state, it outputs the 24-bit message and sets the done signal. After one clock cycle, the FSM resets to the IDLE state and repeats the process.
+
+We will also use a 2-bit counter to keep track of the current byte position in the message. We'll store the bytes in a 24-bit register and shift the stored bytes to the correct positions as new bytes are received.
+
+The reset signal will be used to reset the FSM to the IDLE state, clear the stored bytes, and reset the counter.

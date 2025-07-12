@@ -1,0 +1,10 @@
+This implementation uses a Moore finite state machine (FSM) with 3 states to track the input signal transitions:
+1. IDLE state: Waiting for a signal change
+2. RISE_DETECTED state: Captured a rising edge
+3. FALL_DETECTED state: Captured a falling edge
+
+The FSM transitions between states based on the current input value and previous state. Outputs are asserted only in their respective detection states and automatically return to IDLE. This approach provides:
+- Explicit state tracking of edge conditions
+- Clear separation of edge detection logic
+- Potential for easier timing closure
+- More extensible design (can easily add more states for debouncing etc.)

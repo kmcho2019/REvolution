@@ -1,0 +1,22 @@
+To optimize the PPA of the one-hot FSM combinational logic further, I will apply the following improvements:
+
+1. **Combine repeated terms in next-state logic to reduce gate count:**
+   - For example, (S | S1) & ~d appears twice in S_next and can be factored to reduce redundant gates.
+   - Also, B1_next, B2_next, and B3_next are simple passes of previous state bits, which can be used directly without intermediate wires.
+
+2. **Use fewer intermediate wires to simplify netlist:**
+   - While intermediate wires aid clarity, overly breaking down simple passes increases netlist complexity.
+   - Will minimize wires where possible without harming readability.
+
+3. **Make the next-state vector assignment clearer and directly assign outputs from next_state bits:**
+   - Assign outputs B3_next, S_next, etc., directly from optimized expressions rather than extracting from next_state array to avoid extra logic or nets.
+
+4. **Group shift_ena and other outputs as simple ORs of state bits for minimal logic.**
+
+5. **Retain one-hot encoding and Moore semantics unchanged.**
+
+6. **Use localparams for state bits, enabling easy maintenance and clarity.**
+
+The resulting code will have simplified boolean expressions, fewer wires, and clear signal assignments, improving area and possibly timing while keeping power low due to reduced gate complexity.
+
+This approach targets modest logic simplification within the constraints of one-hot encoding and purely combinational next-state logic, retaining the original FSM behavior and outputs.

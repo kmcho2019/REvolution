@@ -1,0 +1,15 @@
+To optimize the existing 12-hour BCD clock for better PPA, focus on reducing combinational logic delays, minimizing unnecessary toggling, and simplifying the output logic:
+
+1. Register the outputs (hh, mm, ss, pm) synchronously inside the clocked block rather than using a combinational block to convert and assign outputs. This reduces combinational path length and switching toggling on outputs.
+
+2. Maintain seconds and minutes counters fully in BCD, but simplify the increment logic by leveraging arithmetic properties with less nesting. Use dedicated carry signals for seconds and minutes increments, and cascade increments clearly with minimal conditional depth.
+
+3. Use a lookup table (case statement) for binary hour to BCD conversion inside the synchronous block rather than combinational function, registering the BCD hour output only on hour changes. This avoids constant combinational logic and reduces switching.
+
+4. Gate the hour BCD register updates only on hour change, thus avoiding unnecessary toggling.
+
+5. Keep pm toggling only when hour rolls from 11 to 12.
+
+6. Use non-blocking assignments consistently and prioritize synchronous reset.
+
+This approach reduces the critical path through fewer nested conditionals and combinational conversions, reduces toggling on outputs by registering all outputs, and keeps the design area efficient and maintainable.

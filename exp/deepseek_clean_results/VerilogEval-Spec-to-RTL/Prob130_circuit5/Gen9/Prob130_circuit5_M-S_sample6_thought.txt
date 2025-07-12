@@ -1,0 +1,12 @@
+Simplified approach:
+1. The key observation is that the output depends only on the lowest 2 bits of 'c' when c < 4
+2. For c >= 4, output is always 0xF (4'b1111)
+3. We can use a simple case statement that directly maps c[1:0] to the appropriate input
+4. The case statement is more readable and synthesizes efficiently into a 4:1 mux
+5. The c >= 4 check can be done with a simple OR of the upper bits
+
+Advantages:
+- More concise and readable code
+- Eliminates intermediate wires and masking logic
+- Still maintains good synthesis characteristics
+- Clear mapping from specification to implementation

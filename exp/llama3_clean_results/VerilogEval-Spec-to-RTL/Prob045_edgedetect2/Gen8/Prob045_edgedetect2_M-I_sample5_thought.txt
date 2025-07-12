@@ -1,0 +1,7 @@
+The given solution is functionally correct but can be optimized for better PPA (Power, Performance, and Area) metrics. The key to optimization lies in simplifying the logic while maintaining the required functionality. 
+
+One potential improvement is to remove the redundant `edge_detected` register and directly assign the result of the XOR operation to `anyedge` within the always block. This approach simplifies the design by reducing the number of registers used, which can lead to improvements in area and potentially power consumption due to reduced switching activity.
+
+Another consideration is ensuring that the output `anyedge` is not directly assigned within the combinational logic but is instead driven by a registered output to maintain the sequential nature of the design and adhere to the requirement of updating `anyedge` after the input has changed. This means the direct assignment of `anyedge` with the XOR result should be done within the always block but considering the pipelining of the design.
+
+Therefore, the strategy involves minimizing the number of registers, simplifying the combinational logic, and ensuring that the sequential logic is properly managed to optimize for PPA metrics.

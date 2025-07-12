@@ -1,0 +1,21 @@
+To optimize the PPA metrics, I'll implement the following improvements:
+
+1. Replace ROM with case statements:
+   - Eliminates the large ROM structure, reducing area
+   - Only activates logic for valid scancodes, reducing power
+   - Maintains the same timing performance with parallel decoding
+
+2. Direct decoding:
+   - Each valid scancode gets its own case item
+   - Default case handles all invalid codes
+   - No initialization overhead
+
+3. Power optimization:
+   - Only the matching case will trigger logic transitions
+   - Invalid codes immediately return 0 without any computation
+
+4. Area optimization:
+   - Case statement synthesizes to a multiplexer structure
+   - Smaller than 256-entry ROM since we only have 10 valid cases
+
+This approach should reduce both power and area while maintaining the same functionality and timing performance.

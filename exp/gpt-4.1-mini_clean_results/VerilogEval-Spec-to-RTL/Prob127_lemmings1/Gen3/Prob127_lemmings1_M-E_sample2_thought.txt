@@ -1,0 +1,9 @@
+To provide a new architectural approach, I will implement the FSM using an encoded state register with two states, but instead of separate combinational and sequential blocks, I will combine the next state logic and output encoding inside a single always block triggered by clock and asynchronous reset. The outputs will be registered (Moore outputs) in the same always block after state update to ensure output timing is aligned with state changes and to avoid combinational glitches.
+
+Key changes:
+- Use registered outputs (walk_left and walk_right) updated synchronously with the state register.
+- Treat bump inputs as synchronous inputs sampled on clock edges to avoid glitches or metastability.
+- Use an enumerated type for state encoding for clarity.
+- Use a single always block for state and output updates, with asynchronous reset initializing state and outputs.
+  
+This approach differs from the classic split combinational/sequential blocks by combining state and output updates, increasing output stability and potentially simplifying timing analysis.

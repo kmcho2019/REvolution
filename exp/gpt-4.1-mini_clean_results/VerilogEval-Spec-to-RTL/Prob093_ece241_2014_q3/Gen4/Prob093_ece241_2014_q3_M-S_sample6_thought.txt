@@ -1,0 +1,72 @@
+We must output mux_in[3:0], inputs to a 4-to-1 mux selected by {a,b}, such that the entire circuit implements the given 4-variable K-map function of a,b,c,d.
+
+Each mux_in bit corresponds to a fixed {a,b} combination:
+
+- mux_in[0] for ab=00 (column 00)
+- mux_in[1] for ab=01 (column 01)
+- mux_in[2] for ab=11 (column 11)
+- mux_in[3] for ab=10 (column 10)
+
+Each mux_in bit is thus a function of c,d only.
+
+From the given K-map:
+
+      ab
+  cd  00  01  11  10
+  00 | 0 | 0 | 0 | 1 |
+  01 | 1 | 0 | 0 | 0 |
+  11 | 1 | 0 | 1 | 1 |
+  10 | 1 | 0 | 0 | 1 |
+
+For each ab column, mux_in bit is the vector of outputs over cd = 00,01,11,10:
+
+- mux_in[0] (ab=00): [0,1,1,1]
+- mux_in[1] (ab=01): [0,0,0,0]
+- mux_in[2] (ab=11): [0,0,1,0]
+- mux_in[3] (ab=10): [1,0,1,1]
+
+We implement each mux_in bit solely with 2-to-1 muxes controlled by c and d.
+
+Because only c and d are inputs here, and no other gates are allowed, we implement NOT using mux (select between 1 and 0), and AND/OR using muxes.
+
+For each mux_in bit, we derive a minimal mux-tree expression:
+
+- mux_in[1] is always 0.
+
+- mux_in[0]:
+
+  At cd=00:0, 01:1, 11:1, 10:1
+
+  Interpretation: When c=0,d=0 output=0; else output=1
+
+  So mux_in[0] = c OR d = mux(c,1,d)
+
+- mux_in[2]:
+
+  At cd=00:0, 01:0, 11:1, 10:0
+
+  Interpretation: output is 1 only when c=1 and d=1
+
+  So mux_in[2] = c AND d = mux(c,d,0)
+
+- mux_in[3]:
+
+  At cd=00:1, 01:0, 11:1, 10:1
+
+  Observe output depends on d and c in a way:
+
+  When c=1 output=1
+
+  When c=0 output = NOT d
+
+  So mux_in[3] = c OR (NOT d) = mux(c,1,not_d)
+
+Implement NOT d by mux(d,0,1)
+
+Implement these mux_in bits and assign mux_in accordingly.
+
+This uses minimal 2-to-1 muxes and a single 4-to-1 mux externally with selector {a,b}.
+
+This matches the original example's simplification but with correct functions per K-map.
+
+The mux_in bit order is consistent with the problem statement.

@@ -1,0 +1,9 @@
+The original solution uses a case statement to explicitly enumerate outputs for each input combination, which is clear but may not be optimal for area or power. To improve PPA, I will derive a minimal Boolean expression from the Karnaugh map and implement it using continuous assignment. This allows synthesis tools to optimize the logic efficiently.
+
+By examining the Karnaugh map with don't-care conditions considered, we find the minimized function. Incorporating don't-cares to maximize grouping, the function simplifies to:
+
+out = (~b & a) | (c & a) | (b & c)
+
+This expression covers all 1s in the map while using fewer logic terms than enumerating all cases. Implementing this with continuous assignment yields simpler, smaller, and faster logic with less switching, improving power and area.
+
+The 'd' input is truly don't-care and does not appear in the logic. This approach maintains correctness and optimizes PPA.

@@ -1,0 +1,8 @@
+To detect pulses in the input signal data_in, we can use a finite state machine (FSM) that transitions through different states based on the value of data_in. The states can be defined as follows: 
+- IDLE: Initial state where we wait for data_in to go high (1).
+- PULSE_START: State after data_in goes high.
+- PULSE_BODY: State after data_in goes low when it was previously high.
+We start in the IDLE state and wait for data_in to go high. Once data_in goes high, we move to the PULSE_START state. If data_in goes low in the next cycle, we move to the PULSE_BODY state. 
+If data_in remains low for one more cycle after PULSE_BODY, we consider this as the end of a pulse and set data_out to 1. 
+We then return to the IDLE state. 
+At any point if rst_n goes low, we reset to the IDLE state and set data_out to 0.

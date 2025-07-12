@@ -1,0 +1,9 @@
+Fuse the clarity and modularity of both examples by:
+
+- Keeping the minimal and explicit expression for Y1 as y[0] & w, which directly implements the A->B transition.
+- Using the simplified and logically equivalent form for Y3 as (~w) & ~(y[0] | y[3]) from Example 1, which is more compact and requires fewer inverted inputs compared to the triple AND in Example 2. This reduces gate count and potential switching.
+- To optimize power and area, generate only one inversion of w (w_n) and one OR gate for (y[0] | y[3]) that is then inverted, avoiding multiple separate inversions of y[0] and y[3].
+- Maintain modularity by implementing NextStateInput as a separate combinational logic module instantiated by TopModule.
+- Provide clear comments explaining the logic and its equivalence for maintainability and understanding.
+
+This fusion yields minimal logic expressions for the next state inputs, reducing gate count and toggling while preserving correctness and modular design.

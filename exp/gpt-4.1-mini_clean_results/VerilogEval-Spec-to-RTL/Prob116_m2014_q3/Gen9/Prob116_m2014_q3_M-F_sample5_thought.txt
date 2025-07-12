@@ -1,0 +1,14 @@
+The main issue arises from indexing confusion between the problem statement and the code. The K-map is defined with rows as x[3]x[4] and columns as x[1]x[2], but the input vector is only 4 bits: x[3:0]. Since only 4 bits are given, the variables x[4] and x[1]x[2] need to be correctly mapped.
+
+Assuming the input bits are x[3] = MSB down to x[0] = LSB, the problem's x[4] corresponds to x[3], x[3] to x[2], x[2] to x[1], and x[1] to x[0] in the code. Hence, the K-map's rows x[3]x[4] map to x[2]x[3], and columns x[1]x[2] map to x[0]x[1].
+
+With this correction, I'll rewrite the K-map in terms of code bits:
+
+- Rows: x[3] (x4), x[2] (x3)
+- Columns: x[1] (x2), x[0] (x1)
+
+Using this indexing, I will list all minterms (combinations) where f=1 from the K-map and write their corresponding boolean expressions. 'd' cells are don't cares and can be chosen for simplification.
+
+After enumerating the 1's and don't-cares and simplifying, I will implement the simplified logic as a continuous assign statement.
+
+This approach removes the ambiguity about indexing and implements the function accurately according to the given K-map.

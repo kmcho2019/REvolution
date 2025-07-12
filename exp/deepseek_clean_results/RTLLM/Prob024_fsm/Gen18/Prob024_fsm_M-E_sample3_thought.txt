@@ -1,0 +1,17 @@
+Novel Architecture Idea: Shift Register with Parallel Matching
+
+Instead of using a traditional FSM, we'll implement the sequence detector using a shift register approach combined with parallel pattern matching. Here's the key innovation:
+
+1. Shift Register: Maintain a 5-bit shift register that stores the last 5 input bits
+2. Parallel Comparator: Continuously compare the shift register contents with the target pattern (10011)
+3. Edge Detection: Output MATCH=1 only when:
+   - The shift register matches the pattern (10011)
+   - AND we're at the positive edge of the clock
+   - AND we're not in reset
+
+Advantages:
+- Eliminates complex state transition logic
+- Easily modifiable for different patterns by changing the constant
+- Naturally handles continuous input and loop detection
+- Clear separation of storage and comparison logic
+- More intuitive to understand and verify

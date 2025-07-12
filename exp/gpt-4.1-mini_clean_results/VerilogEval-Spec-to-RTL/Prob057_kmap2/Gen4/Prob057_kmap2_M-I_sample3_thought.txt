@@ -1,0 +1,14 @@
+The original implementation is logically correct and minimal in terms of product terms. However, for better PPA, I will optimize power and area by factoring out the common expressions (a | b) and (~a | ~b) into intermediate wires to avoid duplicate OR gates, reducing area and switching activity. This also marginally simplifies the logic for better synthesis results without adding extra logic levels, thus preserving timing.
+
+Specifically, I define two wires:
+- ab_or = a | b
+- na_nb_or = ~a | ~b
+
+Then use these wires in the final output expression:
+out = (~c & ~d & na_nb_or) | (~c & d & ~b) | (c & ~d & ~a) | (c & d & ab_or)
+
+This reduces repeated OR computations, leading to fewer gates, less power, and potentially smaller area.
+
+No changes to the logic depth, so timing remains optimal (tns=wns=0).
+
+Hence, the improvement strategy focuses on logic factorization for shared terms to improve PPA without affecting timing.

@@ -1,0 +1,27 @@
+The problem requires implementing the 4 input signals mux_in[3:0] as functions of inputs c and d only, such that when a 4-to-1 mux (external to TopModule) selects one of these signals based on selector inputs a and b, the overall function of (a,b,c,d) matches the given Karnaugh map.
+
+To minimize 2-to-1 multiplexers used inside TopModule and use exactly one 4-to-1 mux outside with selectors a,b, an alternative architectural idea is:
+
+- Use the inputs c and d as selectors to 2-to-1 multiplexers that generate each mux_in[i].
+- Instead of implementing each column of the K-map independently, notice that the K-map is indexed by rows cd and columns ab.
+- The 4-to-1 mux outside selects one of mux_in[3:0] based on ab, so mux_in[i] is a function of c,d for a fixed ab=i.
+
+Given the K-map values for each ab, implement each mux_in[i] bit as a small tree of 2-to-1 muxes controlled by c and d.
+
+But to optimize and unify the implementation, observe that each mux_in[i] can be implemented as a 2-to-1 mux on one input (say c), whose inputs are 2-to-1 muxes on d or constants.
+
+This leads to a parametric 2-level mux tree:
+
+mux_in[i] = mux2to1(c,
+                     mux2to1(d, val_i00, val_i01),
+                     mux2to1(d, val_i10, val_i11));
+
+where val_ijk is the function output for fixed (ab=i, c=j, d=k).
+
+The 2-to-1 mux module will be instantiated as needed.
+
+Finally, mux_in[3:0] is assigned as {mux_in[3], mux_in[2], mux_in[1], mux_in[0]}, in order corresponding to ab = 10, 11, 01, 00 respectively.
+
+This approach yields a clean, uniform solution that only uses 2-to-1 muxes and constants for each bit, fits the interface and K-map, and uses minimal muxes.
+
+This design ensures correctness and simplicity with no extra logic gates.

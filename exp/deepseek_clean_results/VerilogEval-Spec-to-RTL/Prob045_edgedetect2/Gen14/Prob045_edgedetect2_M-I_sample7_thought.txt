@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization: The current WNS is -0.16ns, indicating a minor timing violation. We can improve this by:
+   - Adding pipeline registers for the XOR operation to break the critical path
+   - Using faster XOR gate implementations if available in the target library
+
+2. Power Optimization:
+   - Implement clock gating for the prev_in register when inputs are stable
+   - Add an enable signal to reduce unnecessary switching activity
+
+3. Area Optimization:
+   - Maintain the current efficient structure but explore if any XOR gates can be shared
+   - Consider using LUT-based implementations if targeting FPGA
+
+4. Readability:
+   - Keep the clean structure while adding optimizations
+   - Add comments for maintainability
+
+The improved solution will:
+- Add pipeline stage for better timing closure
+- Implement clock gating for power savings
+- Maintain the same functionality while improving PPA metrics

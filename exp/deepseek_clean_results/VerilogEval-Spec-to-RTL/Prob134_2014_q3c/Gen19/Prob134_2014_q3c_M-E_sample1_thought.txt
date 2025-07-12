@@ -1,0 +1,19 @@
+Here's a novel approach using a lookup table (LUT) based implementation for the FSM:
+
+1. **LUT Concept**:
+   - Encode the entire state transition and output logic in a pre-computed LUT
+   - Use the current state (y) and input (x) as the LUT address
+   - Store both next state and output in the LUT output
+
+2. **Advantages**:
+   - Single-cycle resolution of all outputs
+   - Easy to modify if FSM changes (just update LUT contents)
+   - Potentially more area-efficient for small FSMs
+   - Clear separation between control and data path
+
+3. **Implementation**:
+   - Create a 16x4 LUT (5 states × 2 inputs = 10 entries, others don't care)
+   - Lower 3 bits of LUT output are next state
+   - MSB is output z
+   - Y0 is directly the LSB of next state
+   - Use synchronous ROM for better timing

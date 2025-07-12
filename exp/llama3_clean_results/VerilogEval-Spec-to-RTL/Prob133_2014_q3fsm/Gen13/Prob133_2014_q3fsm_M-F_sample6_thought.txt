@@ -1,0 +1,13 @@
+To address the issues in the provided Verilog code, we can focus on refining the logic within the STATE_B of the finite state machine. 
+
+Firstly, we need to simplify the state machine by removing the unnecessary condition check for 's' in STATE_B. This check is not required because 's' is used only in state A to transition to state B. Once in state B, the FSM should continue to check 'w' for the next three clock cycles without considering 's'.
+
+Secondly, we should improve the handling of the w_count variable. When the FSM transitions from STATE_A to STATE_B, we should initialize w_count to 0 and then start counting 'w' inputs in the subsequent cycles. 
+
+Lastly, we need to ensure that the output 'z' is set correctly based on the count of 'w' inputs. This involves checking if w_count equals 2 when the counter reaches 3 and setting 'z' accordingly. However, we should also reset 'z' to 0 when the counter does not reach 3 to prevent 'z' from being stuck at 1.
+
+To implement these changes, we will modify the STATE_B logic to correctly handle the w_count and counter variables, remove the unnecessary condition check for 's', and update the output 'z' based on the w_count.
+
+Additionally, we should reset the w_count to 0 when transitioning from STATE_A to STATE_B and only increment w_count when 'w' is 1 in STATE_B.
+
+By making these adjustments, we can improve the correctness and reliability of the finite state machine, ensuring it produces the expected output 'z' based on the input 'w'.

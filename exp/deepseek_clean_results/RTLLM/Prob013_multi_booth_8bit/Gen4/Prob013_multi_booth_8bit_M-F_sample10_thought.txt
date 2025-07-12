@@ -1,0 +1,23 @@
+To fix the Radix-4 Booth multiplier implementation, I'll address the key issues identified:
+
+1. **Counter Width and Logic**: 
+   - Increase counter to 3 bits (0-7) since we need 4 iterations (8 bits / 2 bits per iteration)
+   - Adjust completion condition to counter == 3 (4 iterations)
+
+2. **State Machine Correction**:
+   - Maintain proper state transitions with accurate completion condition
+   - Ensure reset properly initializes all registers
+
+3. **Partial Product Handling**:
+   - Correct the shifting logic for Radix-4 operation
+   - Maintain proper sign extension throughout operations
+
+4. **Timing and Control**:
+   - Ensure ready signal asserts only after final iteration
+   - Properly sequence the partial product accumulation
+
+5. **Algorithm Accuracy**:
+   - Maintain correct Booth encoding/decoding
+   - Ensure proper arithmetic operations (including sign handling)
+
+The fixed implementation will properly complete in 4 clock cycles (plus idle/done states) while maintaining correct Radix-4 Booth algorithm operation.

@@ -1,0 +1,3 @@
+The key issue is that the output 'out' is declared as a single bit but is assigned the result of bitwise operations on 8-bit inputs, causing width mismatch. To fix the bug while keeping the output as a single bit, the mux should select a single bit from either 'a' or 'b' based on 'sel'.
+
+A simple way is to use the selection signal to pick the corresponding bit from 'a' or 'b' (for example, bit 0). So 'out' can be assigned either a[0] or b[0] depending on 'sel'. This matches the 1-bit output declaration and fixes the width mismatch without changing the interface.

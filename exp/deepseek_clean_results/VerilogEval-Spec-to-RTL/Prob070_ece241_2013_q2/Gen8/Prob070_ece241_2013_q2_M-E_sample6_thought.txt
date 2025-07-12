@@ -1,0 +1,11 @@
+Here's a novel approach using a hybrid lookup-table and logic optimization technique:
+
+1. Instead of direct logic expressions, use a 4-to-1 multiplexer structure that inherently handles don't-cares
+2. For out_sop: Implement a minimized SOP by grouping terms that share common literals
+   - Group 2 (0010) and 7 (0111) share 'b' and 'c' being 1
+   - 15 (1111) stands alone but can be combined with don't-cares
+3. For out_pos: Implement a minimized POS by finding common factors in the false cases
+   - Many false cases share ~a or ~d terms
+4. Use bitwise operations to create compact expressions
+5. Leverage don't-care conditions by not including them in either the true or false sets
+6. This approach shows a different structural implementation while achieving minimal forms

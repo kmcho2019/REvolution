@@ -1,0 +1,11 @@
+The feedback indicates the original implementation might have issues with rotation direction and cumulative shifts. To fix this:
+
+1. We'll maintain the 3-stage approach but make it explicitly right rotation to match common convention
+2. Each stage will perform right rotation by its respective power-of-two amount
+3. The stages will properly chain together - output of each stage feeds into the next
+4. When multiple control bits are set, the shifts will correctly accumulate (e.g., ctrl=3'b111 rotates right by 7 positions)
+
+The key changes are:
+- Changing concatenation order for right rotation
+- Keeping the same control bit mapping (ctrl[2]=4, ctrl[1]=2, ctrl[0]=1)
+- Maintaining the cascaded structure for efficient implementation

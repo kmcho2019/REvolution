@@ -1,0 +1,24 @@
+To fix the issues identified in the feedback, we need to make several key improvements:
+
+1. **Cycle Counting Accuracy**: 
+   - Change the cycle counter to count from 0 to 999 (1000 cycles total)
+   - Decrement delay_counter only when cycle_counter reaches 999
+   - Initialize cycle_counter to 0 when entering COUNTING state
+
+2. **Pattern Detection Timing**:
+   - Ensure pattern detection occurs immediately after the 4th bit is shifted in
+   - Transition to READ_DELAY state in the same cycle as pattern detection
+
+3. **Done Signal Timing**:
+   - Assert done when delay_counter reaches 0 AND cycle_counter reaches 999
+   - Maintain done signal until ack is received
+
+4. **Count Output**:
+   - Output delay_counter value during COUNTING state
+   - Ensure count shows the correct remaining time in 1000-cycle blocks
+
+Key changes:
+- Modify cycle_counter comparison to be exact (999)
+- Synchronize delay_counter decrement with cycle_counter wrap
+- Clean up state transition logic
+- Ensure proper initialization of counters when entering states

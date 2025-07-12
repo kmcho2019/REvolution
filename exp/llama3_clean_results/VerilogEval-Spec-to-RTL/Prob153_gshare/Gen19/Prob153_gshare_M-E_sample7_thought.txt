@@ -1,0 +1,9 @@
+To address the issues with the existing implementation, I propose a novel architectural idea that separates the prediction and training logic into distinct pipelines, each with its own clock domain. This allows for a more efficient and scalable design.
+
+The prediction pipeline will operate on the rising edge of the clock and will be responsible for generating the predicted branch direction based on the current PC and branch history. The training pipeline will operate on the falling edge of the clock and will be responsible for updating the PHT and history register based on the actual branch outcome and branch history.
+
+To handle the case where training and prediction of the same PHT entry happen at the same time, I will introduce a buffer to store the PHT entry being trained and use this buffered value for prediction. This ensures that the prediction sees the PHT state before training.
+
+The history update logic will be simplified by using a separate register to store the predicted branch outcome and updating the history register only when the prediction is valid.
+
+To optimize the design for PPA (Power, Performance, and Area), I will use a combination of sequential and combinational logic to minimize the number of clock cycles required for prediction and training. The PHT array will be implemented using a combination of registers and wires to minimize the area required.

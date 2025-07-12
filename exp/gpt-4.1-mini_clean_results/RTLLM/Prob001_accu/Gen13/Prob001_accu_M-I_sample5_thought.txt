@@ -1,0 +1,11 @@
+To optimize the existing design for better PPA:
+
+1. **Performance:** Register `data_in` on the clock edge before addition to reduce combinational adder delay in the critical path. This can help with timing closure.
+
+2. **Power:** Introduce clock enable signals for accumulator and count registers so they only update when `valid_in` is high, reducing unnecessary toggling.
+
+3. **Area:** The additional register for `data_in` is a minor area trade-off for improved timing and power. The logic is already minimal.
+
+4. **Maintain correctness:** Ensure `valid_out` pulses exactly one cycle when 4 inputs have been accumulated.
+
+Overall, pipelining the input and gating registers improves timing and reduces dynamic power slightly with minimal area impact.

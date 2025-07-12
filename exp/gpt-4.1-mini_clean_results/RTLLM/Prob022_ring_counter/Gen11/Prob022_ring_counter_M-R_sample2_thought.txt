@@ -1,0 +1,7 @@
+To avoid the synthesis tool error caused by concatenation inside the sequential block, I will refactor the design by separating the combinational logic that computes the next state from the sequential logic that registers it. 
+
+I will define a wire `next_out` that performs the cyclic left rotation on the current `out`. This uses the same concatenation operation but as a pure combinational assignment, which generally does not cause tool errors.
+
+Then, inside the `always` block triggered on clock or reset, I will simply assign `out` to either the reset state or `next_out`. This splits the rotation logic out of the clocked block and avoids assignment to slices in the sequential block.
+
+This approach keeps the same ring counter behavior, one-hot output, and reset logic, but uses a more tool-friendly structure by separating combinational next state logic from the sequential state update.

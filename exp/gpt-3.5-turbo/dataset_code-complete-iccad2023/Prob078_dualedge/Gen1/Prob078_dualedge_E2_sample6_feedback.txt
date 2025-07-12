@@ -1,9 +1,0 @@
-The main issue in the code is the approach taken to mimic the behavior of a dual-edge triggered flip-flop. The implementation using two separate "always" blocks to handle the logic is causing the problems. 
-
-1. The first "always @(posedge clk)" block is intended to capture the input 'd' value on the rising edge of the clock and store it in 'd_prev'. However, using a single bit to store the previous value (d_prev) could lead to incorrect behavior.
-
-2. The second "always @*" block is meant to detect a change in the input 'd' and assign the new value to 'q_temp'. However, the logic implemented here is not accurately capturing the dual-edge triggered behavior as intended.
-
-3. The third "always @(posedge clk)" block assigns 'q_temp' to 'q'. This connection might also contribute to the incorrect output behavior observed during simulation.
-
-Overall, the design approach needs to be reconsidered to effectively mimic the dual-edge triggered behavior without using direct simultaneous clock edge detection in multiple "always" blocks.

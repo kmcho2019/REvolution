@@ -1,0 +1,13 @@
+Novel Architecture Concept:
+1. State Machine Approach: Implement a 4-state FSM to explicitly track the serialization process
+2. Direct Bit Selection: Instead of shifting, use a multiplexer to select the current bit based on state
+3. Early Valid Generation: Generate valid_out one cycle before the first bit to allow downstream preparation
+4. Registered Outputs: Fully register all outputs for better timing closure
+5. Power Optimization: Minimize switching activity by only updating necessary registers
+
+Key Innovations:
+- Explicit state machine makes timing and behavior more predictable
+- MUX-based bit selection eliminates shift register power consumption
+- Early valid signal helps downstream pipeline stages
+- Fully synchronous design with registered outputs
+- Reduced switching activity compared to shift-based approaches

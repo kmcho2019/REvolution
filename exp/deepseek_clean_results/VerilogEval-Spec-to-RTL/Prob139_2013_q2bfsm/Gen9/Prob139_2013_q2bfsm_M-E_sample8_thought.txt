@@ -1,0 +1,11 @@
+Here's a novel approach using a shift register-based sequence detector and a timer-based y monitor:
+
+1. **Shift Register for Pattern Detection**: Instead of tracking x values in a state machine, use a 3-bit shift register to detect the '101' sequence. This simplifies the pattern matching logic.
+
+2. **Timer for y Monitoring**: Implement a 2-bit timer that starts when g is first set to 1. This timer will count down the two cycles for y observation.
+
+3. **Output Control Logic**: Use a simple state machine with just 3 states (IDLE, ACTIVE, FINAL) to manage the overall flow. The ACTIVE state handles both the sequence detection and y monitoring phases.
+
+4. **Permanent Output Logic**: Once the y condition is met (or not met within two cycles), transition to FINAL state where g remains permanently set or cleared.
+
+This approach separates the pattern detection from the state machine, making the design more modular and potentially easier to debug.

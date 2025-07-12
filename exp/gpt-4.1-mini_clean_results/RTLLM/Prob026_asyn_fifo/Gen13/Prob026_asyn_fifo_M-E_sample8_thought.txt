@@ -1,0 +1,20 @@
+To implement an asynchronous FIFO with parameterizable depth and width, I will use the following approach:
+
+- Use a separate dual-port RAM submodule that supports independent read and write clocks.
+- Maintain separate write and read pointers in binary and Gray code forms.
+- Write pointer is updated synchronously with the write clock domain; read pointer with the read clock domain.
+- Use two-stage synchronizers to transfer the Gray-coded pointers between domains.
+- Instead of comparing full Gray pointers, implement empty and full detection using Gray code and pointer distance:
+  - Empty when synchronized write pointer equals read pointer.
+  - Full when next write pointer equals synchronized read pointer (detect one element left).
+- Convert Gray code pointers to binary to access RAM address space (lower bits).
+- Write is enabled when FIFO is not full, read is enabled when FIFO is not empty.
+- Provide parameters WIDTH (data width) and DEPTH (depth) with computed ADDR_WIDTH.
+- To keep uniqueness, I will implement pointer synchronization using separate modules (pointer synchronizer) instantiated inside the main FIFO.
+- The full detection logic uses a comparison of the write pointer with the read pointer synchronized into the write clock domain, detecting the case when write pointer is exactly one cycle ahead of read pointer, indicating full.
+- Similarly, empty is detected by comparing the read pointer with the write pointer synchronized into the read clock domain.
+- The dual-port RAM module is instantiated inside the FIFO and is parameterized for width and depth.
+- This design avoids relying on special bitwise negation of high bits but uses straightforward pointer arithmetic and Gray code conversions.
+- The RAM module uses behavioral code for simulation and synthesis.
+
+This architecture cleanly separates pointer synchronization as submodules and keeps logic modular, promoting clarity and reusability.

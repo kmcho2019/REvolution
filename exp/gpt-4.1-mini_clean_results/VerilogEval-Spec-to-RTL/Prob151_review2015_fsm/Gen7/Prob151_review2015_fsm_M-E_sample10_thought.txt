@@ -1,0 +1,7 @@
+Implement the FSM using a simple binary-encoded state machine with a shift register for detecting the 4-bit start pattern (1101).  
+Use a 4-bit shift register to continuously shift in the data bit each clock cycle and compare it to the pattern.  
+Once pattern detected, move to a state where shift_ena is asserted and a separate 3-bit counter counts the 4 shift cycles explicitly.  
+After shifting, transition to a counting state that waits for done_counting to go high.  
+Then transition to done state asserting done output until ack is asserted, then return to idle/search state.  
+This structure avoids one-hot encoding, uses a serial shift register for pattern detection rather than multiple states to recognize the sequence, which can simplify state complexity and reduce flip-flop count.  
+Outputs are registered to the state to avoid glitches, and synchronous reset initializes all registers properly.

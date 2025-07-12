@@ -1,0 +1,20 @@
+The optimal fusion strategy combines the simplicity of the MUX-based approach (Example 1) with the potential PPA benefits of uniform gate implementation (Example 2). Here's the thought process:
+
+1. Maintain the elegant MUX structure from Example 1 which provides:
+   - Minimal logic depth (single MUX operation)
+   - Clear functional mapping to the truth table
+   - Excellent timing characteristics
+
+2. Implement the MUX using NAND gates only (inspired by Example 2) to potentially gain:
+   - Better area efficiency in CMOS processes where NANDs are fundamental
+   - More consistent timing characteristics
+   - Potential power benefits from uniform gate types
+
+3. The resulting implementation will:
+   - Use only 3 NAND gates (same as Example 2)
+   - Maintain the same logical function
+   - Potentially offer better PPA than either original solution
+   - Be technology-library friendly
+
+The NAND-based MUX implementation is: f = NAND(NAND(x1, x3), NAND(x2, ~x3))
+This is equivalent to the MUX operation f = x3 ? x1 : x2 but built from NANDs.

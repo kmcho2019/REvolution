@@ -1,0 +1,8 @@
+To improve PPA (timing, power, area) while maintaining the same functionality and FSM structure:
+
+- Change state encoding to one-hot since there are only 3 states, which often improves synthesis timing by reducing logic levels.
+- One-hot encoding increases flip-flop count slightly but can reduce combinational logic complexity and critical path delay, potentially improving timing and power.
+- Maintain asynchronous negative edge reset and positive edge clock triggering.
+- Keep output z as combinational Mealy output generated alongside next_state logic.
+- Use the same single combinational always block for next_state and z for clarity.
+- This should reduce critical path and possibly power due to simpler next-state logic, at a minor area increase from the additional flip-flops.

@@ -1,0 +1,8 @@
+To achieve a 3.5x frequency division, I propose a novel approach using a combination of phase-locked loops (PLLs) and digital logic. The new architecture involves:
+
+1.  **Dual PLL Structure**: Implement two PLLs, one for generating a clock signal with a period equivalent to 4 input clock cycles (CLK_4x) and another for generating a clock signal with a period equivalent to 3 input clock cycles (CLK_3x). This will allow us to create the uneven clock periods required for 3.5x division.
+2.  **Phase-Shifting and Duty Cycle Adjustment**: Implement a phase-shifting mechanism to adjust the duty cycle of the intermediate clock signals. This can be achieved using a combination of delay elements and digital logic to ensure that the final output has a uniform period.
+3.  **OR-ing and Clock Gating**: Use a clock gating technique to selectively enable or disable the intermediate clock signals based on the input clock cycle count. The final output clock signal will be the logical OR of the phase-shifted and gated intermediate clocks.
+4.  **Reset Handling**: Ensure proper reset handling by resetting all internal signals and counters when the `rst_n` signal is low.
+
+This approach allows for a more accurate and efficient implementation of the 3.5x frequency divider, taking into account the requirements for phase shifting, duty cycle adjustment, and clock gating.

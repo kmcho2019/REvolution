@@ -1,0 +1,14 @@
+To improve the solution for better PPA, I will optimize the synchronous reset and initialization approach. Instead of explicitly resetting all RAM locations in a loop (which increases switching activity, area, and critical path delay), I will remove the synchronous reset inside the write always block and instead implement an asynchronous reset of the read_data output only, keeping the RAM memory contents intact on reset. This is acceptable since the RAM is initialized to zeros by default in FPGA/ASIC synthesis tools or can be initialized via a separate initialization file, reducing toggle activity and reset overhead.
+
+Moreover, I'll retain the read operation as a synchronous registered read (rather than combinational) to improve timing stability and reduce glitches on the read_data output. This is a common approach to increase timing robustness, especially at higher frequencies.
+
+Finally, I'll explicitly parameterize the address width using $clog2(DEPTH) to keep the module scalable. The write and read ports remain fully independent for true dual-port operation.
+
+Summary of improvements:
+- Remove synchronous RAM reset loop for better timing and power.
+- Implement synchronous registered read output for timing stability.
+- Keep write operations synchronous.
+- Use parameterized address widths.
+This will reduce reset switching, improve timing slack, and keep area minimal for the small RAM.
+
+Note: This approach assumes the design environment supports memory initialization via synthesis or external files for power-up zero initialization, which is common practice for FPGA and ASIC designs.

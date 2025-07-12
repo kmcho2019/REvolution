@@ -1,0 +1,13 @@
+Novel Architecture: Time-Window Edge Detector
+1. Instead of simple XOR-based edge detection, implement a configurable time window for edge validation
+2. Each bit maintains a 2-cycle history (current and previous values)
+3. Edge is only detected if the input remains stable for at least 1 clock cycle after transition
+4. Benefits:
+   - Filters out glitches shorter than 1 clock cycle
+   - Provides more reliable edge detection in noisy environments
+   - Still maintains single-cycle latency for valid edges
+   - Configurable window size (extendable to more cycles)
+5. Implementation uses:
+   - Two-stage registers for each bit
+   - Triple-input comparison logic (current, previous, and pre-previous values)
+   - Output generation based on stable transitions

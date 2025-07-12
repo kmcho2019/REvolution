@@ -1,0 +1,21 @@
+Refactor the design to separate combinational read logic and sequential update logic more explicitly, and avoid combinational reads of large memory arrays inside an always block. Specifically:
+
+1. Implement the PHT as a synchronous read RAM with registered read outputs to avoid combinational read from large memories, thereby improving simulator stability.
+
+2. Use separate always blocks for prediction outputs (combinational read of registered PHT output and global history), training PHT write, and global history update.
+
+3. Use two sets of registers:
+   - One register to hold the PHT output for the prediction index (read on the previous cycle to avoid combinational array read).
+   - One register to hold the train PHT output for the train index.
+
+4. On reset (asynchronous active high), initialize PHT entries and global history properly using a for-loop with integer.
+
+5. Implement global history update on the clock edge based on training and prediction priorities:
+   - If training with misprediction, restore global_history to train_history.
+   - Else if training without misprediction, global_history is updated with predicted taken only if prediction is valid.
+   - Else if no training, but prediction valid, update global_history with predicted taken.
+   - Else keep global_history unchanged.
+
+6. Prediction outputs are generated combinationally from registered PHT read (for the predict_index) and current global_history register.
+
+This approach adheres to the timing constraints and ensures stable, race-free operation. It also avoids combinational reads of large memories in always blocks and aligns better with typical FPGA and ASIC synthesis flows.

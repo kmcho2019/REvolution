@@ -1,0 +1,21 @@
+We can simplify the FSM by encoding direction in a single bit and mode in another bit, reducing the state encoding complexity.  
+Use two registers: 
+- direction (0 for left, 1 for right) 
+- mode (2-bit): 00=walking, 01=falling, 10=digging.
+
+This yields a simpler two-register FSM with clear priority transitions and easy output decoding.  
+Transitions:  
+- If falling (mode=01), ignore bumps; if ground appears, switch mode to walking but keep direction.  
+- If digging (mode=10), ignore bumps; if ground disappears, switch to falling.  
+- If walking (mode=00), priority:  
+   1) if ground=0, go to falling, keep direction  
+   2) else if dig=1, start digging, keep direction  
+   3) else if bump_left or bump_right, switch direction  
+
+Outputs: walk_left = walking & direction=0  
+walk_right = walking & direction=1  
+aaah = falling  
+digging = digging  
+
+Asynchronous reset forces direction=0 (left), mode=walking (00).  
+This is a Moore FSM where outputs depend only on mode and direction, minimizing complexity and ensuring correctness.

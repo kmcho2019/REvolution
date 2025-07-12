@@ -1,0 +1,17 @@
+To optimize the design for better PPA (Power, Performance, Area), I'll implement the following improvements:
+
+1. Replace the AND-OR structure with a case statement:
+   - Case statements are more readable and often synthesize more efficiently
+   - The synthesizer can optimize case statements better for both area and power
+   - Eliminates the need for separate selection signal generation
+
+2. Combine the selection and default (invalid sel) logic:
+   - Remove the separate valid signal generation
+   - Include the default case (output 0) directly in the case statement
+   - This reduces logic levels and eliminates the final masking operation
+
+3. Benefits:
+   - Reduced area by eliminating redundant logic
+   - Lower power consumption due to fewer switching nodes
+   - Maintains good timing performance (case statements typically synthesize well)
+   - More readable and maintainable code

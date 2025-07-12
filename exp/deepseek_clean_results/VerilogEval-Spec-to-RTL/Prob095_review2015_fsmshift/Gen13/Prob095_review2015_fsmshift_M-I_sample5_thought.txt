@@ -1,0 +1,15 @@
+Improvement strategy:
+1. The current implementation correctly asserts shift_ena for 4 cycles after reset, but the timing needs adjustment
+2. To ensure shift_ena starts at the first clock edge after reset (not immediately during reset):
+   - Initialize shift register to 4'b0111 instead of 4'b1111
+   - This way, the first '1' appears at shift_reg[3] on the first clock after reset
+3. The shift operation remains the same (shift right with 0 insertion)
+4. This guarantees exactly 4 cycles of shift_ena=1 starting from first post-reset clock
+5. After 4 cycles, shift_reg becomes 4'b0000 and stays there
+6. Maintains all advantages of original approach while fixing timing
+
+Benefits:
+- Precise 4-cycle assertion window starting from first post-reset clock
+- Still uses elegant shift register approach
+- Minimal logic changes required
+- Maintains self-terminating property

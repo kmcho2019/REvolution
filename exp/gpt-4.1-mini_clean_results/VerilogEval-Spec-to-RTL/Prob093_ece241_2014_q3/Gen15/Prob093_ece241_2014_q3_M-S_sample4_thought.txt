@@ -1,0 +1,13 @@
+Since the 4-to-1 mux outside "TopModule" is selected by inputs {a,b}, the inputs to that mux—`mux_in[3:0]`—are purely functions of `c` and `d`. Each bit mux_in[i] corresponds to the function output when ab=i (00,01,11,10), according to the K-map.
+
+Given the K-map, each mux_in bit is a 2-variable function of c and d, which can be directly implemented using a single 2-to-1 mux cascade (one mux selects between d=0 and d=1 cases, selected by d; then another selects between c=0 and c=1, selected by c).
+
+Thus, for each mux_in bit, define:
+- low level mux: selects between output values for d=0 and d=1, controlled by d
+- high level mux: selects between c=0 and c=1 results, controlled by c
+
+This uses only 2-to-1 muxes, minimal hardware, no extra logic, and matches the problem requirements.
+
+Finally, assign the bits to mux_in according to ab: mux_in[0] for ab=00, mux_in[1] for ab=01, mux_in[2] for ab=11, mux_in[3] for ab=10.
+
+This is a clean, simple, and minimal approach.

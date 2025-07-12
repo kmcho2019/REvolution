@@ -1,0 +1,32 @@
+The main problem is incomplete sensor decoding and ambiguous interpretation of sensor patterns beyond the four canonical states. To fix this:
+
+1. **Enhanced Sensor Decoding:**  
+   Instead of mapping only four patterns, decode the water level purely based on the *number* of asserted sensors from bottom to top. The sensors are placed at fixed intervals, so the water level corresponds to which sensors are asserted:
+   - s = 3'b111 (all sensors asserted) → Level 3 (above s[2])  
+   - s[2]=0, s[1]=1, s[0]=1 → Level 2 (between s[2] and s[1])  
+   - s[2]=0, s[1]=0, s[0]=1 → Level 1 (between s[1] and s[0])  
+   - s = 3'b000 (no sensors asserted) → Level 0 (below s[0])  
+
+   To handle unexpected sensor patterns (e.g., s=3'b010 or 3'b100), assign levels conservatively based on the highest asserted sensor:
+   - If s[2] asserted → Level 3  
+   - Else if s[1] asserted → Level 2  
+   - Else if s[0] asserted → Level 1  
+   - Else → Level 0  
+
+2. **Previous Level Tracking:**  
+   Update `prev_level` on each sensor change to the previous decoded water level before updating `prev_s`. This ensures `prev_level` reflects the water level prior to the last sensor change.
+
+3. **Supplemental Flow Valve Logic (dfr):**  
+   Assert dfr only when current level is strictly higher than previous level, indicating rising water.
+
+4. **Nominal Flow Valve Outputs (fr0, fr1, fr2):**  
+   Use a direct mapping according to the problem description:
+   - Level 3 (above s[2]): none open (all 0)
+   - Level 2 (between s[2] and s[1]): fr0 open
+   - Level 1 (between s[1] and s[0]): fr0 and fr1 open
+   - Level 0 (below s[0]): fr0, fr1, fr2 open
+
+5. **Reset:**  
+   On synchronous active-high reset, set `prev_s` and `prev_level` to indicate water below s[0], and assert all valves open.
+
+This approach cleanly handles any sensor input pattern safely and aligns with the problem’s requirement for output flow valve controls and dfr behavior.

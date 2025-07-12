@@ -1,0 +1,11 @@
+To improve power and timing without increasing area, capture the input parallel data into an internal register (data_reg) only once every 4 cycles when starting the serialization (when cnt == 3). This avoids glitches due to asynchronous input changes affecting the serial output. Then, use a shift register approach to output bits from data_reg MSB to LSB over 4 cycles. This converts the dynamic indexed multiplexer into a simple shift operation, which tends to be more efficient in hardware and reduces combinational delay. 
+
+The valid_out signal is asserted only when outputting the MSB bit (first serial bit in each 4-bit sequence), i.e., when cnt == 0. The counter cnt runs from 0 to 3, incrementing each clock, resetting to 0 after 3.
+
+This design balances power, performance, and area by:
+- Registering input data to avoid glitches on dout,
+- Using a shift register for output to reduce mux complexity and timing,
+- Maintaining a simple 2-bit counter with synchronous reset,
+- Validating output only on MSB transmission for clarity.
+
+Synchronous reset is kept for timing predictability.

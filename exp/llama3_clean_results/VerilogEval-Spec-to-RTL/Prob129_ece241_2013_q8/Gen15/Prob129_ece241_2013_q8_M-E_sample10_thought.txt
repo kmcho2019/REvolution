@@ -1,0 +1,5 @@
+To implement a Mealy-type finite state machine that recognizes the sequence "101" on the input signal x, we can use a novel architectural approach that employs a combination of counters and comparators. The idea is to count the number of '1' bits and '0' bits between '1' bits, and assert the output z when the correct sequence is detected. This approach allows us to avoid using shift registers and instead, utilize counters to track the sequence.
+
+We will have three states: IDLE, ONE, and ONE_ZERO. The IDLE state is the initial state, where we wait for the first '1' bit. Once we encounter a '1', we transition to the ONE state. In the ONE state, we check if the next bit is '0'. If it is, we transition to the ONE_ZERO state. In the ONE_ZERO state, we check if the next bit is '1'. If it is, we assert the output z and transition back to the IDLE state.
+
+This approach allows us to recognize overlapping sequences and ensures that the output z is asserted when the "101" sequence is detected. We will use an asynchronous reset to reset the state machine to the IDLE state when the aresetn signal is low.

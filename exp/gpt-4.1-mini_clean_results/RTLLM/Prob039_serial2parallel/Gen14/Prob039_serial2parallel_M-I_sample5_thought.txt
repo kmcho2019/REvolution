@@ -1,0 +1,5 @@
+The main issue in the original design is the shift direction and insertion point of the serial bit, which does not match the specification that the first received bit should be the most significant bit in the parallel output. To fix this, we should shift the register right on every new bit and insert the new serial bit at the MSB position. This way, the earliest received bit stays at the MSB, and the latest at the LSB after 8 bits.
+
+Additionally, outputting `dout_parallel` directly from the shift register when the count reaches 8 ensures correct timing and data alignment. We will also assert `dout_valid` for exactly one clock cycle immediately after receiving the 8th bit.
+
+The design uses a 4-bit counter to count up to 8 bits, and a synchronous reset to initialize all registers. This approach is simple, synchronous, and matches the problem's requirements perfectly.

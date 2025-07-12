@@ -1,0 +1,10 @@
+We can simplify the design by removing explicit initialization from the reg declarations and instead using a synchronous reset inside the always block. Since the problem states flip-flops are initially reset to zero before operation, but no reset input exists, we can add an internal reset that activates only at the first clock edge. This ensures known startup states and avoids unknown initial values.
+
+To keep the design minimal and maintain functional correctness:
+- Use an internal register to indicate reset active on the first clock.
+- When reset is active, flip-flops are cleared to zero.
+- On subsequent clock edges, flip-flops update normally based on the combinational logic.
+
+This approach avoids synthesis issues with reg initializations and meets the problem’s reset requirement without adding external inputs.
+
+The combinational logic and output logic remain unchanged, maintaining clarity and simplicity.

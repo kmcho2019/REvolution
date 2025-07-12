@@ -1,0 +1,25 @@
+To implement the state output logic for the given finite-state machine, 
+we need to derive the next state logic for each state flip-flop. 
+Since a one-hot code is used, each state is represented by a single 
+bit set to 1 in the y vector. 
+
+From the state transition diagram, we can see that:
+- State A (000001) transitions to state B when w = 1, and stays in state A when w = 0.
+- State B (000010) transitions to state C when w = 1, and transitions to state D when w = 0.
+- State C (000100) transitions to state E when w = 1, and transitions to state D when w = 0.
+- State D (001000) transitions to state F when w = 1, and transitions to state A when w = 0.
+- State E (010000) stays in state E when w = 1, and transitions to state D when w = 0.
+- State F (100000) transitions to state C when w = 1, and transitions to state D when w = 0.
+
+Now, we can derive the next state logic for each state flip-flop.
+- The input of state flip-flop y[1] (Y1) should be 1 when the current state is A and w = 1 (to transition to state B), 
+  or when the current state is E and w = 1 (to stay in state E), 
+  or when the current state is F and w = 1 (to transition to state C).
+- The input of state flip-flop y[3] (Y3) should be 1 when the current state is B and w = 1 (to transition to state C), 
+  or when the current state is D and w = 0 (to transition to state A), 
+  or when the current state is E and w = 0 (to transition to state D), 
+  or when the current state is F and w = 1 (to transition to state C).
+
+This can be implemented using the following logic equations:
+- Y1 = y[0] & w | y[4] & w | y[5] & w
+- Y3 = y[1] & w | y[3] & ~w | y[4] & ~w | y[5] & w

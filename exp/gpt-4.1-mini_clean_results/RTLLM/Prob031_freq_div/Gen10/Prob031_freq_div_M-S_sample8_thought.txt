@@ -1,0 +1,7 @@
+The design can be simplified by consolidating counters and toggling logic within fewer always blocks, reducing the total number of always blocks while keeping counters and toggles clear and separate. Since the output frequencies are related as divisions of 2, 10, and 100 from 100MHz, the counters can remain small and straightforward.
+
+We keep the asynchronous reset and synchronous counting and toggling, but use two always blocks: one for the 50MHz toggle (simple flip-flop toggle every clock), and another for both the 10MHz and 1MHz clock generation sharing counters within one block. This reduces code lines and complexity while maintaining modularity and clarity.
+
+Minimal bit widths for counters remain for area efficiency. Non-blocking assignments ensure correct synchronous behavior.
+
+This approach yields a simpler, more compact implementation with equivalent functionality.

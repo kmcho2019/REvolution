@@ -1,0 +1,10 @@
+To implement a serial 2's complementer Moore state machine, we need to track whether we've encountered the first '1' in the input stream (starting from LSB). The machine has two states:
+1. STATE_PASS: Before finding the first '1', we simply pass through the input bits unchanged.
+2. STATE_INVERT: After finding the first '1', we invert all subsequent bits.
+
+The state transitions occur as follows:
+- Start in STATE_PASS when reset is active
+- Remain in STATE_PASS while x=0
+- Transition to STATE_INVERT when x=1 is encountered
+- Remain in STATE_INVERT until reset
+- Output depends only on current state and input (Moore machine)

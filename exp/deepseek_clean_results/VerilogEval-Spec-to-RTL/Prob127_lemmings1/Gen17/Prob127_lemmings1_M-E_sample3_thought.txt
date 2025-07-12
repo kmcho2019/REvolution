@@ -1,0 +1,14 @@
+Novel Architecture Idea: 
+Instead of using a traditional state register with binary encoding, we'll implement the state machine using a toggle flip-flop approach. The key insight is that the direction change can be modeled as a toggling operation - each valid bump event (left or right) toggles the current direction. This eliminates the need for explicit state comparisons and reduces the logic to a simple toggle condition.
+
+The design will:
+1. Use a single flip-flop to store the current direction (0=left, 1=right)
+2. Generate a toggle signal when either bump input is active (XOR of bumps ensures toggling on any bump)
+3. Reset forces the direction to left (0)
+4. Outputs are directly derived from the flip-flop value
+
+Benefits:
+- Even simpler transition logic than XOR-based approach
+- More intuitive mapping of "toggle on bump" behavior
+- Same area but potentially better timing due to simpler combinational path
+- Maintains all Moore machine properties

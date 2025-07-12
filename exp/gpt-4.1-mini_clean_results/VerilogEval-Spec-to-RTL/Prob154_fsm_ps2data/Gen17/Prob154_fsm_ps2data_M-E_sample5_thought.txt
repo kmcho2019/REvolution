@@ -1,0 +1,12 @@
+Implement a one-hot encoded FSM with three states: IDLE (waiting for sync), BYTE2, BYTE3. Use a separate shift register (24-bit) to accumulate bytes by shifting in new bytes each cycle starting from the first sync byte. 
+
+The FSM:
+- IDLE: scan input bytes until in[3] == 1 is detected, load that byte into shift register as the most significant byte; transition to BYTE2.
+- BYTE2: shift the new byte into shift register (shift existing data 8 bits left, place new byte at LSB); transition to BYTE3.
+- BYTE3: shift the new byte similarly; assert done for one cycle; transition back to IDLE.
+
+This approach reduces complexity by using a shift register for message accumulation, avoiding explicit byte indexing and potentially easing timing paths. The done signal is generated as a registered output tied to the BYTE3 state, active for one cycle. 
+
+The reset is synchronous and active high. The out_bytes output is assigned from the shift register and is valid when done is asserted.
+
+This design highlights a different architectural style by using one-hot FSM and a byte-shift approach.

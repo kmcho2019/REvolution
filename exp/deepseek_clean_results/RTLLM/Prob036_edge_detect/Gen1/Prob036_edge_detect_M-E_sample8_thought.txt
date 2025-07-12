@@ -1,0 +1,18 @@
+Instead of using direct comparison with the previous value, we can implement a Moore state machine that tracks the input signal's state transitions. This approach provides more flexibility and can be extended for more complex edge detection patterns.
+
+The state machine has 3 states:
+1. IDLE: Initial state, waiting for any edge
+2. RISE_DETECTED: State after detecting rising edge
+3. FALL_DETECTED: State after detecting falling edge
+
+Transitions:
+- From IDLE to RISE_DETECTED when a changes from 0 to 1
+- From IDLE to FALL_DETECTED when a changes from 1 to 0
+- From any state back to IDLE on next clock
+
+Outputs:
+- rise is high only in RISE_DETECTED state
+- down is high only in FALL_DETECTED state
+- Both outputs are low in IDLE state
+
+This approach provides better timing control and can be easily extended for more complex edge patterns.

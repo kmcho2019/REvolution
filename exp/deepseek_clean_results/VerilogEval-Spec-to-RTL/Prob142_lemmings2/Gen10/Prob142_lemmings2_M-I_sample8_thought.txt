@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Separate fall detection and bump handling into parallel paths to reduce critical path
+   - Register direction changes to break combinational paths
+   - Use early ground detection to anticipate state transitions
+
+2. Power Optimization:
+   - Add clock gating for output registers when outputs are stable
+   - Only update direction register when actually walking on ground
+   - Minimize unnecessary toggles in direction logic
+
+3. Area Optimization:
+   - Maintain minimal state encoding (1-bit state + 1-bit direction)
+   - Simplify bump detection logic using priority encoding
+   - Share common terms in output logic
+
+Key Changes:
+- Added output registers with clock gating
+- Separated state and direction update logic
+- Optimized bump detection with priority
+- Maintained all functional requirements while improving PPA

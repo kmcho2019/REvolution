@@ -1,0 +1,8 @@
+Simplified Radix-2 Divider Design:
+1. Unified 8-bit counter: Replace 4-bit counter with simple 3-bit counter (0-7) since we only need 8 cycles
+2. Remove redundant registers: Eliminate separate quotient_sign and remainder_sign registers by calculating signs on-the-fly
+3. Simplified shift register: Use 16-bit SR [remainder|quotient] without carry bit, handling subtraction separately
+4. Direct result assignment: Combine remainder and quotient directly in the result output
+5. Clear state machine: Only two states (IDLE and CALCULATING) controlled by counter
+6. Simplified zero handling: Return all zeros for division by zero case (more standard than all 1's)
+7. Reduced register usage: Compute absolute values directly when needed rather than storing them

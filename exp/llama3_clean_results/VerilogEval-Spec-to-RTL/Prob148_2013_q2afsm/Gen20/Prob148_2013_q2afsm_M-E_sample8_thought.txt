@@ -1,0 +1,11 @@
+One novel approach to implementing the FSM is to utilize a distributed, hierarchical state machine structure. Instead of having a single, centralized state register, we can break down the state machine into smaller, modular components, each handling a specific subset of the state transitions. 
+
+This can be achieved by introducing a separate module for each state, which encapsulates the logic for that particular state. Each state module would then communicate with the others through a network of signals, allowing them to coordinate their actions and determine the next state.
+
+By distributing the state machine in this way, we can potentially reduce the complexity of the individual state transition logic, making it easier to understand, modify, and optimize. Additionally, this approach could enable more efficient use of resources, as each state module can be optimized independently.
+
+To implement this idea, we can define a set of state modules, each with its own input and output signals. The input signals would include the current state, the input signals `r`, and any necessary control signals. The output signals would include the next state, as well as any output signals required by the state machine, such as the `g` signals.
+
+We can then use a top-level module to instantiate each state module and connect them together, forming the distributed state machine. This top-level module would also handle the clock and reset signals, ensuring that the state machine is properly synchronized and reset when necessary.
+
+By adopting this distributed, modular approach, we can create a more scalable, maintainable, and efficient state machine, which can be easily extended or modified as needed.

@@ -1,0 +1,9 @@
+The feedback highlights a critical timing issue in the edge detection logic. Here's the corrected approach:
+1. Need to properly store the previous input value one clock cycle before comparison
+2. Split the edge detection into two stages:
+   - First stage: Store current input in prev_in (happens at posedge clk)
+   - Second stage: Compare current input with prev_in from previous cycle
+3. This ensures we're comparing the true previous cycle's value with current input
+4. Output bits are set when falling edges are detected and remain set until reset
+5. Reset clears both output and previous input registers
+6. All operations are properly synchronized to posedge clk

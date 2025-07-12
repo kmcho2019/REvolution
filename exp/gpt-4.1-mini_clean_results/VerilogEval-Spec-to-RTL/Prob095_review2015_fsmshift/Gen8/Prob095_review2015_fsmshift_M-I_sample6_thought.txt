@@ -1,0 +1,13 @@
+The original design asserted `shift_ena` immediately when `reset` was high, counting down the 4 cycles while reset remained asserted. The spec, however, states that `reset` is synchronous and active high, and upon reset assertion, `shift_ena` should be asserted for exactly 4 clock cycles *after* the reset signal goes low. This means the 4-cycle enable period begins only after reset is released.
+
+To fix this, the FSM should detect the rising edge of `reset` synchronously to initialize a 4-cycle enable count, but the enable counting should start on the cycle after reset is deasserted. This can be done by:
+
+- Using a register to hold the previous value of `reset` to detect reset deassertion (falling edge of reset).
+- Starting the 4-cycle counter only on the cycle after reset goes from high to low.
+- Counting down the 4 cycles with `shift_ena` asserted, then stopping.
+
+This ensures that during reset, `shift_ena` is 0, and exactly 4 cycles after reset is released, `shift_ena` is asserted. After that, it stays low until another reset occurs.
+
+Because there's no input pattern for further triggering, this meets the spec exactly.
+
+This approach also avoids off-by-one errors and matches the timing expected by typical synchronous reset FSMs.

@@ -1,0 +1,9 @@
+The original solution computes all 25 pairwise equality bits explicitly, including redundant symmetric pairs (e.g., (a,b) and (b,a)), which increases area and power unnecessarily. To optimize for PPA, I will leverage the symmetry of equality: the result of comparing inputs[i] and inputs[j] is the same as comparing inputs[j] and inputs[i]. So we only need to compute the upper triangle (including diagonal) of the 5x5 matrix. The lower triangle bits can reuse these results.
+
+To achieve this, I will:
+- Pack inputs into a 5-bit vector.
+- Use nested generate loops to compute only upper triangle bits (i <= j) and store in a 2D reg or wire array.
+- Assign the output bits by flattening this 2D array.
+- For bits corresponding to lower triangle (i > j), assign from the symmetric upper triangle bit, reducing redundant logic.
+
+This halves the number of unique computations and enables synthesis to share gates, reducing area and power. Using generate loops also reduces code verbosity and helps maintainability without hurting performance.

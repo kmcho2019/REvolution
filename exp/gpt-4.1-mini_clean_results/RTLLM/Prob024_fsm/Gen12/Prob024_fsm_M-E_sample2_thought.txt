@@ -1,0 +1,7 @@
+I will implement the Mealy FSM as a shift register-based sequence detector with a state encoding scheme that directly stores how much of the pattern "10011" has been matched so far, using a one-hot style of state encoding to simplify next-state logic. The FSM will use a 6-state machine: state 0 means no bits matched, states 1 through 5 correspond to matching the first 1, 10, 100, 1001, and finally 10011. Upon reaching the final state 5 with the input bit = 1, the MATCH output is asserted.
+
+To support continuous and overlapping sequences, transitions will be defined so that partial matches inside the sequence are recognized and the FSM returns to the appropriate intermediate state without fully resetting.
+
+The MATCH output is asserted combinationally as a Mealy output based on the present state and current input, ensuring MATCH=1 at the exact clock cycle the last bit of the sequence arrives.
+
+Synchronous reset initializes the FSM to state 0. Using a one-hot encoding for states simplifies the combinational logic and clarifies the design.

@@ -1,0 +1,11 @@
+A novel approach to designing the frequency divider module `freq_div` is to utilize a hierarchical structure with separate modules for each output clock frequency (`CLK_50`, `CLK_10`, and `CLK_1`). This approach allows for a more modular and maintainable design, where each module can be optimized independently.
+
+The key idea is to create a top-level module `freq_div` that instantiates three separate modules: `clk_div_2`, `clk_div_10`, and `clk_div_100`. Each of these modules is responsible for generating its respective output clock frequency.
+
+The `clk_div_2` module simply toggles the output clock signal at every positive edge of the input clock signal. The `clk_div_10` and `clk_div_100` modules use counters to divide the input clock frequency and generate the respective output clock signals.
+
+To further improve the design, we can use a parameterized approach to make the modules more flexible and reusable. For example, the `clk_div_10` and `clk_div_100` modules can be designed to take a parameter that specifies the division factor, allowing them to be easily reused for different frequency divisions.
+
+Additionally, we can use a more efficient way to implement the counters by using a single counter and dividing it to generate the necessary frequencies. This eliminates the need for multiple counters and reduces the complexity of the design.
+
+Overall, this hierarchical approach with separate modules for each output clock frequency provides a more modular and maintainable design, making it easier to optimize and reuse the modules.

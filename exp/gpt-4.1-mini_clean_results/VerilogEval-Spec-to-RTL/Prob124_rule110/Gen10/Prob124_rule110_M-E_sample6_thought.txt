@@ -1,0 +1,7 @@
+Implement Rule 110 using a shift-register style approach to explicitly handle neighbor bits. Instead of calculating each cell's next state in parallel with a large combinational block, use a combinational pipeline that extracts left, center, and right bits by shifting a 3-bit window over the state register. By concatenating zeroes at both ends (to simulate boundaries), generate the 3-bit neighborhood per cell efficiently.
+
+We build a combinational 514-bit vector: zero bit + current state q + zero bit, representing the padded state. Then for each cell i, its neighborhood is bits [i+2:i], corresponding to left, center, right bits for cell i. A simple LUT (lookup table) representing the Rule 110 mapping is implemented as a case statement.
+
+This approach separates neighbor extraction cleanly and uses a direct case lookup for next state, improving clarity. The synchronous process updates the state on clock edge or loads new data. This design naturally fits hardware with a small 3-bit LUT per cell and simplifies neighbor boundary handling.
+
+Overall, this architecture focuses on clarity by explicitly padding state edges and indexing neighborhoods rather than complex boolean logic, producing a modular and maintainable implementation.

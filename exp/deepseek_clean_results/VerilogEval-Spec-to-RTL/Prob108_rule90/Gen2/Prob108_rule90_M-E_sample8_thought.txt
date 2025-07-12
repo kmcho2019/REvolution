@@ -1,0 +1,14 @@
+To create a more synthesis-friendly implementation of Rule 90 cellular automaton, I propose a novel approach using shift registers and parallel XOR logic:
+
+1. Instead of processing all 512 bits in one go, we'll use a pipelined approach that processes the state in parallel but with better timing characteristics
+2. We'll implement the boundary conditions explicitly by extending the state with zeros
+3. The core logic will use a combination of:
+   - Left-shifted version of the state (for left neighbors)
+   - Right-shifted version of the state (for right neighbors)
+   - XOR operation between these shifted versions
+4. This approach:
+   - Reduces critical path by avoiding long combinational chains
+   - Makes better use of FPGA shift register resources
+   - Maintains clear boundary conditions
+   - Is more synthesis-friendly while keeping the same functionality
+5. The implementation will use non-blocking assignments for all register updates

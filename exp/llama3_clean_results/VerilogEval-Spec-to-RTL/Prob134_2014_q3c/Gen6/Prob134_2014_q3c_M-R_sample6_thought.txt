@@ -1,0 +1,7 @@
+To refactor the given code, we can simplify the state machine implementation by directly using the provided next state and output tables to drive the `nextState` and `z` signals. This can be achieved by replacing the `case` statement inside the `always_comb` block with a direct lookup from the `nextStateTable` and `zTable` arrays based on the current state and input `x`. 
+
+We will remove the unnecessary `case` statement and directly use the `nextStateTable` to assign the `nextState` based on the current state and input `x`. The `z` output will be directly driven from the `zTable` based on the current state. 
+
+Additionally, we will keep the `initial` block for initializing the `currentState`, but note that in a real-world design, an asynchronous reset signal should be used instead for proper initialization.
+
+This refactoring aims to simplify the code, improve readability, and potentially reduce the area usage by eliminating the `case` statement and directly using the lookup tables.

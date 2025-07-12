@@ -1,0 +1,20 @@
+Here's a novel architectural approach using a time-multiplexed design:
+
+1. Instead of having three separate flip-flops, we'll use a single register with three states that cycles through each operation (XOR, AND, OR) sequentially.
+
+2. We'll implement a modulo-3 counter to track which operation we're currently processing.
+
+3. Each clock cycle will:
+   - Update one of the operations based on the counter state
+   - Store the result in a temporary register
+   - Cycle to the next operation
+
+4. The outputs will be held in a 3-bit shift register that maintains the last results of all three operations.
+
+5. The NOR gate will operate on these stored values.
+
+Advantages:
+- Reduced flip-flop count (from 3 to 1 main storage element)
+- Sequential processing ensures no timing conflicts between operations
+- More predictable synthesis due to explicit state sequencing
+- Still maintains the same logical behavior over three clock cycles

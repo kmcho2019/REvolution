@@ -1,0 +1,9 @@
+I will fuse the advantages of both examples: Use synchronous reset with a loop to clear all RAM entries at reset to ensure deterministic initialization (from both examples). Keep the RAM array as 8x6 bits using parameterized WIDTH and DEPTH. Use synchronous write with write enable gating.
+
+For reading, instead of purely combinational read or a combinational always block, I will register the read_data output on the clock edge when read_en is asserted. This registered read output prevents combinational glitches, improves timing by reducing the read data path to a registered stage, and avoids glitches from toggling read_en asynchronously. When read_en is low, read_data remains stable (no forced zero), reducing output toggling and dynamic power.
+
+Address widths are parameterized with $clog2(DEPTH).
+
+This approach balances reset reliability, read timing, power efficiency, and clean dual-port RAM behavior. It minimizes read data glitches and switching power, keeps reset simple and deterministic, and meets the full specification with simultaneous independent read and write operations.
+
+This fusion strategy yields a robust and practical dual-port RAM implementation suitable for ASIC or FPGA synthesis.

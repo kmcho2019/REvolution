@@ -1,5 +1,0 @@
-The issue in the provided Verilog code lies in the incorrect emulation of a dual-edge triggered flip-flop. The code uses two separate always blocks for posedge and negedge triggers, trying to create a dual-edge triggered behavior. However, in practical FPGA implementations, dual-edge triggered flip-flops are not available, and using always blocks for both posedge and negedge is incorrect.
-
-The problem with this approach is that on the negative edge of the clock, q2 is updated with the value of q1 which is updated on the positive edge of the clock. This causes the output q to propagate the input value d with a delay, resulting in a significant number of mismatches between expected and actual output values in the simulation log.
-
-To fix this issue and create a proper behavior of a dual-edge triggered flip-flop, a different approach needs to be taken that models the behavior without relying on dual-edge triggering, which is not directly supported in FPGAs.

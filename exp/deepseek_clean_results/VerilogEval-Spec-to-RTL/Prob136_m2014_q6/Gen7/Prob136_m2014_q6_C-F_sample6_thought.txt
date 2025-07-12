@@ -1,0 +1,25 @@
+Fusion Strategy:
+
+1. **State Encoding**: Combine Gray code benefits (from both examples) with optimized state ordering to minimize transitions between frequently connected states. This reduces power consumption and improves timing.
+
+2. **Output Logic**: Keep the efficient direct bit assignment (z = state[2]) from both examples, as it's the most area and power efficient implementation.
+
+3. **State Transition**: Use a clear case structure but optimize state ordering to group common transitions (like D appearing in multiple transitions).
+
+4. **Reset Handling**: Maintain synchronous reset for consistency across designs.
+
+5. **Optimizations**:
+   - Use Gray code that minimizes transitions for common paths (A<->D, B<->D, C<->D)
+   - Keep output logic minimal (single bit assignment)
+   - Add default case for robustness
+   - Optimize state encoding to have E and F share MSB=1 for output logic
+
+Optimized Gray code mapping:
+A: 000, B: 001, D: 011, C: 010, F: 110, E: 100
+This ensures:
+- Single-bit changes for A->B (000->001)
+- Single-bit changes for B->D (001->011)
+- Single-bit changes for D->C (011->010)
+- Single-bit changes for C->F (010->110)
+- Single-bit changes for F->E (110->100)
+- Common D transitions maintain single-bit changes

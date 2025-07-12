@@ -1,0 +1,22 @@
+module multi_8bit(
+    input [7:0] A,
+    input [7:0] B,
+    output [15:0] product
+);
+
+reg [15:0] temp_product;
+reg [7:0] shifted_A;
+
+always @(A or B) begin
+    temp_product = 0;
+    shifted_A = A;
+    for (int i = 0; i < 8; i++) begin
+        if (B[i]) begin
+            temp_product = temp_product + (shifted_A << i);
+        end
+        shifted_A = shifted_A << 1;
+    end
+    product = temp_product;
+end
+
+endmodule

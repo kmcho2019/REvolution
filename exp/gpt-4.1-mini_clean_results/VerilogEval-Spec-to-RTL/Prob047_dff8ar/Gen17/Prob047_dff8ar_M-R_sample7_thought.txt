@@ -1,0 +1,7 @@
+Refactor the design by splitting each bit of the 8-bit vector into individual 1-bit D flip-flops with asynchronous active-high reset. Instead of a single vector register, instantiate 8 separate flip-flop modules in a generate loop inside TopModule. Each DFF module handles one bit. This modularizes the flip-flop behavior and emphasizes structural design. Also, keep asynchronous reset and clock triggering with non-blocking assignments within each individual always block.
+
+This refactoring:
+- Maintains exact functionality and timing.
+- Demonstrates a structural approach instead of a vectorized register.
+- May help visualization, debugging, or extension to mixed bit-width or different reset polarity per bit.
+- Retains all benefits of the original design while showing a more granular, explicit style.

@@ -1,0 +1,19 @@
+To address the issues mentioned in the feedback, we need to re-examine the state machine and counter logic to correctly implement the required fractional frequency division of 3.5x. This involves accurately generating the longer and shorter parts of the divided clock cycle.
+
+First, we will introduce two counters, `cnt_long` and `cnt_short`, to track the longer and shorter parts of the divided clock cycle, respectively. The `cnt_long` counter will be used to generate a pulse for 4 clock cycles, representing the longer part of the divided clock cycle. Similarly, the `cnt_short` counter will be used to generate a pulse for 3 clock cycles, representing the shorter part of the divided clock cycle.
+
+Next, we will modify the state machine to correctly alternate between the longer and shorter parts of the divided clock cycle. This can be achieved by using two states, `STATE_LONG_PULSE` and `STATE_SHORT_PULSE`, to represent the longer and shorter parts of the cycle, respectively.
+
+We will also introduce two internal signals, `clk_int1` and `clk_int2`, to store the intermediate divided clock signals for the longer and shorter parts of the cycle. These signals will be used to generate the final divided clock output, `clk_div`, after applying the phase-shifting logic.
+
+To achieve the desired half-integer division and duty cycle adjustment, we will use a separate signal, `clk_div_shift`, to store the phase-shifted version of the divided clock signal. This will be done by delaying one of the intermediate clock signals by half a clock period and advancing the other by half a clock period.
+
+Finally, we will assign the final divided clock output, `clk_div`, by performing a logical OR operation between the original and phase-shifted versions of the divided clock signal. This will ensure that the final output has a uniform period and correct phase-shifting.
+
+The corrected design will involve the following steps:
+1. Initialize the counters and state machine.
+2. Generate the longer and shorter parts of the divided clock cycle using the counters and state machine.
+3. Apply the phase-shifting logic to the intermediate divided clock signals.
+4. Assign the final divided clock output using the logical OR operation.
+
+By following these steps, we can correctly implement the fractional frequency division of 3.5x and achieve the desired output.

@@ -1,0 +1,14 @@
+The original design is already minimal and clear, with explicit bitwise equality signals and hierarchical greater-than logic. To optimize PPA further, I will make the following improvements:
+
+1. Use Verilog's built-in comparison operators to leverage synthesis tools' ability to optimize comparator logic efficiently. This often yields better area and timing than manual bitwise logic.
+
+2. Implement the outputs by simple continuous assignments:
+   - A_equal = (A == B)
+   - A_greater = (A > B)
+   - A_less = (A < B)
+   
+3. This reduces code complexity, potentially lowers logic levels, and helps synthesis tools map to optimized hardware comparators or priority structures.
+
+4. The outputs remain mutually exclusive by construction, maintaining the original requirements.
+
+This approach improves PPA by trusting synthesis to generate optimized gates while keeping the code concise, easy to maintain, and functionally equivalent.

@@ -1,0 +1,11 @@
+The main functional issue stems from the way the x input pattern (101) is detected and how the shift register x_shift is updated only in state C and reset otherwise. This causes potential loss of data and timing misalignment. To fix this:
+
+- Always shift x input every clock cycle after reset is deasserted, so that pattern detection is continuous and not state-dependent.
+- Only consider the pattern detection when in state C.
+- Correct the y_count timing to count exactly two cycles in state E, by starting y_count at 0 when entering E, incrementing each cycle, and moving state if y_count == 1 and y==0 on next cycle (which means 2 cycles have elapsed).
+- Make sure outputs f and g are Moore outputs purely combinational based on the current state.
+- Synchronous reset will reset all registers including state, x_shift, and y_count properly.
+- Implement the state transitions accordingly to the specification, ensuring that the pattern detection and outputs timing match the described behavior.
+- This approach avoids losing the x input pattern history and aligns timing properly for outputs f and g, eliminating output mismatches.
+
+Overall, shifting x every cycle keeps a sliding window of the last three x inputs, enabling precise detection of 101 pattern exactly when needed without missing cycles.

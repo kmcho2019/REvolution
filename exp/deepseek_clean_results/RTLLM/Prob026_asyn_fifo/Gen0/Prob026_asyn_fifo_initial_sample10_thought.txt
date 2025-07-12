@@ -1,0 +1,13 @@
+The design implements an asynchronous FIFO with configurable width and depth using:
+1. Dual-port RAM for data storage
+2. Separate write and read controllers
+3. Gray code pointer synchronization
+4. Two-stage synchronizers for cross-clock domain transfers
+5. Full/empty detection using Gray code comparison
+
+Key points:
+- Use Gray code for pointers to prevent metastability
+- Two-stage synchronizers for safe cross-clock domain transfers
+- Full condition: when write pointer is one cycle ahead (MSBs differ, others same)
+- Empty condition: when read and write pointers are equal
+- Separate clock domains for read and write operations

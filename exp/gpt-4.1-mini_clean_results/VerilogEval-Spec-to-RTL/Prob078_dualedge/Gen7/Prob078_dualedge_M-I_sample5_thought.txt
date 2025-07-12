@@ -1,0 +1,9 @@
+To improve PPA (power, performance, area) over the previous two-flip-flop plus mux approach, I will avoid the output mux that depends on the clock signal to select between two registers. Instead, I will use a single always block triggered only on the positive edge of the clock, but inside it, I will sample the input 'd' twice per full clock period using a slower internal clock signal derived from the input clock. This is a classical approach to mimic dual-edge triggering by using a flip-flop and a half-rate enable signal.
+
+Specifically, I will create a half-rate clock enable (a flip-flop toggling at half the frequency) that is updated on posedge clk. Then, I will sample 'd' on posedge and, using the clock enable signal, decide which sample to update. Finally, I will combine these two samples (one stored on posedge, one stored with enable on the other half period) by multiplexing with the clock enable signal. This way, only one flip-flop is clocked per clock edge, and no mux depends on clk. This method reduces area and power by halving flip-flop count and avoids combinational mux delay caused by clk.
+
+This approach is widely used for dual-edge capture on FPGAs without dual-edge flip-flops.
+
+The output 'q' is updated every half clock cycle by toggling between the two sampled values internally.
+
+This design is fully synthesizable and more PPA efficient.

@@ -1,0 +1,11 @@
+Novel Architectural Idea: "Parallel Precompute with Select"
+1. Instead of using a single adder/subtractor, precompute both next values (count+1 and count-1) in parallel
+2. Use the up_down signal to select between the precomputed values
+3. Benefits:
+   - Potentially better timing as addition and subtraction happen in parallel
+   - Cleaner critical path (just a mux after precomputation)
+   - More regular structure that may map better to FPGA resources
+   - Easier to pipeline if needed
+4. Tradeoff:
+   - Slightly more area due to dual computation
+   - But modern synthesis tools may optimize this anyway

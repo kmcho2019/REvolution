@@ -1,0 +1,16 @@
+Both examples implement the same functional behavior: output q depends on c selecting one of the inputs b, e, a, d for c=0 to 3, and outputs 4'hF for c≥4. 
+
+Example 1 uses a vector concatenation and shift-based mux for a compact, scalable approach, but this introduces a variable shift operation which may negatively affect timing and power.
+
+Example 2 uses a simple chain of ternary operators for the mux, which is clearer and synthesizes to a straightforward 4-to-1 mux without shift logic, leading to better PPA.
+
+To fuse these strengths, I will:
+- Retain the clarity and synthesis friendliness of the conditional assignments from Example 2.
+- Avoid multiple comparisons by indexing an array or case statement, which improves readability and allows synthesis tools to optimize mux logic better.
+- Use a combinational function or case statement to implement the 4-to-1 mux logic instead of chained ternaries or shifts.
+- Provide a single continuous assignment with minimal logic overhead.
+- Output 4'hF for c≥4.
+
+This fusion achieves clean, synthesizable, efficient muxing without shift overhead while maintaining clarity and easy extension.
+
+Hence, the implementation uses a combinational always @* block with a case statement on c that outputs q accordingly. This will synthesize to a 4-to-1 mux plus a comparator for c≥4, with minimal area and power. The case statement is explicit, scalable, and maps the outputs exactly as required.

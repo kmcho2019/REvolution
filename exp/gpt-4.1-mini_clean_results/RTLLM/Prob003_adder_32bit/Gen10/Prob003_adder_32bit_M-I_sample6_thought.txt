@@ -1,0 +1,13 @@
+To optimize the original design for better PPA (performance, power, and area), we will implement a hierarchical carry-lookahead logic within the 16-bit CLA blocks. Specifically:
+
+- Instead of a linear chain of carry calculations, we introduce group propagate (P) and group generate (G) signals for 4-bit sub-blocks within the 16-bit block. This reduces carry calculation depth from linear to a logarithmic structure, improving speed.
+
+- Use a generate loop to succinctly implement the bitwise P and G signals and group calculations to reduce code redundancy and area.
+
+- Calculate carries at group level first, then at bit level using these group carry-ins. This hierarchical structure improves both performance (by faster carry resolution) and power (by localizing toggling within groups).
+
+- Maintain 1-based indexing on top module inputs/outputs, internally use zero-based indexing.
+
+- Retain the top-level 32-bit adder as two instances of the optimized 16-bit CLA.
+
+This approach balances design complexity with significant speed improvement by hierarchical carry computation and reduces code redundancy for better maintainability and area efficiency.

@@ -1,0 +1,12 @@
+To precisely implement a fixed-point subtractor with explicit handling of signs and zero result sign bit, I will break down the inputs into sign, integer, and fractional parts and perform the subtraction by following the signed magnitude arithmetic principles. The design will separate sign bits and magnitude values and implement logic for same sign and different sign subtraction cases as specified:
+
+- Extract sign bits and magnitudes (absolute values).
+- For same signs, subtract magnitudes; result sign equals operand signs.
+- For different signs, add magnitudes; result sign determined by magnitude comparison.
+- After calculation, if result magnitude is zero, explicitly clear sign bit to zero.
+- Assemble the result back with sign and magnitude.
+- Use registers to hold intermediate results as requested.
+  
+This approach ensures precise control over the sign handling and magnitude calculation, fully aligned with the problem statement. It also avoids relying on signed arithmetic shorthand, enabling a clear hardware structure for synthesis.
+
+The code will use combinational always block with registers for intermediate results, parameterized with N and Q, with comments documenting each step for clarity.

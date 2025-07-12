@@ -1,0 +1,14 @@
+To simplify the original pipelined float multiplier while maintaining IEEE-754 correctness:
+
+- Collapse the pipeline stages into a single sequential block with a simple FSM controlled by a 3-bit counter, reducing pipeline registers.
+- Perform all operations stepwise across clock cycles using the counter.
+- Extract inputs and special cases on cycle 1.
+- Multiply mantissas and add exponents on cycle 2.
+- Normalize and generate rounding bits on cycle 3.
+- Perform rounding, handle special cases, and output final result on cycle 4.
+- Use fixed-width registers but avoid redundant pipeline signal forwarding.
+- Keep logic straightforward: extract sign, exponent, mantissa; multiply; normalize; round; assemble output.
+- Support special cases (zero, inf, NaN) with priority.
+- Use guard, round, sticky bits for correct rounding to nearest even.
+- Reset clears internal registers and output.
+This approach trades throughput and latency for simpler control and smaller area, suitable when pipelining is not critical.

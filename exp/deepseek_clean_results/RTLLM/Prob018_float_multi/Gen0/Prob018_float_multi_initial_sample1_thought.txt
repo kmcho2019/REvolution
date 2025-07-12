@@ -1,0 +1,12 @@
+The floating-point multiplier implementation follows IEEE 754 single-precision format (32-bit). The design breaks down into several stages:
+1. Input decomposition: Extract sign, exponent, and mantissa from inputs
+2. Special case handling: Check for NaN, infinity, zero
+3. Sign calculation: XOR of input signs
+4. Exponent addition: Sum exponents with bias adjustment
+5. Mantissa multiplication: 24x24 bit multiplication (including implicit 1)
+6. Normalization: Shift mantissa and adjust exponent
+7. Rounding: Apply round-to-nearest-even (RNE)
+8. Overflow/underflow handling: Check exponent range
+9. Result assembly: Combine sign, exponent, and mantissa
+
+The implementation uses a pipelined approach with a 3-cycle counter for operation sequencing.

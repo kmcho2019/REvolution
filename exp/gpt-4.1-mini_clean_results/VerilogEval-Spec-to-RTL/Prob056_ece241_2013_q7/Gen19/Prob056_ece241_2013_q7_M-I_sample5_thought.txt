@@ -1,0 +1,7 @@
+To optimize the existing JK flip-flop design for better PPA without sacrificing clarity, I will integrate the combinational logic directly into the sequential always block, removing the intermediate wire Q_next. This can reduce unnecessary net delay and possibly improve synthesis optimization by allowing tools to directly infer the flip-flop with minimal logic.
+
+Additionally, to minimize switching power, I will add a check to update Q only when its next value differs from its current value, thus reducing unnecessary toggling inside the flip-flop register. This simple conditional update can help avoid redundant assignments in simulation and may guide synthesis tools toward gating or clock enable optimizations.
+
+The revised implementation maintains the minimal characteristic equation inside the always block for efficiency, retains clear comments for maintainability, and is structured with a synchronous non-blocking assignment, preserving correct sequential semantics.
+
+This approach likely improves timing slightly by eliminating an intermediate combinational net and may reduce power by limiting unnecessary state updates, with no increase in area complexity.

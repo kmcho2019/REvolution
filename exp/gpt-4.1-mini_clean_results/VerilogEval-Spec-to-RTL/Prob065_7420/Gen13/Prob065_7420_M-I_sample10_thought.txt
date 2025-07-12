@@ -1,0 +1,10 @@
+The existing implementation already matches the 7420 chip functionally, with two separate 4-input NAND gates instantiated via a reusable nand4 module. The design is clean and synthesizable. Given the minimal critical path and simple combinational logic, timing cannot be improved further at the RTL level. Power and area are also already minimal.
+
+To optimize further, I can eliminate the extra module instantiations by folding the nand4 module directly into the TopModule. This removes the overhead of separate module instantiations, potentially reducing area and power slightly by allowing the synthesis tool to optimize better. The logic remains functionally identical. This flattening could marginally improve PPA while maintaining clarity by using concise assign statements for the 4-input NAND gates.
+
+Hence, the improvement strategy is:
+- Remove the nand4 submodule to reduce hierarchy overhead
+- Use direct assign statements for the two 4-input NAND outputs
+- Maintain clarity and readability
+
+This yields a slightly smaller and possibly lower-power implementation with identical timing.

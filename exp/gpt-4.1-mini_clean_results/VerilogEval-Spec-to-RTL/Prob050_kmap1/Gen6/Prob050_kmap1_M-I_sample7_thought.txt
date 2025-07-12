@@ -1,0 +1,7 @@
+The original design uses an explicit 3-input OR gate module instantiated inside TopModule, which is clear but slightly increases area and power due to hierarchy and possible routing overhead.
+
+To optimize power and area while preserving correctness and minimal delay, I will inline the OR logic directly in TopModule using a continuous assignment statement. This eliminates module instantiation overhead, reduces routing complexity, and slightly lowers power by minimizing the logic hierarchy.
+
+This direct RTL assignment preserves the minimal gate count (one OR3), ensures no extra gate delays are introduced, and maintains the function exactly as required by the Karnaugh map.
+
+Thus, the improvement strategy is to replace the structural Or3 module with a simple continuous assignment in TopModule for better PPA.

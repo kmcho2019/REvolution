@@ -1,0 +1,28 @@
+Improvement Strategy:
+
+1. Simplified State Machine:
+- Remove redundant VALIDATE state - pattern validation can happen directly in IDLE state
+- Maintain only 4 essential states: IDLE, SHIFT, COUNT, NOTIFY
+- More efficient state transitions with fewer cycles
+
+2. Accurate Shift Control:
+- Use 2-bit counter (0-3) for precise 4-cycle shift_ena control
+- Generate shift_ena only during active SHIFT state
+- Clear counter when leaving SHIFT state
+
+3. Optimized Pattern Detection:
+- Continuous pattern register update in IDLE state
+- Immediate state transition on pattern match (1101)
+- Automatic clearing of pattern register when leaving IDLE
+
+4. Output Optimization:
+- Direct state-based outputs for clear timing
+- shift_ena active only during SHIFT state
+- counting active only during COUNT state
+- done active only during NOTIFY state
+
+Key Improvements:
+- Reduced state count improves timing and area
+- More efficient shift counter implementation
+- Clearer state transitions
+- Outputs directly tied to states for better timing

@@ -1,0 +1,13 @@
+To further optimize the design for power and potentially reduce unnecessary toggling, introduce a clock enable (ce) signal within the module that controls when shifting occurs. This can help if the input bit d remains stable and shifting is not always needed; however, since no external enable input is specified, we cannot gate shifting by external control. 
+
+Given that, the design is already minimal and any further optimization is largely technology-dependent. One slight improvement is to declare q as a synchronous reset register with an explicit reset input if available, which can aid in design clarity and synthesis tools recognizing initialization, but since initial reset is not specified, we will keep initial block.
+
+Another minor tweak for synthesis tools is to use a non-blocking assignment with concatenation as is done, which is already optimal. 
+
+Therefore, the best optimization at the RTL level is to keep the existing clean design and ensure the initial block is compatible with the synthesis tool by adding a synthesis directive if necessary, or removing it if synthesis reset logic is preferred.
+
+For the sake of this exercise, I will keep the initial block (which some tools ignore) but add comments clarifying its simulation-only effect, and maintain the single concatenated assignment for clarity and efficiency.
+
+No change in functionality or structure is needed.
+
+This keeps PPA optimal while complying with the problem specification.

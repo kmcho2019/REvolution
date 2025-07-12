@@ -1,0 +1,20 @@
+The refactored solution maintains the same core behavior but uses a different structural approach:
+
+1. Key Behavioral Insights:
+   - p acts as a registered version of 'a' when q is 0 (transparent mode)
+   - q becomes 1 in the cycle following p=1 (delayed response)
+   - q resets to 0 immediately when 'a' is 1 at clock edge
+   - Outputs only change on positive clock edges
+
+2. Refactoring Approach:
+   - Use separate always blocks for clarity
+   - Implement p as a simple register that samples 'a' when q is 0
+   - Implement q as a state that tracks previous p values
+   - Use explicit reset condition for q when a=1
+   - Remove the p_prev register by directly using the registered p value
+
+3. Structural Improvements:
+   - Clear separation of p and q update logic
+   - More direct implementation of the q state transition
+   - Better matches the waveform timing requirements
+   - Maintains same functionality with cleaner structure

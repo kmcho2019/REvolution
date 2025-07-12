@@ -1,0 +1,11 @@
+To simplify the design while preserving full functionality, we will:
+
+- Keep the core logic of neighbor counting and toroidal wrapping using masking for modular arithmetic.
+- Replace nested integer loops with nested generate loops to improve clarity and encourage synthesis tools to produce clean hardware.
+- Replace integer loop variables in combinational always block with generate loops, which are evaluated at compile time.
+- Use arrays to represent the grid for easier indexing and neighbor summation.
+- Compute neighbor sums with a simple explicit expression for each neighbor rather than looping at runtime.
+- Keep synchronous load and update logic straightforward.
+- This approach reduces runtime loops and makes code easier to understand and synthesize while maintaining the exact behavior.
+
+We maintain a single always block for sequential update and combinational next state calculation done by a generate block unrolled at compile time.

@@ -1,0 +1,18 @@
+Improvement strategy for better PPA:
+1. Timing Optimization:
+   - Pre-compute the terminal count condition one cycle earlier to break the critical path
+   - Use registered comparison to reduce combinational logic delay
+
+2. Power Optimization:
+   - Implement clock gating when counter reaches 8 (1000) to prevent unnecessary toggles
+   - Use a dedicated terminal count signal to minimize switching activity
+
+3. Area Optimization:
+   - Maintain the efficient 2-bit terminal count detection (q[3] & q[0])
+   - Avoid additional registers except for the critical path optimization
+
+Key changes:
+- Added registered terminal count detection
+- Implemented clock gating for last two counts
+- Maintained simple increment logic for most cases
+- Kept synchronous reset functionality

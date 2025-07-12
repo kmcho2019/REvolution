@@ -1,0 +1,6 @@
+To implement the TopModule, I will use a 32-bit register to store the branch history. The module will have two main operations: 
+1) Update the branch history when a prediction is made (predict_valid = 1) by shifting in the predict_taken value from the LSB side.
+2) Roll back the branch history when a misprediction occurs (train_mispredicted = 1) by loading the train_history concatenated with the actual result of the branch (train_taken).
+The module will also be reset when areset is asserted, setting the branch history to zero.
+The predict_history output will always reflect the current value of the branch history register.
+To handle the case where a prediction and misprediction occur at the same time, I will prioritize the misprediction by only updating the branch history when a misprediction occurs, even if a prediction is also being made.

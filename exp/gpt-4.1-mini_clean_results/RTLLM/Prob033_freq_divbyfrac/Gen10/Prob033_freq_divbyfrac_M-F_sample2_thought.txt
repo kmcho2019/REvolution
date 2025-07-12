@@ -1,0 +1,17 @@
+To achieve a 3.5x fractional division, we need to generate a divided clock with a 7-cycle period consisting of alternating long (4 clk cycles) and short (3 clk cycles) intervals. To balance the duty cycle, we use double-edge clocking: produce two clocks phase shifted by half a source clock period, then OR them to get a nearly 50% duty cycle output.
+
+To implement this without asynchronous toggling or clock domain crossing:
+
+1. Use a 3-bit synchronous counter (0 to 6) that tracks position within the 7-cycle period.
+
+2. Generate `clk_even` and `clk_odd` toggles on carefully chosen counts to get the uneven periods:
+   - `clk_even` toggles on counts 0 and 4 (start of long and short pulses)
+   - `clk_odd` toggles on counts 1 and 5 (shifted by one count, representing half cycle phase shift)
+
+3. To create the half-cycle phase shift, generate `clk_odd` on the same clock domain but delayed by half a clock cycle. Since real half-cycle delay isn't possible without PLL/DLL, approximate by toggling at shifted counts.
+
+4. Synchronize all registers and toggles on posedge clk with synchronous reset for glitch-free operation.
+
+5. OR `clk_even` and `clk_odd` to obtain the final output clock with improved duty cycle and uniform period equal to 7 input clock cycles, achieving fractional division by 3.5.
+
+This approach solves asynchronous domain issues and generates the fractional clock using only synchronous logic.

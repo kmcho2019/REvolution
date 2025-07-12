@@ -1,0 +1,10 @@
+Instead of using a multi-state FSM, I will implement a simpler approach using a toggle flag and a pair of registers:
+
+- When a valid 8-bit input arrives (valid_in = 1), if the flag is 0 (meaning no pending first byte), store the input in a register `data_lock` and set the flag to 1.
+- If the flag is 1 (meaning the first byte is already stored), then store the second byte in another register `data_next`.
+- On the next clock cycle after storing the second byte, generate valid_out=1 and output data_out by concatenating `data_lock` (higher 8 bits) and `data_next` (lower 8 bits).
+- Then clear the flag to 0 to prepare for the next pair of inputs.
+- valid_out and data_out are registered outputs that only update one cycle after receiving the second byte, ensuring timing correctness.
+- This approach decouples the input data sampling from output generation and avoids multi-state FSM complexity by using the flag to track input arrival state.
+- On reset, all registers and flag are cleared.
+- The logic is all synchronous with clk and async reset.

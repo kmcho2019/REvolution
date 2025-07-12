@@ -1,0 +1,23 @@
+Implement the 4-bit unsigned multiplier as a fully pipelined shift-and-add multiplier with two pipeline stages for intermediate results:
+
+1. Inputs are extended by `size` zeros at MSB as requested, though this does not affect the core algorithm.
+
+2. The multiplier iterates over each bit of the multiplier (mul_b) across pipeline stages by maintaining a pipeline counter and partial sum registers.
+
+3. At stage 1: On the first clock cycle, registers hold the multiplicand (extended), multiplier (extended), a partial product sum (initialized to 0), and the current bit index (starting at 0).
+
+4. At stage 2: On the next clock cycle, if the current multiplier bit is 1, the multiplicand shifted left by the bit index is added to the partial sum.
+
+5. The pipeline registers hold these intermediate sums and indices. After processing all bits (size cycles), the final product is latched into `mul_out`.
+
+6. Two levels of registers correspond to:
+   - Level 1: Registers holding multiplicand, multiplier, partial sum, and bit index.
+   - Level 2: Registers holding the updated partial sum after addition and incremented bit index.
+
+7. By shifting the bit index through pipeline stages, the design achieves pipelined multiplication over multiple cycles, using two register stages per bit processed.
+
+8. Reset clears all registers and output.
+
+This pipeline performs the multiplication serially in a pipelined manner but uses two levels of registers as requested, staging the data and partial sum updates. The latency will be `size + 1` cycles due to the pipeline.
+
+This approach differs from the previous tree addition style by employing a shift-and-add sequential pipeline style with two registers stages per cycle.

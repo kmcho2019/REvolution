@@ -1,0 +1,15 @@
+Instead of a classical FSM detecting edges, I propose using a 3-bit shift register that tracks the last three samples of data_in every clock cycle. By continuously shifting in data_in, we can easily detect the pulse pattern "010" whenever it appears. The output data_out is asserted high only at the clock cycle when the pattern "010" is matched in these three bits.
+
+This approach is purely combinational detection on a sliding window of samples, requiring no explicit states or edge detection logic. The pattern detection is simple: if the 3-bit shift register equals 3'b010, then data_out = 1; else 0.
+
+Advantages:
+- Very simple hardware: just a 3-bit shift register and a comparator.
+- Data_out is asserted exactly at the last "0" cycle of the pulse pattern, consistent with the spec.
+- This approach automatically detects pulses even if they overlap or appear in quick succession.
+- Easy to implement and verify.
+
+Trade-offs:
+- Continuous shifting and comparison every cycle, but this is minimal logic.
+- data_out pulses are one clock cycle wide, matching the problem requirements.
+
+This design complements the original FSM-based solution by leveraging pattern matching on a sliding window.

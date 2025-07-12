@@ -1,0 +1,18 @@
+The fundamental issue with the original design is the circular dependency in clock generation. Here's the improved approach:
+
+1. Use a free-running counter clocked by a simulation time-based always block
+2. Generate the clock by comparing the counter value with half-period
+3. Remove the circular dependency by separating the time base from clock generation
+4. Simplify the design by:
+   - Removing the unnecessary fast clock domain
+   - Using a single always block for clean implementation
+   - Proper parameter validation
+5. Maintain precise timing through counter-based period control
+6. Ensure clean reset behavior
+
+Key improvements:
+- Correct clock generation methodology
+- Simplified and more reliable implementation
+- Maintained parameter configurability
+- Proper reset handling
+- Fully synthesizable structure

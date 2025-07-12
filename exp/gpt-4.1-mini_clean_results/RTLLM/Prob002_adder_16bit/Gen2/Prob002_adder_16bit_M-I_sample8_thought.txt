@@ -1,0 +1,9 @@
+To improve the PPA (Power, Performance, Area) of the 16-bit adder composed of two 8-bit adders, I'll replace the generic "+" operator with explicit ripple-carry adders at the 8-bit level. This structural approach allows better control over logic synthesis, potentially reducing area and power by minimizing unnecessary logic.
+
+I'll implement an 8-bit ripple carry adder using a chain of 1-bit full adders. This explicit ripple carry structure is predictable for synthesis tools and can optimize for area and power by minimizing carry-lookahead logic synthesis.
+
+Then, instantiate two such 8-bit ripple carry adders in the 16-bit adder module, connecting carry-out to carry-in as before.
+
+This approach trades off a small increase in latency compared to "+" operator-based addition but can improve power and area by limiting complex carry logic. The explicit ripple carry also aids in easy timing analysis.
+
+The full adder primitive module will be reusable for each bit in the 8-bit adder, yielding modular and synthesizable code.

@@ -1,0 +1,17 @@
+The existing solution already implements the required finite state machine (FSM) and datapath to search for message boundaries in an input byte stream. However, we can improve the solution by optimizing the FSM's state transitions and combinational logic to reduce the critical path delay. 
+
+One potential optimization is to use a one-hot encoding for the state machine instead of a binary encoding to reduce the combinational logic complexity. This approach would involve using three separate bits to represent each state (Idle, Byte1, Byte2) and would simplify the logic required to transition between states.
+
+Additionally, we can reduce the switching activity in the design by only updating the `out_bytes` register when a new byte is received. This can be achieved by adding an additional signal to indicate when a new byte has been received and only updating `out_bytes` when this signal is asserted.
+
+To further optimize the area, we can consider using a more efficient FSM encoding, such as a one-hot encoding with a counter to keep track of the number of bytes received. However, this approach may not result in significant area savings due to the simplicity of the current design.
+
+In terms of power optimization, we can reduce the power consumption by minimizing the switching activity in the design. This can be achieved by only toggling the `done` signal when a message is received and by minimizing the number of times the `out_bytes` register is updated.
+
+Based on the provided PPA metrics, the main area of focus for optimization should be the timing (tns and wns) and power consumption. The area usage is relatively low, so area optimization may not be as critical.
+
+The improvement strategy will involve the following steps:
+1. Implement a one-hot encoding for the state machine to reduce combinational logic complexity.
+2. Add an additional signal to indicate when a new byte has been received and only update `out_bytes` when this signal is asserted.
+3. Minimize switching activity in the design by only toggling the `done` signal when a message is received.
+4. Review the synthesis report to identify specific areas of high resource utilization and target optimizations accordingly.

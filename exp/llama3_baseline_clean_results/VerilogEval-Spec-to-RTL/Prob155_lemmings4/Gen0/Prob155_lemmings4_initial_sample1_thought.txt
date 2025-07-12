@@ -1,0 +1,20 @@
+To implement the Lemmings finite state machine, we will first identify all the possible states the Lemming can be in: walking left, walking right, falling, digging, and splattered. We will then define the transitions between these states based on the input signals.
+
+We will use a Moore state machine, where the outputs are a function of the current state only. We will need to use a counter to keep track of the number of clock cycles the Lemming has been falling.
+
+The state machine will have the following states:
+- WALK_LEFT: The Lemming is walking to the left.
+- WALK_RIGHT: The Lemming is walking to the right.
+- FALLING: The Lemming is falling.
+- DIGGING: The Lemming is digging.
+- SPLATTERED: The Lemming has splattered and will not move or fall again.
+
+The transitions between these states will be based on the input signals:
+- If the Lemming is walking and bumps into something, it will switch directions.
+- If the Lemming is walking and the ground disappears, it will fall.
+- If the Lemming is walking and it is told to dig, it will start digging.
+- If the Lemming is falling and the ground reappears, it will start walking again in the same direction as before.
+- If the Lemming is digging and the ground disappears, it will fall.
+- If the Lemming has been falling for more than 20 clock cycles and hits the ground, it will splatter.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling. If this counter exceeds 20 and the ground reappears, the Lemming will splatter.

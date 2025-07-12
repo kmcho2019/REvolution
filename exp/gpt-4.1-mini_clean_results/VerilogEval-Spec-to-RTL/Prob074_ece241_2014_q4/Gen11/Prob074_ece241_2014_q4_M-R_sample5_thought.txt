@@ -1,0 +1,7 @@
+Refactor the design by implementing the flip-flops with an explicit synchronous active-high reset signal internally driven by the initial condition, ensuring the flip-flops initialize to zero on the first clock cycle. This is done by adding a simple reset logic that is asserted initially and de-asserted immediately after the first clock cycle, making initialization explicit and synthesis-friendly without requiring an external reset input.
+
+Also, implement the combinational logic for the D inputs within a combinational always block to group all combinational logic together, while keeping flip-flops in a synchronous sequential always block. This clarifies separation between combinational and sequential logic while using an internal reset signal to guarantee the initial zero states.
+
+This structure avoids direct use of complemented flip-flop outputs in assign statements by computing them as intermediate signals, improving synthesis friendliness. The output is still the NOR of the three flip-flop outputs, as required.
+
+This approach provides an explicit, synthesizable initial reset behavior without changing core FSM logic.

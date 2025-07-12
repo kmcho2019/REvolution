@@ -1,0 +1,9 @@
+To simplify the solution, focus on minimizing unnecessary logic and reducing the number of registers. The existing implementation uses two 8-bit registers (`ins_p1` and `ins_p2`) to store instructions from different sources. However, the requirements can be met with a single 8-bit register and efficient use of combinational logic for output assignments.
+
+Key simplifications:
+1. **Single Register**: Use a single 8-bit register (`ins_reg`) to store the instruction. This simplifies the clock gating and reset logic.
+2. **Efficient Reset Logic**: Use a simple `if` statement to reset the register when the `rst` signal is low.
+3. **Minimal Combinational Logic**: Derive the outputs (`ins`, `ad1`, and `ad2`) directly from the stored instruction and the `fetch` signal.
+4. **Simplified Output Logic**: For `ad2`, use a multiplexer to select between the stored instruction and the input `data` based on the `fetch` signal.
+
+This approach reduces the complexity of the design, minimizes the number of registers, and simplifies the combinational logic for output assignments.

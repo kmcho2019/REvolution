@@ -1,0 +1,17 @@
+To implement the Lemming behavior, we need a finite state machine (FSM) with multiple states and transitions. The FSM should handle:
+1. Walking left and right, switching directions when bumped
+2. Falling when ground=0, with 'aaah' output
+3. Digging when dig=1 and on ground, with 'digging' output
+4. Splattering if falling for more than 20 cycles before hitting ground
+5. Proper priority handling (fall > dig > bump)
+
+We'll use these states:
+- WALK_LEFT: walking left
+- WALK_RIGHT: walking right
+- FALL_LEFT: falling while originally walking left
+- FALL_RIGHT: falling while originally walking right
+- DIG_LEFT: digging while originally walking left
+- DIG_RIGHT: digging while originally walking right
+- SPLAT: splattered state
+
+We'll need a counter to track fall duration (for splat condition) and proper state transitions based on inputs.

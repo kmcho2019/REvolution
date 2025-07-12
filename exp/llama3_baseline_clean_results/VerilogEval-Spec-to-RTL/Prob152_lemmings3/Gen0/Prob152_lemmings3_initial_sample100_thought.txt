@@ -1,0 +1,9 @@
+To solve this problem, we will design a Moore state machine that can be in one of four states: walking left, walking right, falling, or digging. We will use a case statement to handle the different states and their respective transitions. The state machine will be triggered on the positive edge of the clock and will reset asynchronously when areset is high.
+
+The states will be:
+- WALK_LEFT: The Lemming is walking left. If bump_left is high, it will switch to WALK_RIGHT. If bump_right is high, it will stay in the same state because there's no effect on this input in this state, but if the bump_right is also high with bump_left, it will switch to WALK_RIGHT. If ground is low, it will switch to FALLING. If dig is high, it will switch to DIGGING.
+- WALK_RIGHT: The Lemming is walking right. If bump_right is high, it will switch to WALK_LEFT. If bump_left is high, it will stay in the same state for the same reason as above, but if bump_left is also high with bump_right, it will switch to WALK_LEFT. If ground is low, it will switch to FALLING. If dig is high, it will switch to DIGGING.
+- FALLING: The Lemming is falling. It will stay in this state until ground is high again. Once ground is high, it will switch back to the previous walking state.
+- DIGGING: The Lemming is digging. It will stay in this state until ground is low. Once ground is low, it will switch to FALLING.
+
+We will also use a separate variable to store the previous walking direction before falling or digging, so that we can switch back to the correct state when ground appears or disappears.

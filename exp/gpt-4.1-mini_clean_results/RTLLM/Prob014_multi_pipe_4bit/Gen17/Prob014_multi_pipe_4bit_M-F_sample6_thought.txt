@@ -1,0 +1,35 @@
+Fix the sequential accumulation logic to ensure that all partial products are properly added before outputting the final product, adhering strictly to two levels of pipeline registers:
+
+- Level 1 (Stage 1): Latch all partial products in parallel from the combinational generation.
+
+- Level 2 (Stage 2): Sum the partial products in a single clock cycle by adding them together and storing the result in registers.
+
+Thus, the two pipeline levels correspond to:
+
+1. Registering the partial products.
+
+2. Registering the final accumulated product.
+
+This matches the problem statement's "two levels of registers" requirement.
+
+Implementation details:
+
+- Extend multiplicand by prepending size zeros on MSB side (size = 4), making a 8-bit number.
+
+- Generate partial products combinationally for each bit of multiplier:
+
+  - If mul_b[i] == 1: partial product = (mul_a_ext << i)
+
+  - Else partial product = 0
+
+- Stage 1 registers latch partial products at posedge clk or negedge rst_n.
+
+- Stage 2 registers latch sum of all partial products at posedge clk or negedge rst_n.
+
+- Output mul_out is updated from Stage 2 registers.
+
+This design avoids multi-cycle adder pipeline complexity, matches two levels of pipelining, and guarantees correct multiplication results after two clock cycles (pipeline latency).
+
+Reset sets all registers and output to zero.
+
+This approach fully addresses the feedback and ensures correctness.

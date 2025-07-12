@@ -1,0 +1,16 @@
+The previous implementation incorrectly used the term (b & c) in the SOP expression, which matches invalid zero-output inputs (like 6), violating the specification. To fix this:
+
+1. Define the inputs as a 4-bit number: num = {a, b, c, d} with a as MSB.
+2. The output is 1 for decimal inputs 2, 7, and 15, 0 for certain others, and the rest are don't-cares.
+3. Using Karnaugh maps or boolean algebra with the don't-cares (3,8,11,12), minimize the function.
+
+After careful minimization, the minimal SOP for output=1 is:
+  out_sop = (~a & ~b & c & ~d) | (~a & b & c & d) | (a & b & c & d)
+which corresponds exactly to 2(0010), 7(0111), and 15(1111).
+
+For the POS minimal form (zeros are at 0,1,4,5,6,9,10,13,14 and don't-cares 3,8,11,12), the minimal product-of-sums is:
+  out_pos = (a + b + ~c + d) & (a + ~b + c + d) & (~a + b + c + ~d)
+
+These expressions properly exclude zero outputs and cover the required ones without overlap or ambiguity.
+
+Implement these corrected minimal expressions directly in Verilog.

@@ -1,0 +1,7 @@
+To fix the off-by-one timing and counter update issues, I will simplify the counting logic by explicitly counting clock cycles up to 1000, then decrement the interval counter.  
+I will keep a clear separation between cycle counting and interval counting, updating the count output directly from the remaining intervals.  
+I will clear the pattern shift register and delay bits counter immediately upon re-entering PATTERN_SEARCH to avoid stale pattern matches.  
+The done signal will be asserted exactly in WAIT_ACK state as required.  
+The counting output count will be valid and show the current remaining delay number (from delay down to 0) during counting, and don't-care outside counting.  
+Synchronous reset will clear all registers properly.  
+This approach ensures exact counting of (delay+1)*1000 cycles by counting cycles from 0 to 999, then decrementing intervals, matching the spec exactly without off-by-one errors.

@@ -1,0 +1,11 @@
+The current implementation uses a function with a case statement to implement a combinational 8-entry lookup table mapping 3-bit input to 16-bit output. This is already efficient and clear, and synthesis tools will typically infer a minimal multiplexer tree or ROM.
+
+For better power and area efficiency, I will avoid the function and instead use a direct combinational multiplexer with a `case` statement in an always_comb block. This removes the slight overhead of function calls and may help synthesis tools infer a more optimized mux tree.
+
+Additionally, to slightly improve readability and synthesis optimization, I will declare the output `q` as reg (since it is assigned combinationally inside always @(*) block), which is standard practice.
+
+This approach can yield very similar logic but with more explicit combinational coding style favored by some synthesis tools, potentially optimizing area and power.
+
+Performance impact is negligible, but area and power might improve slightly due to more straightforward RTL.
+
+Overall, the design remains purely combinational, small, and clear.

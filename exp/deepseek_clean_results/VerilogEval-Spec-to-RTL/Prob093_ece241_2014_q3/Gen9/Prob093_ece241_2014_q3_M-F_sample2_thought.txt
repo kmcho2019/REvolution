@@ -1,0 +1,21 @@
+To correctly implement the K-map using only multiplexers as required, here's the revised approach:
+
+1. Analyze each mux_in output separately based on the K-map:
+   - mux_in[0] (ab=00): Output is 1 when cd=01,11,10 → This is ~(c & ~d)
+   - mux_in[1] (ab=01): Always 0 → Hardwire to 0
+   - mux_in[2] (ab=10): Output is 1 when cd=00,11,10 → This is ~d | ~c
+   - mux_in[3] (ab=11): Output is 1 when cd=11,10 → This is c & d
+
+2. Implementation strategy:
+   - Use 2-to-1 multiplexers to implement each required logic function
+   - For mux_in[0]: Implement ~(c & ~d) using a mux that selects between ~d and 0 based on c
+   - For mux_in[2]: Implement ~d | ~c using a mux that selects between 1 and ~d based on c
+   - For mux_in[3]: Implement c & d using a mux that selects between 0 and d based on c
+   - Total of three 2-to-1 muxes required (one for each non-constant output)
+
+3. Output ordering:
+   - Ensure correct mapping to the 4-to-1 mux selector inputs
+   - mux_in[0] corresponds to ab=00
+   - mux_in[1] corresponds to ab=01
+   - mux_in[2] corresponds to ab=10
+   - mux_in[3] corresponds to ab=11

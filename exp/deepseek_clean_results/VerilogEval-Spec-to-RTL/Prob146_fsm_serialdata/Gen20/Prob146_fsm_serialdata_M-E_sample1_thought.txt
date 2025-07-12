@@ -1,0 +1,19 @@
+Novel Architecture Idea:
+1. Combined Shift-State Register: Instead of separate state and shift registers, use a single 11-bit register where:
+   - Bit 10: Current state (IDLE=1, ACTIVE=0)
+   - Bits 9-1: Shift register for data (includes start/stop bits)
+   - Bit 0: Early stop bit detection flag
+
+2. Early Stop Detection: Monitor the stop bit position during shifting to detect errors early.
+
+3. Parallel Processing: Check for valid frame conditions (start+stop bits) in parallel with shifting.
+
+4. Minimal Counting: Eliminate explicit bit counter by using register position as implicit counter.
+
+5. Power Optimization: Only update relevant register portions in each state.
+
+Key Benefits:
+- Reduced area (single combined register)
+- Faster error detection (parallel checking)
+- Implicit counting through register position
+- Lower power (less switching activity)

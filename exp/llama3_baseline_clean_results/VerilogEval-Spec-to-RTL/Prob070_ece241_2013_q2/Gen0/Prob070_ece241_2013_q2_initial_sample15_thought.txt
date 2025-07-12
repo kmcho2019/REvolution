@@ -1,0 +1,25 @@
+To implement the digital system described, we first need to understand the conditions under which the outputs out_sop and out_pos should be set to logic-1. 
+
+For out_sop (sum-of-products), we look for the conditions that set the output to logic-1, which are when the inputs represent the numbers 2, 7, or 15 in binary. 
+- The binary representation of 2 is 0010, so the condition is (~a & ~b & c & ~d).
+- The binary representation of 7 is 0111, so the condition is (~a & b & c & d).
+- The binary representation of 15 is 1111, so the condition is (a & b & c & d).
+
+For out_pos (product-of-sums), we need to find the conditions that would set the output to logic-0, which are the numbers 0, 1, 4, 5, 6, 9, 10, 13, and 14 in binary, and then invert those conditions.
+- The binary representations are:
+  - 0: 0000
+  - 1: 0001
+  - 4: 0100
+  - 5: 0101
+  - 6: 0110
+  - 9: 1001
+  - 10: 1010
+  - 13: 1101
+  - 14: 1110
+We then find the sum-of-products for these conditions and invert them to get the product-of-sums form.
+
+However, a more straightforward approach for out_pos is to directly find the product-of-sums form by identifying the complements of the minterms that would produce a 0. Since we're tasked with finding the minimum forms, let's simplify:
+- For out_sop, we directly add the minterms for 2, 7, and 15.
+- For out_pos, given the requirement, we'll consider the approach of complementing the sum-of-products of the conditions that should result in a 0, but for simplicity and adherence to standard digital design practices, we'll identify the product-of-sums directly from the conditions that must be avoided.
+
+After identifying these conditions, we can write the Verilog code to implement these logic equations.

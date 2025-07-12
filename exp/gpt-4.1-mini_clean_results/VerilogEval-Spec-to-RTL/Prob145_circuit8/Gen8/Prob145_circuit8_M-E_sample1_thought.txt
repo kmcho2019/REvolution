@@ -1,0 +1,13 @@
+The waveform suggests a sequential circuit with two state bits (p and q) updated synchronously on clock edges. Initially, p and q are undefined (X), then after several clock cycles they settle to 0. Later on, p appears to be set to 1 only when input a is 1 on a rising clock edge and some internal condition allows it, while q latches and holds a delayed version of p but only after certain state transitions.
+
+A novel approach is to interpret p and q as two flip-flops forming a two-bit state register implementing a Mealy/Moore type machine with these state update rules:
+
+- On each rising clock edge:
+  - p updates to `a & (~q) | (p & ~a)` (p sets if a=1 and q=0, or holds if p=1 and a=0)
+  - q updates to the previous p's value unless reset conditions occur.
+- Initially, both p and q are 0 (or undefined), mimicking waveform behavior by starting uninitialized.
+- On the falling clock edge, outputs remain stable, so outputs are registered only on rising edges.
+
+This logic creates a controlled latch where p can only set when a is high and q is low, and q delays p by one clock cycle but can only be set after p is stable. This matches the observed delayed setting and reset behavior from the waveform. The logic also captures that q is set to 1 only after p has been 1 for some time.
+
+This method provides a fresh logic definition separating the next states clearly and matches the asynchronous behavior shown in the waveform more closely.

@@ -1,0 +1,17 @@
+To correctly design a 4-bit unsigned number pipeline multiplier, we need to address the issues mentioned in the feedback. 
+
+First, we must correctly generate the partial products by shifting the multiplicand `mul_a` by `i` positions when `mul_b[i]` is 1. 
+
+Next, we should accumulate the sum of partial products correctly by not resetting `sum` to zero at every clock cycle. 
+
+We also need to implement the pipelining correctly by storing the partial products in registers and then summing them in the next stage.
+
+Finally, we should ensure the output `mul_out` is correctly assigned the final product, which should be `2*size` bits wide.
+
+To implement the pipeline multiplier, we will use two stages of registers. The first stage will store the partial products, and the second stage will store the intermediate sum.
+
+We will use a generate block to generate the partial products for each bit position of the multiplier.
+
+We will also use a reset signal to handle the reset condition and set the registers to zero when the reset signal is low.
+
+We will ensure that the design is synchronous and all operations are performed on the positive edge of the clock signal or the falling edge of the reset signal.

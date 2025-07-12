@@ -1,0 +1,17 @@
+Implement the gshare predictor with separate committed and speculative global history registers and a fully synchronous update scheme, but handle the prediction outputs combinationally rather than registering them on the clock edge.
+
+Key differences in this approach:
+1. Maintain a committed global history register (`ghr_commit`) updated only on training of non-mispredicted branches, reflecting the true architectural history.
+2. Maintain a speculative global history register (`ghr_spec`) that is updated immediately on prediction by shifting in the predicted bit, and restored to a known history from training on misprediction recovery.
+3. The prediction outputs (`predict_taken` and `predict_history`) are generated combinationally from the current speculative history before any updates are applied in this cycle:
+   - `predict_history` = current `ghr_spec`
+   - `predict_taken` from PHT entry indexed by `predict_pc ^ ghr_spec`
+4. The speculative history is updated on the clock edge after prediction (when `predict_valid`), but only if no training misprediction occurs (training misprediction recovery has higher priority).
+5. On training (when `train_valid`), update the PHT entry synchronously with saturating counters according to the actual branch outcome.
+6. If the training indicates a misprediction, restore the speculative history to the supplied `train_history` immediately on clock edge (instead of updating by prediction).
+7. Because prediction outputs are combinational, the outputs reflect the predictor state at the current cycle before any update, thus aligning with the problem requirement that prediction sees the PHT before training updates.
+8. Using synchronous reset to initialize PHT entries and history registers.
+
+This structure directly models speculative updates to global history on prediction and corrects those on misprediction, while producing immediate combinational outputs that match the predictor state used for making the prediction. It avoids the complexity of registering prediction outputs and potential off-by-one errors in output history capture.
+
+Overall, this approach provides clear separation of speculative and committed states, deterministic timing for history updates, and combinational prediction outputs consistent with the problem description.

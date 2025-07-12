@@ -1,0 +1,17 @@
+This design implements a modified Booth algorithm with pipelining for higher throughput. Key innovations:
+1. Uses radix-4 Booth encoding to reduce required additions by half
+2. Implements a 2-stage pipeline: 
+   - Stage 1: Booth encoding and partial product generation
+   - Stage 2: Wallace tree reduction and final addition
+3. Includes early termination when multiplier is zero
+4. Optimized control FSM with fewer states
+5. Uses carry-save adders in reduction tree for better timing
+
+The flow:
+- Reset initializes all registers
+- Start loads operands and begins Booth encoding
+- Partial products generated in first cycle
+- Wallace tree reduces products in second cycle
+- Final addition completes in third cycle
+- Early termination skips cycles when multiplier is zero
+- Done asserts when final result is ready

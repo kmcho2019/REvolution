@@ -1,0 +1,12 @@
+Refactor the pipelined multiplier to separate combinational partial product generation from sequential accumulation more explicitly:
+
+- Use a combinational block to generate all partial products at once (no registers for partial products).
+- Use two pipeline register stages to accumulate partial sums:
+  - Stage 1 registers sum partial products for bits 0 and 1, and bits 2 and 3, respectively.
+  - Stage 2 register sums the two stage 1 results to get the final product.
+- Use two sets of always_ff blocks, each triggered on clk and rst_n, handling pipeline registers.
+- Implement reset with synchronous active low reset (rst_n).
+- Perform zero extension explicitly and consistently for mul_a when shifting to ensure uniform width.
+- Keep outputs registered at stage 2 for stable output.
+- Use parameters and localparams consistently for widths.
+- This structure improves clarity by explicitly distinguishing combinational partial product generation and sequential pipelining stages.

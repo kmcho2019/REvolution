@@ -1,0 +1,7 @@
+To optimize the given solution for better PPA, we will:
+- Combine the three byte storage registers into a single 24-bit shift register, shifting in each received byte. This reduces flip-flop usage and logic complexity.
+- Use a 2-bit counter as before to track position: 0 means searching for start byte, 1 and 2 indicate message byte count.
+- Output the 24-bit message and done signal in the cycle after receiving the third byte by updating them synchronously.
+- Reduce toggling of done by asserting it only one cycle and keeping out_bytes stable only when done is asserted; elsewhere out_bytes is don't-care.
+- Use synchronous reset.
+This approach simplifies the datapath, reduces registers from 3 separate 8-bit registers to one 24-bit register, reduces logic depth by using shift register style, and retains functionality.

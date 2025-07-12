@@ -1,0 +1,18 @@
+The main issue in the original implementation is the inconsistent and incorrect management of bits during the division iterations, especially how partial dividends are formed and how bits are shifted in. Also, the usage of two combinational always blocks latching inputs is unnecessary, as inputs can be directly used combinationally.
+
+To fix this, I will:
+
+- Use only one combinational always block triggered by changes in inputs.
+- Directly use inputs A and B without intermediate registers.
+- Implement the division algorithm as a sequential bit-shifting and subtracting process using a loop from the highest bit to the lowest bit of the dividend.
+- Initialize an 8-bit remainder with zero.
+- At each iteration (from bit 15 down to 0):
+  - Shift the remainder left by 1 bit and shift in the current bit of A.
+  - Compare remainder with divisor B.
+  - If remainder >= B, set the quotient bit to 1 and subtract B from remainder.
+  - Otherwise, quotient bit is 0 and remainder remains unchanged.
+- After 16 iterations, quotient holds the final division result.
+- Extend the 8-bit remainder to 16 bits by zero padding.
+- This approach matches a classic restoring division method, fully combinationally implemented.
+
+This refactor keeps the conceptual algorithm as requested but uses a cleaner and more conventional division approach with straightforward bit manipulations and a single combinational always block.

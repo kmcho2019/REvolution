@@ -1,0 +1,11 @@
+Implement the 8-bit adder using a hierarchical carry-lookahead approach instead of a simple ripple carry. 
+
+Key points of this design:
+1. Divide the 8-bit inputs into two 4-bit blocks.
+2. Each 4-bit block uses a 4-bit carry lookahead adder (CLA) module that generates sum and a block carry out.
+3. A top-level module then combines the two 4-bit CLAs, using the carry out of the first 4-bit CLA as the carry in of the second.
+4. The 4-bit CLA uses propagate and generate signals to compute carry signals in parallel, reducing carry delay compared to ripple carry.
+5. This structure maintains modularity, improves timing performance by reducing carry propagation delay, and still uses combinational logic.
+6. The final 8-bit sum and carry-out are obtained from the composition of the two 4-bit CLAs and the carry lookahead logic.
+
+This hierarchical CLA approach balances performance improvement and code clarity without complex generate loops or deeply nested modules.

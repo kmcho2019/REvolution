@@ -1,9 +1,0 @@
-1. The state transitions in the Mealy state machine are incorrect. The transition from `PATTERN_DETECTED` to `COUNT_CYCLES` should happen after 4 clock cycles of `shift_ena`. However, the comparison `if (shift_ena == 4)` is used, which will only trigger the transition when `shift_ena` reaches exactly 4, leading to incorrect behavior.
-
-2. The `delay_counter` should be incremented in the `COUNT_CYCLES` state to count 2 cycles before transitioning to `TIMER_DONE`. However, the increment logic `delay_counter = delay_counter + 1;` skips the actual counting logic and directly increments `delay_counter`, resulting in a premature transition to `TIMER_DONE`.
-
-3. There is no initial value set for `delay_counter`, leading to unpredictable behavior at the start of simulation. It is crucial to initialize `delay_counter` to a known state, typically 2'b00, at the reset state.
-
-4. Although not directly causing simulation mismatches, it's worth noting that the assignment `shift_ena = 1;` in the `PATTERN_DETECTED` state will not count clock cycles as intended. This assignment should be zeroed to start counting clock cycles correctly.
-
-In summary, these issues in state transitions, counter handling, and initialization cause the mismatches observed during simulation.

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. State Reduction: Use a 2-bit counter to track byte position (0=waiting, 1=first byte, 2=second byte, 3=third byte)
+2. Direct Storage: Store incoming bytes directly into the appropriate position of out_bytes
+3. Minimal Logic: Only update state and storage when needed (when in[3]=1 or when collecting bytes)
+4. Output Control: Assert done only after third byte is received
+5. Reset Handling: Simple synchronous reset to initial state
+
+Key Improvements:
+- Eliminate redundant state encoding checks
+- Remove unnecessary default case
+- Simplify byte storage logic
+- Reduce power by only updating registers when needed
+- Maintain clean output handling

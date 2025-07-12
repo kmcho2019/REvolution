@@ -1,0 +1,11 @@
+The original solution is functionally correct and minimal by leveraging two's complement signed subtraction directly for fixed-point numbers, which inherently handles sign, integer, and fractional bits correctly.
+
+To address the testbench elaboration errors with missing parameters, I will add default values for parameters `N` and `Q`. This ensures that if no parameters are explicitly passed during instantiation, the module still compiles and simulates correctly.
+
+Also, the problem statement requests an internal register `res` to store the subtraction result. While combinational logic is usually preferable, I will implement an internal register updated combinationally and assign it to output, to meet the exact problem requirements.
+
+Finally, I will explicitly handle the zero result case by checking if `res` is zero and force the sign bit to zero, as requested.
+
+This maintains synthesis friendliness and fixed-point precision while strictly conforming to the problem's interface and internal register usage.
+
+The design remains simple, efficient, and parameterized with default values, improving usability in testbenches and synthesis flows without forcing all instantiations to specify parameters.

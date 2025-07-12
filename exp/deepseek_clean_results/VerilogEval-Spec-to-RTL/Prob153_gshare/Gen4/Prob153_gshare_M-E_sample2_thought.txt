@@ -1,0 +1,17 @@
+Here's a novel approach using a speculative GHR (Global History Register) to handle the prediction/training conflict:
+
+1. **Dual GHR System**: Maintain two GHRs - one for current predictions (speculative_ghr) and one for training recovery (committed_ghr). This separates the prediction and training paths.
+
+2. **Speculative Updates**: Predictions update the speculative GHR immediately, while training updates affect the committed GHR. On misprediction, we restore the speculative GHR from the committed one.
+
+3. **PHT Shadowing**: Use a shadow PHT that gets updated one cycle after training, ensuring predictions see the pre-training state when they occur simultaneously.
+
+4. **Priority Handling**: Training always takes precedence - when both occur, we use the training GHR for PHT access and update both GHRs based on training.
+
+5. **Efficient Recovery**: Mispredictions trigger an immediate GHR recovery from the training history, while normal training updates both GHRs in sync.
+
+Key innovations:
+- Eliminates prediction/training conflicts via dual GHRs
+- Maintains correct timing with shadow PHT
+- Clear separation of speculative and committed state
+- Efficient recovery mechanism

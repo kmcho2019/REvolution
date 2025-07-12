@@ -1,0 +1,7 @@
+Instead of directly reversing the byte order with slicing or a generate loop, implement a hierarchical approach: first split the 32-bit input into four 8-bit bytes, then use a set of four 8-bit multiplexers controlled by a fixed selector to reorder these bytes. Each 8-bit multiplexer chooses one input byte based on a hardwired selector that corresponds to the reversed byte index. This approach structurally models the byte reversal as a multiplexing operation and could be easily extended for parameterized byte widths or used as a teaching example for byte reordering using multiplexers. Although it might not reduce latency or area, it offers a novel modular structure and clear functional mapping.
+
+Summary:
+- Decompose input into bytes.
+- Use four 8-bit multiplexers to select reversed bytes.
+- Selector signals are hardwired constants representing reversed indices.
+- Final output concatenates the mux outputs.

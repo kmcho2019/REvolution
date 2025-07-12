@@ -1,0 +1,13 @@
+Novel Approach: Split Counter with Synchronized Rollover
+1. Instead of a single 10-bit counter, implement two synchronized counters:
+   - A 3-bit counter (0-7) for the lower bits
+   - A 7-bit counter (0-124) for the upper bits
+2. The lower counter increments every cycle, while the upper counter increments only when the lower counter rolls over
+3. Combine the outputs to form the 10-bit count value (7 upper bits + 3 lower bits)
+4. Special terminal count logic detects when both counters reach their maximum values (124 and 7)
+5. Benefits:
+   - Reduced switching activity (upper bits change less frequently)
+   - Simplified comparison logic (only need to check for max values)
+   - Better timing due to smaller comparators
+   - More power efficient as only part of the counter toggles each cycle
+6. Maintains same functionality: counts 0-999 with 1000-cycle period and synchronous reset

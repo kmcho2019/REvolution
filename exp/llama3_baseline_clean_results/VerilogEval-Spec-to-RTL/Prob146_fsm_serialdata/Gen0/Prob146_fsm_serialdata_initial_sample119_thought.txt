@@ -1,0 +1,10 @@
+To implement the finite state machine (FSM) that receives bytes from a serial communication protocol with a start bit, 8 data bits, and a stop bit, we need to define the states and transitions of the FSM. The states can be: IDLE, START, DATA, and STOP. 
+
+- The IDLE state waits for the start bit (0) to begin receiving a byte. 
+- The START state shifts the start bit into the data register and waits for the next data bit.
+- The DATA state shifts each incoming data bit into the data register until all 8 bits have been received.
+- The STOP state checks if the stop bit is correct (1), if so, it asserts the done signal and outputs the received byte, then returns to the IDLE state.
+
+We also need to handle the case when the stop bit does not appear as expected. In this case, the FSM will wait in the STOP state until a stop bit is received, then it will reset to the IDLE state. 
+
+The FSM will be implemented using a case statement to define the states and their transitions. We will use a reg variable to store the current state and a reg vector to store the received data byte.

@@ -1,0 +1,14 @@
+Novel Approach: Thermometer-Coded Equality Check
+1. Instead of traditional bitwise comparison, implement a thermometer-style equality check:
+   - Convert the 2-bit inputs into a 4-bit "thermometer" representation where each bit represents a specific value (00, 01, 10, 11)
+   - For each input, only one bit in its thermometer code will be high
+   - The output z is 1 when both inputs have their thermometer bits high in the same position
+2. Advantages:
+   - Eliminates explicit comparison logic
+   - Uses simple AND-OR structure that may map well to certain FPGA architectures
+   - Conceptually scales better for wider inputs (though not needed here)
+   - Provides inherent one-hot encoding that could be useful for debugging
+3. Implementation:
+   - Create 4 AND gates (one for each possible input value)
+   - Each AND gate checks if both inputs match that specific value
+   - OR all AND outputs to get final equality signal

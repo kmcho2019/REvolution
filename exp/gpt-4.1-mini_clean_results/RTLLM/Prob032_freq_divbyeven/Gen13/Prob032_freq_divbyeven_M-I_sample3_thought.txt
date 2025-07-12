@@ -1,0 +1,13 @@
+The original solution is functionally correct and clean but can be optimized for PPA (power, performance, and area) by merging the two always blocks into a single always block. This reduces the number of sequential processes, allowing synthesis tools to better optimize the logic and reduce resource usage.
+
+Also, reset is asynchronous active-low, so to match the original description (which says reset initializes registers when rst_n is low), an asynchronous reset style is preferable for faster response.
+
+Finally, to ensure the counter width is sufficient for any NUM_DIV, we calculate the required width dynamically instead of fixing 4 bits, which could lead to synthesis warnings if NUM_DIV > 16.
+
+These changes:
+1. Merge counting and toggling into a single always block.
+2. Implement asynchronous active-low reset.
+3. Compute counter width from NUM_DIV parameter.
+4. Add a compile-time check that NUM_DIV is even.
+
+This approach maintains clarity, correctness, and improves PPA.

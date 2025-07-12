@@ -1,0 +1,9 @@
+To implement the radix-2 divider, we first need to understand the operation of the division process. 
+We will use a shift register SR to hold the dividend and divisor during the division process. 
+We will also use a counter cnt to track the number of bits processed and a flag start_cnt to indicate when the division process should start.
+When opn_valid is high and res_valid is low, we save the inputs dividend and divisor, initialize SR with the absolute value of the dividend shifted left by one bit, 
+set NEG_DIVISOR to the negated absolute value of the divisor, and set cnt and start_cnt to begin the division process.
+In each clock cycle, we check if start_cnt is high. If it is, we perform the division process. 
+We compute the subtraction of NEG_DIVISOR from SR and use a multiplexer to select the appropriate result based on the carry-out.
+We update SR by shifting left and inserting the carry-out.
+When the counter cnt reaches 8, we update the result with the final remainder and quotient, clear cnt and start_cnt, and set res_valid high.

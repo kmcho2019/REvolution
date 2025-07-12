@@ -1,0 +1,10 @@
+A new approach to achieve the fractional division by 3.5 using double-edge clocking is to create a modulo-7 counter (since 3.5 × 2 = 7 half-cycles) running at the input clock frequency. The output clock toggles on both the rising and falling edges of the input clock, but at carefully chosen counter states to generate two uneven half-periods (4 and 3 input clock cycles).
+
+Specifically:
+- Use a 3-bit counter that increments on every rising edge of clk and wraps around modulo 7.
+- On the rising edge of clk, toggle the output clock at specific counts that correspond to the start/end of the 4-cycle high period.
+- On the falling edge of clk, toggle the output clock at specific counts that correspond to the start/end of the 3-cycle low period.
+- Synchronize the toggling signals carefully to ensure duty cycle balancing.
+- Generate two internal clock signals toggling on posedge and negedge respectively, then OR them to produce a combined fractional clock with nearly 50% duty cycle.
+- Reset logic initializes all signals to 0.
+- This approach avoids using clk sampling across clock domains and exploits symmetrical toggling points to realize half-integer division with balanced duty cycle.

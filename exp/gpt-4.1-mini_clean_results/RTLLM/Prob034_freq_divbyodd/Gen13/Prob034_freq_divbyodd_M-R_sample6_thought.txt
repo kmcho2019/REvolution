@@ -1,0 +1,11 @@
+To correctly implement a frequency divider by an odd number using two counters and two clock dividers as specified, I will restructure the design to explicitly use two counters: one driven by the positive clock edge (cnt1) and one by the negative clock edge (cnt2). Each counter counts modulo NUM_DIV.
+
+The two clock dividers clk_div1 and clk_div2 will toggle when their counters reach the halfway point of NUM_DIV (half_div). This will create two pulse trains on opposite clock edges that when OR'ed produce a clock with frequency clk/(NUM_DIV) and a better duty cycle for odd dividers.
+
+To realize this, I will use two separate always blocks: one triggered on the positive edge and the other on the negative edge of clk, each handling one counter and toggling its respective clk_div output. The final clk_div output will be a combinational OR of clk_div1 and clk_div2.
+
+The reset (active low) will initialize counters and clk_div outputs. This structure faithfully implements the requested dual-edge, dual-counter odd-frequency divider, improving timing and output waveform shape compared to a single-counter toggle on posedge only.
+
+Parameter NUM_DIV is odd; half_div = (NUM_DIV - 1)/2.
+
+This approach follows the problem specification and improves clarity by separating positive and negative edge logic.

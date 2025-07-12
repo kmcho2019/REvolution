@@ -1,0 +1,7 @@
+To improve performance and reduce critical path delay, I will replace the simple ripple-style carry computation loop with a hierarchical carry-lookahead structure. This approach computes group generate (G) and propagate (P) signals for the lower and upper 4-bit halves, allowing faster carry resolution for the most significant bits and reducing carry propagation delay.
+
+This results in shorter carry paths compared to a fully serial chain in the generate-for loop. It also reduces power due to fewer intermediate signals switching on the critical path and potentially smaller area from more compact carry logic.
+
+The sum and overflow detection remain the same: sum bits computed from propagate and carry, and overflow detected as the XOR of the carry-in and carry-out to the MSB.
+
+This compromise keeps the code scalable and efficient for 8-bit width, balancing readability and improved PPA metrics.

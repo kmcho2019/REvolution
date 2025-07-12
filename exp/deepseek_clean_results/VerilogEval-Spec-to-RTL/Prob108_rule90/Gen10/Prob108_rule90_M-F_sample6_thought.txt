@@ -1,0 +1,18 @@
+The key issues in the previous implementation were incorrect boundary handling and overly complex neighbor selection. Here's the corrected approach:
+
+1. **Simplified Rule 90 Implementation**: Each cell's next state is simply the XOR of its left and right neighbors (q[i-1] ^ q[i+1]).
+
+2. **Proper Boundary Handling**: 
+   - For the leftmost cell (q[0]), the left neighbor is 0 (as specified)
+   - For the rightmost cell (q[511]), the right neighbor is 0
+   - All other cells use their actual left/right neighbors from the q register
+
+3. **Direct Implementation**:
+   - Remove unnecessary chunk processing and clock gating
+   - Use a straightforward generate loop to implement the rule for each bit
+   - Handle boundary conditions explicitly in the generate loop
+
+4. **Clean Synchronous Update**:
+   - Update on positive clock edge
+   - Load takes precedence over normal operation
+   - No additional gating needed beyond the load signal

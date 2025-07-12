@@ -1,0 +1,13 @@
+To fix the pulse detection module, we need to:
+1. Focus specifically on the 3-cycle pulse detection (0->1->0) as required by the problem statement, removing unnecessary parameterization
+2. Correct the history register to properly track the last 2 samples (needed for 3-cycle detection)
+3. Make the output immediate on pulse detection (no extra registration delay)
+4. Simplify the state tracking to just the necessary history bits
+5. Ensure reset properly initializes all state
+
+Key changes:
+- Use a 2-bit history register to track previous two samples
+- Detect the exact pattern 010 (current=0, prev=1, prev_prev=0)
+- Output immediately when pattern is detected
+- Remove unnecessary intermediate registers
+- Keep the module interface exactly as specified

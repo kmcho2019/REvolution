@@ -1,0 +1,15 @@
+I will implement the 64-bit arithmetic shift register using a single always_ff block with a combinational multiplexed shift operation based on the amount input. Instead of decomposing the shift into multiple stages, I will use a straightforward case statement to select the shifted result according to the four possible shift conditions. This approach avoids intermediate registers, minimizes conditional branching, and enables the synthesis tool to optimize the shift logic efficiently.
+
+For arithmetic right shifts, I will explicitly perform sign extension by replicating the MSB before shifting. Left shifts will be zero-filled by default.
+
+Key points:
+- The shift is performed combinationally inside the always_ff triggered by clk.
+- If load is high, load data synchronously.
+- Else if ena is high, shift according to amount as:
+    2'b00: shift left by 1
+    2'b01: shift left by 8
+    2'b10: shift right arithmetic by 1
+    2'b11: shift right arithmetic by 8
+- Use signed arithmetic for right shifts, extending the sign bit manually for 8-bit shifts.
+- Retain q as a reg 64-bit output.
+- This structure enables clearer timing paths and avoids intermediate storage, potentially improving timing and power.

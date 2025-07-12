@@ -1,0 +1,9 @@
+Instead of instantiating separate gate modules, use a compact behavioral approach that leverages the one-hot nature of y to compute Y1 and Y3 with combinational always blocks and case statements.
+
+Since each state corresponds to a single high bit in y, Y1 is the next state input for y[1] (state B), which is true only when current state is A (y[0]) and w=1.
+
+Similarly, Y3 is next state input for y[3] (state D), true when current state is one of B, C, E, F (y[1], y[2], y[4], y[5]) and w=0.
+
+By using an always_comb block with a temporary reg for outputs, this design avoids intermediate signals and modules, improving readability and potentially reducing netlist complexity. This approach also makes the logic easy to extend to other outputs or states if needed.
+
+No gate modules are instantiated, just pure RTL behavioral modeling consistent with FSM implementation style.

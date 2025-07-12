@@ -1,0 +1,7 @@
+To improve PPA (Performance, Power, Area) over the ripple carry 8-bit adder design, I will implement a simple carry lookahead logic inside the 8-bit adder instead of a ripple carry chain. This reduces the carry propagation delay from linear to logarithmic by computing carry signals in parallel.
+
+Specifically, the 8-bit adder will calculate group propagate and generate signals and use carry lookahead equations to compute all carry bits in a few logic levels. This reduces critical path delay and dynamic power (less toggling on carry chain) while increasing area marginally due to extra logic gates.
+
+Then, instantiate two such 8-bit carry lookahead adders to build the 16-bit adder. This preserves modularity and clean hierarchy while significantly improving timing.
+
+The overall design remains combinational, uses continuous assignments, and does not use generate loops or for-loops for clarity and synthesis friendliness.

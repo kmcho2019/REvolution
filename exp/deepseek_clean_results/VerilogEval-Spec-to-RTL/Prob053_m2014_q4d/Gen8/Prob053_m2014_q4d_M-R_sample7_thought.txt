@@ -1,0 +1,10 @@
+To address the initialization issue while maintaining the same functionality, we'll restructure the implementation to make the feedback path more explicit. The key changes are:
+
+1. Use continuous assignment for the XOR operation to clearly show the combinational logic
+2. Keep the flip-flop for sequential storage
+3. Remove any initial blocks since they aren't synthesizable
+4. The feedback path remains from q to the XOR input
+5. The design still uses minimal hardware (one flip-flop + one XOR)
+6. The non-blocking assignment ensures proper sequential behavior
+
+This version makes the data flow clearer: in -> XOR -> DFF -> out -> feedback to XOR. While functionally equivalent, this structure better represents the actual hardware implementation and avoids initialization ambiguity by relying on synthesis tool defaults.

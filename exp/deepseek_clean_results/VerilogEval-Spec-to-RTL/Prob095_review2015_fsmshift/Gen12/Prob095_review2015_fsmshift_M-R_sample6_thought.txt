@@ -1,0 +1,17 @@
+Refactored approach:
+1. Maintain the same 2-bit counter concept but improve the timing
+2. Key changes:
+   - Make shift_ena assert immediately on reset (cycle 0 counts as first cycle)
+   - Use a 3rd bit to track "done" state after 4 cycles
+   - Counter now counts 0-3 (4 cycles) then stops
+   - shift_ena is high when not in done state (counter <= 3)
+3. Implementation:
+   - 3-bit register (1 done flag + 2 counter bits)
+   - Reset sets counter to 0 and clears done flag
+   - Counter increments while not done
+   - Done flag sets after counter reaches 3
+   - shift_ena is !done
+4. Benefits:
+   - Exact 4-cycle assertion starting immediately
+   - Clear done state management
+   - Still minimal hardware (just 3 bits total)

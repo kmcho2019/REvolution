@@ -1,0 +1,18 @@
+The key improvements needed are:
+
+1. Reset Initialization: Ensure proper initialization of both PHT and GHR on reset. The PHT should start in a weakly taken state (2'b01) which is more standard for branch predictors.
+
+2. GHR Update Priority: Maintain strict priority where training (especially mispredictions) takes precedence over predictions. The current logic is correct but needs verification.
+
+3. PHT Update Timing: Ensure PHT updates only affect the next cycle while predictions use current state.
+
+4. Index Calculation: Verify the XOR-based index calculation is correctly implemented for both prediction and training paths.
+
+5. Output Timing: Ensure predict_history reflects the GHR state used for the current prediction, not the potentially updated state.
+
+The improved solution will:
+- Initialize PHT to 2'b01 (weakly taken)
+- Maintain clear priority in GHR updates
+- Keep PHT updates properly timed
+- Ensure correct index calculation
+- Properly handle output timing

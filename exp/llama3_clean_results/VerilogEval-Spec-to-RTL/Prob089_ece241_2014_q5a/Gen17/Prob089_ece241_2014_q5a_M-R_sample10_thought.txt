@@ -1,0 +1,9 @@
+To refactor the given code, we can explore alternative structures that maintain the same functionality while potentially improving performance, power consumption, and area usage. One possible approach is to use a combination of combinational logic and sequential logic, where the sequential part handles the state of the 2's complement operation (i.e., whether we are before or after the first '1' encountered in the input stream), and the combinational part calculates the output 'z' based on the current state and input 'x'.
+
+This refactoring involves removing the conditional assignment within the always block and instead using a combinational logic expression for 'z'. The detector signal remains sequential but is updated based on its current state and the input 'x'. This separation of sequential and combinational logic can potentially simplify the design and improve its PPA metrics.
+
+Another approach could involve re-encoding the state machine, potentially reducing the number of states or the complexity of state transitions. However, given the simplicity of the current state machine, a more significant improvement might come from optimizing the logic implementation rather than the state machine structure itself.
+
+In terms of logic implementation, using continuous assignments (`assign`) for the output 'z' can potentially reduce the area and improve performance by avoiding the use of procedural assignments within always blocks. This approach can also make the code more readable and easier to understand, as it explicitly separates the combinational logic from the sequential logic.
+
+The refactored design aims to maintain the same functionality as the original while optimizing its implementation for better PPA metrics. By exploring different structures and logic implementations, we can potentially improve the design's efficiency and reduce its overhead.

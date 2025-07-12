@@ -1,0 +1,48 @@
+Instead of directly implementing the sum of minterms, I will analyze the Karnaugh map to find common implicants and factor the logic to reduce gate count and depth.  
+First, I note that inputs are a, b, c, d. The Karnaugh map's rows are indexed by c,d and columns by a,b as per the problem statement.
+
+From the K-map:
+
+         ab
+    cd  00 01 11 10
+    00  1  1  0  1
+    01  1  0  0  1
+    11  0  1  1  1
+    10  1  1  0  0
+
+Groups of ones:
+
+- Group 1: cells (cd=00, ab=00,01) = m0,m1 -> c=0,d=0, a=0, b=don't care  
+  Term: ~c & ~d & ~a
+
+- Group 2: cells (cd=00, ab=00,10) = m0,m2 -> c=0,d=0, b=0, a=don't care  
+  Term: ~c & ~d & ~b
+
+- Group 3: cells (cd=01, ab=00,10) = m4,m6 -> c=0,d=1, b=0, a=don't care  
+  Term: ~c & d & ~b
+
+- Group 4: cells (cd=10, ab=00,01) = m8,m9 -> c=1,d=0, a=0, b=don't care  
+  Term: c & ~d & ~a
+
+- Group 5: cells (cd=11, ab=01,10,11) = m13,m14,m15 -> c=1,d=1, combinations of a,b - b=don't care?  
+  Check:
+
+  m13: c=1,d=1,a=0,b=1 -> 1  
+  m14: c=1,d=1,a=1,b=0 -> 1  
+  m15: c=1,d=1,a=1,b=1 ->1  
+
+  So, for c=1,d=1, and (a=1 or b=1) is 1.  
+  So term is c & d & (a | b)
+
+- Group 6: cells (cd=00, ab=10) m2 and (cd=01, ab=10) m6 both 1  
+  Term already in Group 3 and 2.
+
+- Group 7: cells (cd=00, ab=10), m2 and (cd=01, ab=10), m6 again.
+
+Overall, expression can be:
+
+F = (~c & ~d & (~a | ~b)) | (~c & d & ~b) | (c & ~d & ~a) | (c & d & (a | b))
+
+This is a factored sum-of-products expression with four terms. This design will use fewer gates than the full sum of minterms.
+
+Implement these terms and OR them for output.

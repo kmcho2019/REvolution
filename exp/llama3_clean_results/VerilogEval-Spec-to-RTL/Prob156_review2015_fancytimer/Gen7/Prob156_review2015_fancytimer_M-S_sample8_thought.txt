@@ -1,0 +1,9 @@
+To simplify the existing solution, we can divide the design into clear, distinct states, focusing on each state's main functionality. The main states are IDLE, PATTERN_DETECTION, DELAY_DETECTION, and COUNTING. 
+
+We start by implementing the pattern detection in the IDLE state, where we look for the '1101' sequence in the incoming data. Once detected, we move to the DELAY_DETECTION state where we shift in the next 4 bits from the data input to determine the delay value.
+
+After obtaining the delay value, we transition to the COUNTING state. Here, we use a counter to count down from the delay value multiplied by 1000, ensuring the count output reflects the remaining time. 
+
+When the counter reaches 0, we assert the done signal and wait for the ack signal to reset the state machine to the IDLE state.
+
+To simplify the code, we can eliminate unnecessary logic and focus on the essential operations for each state. This will reduce the overall complexity and make the design more efficient.

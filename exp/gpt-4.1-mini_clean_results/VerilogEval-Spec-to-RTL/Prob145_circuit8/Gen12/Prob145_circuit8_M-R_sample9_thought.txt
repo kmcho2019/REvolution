@@ -1,0 +1,19 @@
+The original design used an always block with an initialized flag to handle reset-like behavior and sequential updates of p and q on the posedge clock. To refactor and keep the core behavior, I will implement a simple 2-bit state register explicitly as a state vector, updating synchronously on clock posedge, then assign p and q from the bits of that state vector.
+
+This avoids separate registers for p and q and the initialized flag. Instead, the state register initializes to zero via an initial block (for simulation purposes) and updates according to the same logic: the next state is {p,q} with q capturing previous p and p updated as p OR a.
+
+Outputs p and q are driven as continuous assignments from state bits, improving clarity and showing p and q as pure outputs derived from state bits.
+
+This also avoids mixing blocking and nonblocking assignments and separates sequential logic (state update) and combinational output assignments.
+
+Thus, the code will have:
+
+- reg [1:0] state; // state[1]=p, state[0]=q
+- next_state logic: next_state[0] = state[1]; next_state[1] = state[1] | a;
+- always @(posedge clock) state <= next_state;
+- assign p = state[1];
+- assign q = state[0];
+
+Initialization done in initial block for simulation (state=2'b00).
+
+This refactoring maintains the original logic and timing, but restructures code cleanly and explicitly as a state register and output assignments.

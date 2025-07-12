@@ -1,0 +1,13 @@
+To improve PPA metrics while maintaining functionality, we apply these optimizations:
+
+- Use one-hot state encoding to reduce combinational next-state logic complexity and improve timing at the cost of minor area increase, which is acceptable here since the FSM only has four states.
+
+- Implement clock enables for the bit counter and shift register so they update only when needed (in DATA state), reducing unnecessary switching and power consumption.
+
+- Use a shift-left operation instead of concatenation for the shift register to let synthesis infer a more optimal shift register primitive, improving timing and area.
+
+- Remove redundant resets within states and centralize synchronous reset in one place for registers, avoiding unnecessary switching.
+
+- Keep the done signal as a one-cycle pulse in STOP state when a valid stop bit is detected.
+
+These changes should reduce the critical path in next-state logic and shift register updates, lower power from less switching activity, and keep area overhead reasonable.

@@ -1,0 +1,11 @@
+The original solution correctly implements the function but does so by explicitly instantiating an inverter and an AND gate as separate modules, which adds unnecessary module overhead and may increase area and power.
+
+To optimize for power, performance, and area (PPA):
+
+- Use a direct continuous assignment for z = (x ^ y) & x, allowing synthesis tools to infer minimal gates and optimize the logic efficiently.
+
+- Avoid explicit module hierarchy for simple combinational expressions to reduce gate count and routing overhead.
+
+- This approach reduces netlist complexity, lowers area, and can minimize power without sacrificing performance.
+
+Thus, the improved design simply uses a single assign statement implementing the exact requested function.

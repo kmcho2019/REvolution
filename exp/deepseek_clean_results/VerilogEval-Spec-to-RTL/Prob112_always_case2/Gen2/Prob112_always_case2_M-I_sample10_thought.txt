@@ -1,0 +1,10 @@
+To fix the priority encoder implementation, we need to:
+1. Correct the priority ordering in the casez statement to check from MSB (highest priority) to LSB (lowest priority)
+2. Ensure the output position values correctly correspond to the bit positions (3 for MSB down to 0 for LSB)
+3. Maintain the default case for all-zero input
+
+The improved solution will:
+- List case patterns from MSB to LSB (4'b1??? first)
+- Map outputs to match actual bit positions (3→11, 2→10, 1→01, 0→00)
+- Keep the default case for zero input
+This ensures correct priority encoding behavior where the highest set bit is always found first.

@@ -1,0 +1,33 @@
+Analyze the waveform to extract the state machine behavior clearly:
+
+- Initially, outputs are undefined until the first clock edge.
+- At the first positive edge of clock with a=0 (25ns), p=0 and q=x (undefined).
+- After clock falls (55ns), q goes to 0 as well, so assume q is registered at negedge clock.
+- After 85ns clock rising edge, when a=1, p toggles to 1 while q remains 0.
+- q becomes 1 after a sequence of clock falling edges with certain inputs, indicating q is set after some condition involving p and a.
+- After q=1, p toggles in sync with a being 1 on clock edges.
+- q remains 1 while p toggles or holds depending on a.
+- When clock goes low at 175ns, outputs reset to 0.
+
+From these observations, a possible correct behavior is:
+
+- p is updated at the rising edge of clock based on input a and current q.
+- q is updated at the falling edge of clock based on current p.
+- Both p and q are registers.
+- On reset or initial condition, both outputs start as unknown (x) then settle to 0.
+
+Implement two clock-edge triggered registers:
+
+- On posedge clock: p <= a & ~q
+- On negedge clock: q <= p | q
+
+This fits the waveform trend:
+
+- p depends on current a and q at rising edge.
+- q accumulates the state from p at falling edge.
+
+By separating updates on posedge and negedge, this respects the waveform timing and output transitions observed.
+
+Also, initialize p and q to unknown (1'bx) to reflect initial x states, then allow the first clock cycles to set outputs accordingly.
+
+This two-edge triggered design matches the waveform behavior and aligns outputs correctly over time.

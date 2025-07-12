@@ -1,0 +1,38 @@
+Instead of using a case statement indexed by a permuted input vector, this solution directly implements the minimized logic expression derived from the Karnaugh map. 
+
+By analyzing the Karnaugh map and treating the don't-care values as flexible, we can derive a simplified Boolean expression for the output f in terms of the inputs x[3:0] (where x[3] = MSB, x[0] = LSB).
+
+The Karnaugh map given with rows as x[3]x[4] and columns as x[1]x[2] (interpreted as x[2]x[3] rows, x[0]x[1] columns in Verilog):
+
+From the map, we identify minterms with f=1 and try to cover all 1's efficiently:
+
+1) Group the four 1's in row x[3]x[4]=11 (addr 1100,1101,1110,1111): 
+   But some are 'd' and some 0, so we only take definite 1's:
+   Entries: 1100=1,1101=1 (1110,1111 d or 0)
+   Group these with nearby ones if possible.
+
+2) Group row 10: 1000=1,1001=1
+
+3) Minterm at 0111=1
+
+After analysis, the following simplified expression covers all the 1s with don't-cares assigned for optimal simplification:
+
+f = (x[3] & ~x[2])         // row 10 covers 1's in columns 00 and 01
+  | (x[3] & x[2])          // row 11 covers 1's in columns 00 and 01
+  | (~x[3] & x[1] & x[0] & x[2])  // single minterm at 0111 (row=01 col=11)
+
+Simplifying the first two terms: f = x[3] | (some condition)
+
+But check if x[3]=1 covers all 1's in rows 10 and 11; yes.
+
+The one 1 at 0111 (x[3]=0,x[2]=1,x[1]=1,x[0]=1) is not covered by x[3]=1, so it must be added separately.
+
+Final expression:
+
+f = x[3] | (~x[3] & x[2] & x[1] & x[0])
+
+This is very simple to implement as combinational logic using bitwise operations, and easy for synthesis tools to optimize.
+
+This approach avoids the case statement, uses direct continuous assignment, and is easy to understand and verify.
+
+This leads to better PPA by minimizing gates and critical path delay.

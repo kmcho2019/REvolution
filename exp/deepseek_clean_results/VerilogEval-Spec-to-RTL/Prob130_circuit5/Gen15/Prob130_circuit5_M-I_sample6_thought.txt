@@ -1,0 +1,18 @@
+Based on the feedback and PPA metrics, here's an optimized approach:
+
+1. **Key Improvements**:
+   - Replace parallel comparators with a single 2-to-4 decoder for c[1:0] to reduce power and area
+   - Use a case statement for clearer selection logic that may synthesize more efficiently
+   - Simplify the 'f' output condition by incorporating it into the case statement
+   - Eliminate redundant mask generation and bitwise operations
+
+2. **Optimization Strategy**:
+   - Use c[1:0] directly in a case statement for the 4 valid cases (0-3)
+   - Make all other cases (including when c[3:2] != 0) default to 'f'
+   - This reduces logic depth and eliminates the need for separate comparison and masking logic
+
+3. **Expected Benefits**:
+   - Reduced power due to simpler decoder logic
+   - Smaller area from eliminating redundant comparators and mask generation
+   - Potentially better timing with simpler selection path
+   - More maintainable code with clear case structure

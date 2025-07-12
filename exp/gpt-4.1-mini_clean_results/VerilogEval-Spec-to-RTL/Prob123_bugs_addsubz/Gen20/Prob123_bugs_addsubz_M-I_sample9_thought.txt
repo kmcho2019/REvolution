@@ -1,0 +1,9 @@
+The original solution implements a manual ripple carry adder-subtractor using a function with explicit carry propagation, which ensures correctness but may hurt performance and area compared to leveraging built-in arithmetic operators. Since synthesis tools efficiently infer adders and subtractors from arithmetic expressions, replacing the custom function with direct use of the built-in '+' and '-' operators will improve timing and area by using optimized vendor primitives. 
+
+For the zero flag, using the reduction NOR operator (~|out) is optimal and synthesizable, so it should be retained.
+
+In addition, the original code conditionally sets `result_is_zero` only if zero; it doesn't assign it to zero explicitly, which can cause latch inference. The fixed code should explicitly assign `result_is_zero` for both conditions within the always block.
+
+Thus, the improved design uses a single always @(*) block performing the add/sub based on `do_sub` and assigns `result_is_zero = ~|out` cleanly, leveraging Verilog built-in operators for synthesis-friendly and efficient logic.
+
+This yields a smaller, faster, and lower-power implementation by avoiding explicit ripple carry logic and letting synthesis infer the optimal adder/subtractor structures.

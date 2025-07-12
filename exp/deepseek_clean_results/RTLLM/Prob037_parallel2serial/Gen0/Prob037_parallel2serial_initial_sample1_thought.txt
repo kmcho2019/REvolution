@@ -1,0 +1,13 @@
+The parallel-to-serial converter needs to:
+1. Store the 4-bit parallel input in a register when a new conversion starts
+2. Output one bit per clock cycle (MSB first)
+3. Use a counter to track which bit is being output
+4. Reset the counter and load new data when the counter reaches 3 (last bit)
+5. Generate a valid_out signal when outputting valid data
+6. Handle synchronous reset properly
+
+The implementation will use:
+- A 4-bit data register to hold the parallel input
+- A 2-bit counter to track the current bit position
+- Shift operation to move through the bits
+- Valid signal generation based on counter state

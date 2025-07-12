@@ -1,0 +1,10 @@
+From the waveform, q is 1 from the first clock edge where a=0, and remains 1 even when a=1 until the next clock edge with a=1, at which point q resets to 0 and remains 0 as long as a=1 on clock edges. 
+
+Interpreting this, q behaves like a latch that sets when a=0 on clock edge and resets only when a=1 is detected on a clock edge after being set. This is like a state machine with two states:
+
+- State 0: q=0, on clk posedge if a=0, go to state 1 (q=1)
+- State 1: q=1, on clk posedge if a=1, go to state 0 (q=0); else remain in state 1
+
+So q toggles only when a changes in a specific way at clock edges, implementing a simple two-state FSM.
+
+I will implement this FSM with q as the state variable and conditionally toggle q on positive edges of clk depending on a.

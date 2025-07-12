@@ -1,0 +1,13 @@
+Novel Architecture: Phase Accumulator Square Wave Generator
+1. Instead of a simple counter, use a phase accumulator that adds the frequency value each clock cycle
+2. The MSB of the accumulator naturally becomes our square wave output (auto-toggling at desired frequency)
+3. Benefits:
+   - Eliminates explicit comparison logic (reduces critical path)
+   - Provides linear frequency control (output period ∝ 1/freq)
+   - Naturally handles frequency changes without glitches
+   - Scales well for higher precision requirements
+4. Implementation:
+   - 8-bit phase accumulator (matches input frequency width)
+   - Output is simply the MSB of the accumulator
+   - No explicit counter reload needed
+   - Frequency resolution = clk_freq / 2^8

@@ -1,0 +1,17 @@
+To optimize the original solution for better PPA while maintaining correctness and the required functionality, the improvements focus on reducing unnecessary toggling and clarifying resets:
+
+1. Apply clock enable signals in the clk_a domain to update data_reg and en_data_reg only when data_en is asserted. Since data_en is low most of the time and data_in is static during data_en, this reduces switching activity and dynamic power in clk_a domain.
+
+2. Convert the clk_b domain reset to asynchronous to align with clk_a domain reset style, potentially simplifying reset handling and reducing reset-related glitches.
+
+3. Use non-blocking assignments consistently and minimize logic within the clk_b always block to maintain minimal logic depth.
+
+4. Retain the 2-flop synchronizer chain for en_data_reg to reduce metastability.
+
+5. Avoid redundant else branches; registers hold their values naturally.
+
+This reduces switching power in clk_a domain registers and improves timing margin on resets. The area impact is minimal since no extra hardware is added, just gating logic on enables.
+
+The functionality remains unchanged: data_in and data_en are captured in clk_a domain, en_data_reg synchronized into clk_b domain through en_clap_one and en_clap_two, output dataout updates only when en_clap_two is high.
+
+Overall, this approach reduces toggling and maintains clean cross-domain synchronization.

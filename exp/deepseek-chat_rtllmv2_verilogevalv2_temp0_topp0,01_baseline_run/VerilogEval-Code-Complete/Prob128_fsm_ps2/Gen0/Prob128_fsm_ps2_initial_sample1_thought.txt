@@ -1,5 +1,0 @@
-To solve this problem, we need to design a finite state machine (FSM) that can identify the start and end of 3-byte messages in a PS/2 mouse protocol byte stream. The key is to look for the first byte where bit 3 (in[3]) is set to 1, then count the next two bytes to complete the message. The FSM should have three states: IDLE (waiting for the first byte), BYTE2 (received first byte, waiting for second), and BYTE3 (received second byte, waiting for third). The 'done' signal should be asserted in the cycle immediately after the third byte is received. The FSM should reset to the IDLE state on a synchronous reset.
-
-1. IDLE state: Wait for a byte with in[3]=1. When found, transition to BYTE2.
-2. BYTE2 state: Accept any byte and transition to BYTE3.
-3. BYTE3 state: Accept any byte, assert 'done', and transition back to IDLE.

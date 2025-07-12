@@ -1,0 +1,29 @@
+Analyzing the previous expression:
+
+out =
+    (~c & ~d & (~a | ~b)) |
+    (~c & d & ~b) |
+    (c & ~d & ~a) |
+    (c & d & (a | b))
+
+We notice that terms (~c & ~d & ~a) and (~c & d & ~b) overlap partially with the first term and share common literals.
+
+Alternatively, checking the K-map minterms directly, we can find a simpler minimal SOP expression by revisiting the K-map grouping:
+
+K-map cells with 1 are at minterms:
+0,1,4,5,8,9,10,12,13,14,15
+
+Using K-map groupings, one possible minimal expression is:
+
+out = (~a & ( ~c | ~d)) | (~b & ~c) | (c & d & (a | b))
+
+Explanation:
+- (~a & (~c | ~d)) covers minterms where a=0 and either c=0 or d=0 (covering m0,1,4,8,9,10,12)
+- (~b & ~c) covers cases where b=0 and c=0 (covering m0,1,4,5,8,9)
+- (c & d & (a | b)) covers cases where c=1 and d=1 and either a=1 or b=1 (m13,14,15)
+
+This expression has fewer OR terms and reduced logic complexity by factoring common terms.
+
+This simplification reduces the number of gates and literal count, maintaining correct functionality.
+
+I will implement this simplified expression.

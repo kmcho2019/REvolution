@@ -1,0 +1,13 @@
+Refactor by explicitly tracking three water level states: current, previous, and one-before-previous (two prior states). On each clock edge, update these so that "previous to last sensor change" is correctly preserved in the second-to-last state register.
+
+Use a simpler 2-bit reg to hold the water level ordinal directly, avoiding enums and functions, thus improving compatibility and clarity.
+
+Decode sensors combinationally to a level ordinal (0=below s0, 1=between s1-s0, 2=between s2-s1, 3=above s2), then update shift registers for current, prev, and prev_prev levels synchronously.
+
+Compute dfr by comparing current level to prev_prev level (not just immediately previous), asserting dfr when the level increased since two cycles ago, per spec.
+
+Assign nominal valves combinationally based on current level ordinal as per given table.
+
+Synchronous reset sets all three level registers to 0 (lowest level), enabling all valves on reset as required.
+
+This approach guarantees correct historical level tracking for flow decisions and simplifies logic by using ordinal integers and shift-register style updates instead of enums and functions.

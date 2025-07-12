@@ -1,0 +1,5 @@
+Refactor the design to use a combinational function to compute the rotated or loaded value, and then assign the output register synchronously from this function result. This removes the always @(*) block and replaces it with a pure function that returns the next state of the rotator based on the current state and inputs.
+
+This approach improves modularity and reusability, clearly separates combinational logic as a function, and keeps the sequential update simple. Using a function also aids clarity and can be readily synthesized. The sequential logic remains a single always block updating q from the function output.
+
+The function encapsulates all next state logic including load and rotation direction, while the always block drives the register update on the clock edge.

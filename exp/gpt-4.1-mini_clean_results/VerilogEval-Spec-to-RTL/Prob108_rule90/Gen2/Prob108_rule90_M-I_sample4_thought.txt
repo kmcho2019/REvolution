@@ -1,0 +1,16 @@
+To improve synthesis performance and reduce complexity for synthesis tools, especially when handling large 512-bit wide vectors and wide concatenations, we can implement the Rule 90 update using a generate-for loop, computing each bit's next state separately as the XOR of its left and right neighbors with zero boundary conditions. This approach maps better onto hardware as it clearly expresses the local dependencies and lets the synthesis tool infer parallel, simple XOR gates for each bit, avoiding large wide-vector shifts and concatenations.
+
+The load operation remains as a direct load of the entire 512-bit input when asserted.
+
+This fine-grained bit-level implementation tends to improve synthesis runtime, area, and possibly power by letting the tools optimize locally, rather than relying on wide 512-bit vector shifts and XOR.
+
+Specifically:
+- For bit 0, left neighbor is 0, right neighbor is q[1].
+- For bit 511, left neighbor is q[510], right neighbor is 0.
+- For bits 1 to 510, left neighbor is q[i-1], right neighbor is q[i+1].
+
+At every clock posedge:
+- If load asserted, load q with data.
+- Else, update q bit-by-bit as per Rule 90 neighbor XOR.
+
+This design is functionally equivalent but more synthesis-friendly.

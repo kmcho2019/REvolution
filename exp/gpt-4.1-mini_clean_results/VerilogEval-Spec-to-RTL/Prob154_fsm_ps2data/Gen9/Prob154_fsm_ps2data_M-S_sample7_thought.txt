@@ -1,0 +1,8 @@
+Use a simple 2-bit state to track how many message bytes have been received (0 to 3).  
+On reset, clear registers synchronously.  
+When in state 0, wait for a start byte (in[3]=1). Upon detecting it, store the byte as the first message byte and move to state 1.  
+In states 1 and 2, store the next bytes and increment state.  
+When reaching state 3 (after receiving the third byte), output the concatenated message and assert done for one cycle, then return to state 0.  
+Keep all storage in one 24-bit register that shifts left by 8 bits with each new byte, to simplify the datapath and minimize registers.  
+This reduces complexity by eliminating separate byte registers and explicitly uses only one shifting register and a simple counter.  
+Use synchronous reset and always block triggered on posedge clk.

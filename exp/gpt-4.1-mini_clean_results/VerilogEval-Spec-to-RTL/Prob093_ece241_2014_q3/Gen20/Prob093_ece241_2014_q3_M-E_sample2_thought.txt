@@ -1,0 +1,33 @@
+The problem requires implementing a 4-variable function f(a,b,c,d) given by a K-map, using one 4-to-1 mux with selectors {a,b} selecting one of four inputs mux_in[3:0]. Each mux_in[i] is a function of c and d only.
+
+A novel approach is to directly implement the entire 4-variable function f(a,b,c,d) using a hierarchy of multiplexers, but respecting the problem constraints:
+
+- Top-level: one 4-to-1 multiplexer with select inputs {a,b}, inputs mux_in[3:0]
+- Each mux_in[i] is a function of (c,d), constructed using as few 2-to-1 multiplexers as possible
+- Allowed components: one 4-to-1 mux and any number of 2-to-1 muxes, no other logic gates
+
+The key insight:
+
+1. The top-level mux selects a column in the K-map (based on ab). Each mux_in[i] corresponds to a column slice of the K-map.
+
+2. Each mux_in[i] is a 2-variable function f(c,d) defined by the rows of the K-map.
+
+3. Since only mux2 modules are allowed for logic, we implement each mux_in[i] as a binary tree of 2-to-1 muxes (mux2), using c or d as selectors.
+
+4. To minimize mux2 usage, implement each mux_in[i] by Shannon decomposition on one variable and choose the variable that leads to minimal mux2 count.
+
+5. Implement the mux2 module as a parameterized mux: out = sel ? in1 : in0.
+
+6. Implement NOT using mux2 by feeding a constant 0 and 1 and selecting by the variable.
+
+Steps:
+
+- Derive correct truth tables for mux_in[0]..mux_in[3] from the given K-map.
+
+- For each mux_in[i], implement f(c,d) by mux2s, no gates.
+
+- Implement the TopModule with inputs c, d and output mux_in[3:0].
+
+This design is fully structural, matches the K-map exactly, uses only mux2 modules (2-to-1 muxes) to build mux_in functions, and leaves the 4-to-1 mux with a,b selectors external as per problem.
+
+This approach is systematic, verifiable, and minimal in mux2 use.

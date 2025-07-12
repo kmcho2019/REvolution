@@ -1,0 +1,7 @@
+To refactor the original design while keeping the functionality, I'll implement the next state and output logic using `always_comb` blocks to separate the output and next_state logic clearly. This also allows for easy scalability and more readable logic by using case statements over the one-hot encoded states. 
+
+Although one-hot states usually imply only one bit set, the input can be multiple active bits, so in the always_comb, I will loop over each state bit and accumulate the transitions and outputs. This approach changes the style from large OR expressions to more explicit state-wise processing, improving readability and maintenance.
+
+The outputs out1 and out2 will be assigned combinationally as OR of the relevant active states. The next_state logic will accumulate next state bits based on input and current states using a for-loop, clearly showing state transitions without large expressions.
+
+This style fits well with modern SystemVerilog and complex FSMs with multiple active states.

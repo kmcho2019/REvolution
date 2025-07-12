@@ -1,0 +1,34 @@
+module TopModule (
+    input  mode,
+    input  too_cold,
+    input  too_hot,
+    input  fan_on,
+    output reg heater,
+    output reg aircon,
+    output reg fan
+);
+
+    wire fan_enable;
+
+    always @(*) begin
+        heater = 1'b0;
+        aircon = 1'b0;
+
+        if (mode) begin
+            // Heating mode
+            if (too_cold)
+                heater = 1'b1;
+        end else begin
+            // Cooling mode
+            if (too_hot)
+                aircon = 1'b1;
+        end
+    end
+
+    assign fan_enable = heater || aircon || fan_on;
+
+    always @(*) begin
+        fan = fan_enable;
+    end
+
+endmodule

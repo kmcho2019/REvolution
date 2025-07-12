@@ -1,0 +1,14 @@
+Fuse the key strengths of both examples by implementing a minimal 2-bit counter FSM that tracks the byte position within a PS/2 mouse message, while introducing a carefully controlled enable gating signal to minimize toggling and improve power efficiency.
+
+Fusion strategy:
+
+- Use a 2-bit counter to track which byte of the message is being processed: 0 means waiting for a start byte (where in[3] = 1), 1 and 2 represent the second and third bytes respectively.
+- Only update the counter and generate the done pulse when enabled to reduce unnecessary toggling; enable is active when waiting for a start byte and when inside a message (count != 0).
+- Assert done as a one-cycle pulse immediately after the third byte (count = 2) is received.
+- Ensure done is cleared each cycle except when the done event occurs to avoid glitches and unnecessary switching.
+- Use non-blocking assignments consistently to ensure proper sequential logic and synthesis friendliness.
+- Keep synchronous active-high reset to ensure clean initialization.
+- Maintain minimal combinational logic to preserve short critical path and small area.
+- This fusion merges the enable gating from example 2 with the clean done logic and default clearing from example 1, optimizing power and clarity while keeping FSM logic minimal and performance robust.
+
+The final design balances performance, power, and area effectively by gating state updates and done signal toggling only when necessary, avoiding spurious transitions, and ensuring correct, glitch-free done pulses for message detection.

@@ -1,0 +1,11 @@
+The original design is correct and simple, but it shifts the entire 4-bit register every cycle using concatenation, which could create a longer critical path and more switching activity, impacting timing and power. To optimize:
+
+1. Change the shift direction to right shift instead of left shift so we can output the MSB first by indexing directly. Shifting right by one bit every cycle extracts next bits by shifting into the LSB position, making the output simply the MSB of the data register.
+
+2. Use a 4-bit shift register loaded with input data when the counter is 0 (instead of at cnt == 3), and then shift right on subsequent cycles while counting from 0 to 3. This way, valid_out is asserted at cnt == 0 to mark the first (MSB) bit output.
+
+3. To reduce switching power, perform the shift operation only when needed by gating the shift based on counter value.
+
+4. Reset counter and data properly on reset.
+
+Overall, these changes reduce the combinational path (only a single right shift), minimize toggling by gating shift operation, align valid_out better with the first bit output, and should improve timing and power slightly.

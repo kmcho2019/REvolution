@@ -1,0 +1,20 @@
+module LFSR (
+    input  wire       clk,
+    input  wire       rst,
+    output wire [3:0] out
+);
+
+    reg [3:0] lfsr_reg;
+    wire feedback;
+
+    assign feedback = ~(lfsr_reg[3] ^ lfsr_reg[2]);
+    assign out = lfsr_reg;
+
+    always @(posedge clk) begin
+        if (rst)
+            lfsr_reg <= 4'b0000;
+        else
+            lfsr_reg <= {lfsr_reg[2:0], feedback};
+    end
+
+endmodule

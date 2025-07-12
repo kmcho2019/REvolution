@@ -1,0 +1,11 @@
+To implement the finite state machine (FSM) with the specified behavior, we can use a simple Mealy machine approach since the output z depends on the current state and inputs. 
+
+We start by identifying the minimum number of states required. State A is the initial state where the FSM stays until s = 1. Then it transitions to state B. 
+
+In state B, we need to count how many times w = 1 over the next three clock cycles and then decide on z based on this count. This can be done by moving through a series of states that essentially act as counters for w = 1 occurrences. However, to minimize the number of states, we realize that we only need to keep track of the count of w = 1 over the last three cycles and whether we are in the process of counting (i.e., after s has gone high).
+
+A more efficient approach involves recognizing that once s = 1, the FSM enters a mode where it continuously monitors w for three-cycle windows. For the output z to be 1, exactly two w = 1 conditions must be met within any three consecutive cycles after s = 1. This can be achieved by having states that essentially keep track of the number of w = 1 occurrences within these three-cycle windows.
+
+However, a simpler conceptual approach is to think of the problem as needing to detect a specific pattern in w after s = 1 and use a counter to keep track of the number of w = 1 occurrences within a three-cycle window. This simplifies the state machine design to just two main states (A and B) with an internal counter or shift register mechanism to monitor w over three cycles. 
+
+In Verilog, this can be implemented by using a simple state machine with an internal counter or a shift register to track w over time, and then using combinational logic to determine the output z based on this tracking.

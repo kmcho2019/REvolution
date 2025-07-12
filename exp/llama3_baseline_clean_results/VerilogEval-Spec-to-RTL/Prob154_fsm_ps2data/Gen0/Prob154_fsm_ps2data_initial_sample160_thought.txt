@@ -1,0 +1,7 @@
+To implement this module, we'll use a finite state machine (FSM) with the following states: 
+- IDLE: Waiting for the first byte of the message (in[3] = 1).
+- WAIT_BYTE2: Waiting for the second byte of the message.
+- WAIT_BYTE3: Waiting for the third byte of the message.
+- DONE: Message received, assert done and output the 24-bit message.
+
+We will use a 2-bit state variable to encode the above states. The FSM will move from one state to another based on the current state and input. The message bytes will be stored in registers and shifted to their correct positions when a new byte is received. When all three bytes are received, the message will be output and the done signal will be asserted.

@@ -1,0 +1,13 @@
+To improve the existing solution, the key focus will be on resolving the functional errors that led to the simulation mismatches. The initial analysis suggests that the logic for calculating 'z' and the state updates is mostly correct, but there are issues with the simulation results, indicating a deeper problem.
+
+Given the problem statement, the critical aspect to reconsider is the initial state of the D flip-flops and how their outputs are fed back into the gates. The feedback loop, where the output of each flip-flop is used as the second input to its corresponding gate, might be causing the issue due to the way these outputs are used and updated.
+
+One potential improvement is to ensure that the flip-flop outputs are properly initialized and that their feedback into the gates does not cause unintended behavior at the start of the simulation. This involves carefully considering the initial conditions and the propagation of these conditions through the feedback loop.
+
+Another potential issue could be related to the synthesis and simulation tools' behavior regarding initial values and the treatment of registers and wires in the design. Ensuring that the design is properly synchronous and that all sequential elements are correctly clocked can help resolve these issues.
+
+Optimization for better PPA (Power, Performance, Area) metrics involves minimizing the number of gates and flip-flops, which could involve algebraic simplification of the logic or rethinking the implementation to reduce the number of sequential elements required.
+
+In the provided code, the use of non-blocking assignments (`<=`) within the always block is correct for synchronous designs, as it helps prevent race conditions. However, ensuring that all sequential logic is properly synchronized with the clock and that the feedback paths do not introduce hazards or races is crucial.
+
+To address the specific issue of the 95 mismatches in 118 samples for output 'z', a detailed review of the gate logic and the simulation stimuli is necessary to identify where the discrepancies are occurring and why the current implementation is not producing the expected results.

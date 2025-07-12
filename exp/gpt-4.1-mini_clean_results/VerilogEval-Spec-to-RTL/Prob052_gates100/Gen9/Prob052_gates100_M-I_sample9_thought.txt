@@ -1,0 +1,22 @@
+To improve the PPA (Power, Performance, Area) while keeping the design clean and synthesizable, the following strategy is applied:
+
+1. **Reduce the number of intermediate wires**:
+   - Instead of multiple hierarchical levels with many intermediate signals, use a balanced tree reduction approach with fewer stages.
+   - Combine partial reductions with larger groups at once to minimize the total number of logic levels, reducing delay.
+
+2. **Uniform grouping for all outputs simultaneously**:
+   - Since all outputs are reduction operations on the same input vector, perform the grouping once and share those intermediate signals for AND, OR, and XOR reductions. This reduces redundant hardware.
+
+3. **Balance between fan-in and levels**:
+   - Use groups of 10 bits for the first level (10 groups), which reduces the number of intermediate signals drastically compared to groups of 5.
+   - Then do a second level of reduction on the 10 intermediate results down to a final output.
+   - The maximum fan-in is 10, reasonable for modern synthesis tools, while the reduction depth is minimized.
+
+4. **Minimize logic levels**:
+   - Two-level tree leads to at most two combinational levels per output, reducing critical path delay.
+   - XOR reduction might still have longer delay, but this two-level balanced tree is a practical tradeoff.
+
+5. **Use reduction operators consistently**:
+   - Use built-in reduction operators (&, |, ^) for concise synthesis-friendly expressions.
+
+Overall, this approach reduces wire count, logic levels, and fan-in, likely improving power and area by reducing redundant logic and signal transitions, and improving timing by fewer combinational stages.

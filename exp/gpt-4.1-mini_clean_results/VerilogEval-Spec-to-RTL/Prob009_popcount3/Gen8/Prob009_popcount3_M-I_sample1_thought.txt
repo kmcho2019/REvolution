@@ -1,0 +1,19 @@
+For a 3-bit population count, the addition approach is already minimal and optimal for performance and area. However, power consumption can sometimes be further reduced by replacing addition with pure combinational logic minimizing switching. 
+
+Using a combinational logic expression derived from the exact count bits might reduce toggling and switching activity compared to addition circuits. 
+
+The output bits are:
+- out[0]: parity of the input bits (odd number of ones)
+- out[1]: whether at least two input bits are set (majority function for three inputs)
+
+So,
+- out[0] = in[0] ^ in[1] ^ in[2]
+- out[1] = (in[0]&in[1]) | (in[1]&in[2]) | (in[0]&in[2])
+
+This logic involves fewer transitions than addition and could potentially reduce dynamic power at no cost of area or delay. Since the original addition had zero slack, replacing with this two-level logic may also slightly improve delay.
+
+Hence the improvement:
+- Replace addition by minimal combinational logic expressions for each output bit.
+- This leads to minimal gate levels, no carry logic, and possibly lower power.
+
+This is an optimal balance of PPA for a small population count of 3 bits.

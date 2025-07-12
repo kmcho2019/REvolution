@@ -1,0 +1,13 @@
+Novel Architecture: Phase Accumulator Approach
+1. Instead of using a simple counter, implement a phase accumulator that continuously adds the frequency control word
+2. The MSB of the accumulator naturally creates a square wave with precise frequency control
+3. Benefits:
+   - Smoother frequency transitions (no glitches when changing freq)
+   - More precise frequency control (sub-clock cycle resolution possible)
+   - Easier to extend to higher resolutions
+   - No need for explicit counter comparisons
+4. Implementation:
+   - 16-bit accumulator for better frequency resolution
+   - Use accumulator MSB as square wave output
+   - Handle freq=0 case by forcing output low
+   - No gated clocks needed

@@ -1,0 +1,7 @@
+To fix the issue indicated by the feedback, I will add an asynchronous active-high reset input to both the DFF and TopModule. This reset will initialize the flip-flop outputs to zero, avoiding unknown (X) states at simulation startup and eliminating early mismatches. 
+
+Additionally, rather than instantiating eight separate DFF modules, I will simplify the design by using a single always block in TopModule that captures all 8 bits of 'd' into 'q' on the rising edge of 'clk' synchronously. This vectorized approach reduces module overhead, improves clarity, and facilitates synthesis optimizations.
+
+The reset will asynchronously set 'q' to zero, ensuring known initial state and stable simulation startup. The reset signal is added as input 'rst' to TopModule and propagated to the DFF module (if used), or handled inside the vectorized always block.
+
+This approach improves simulation robustness and potentially area and performance by using a vector register rather than multiple instantiated flip-flops.

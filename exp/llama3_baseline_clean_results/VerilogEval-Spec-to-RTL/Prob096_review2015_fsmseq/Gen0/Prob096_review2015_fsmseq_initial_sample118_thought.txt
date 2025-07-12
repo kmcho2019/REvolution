@@ -1,0 +1,10 @@
+To implement the TopModule, we will create a finite-state machine (FSM) that searches for the sequence 1101 in the input bit stream. We can define the states as follows:
+- IDLE: Initial state, waiting for the sequence to start
+- GOT_1: First '1' received
+- GOT_11: First two '1's received
+- GOT_110: First three '1', '1', '0' received
+- GOT_1101: Sequence 1101 received, set start_shifting to 1
+
+The FSM will transition between these states based on the input data. When the sequence 1101 is detected, the FSM will remain in the GOT_1101 state and set start_shifting to 1 until reset is asserted.
+
+We will use a parameterized enumeration to define the states, and a case statement to handle the transitions between states. We will also use a reg variable to store the current state and another reg variable to store the output start_shifting.

@@ -1,0 +1,18 @@
+Novel Architecture: Distributed Pipeline RAM with Shadow Registers
+
+Key Innovations:
+1. Dual-phase operation: Combines synchronous writes with asynchronous reads using shadow registers
+2. Write pipeline: Implements a 2-stage write pipeline (address+data) for better timing closure
+3. Shadow registers: Maintains a duplicate set of registers for read operations to prevent read-write collisions
+4. Banked structure: Organizes memory into two interleaved banks for concurrent access
+5. Benefits:
+   - Eliminates read-write hazards through shadow registers
+   - Improves timing with pipelined write path
+   - Enables true simultaneous read/write operations
+   - Better power efficiency through banked structure
+
+Implementation Approach:
+1. Two physical banks (even/odd addresses) with separate write pipelines
+2. Shadow registers updated on opposite clock phases
+3. Bank selection based on LSB of address
+4. Registered outputs for clean timing

@@ -1,0 +1,10 @@
+The original solution uses dual-edge triggered flip-flops which cause complexity, possible race conditions, and do not align well with typical synchronous design practices. The waveform shows that 'p' updates at rising edges of clock depending on input 'a' and state 'q', and 'q' updates at falling edges of clock to the value of 'p'. This results in a staggered update of the two outputs.
+
+To improve correctness and clarity, I will convert the design into a fully synchronous, single-edge clocked system by adding an internal state register. We note from the waveform that initially both outputs are unknown and later stabilize into a two-bit state machine updated on the rising edge of the clock.
+
+Analyzing the waveform carefully suggests that:
+
+- On each rising clock edge, 'p' is updated based on the input 'a' and the previous 'q' value.
+- 'q' is updated to the previous value of 'p' from the last cycle.
+
+Hence, the logic is:

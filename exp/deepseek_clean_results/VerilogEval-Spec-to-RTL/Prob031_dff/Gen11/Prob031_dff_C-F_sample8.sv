@@ -1,0 +1,8 @@
+// Single positive-edge triggered D flip-flop
+module TopModule (
+    input  clk,
+    input  d,
+    output reg q
+);
+    always @(posedge clk) q <= d;
+endmodule

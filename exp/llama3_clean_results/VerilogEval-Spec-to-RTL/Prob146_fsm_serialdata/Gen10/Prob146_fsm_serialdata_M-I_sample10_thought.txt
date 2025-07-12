@@ -1,0 +1,23 @@
+To improve the existing solution, we need to address the issues identified in the feedback. The key improvements include:
+- Correctly handling the stop bit verification and the transition to the IDLE state.
+- Properly handling the 'done' signal to ensure it remains high for at least one clock cycle after a byte is correctly received.
+- Ensuring 'out_byte' is only updated when a valid byte is received.
+- Simplifying the logic to reduce conditional statements and improve readability.
+- Optimizing the design for better power, performance, and area (PPA) metrics.
+
+The main improvements include:
+- Revising the state machine's transitions to correctly handle the stop bit verification and the update of 'out_byte' and 'done' signals.
+- Removing unnecessary always blocks and directly handling the 'done' signal within the main state machine logic.
+- Ensuring 'out_byte' is only updated when a valid byte is received.
+- Simplifying the logic to reduce conditional statements and improve readability.
+We will also use a 4-bit counter to prevent overflow and update 'data_reg' with the correct order of bits.
+
+To optimize the design, we can reduce the number of combinational logic gates and registers, thereby improving the design's power consumption, delay, and area. We will also ensure that the design is correctly implemented and verified using simulation.
+
+The revised state machine will have the following states:
+- IDLE: The initial state where the FSM waits for the start bit.
+- START: The state where the start bit is detected and the FSM transitions to the DATA state.
+- DATA: The state where the FSM receives the 8 data bits and updates 'data_reg'.
+- STOP: The state where the stop bit is verified, and 'out_byte' and 'done' signals are updated.
+
+By revising the state machine's logic and simplifying the design, we can improve the design's functionality, readability, and PPA metrics.

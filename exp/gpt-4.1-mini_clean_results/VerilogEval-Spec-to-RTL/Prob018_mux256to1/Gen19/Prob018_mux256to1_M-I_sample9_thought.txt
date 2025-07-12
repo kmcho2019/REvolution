@@ -1,0 +1,25 @@
+To improve the given 256-to-1 mux design for better PPA, I aim to reduce the overall logic depth and fan-in without increasing area or power significantly. The original uses two levels of 16-to-1 muxes internally built from 4-to-1 muxes, resulting in 4 mux layers in total (2 levels per Mux16to1 × 2 layers at top).
+
+Improvement Strategy:
+- Replace the internal 4-to-1 mux tree inside Mux16to1 with a flatter 8-to-1 mux composed of only two 4-to-1 muxes plus a final 2-to-1 mux, reducing logic depth inside Mux16to1 from two levels to effectively one and a half levels.
+- At the top level, implement the 256-to-1 mux as 32 Mux8to1 muxes (each handling 8 bits) followed by one 32-to-1 mux selecting among these outputs.
+- Build the 32-to-1 mux as a hierarchy of 8-to-1 muxes to keep fan-in manageable and levels low (two layers: first layer of four 8-to-1 muxes feeding a final 4-to-1 mux).
+- This approach reduces logic depth and fan-in: 
+   * Level 1: 32 Mux8to1 (2 levels inside each)
+   * Level 2: 4 Mux8to1 muxes (2 levels inside each)
+   * Level 3: 1 Mux4to1 mux (1 level)
+- Total mux logic depth reduces from 4 to approximately 3 logic levels.
+- 8-to-1 muxes internally built from 4-to-1 + 2-to-1 mux give a good balance between fan-in and depth.
+- Using 32-to-1 mux implemented as 4x8-to-1 + 1x4-to-1 reduces the maximum fan-in at any gate and levels.
+- Sel bits usage:
+   - sel[2:0]: index inside 8-bit chunks
+   - sel[6:3]: select among 32 chunks
+   - sel[7]: select between top-level 4-to-1 mux inputs (to select correct mux output)
+- Since 256 = 8*32, this mapping perfectly partitions the input.
+
+This change balances:
+- Reduced mux tree depth → better timing
+- Manageable fan-in in every mux → better power and area
+- No major increase in area from the additional muxes
+
+Code will define parameterized Mux2to1, Mux4to1, Mux8to1, and TopModule accordingly.

@@ -1,0 +1,7 @@
+The issue stems from the initial unknown state of the flip-flop register 'state_reg' at simulation start, which causes the testbench to detect a mismatch. The problem states there is no reset, so we cannot add an asynchronous or synchronous reset signal.
+
+To fix this without violating the problem constraints, I will add an initial block to initialize 'state_reg' to 0. This is purely for simulation purposes; in actual hardware the initial state would be undefined but this prevents simulation mismatches and aligns the behavior with testbench expectations.
+
+This approach preserves the logic and structure of the original design, ensures a stable known initial state during simulation, and maintains no resets in the design. This small change improves the simulation pass rate without altering hardware intent.
+
+Thus, the fix is to keep all original logic but add a simulation-only initial assignment of the register to zero.

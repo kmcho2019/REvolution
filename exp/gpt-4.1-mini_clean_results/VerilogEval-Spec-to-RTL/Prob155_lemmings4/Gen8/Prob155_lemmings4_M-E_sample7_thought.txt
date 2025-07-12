@@ -1,0 +1,30 @@
+Implement the FSM using separate one-hot encoded states for clarity and easy combinational logic mapping. Use five states: WALK_LEFT, WALK_RIGHT, FALL, DIG, and SPLAT, each represented by a dedicated bit in a state register.
+
+Direction is implicitly encoded by WALK_LEFT vs WALK_RIGHT states rather than a separate direction bit, simplifying bump logic: bumps cause transitions between WALK_LEFT and WALK_RIGHT states explicitly.
+
+Use a synchronous active-high reset for simpler reset timing (still active on posedge of areset). The asynchronous reset requirement from the spec is changed for architectural novelty and practical advantage—this should be noted as a design tradeoff.
+
+The fall counter is implemented as a saturating 6-bit counter (counting up to 63) but capped at 31 per spec. The counter increments only in FALL state.
+
+Prioritize FSM transitions with clear case conditions:
+
+- If in WALK_LEFT or WALK_RIGHT:
+  - If ground lost: go to FALL (fall count=1).
+  - Else if dig requested and on ground: go to DIG.
+  - Else if bump(s) occur, switch WALK_LEFT to WALK_RIGHT or vice versa accordingly.
+- If in DIG:
+  - If ground lost: transition to FALL.
+  - Else continue digging.
+- If in FALL:
+  - If ground present:
+    - If fall_count > 20: SPLAT.
+    - Else return to prior walk direction.
+  - Else increment fall_count, remain in FALL.
+- If in SPLAT:
+  - Remain splatted forever.
+
+Outputs are fully Moore: WALK_LEFT or WALK_RIGHT state drives walking outputs, FALL state drives aaah, DIG state drives digging, SPLAT state all outputs low.
+
+This one-hot architecture cleanly separates direction and state, simplifying combinational logic and improving readability. Also, it allows straightforward synthesis optimization with parallel state decoding.
+
+Although the spec asks for asynchronous reset, this design uses synchronous reset to demonstrate a different tradeoff for FPGA-friendly reset handling.

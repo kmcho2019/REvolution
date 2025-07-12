@@ -1,0 +1,14 @@
+To implement this FSM, we'll follow these steps:
+1. Define the states (A, B, C, D) using binary encoding
+2. Create a state register that updates on clock edges with synchronous reset
+3. Implement the state transition logic based on the input r[2:0]
+4. Generate outputs g[2:0] based on the current state (combinational logic)
+5. Follow the priority scheme where r[0] has highest priority and r[2] has lowest
+
+The FSM will:
+- Stay in state A when no requests (r=000)
+- Transition to B when r[0]=1 (highest priority)
+- Transition to C when r[0]=0 and r[1]=1
+- Transition to D when only r[2]=1
+- Output g[0]=1 in state B, g[1]=1 in state C, g[2]=1 in state D
+- Return to state A when current grant's request drops

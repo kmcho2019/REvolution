@@ -1,0 +1,19 @@
+To solve the HDLC framing problem, we can design a novel architecture using a combination of shift registers and a small control unit. The idea is to shift the incoming data into a register and use a control unit to monitor the bits and detect the required sequences. 
+
+Here's how it works:
+
+1. **Shift Register:** Implement a 7-bit shift register to hold the last 7 bits of the incoming data stream. This register will shift in the new bit and shift out the oldest bit on every clock cycle.
+
+2. **Control Unit:** Design a control unit that monitors the bits in the shift register. The control unit checks for the required sequences (01111110, 0111110, and 7 or more consecutive 1s) and generates the corresponding output signals (flag, disc, err).
+
+3. **Sequence Detection:** The control unit uses combinatorial logic to detect the sequences. It checks the shift register's bits to determine if a sequence has been detected and generates the corresponding output signal.
+
+4. **Output Signal Generation:** The control unit generates the output signals (flag, disc, err) based on the detected sequences. These signals are asserted for one clock cycle after the sequence is detected.
+
+This architecture is efficient and easy to implement. The shift register provides a simple way to store the last 7 bits of the data stream, and the control unit can be implemented using combinatorial logic.
+
+The advantages of this architecture include:
+
+* **Low Complexity:** The architecture is relatively simple, with a small control unit and a shift register.
+* **High Performance:** The architecture can operate at high speeds, as the shift register and control unit can be designed to operate in a single clock cycle.
+* **Low Power Consumption:** The architecture has low power consumption, as the shift register and control unit only consume power when the clock is active.

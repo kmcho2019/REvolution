@@ -1,0 +1,21 @@
+To refactor the asynchronous FIFO design while keeping the core functionality intact, I will:
+
+1. Separate pointer binary and Gray code registers more explicitly, using combinational logic (`assign`) for Gray code conversions instead of sequential blocks when possible. This reduces sequential logic complexity.
+
+2. Implement write and read pointer increments in always blocks, but compute Gray code via assign statements outside always blocks for clarity and cleaner separation of combinational and sequential logic.
+
+3. Use synchronous resets (reset on posedge clock) instead of asynchronous resets to simplify clock domain crossing and synthesis (this is often preferred in FPGA designs, but if truly asynchronous reset is needed, that can be reverted).
+
+4. Implement pointer synchronizers with parameterizable two-flop synchronizer modules to clean up the code and improve reuse/readability.
+
+5. Combine full and empty flags generation into separate functions for clarity and reuse.
+
+6. Improve signal naming consistency and signal declarations (e.g., using localparams and more descriptive signal names).
+
+7. Register the output read data directly from the RAM read port without gating inside always block by relying on the read enable signal pipelined with data.
+
+8. Keep dual_port_ram module unchanged structurally but move comments for clarity.
+
+This approach emphasizes clear modular separation, uses more combinational assignments where appropriate, and synchronous reset for pointer registers to ease timing and design comprehension.
+
+The FIFO will remain fully parameterized by WIDTH and DEPTH, using Gray code pointers and the classic full/empty detection technique.

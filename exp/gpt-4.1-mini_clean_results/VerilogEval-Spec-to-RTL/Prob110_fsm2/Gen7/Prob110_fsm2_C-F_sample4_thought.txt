@@ -1,0 +1,11 @@
+To combine the strengths of both examples, I will implement a clear two-process Moore FSM with asynchronous reset:
+
+- Use a separate reg 'state' for the current state, and a combinational always block for next state logic, avoiding mixing state updates and combinational logic in one always block. This improves readability, scalability, and reduces risk of combinational loops.
+
+- Assign the output 'out' directly and continuously from the state to minimize registers and logic, like in Example 1, ensuring the output is glitch-free because the output depends only on the registered state (Moore output).
+
+- Keep the asynchronous active-high reset in the sequential block for fast reset response.
+
+- Use localparam to clearly encode states OFF=0 and ON=1.
+
+This fusion brings the clarity and safety of separate combinational and sequential always blocks (Example 2) and the simplicity and area savings of direct output assignment from the state (Example 1). It ensures glitch-free output, minimal registers, and clear FSM style ideal for synthesis and verification.

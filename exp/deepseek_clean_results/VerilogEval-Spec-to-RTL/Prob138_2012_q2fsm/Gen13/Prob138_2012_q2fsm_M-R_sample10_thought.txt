@@ -1,0 +1,16 @@
+Refactoring Strategy:
+1. State Encoding: Keep the same optimal state encoding (A:000, B:001, C:011, D:010, E:110, F:111) for consistency and minimal transitions.
+
+2. State Transition Logic: Replace the case statement with a series of ternary conditional operators in continuous assignments. This makes the state transitions more compact and eliminates the need for a separate always block.
+
+3. Output Logic: Maintain the same efficient bit-check (current_state[2]) but move it to a continuous assignment for consistency with the new style.
+
+4. State Storage: Keep the sequential always block for state storage but make it more compact by moving the reset logic inline.
+
+5. Architecture: Use a single always block for sequential logic and continuous assignments for all combinational logic, creating a cleaner separation between sequential and combinational parts.
+
+Key Changes:
+- Replaced case statement with ternary operators in continuous assignments
+- Moved all combinational logic to continuous assignments
+- Kept the same efficient state encoding and output logic
+- Simplified the state storage block

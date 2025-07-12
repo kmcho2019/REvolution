@@ -1,0 +1,17 @@
+Based on the PPA metrics and feedback, here's an optimized design strategy:
+
+1. Replace one-hot with binary state encoding (2 bits) to reduce area and fanout
+2. Implement sequential shifting instead of pre-computed shifts to save area and power
+3. Pipeline the accumulator to improve timing (critical path)
+4. Add clock gating for power reduction in idle states
+5. Optimize counter width (3 bits for 0-15 count)
+6. Simplify the shift operation by using a rotating register approach
+7. Remove unnecessary registers in DONE state
+
+Key improvements:
+- Binary state encoding reduces flip-flop count
+- Sequential shifting eliminates large multiplexer
+- Pipelined accumulator breaks critical path
+- Clock gating reduces dynamic power
+- Rotating register approach simplifies shift logic
+- Cleaner state transitions improve timing predictability

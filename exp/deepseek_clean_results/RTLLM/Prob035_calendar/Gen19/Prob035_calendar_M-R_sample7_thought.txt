@@ -1,0 +1,14 @@
+Refactoring Strategy:
+1. Replace sequential always blocks with combinational logic using assign statements
+2. Create next-state logic for each counter (sec, min, hour)
+3. Use a single always block for sequential state updates
+4. Simplify rollover conditions by calculating them in parallel
+5. Maintain same bit-width optimization (6-bit for all outputs)
+6. Improve readability by separating next-state calculations from state updates
+
+Key Changes:
+- All counter logic is now purely combinational
+- Next-state values are calculated in parallel before the clock edge
+- Single register update block improves synthesis predictability
+- Clear separation between combinational and sequential logic
+- Rollover conditions are calculated once and reused

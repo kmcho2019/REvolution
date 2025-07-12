@@ -1,0 +1,7 @@
+To optimize the original design for better power and maintain performance, introduce a clock enable (ce) signal that only updates the register when the input data changes, preventing unnecessary toggling inside the flip-flops. Since the input d is 8-bit, generate the enable as the OR of all bits differing from the current q. However, to avoid combinational feedback complexity, store the input comparison synchronously. For simplicity, we can add a clock enable input and assume upstream logic controls it, but since it's not in the original spec, a direct comparison at the clock domain is the best simple approach. 
+
+Alternatively, retain the original asynchronous reset and flip-flops but add a synchronous load enable by checking if d != q before loading new data to avoid unnecessary switching inside flip-flops. This reduces internal switching activity and power without affecting area or performance significantly.
+
+The asynchronous reset is kept as required; the added enable signal reduces switching at the clock input by not updating q when d equals q. This reduces power without extra area or delay impact.
+
+Thus, the improved code includes a clock enable that updates q only when d is different from q, leveraging the original asynchronous reset and edge triggered flip-flops.

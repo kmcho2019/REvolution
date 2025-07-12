@@ -1,3 +1,0 @@
-The issue in the code lies in the feedback logic of the LFSR. In a Galois LFSR, the feedback mechanism should XOR the bits at the tap positions (5 and 3 in this case) with the LSB (q[0]) to determine the next value. However, the current code XORs the bits at tap positions directly with each other, disregarding the LSB as part of the feedback. This incorrect feedback logic leads to a divergent state from the expected behavior of a Galois LFSR.
-
-Due to this logic error, the LFSR fails to generate the correct sequence of states, resulting in a high number of output mismatches during simulation. The incorrect feedback connections prevent the LFSR from functioning as intended, causing the simulation to deviate from the expected maximal-length sequence.

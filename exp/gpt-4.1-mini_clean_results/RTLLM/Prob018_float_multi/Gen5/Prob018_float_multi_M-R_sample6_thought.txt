@@ -1,0 +1,9 @@
+To fix the syntax errors and improve code clarity, we refactor the design to use a clean synchronous finite state machine (FSM) with explicit states instead of a simple counter, and we declare all intermediate variables at the module scope to comply with Verilog syntax. We also replace the problematic procedural declarations inside the always block by using module-level regs and wires.
+
+The processing stages (extraction, normalization, multiplication, rounding, and output composition) are clearly separated in FSM states with defined transitions. All intermediate computations inside clocked always blocks use pre-declared temporaries. 
+
+This structure keeps multi-cycle operation sequencing but avoids illegal variable declarations inside procedural blocks. It also clarifies control flow and signal updates.
+
+We maintain the use of signed exponents for easier underflow/overflow detection and precise rounding logic per IEEE-754 rules. Special cases are handled explicitly at the start of the FSM.
+
+By using a FSM and module-wide intermediate registers, the design becomes synthesizable and readable, solving the previous syntax errors and preserving the IEEE-754 compliant 32-bit floating-point multiplication functionality.

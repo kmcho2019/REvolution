@@ -1,0 +1,14 @@
+Here's a novel approach using a shift register with parallel pattern matching and a more robust state machine design:
+
+1. **Parallel Pattern Detection**: Instead of serial pattern matching, use a 4-bit shift register with parallel comparison to detect "1101" exactly. This ensures precise pattern matching without false positives.
+
+2. **Explicit Cycle Counting**: Use a dedicated 2-bit counter for the 4-cycle shift operation with clear start/stop conditions. This guarantees exactly 4 cycles of shift_ena.
+
+3. **State Machine Enhancements**:
+   - Add a WAIT state after pattern detection to ensure clean transition to shifting
+   - Separate DONE and ACK states for clearer handshaking
+   - Use Gray coding for state encoding to prevent glitches
+
+4. **Output Control**: Generate outputs synchronously to avoid glitches and ensure proper timing alignment.
+
+The key innovation is the parallel pattern matching combined with Gray-coded states and explicit cycle counting, making the design more robust and timing-precise.

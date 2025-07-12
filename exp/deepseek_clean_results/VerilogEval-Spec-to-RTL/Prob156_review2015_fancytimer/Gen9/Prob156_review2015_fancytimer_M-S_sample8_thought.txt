@@ -1,0 +1,16 @@
+Here's a simplified approach that maintains all required functionality while reducing complexity:
+
+1. **Simplified State Machine**: Reduce to just 4 states (IDLE, CAPTURE, COUNT, DONE) with clear transitions
+2. **Efficient Counting**: Use a single 14-bit counter (enough for max 16*1000=16000 cycles) instead of separate period and cycle counters
+3. **Direct Delay Calculation**: Calculate total cycles as (delay+1)*1000 upfront and count down
+4. **Clean Output Logic**: 
+   - count shows delay value during counting phase
+   - counting asserted only during COUNT state
+   - done asserted only in DONE state until ack
+5. **Pattern Detection**: Simple shift register that clears after detection
+
+Key simplifications:
+- Single counter instead of two nested counters
+- Pre-calculate total cycles
+- Clear state transitions
+- Minimal output control logic

@@ -1,0 +1,7 @@
+To refactor the original design while preserving the core logic of computing the even parity using XNORs, we can implement the logic in a single combinational always block with a local signal to hold intermediate results instead of multiple assign statements.
+
+This approach still realizes the same XNOR tree for parity computation, but with behavioral style using an always @(*) block. It provides a different coding style that can be preferable for certain synthesis flows or coding guidelines.
+
+Here, intermediate signals are declared as reg inside the module and assigned within the always block, then the output is assigned from those signals. This differs from the purely structural assign-based approach by using a single procedural block, improving code compactness and changing coding style while preserving the circuit function.
+
+This style can be beneficial in scenarios requiring conditional assignments or more complex combinational logic, although here it is simply applied to a straightforward function.

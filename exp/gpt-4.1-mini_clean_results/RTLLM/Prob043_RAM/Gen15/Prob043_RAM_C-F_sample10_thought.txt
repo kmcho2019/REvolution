@@ -1,0 +1,9 @@
+Fuse the best aspects of both examples for an optimal dual-port RAM design with synchronous write and reset, and a gated combinational read output:
+
+- Keep parameterized WIDTH and DEPTH with address width derived from $clog2(DEPTH) for area efficiency.
+- Use a synchronous reset that initializes the entire RAM array via a for-loop for synthesis-friendly RAM clearing.
+- Implement write operation synchronous with clk and gated by write_en.
+- Use combinational read output gated by read_en to achieve zero read latency while avoiding unnecessary toggling (outputs zero when read_en is low).
+- Avoid using a read_data register to reduce logic and improve timing.
+- Maintain clean, readable code style suitable for both FPGA and ASIC synthesis.
+- This design balances performance (zero read latency), area (minimal addressing), and power (read enable gating), fulfilling all specifications with robustness and clarity.

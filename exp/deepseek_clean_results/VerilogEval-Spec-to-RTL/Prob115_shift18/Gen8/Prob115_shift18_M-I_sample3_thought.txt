@@ -1,0 +1,24 @@
+Improvement Strategy:
+1. **Critical Path Optimization**:
+   - Restructure shift logic to reduce multiplexer depth by separating direction and magnitude selection
+   - Pre-compute both left and right shift options in parallel, then select with a single mux
+
+2. **Power Optimization**:
+   - Gate the shift computation with 'ena' to prevent unnecessary switching
+   - Move sign extension calculation inside right-shift condition
+   - Use clock gating for the register update
+
+3. **Area Optimization**:
+   - Share common logic between 1-bit and 8-bit shifts
+   - Remove redundant calculations by properly nesting conditions
+
+4. **Timing Closure**:
+   - Balance path delays by making left and right shift computations symmetric
+   - Simplify control logic by decoding shift amount separately
+
+Key Improvements:
+- Reduced combinational logic depth by 1 level
+- Eliminated unconditional sign extension calculation
+- Added explicit clock gating for power savings
+- More balanced left/right shift paths
+- Cleaner control flow with nested conditions

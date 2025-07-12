@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. Timing Optimization:
+   - Use Example 2's parallel rollover detection (ss_roll, mm_roll) for faster critical paths
+   - Implement Example 1's simpler hour counter (1-12 binary) but with optimized PM toggle logic
+   - Register BCD outputs to break timing paths
+
+2. Power Efficiency:
+   - Maintain Example 1's ena-gating for all counters
+   - Use Example 2's minimal PM toggle logic (only on hour changes)
+   - Keep all counters static when not enabled
+
+3. Area Reduction:
+   - Use Example 1's compact hour representation (4 bits)
+   - Implement Example 2's continuous BCD conversion for outputs
+   - Split BCD counters into separate tens/units digits for better packing
+
+Key Innovations:
+- Combined parallel rollover detection with optimized hour counter
+- Registered BCD outputs for better timing closure
+- Simplified PM toggle logic with direct hour comparison
+- Split BCD counters for better area utilization
+- Clear separation of counter logic and output generation

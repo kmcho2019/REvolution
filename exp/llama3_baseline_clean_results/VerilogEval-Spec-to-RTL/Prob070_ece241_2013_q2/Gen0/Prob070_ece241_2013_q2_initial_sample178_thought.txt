@@ -1,0 +1,33 @@
+To find the minimum sum-of-products (SOP) form for out_sop, we first need to identify the input combinations that produce a logic-1 output. These combinations are 2 (0010), 7 (0111), and 15 (1111). The SOP expression is then formed by summing the product terms corresponding to these input combinations. 
+
+For the minimum product-of-sums (POS) form for out_pos, we look for the input combinations that produce a logic-0 output, which are 0 (0000), 1 (0001), 4 (0100), 5 (0101), 6 (0110), 9 (1001), 10 (1010), 13 (1101), and 14 (1110). The POS expression is then formed by taking the product of the sum terms corresponding to these input combinations.
+
+Given the input combinations for logic-1 outputs (out_sop) are 2, 7, and 15, the minimum SOP expression is:
+out_sop = (a'b & b & c' & d) | (a'b & b & c & d) | (a & b & c & d)
+
+Simplifying, we get:
+out_sop = (b & d') | (b & c & d) | (a & b & c & d)
+
+However, considering all given inputs for a logic-1 output, the expression simplifies further to its minimum form:
+out_sop = (b & c & d) | (b & d & ~c)  is incorrect; the correct expression is out_sop = (b & d) | (a & b & c & d) which simplifies to out_sop = (b & d).
+
+For the minimum POS expression of out_pos, considering the combinations for logic-0 outputs are 0, 1, 4, 5, 6, 9, 10, 13, and 14, we find the sum terms and then multiply them.
+
+Sum terms for out_pos (complement of the given output):
+- (a + b' + c' + d') for 0
+- (a' + b' + c' + d) for 1
+- (a' + b + c' + d') for 4
+- (a' + b + c' + d) for 5
+- (a' + b + c + d') for 6
+- (a + b' + c + d) for 9
+- (a + b + c' + d) for 10
+- (a + b + c + d') for 13
+- (a + b + c + d') for 14, note d' is common in 13 and 14, but we are looking for the product of sums, hence we should not simplify here but list all sums.
+
+The correct approach is to simplify based on given conditions. We need to consider the values of a, b, c, and d that produce a logic-0 output and express out_pos in terms of the sum of these conditions.
+
+Upon closer inspection and correctly following the problem statement for minimum POS, the conditions for a logic-0 output can be represented as sums. However, the mistake here was in prematurely simplifying without considering the actual conditions given. 
+
+The minimum POS form can be determined by looking at the conditions that lead to a logic-0 output and combining them in a product-of-sums expression. The correct way to express out_pos in minimum POS form is to identify all possible sums that cover the logic-0 conditions and then find the intersection (product) of these sums.
+
+Given the complexity and the mistake in the initial thought process, let's directly implement the correct logic for both SOP and POS expressions in Verilog.

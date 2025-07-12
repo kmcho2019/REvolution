@@ -1,0 +1,8 @@
+Refactor the radix-2 divider using an explicit finite state machine (FSM) with clearly defined states: IDLE, DIVIDE, and DONE.  
+On opn_valid, latch inputs and prepare operands and signs; then enter the DIVIDE state.  
+Use a 4-bit counter counting from 0 to 7 to step through division cycles.  
+Use combinational subtraction to decide quotient bit in each cycle, updating a shift register SR accordingly.  
+After 8 cycles, perform sign correction on quotient and remainder and move to DONE state.  
+In DONE, assert res_valid until acknowledged by new opn_valid.  
+This restructuring improves clarity and modularity, avoids complex muxes inside always blocks, and uses synchronous reset and explicit state transitions.  
+The result ports remain the same, and interface matches exactly the original spec.

@@ -1,0 +1,10 @@
+To implement the 12-hour clock with a set of counters, we need to consider the following steps:
+
+1. Create counters for hours, minutes, and seconds. Each counter should be able to hold values up to 12 for hours and 59 for minutes and seconds.
+2. Implement a mechanism to increment the counters once per second, which is achieved by checking the ena signal.
+3. When the counter for seconds reaches 59, it should reset to 0 and increment the minutes counter. Similarly, when the minutes counter reaches 59, it should reset to 0 and increment the hours counter.
+4. When the hours counter reaches 12, it should wrap around to 1 and toggle the pm signal (AM/PM indicator).
+5. On the active high reset signal, reset all counters to their initial values (hours to 12, minutes to 0, seconds to 0, and pm to AM).
+6. Ensure all sequential logic is triggered on the positive edge of the clock.
+
+We will use Verilog's non-blocking assignment operator (<=>) for sequential logic and always @(posedge clk) block to trigger the logic on the positive edge of the clock.

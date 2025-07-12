@@ -1,0 +1,6 @@
+Instead of separate counters for each time unit, we'll use a single 17-bit counter that increments every second (when enabled). The counter value represents total seconds since midnight (0-43199 for 12 hours). We'll then decode this value to:
+1. Extract seconds (0-59) via modulo 60
+2. Extract minutes (0-59) via modulo 3600 then divide by 60
+3. Extract hours (1-12) via divide by 3600
+4. Determine AM/PM by checking if we're in the first or second half of the 12-hour cycle
+This approach reduces sequential logic and simplifies rollover handling by using arithmetic operations on the single counter value.

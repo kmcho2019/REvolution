@@ -1,9 +1,0 @@
-1. The initial state of the finite state machine (FSM) is not properly defined. The IDLE state is assigned 3'b00 in the parameter, but in the always block, it is being initialized as 2'b00. This discrepancy can lead to improper state transitions.
-
-2. In the state transition logic, the count is being reset to 3'b0, which does not align with the correct count for counting 8 data bits (should be 0 to 7). This initialization issue could lead to incorrect counting of bits.
-
-3. The condition to check for the STOP_BIT is incorrect. The condition `if (in == 1'b1 && count == 9)` is used to check for the stop bit, but the count should only be 8 when checking the stop bit as it should count from 0 to 7 for the data bits.
-
-4. The shifting of the received bit into `out_byte` is not aligned with the LSB first protocol. The assignment `{in, out_byte[7:1]}` should shift `in` from bit 0 to bit 7 of `out_byte`.
-
-5. The FSM lacks a mechanism to handle cases where the stop bit is incorrect or missing. It should wait for the next start bit before attempting to receive the next byte. This handling is critical for correct byte reception but is missing in the current implementation.

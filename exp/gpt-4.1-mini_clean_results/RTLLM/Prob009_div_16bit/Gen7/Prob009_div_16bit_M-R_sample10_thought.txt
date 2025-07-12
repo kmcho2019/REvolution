@@ -1,0 +1,16 @@
+To refactor the original fully combinational always blocks into a more structural and clear style, we can implement the division logic using continuous assignments and generate blocks instead of loops inside always blocks. 
+
+The division process is sequentially dependent (bit-by-bit), so fully unrolling in pure assign statements is challenging. However, since the divisor is 8-bit and dividend 16-bit, we can implement a combinational "for-generate" block with a chain of intermediate remainder signals modeled as wires. This forms a combinational chain of shift-subtract steps, each feeding the next, effectively creating a ripple chain of division steps without explicit procedural always blocks.
+
+This approach:
+
+- Eliminates always blocks for combinational logic, using only registers to latch inputs.
+- Uses a vector of remainder and quotient wires to model step-by-step division in combinational logic.
+- Provides a more explicit combinational structure beneficial for synthesis tools that support generate blocks.
+- Keeps the input registers (a_reg, b_reg) assigned combinationally as requested.
+
+The remainder and quotient bits for each iteration are calculated via generate constructs, making the pipeline explicit in the hardware structure instead of behavioral loops.
+
+Finally, the remainder is zero-extended and output as per requirement.
+
+This design maintains the combinational behavior and two-block structure: one combinational block for registering inputs, and the rest is modeled with assign statements and generate blocks.

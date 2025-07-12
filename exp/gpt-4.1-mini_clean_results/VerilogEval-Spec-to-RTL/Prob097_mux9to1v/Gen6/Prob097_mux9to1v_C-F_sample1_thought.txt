@@ -1,0 +1,11 @@
+Fuse the strengths of both approaches by using the indexed array of inputs (from Example 1) to keep the multiplexer logic straightforward and compact, enabling synthesis tools to infer an efficient mux structure. Simultaneously, incorporate one-hot decoding and bitwise selective assignment (from Example 2) only for the output bits to reduce glitching and power caused by combinational muxing of all inputs.
+
+Specifically, decode the selector to a one-hot vector for inputs 0 to 8, and use the indexed array to provide inputs. Then, for each bit, use a generate loop to select the bit using the one-hot signals, reducing switching activity and enabling better gate-level optimization. For sel >= 9, force output bits to all ones as per spec.
+
+This hybrid approach balances performance, power, and area:
+- Keeps the readable and concise array indexing of inputs (good for synthesis).
+- Employs one-hot decoded enables at bit-level to reduce glitches and switching power.
+- Outputs all ones for invalid selector values efficiently.
+- Avoids large OR trees over all inputs per bit by masking only the active input from the array.
+
+Overall, the design enhances power efficiency by gating signals with one-hot enables, while keeping area low and timing reasonable by leveraging indexed inputs instead of fully flat logic.

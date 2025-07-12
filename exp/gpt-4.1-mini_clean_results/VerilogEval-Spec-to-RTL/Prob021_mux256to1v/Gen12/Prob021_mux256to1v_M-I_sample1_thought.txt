@@ -1,0 +1,26 @@
+To improve PPA (performance, power, area) over the existing three-stage hierarchical mux design, I propose the following optimizations:
+
+1. Replace the large 16-to-1 muxes in the first stage with a two-level hierarchy of 4-to-1 muxes, effectively breaking down the first stage into four smaller muxes chained:
+   - First stage: sixty-four 4-to-1 muxes selected by sel[1:0] (select bits of the lowest two bits)
+   - Second stage: sixteen 4-to-1 muxes selected by sel[3:2]
+   - Third stage: four 4-to-1 muxes selected by sel[5:4]
+   - Fourth (final) stage: one 4-to-1 mux selected by sel[7:6]
+
+2. This four-stage 4-to-1 mux tree uses only 4-to-1 muxes, which are simpler and smaller than 16-to-1 muxes, reduces large fan-in mux inputs, and balances the mux tree depth for better timing and area.
+
+3. Use a parameterized 4-to-1 4-bit mux module for all levels for code reuse and clarity.
+
+4. Carefully slice the input vector `in` on-the-fly without intermediate unpacking, minimizing area and power.
+
+5. This approach yields a balanced mux tree with smaller mux input sizes at every stage, lowering both delay and power, and reducing area due to simpler muxes.
+
+Overall, the mux tree breakdown is:
+
+- Stage 0 (sel[1:0]): 256 inputs grouped into 64 groups of 4 inputs each → 64 outputs
+- Stage 1 (sel[3:2]): 64 inputs grouped into 16 groups of 4 inputs each → 16 outputs
+- Stage 2 (sel[5:4]): 16 inputs grouped into 4 groups of 4 inputs each → 4 outputs
+- Stage 3 (sel[7:6]): 4 inputs → 1 output
+
+This four-stage 4-to-1 mux tree should improve timing by reducing mux input sizes, lower power by reducing fanout and switching load, and decrease area by avoiding large 16-to-1 muxes.
+
+The final code implements this hierarchy with proper slicing and generate loops.

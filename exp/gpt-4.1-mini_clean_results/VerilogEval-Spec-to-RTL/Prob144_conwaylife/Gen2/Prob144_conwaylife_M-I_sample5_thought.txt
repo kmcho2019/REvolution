@@ -1,0 +1,19 @@
+To improve the PPA (power, performance, area) metrics of the Game of Life 16x16 toroidal grid:
+
+- The original design computes next state for all 256 cells combinationally in one cycle, causing a long critical path and large area from unrolled neighbor summations.
+- Improvement strategy: pipeline the computation by processing the grid row by row over multiple clock cycles, significantly reducing combinational logic depth per cycle and improving max frequency.
+- Use a row counter to track which row is being computed in the current cycle, computing neighbors only for that row.
+- Store current grid state in a 256-bit register q.
+- Compute and store the next state of the active row in a 16-bit register next_row each cycle.
+- After computing all 16 rows over 16 cycles, update the whole grid with the new state.
+- The load input still synchronously loads the entire grid at once.
+- This reduces combinational complexity per cycle roughly by 16x, improving timing and area by serializing computation.
+- Power benefits from reduced toggling at any one time.
+- The next state update per cycle modifies only the row being computed in next_q register, then at the end q is updated.
+- For simple control, implement a state machine or counters for load, compute, and update phases.
+- The index wrapping uses the same masking technique for neighbors.
+- We keep arithmetic with shifts and masking to avoid expensive modulo/divisions.
+- Non-blocking assignments in sequential blocks and blocking in combinational logic are maintained for clarity.
+- This approach balances latency (16 cycles per generation) with much better timing and area.
+
+This pipelined, row-wise computation is a practical tradeoff for better PPA.

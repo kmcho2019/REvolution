@@ -1,0 +1,12 @@
+Here's a novel approach that separates the direction tracking from the action state, using two separate state machines:
+
+1. A direction state machine (left/right) that persists through actions
+2. An action state machine (walking/falling/digging) that handles immediate behaviors
+
+Key innovations:
+- Decoupled direction and action states for cleaner transitions
+- Direction is preserved in a separate register during falls/digs
+- Action state machine follows priority rules (fall > dig > bump)
+- Uses hierarchical state management for better maintainability
+
+This approach makes the state transitions more explicit and avoids the common pitfall of losing direction information during falls.

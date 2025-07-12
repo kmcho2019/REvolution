@@ -1,0 +1,14 @@
+Fuse the immediate Mealy-style output timing and compact packed registers from Example 1 with the clear separated counters and registered output from Example 2 for better timing and power balance.
+
+Key points of the fusion:
+- Use two states: A and B, minimal encoding.
+- In A, wait for s=1, keep counters zero, output z=0.
+- In B, use separate 2-bit cycle counter and 2-bit w_accum registers (for clearer arithmetic and faster timing).
+- Update counters only in B (clock enable) to reduce power.
+- At the 3rd cycle (cycle_cnt == 2), output z is generated combinationally by checking (w_accum + w) == 2, immediately in the same cycle (Mealy style) for minimal latency, but the output z itself is registered for timing stability.
+- After output, counters reset for next 3-cycle window.
+- Use synchronous reset active high.
+- Use non-blocking assignments in sequential logic and blocking in combinational logic.
+- This gives minimal state count, low area (small counters), good power (clock-enabled counters), and improved timing by separating arithmetic on small registers and registering output z.
+
+Overall, this fusion gives immediate decision on z in cycle 3 using current inputs, while output z is registered to avoid glitches and improve timing closure. It keeps counters separate for simpler addition and clear logic, and updates counters only in B for power saving.

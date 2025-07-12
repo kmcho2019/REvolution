@@ -1,0 +1,5 @@
+To design the TopModule, we can create separate counters for hours, minutes, and seconds. Each counter will be a 2-digit BCD counter (capable of counting from 0 to 99, but limited to the respective time ranges for hours, minutes, and seconds). The counters will be clocked by the fast-running clk and will increment only when ena is high. The reset signal will reset all counters to their initial states. The pm signal will be determined based on the hour value.
+
+We will implement the counters using Verilog's sequential logic, utilizing the always @(posedge clk) block to handle the clock and reset. The counters will be designed to wrap around to their minimum values when they reach their maximum values (e.g., when seconds reach 59, they will wrap around to 0, and minutes will increment; when minutes reach 59, they will wrap around to 0, and hours will increment, considering the 12-hour format).
+
+The pm signal will be generated based on the hour value, with hours 12-11 (in 24-hour format) being PM and hours 0-11 being AM.

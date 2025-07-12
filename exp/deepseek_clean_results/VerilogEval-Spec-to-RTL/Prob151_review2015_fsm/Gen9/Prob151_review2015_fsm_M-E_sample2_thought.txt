@@ -1,0 +1,14 @@
+Novel approach using a shift register with parallel pattern matching:
+1. Instead of sequential pattern detection, use a 4-bit shift register with parallel comparison for the 1101 pattern
+2. Implement a separate 2-bit counter to precisely control the 4-cycle shift operation
+3. Use explicit state transitions with clear conditions for each output
+4. Add a pattern_valid flag to ensure we only detect complete patterns
+5. Clear all working registers when returning to IDLE state
+6. Optimize state encoding for minimal transitions
+
+Key innovations:
+- Parallel pattern matching avoids timing issues with sequential detection
+- Explicit shift counter ensures exact 4-cycle operation
+- Pattern_valid flag prevents partial pattern detection
+- Clean state transitions with all outputs purely combinational
+- Complete reset of all registers when returning to IDLE

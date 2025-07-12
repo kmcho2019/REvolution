@@ -1,0 +1,10 @@
+The original design is mostly correct, but the green_duration shortening logic is embedded in the same always block as the state and timer updates, leading to subtle timing issues and potential multiple shortenings in one green cycle. Also, there is a possible off-by-one in how the remaining green time is computed and how green_duration is updated.  
+
+Improvements:  
+1. Separate green_duration update logic into its own always_ff block triggered only on the positive clock edge, with a register to record if green shortening has already been applied during the current green cycle. This prevents multiple shortenings per green cycle.  
+2. Carefully compute remaining green time as `green_duration - timer - 1` because timer starts at 0, and shorten green_duration only once per green cycle when a pass_request arrives and remaining green time > 10.  
+3. Reset the "shortening applied" flag at the beginning of each green state, so shortening can be applied anew in the next green cycle if needed.  
+4. Minor style and clarity improvements, keeping power and area efficient (minimal logic, no unnecessary operations).  
+5. The synchronization of pass_request is maintained for metastability protection.  
+
+These changes ensure correctness by removing potential multiple green_duration changes in one cycle, improve readability, and thus improve robustness with minimal added complexity or resource use.

@@ -1,0 +1,9 @@
+To optimize for better performance, power, and area (PPA), I will implement clock gating internally to disable clocking the flip-flops corresponding to bytes that are not enabled by byteena. This reduces dynamic power by preventing unnecessary toggling in unused bytes. Also, this reduces load on the clock tree, possibly improving timing. 
+
+The synchronous active-low reset remains as required. The positive edge clocking and DFFs remain intact.
+
+Internally, I will generate gated clocks for upper and lower bytes separately based on byteena bits ANDed with clk, and instantiate two 8-bit registers to hold the bytes. The gated clocks will be generated with minimal logic using AND gates (assuming safe clock gating in the target technology). 
+
+This approach trades some added gating logic for dynamic power savings and potentially better timing by reducing load on FF clock inputs and toggling of unused FFs, which often is a beneficial tradeoff for power-sensitive or high-frequency designs.
+
+If gating clock is not preferred, the second-best option is to keep the original mux approach, but as the question requests an improved PPA solution, clock gating is a valid and commonly used optimization.

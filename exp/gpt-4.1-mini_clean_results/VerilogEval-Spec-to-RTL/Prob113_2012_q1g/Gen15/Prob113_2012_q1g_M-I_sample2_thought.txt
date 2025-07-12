@@ -1,0 +1,22 @@
+The original design is already minimal and clear, but further optimizations can improve area and power slightly by reducing intermediate wires and sharing complements more aggressively. 
+
+Improvement strategy:
+- Factor out common terms in the expression to reduce redundant logic:
+  From the original:
+  f = (~x3 & ~x1)
+    | (~x3 & x2 & x1 & ~x0)
+    | (x3 & x2 & (~x0 | x1))
+
+  Notice (~x3) is common in first two terms:
+    (~x3 & (~x1 | (x2 & x1 & ~x0)))
+  Also, (~x0 | x1) appears only once.
+
+- Merge the first two terms under one AND with OR:
+  f = (~x3 & ( ~x1 | (x2 & x1 & ~x0) )) | (x3 & x2 & (~x0 | x1))
+
+- Reduce intermediate wires by combining logic inside the always small expressions.
+- Use minimal complements: only generate complements once and reuse.
+- This reduces the number of gates and nets, helping area and power.
+- Keep the decomposition to two-input AND gates for synthesis friendliness but minimize unnecessary wires.
+
+This approach improves power by fewer nets toggling and reduces area by removing extra intermediate nets, while maintaining the original function and timing characteristics.

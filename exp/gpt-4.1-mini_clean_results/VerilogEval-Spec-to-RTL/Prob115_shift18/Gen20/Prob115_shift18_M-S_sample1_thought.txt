@@ -1,0 +1,7 @@
+Simplify the shift selection by directly decoding the 2-bit "amount" input into four shift variants with a single 4-way mux, instead of cascading two 2-way muxes. This eliminates one level of multiplexing and reduces combinational complexity.
+
+Keep the same explicit concatenation for left and arithmetic right shifts, ensuring correct sign bit filling for arithmetic right shifts.
+
+Also, remove the unnecessary "else" branch in the always block where q <= q; since synthesis infers register hold by default if not assigned.
+
+This simplification reduces the mux hierarchy and makes the code more straightforward, without changing the functionality or shifting behavior.

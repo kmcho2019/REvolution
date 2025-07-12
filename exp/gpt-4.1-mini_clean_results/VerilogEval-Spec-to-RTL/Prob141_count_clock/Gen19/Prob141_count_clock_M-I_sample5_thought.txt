@@ -1,0 +1,12 @@
+To optimize the design for better PPA (performance, power, area), the main improvement is to simplify and reduce combinational logic in the hour output conversion and the seconds/minutes counting.
+
+Key changes:
+1. Store hours directly as BCD (tens and units digit) rather than binary 1-12, eliminating the combinational binary-to-BCD conversion logic and thus reducing combinational delay and power.
+2. Use the same tens/units BCD structure for hours, with tens digit only 0 or 1, units digit 0-9, and count 12 as "12" (BCD 0x12). This makes hours increment logic simple and symmetric to minutes and seconds.
+3. Adjust increment logic for hours tens/units similar to minutes and seconds, with special handling to wrap from 12 to 1.
+4. Update pm toggle when hour increments from 11 to 12 (detect units=1 and tens=1 transition).
+5. Maintain synchronous reset and enable behavior.
+6. Keep all counters as separate small BCD digits with straightforward carry logic to minimize critical paths and power.
+7. Use nonblocking assignments consistently and minimize nested conditional complexity by flattening conditions.
+
+This approach reduces combinational logic, avoids arithmetic for BCD conversion, and yields a uniform counting style for all time fields, improving timing and power with minimal area impact.

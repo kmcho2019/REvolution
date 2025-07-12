@@ -1,0 +1,15 @@
+To refactor the LFSR implementation while maintaining the same functionality, we can make the following changes:
+
+1. **Separate Combinational and Sequential Logic**: Use continuous assignments (`assign`) for the combinational logic (feedback and XOR operations) and keep only the register update in the `always` block. This makes the design more modular and potentially easier to optimize during synthesis.
+
+2. **Explicit Feedback Path**: Clearly separate the feedback calculation from the register update, making the design more readable and potentially helping synthesis tools with optimization.
+
+3. **Maintain Same Reset Behavior**: Keep the synchronous reset that initializes to 5'b00001.
+
+4. **Same Tap Positions**: Maintain the maximal-length configuration with taps at positions 5 and 3 (bit indices 4 and 2 in 0-based notation).
+
+The refactored version will:
+- Compute feedback and XOR operations using continuous assignments
+- Keep the register update in a single always block
+- Maintain identical functionality
+- Potentially improve readability and synthesis results

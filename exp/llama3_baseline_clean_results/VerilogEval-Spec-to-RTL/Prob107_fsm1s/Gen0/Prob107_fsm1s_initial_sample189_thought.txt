@@ -1,0 +1,9 @@
+To implement the Moore state machine as described, we first need to identify the states and their corresponding outputs. The states are A and B, with B being the reset state. State A has an output of 0, and state B has an output of 1.
+
+The next step is to understand the transitions. From state B, if the input in is 0, the machine transitions to state A. If in is 1, it stays in state B. From state A, if in is 0, it transitions back to state B, and if in is 1, it stays in state A.
+
+Given that reset is active-high synchronous, when the reset signal is high, the state machine should immediately transition to its reset state, which is B, regardless of the current state or input.
+
+We can use a 1-bit signal to represent the current state (0 for A, 1 for B, for example). The output can be directly derived from the current state. For the state transitions, we use a combinational logic block that takes the current state and input as inputs and decides the next state.
+
+In Verilog, we can use an always block to handle the state transitions and another always block for the output logic if needed, or we can derive the output directly from the state signal since the output is determined by the state in a Moore machine.

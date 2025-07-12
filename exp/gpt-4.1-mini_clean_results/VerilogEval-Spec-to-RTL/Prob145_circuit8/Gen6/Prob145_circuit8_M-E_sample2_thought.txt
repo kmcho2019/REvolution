@@ -1,0 +1,19 @@
+Instead of using both clock edges, I will design a synchronous finite state machine (FSM) that updates outputs p and q only on the rising edge of the clock.
+
+From the waveform analysis, p sometimes holds or toggles depending on a and prior states, and q follows p but changes more slowly and only after certain conditions.
+
+To capture this behavior cleanly with a single clock edge:
+
+- Use a 2-bit state register that tracks the internal state reflecting the combined behavior of p and q.
+- Define states so that:
+   * p and q outputs derive from the state bits.
+   * State transitions depend on input 'a' and current state.
+- Initialize state to 0 on simulation start (no reset needed per waveform).
+- Update state synchronously on posedge clock.
+- Output p and q directly from state bits.
+
+This approach makes the circuit purely synchronous, avoids using negedge clock, and can be verified to reproduce the waveform by state transition logic.
+
+In essence, p and q become the two bits of a state machine that changes state based on input 'a' and current state, following the observed output pattern from the waveform.
+
+This novel FSM approach respects synchronous design best practices and should produce matching outputs.

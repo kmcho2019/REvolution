@@ -1,0 +1,27 @@
+Revised Design Approach:
+
+1. Priority Handling:
+   - Implement strict priority: fall > dig > bump
+   - Check ground first in WALK state to handle falling with highest priority
+   - Only consider dig if ground is stable
+   - Only process bumps if neither falling nor digging
+
+2. Direction Logic:
+   - Track direction separately (1=left, 0=right)
+   - Handle bump_left and bump_right independently
+   - Preserve direction during falls and digs
+
+3. State Transitions:
+   - Add explicit conditions for DIG state entry (ground=1 and dig=1)
+   - Maintain direction when transitioning between states
+   - Properly reset fall counter when entering FALL state
+
+4. Output Logic:
+   - Maintain Moore-style outputs
+   - Ensure all outputs are zero in SPLAT state
+   - Correctly reflect walking direction after falls/digs
+
+5. Edge Cases:
+   - Handle simultaneous bumps (both left and right)
+   - Ignore bumps/digs during falls
+   - Preserve direction after falls complete

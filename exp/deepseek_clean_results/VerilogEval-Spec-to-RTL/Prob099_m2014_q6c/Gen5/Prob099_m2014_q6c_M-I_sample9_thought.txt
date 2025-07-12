@@ -1,0 +1,14 @@
+The original solution correctly implements the logic for Y2 and Y4 based on the state machine description, but we can optimize it further for better PPA (Power, Performance, Area) by:
+
+1. Simplifying the Y4 logic equation by observing that:
+   - Y4 is true for any state except A when w=1
+   - Y4 is also true for state D when w=0
+   - This reduces the number of OR terms from 5 to 2
+
+2. Maintaining the one-hot encoding property ensures only one state bit is active at a time, allowing simpler logic
+
+3. Using direct bit assignments without intermediate variables reduces logic levels
+
+Optimized logic equations:
+- Y2 remains the same (only depends on state A and w=0)
+- Y4 can be expressed as (not state A AND w=1) OR (state D AND w=0)

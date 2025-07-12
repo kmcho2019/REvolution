@@ -1,0 +1,7 @@
+Refactor the design by using three separate always blocks—one each for seconds, minutes, and hours counters—to more clearly separate the logic and make each counter handle its own update and rollover conditions. Each block will still be synchronous with asynchronous reset. This decomposition aligns with the original specification and facilitates easier understanding, debugging, and potentially better synthesis optimization for timing since each always block only processes its own logic.
+
+To coordinate the increments across counters, minutes increment when seconds roll over from 59 to 0, and hours increment when both minutes and seconds roll over from 59 to 0. This interdependence is captured by checking the respective conditions from other counters.
+
+All outputs remain the same widths, with Hours as 6-bit output but only 5 bits used logically (0–23). This maintains the specified output width. Non-blocking assignments and synchronous reset behavior are preserved for correct sequential logic.
+
+This structure also naturally reduces combinational path complexity within each always block since they only handle one counter's update and the necessary conditions for increment.

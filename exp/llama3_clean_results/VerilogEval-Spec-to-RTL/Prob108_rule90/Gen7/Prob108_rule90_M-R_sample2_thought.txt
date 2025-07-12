@@ -1,0 +1,9 @@
+To address the synthesizability issues and improve the performance of the Rule 90 one-dimensional cellular automaton implementation, we will refactor the code to use a combinational logic approach instead of a sequential one. This involves calculating the next state of each cell directly using continuous assignment (`assign`) statements, rather than using an `always` block.
+
+We will also consider the boundary conditions explicitly for the first and last cells, ensuring that the left neighbor of the first cell and the right neighbor of the last cell are both considered as 0 (off).
+
+To improve synthesizability, we will avoid using for loops within always blocks and instead utilize a more parallelized approach, taking advantage of Verilog's ability to handle large bitwise operations efficiently.
+
+By using a combinational logic approach, we can improve the timing performance and reduce the area required for the implementation. This approach also avoids the need for clock gating, as the combinational logic is always "on" and does not require a clock signal to operate.
+
+To implement this refactored design, we will use a combination of bitwise operators (`^` for XOR and `<<` or `>>` for shifting) to calculate the next state of each cell directly from the current state of its neighbors.

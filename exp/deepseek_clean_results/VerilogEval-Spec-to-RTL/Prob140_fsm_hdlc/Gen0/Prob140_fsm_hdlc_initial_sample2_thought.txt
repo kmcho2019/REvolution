@@ -1,0 +1,14 @@
+To implement the HDLC framing decoder, we'll use a Moore FSM with states representing the count of consecutive 1s seen. The states are:
+- STATE_0: initial state (previous bit was 0)
+- STATE_1: seen one 1
+- STATE_2: seen two 1s
+- STATE_3: seen three 1s
+- STATE_4: seen four 1s
+- STATE_5: seen five 1s (next 1 would trigger discard)
+- STATE_6: seen six 1s (flag condition)
+- STATE_ERR: seen seven or more 1s (error condition)
+
+The FSM transitions between states based on the input bit. Outputs are generated based on the current state and input:
+- disc: when in STATE_5 and input is 1
+- flag: when in STATE_6 and input is 0
+- err: when in STATE_6 and input is 1 (transition to STATE_ERR)

@@ -1,0 +1,30 @@
+The key problem in the original solution is the one-cycle pipeline delay between the prediction request and prediction outputs (`predict_taken` and `predict_history`). According to the spec, these outputs must correspond to the current prediction request and be valid in the same cycle (`predict_valid = 1`). The predictor uses the current GHR to form the index and produce the prediction, and must output the GHR state used for prediction immediately.
+
+Improvement strategy:
+
+1. **Make prediction outputs combinational in the cycle of the prediction request**  
+   This means `predict_taken` and `predict_history` are driven combinationally from the current `predict_pc` and current `ghr`. The `predict_history` output is simply the current `ghr`. The prediction uses `predict_pc ^ ghr` to index into the PHT and read the 2-bit counter.
+
+2. **Register the prediction inputs and PHT entry to update GHR speculatively on the next clock edge**  
+   To update the GHR speculatively for the next prediction, we need to capture the prediction outcome at the clock edge. This means a pipeline register stores whether the last cycle had a valid prediction and the predicted taken bit.
+
+3. **Update GHR with priority given to training misprediction recovery**  
+   On the positive clock edge:
+   - If `train_valid` and `train_mispredicted`, restore GHR to `train_history` (recover GHR state).
+   - Else if previous cycle's prediction was valid, update GHR speculatively with the predicted bit.
+
+4. **PHT updates happen on clock edge if `train_valid` is asserted**  
+   The PHT is updated with the actual outcome (`train_taken`) at the index given by `train_pc ^ train_history`.
+
+5. **Avoid pipeline registers delaying prediction outputs**  
+   Since `predict_taken` and `predict_history` are combinational outputs, they reflect the prediction computed from the current inputs and GHR synchronously.
+
+This resolves the timing mismatch, aligns outputs with the prediction request cycle, and maintains correct speculative updates and training.
+
+Additional optimization:
+
+- Initialize PHT entries to weakly not taken (2'b01) on reset.
+- Use packed arrays for PHT for better synthesis.
+- Keep code clean and comments clear.
+
+Overall, this design fully respects the spec timing, priorities, and Gshare logic, producing correct, timely outputs and state updates.

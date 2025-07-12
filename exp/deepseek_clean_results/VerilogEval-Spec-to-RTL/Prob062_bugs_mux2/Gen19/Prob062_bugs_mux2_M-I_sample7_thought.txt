@@ -1,0 +1,13 @@
+The current solution correctly implements an 8-bit 2-to-1 mux but can be optimized for better PPA (Power, Performance, Area). Here's the improvement strategy:
+
+1. Performance: The ternary operator is already optimal for timing, but we can ensure the synthesis tool uses the most efficient cells by being explicit about the mux structure.
+
+2. Power: We can reduce switching power by:
+   - Using a case statement which might lead to better power-optimized synthesis
+   - Making the selection logic more explicit to potentially enable better clock gating
+
+3. Area: While the current area is good, we can:
+   - Use a case statement that might map more efficiently to target technology
+   - Remove any potential for synthesis tool to infer more complex logic
+
+The improved version will use a case statement which often gives synthesis tools more optimization opportunities while maintaining the same functionality.

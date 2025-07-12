@@ -1,0 +1,26 @@
+To optimize this FSM implementation further, I'll focus on improving PPA metrics while maintaining functionality:
+
+1. State Encoding Optimization:
+- Reduce from 3-bit Gray code to 2-bit encoding since we only have 6 states
+- Carefully assign codes to maintain minimal transitions between frequently connected states
+- Encode output z directly in the state bits to eliminate separate output logic
+
+2. Logic Simplification:
+- Remove default case since all states are explicitly covered
+- Optimize state transition logic by grouping similar transitions
+- Use direct state bit assignment for output to reduce logic levels
+
+3. Power Optimization:
+- Maintain Gray-like properties in the 2-bit encoding to minimize switching
+- Keep synchronous reset for consistent timing
+
+4. Area Reduction:
+- 2-bit encoding saves one flip-flop compared to 3-bit
+- Simplified output logic reduces routing resources
+
+Key improvements:
+- 33% reduction in state register bits (3→2 bits)
+- Maintained minimal transition properties
+- Direct output from state bits
+- Cleaner state transition logic
+- Better timing from reduced logic depth

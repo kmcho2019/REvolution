@@ -1,0 +1,7 @@
+To improve PPA (power, performance, and area), simplify the design by storing only the previous input vector (8 bits) rather than a 2-bit shift register per bit. This reduces the register count from 16 flip-flops to 8, cutting area and dynamic power roughly in half. 
+
+Generate the positive edge detection by comparing the current input and previous input bits: pedge = (~prev_in) & in. To avoid the combinational path through pedge, register pedge output so that its value is stable and synchronized with the clock, improving timing closure and performance.
+
+Use non-blocking assignments consistently, combine pedge generation and registering into one clocked always block, which reduces combinational logic and ensures outputs update with one clock delay after the input transition as requested.
+
+This yields a clean, low-area, power-efficient positive edge detector with registered outputs suitable for higher frequency operation.

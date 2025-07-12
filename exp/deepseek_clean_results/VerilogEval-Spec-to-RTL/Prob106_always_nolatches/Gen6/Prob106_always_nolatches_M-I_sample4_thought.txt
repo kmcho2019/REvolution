@@ -1,0 +1,8 @@
+The current solution is already quite efficient, but we can make a few optimizations to further improve PPA:
+
+1. Remove the intermediate 'is_arrow' wire since we can directly compare the full 16-bit values, which might allow better constant propagation during synthesis.
+2. Use case equality (===) for comparisons since we're matching exact constants, which can be more efficient in some synthesis tools.
+3. Keep the parallel output structure for maximum timing performance.
+4. The direct full 16-bit comparisons may allow the synthesis tool to better optimize the comparison logic.
+
+These changes should maintain the same functionality while potentially reducing area and power slightly by eliminating the intermediate wire and using more efficient comparison operations.

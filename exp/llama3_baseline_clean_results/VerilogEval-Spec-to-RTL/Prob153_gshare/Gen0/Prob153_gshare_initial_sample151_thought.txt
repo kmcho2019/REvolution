@@ -1,0 +1,10 @@
+To implement the gshare branch predictor module, we need to follow these steps:
+1. Define the module interface with the specified input and output ports.
+2. Implement a 7-bit global branch history register and a 128-entry table of two-bit saturating counters.
+3. Calculate the index for the table using the 7-bit pc and 7-bit global history, hashed (using xor) into a 7-bit index.
+4. Implement the prediction logic, which uses the table to predict the branch direction when a prediction request is made.
+5. Implement the training logic, which updates the table and the global branch history register based on the actual branch outcome and whether the branch was a misprediction.
+6. Handle the case where training for a misprediction and a prediction occur in the same cycle, giving precedence to training.
+7. Implement the asynchronous reset logic to reset the module when the areset signal is high.
+
+We will use a combination of always blocks to implement the sequential logic and combinational logic for the prediction and training logic.

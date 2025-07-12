@@ -1,8 +1,0 @@
-The design is a state machine that tracks the water level based on three sensors s[1], s[2], s[3]. The outputs fr1, fr2, fr3, and dfr depend on the current water level and the direction of the last sensor change (whether the water level is rising or falling). We will store the previous sensor state to detect the direction of change. On reset, the system assumes the water level is low (no sensors asserted) and all outputs asserted. The logic for outputs is:
-
-- Above s[3] (all sensors asserted): no flow valves open (fr1=fr2=fr3=dfr=0)
-- Between s[3] and s[2] (s[1], s[2] asserted): fr1=1, fr2=fr3=0; dfr=1 if water level rising (previous level lower)
-- Between s[2] and s[1] (only s[1] asserted): fr1=fr2=1, fr3=0; dfr=1 if rising
-- Below s[1] (no sensors asserted): fr1=fr2=fr3=1, dfr=1 if rising
-
-We will implement a synchronous process that updates previous sensor state and outputs accordingly on each clock cycle. The dfr output is set if the current sensor state is higher than the previous sensor state (meaning water level rising). The comparison is done by checking if the current sensor pattern is "greater" than the previous in terms of water level (e.g., more sensors asserted or higher sensors asserted). We define a function to map sensor pattern to a level number for easy comparison.

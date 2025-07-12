@@ -1,0 +1,5 @@
+Implement the 64-bit subtractor using a segmented carry-select adder (CSA) architecture tailored for subtraction via two's complement addition. Split the 64-bit operands into 8 segments of 8 bits each. For each segment, precompute two possible results and carries assuming the incoming carry-in is 0 or 1, then select the correct one based on actual carry-in from the previous segment. This reduces carry propagation delay compared to ripple carry and simplifies logic compared to a full CLA.
+
+For overflow detection, use the sign bits of A, B, and the result exactly as described: overflow occurs if A and B have different signs, and the result sign differs from A's sign.
+
+This approach offers a good balance of speed and area by localizing addition complexity to small 8-bit blocks with carry select, avoiding complex hierarchical CLA logic. It also keeps overflow logic minimal and straightforward. The segmented CSA architecture is well-suited for FPGA and ASIC implementations, offering faster subtraction than ripple and simpler than full CLA designs.

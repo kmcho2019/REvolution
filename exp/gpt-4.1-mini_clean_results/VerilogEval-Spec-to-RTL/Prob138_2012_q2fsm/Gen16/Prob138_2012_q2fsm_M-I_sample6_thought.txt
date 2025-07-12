@@ -1,0 +1,9 @@
+The original one-hot encoding FSM is clear but uses 6 flip-flops and somewhat complex next-state logic. To improve power and area without sacrificing timing significantly, I will switch to a 3-bit binary encoded FSM for the six states. 
+
+Using binary encoding reduces flip-flop count from 6 to 3, reduces switching power, and simplifies next-state logic with a single combinational always block and a case statement, which synthesis tools can easily optimize.
+
+The synchronous reset remains active-high and resets the state to A (encoded as 3'b000).
+
+The output `z` will be combinationally assigned based on state being E (3'b100) or F (3'b101).
+
+This approach balances simplicity, reduces area and power by fewer FFs and simpler combinational logic, while maintaining good timing due to compact state representation and structured next-state logic.

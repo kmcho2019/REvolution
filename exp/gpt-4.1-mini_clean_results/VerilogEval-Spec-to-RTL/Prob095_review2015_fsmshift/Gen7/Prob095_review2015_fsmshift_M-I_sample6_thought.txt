@@ -1,0 +1,17 @@
+To ensure shift_ena is asserted exactly 4 cycles immediately after synchronous reset is released, I will refine the logic as follows:
+
+- On synchronous reset, I will synchronously initialize a 2-bit counter to 3, representing the number of remaining cycles to assert shift_ena.
+
+- When reset is high, shift_ena is asserted (because the counter is set to 3).
+
+- After reset is released, on each clock cycle if the counter is not zero, decrement it and keep shift_ena asserted.
+
+- When the counter reaches zero, shift_ena deasserts and remains low forever until the next reset.
+
+This counter-based approach avoids FSM complexity and off-by-one errors by focusing directly on counting the enable cycles remaining.
+
+Because reset is synchronous active-high, this method guarantees shift_ena is asserted for exactly 4 clock cycles starting immediately after reset is sampled at the clock edge, including the reset cycle itself.
+
+No enum or FSM is required, which reduces resource usage (better PPA).
+
+This is a simple, clean, and robust solution meeting the problem specification.

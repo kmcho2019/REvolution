@@ -1,0 +1,14 @@
+Bit-Sliced Enable Architecture:
+1. Instead of byte-level control, implement individual bit-level write enables
+2. Generate write enable signals for each flip-flop by combining byteena with bit position
+3. Use a single always block for all flip-flops with conditional updates
+4. Advantages:
+   - More granular control than byte-level enables
+   - Single always block reduces hierarchy overhead
+   - Clear visibility of all flip-flop behavior in one place
+   - Easier to extend to different bit widths
+   - Potential for better optimization during synthesis
+5. Implementation:
+   - Generate 16 individual enable signals
+   - Use ternary operator for next-state logic
+   - Maintain synchronous active-low reset

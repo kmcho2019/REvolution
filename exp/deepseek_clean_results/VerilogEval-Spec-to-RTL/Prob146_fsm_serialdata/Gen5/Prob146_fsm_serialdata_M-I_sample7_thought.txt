@@ -1,0 +1,17 @@
+To optimize the design for better PPA metrics, I'll implement the following improvements:
+
+1. **State Encoding**: Switch to one-hot encoding for better timing performance by reducing fan-out on state signals.
+
+2. **Counter Optimization**: Replace the 3-bit down counter with a 2-bit counter and additional logic to track when all 8 bits are received.
+
+3. **Power Reduction**: 
+   - Add an enable signal for the shift register to only update when needed
+   - Hold 'done' signal stable until next start bit is detected
+
+4. **Simplified State Machine**: 
+   - Remove explicit ERROR state and handle missing stop bits within STOP state
+   - Combine some state transitions to reduce logic levels
+
+5. **Output Registering**: Properly register outputs to improve timing paths.
+
+These changes should reduce area, improve timing, and lower power consumption while maintaining correct functionality.

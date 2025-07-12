@@ -1,0 +1,8 @@
+To optimize the design for better power and area without sacrificing performance, implement clock gating on the `prev_in` register updates to avoid unnecessary toggling when the input vector is stable (no changes from previous cycle). This reduces dynamic power due to switching.
+
+Specifically:  
+- Compare `in` with `prev_in` each clock cycle; update `prev_in` only if `in` has changed (using a clock-enable signal).  
+- Use this clock-enable to gate the register update, reducing unnecessary flip-flop toggling.  
+- Keep `pedge` registering as is for timing stability and glitch avoidance.
+
+This approach reduces power by minimizing unnecessary switching in the state register while keeping the positive edge detection logic intact and maintaining high frequency performance with minimal added logic.

@@ -1,0 +1,9 @@
+Refactor the hierarchical 256-to-1 mux by flattening the approach to a two-level mux tree with clear indexing and using `always @(*)` combinational blocks instead of continuous assignments within submodules. This changes the internal implementation style while preserving the same modular and hierarchical structure.
+
+- Replace the submodules' `assign` statements with combinational `always` blocks using case statements for mux selection.
+- Flatten Stage 1 to be 16 16-to-1 muxes implemented as combinational case statements over the 16 inputs.
+- Stage 2 remains a 4-to-1 mux, also implemented with combinational case statements.
+- Final Stage 3 4-to-1 mux also done similarly.
+- This style makes the mux function more explicit and easier to extend or modify internal mux logic.
+- Keep clear indexing and slicing with part selects for inputs.
+- This refactor keeps power, area, and performance close but changes coding style and improves code clarity regarding mux selection.

@@ -1,0 +1,8 @@
+The new architecture implements a bit-sliced design where each flip-flop has its own enable logic derived from the byte enable signals. This approach:
+1. Enables per-bit write control (though still constrained by byte enables)
+2. Allows for potential future expansion to individual bit enables
+3. Simplifies clock domain considerations by using a single always block
+4. Provides better visibility for formal verification tools
+5. Enables more flexible placement during physical design
+
+The design generates 16 individual enable signals by expanding the byte enables to each corresponding bit. While functionally equivalent, this structure may offer better optimization opportunities for synthesis tools.

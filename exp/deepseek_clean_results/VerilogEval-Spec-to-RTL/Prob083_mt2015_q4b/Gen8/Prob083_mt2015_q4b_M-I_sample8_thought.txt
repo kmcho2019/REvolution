@@ -1,0 +1,10 @@
+The current implementation works correctly but has optimization opportunities. Here's the improved strategy:
+
+1. Combine the two always blocks into one to eliminate unnecessary logic separation and enable better synthesis optimization
+2. Use non-blocking assignments for the registered signal (prev_equal) to ensure proper sequential behavior
+3. Add a clock input to make it synchronous, which is more typical for real designs and allows better power control
+4. This will:
+   - Reduce area by combining logic
+   - Improve timing by reducing combinational paths
+   - Lower power by only updating on clock edges
+   - Maintain the same functionality while being more synthesis-friendly

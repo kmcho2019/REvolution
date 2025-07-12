@@ -1,0 +1,35 @@
+The existing implementation uses a 2-bit binary encoded FSM, which is minimal and efficient. However, for better timing, power, and possibly area in FPGA or ASIC synthesis, one-hot encoding often results in faster next-state decoding because each state bit directly represents a state, simplifying logic and enabling flip-flops to be directly driven by decoded signals.
+
+The original solution’s one-hot encoding used 3 flip-flops (since there are 4 states, one is unused or can be left unused), but the user's original problem statement and state diagram actually define four states (A, B, C, D), so one-hot encoding will require 4 bits. However, D has minimal transitions, only reachable from A when only r2=1, and no grants assigned in A or D.
+
+To optimize:
+
+- Use one-hot encoding for the 4 states (A, B, C, D), each assigned to one flip-flop.
+- This reduces the complexity of the next-state logic since next state is just combinational logic on one-hot encoded signals.
+- Outputs g can be directly driven by the state bits for grant states (B, C, D).
+- Reset is synchronous active low, resetting into state A.
+- Separate always blocks for sequential (state registers) and combinational logic (next state, outputs).
+- Using one-hot encoding usually improves timing due to simpler next state logic with minimal fan-in per flip-flop, especially important for small FSMs.
+- The area penalty is slight due to one extra flip-flop, but timing gain can be significant.
+- Power may improve due to reduced combinational logic complexity and simpler state decoding.
+
+This design will preserve the same FSM behavior but potentially improve timing slack and reduce combinational power in logic synthesis.
+
+State encoding (one-hot):
+- A = 4'b0001 (state[0])
+- B = 4'b0010 (state[1])
+- C = 4'b0100 (state[2])
+- D = 4'b1000 (state[3])
+
+Outputs:
+- g[0] = 1 when in B
+- g[1] = 1 when in C
+- g[2] = 1 when in D
+
+Next state logic:
+- From A: priority order r0, r1, r2 to B, C, D respectively; else remain in A.
+- From B: stay in B if r0=1 else go to A
+- From C: stay in C if r1=1 else go to A
+- From D: stay in D if r2=1 else go to A
+
+This approach is fully synthesizable, clean, and straightforward.

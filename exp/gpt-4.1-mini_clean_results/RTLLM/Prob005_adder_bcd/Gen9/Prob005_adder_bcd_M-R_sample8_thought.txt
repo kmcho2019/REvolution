@@ -1,0 +1,7 @@
+Refactor the BCD adder by splitting the addition and correction steps more explicitly using intermediate wires without conditional operators.  
+- First, perform the binary addition of A, B, and Cin into a 5-bit sum (raw_sum).  
+- Next, use combinational logic to generate the BCD correction: a 4-bit wire added only when needed.  
+- Instead of a conditional operator, use a generate-correct-sum wire computed as raw_sum + correction.  
+- Determine the correction signal by comparison (>9) and use it to select a 4-bit correction value (6 or 0) via a multiplexer style logic.  
+- Finally, assign Sum and Cout from corrected sum bits.  
+This method clarifies the addition and correction path, avoids the use of a ternary operator inside addition, and may improve synthesis friendliness by separating correction logic clearly.

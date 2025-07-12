@@ -1,0 +1,25 @@
+The module performs fixed-point subtraction with sign-aware logic. Both inputs are signed fixed-point numbers represented in two's complement with N bits and Q fractional bits. The subtraction handles three cases:
+
+1. Same sign inputs: simply subtract b from a.
+2. Different sign inputs: effectively add the absolute values and determine the sign based on magnitude comparison.
+3. Zero result: explicitly force the sign bit to 0.
+
+Since inputs are in two's complement, the simplest approach is to perform subtraction as c = a - b directly, and then handle the zero result sign bit correction. The additional complexity about sign handling is naturally covered by two's complement arithmetic, but the problem statement wants explicit sign-aware logic with absolute value addition in different sign case.
+
+To implement this:
+- Extract sign bits of a and b.
+- If signs equal: res = a - b.
+- If signs differ: 
+   - Compute absolute values of a and b.
+   - Add them.
+   - Determine sign of result by magnitude comparison.
+- Set output c accordingly.
+- Handle zero result explicitly by setting sign bit 0.
+
+Note: Since two's complement subtraction inherently covers all cases, the main difference is to mimic the described behavior and ensure sign bit correctness at zero.
+
+The code will use parameters Q and N. Inputs and outputs are N-bit wide.
+
+We use registers to store intermediate results. The final output is registered from res.
+
+This approach maintains fixed-point precision since subtraction and addition use full N bits including fractional bits Q.

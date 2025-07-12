@@ -1,0 +1,11 @@
+To optimize for PPA, reduce logic depth and gate count by using vector-level operations without slicing wherever possible. For out_both and out_any, the original code uses slices that shift by one bit; these can be implemented via left and right shifts plus bitwise AND/OR, which are typically more efficient and easier for synthesis tools to optimize. This approach also makes boundary handling clearer and potentially reduces the number of gates.
+
+Specifically:
+
+- For out_both: Use (in & (in << 1)) to compare each bit with its left neighbor; then explicitly set the last bit to zero.
+- For out_any: Use (in | (in >> 1)) to compare each bit with its right neighbor; then explicitly set the first bit to zero.
+- For out_different: Keep the wrap-around XOR with a rotation by one to the right using {in[0], in[99:1]}, which is optimal.
+
+This approach reduces explicit slicing and may help synthesis tools to better optimize timing and area. Also, explicitly assign zeros to the boundary bits to avoid any glitches or unknown values.
+
+This maintains purely combinational logic with minimal area and optimal critical path, likely improving power and area slightly without changing functionality.

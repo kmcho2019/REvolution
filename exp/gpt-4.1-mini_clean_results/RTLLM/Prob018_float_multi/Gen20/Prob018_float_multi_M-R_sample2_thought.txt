@@ -1,0 +1,11 @@
+Refactor the original 3-stage pipeline float multiplier by separating combinational and sequential logic more explicitly. Instead of a single counter controlling pipeline stages with a case statement, create a simple FSM with explicit states for each stage (IDLE, LOAD, MUL, NORM) for clarity and extensibility.
+
+Key changes:
+- Use a state machine with named states instead of a 2-bit counter.
+- Perform all combinational calculations in separate always_comb or assign blocks, reducing logic inside clocked always blocks.
+- Register inputs and intermediate signals in sequential blocks corresponding to each state.
+- Maintain the 3 pipeline stages conceptually, but with explicit state transitions for better readability and control.
+- Use separate always blocks for state transitions, output registers, and combinational calculations.
+- Use nonblocking assignments exclusively in sequential logic.
+- This modularizes the design and makes it easier to extend or modify pipeline stages or handle additional cases.
+- The floating-point logic and rounding remain unchanged, ensuring IEEE-754 compliance.

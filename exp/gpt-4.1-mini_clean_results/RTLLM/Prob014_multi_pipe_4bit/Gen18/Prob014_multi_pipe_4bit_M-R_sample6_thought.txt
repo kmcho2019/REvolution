@@ -1,0 +1,8 @@
+Refactor the pipeline multiplier by separating the pipeline registers into distinct always blocks for intermediate sums, and computing sums combinationally between pipeline registers. Use explicit wires for intermediate sums, which are then registered in pipeline stages. This approach clarifies data flow, avoids simultaneous read-write on the same registers, and leverages combinational logic for sums instead of adding in the same clock edge as registering. Also, implement the reset logic to clear pipeline registers and output synchronously on clock edges, using synchronous active-low reset.
+
+The core multiplication via generate block and zero extension remains unchanged. The main difference is the split into:
+- Combinational addition of partial products in the first pipeline stage feeding stage1 registers.
+- Combinational addition of stage1 registered outputs feeding stage2 registers.
+- Output registered stage2 sums.
+
+This provides clearer pipeline stages with combinational logic in between, improving readability and potential synthesis timing.

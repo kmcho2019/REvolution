@@ -1,0 +1,10 @@
+Use a modulo-7 counter to divide the clock period into 7 equal parts. Generate two pulses representing half-periods of the fractional output clock but with uneven durations of 4 and 3 input clock cycles, respectively.
+
+To achieve the 3.5 division:
+
+- Create two internal clocks: clk_a and clk_b.
+- clk_a toggles at count values 0 and 4, so its high and low durations correspond to 4 and 3 input clocks.
+- clk_b is clk_a delayed by half an input clock period, realized by sampling clk_a at negedge clk.
+- The final output clk_div is the OR of clk_a and clk_b, effectively doubling the output frequency and creating a 50% duty cycle at a fractional frequency (clk / 3.5).
+
+This approach leverages the double-edge technique without complex phase shifting or metastability issues, resulting in a smooth fractional frequency divider with balanced duty cycle.

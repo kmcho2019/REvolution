@@ -1,0 +1,9 @@
+To simplify the solution, we will focus on reducing the complexity of the design while maintaining its functionality. The current design uses separate modules for next state logic and output logic, which improves maintainability and scalability. However, we can simplify the design by removing unnecessary logic and signals. 
+
+One area for simplification is the clock gating logic. The current implementation uses a separate `clk_enable` signal to enable or disable the clock, which can be removed. Instead, we can directly use the condition `if (y == next_y)` to decide whether to update the state or not.
+
+Another area for simplification is the state machine encoding. The current implementation uses a one-hot encoding, which can be area-inefficient for large state machines. However, since the state machine has only 5 states, we can stick with the current encoding scheme.
+
+We will also simplify the next state logic by removing the `NextStateModule` and `OutputModule` and directly implementing the logic inside the `TopModule`. This will reduce the overall area usage and simplify the design.
+
+Finally, we will remove the `clk_enable` signal and directly use the `next_y` signal to update the state.

@@ -1,0 +1,18 @@
+Implement a fully combinational IEEE-754 single-precision floating-point multiplier that operates in one clock cycle and outputs the result registered on the clock edge. To keep latency low and avoid multi-cycle FSM complexity, perform all operations combinationally with registered inputs and outputs synchronized by the clock.
+
+The design steps:
+- On clock rising edge, capture inputs and decompose into sign, exponent, and mantissa.
+- Immediately in combinational logic, determine special cases (NaN, Inf, zero, denormals).
+- Compute sign XOR, add exponents minus bias, and multiply mantissas with implicit leading bits.
+- Normalize the product mantissa and adjust exponent accordingly.
+- Implement IEEE-754 round-to-nearest-even rounding using guard, round, and sticky bits.
+- Handle overflow (set to Inf), underflow (set to zero), and special cases.
+- Register the final assembled 32-bit IEEE-754 output.
+
+This approach avoids multi-cycle state machines, reduces control complexity, and gives a single-clock-cycle latency multiplier suitable for high-performance datapaths. Internal signals like mantissa product and rounding bits are all combinational expressions. The pipeline boundary is the input and output registers clocked on clk.
+
+While the combinational logic is large (e.g., 24x24-bit multiplier), this is common in high-performance floating-point units. For area/power tradeoffs, multiplier can be replaced by dedicated hardware or partial pipelining outside this module.
+
+Internal signals a_mantissa, b_mantissa, product, exponents, signs, and rounding bits are registers to keep synchrony and clear code organization. No FSM or counters are used, simplifying control.
+
+This design suits systems prioritizing throughput and low latency over area or multi-cycle sequencing.

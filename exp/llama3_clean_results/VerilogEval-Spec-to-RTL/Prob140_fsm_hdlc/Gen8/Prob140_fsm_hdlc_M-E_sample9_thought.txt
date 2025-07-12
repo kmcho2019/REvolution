@@ -1,0 +1,7 @@
+To approach this problem with a novel architectural idea, let's consider leveraging a combination of counters and a simple state machine to detect the specific patterns required by the HDLC protocol. The main challenge in the current implementation is the direct enumeration of states for each possible sequence of ones. Instead, we can use counters to track the number of consecutive ones and zeros, significantly simplifying the state machine.
+
+Our novel approach will involve two main components: a counter for consecutive ones and a counter for consecutive zeros. The state machine will then use these counters to determine when a flag, discard, or error condition is met. This method reduces the complexity of the state machine and potentially improves the PPA metrics by minimizing the combinational logic required for state transitions.
+
+Additionally, to improve power efficiency, we will ensure that our counters and state machine are only updated when necessary, and we will use reset and clock gating techniques where applicable to minimize unnecessary switching activity.
+
+By decoupling the state machine's complexity from the number of consecutive bits to be detected, this approach not only simplifies the design but also makes it more scalable and easier to modify if the requirements change.

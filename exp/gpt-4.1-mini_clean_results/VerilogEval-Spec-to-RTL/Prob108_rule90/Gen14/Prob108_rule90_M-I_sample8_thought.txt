@@ -1,0 +1,10 @@
+To improve the given design's power and area while maintaining functionality and timing, I will reduce block size from 64 bits to 32 bits. This finer partitioning reduces fanout on inter-block boundary signals and XOR gates, easing routing and lowering dynamic power by limiting large fanout nets. Additionally, I will optimize the boundary wiring by combining boundary signals into a single bus, reducing the total number of wires and congestion. 
+
+Instead of generating separate left and right boundary arrays, I will directly connect neighbors between blocks without intermediate arrays, minimizing routing overhead. Also, I will use explicit nonblocking assignments and carefully position combinational logic in a single always_comb block inside each block to reduce net count and improve synthesis.
+
+Overall:
+- Use 16 blocks of 32 bits instead of 8 blocks of 64 bits.
+- Simplify boundary signals, eliminate unnecessary intermediate wires.
+- Maintain zero boundary conditions on the global ends.
+- Keep load synchronous and nonblocking.
+- This should reduce area by smaller blocks, power by reduced fanout and switching, and keep performance stable due to smaller fanout XOR trees.

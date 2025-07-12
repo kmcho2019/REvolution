@@ -1,0 +1,7 @@
+To implement a 64-bit Johnson counter, we can utilize a synchronous design approach with a 64-bit register to hold the current count value. On every rising edge of the clock signal or the falling edge of the reset signal, the counter value will be updated based on the current least significant bit (Q[0]).
+
+We will use an if-else statement inside the always block to handle the reset condition and the increment/decrement logic. If the reset signal (rst_n) is low, the counter value (Q) will be set to 0. Otherwise, we will check the value of the least significant bit (Q[0]) to determine whether to increment or decrement the counter.
+
+For incrementing, we will shift the current value (Q[63:1]) to the right and append a 1 at the most significant bit position. For decrementing, we will shift the current value (Q[63:1]) to the right and append a 0 at the most significant bit position.
+
+The use of non-blocking assignments (<=) will ensure that the updates to the Q register are made in a safe and predictable manner.

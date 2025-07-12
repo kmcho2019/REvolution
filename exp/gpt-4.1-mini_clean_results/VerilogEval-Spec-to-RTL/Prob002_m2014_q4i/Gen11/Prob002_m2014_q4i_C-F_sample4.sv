@@ -1,0 +1,5 @@
+`default_nettype none
+module TopModule(output wire out);
+    assign out = 1'b0;
+endmodule
+`default_nettype wire

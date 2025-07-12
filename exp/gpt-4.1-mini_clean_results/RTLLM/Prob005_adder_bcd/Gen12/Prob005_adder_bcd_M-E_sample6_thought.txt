@@ -1,0 +1,8 @@
+Implement the BCD adder by first performing the binary addition of A, B, and Cin producing a 5-bit intermediate sum. Instead of checking the sum against 9 directly via a compound boolean condition, use two simpler conditions:
+
+1. If the raw_sum is greater than 9, correction is needed.
+2. Alternatively, if the sum's upper nibble bits indicate an invalid BCD (sum[3] & (sum[2] | sum[1])) or carry out from bit 3 addition.
+
+Once correction_needed is asserted, add 6 (0110) to the lower 4 bits of raw_sum, ignoring the MSB since it's only for carry.
+
+The architecture uses a 4-bit adder with carry-in from lower bits to add the correction value selectively, and then derives Cout from the corrected sum carry-out. This approach decomposes the correction into a small 4-bit adder, simplifying the logic and potentially reducing critical path by keeping correction addition local to 4 bits instead of a 5-bit addition. It also separates carry generation cleanly, improving modularity and synthesis optimization opportunities.

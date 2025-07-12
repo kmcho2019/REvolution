@@ -1,0 +1,12 @@
+To implement a fractional frequency divider by 3.5 using double-edge clocking and phase-shifted clocks, we follow these steps:
+
+1. Use a modulo-7 counter (0 to 6) to create uneven clock periods representing counts of 4 and 3 input clock cycles.
+2. Generate two intermediate clocks (`clk_intA` and `clk_intB`) with differing duty cycles:
+   - `clk_intA` is high for 4 cycles, low for 3 cycles.
+   - `clk_intB` is high for 3 cycles, low for 4 cycles.
+3. Create phase-shifted versions of these clocks by toggling their states on both the positive and negative edges of the input clock, effectively achieving half-cycle shifts.
+4. OR the phase-shifted clocks to produce a fractional frequency output `clk_div` with uniform period and improved duty cycle.
+
+This method directly synthesizes the fractional frequency clock with the desired division ratio (3.5) and balances the duty cycle by combining two clocks out of phase by half an input clock period.
+
+The implementation uses dual-edge triggered registers and a counter, requiring careful use of nonblocking assignments and reset to ensure glitch-free operation.

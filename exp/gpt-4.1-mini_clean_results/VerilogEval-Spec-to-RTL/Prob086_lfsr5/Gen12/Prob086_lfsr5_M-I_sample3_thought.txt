@@ -1,0 +1,12 @@
+The original design is already clean and simple for a 5-bit maximal-length Galois LFSR with taps at bits 5 and 3 and synchronous reset. To optimize for better PPA, the main opportunity is reducing combinational logic delay and switching power.
+
+Improvement strategy:
+1. Reduce combinational logic depth by merging the feedback XOR operations into fewer steps.
+2. Use a single non-blocking assignment with concatenation to simplify logic and allow synthesis tools to optimize the shift operation and XOR gates more effectively.
+3. This can reduce routing and logic levels, potentially improving timing (wns) and power by reducing switching nodes.
+4. The synchronous reset remains unchanged to ensure a proper non-zero seed.
+5. Maintain all signals as registers updated on the clock edge to avoid combinational loops.
+
+This approach trades a bit of readability for better synthesis optimization. The LFSR logic remains functionally identical but is more concise, likely easing the critical path and potentially reducing area by leveraging synthesis optimization on concatenations.
+
+This change aims to maintain functional correctness while improving timing and power metrics.

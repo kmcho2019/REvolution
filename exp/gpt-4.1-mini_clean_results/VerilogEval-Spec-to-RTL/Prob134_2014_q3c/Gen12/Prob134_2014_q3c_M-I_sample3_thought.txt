@@ -1,0 +1,13 @@
+The existing solution is correct and compact, but it relies on explicit 3-bit equality checks for the current state y, which synthesize into comparators. These comparators may introduce delay and power cost. To optimize for better PPA, I propose:
+
+1. Encode the present state y into one-hot signals representing the 5 valid states, avoiding direct equality comparators.
+2. Generate next state bits and output z by decoding only these one-hot signals combined with input x, using simple muxes and logic operations.
+3. Treat undefined states (101,110,111) as zero state or mask them out, so logic is optimized for valid states only.
+4. This approach reduces the complexity of comparators, replacing them with decoded one-hot signals and reduces logic levels.
+5. Also use continuous assignments with concise logic to keep power low.
+
+This one-hot decoding technique typically reduces combinational path delay, switching activity, and can simplify synthesized LUTs compared to multiple equality checks on multi-bit values.
+
+Thus, we trade a few extra wires (one-hot signals) for simpler combinational logic, improving timing and power while maintaining area efficiency.
+
+The module interface and behavior remain unchanged.

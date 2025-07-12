@@ -1,0 +1,9 @@
+Fuse the masked update approach from Example 1 with the per-byte conditional assignment style of Example 2 for clarity, modularity, and slight logic simplification. Implement two separate always blocks—one for each byte slice (upper and lower bytes)—each with synchronous active-low reset and byte-enable controlled updating. This modular approach helps the synthesis tool better optimize each byte independently, potentially reducing combinational logic and critical path delay compared to a single large masked expression. It also improves readability by isolating logic per byte and preserves functionality with non-blocking assignments. Output q is a concatenation of these two byte registers, ensuring a clean interface.
+
+This fusion yields:  
+- Performance: Reduced combinational masking logic per byte, potentially shorter critical paths.  
+- Power: Updating only relevant bytes independently prevents unnecessary toggling.  
+- Area: Slightly more registers (two 8-bit regs) but simpler logic; overall area is comparable or better due to simpler combinational logic.  
+- Readability: Clear byte-wise update semantics with explicit always blocks.
+
+Synchronous reset is applied independently in each always block, adhering to the spec. The final output is formed by concatenating the two registers.

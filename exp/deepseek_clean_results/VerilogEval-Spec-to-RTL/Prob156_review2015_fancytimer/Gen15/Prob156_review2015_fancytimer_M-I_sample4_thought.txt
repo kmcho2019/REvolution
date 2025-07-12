@@ -1,0 +1,25 @@
+Improvement Strategy:
+
+1. **Precise Cycle Counting**:
+   - Use two counters: one for tracking 1000-cycle blocks (delay_counter) and another for tracking cycles within each block (cycle_counter)
+   - This eliminates the need for division in count calculation and ensures exact cycle counts
+   - Reset counters properly when entering COUNT state
+
+2. **Pattern Detection Enhancement**:
+   - Clear pattern register immediately after detection to prevent false matches
+   - Ensure pattern shifts only happen in IDLE state
+
+3. **Output Timing Correction**:
+   - Calculate count output directly from delay_counter (no division needed)
+   - Ensure done asserts for exactly one cycle before waiting for ack
+   - Make counting output accurate throughout counting phase
+
+4. **State Machine Optimization**:
+   - Simplify state transitions with clear conditions
+   - Remove redundant signals and registers
+   - Ensure proper initialization of all registers
+
+5. **Acknowledgment Handling**:
+   - Maintain done signal until acknowledgment received
+   - Clear done only after ack is detected
+   - Proper reset to IDLE state after acknowledgment

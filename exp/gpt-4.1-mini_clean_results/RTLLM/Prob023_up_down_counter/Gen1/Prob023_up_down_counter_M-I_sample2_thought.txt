@@ -1,0 +1,3 @@
+To improve PPA (Performance, Power, and Area), optimize the increment/decrement logic by using a single adder with a signed increment value based on up_down. Instead of separate addition and subtraction, perform count + (up_down ? +1 : -1). This reduces logic complexity by unifying the arithmetic operation. Also, add an enable signal internally that only updates the counter if the direction control changes or counting is needed; however, since no enable input is given, we keep the counter always active. The reset remains synchronous for simplicity and timing consistency.
+
+This method keeps the code clean and potentially improves synthesis results by merging increment and decrement into one addition operation with a signed increment operand.

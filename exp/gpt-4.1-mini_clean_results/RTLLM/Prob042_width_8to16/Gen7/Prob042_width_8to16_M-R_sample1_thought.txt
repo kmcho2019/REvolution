@@ -1,0 +1,10 @@
+Refactor the design by separating combinational next-state logic from sequential state and output register updates. Use a 2-bit FSM with states IDLE and HOLD to clearly track whether we have one stored input. 
+
+- Store first 8-bit input in `data_lock` on valid_in in IDLE.
+- In HOLD, when second valid_in arrives, store it in `data_second`.
+- On the next clock cycle (after receiving second data), produce `valid_out` and `data_out = {data_lock, data_second}`.
+- Clear stored data and go back to IDLE after output.
+
+By explicitly separating combinational next_state and sequential state updates and also producing output via a registered `output_valid` signal that is one cycle delayed from the second input, we ensure correct timing. All registers update on posedge clk or negedge rst_n, and outputs are synchronous and registered as per spec. This approach avoids race conditions by clearly controlling state transitions and output enable signals, keeping data stable.
+
+Additionally, valid_out is only asserted for one cycle right after output data is ready, and data_lock and data_second are cleared to avoid stale data. This clean separation of combinational and sequential logic improves clarity and simulation correctness.

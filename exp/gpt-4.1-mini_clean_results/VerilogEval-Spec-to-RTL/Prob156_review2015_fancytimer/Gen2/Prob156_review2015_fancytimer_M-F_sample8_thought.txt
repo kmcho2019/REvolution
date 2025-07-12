@@ -1,0 +1,33 @@
+To fix the design, I will address all key feedback points as follows:
+
+1. **Replace division by 1000 with a simpler counter cascade**  
+   Instead of total_cycle_count counting all cycles and then dividing by 1000, I will implement a two-level counting scheme:  
+   - A "ms_count" counter counting from 0 to 999 to track 1000 cycles.  
+   - A "step_count" counter that counts down from delay to 0 each time ms_count wraps.  
+   This eliminates division and ensures exact timing.  
+   Total counting cycles = (delay + 1) * 1000 exactly.
+
+2. **Fix pattern detection timing**  
+   The pattern shift register will shift in the new bit at the beginning of the cycle, and the FSM will use the updated pattern in the next cycle to move to LOAD_DELAY. This ensures no data misalignment.
+
+3. **Remove redundant signal clearing on every cycle**  
+   Signals like count, counting, done will be updated only when their values change or on state transitions to avoid glitches.
+
+4. **Use non-blocking assignments consistently**  
+   All sequential logic will use non-blocking assignments.
+
+5. **Simplify FSM and counters**  
+   The FSM will have clear states: SEARCH, LOAD_DELAY, COUNT, DONE.  
+   In LOAD_DELAY, shift in delay bits MSB first correctly (by shifting left and inserting new bit at LSB).  
+   Counting state uses ms_count and step_count counters.
+
+6. **Outputs**  
+   - `counting` is high only in COUNT state.  
+   - `done` is high only in DONE state.  
+   - `count` outputs current remaining step_count (delay countdown).  
+   - When not counting, count is don't care (set to zero).
+
+7. **Reset behavior**  
+   Synchronous reset sets the module to SEARCH state and clears all registers.
+
+This approach ensures cycle-accurate timing, correct FSM transitions, stable output signals, and synthesizable, simple logic without division or multiplication.

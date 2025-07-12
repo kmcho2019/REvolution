@@ -1,0 +1,13 @@
+Refactor the original implementation by expressing the function f as a disjunction of minterms explicitly derived from the Karnaugh map, rather than factoring the expression. Each minterm corresponds to a specific combination of inputs where f=1. This approach uses the original bits directly and builds f as an OR of ANDed terms representing the minterms from the Karnaugh map without pre-factoring.
+
+This structure:
+- Makes the direct relation between the Karnaugh map entries and logic terms clearer.
+- Avoids complemented intermediate wires and uses direct negation in the minterms.
+- Helps in verifying correctness by directly mapping each minterm.
+- Keeps the implementation purely combinational with `assign`.
+- Enhances readability by showing exactly which input combinations generate f=1.
+
+The function is then the OR of the minterms where f=1:
+- For x[3:0] = 0000, 0010, 1100, 1101, 1110, 1010, 1011, 1000, 1001, and 1111.
+
+Expressing these minterms explicitly ensures the function remains logically equivalent and possibly aids clarity at the expense of minimal literal count.

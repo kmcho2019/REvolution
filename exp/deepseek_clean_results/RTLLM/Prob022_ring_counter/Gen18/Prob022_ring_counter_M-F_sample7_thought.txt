@@ -1,0 +1,17 @@
+The feedback indicates the simulator doesn't support array assignments in case statements. To fix this, we'll:
+1. Use a simpler shift register approach instead of explicit state machine
+2. Maintain the same functionality (one-hot encoding, cyclic behavior)
+3. Use a standard shift-left operation with wrap-around
+4. Keep the reset initialization to 8'b00000001
+5. This approach will:
+   - Be more simulator-friendly
+   - Still maintain clear one-hot behavior
+   - Use basic Verilog operations that all tools support
+   - Be more concise while equally functional
+   - Easily map to hardware shift registers
+
+Key changes:
+- Replace state machine with shift operation
+- Use concatenation for the wrap-around
+- Keep same reset behavior
+- Simpler implementation with same external behavior

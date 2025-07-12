@@ -1,0 +1,15 @@
+The fusion strategy combines the clarity and minimal register usage from Example 2 with the explicit two always block structure requested in the problem statement from Example 1, while improving power and area by avoiding unnecessary input registers and extra generate loops. 
+
+Key points of fusion:
+- Keep two always @(*) blocks as required:
+  1) One simply latches inputs into combinational registers (`a_reg`, `b_reg`) to respect the problem statement.
+  2) Another performs the division logic purely combinationally using the latched registers.
+- Use a generate loop within the second always block to mimic the iterative shift-subtract approach cleanly, avoiding redundancy in quotient assembly.
+- Use 9-bit wires internally to hold remainder stages since remainder + next dividend bit can be 9 bits wide.
+- Store quotient bits during the division steps directly into a combinational register `quotient`.
+- Output zero-extended remainder (lower 8 bits) as 16-bit `odd`.
+- Avoid multiple generate loops and unnecessary intermediate wires to reduce complexity and power.
+- The division is fully combinational, with a 16-step shift-subtract sequence unrolled in combinational logic inside the always block, triggered by changes in inputs.
+- This respects the original problem's requirement for two always blocks, purely combinational logic, and provides code clarity and synthesis friendliness.
+
+This approach balances the readability, combinational clarity, and problem constraints, while incorporating efficiency improvements from both examples.

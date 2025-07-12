@@ -1,0 +1,13 @@
+The original approach uses two counters toggling clk_div1 and clk_div2 on both HALF_DIV and NUM_DIV-1 counts, causing double toggles per cycle and timing issues. Also, cnt1 and cnt2 are incremented independently on posedge and negedge clk, which can cause misalignment and glitches.
+
+To correct this, we simplify the logic: each counter counts up to NUM_DIV-1; on reaching NUM_DIV-1, the respective clk_div signal toggles and the counter resets. This ensures a single toggle per full count cycle.
+
+Importantly, to achieve a duty cycle close to 50% for odd division, we toggle clk_div1 on the positive edge when the counter reaches HALF_DIV, and toggle clk_div2 on the negative edge when its counter reaches HALF_DIV. This staggers toggling events evenly across the input clock period.
+
+Thus, clk_div1 toggles at posedge clk at count = HALF_DIV, cnt1 resets at NUM_DIV-1; similarly, clk_div2 toggles at negedge clk at count = HALF_DIV, cnt2 resets at NUM_DIV-1.
+
+The final clk_div is the OR of clk_div1 and clk_div2, generating an odd division output with close to 50% duty cycle.
+
+Also, counters and toggles are carefully synchronized, avoiding multiple toggles per cycle. The reset initializes all registers.
+
+This approach respects the odd divisor, ensuring one toggle per half cycle on posedge and negedge respectively and results in a clean divided clock output.

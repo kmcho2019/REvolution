@@ -1,0 +1,13 @@
+Use a simple 2-bit FSM with states IDLE, BYTE2, BYTE3 to track byte count after sync detection.
+
+On reset, go to IDLE. When in IDLE, wait for a byte with in[3]=1 to mark first byte; store it in out_bytes[23:16].
+
+Then on subsequent bytes, shift the previous bytes down by 8 bits and store the new byte in out_bytes[23:16].
+
+After receiving the third byte, assert done for one cycle.
+
+This approach uses a shift-register style to store the 3-byte message, simplifying the logic and removing explicit byte lane indexing while preserving functionality and synchronous reset.
+
+Output done is asserted only for one cycle after receiving the third byte.
+
+All registers update on posedge clk with synchronous active-high reset.

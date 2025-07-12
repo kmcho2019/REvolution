@@ -1,0 +1,18 @@
+The improved solution addresses the issues in the original implementation by:
+
+1. Implementing proper synchronous reset behavior
+2. Correcting the output logic to match the specification:
+   - fr2 should be active only when below s[0] (all sensors off)
+   - fr1 should be active when between s[1]-s[0] (only s[0] on) or below s[0]
+   - fr0 should be active when between any sensors (any sensor below s[2] on)
+   - dfr should indicate when water level is rising (current level higher than previous)
+
+3. Using a state machine approach to:
+   - Track current water level (4 possible states)
+   - Remember previous level for dfr calculation
+   - Generate outputs based on current state
+
+4. Optimization:
+   - Clear state encoding for better readability
+   - Minimal logic for output generation
+   - Proper synchronous reset implementation

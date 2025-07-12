@@ -1,0 +1,9 @@
+Implement an 8-bit multiplier using a sequential shift-and-add algorithm within a synchronous design. Instead of a purely combinational approach, this uses a clocked process and an internal 16-bit accumulator (product register). The multiplicand (A) and multiplier (B) are loaded into internal registers. On each clock cycle, the least significant bit of the multiplier register is checked; if it is 1, the multiplicand is added to the product. Then the multiplicand is shifted left by one, and the multiplier is shifted right by one bit. This repeats for 8 cycles to complete the multiplication. 
+
+This approach greatly reduces combinational complexity and area since only one adder and a few registers are used. It also naturally fits into a pipelined or controlled environment and is power efficient due to reduced switching on each cycle. The module includes a start input and a done output to signal multiplication completion.
+
+Note: Since the original problem only specifies input and output ports, the start and done signals are extra; to stick to the original specification, the module will implement the multiplication combinationally inside an always_comb block using a for-loop unrolling the shift-and-add operation without registers or clock. This simulates the shift-and-add algorithm behaviorally for synthesis as purely combinational logic, providing a different structural style compared to parallel partial product summation.
+
+The key difference: instead of generating all partial products and summing them in parallel, it sequentially accumulates the product in a variable inside a for loop, adding shifted versions of A conditionally depending on bits of B.
+
+This approach simulates a hardware shift-and-add multiplier combinationally and is simple yet distinct from the balanced adder tree approach.

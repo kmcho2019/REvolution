@@ -1,0 +1,24 @@
+The key improvements needed are:
+
+1. Correct counting duration calculation: The current implementation doesn't properly account for the (delay+1)*1000 requirement. We need to:
+   - Initialize period_counter to delay_value (not delay_reg)
+   - Count exactly (delay_value+1) periods of 1000 cycles each
+
+2. Fix pattern detection timing:
+   - Ensure pattern_reg updates synchronously with clock
+   - Properly handle state transitions after pattern detection
+
+3. Output signal timing:
+   - Ensure 'counting' is asserted only during COUNTING state
+   - Assert 'done' only after complete counting
+   - Maintain correct count values during counting
+
+4. Reset behavior:
+   - Clear all registers properly on reset
+   - Initialize state machine correctly
+
+The improved design will:
+- Use separate counters for pattern detection and timing
+- Implement precise (delay+1)*1000 cycle counting
+- Maintain correct output values in all states
+- Handle state transitions cleanly

@@ -1,0 +1,5 @@
+Implement the FSM with a binary-encoded state machine using a single shift register for pattern detection and a 2-bit counter to track the four shift cycles, minimizing state variables. Use a single always block triggered on the clock's rising edge to manage state transitions and outputs synchronously.
+
+The state machine has four states: WAIT_PATTERN (looking for 1101), SHIFTING (shifting in 4 bits), COUNTING (waiting for done_counting), and DONE (asserting done and waiting for ack). The pattern detector is a 4-bit shift register shifted every clock cycle. When the pattern matches 1101, transition from WAIT_PATTERN to SHIFTING and start counting shift cycles using a small counter. After 4 shift cycles, move to COUNTING state asserting counting=1. When done_counting=1, assert done and move to DONE state. Wait for ack=1, then return to WAIT_PATTERN.
+
+Outputs shift_ena, counting, done are registers updated synchronously with the state, simplifying timing and ensuring glitch-free output. This minimal FSM and counting solution reduces code complexity and state overhead.

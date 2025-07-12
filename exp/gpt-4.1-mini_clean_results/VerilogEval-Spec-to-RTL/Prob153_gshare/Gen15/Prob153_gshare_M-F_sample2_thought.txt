@@ -1,0 +1,21 @@
+The main issue is that `predict_history` must reflect the *exact* state of the speculative GHR used to make the prediction at the cycle the prediction request is asserted, and must not be affected by the speculative GHR update in the same cycle.
+
+In the previous code, both `predict_history_r` and `spec_ghr` were updated in the same always block with non-blocking assignments, which should cause `predict_history_r` to capture the old `spec_ghr` before update. However, simulation mismatches suggest this is not happening correctly, possibly due to simulator subtleties or tooling.
+
+To fix this, I will:
+
+1. Separate the capturing of `predict_history` into a *combinational* assignment rather than a registered one. At the time `predict_valid` is asserted, `predict_history` will be assigned the current speculative GHR (before update).
+
+2. Update `spec_ghr` only at the clock edge after producing the prediction outputs, so the prediction outputs use the current speculative GHR and PHT state before any update.
+
+3. Keep training updates synchronous and with priority on misprediction recovery.
+
+4. Maintain the priority that if training with mispredict and prediction happen simultaneously, the committed and speculative GHRs are restored to the committed GHR (`train_history`), ignoring the prediction update.
+
+5. Use a single always block for sequential state updates, but keep prediction outputs purely combinational or registered at outputs based on stable inputs.
+
+This approach guarantees `predict_history` outputs the correct GHR snapshot *used* in the prediction (current speculative GHR before update), and `predict_taken` reads PHT indexed with this GHR. The updates to the GHR happen after outputs are computed, ensuring cycle-accurate behavior.
+
+Additionally, I will include a reset of the PHT entries with blocking assignment inside an asynchronous reset to ensure correct initialization.
+
+This fix will align the design with the specified timing semantics and fix the mismatch issues with prediction outputs and history values.

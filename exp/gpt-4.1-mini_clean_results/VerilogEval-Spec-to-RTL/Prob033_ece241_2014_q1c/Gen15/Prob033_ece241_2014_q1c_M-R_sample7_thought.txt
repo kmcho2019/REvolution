@@ -1,0 +1,10 @@
+Refactor the design by removing the hierarchical FourBitCLAAdder module and instead implement the entire 8-bit carry-lookahead logic directly inside TopModule. This simplifies the module hierarchy and uses a single set of propagate/generate signals for all 8 bits, enabling direct computation of all carry signals with carry-lookahead formulas.
+
+Key points in refactoring:
+- Compute propagate (p) and generate (g) for all 8 bits.
+- Use carry-lookahead equations to compute all intermediate carry signals c[1:8], with c[0] = 0.
+- Sum bits are computed as p XOR carry-in per bit.
+- Carry-out is c[8].
+- Overflow is carry into MSB (c[7]) XOR carry out of MSB (c[8]) as before.
+- Use only continuous assignments (assign) and wire declarations, no submodules.
+- This will increase logic per module but reduces hierarchical complexity and may improve synthesis tools’ ability to optimize.

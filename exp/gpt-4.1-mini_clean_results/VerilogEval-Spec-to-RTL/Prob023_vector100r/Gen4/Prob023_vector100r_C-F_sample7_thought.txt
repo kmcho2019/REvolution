@@ -1,0 +1,9 @@
+Fuse the direct, fully flattened bit reversal from Example 1 with the parameterized, modular chunk-based approach from Example 2, but eliminate unnecessary intermediate wires and module instances to reduce hierarchy and improve PPA metrics.
+
+Fusion Strategy:
+- Use a parameterized BitRevN module with a generate-for loop for clarity and reusability.
+- In TopModule, directly implement a single flattened combinational assignment to reverse the entire 100-bit input vector without splitting into chunks or intermediate wires.
+- This leverages the clarity and correctness of BitRevN from Example 2 for smaller scopes but applies its logic at the top-level for the full width, avoiding hierarchy overhead.
+- The assignment is done in a single generate loop for out[i] = in[99 - i], ensuring minimal area and power.
+- This approach blends the modular parameterization idea for potential future reuse with the minimalistic, low-overhead direct assignment style from Example 1.
+- It keeps the code concise, readable, and synthesizable with a minimal and optimal gate count and wiring.

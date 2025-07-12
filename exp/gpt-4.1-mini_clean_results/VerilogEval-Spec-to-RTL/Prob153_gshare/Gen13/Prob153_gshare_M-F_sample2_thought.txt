@@ -1,0 +1,29 @@
+To fix the reported issues, the design should implement a fully synchronous, well-aligned two-stage prediction pipeline with explicit registered prediction addresses and staged PHT reads. Key fixes:
+
+1. **Separate pipeline registers for predict address and PHT read enable:**  
+   Register `predict_pc` and `predict_ghr` on `predict_valid` into stage 1 registers.  
+   Register the index into stage 2 registers, where synchronous PHT read data is captured.  
+   Use registered addresses at each pipeline stage to align read and output timing correctly.
+
+2. **Register PHT read address and data explicitly:**  
+   Instead of combinational array read, model PHT as synchronous memory with read address registered on clock edge.  
+   At stage 2, capture the PHT data output after one cycle delay. This avoids combinational reading issues.
+
+3. **Update outputs only when pipeline stage 2 valid:**  
+   Drive `predict_taken` and `predict_history` only when prediction pipeline stage 2 is valid, ensuring stable outputs.
+
+4. **Fix GHR update timing and priority:**  
+   Update GHR at posedge clk *after* outputs are updated, with priority:  
+   - If training misprediction: recover GHR to `train_history`.  
+   - Else if training valid: shift in `train_taken`.  
+   - Else if prediction valid (stage 2): shift in predicted bit.  
+   - Else hold GHR.  
+   This ensures GHR used for predictions is always the state before any updates in the current cycle, matching spec.
+
+5. **Initialize PHT entries to weakly not taken (01) on reset.**
+
+This fully synchronous pipeline with explicit staged addresses and data, and clearly separated GHR update timing, resolves stale or mismatched prediction outputs and history. The outputs correspond precisely to the GHR used for prediction, and training updates do not affect the current prediction output, matching the timing expectations described.
+
+The predicted branch taken output corresponds to the MSB of the saturating counter read from PHT indexed by XOR of PC and GHR latched at predict_valid. The predict_history output shows the GHR used for the prediction. Both outputs are stable for the cycle after the prediction request and update in lockstep.
+
+This clear pipeline and synchronous memory modeling fix the earlier glitches and mismatches.

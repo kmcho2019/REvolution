@@ -1,0 +1,5 @@
+Implement the 0-to-999 counter using a single 10-bit binary register that increments each clock cycle and rolls over to zero after reaching 999. Use a single arithmetic comparison (q == 999) for terminal count detection to simplify the comparator logic. The synchronous reset clears the counter to zero.
+
+To optimize the design differently, use an intermediate wire 'count_next' to hold the next count value, determined by the condition (whether q reached MAX_COUNT or not). This separates combinational and sequential logic more clearly and aids readability and synthesis optimization.
+
+This approach reduces the comparator complexity (using a single equality check rather than partitioned bitwise comparisons) and keeps the logic straightforward and efficient. It also uses a non-blocking assignment inside the sequential block for the counter update, aligned with good synchronous design practice.

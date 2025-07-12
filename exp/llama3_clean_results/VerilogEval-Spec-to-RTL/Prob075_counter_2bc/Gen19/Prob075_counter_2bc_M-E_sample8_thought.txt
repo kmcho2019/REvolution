@@ -1,0 +1,13 @@
+A novel approach to implementing the two-bit saturating counter is to utilize a finite state machine (FSM) with a different encoding scheme. Instead of directly encoding the counter value into the state, we can use a one-hot encoding scheme to represent the states (0, 1, 2, and 3) of the counter. However, since we only need to output a two-bit value representing the counter (0 to 3), we can simplify the FSM to directly manage the output.
+
+The idea is to have an FSM that transitions between states based on the inputs `train_valid` and `train_taken`. We can define the states as follows: 
+- State 0: Counter value is 0
+- State 1: Counter value is 1
+- State 2: Counter value is 2
+- State 3: Counter value is 3 (saturation point)
+
+The FSM will increment the counter when `train_valid` and `train_taken` are both high, decrement when `train_valid` is high and `train_taken` is low, and hold the value when `train_valid` is low. This approach ensures that the counter saturates at 3 and does not go below 0.
+
+The advantage of this approach is that it explicitly models the desired behavior of the counter as a state machine, making the logic straightforward to understand and implement. It also allows for easy extension if more complex behaviors are needed in the future.
+
+However, to simplify the design while maintaining the two-bit output requirement, we can use a more straightforward encoding where each state directly corresponds to the counter's output value. This simplifies the logic and reduces the complexity of the FSM.

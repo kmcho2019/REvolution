@@ -1,0 +1,9 @@
+The original design is clean and functionally correct, directly modeling two independent 4-input NAND gates as required. To optimize for Power, Performance, and Area (PPA), I will:
+
+- Use built-in Verilog primitive gates where possible to enable the synthesis tool to map directly onto optimized NAND4 cells from the target library.
+- Replace the custom nand4 module with two separate `nand` primitives chained for 4-input NAND to hint better synthesis optimization.
+- Since the 4-input NAND primitive might not be universally supported, chaining two 2-input NAND gates is a good synthesis-friendly approach, minimizing gate delay and area, while potentially reducing switching activity due to simpler gate instantiations.
+- Remove the module hierarchy for a flatter design, reducing instantiation overhead and possibly improving timing.
+- The inputs are completely distinct for each NAND gate, so sharing logic isn't feasible.
+
+This method provides a better balance between synthesis tool friendliness, power efficiency by fewer logic transitions, and improved timing by minimizing gate depth without extra inversion stages.

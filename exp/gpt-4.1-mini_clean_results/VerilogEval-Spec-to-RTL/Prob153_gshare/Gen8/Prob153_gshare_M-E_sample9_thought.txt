@@ -1,0 +1,19 @@
+Use two copies of the global history register (GHR) to separate the architectural and speculative states explicitly. One register (arch_GHR) holds the architectural (committed) global history state, updated only upon training with or without misprediction. The other register (spec_GHR) holds the speculative GHR used for prediction, updated on each prediction request.
+
+- Prediction uses spec_GHR combined with predict_pc (XOR) to index the PHT and generate predictions combinationally.
+
+- Prediction outputs the predicted taken bit and the current spec_GHR before the speculative update.
+
+- On predict_valid, spec_GHR is shifted in with the predicted bit to reflect speculative update.
+
+- On train_valid, the PHT entry indexed by train_pc XOR train_history is updated using the actual branch outcome.
+
+- On a misprediction during training, arch_GHR is restored to train_history, recovering architectural history after the mispredicted branch, and spec_GHR is updated to arch_GHR to discard speculative updates after the misprediction.
+
+- When training and prediction occur in the same cycle, training takes precedence: PHT updates and misprediction recovery happen first, and spec_GHR update from prediction is suppressed if there is a misprediction.
+
+- The prediction outputs are registered to hold stable values, updated only on predict_valid.
+
+This approach cleanly separates committed vs speculative global history state, precisely controls updates to both, and properly resolves contention between training and prediction updates in the same cycle. The PHT is updated synchronously at clock edge, prediction reads PHT combinationally, and outputs reflect pre-update PHT states as per spec.
+
+Reset asynchronously clears PHT entries to weakly not taken (01), and both GHR registers to zero.

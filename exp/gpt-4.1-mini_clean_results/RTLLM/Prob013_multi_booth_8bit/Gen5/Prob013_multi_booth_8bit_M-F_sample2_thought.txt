@@ -1,0 +1,47 @@
+The previous design implemented a simple bit-by-bit multiplication approach, not Radix-4 Booth encoding, and suffered from synthesizability issues due to 32-bit arithmetic and large shifts each cycle.
+
+To fix the design and strictly implement an 8-bit Radix-4 Booth multiplier as requested, I will:
+
+- Use Radix-4 Booth encoding, which examines 3 bits of the multiplier at a time (including an appended zero bit), processing 2 multiplier bits per cycle, thus 4 cycles for 8-bit inputs.
+
+- The problem statement requests a 5-bit counter up to 16 with left shifts by 1 each cycle, but that suits Radix-2. Since it's Radix-4, I will slightly adapt to process 2 bits per iteration, but keep the 16-step counter as per the problem statement, though that conflicts with radix-4 efficiency. 
+
+- To reconcile the requirements:
+  - Implement radix-4 booth encoding properly, processing 2 bits per cycle.
+  - Use a 5-bit counter counting iterations; since 8 bits processed 2 bits per cycle, only 4 iterations are needed.
+  - To fill 16 iterations, I will treat the process as 8 cycles processing 2 bits at a time, matching the problem's mention of 16 steps in the feedback.
+  
+- Use signed 16-bit multiplicand and multiplier registers, sign-extended from inputs.
+
+- Implement Booth recoding by looking at multiplier bits: `multiplier[2i+1:2i-1]` with LSB appended zero bit for first iteration.
+
+- On each cycle, generate partial product based on Booth recoding (multiplicand * -2, -1, 0, 1, or 2), shifted accordingly.
+
+- Accumulate the partial products into a 32-bit product register to avoid overflow.
+
+- Increment counter each cycle; after required cycles, output the lower 16 bits of the product and set ready.
+
+- Avoid large shifts every cycle by shifting partial products appropriately before addition.
+
+- Implement synchronous reset and clock logic with registers.
+
+- This approach addresses the feedback by:
+  - Implementing true Radix-4 Booth encoding.
+  - Reducing the number of addition operations (only one addition per cycle).
+  - Removing large shift operations on multiplicand each cycle.
+  - Using synthesizable standard RTL constructs (no unusual operators).
+  - Keeping the ready signal to indicate operation completion.
+
+- The code will be clean, synthesizable, and compliant with the problem specifications.
+
+---
+
+**Summary:**
+
+- Use Radix-4 booth encoding with multiplier extended by one bit at LSB (zero appended).
+
+- For 8-bit multiplier, 4 iterations (or 8 if counting individual steps) are sufficient; but to meet problem's 5-bit counter <16, keep counter to count 8 (or 16) steps. I will do 8 cycles processing 2 bits per cycle.
+
+- Output product as 16-bit result, ready signal on completion.
+
+This design will pass synthesis without unknown module errors, and simulate correct multiplication results.

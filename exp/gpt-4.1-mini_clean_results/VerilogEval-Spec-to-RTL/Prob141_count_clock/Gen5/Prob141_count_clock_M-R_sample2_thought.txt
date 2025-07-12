@@ -1,0 +1,9 @@
+Refactor by separating the counters for seconds, minutes, and hours into distinct always blocks triggered by the enable pulse, improving modularity and simplifying increment logic. Implement synchronous reset handling separately in each block.
+
+For the BCD outputs, replace division/modulo operations with combinational logic using shift and subtraction (double dabble) method for binary to BCD conversion for seconds and minutes, which is fully synthesizable and efficient. Since the range is fixed (0-59), a simple combinational comparison-based approach can also be used.
+
+For the hours, use a small combinational LUT based on the binary hour value to produce the BCD output, avoiding complex conditions.
+
+The pm toggle is done synchronously on the hour rollover from 11 to 12 in a dedicated always block, triggered only when hours increment from 11 to 12.
+
+This modular structure reduces the complexity of each always block, improves synthesizability of the BCD conversion, and maintains the original functional correctness and interface.

@@ -1,0 +1,17 @@
+To design a traffic light controller, we can utilize a finite state machine (FSM) architecture. The FSM will have four states: idle, red, yellow, and green. The state transitions will be controlled by a counter that increments every clock cycle. The pedestrian button press will be handled by introducing a new state, "pedestrian_request," which will override the normal state transitions when active.
+
+The novel architectural idea is to use a hierarchical FSM structure, where the top-level FSM controls the overall state transitions, and a sub-FSM handles the pedestrian request logic. This approach will allow for a more modular and scalable design.
+
+The top-level FSM will have the following states:
+
+*   Idle: Initial state, where all lights are off.
+*   Red: Red light is on, and the counter increments until it reaches the red light duration (10 clock cycles).
+*   Yellow: Yellow light is on, and the counter increments until it reaches the yellow light duration (5 clock cycles).
+*   Green: Green light is on, and the counter increments until it reaches the green light duration (60 clock cycles) or a pedestrian request is made.
+
+The sub-FSM will handle the pedestrian request logic and will have the following states:
+
+*   Pedestrian_request_idle: Initial state, where no pedestrian request is active.
+*   Pedestrian_request_active: Pedestrian request is active, and the green light duration is shortened to 10 clock cycles.
+
+The outputs of the FSM will be the red, yellow, and green light signals, as well as the clock signal, which represents the count value of the internal counter.

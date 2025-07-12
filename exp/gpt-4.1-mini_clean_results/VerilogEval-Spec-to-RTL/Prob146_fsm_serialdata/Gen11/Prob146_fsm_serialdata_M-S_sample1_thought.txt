@@ -1,0 +1,13 @@
+Implement a binary-encoded FSM with four states: IDLE, RECEIVE, STOP, and ERROR_WAIT, to reduce flip-flop count and combinational logic complexity compared to one-hot encoding.
+
+Use a simple 3-bit bit counter and an 8-bit shift register to collect bits in RECEIVE state.
+
+Shift in bits LSB first by placing the new bit at MSB and shifting right. This keeps logic simple and matches serial input order.
+
+Assert done for one cycle when a valid stop bit (1) is detected in STOP state, and update out_byte at that time.
+
+If stop bit invalid, transition to ERROR_WAIT until line idles (in == 1) before going back to IDLE.
+
+Use synchronous active-high reset to initialize all registers.
+
+This reduces the number of state bits and avoids one-hot encoding overhead while keeping functionality and timing straightforward.

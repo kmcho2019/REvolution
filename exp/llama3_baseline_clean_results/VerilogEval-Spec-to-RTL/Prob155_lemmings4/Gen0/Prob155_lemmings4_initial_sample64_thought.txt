@@ -1,0 +1,22 @@
+To implement the Lemmings' finite state machine, we need to break down the states into the following:
+1. Walking (either left or right)
+2. Falling
+3. Digging
+4. Splattered (when the Lemming falls for more than 20 cycles and hits the ground)
+
+We will use a Moore state machine to implement this behavior, where the output is a function of the current state only. We will use the following states:
+- S_WALK_LEFT
+- S_WALK_RIGHT
+- S_FALL
+- S_DIG
+- S_SPLATTER
+
+We will also keep track of the direction of the Lemming (left or right) and the number of cycles it has been falling.
+
+When the Lemming is walking and ground=0, it will transition to the S_FALL state.
+When the Lemming is falling and ground=1, it will check if it has fallen for more than 20 cycles. If so, it will transition to the S_SPLATTER state. Otherwise, it will resume walking in the same direction as before the fall.
+When the Lemming is walking and dig=1, it will transition to the S_DIG state.
+When the Lemming is digging and ground=0, it will transition to the S_FALL state.
+When the Lemming is bumped, it will switch directions.
+
+We will use a 5-bit state register to represent the current state and a 5-bit register to keep track of the direction and the number of cycles it has been falling.

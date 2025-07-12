@@ -1,0 +1,19 @@
+The main issue is that the original code toggles direction blindly on any bump, ignoring which side was bumped, while the spec requires setting direction explicitly depending on bump side: bump_left means walk right; bump_right means walk left; if both sides are bumped simultaneously, direction still switches (which effectively can be toggling direction).
+
+To fix this, in the WALKING state when bump(s) occur and no falling or digging happens, update direction as follows:
+
+- If both bump_left and bump_right are 1: toggle direction (switch).
+- Else if bump_left is 1: set direction to right (1).
+- Else if bump_right is 1: set direction to left (0).
+
+This explicit handling meets the spec and should fix mismatches.
+
+All other FSM logic and prioritization remain as before, including the priority: fall > dig > bump.
+
+Edge detection of ground remains a one-cycle delayed register sampled synchronously.
+
+This solution maintains a Moore FSM with outputs based on registered state and direction.
+
+Reset logic stays the same.
+
+This fix should eliminate the walking direction mismatches seen in the original design.

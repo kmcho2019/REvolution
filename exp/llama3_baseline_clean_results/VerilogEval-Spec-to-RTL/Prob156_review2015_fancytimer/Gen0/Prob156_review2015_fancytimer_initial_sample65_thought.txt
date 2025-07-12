@@ -1,0 +1,9 @@
+To implement the TopModule, we can use a finite state machine (FSM) with several states: IDLE (waiting for the start pattern), SHIFT (shifting in the delay bits), COUNT (counting down), and DONE (waiting for ack). The FSM will transition between these states based on the current state, input signals, and internal counters.
+
+In the IDLE state, the module will search for the start pattern (1101) by shifting in the data bits. Once the pattern is detected, the module will transition to the SHIFT state and shift in the next 4 bits to determine the delay.
+
+In the SHIFT state, the module will shift in the 4 delay bits and store them in a register.
+
+In the COUNT state, the module will count down from (delay + 1) * 1000 clock cycles and output the remaining time. The counting output will be asserted during this state.
+
+In the DONE state, the module will assert the done output and wait for the ack input to be 1 before transitioning back to the IDLE state.

@@ -1,0 +1,12 @@
+Novel architectural idea:
+1. Use the output register (z) to serve dual purpose - storing the current output AND tracking inversion state
+2. The MSB of z (when viewed as a shift register) indicates whether we've seen the first '1' (inversion point)
+3. This eliminates the need for a separate state register (invert_flag), reducing area
+4. The design becomes a self-referential state machine where the output history determines future behavior
+5. Reset initializes the "state" (z) to 0, and the first '1' in input flips the state permanently
+
+Key advantages:
+- No separate state register needed (area optimization)
+- Output directly reflects the current state (simpler logic)
+- Still maintains clear Moore machine behavior
+- Asynchronous reset functionality preserved

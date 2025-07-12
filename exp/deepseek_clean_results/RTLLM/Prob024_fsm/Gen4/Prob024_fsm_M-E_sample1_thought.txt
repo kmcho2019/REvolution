@@ -1,0 +1,19 @@
+Novel approach using shift register and pattern matching:
+
+1. Shift Register: Instead of traditional FSM states, use a 5-bit shift register to track the last 5 input bits. This captures the sequence history directly.
+
+2. Pattern Matching: Compare the shift register contents with the target pattern (10011) using a simple equality check. This eliminates complex state transition logic.
+
+3. Edge Handling: Reset the shift register on RST and shift on each clock edge. The output is purely combinatorial based on the current shift register value.
+
+4. Advantages:
+   - Simpler implementation with no explicit state machine
+   - Easily extensible to longer patterns by increasing shift register size
+   - Clear relationship between input history and output
+   - No state encoding decisions needed
+   - Naturally handles continuous input and loop detection
+
+5. Tradeoffs:
+   - Slightly larger area due to shift register
+   - But simpler control logic may compensate
+   - Timing is straightforward as it's just shift + compare

@@ -1,0 +1,7 @@
+Refactor the design by removing the explicit two-state FSM and instead use only a 4-bit counter and a shift register updated inside a single always block triggered on the clock edge. The shift register shifts left and inserts new bits at LSB, but since the earliest bit must be MSB, we insert at the MSB and shift right as before, or equivalently, we can shift left and insert at LSB while reversing the bit order when outputting. To keep the same order without reversing at output, we will continue to shift right and insert at MSB, but drop the explicit state machine and just rely on the counter and din_valid for control.
+
+The output valid is asserted only when the 8th bit is received (counter hits 7), for one clock cycle.
+
+This approach simplifies control logic by avoiding a separate state register and explicitly relies on the counter and din_valid input to manage data capture and output validity. It preserves the synchronous reset and a clean, fully synchronous design.
+
+This restructuring results in simpler logic, potentially smaller area and easier timing closure, while maintaining correct bit ordering per specification.

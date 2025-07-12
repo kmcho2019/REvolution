@@ -1,0 +1,13 @@
+To fix the err output timing and align it with a proper Moore FSM, outputs must depend solely on the current state, not on inputs. The current code asserts `err_next` combinationally depending on both state and input in the error state, which breaks Moore FSM principle and causes timing mismatches.
+
+Improvement strategy:
+- Assign outputs (`disc`, `flag`, `err`) only based on the current state, fully ignoring input in their combinational logic.
+- Move the detection of conditions that produce outputs into state transitions only.
+- For disc and flag, outputs remain asserted for one cycle exactly after the condition is detected by using states as done before.
+- For err, the FSM enters error state (S7) upon receiving the seventh consecutive 1; the `err` output will be asserted in S7 regardless of input.
+- Stay in S7 as long as consecutive ones continue, asserting err; transition out of S7 on input zero, but still assert err for that one cycle in S7.
+- Reset initializes FSM to S0, outputs deasserted.
+
+This guarantees that outputs are true Moore outputs (only depend on state), asserted for exactly one cycle after detection, eliminating output glitches and timing mismatches. The next-state logic uses input, but outputs are state-dependent only.
+
+The one-hot encoding and the overall FSM structure remain the same for clarity and synthesis friendliness.

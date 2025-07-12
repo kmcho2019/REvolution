@@ -1,0 +1,15 @@
+To improve the existing solution, we need to focus on optimizing the comparator logic for better PPA (Power, Performance, and Area) metrics. Given the current implementation is already quite straightforward and uses efficient comparison operators, our strategy will involve a combination of logic optimization and ensuring that the code is well-structured for synthesis. 
+
+The existing code uses an always block with sensitivity to all inputs (`@(*)`), which is correct for combinational logic. It directly assigns the comparison results to the outputs, making it simple and efficient. However, we can explore if there's any room for improvement in terms of logic simplification or restructuring that could benefit synthesis.
+
+For performance optimization, since the current design is already purely combinational and doesn't involve any sequential logic, we'll look into how the comparison logic can be optimized. 
+
+For power optimization, reducing switching activity is key. While the current design is straightforward and doesn't seem to have unnecessary switching, we'll consider if there are alternative ways to express the logic that might reduce power consumption, possibly by minimizing the number of operations or using logic that results in less switching activity.
+
+For area optimization, given the simplicity of the comparator, the current design seems area-efficient. However, exploring different logic structures or encoding schemes might lead to minor improvements, depending on the synthesis tool and target technology.
+
+One potential improvement could be to explicitly define the comparison logic in a way that reduces the number of operations or makes the logic more synthesizable. For instance, checking for equality first and then determining greater or less than based on the most significant bits where the numbers differ. However, this might not yield significant improvements without specific synthesis tool optimizations.
+
+Another approach is to consider using case statements or if-else chains for the comparison, which might allow for more efficient synthesis in certain cases, especially if the synthesis tool can optimize the conditional logic better than the direct comparison operators.
+
+However, given the provided metrics, the area and power seem to be the focus points for optimization. The area is 17.0, and the power is 0.000981, which are relatively low but could potentially be optimized further with careful logic restructuring.

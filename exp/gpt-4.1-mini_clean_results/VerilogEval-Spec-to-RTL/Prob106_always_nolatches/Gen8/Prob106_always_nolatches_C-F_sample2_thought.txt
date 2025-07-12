@@ -1,0 +1,5 @@
+I will fuse the strengths of both examples by using a single always_comb (or always @(*) ) block with a case statement on the lower 8 bits of scancode, conditioned on the upper 8 bits being 0xE0. This makes the decoding explicit, easy to read, and synthesis-friendly, as case statements typically allow synthesis tools to optimize comparators efficiently. 
+
+Outputs will be declared as reg and driven combinationally, defaulting to zero at each evaluation. This maintains a clean, latch-free design. The condition on the upper byte is done once outside the case statement to avoid redundant comparisons, and only if it matches 0xE0 will the case be evaluated on the lower byte, minimizing unnecessary logic toggling. This combines clarity, potential area and power benefits, and good synthesis support.
+
+Overall, the fusion yields concise, clear, efficient logic with minimal switching and maximal maintainability.

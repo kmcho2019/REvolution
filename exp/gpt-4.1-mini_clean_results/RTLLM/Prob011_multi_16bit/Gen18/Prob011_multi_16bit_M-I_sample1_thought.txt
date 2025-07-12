@@ -1,0 +1,18 @@
+To optimize the existing 16-bit multiplier for better Performance, Power, and Area (PPA), I will focus on these improvements:
+
+1. **Power Reduction via Clock Enable (CE):**  
+   Introduce explicit clock enables to registers so they only toggle when necessary. This reduces unnecessary switching in `areg`, `breg_ext`, `yout_r`, and the counter `i`. This saves dynamic power.
+
+2. **Simplified Control Logic:**  
+   Remove the redundant clearing of `done_r` at i=17 by resetting it immediately when `start` is low or `rst_n` is asserted, simplifying logic and reducing area.
+
+3. **Register Updates Only on Enable:**  
+   Registers update only when relevant:  
+   - `areg` and `breg_ext` update only during multiplication cycles (>0 and <17).  
+   - `yout_r` updates only when LSB of `areg` is set, avoiding unnecessary toggling on add operations.  
+   - `i` counter increments only when start is high and i < 17.
+
+4. **Maintain Functional Correctness:**  
+   The multiplier completes in 16 cycles and sets `done` accordingly.
+
+These changes should reduce power by lowering toggle rates, possibly improve timing by reducing switching load, and slightly reduce area by simplifying control logic.

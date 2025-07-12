@@ -1,0 +1,28 @@
+Novel Architecture: Radix-4 Booth Encoded Pipelined Multiplier with Carry-Save Adders
+
+Key Innovations:
+1. Radix-4 Booth Encoding:
+   - Reduces number of partial products by half (from 8 to 4)
+   - More efficient than standard multiplication
+   - Handles signed multiplication inherently (though we use unsigned here)
+
+2. Carry-Save Adder Pipeline:
+   - 3-stage pipeline with carry-save adders for faster operation
+   - Avoids carry propagation until final stage
+   - Better timing characteristics than ripple-carry adders
+
+3. Optimized Pipeline Control:
+   - Single clock domain with enable-based pipeline
+   - Compact enable shift register (1-bit per stage)
+   - Output isolation when disabled
+
+4. Power Optimization:
+   - Operand isolation for unused pipeline stages
+   - Zero partial products when disabled
+   - Gated clock enable signals
+
+Implementation Details:
+- Stage 1: Booth encoding and partial product generation
+- Stage 2: Carry-save addition of first two partial products
+- Stage 3: Carry-save addition of remaining partial products
+- Stage 4: Final carry-propagate addition and result

@@ -1,0 +1,35 @@
+To fuse the strengths of both examples, I will combine the structural clarity of Example 2 with the minimized and factored Boolean expression from Example 1.
+
+Key points for fusion:
+- From Example 1, the minimized SOP expression reduces gate count and logic levels by factoring common terms and uses minimal inversions.
+- From Example 2, the decomposition by (c,d) groups with corresponding partial functions on (a,b) and a 4-to-1 mux offers clear structural mapping and can help localize logic and potentially lower switching.
+
+Fusion strategy:
+- Use the minimized expression from Example 1 as base logic, but rewrite it as a mux controlled by {c,d} to leverage the grouping in Example 2 for clarity.
+- For each {c,d} combination, simplify the function to the equivalent minimal expression extracted from the fused form of Example 1.
+- This merges minimal SOP logic with the mux-based selection, preserving optimization and structural clarity.
+
+Deriving per {c,d} functions from Example 1's expression:
+
+out =
+    (~c & ~d & (~a | ~b)) |    // cd=00 : ~a + ~b
+    (~c & d & ~b) |            // cd=01 : ~b
+    (c & ~d & ~a) |            // cd=10 : ~a
+    (c & d & (a | b))          // cd=11 : a + b
+
+These match exactly the partial functions of Example 2 but are now backed by the minimal SOP analysis of Example 1, confirming optimality.
+
+Implementing this:
+- Define partial functions per (c,d) group:
+  F_00 = ~a | ~b
+  F_01 = ~b
+  F_10 = ~a
+  F_11 = a | b
+
+- Implement a 4-to-1 mux based on {c,d} (cd interpreted as 2-bit selector).
+- Use one-hot decoder for (c,d) to enable each partial function.
+- Output is OR of all enabled partial functions.
+
+This approach retains minimal logic expressions, reuses common negations, and structures output selection clearly, combining clarity, optimal gate count, and reduced switching by gating only one partial function per input.
+
+I will implement this combined approach accordingly.

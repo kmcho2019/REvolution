@@ -1,0 +1,13 @@
+Implement a 4-bit unsigned multiplier with two pipeline stages: 
+
+- Stage 1: Generate all partial products in parallel by ANDing the multiplicand bits with each multiplier bit and shifting accordingly. Store these partial products in registers (level 1 registers).
+
+- Stage 2: Sum the partial products in a balanced tree fashion: first add partial products [0] and [1], and [2] and [3] in one cycle (level 2 registers), then in the next cycle sum these two intermediate sums to get the final product (level 3 register).
+
+Thus, the pipeline depth is three clock cycles: one for partial product generation, one for partial product pairwise summation, and one for final summation. This pipeline improves timing by spreading additions across stages and uses registers at each stage for intermediate sums.
+
+The inputs mul_a and mul_b are extended by adding size zeros at the MSB to align the width for shifting and addition.
+
+Reset (active low) clears all pipeline registers and output.
+
+The design uses generate blocks for partial product generation and clean structured registers for pipelining the sums.

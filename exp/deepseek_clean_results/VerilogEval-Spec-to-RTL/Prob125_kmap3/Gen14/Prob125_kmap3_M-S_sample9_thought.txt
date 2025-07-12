@@ -1,0 +1,6 @@
+After analyzing the Karnaugh map and the current solution, I can simplify the logic by observing:
+1. When c=1, output is 1 only when (b=0) OR (b=1 AND a=1)
+2. When c=0, output is 1 only when a=1 (taking advantage of don't-cares)
+This can be further simplified to: out = (c & (~b | a)) | (~c & a)
+Which reduces to: out = (c & (~b | a)) | (~c & a) = a | (c & ~b)
+This final expression uses just one OR and one AND gate, significantly simpler than the original solution while maintaining the same functionality.

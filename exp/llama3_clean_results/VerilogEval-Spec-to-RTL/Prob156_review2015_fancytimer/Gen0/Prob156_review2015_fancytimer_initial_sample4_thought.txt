@@ -1,0 +1,9 @@
+To implement the TopModule, we can use a finite state machine (FSM) with several states: 
+- IDLE: Searching for the input pattern 1101.
+- SHIFT: Shifting in the next 4 bits to determine the duration of the timer delay.
+- COUNT: Counting for exactly (delay[3:0] + 1) * 1000 clock cycles.
+- DONE: Notifying the user that the timer has timed out and waiting for the ack signal.
+
+We will use a counter to keep track of the remaining time. The count output will be the current value of the counter. 
+The counting output will be asserted when the FSM is in the COUNT state. 
+The done output will be asserted when the FSM is in the DONE state.

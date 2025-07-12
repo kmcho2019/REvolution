@@ -1,0 +1,11 @@
+Implement a finite state machine (FSM) to detect the serial data frame with the format: start bit (0), 8 data bits (LSB first), and stop bit (1). The line is idle high (1). 
+
+FSM states: 
+- IDLE: waiting for start bit (line = 0)
+- RECEIVE_BITS: shifting in the 8 data bits
+- CHECK_STOP: verify if stop bit == 1
+- WAIT_STOP: if stop bit invalid, wait until line goes high (stop bit) before going back to IDLE
+
+The FSM outputs 'done' high for one cycle when a byte is correctly received (stop bit detected as 1 after 8 bits). The FSM synchronously resets on reset signal.
+
+No need to output the data byte; just identify and indicate when a correct byte is received.

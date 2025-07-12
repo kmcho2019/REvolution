@@ -1,0 +1,22 @@
+To fix the implementation, we need to address the pattern detection, state encoding, and timing control issues:
+
+1. Pattern Detection:
+   - Implement a proper shift register to track the last 4 bits of input data
+   - Compare the shift register contents with the pattern 1101 (MSB first)
+
+2. State Machine:
+   - Use proper 3-bit state encoding to avoid glitches
+   - Add explicit states for pattern detection (PATTERN_DETECT)
+   - Maintain shift counter only during SHIFT state
+
+3. Timing Control:
+   - Ensure shift_ena is asserted exactly 4 cycles after pattern detection
+   - Keep counting high until done_counting is received
+   - Assert done until ack is received
+
+The improved FSM will have these states:
+1. IDLE: Initial state, waiting for pattern
+2. PATTERN_DETECT: Validates the 1101 pattern
+3. SHIFT: Shifts in duration bits (4 cycles)
+4. COUNTING: Waits for counter completion
+5. DONE: Signals completion and waits for ack

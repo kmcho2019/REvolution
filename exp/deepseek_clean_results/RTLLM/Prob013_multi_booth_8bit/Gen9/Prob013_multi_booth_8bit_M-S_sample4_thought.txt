@@ -1,0 +1,22 @@
+Simplified 8-bit Radix-4 Booth Multiplier Design:
+
+1. Key Simplifications:
+   - Maintain single always block for all sequential logic
+   - Reduce register sizes to minimum required (16-bit for multiplicand/product, 9-bit for multiplier)
+   - Keep Radix-4 Booth encoding but simplify case statements
+   - Combine counter and ready logic into simple state machine
+
+2. Optimized Radix-4 Implementation:
+   - Process 2 bits per cycle (4 iterations for 8-bit)
+   - Use 9-bit multiplier (8 bits + previous LSB) for proper encoding
+   - Arithmetic right shift by 2 bits each cycle
+
+3. Simplified Control:
+   - 2-bit counter (0-3 iterations)
+   - Ready signal set after 4 cycles
+   - Reset initializes all registers
+
+4. Arithmetic Handling:
+   - Proper sign extension for inputs
+   - Single product accumulation register
+   - Direct output assignment when done

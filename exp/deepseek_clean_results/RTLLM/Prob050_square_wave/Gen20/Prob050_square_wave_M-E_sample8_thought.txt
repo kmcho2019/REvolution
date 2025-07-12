@@ -1,0 +1,13 @@
+Novel DDS-inspired Architecture:
+1. Phase Accumulator: Instead of a simple counter, use a phase accumulator that adds the frequency value each cycle
+2. Phase Wrapping: When accumulator overflows, toggle the output (natural square wave generation)
+3. Frequency Scaling: The input frequency value directly controls the output frequency without division
+4. Zero Handling: Special case for freq=0 handled by forcing output low
+5. Power Optimization: Implement clock gating when freq=0 to save power
+
+Key Advantages:
+- More linear frequency control (output frequency proportional to input value)
+- No need for explicit comparison operations (uses natural overflow)
+- Lower power at high frequencies (fewer toggles of internal logic)
+- Simpler critical path (just an adder vs comparator)
+- Better frequency resolution at lower frequencies

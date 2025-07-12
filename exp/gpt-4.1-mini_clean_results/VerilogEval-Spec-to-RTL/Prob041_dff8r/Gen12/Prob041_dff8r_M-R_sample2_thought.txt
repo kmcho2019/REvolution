@@ -1,0 +1,6 @@
+Refactor the 8-bit register by instantiating eight single-bit D flip-flop modules rather than using a single vectorized always block in TopModule. This approach emphasizes a fully modular structure, where each DFF module handles one bit independently with synchronous reset.
+
+Specifically:
+- Retain the DFF module to encapsulate the behavior of each flip-flop with synchronous reset on clk's rising edge.
+- In TopModule, instantiate 8 DFF modules, connecting each bit of input d and output q separately.
+- This promotes modularity and bit-level control and reflects an alternative implementation style while preserving the original functionality.

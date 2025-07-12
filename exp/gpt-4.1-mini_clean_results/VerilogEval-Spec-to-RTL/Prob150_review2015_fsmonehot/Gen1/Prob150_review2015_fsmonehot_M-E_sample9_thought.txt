@@ -1,0 +1,7 @@
+Instead of explicitly enumerating intermediate next states as separate signals, use a single combinational always block that directly computes only the requested next-state outputs (one-hot bits) from the current state and inputs by applying the FSM transitions and ignoring intermediate next-state signals. This reduces unnecessary signals and logic. Also, derive outputs purely based on the current state, as per Moore machine behavior.
+
+For clarity and potential synthesis friendliness, represent state bits as localparams for bit indices, and implement the next-state logic with a concise combinational expression, focusing only on next states that the problem asks to output: B3_next, S_next, S1_next, Count_next, Wait_next.
+
+Outputs done, counting, and shift_ena are directly driven by current state bits.
+
+This approach simplifies the combinational next-state logic and makes the code succinct and focused on outputs required, while still fully implementing the one-hot next-state logic of the FSM.

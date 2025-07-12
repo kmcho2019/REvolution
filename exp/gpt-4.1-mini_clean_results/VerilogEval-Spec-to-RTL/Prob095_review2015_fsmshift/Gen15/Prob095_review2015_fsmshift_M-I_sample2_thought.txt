@@ -1,0 +1,5 @@
+To correct the off-by-one cycle issue causing shift_ena to be asserted for one cycle longer than desired, initialize the counter to 3 instead of 4 on reset. Since the counter counts down at every clock edge, starting at 3 will yield exactly 4 clock cycles with shift_ena asserted (counter = 3,2,1,0). Also, keep the synchronous active-high reset logic and count down only when the counter is not zero to prevent underflow. This adjustment keeps the logic minimal, prevents unnecessary toggling after the counting is complete, and ensures the enable signal duration matches exactly 4 clock cycles after reset.
+
+Optionally, to reduce power by avoiding toggling when not needed, do not update the counter once it reaches zero.
+
+This maintains the original simplicity and function, eliminating the off-by-one error.

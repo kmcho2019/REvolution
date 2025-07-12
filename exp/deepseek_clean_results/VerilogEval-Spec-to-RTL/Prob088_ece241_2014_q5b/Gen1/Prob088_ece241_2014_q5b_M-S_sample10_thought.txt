@@ -1,0 +1,10 @@
+To simplify the Mealy FSM implementation while maintaining functionality:
+1. Recognize that once we enter state B, we never return to state A (B is absorbing)
+2. Simplify next state logic by observing state_B can simply be set when in A and x=1
+3. Output z can be derived directly from current state and input without complex combinational logic
+4. Maintain one-hot encoding with asynchronous reset to state A
+
+Key simplifications:
+- next_state_A is simply ~x when in state A (0 otherwise)
+- next_state_B is x when in state A or 1 when already in B
+- output z is x when in A or ~x when in B

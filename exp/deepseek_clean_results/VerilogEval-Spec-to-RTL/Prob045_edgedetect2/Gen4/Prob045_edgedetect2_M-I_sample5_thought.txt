@@ -1,0 +1,17 @@
+To optimize the PPA metrics while maintaining functionality:
+1. Timing Optimization: The current WNS violation (-0.16ns) is minor. We can improve timing by:
+   - Using simpler XOR gates from the standard cell library
+   - Adding pipeline registers if needed (though this would increase latency)
+2. Power Optimization:
+   - Add clock gating for bits that rarely change (but requires knowledge of input patterns)
+   - Since we don't have input statistics, we'll focus on reducing switching activity
+3. Area Optimization:
+   - Use more compact flip-flop implementations
+   - Combine some logic where possible
+
+The optimized version will:
+- Keep the same edge detection logic (most efficient method)
+- Use 'reg' for outputs (required for procedural assignment)
+- Add explicit reset capability (good practice)
+- Use non-blocking assignments for sequential logic
+- No major architectural changes needed since the design is already efficient

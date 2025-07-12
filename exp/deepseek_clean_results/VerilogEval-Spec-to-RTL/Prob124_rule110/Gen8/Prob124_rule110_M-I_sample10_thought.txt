@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. **Timing Optimization**: Break the combinational path by pipelining the next state calculation. This will improve the negative WNS by reducing the critical path length.
+
+2. **Power Optimization**: Implement clock gating for the state registers when the automaton isn't actively evolving (load=1 case). This will reduce dynamic power consumption.
+
+3. **Area Optimization**: 
+   - Simplify boundary condition handling by using a temporary extended register
+   - Optimize the Rule 110 logic to use fewer operations while maintaining correctness
+   - Share common subexpressions between adjacent cells
+
+4. **Logic Optimization**: 
+   - Recognize that the Rule 110 can be expressed as: next_state = (left & (center ^ right)) | (~left & (center | right))
+   - This reduces the logic operations from 3 levels to 2 levels
+
+Key Changes:
+- Added pipeline registers for next state calculation
+- Implemented clock gating
+- Simplified boundary handling with extended register
+- Optimized Rule 110 logic expression
+- Maintained parallel processing with generate block

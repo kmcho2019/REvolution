@@ -1,0 +1,15 @@
+To improve the PPA metrics while maintaining functionality, I'll implement the following optimizations:
+
+1. **Timing Improvement**: 
+   - Replace the direct comparison (q == 10'd999) with a simpler terminal count detection (when all bits are 1's for 999 in binary)
+   - Use a registered comparator to break the critical path
+
+2. **Power Optimization**:
+   - Add clock gating when the counter reaches maximum value (999)
+   - This reduces unnecessary toggling when the counter wraps around
+
+3. **Area Optimization**:
+   - Use simpler comparison logic that doesn't require full 10-bit comparison
+   - The terminal count for 999 (1111100111) can be detected with fewer gates
+
+The improved design will maintain the same functionality but with better timing closure and lower power consumption.

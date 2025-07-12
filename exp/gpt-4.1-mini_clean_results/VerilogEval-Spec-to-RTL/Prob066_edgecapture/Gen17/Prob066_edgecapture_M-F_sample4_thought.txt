@@ -1,0 +1,7 @@
+To address the feedback, the main concern is the spurious detection of falling edges immediately after reset due to clearing `prev_in` to zero. This causes `prev_in` bits to be zero, and if `in` bits are also zero at the first clock cycle after reset, then no falling edge is detected; however, if `in` bits are one right after reset, a spurious falling edge may be detected in the following cycle.
+
+To avoid this, instead of initializing `prev_in` to zero on reset, initialize it to the input value `in` at reset. This way, no false falling edges will be detected on the first cycle after reset because the previous input and the current input will be equal at reset. Then, subsequent falling edges will be correctly detected.
+
+This change ensures that the output bits only capture falling edges after reset and avoids spurious events due to initial conditions.
+
+Also, the logic remains the same, and all registers update synchronously on the clock edge, maintaining a single always block for clarity and efficiency.

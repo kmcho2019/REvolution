@@ -1,0 +1,11 @@
+To improve the PPA of the rotator, focus on reducing unnecessary toggling and simplifying the logic:
+
+1. Remove the redundant assignment `q <= q;` in the else clause. Keeping this assignment causes the register to be clocked and potentially toggled unnecessarily, increasing dynamic power without changing the state. By removing it, we let the register hold its state naturally, which most synthesis tools optimize by gating internally.
+
+2. Simplify the rotation logic by directly assigning `q` in each condition without extra temporary variables, improving clarity and synthesis friendliness.
+
+3. Maintain the priority of load over rotation, and rotation only if ena is 2'b01 or 2'b10.
+
+4. Although we cannot pipeline due to synchronous load and rotate on the same clock, the simple concatenation remains the best approach for a single-bit rotate. Barrel shifters are overkill here.
+
+This yields a minimal, efficient, and clean design that reduces toggling and power while preserving performance and area characteristics.

@@ -1,0 +1,19 @@
+The Karnaugh map defines out = a + b + c (logical OR of all inputs). The minimal logical expression is a simple 3-input OR. From the examples, modularity and clarity were shown by using 2-input OR gate modules, but this adds gate count and area overhead.
+
+For a superior solution, fuse these ideas:
+
+- Keep the modular Or2 gate definition for clarity and reusability.
+- Use only one Or2 module instance and one direct OR operator, reducing gate count and area.
+- Implement the logic as: out = Or2(a, b) OR c, but write the second OR with the direct operator to save one module instantiation.
+- This hybrid approach balances modularity (one Or2 instance) and area/power efficiency (one built-in OR).
+- Avoid unnecessary wires by using inline expressions where appropriate.
+
+This fusion reduces area and power compared to two Or2 instances and keeps modularity better than a fully direct assign. It simplifies the netlist while preserving clarity, enabling synthesis tools to optimize the direct OR gate easily.
+
+Final logic:
+
+  wire ab_or = a | b;  // via Or2 module
+
+  out = ab_or | c;     // direct OR operator
+
+This design effectively has two OR gates but only one module instantiation, minimizing overhead while maintaining readability and good PPA.

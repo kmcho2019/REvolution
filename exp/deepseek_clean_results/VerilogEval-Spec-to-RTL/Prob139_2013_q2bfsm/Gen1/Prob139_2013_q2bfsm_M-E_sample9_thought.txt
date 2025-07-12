@@ -1,0 +1,13 @@
+Here's a novel approach using a combination of pattern matching and timeout counters:
+
+1. Instead of a traditional FSM with discrete states, we'll use a counter-based approach with flags to track progress through the sequence
+2. Use a 3-bit shift register to track the x input pattern (1-0-1) continuously after reset
+3. Implement two timeout counters: 
+   - One for the initial f pulse (single cycle)
+   - Another for the y monitoring phase (2 cycles)
+4. Use status flags to track:
+   - f_pulsed: indicates if the initial pulse was sent
+   - pattern_matched: indicates when 1-0-1 sequence is found
+   - y_timeout: tracks if y wasn't detected within 2 cycles
+5. Output logic becomes purely combinatorial based on these flags
+6. Reset synchronously clears all counters and flags

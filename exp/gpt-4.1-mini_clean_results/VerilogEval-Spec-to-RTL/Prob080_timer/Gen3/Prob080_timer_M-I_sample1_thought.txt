@@ -1,0 +1,3 @@
+To optimize for better power and timing, I will introduce a clock enable (cen) signal that activates the counter only when it needs to change (on load or when counter is non-zero). This reduces unnecessary toggling of the register when the counter is zero and no load occurs, lowering dynamic power.  
+The logic for next_counter is simplified since the counter only updates when enabled, and the counter stays stable otherwise. This also slightly improves timing by reducing the active logic on each clock edge.  
+The terminal count output remains combinational and asserted when the counter is zero. Overall, this small change reduces switching activity while preserving functional correctness and the single D flip-flop requirement.

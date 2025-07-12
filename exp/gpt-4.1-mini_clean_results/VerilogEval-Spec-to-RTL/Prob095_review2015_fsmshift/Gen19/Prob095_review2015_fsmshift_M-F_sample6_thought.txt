@@ -1,0 +1,13 @@
+To fix the off-by-one error in the original design, we should explicitly count the number of clock cycles during which `shift_ena` is asserted, starting immediately after the synchronous reset.
+
+- Upon synchronous reset, initialize the counter to zero and assert `shift_ena`.
+
+- On each clock cycle after reset, increment the counter.
+
+- Keep `shift_ena` asserted while the counter is less than 4.
+
+- After counting exactly 4 cycles (i.e., when counter reaches 4), deassert `shift_ena` and stop counting.
+
+This ensures `shift_ena` is asserted exactly for 4 clock cycles including the cycle immediately after reset is released, matching the specification precisely.
+
+By counting from 0 up to 3 (total 4 counts) during which `shift_ena` remains high and deasserting on count 4, we get the exact timing needed without ambiguity or off-by-one errors.

@@ -1,0 +1,29 @@
+Key fixes needed based on feedback:
+1. Accurate cycle counting:
+   - Maintain separate counters for total cycles and 1000-cycle chunks
+   - Precisely calculate total cycles as (delay+1)*1000
+   - Decrement count output only after completing each 1000-cycle chunk
+
+2. Correct pattern detection:
+   - Ensure pattern register is cleared after detection to prevent false triggers
+   - Properly synchronize transition to CAPTURE state after full pattern match
+
+3. Precise state transitions:
+   - Move delay value capture to proper cycle (after 4 bits)
+   - Start counting immediately after last delay bit is captured
+   - Transition to DONE state exactly when total cycles complete
+
+4. Output timing:
+   - Update count output at 1000-cycle boundaries
+   - Assert done exactly when counting completes
+   - Clear outputs properly during reset and state transitions
+
+New approach:
+- Use pattern register to detect 1101 sequence
+- Capture next 4 bits as delay value
+- Calculate total cycles as (delay+1)*1000
+- Count cycles in two levels: 
+   - chunk_counter for 0-999 cycles
+   - cycle_counter for total cycles
+- Decrement count output when chunk_counter wraps
+- Strict state machine with clear transition conditions

@@ -1,0 +1,20 @@
+Refactor the radix-4 Booth multiplier to use a clear finite state machine (FSM) with explicit states: IDLE, CALC, DONE. 
+
+- On reset or start (triggered by reset high), initialize sign-extended multiplicand and multiplier with one extra LSB bit (for Booth recoding).
+- Use a 3-bit counter to track the number of partial-product cycles (4 cycles for 8-bit inputs).
+- In CALC state, at each clock cycle:
+  - Extract the 3 relevant bits from the multiplier register for Booth recoding.
+  - Compute the partial product (0, ±multiplicand, ±2*multiplicand).
+  - Add the shifted partial product to an accumulator register.
+  - Arithmetic right shift the multiplier register by 2 bits for next cycle.
+  - Increment the cycle counter.
+- When cycle counter reaches 4, move to DONE state:
+  - Output lower 16 bits of accumulator as product.
+  - Assert ready signal.
+- Wait in DONE state until reset.
+  
+This FSM approach improves clarity and decouples calculation phases. The multiplier register is shifted instead of the accumulator shifting partial sums, making implementation and bit extraction simpler. Also, use synchronous reset with posedge clk or posedge reset to comply with the problem statement. All registers are 17-bit signed to hold intermediate results.  
+
+We also implement a combinational booth decoder function for cleanliness.
+
+This approach respects the original problem constraints, uses clear FSM, and is easy to simulate and synthesize.

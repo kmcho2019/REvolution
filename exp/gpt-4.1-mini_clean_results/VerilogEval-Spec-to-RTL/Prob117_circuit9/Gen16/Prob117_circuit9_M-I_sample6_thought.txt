@@ -1,0 +1,7 @@
+To improve PPA, simplify the always block by removing the redundant conditional assignment `if (q !== next_state)`. This reduces the combinational logic for comparison and lets the register assignment handle change detection naturally, as synthesis tools typically optimize away redundant register writes.
+
+Also, use a case statement for clearer and possibly faster combinational logic synthesis in the next_state block. The case covers all q values explicitly, encoding the modulo-7 count sequence, which might improve synthesis optimization.
+
+Since the initial state is undefined, no reset is added as per the waveform.
+
+These changes aim to slightly improve timing (tns, wns) and simplify the logic for potential area and power benefits without changing functionality.

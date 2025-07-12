@@ -1,0 +1,15 @@
+Implement a simplified, clear 3-cycle IEEE-754 single-precision floating-point multiplier with the following approach:
+
+- Cycle 0: Extract sign, exponent, mantissa (with implicit leading one for normalized), and detect special cases (zero, inf, NaN).
+- Cycle 1: Multiply mantissas, add exponents, compute output sign.
+- Cycle 2: Normalize (shift right if product MSB set), extract rounding bits, perform round-to-nearest-even in a purely combinational style using registered signals, and handle overflow/underflow and special cases.
+
+Key simplifications:
+- Use a 3-bit counter for cycles as requested.
+- Round and normalize in one step with clear combinational logic before registering outputs.
+- Store intermediate signals in registers to simplify sequential logic.
+- Handle all special cases with separate registered flags and use combinational mux at output.
+- Avoid local variables inside sequential blocks and multiple assignments to the same registers in one clock cycle.
+- Provide clear and minimal logic for rounding and exponent adjustment.
+
+This structure minimizes combinational complexity inside sequential always block and ensures synthesis-friendly code.

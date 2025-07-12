@@ -1,0 +1,10 @@
+Both examples correctly identify that all submodules A and B have identical inputs and outputs, so instantiating them twice is redundant. The best approach is to instantiate one A and one B module only, then use their outputs for both the OR and AND gates. This avoids duplication and reduces area and power.
+
+To improve upon these, we can also perform boolean simplification on the final expression: z = (or_out) ^ (and_out) = (a | b) ^ (a & b). This expression is equivalent to the bitwise XOR of a and b, because (a | b) ^ (a & b) simplifies to a ^ b.
+
+Hence, we can further simplify the top module by using only one XOR gate on the outputs of A and B, removing the intermediate OR and AND gates altogether. This reduces the number of gates, thus improving performance, power, and area.
+
+In summary, the fusion strategy is:
+- Instantiate one A and one B only,
+- Replace the OR and AND gates followed by XOR with a direct XOR of outputs from A and B,
+- This maintains correctness, reduces gate count, minimizes logic depth, and optimizes all PPA metrics.

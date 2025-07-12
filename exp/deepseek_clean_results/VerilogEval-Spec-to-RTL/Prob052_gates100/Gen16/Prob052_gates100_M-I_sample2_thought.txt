@@ -1,0 +1,19 @@
+The current solution already shows good PPA metrics, but we can make some targeted improvements:
+
+1. **Power Optimization**: 
+   - Replace the sequential loops in tree_and/tree_or with parallel reduction trees to potentially reduce switching activity
+   - Use synthesis-friendly reduction patterns that tools can better optimize
+
+2. **Area Optimization**:
+   - Leverage Verilog's built-in reduction operators which are highly optimized by synthesis tools
+   - Remove the separate functions and use direct reduction operations
+
+3. **Performance**:
+   - Maintain the 0ns timing violations by keeping operations purely combinational
+   - The reduction operators will naturally form efficient tree structures
+
+The improved version will:
+- Use direct reduction operators for all three operations
+- Eliminate the helper functions to reduce hierarchy
+- Rely on synthesis tools to implement optimal tree structures
+- Maintain the same interface while being more synthesis-friendly

@@ -1,0 +1,11 @@
+To address the issues in the original code, we need to make several changes to the state machine implementation.
+
+Firstly, we need to update the `count` output every clock cycle to display the remaining time. This can be done by assigning the `count` output to `remaining_time` when the state is `DELAY`.
+
+Secondly, we need to assert the `counting` output for the entire duration of the count, which is from the start of the `DELAY` state until the end of the `DELAY` state. This can be done by assigning the `counting` output to `1` when the state is `DELAY`.
+
+Thirdly, we need to assert the `done` output only when the count is complete and the `ack` input is 1. This can be done by assigning the `done` output to `1` when the state is `WAIT_ACK` and the `ack` input is 1.
+
+Lastly, we need to reset the state machine correctly when the `reset` input is 1, and wait for the `ack` input to be 1 before resetting to the `RESET` state.
+
+To implement these changes, we need to revise the state machine to update the `count` output correctly, assert the `counting` output correctly, and assert the `done` output correctly. We also need to revise the state machine to reset correctly and handle the `ack` input correctly.

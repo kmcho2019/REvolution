@@ -1,0 +1,15 @@
+The original FSM design is functionally correct and cleanly structured with synchronous reset and separate always blocks for the state register and next-state logic. To optimize for better PPA (performance, power, area), we can reduce the state encoding bit width from 3 bits to 3 bits, which is minimal for 6 states, so no improvement there. However, we can:
+
+- Use one-hot encoding (6 bits) to potentially improve speed at the cost of area and power, or
+- Use 3-bit binary encoding with explicit unique state codes (already done).
+  
+Since the original uses 3-bit binary encoding and the design is simple, the best improvement is to add an encoding parameter to clarify the bit widths and potentially add a default "safe" next_state assignment at the top of the combinational always block to avoid inferred latches. Although the original uses default in case statement, adding a default next_state at the beginning further helps synthesis tools.
+
+Also, we can implement output 'z' as a combinational always block, which might improve synthesis and testing clarity by clearly defining when 'z' is driven.
+
+Finally, we keep the synchronous reset, separate always blocks, and maintain the existing encoding to optimize clarity and synthesis friendliness without increasing area.
+
+Summary of improvements:
+- Add default assignment for next_state at the start of always block.
+- Implement output 'z' using an always @(*) block instead of continuous assignment.
+- Include comments clarifying encoding and FSM behavior.

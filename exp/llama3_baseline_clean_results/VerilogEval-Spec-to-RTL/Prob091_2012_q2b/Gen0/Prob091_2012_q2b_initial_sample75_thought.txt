@@ -1,0 +1,9 @@
+To implement the state output logic for the given finite-state machine, we first need to understand the state transitions based on the input 'w' and the current state 'y'. Given that a one-hot code is used for state assignment, we can directly derive the next state logic by inspecting the state transition diagram.
+
+The output signals Y1 and Y3 are the inputs to the state flip-flops y[1] and y[3], respectively. To determine these outputs, we need to consider the states where y[1] and y[3] are set (1) in the next state, based on the current state 'y' and input 'w'.
+
+For Y1 (y[1]), it is set in the next state when the current state is B (000010) and the input 'w' is 0 (because B(0) -> D), or when the current state is D (001000) and 'w' is 0 (because D(0) -> A), or when the current state is F (100000) and 'w' is 1 (because F(1) -> C).
+
+For Y3 (y[3]), it is set in the next state when the current state is C (000100) and 'w' is 0 (because C(0) -> D), or when the current state is E (010000) and 'w' is 0 (because E(0) -> D), or when the current state is A (000001) and 'w' is 1 (because A(1) -> B), or when the current state is D (001000) and 'w' is 1 (because D(1) -> F).
+
+We can express this logic in Verilog using conditional statements to assign Y1 and Y3 based on the current state 'y' and the input 'w'.

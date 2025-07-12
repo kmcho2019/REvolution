@@ -1,0 +1,18 @@
+Refactoring Approach:
+1. Maintain the same functional behavior (8-bit signed addition with overflow detection)
+2. Simplify the implementation by using Verilog's built-in addition operator
+3. Let synthesis tools optimize the adder implementation (they can choose best PPA tradeoff)
+4. Compute overflow by checking if both inputs have same sign but result has different sign
+5. Benefits:
+   - More concise and readable code
+   - Leverages synthesis tool optimizations
+   - Maintains same overflow detection accuracy
+   - Easier to modify for different bit widths
+   - Reduced potential for implementation errors
+
+Key Changes:
+- Replace manual carry computation with + operator
+- Simplify overflow detection logic
+- Remove intermediate g/p terms
+- Use direct assignment for sum
+- More declarative style

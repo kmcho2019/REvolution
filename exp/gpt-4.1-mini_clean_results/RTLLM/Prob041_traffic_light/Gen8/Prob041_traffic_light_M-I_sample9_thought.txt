@@ -1,0 +1,17 @@
+To optimize the given traffic light FSM design for better power, performance, and area (PPA), the following strategies will be applied:
+
+1. **Clock Gating for Timer Register**: Introduce an enable signal for the timer register so it updates only when needed (i.e., timer > 0 or state changes). This reduces unnecessary toggling and dynamic power consumption.
+
+2. **Output Signal Registering**: Register output signals (red, yellow, green, clock) to reduce glitches and improve timing closure by breaking combinational paths at outputs.
+
+3. **Simplify ped_shortened Flag Update**: Combine ped_shortened update with state changes to minimize logic and simplify synchronous logic.
+
+4. **Remove next_state temporarily holding current state**: In the ped_shortened update block, directly update ped_shortened only on state changes instead of redundant assignments.
+
+5. **Use one always_ff block for state, timer, and ped_shortened updates** to consolidate synchronous logic, further improving timing.
+
+6. **Use localparam for states and timing constants with consistent naming** for better readability.
+
+7. **Maintain 7-bit timer width** as it covers max counts efficiently.
+
+The modifications focus on reducing switching activity, preventing glitches on outputs, and minimizing combinational logic depth, leading to better PPA without changing the original functionality.

@@ -1,0 +1,16 @@
+To implement the state transition table for the Moore state machine, we need to first identify the current state and the input, and then use this information to determine the next state. Since we are using one-hot encoding for the states, each state is represented by a unique 4-bit binary vector. We can use this information to derive the logic equations for the next state and output.
+
+We will start by defining the next state logic. We will use the following logic equations:
+
+- If the current state is A (4'b0001) and in=0, the next state is A.
+- If the current state is A (4'b0001) and in=1, the next state is B.
+- If the current state is B (4'b0010) and in=0, the next state is C.
+- If the current state is B (4'b0010) and in=1, the next state is B.
+- If the current state is C (4'b0100) and in=0, the next state is A.
+- If the current state is C (4'b0100) and in=1, the next state is D.
+- If the current state is D (4'b1000) and in=0, the next state is C.
+- If the current state is D (4'b1000) and in=1, the next state is B.
+
+We will also define the output logic. The output is 1 only when the current state is D.
+
+We will then implement these logic equations in Verilog.

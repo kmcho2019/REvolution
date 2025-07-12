@@ -1,0 +1,6 @@
+To implement the described finite state machine (FSM), we can break down its operation into several steps:
+1. **Reset Handling**: Initially, the FSM should stay in state A as long as the `resetn` signal is asserted (low). Once `resetn` is de-asserted, it transitions to a state where it sets `f` to 1 for one clock cycle.
+2. **Monitoring `x`**: After setting `f` to 1, the FSM should monitor the `x` input. It needs to detect the sequence 1, 0, 1 on `x` over three successive clock cycles. This can be done by using a counter or a simple state machine that tracks the sequence.
+3. **Setting `g` and Monitoring `y`**: Once the sequence is detected, `g` should be set to 1. The FSM then monitors `y`. If `y` becomes 1 within two clock cycles, `g` remains 1. If `y` does not become 1 within two cycles, `g` is set back to 0.
+
+To implement this, we can use a combination of counters and state machines. However, given the relatively simple sequence and timing constraints, we can achieve this with a small number of states and counters.

@@ -1,0 +1,9 @@
+Refactoring the floating-point multiplier to use a combinational decoding and a sequential FSM approach improves code clarity and separates datapath from control logic. Instead of deeply pipelined registers carrying intermediate signals each clock, an FSM with explicit states controls each step: decode, multiply, normalize, round, and output. Inputs are latched on start, and outputs are ready after several cycles indicated by the FSM state.
+
+This structure uses combinational `assign` to decode inputs and detect special cases upfront, while sequential logic (an FSM) controls progression and updates registers accordingly. It also uses explicit intermediate registers for mantissa, exponent, sign, and flags between FSM states, simplifying timing and debugging.
+
+The sticky bit calculation and rounding remain similar but occur within FSM states, reducing combinational complexity per clock cycle. Special cases are checked during decode and final assembly states.
+
+This approach makes the control flow explicit, eases possible further optimization or insertion of pipeline stages, and distinctly separates combinational and sequential parts.
+
+The module interface remains the same, and the core IEEE-754 standard multiplication functionality and special case handling are preserved.

@@ -1,0 +1,7 @@
+To refactor the existing code, we can replace the `always` block with a combination of `assign` statements and logical operations to achieve the same functionality. This approach can potentially improve the readability and maintainability of the code. The core idea remains the same: selecting one of the data inputs based on the `sel` signal and outputting 0 when `sel` is outside the valid range.
+
+We can use a combination of bitwise AND and OR operations to select the correct data input. Each data input will be ANDed with a mask that is high only when the corresponding `sel` value is matched. The results of these AND operations will then be ORed together to produce the final output.
+
+For example, `data0` will be ANDed with a mask that is high only when `sel` is 0, `data1` will be ANDed with a mask that is high only when `sel` is 1, and so on. The resulting values will be ORed together to produce the final output.
+
+This approach eliminates the need for an `always` block and a `case` statement, making the code more concise and potentially more efficient.

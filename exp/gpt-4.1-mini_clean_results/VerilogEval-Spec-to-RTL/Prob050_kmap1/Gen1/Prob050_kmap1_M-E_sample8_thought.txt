@@ -1,0 +1,21 @@
+Another way to express the output is by recognizing from the Karnaugh map that the output is zero only when all inputs are zero (a=0, b=0, c=0), and one otherwise.
+
+We can use a NAND operation on the three inputs to achieve this behavior, since NAND outputs 0 only when all inputs are 1.
+
+Here, all zeros should produce zero output, so invert inputs before NAND, or use NOR. Alternatively, we can write:
+
+out = ~(~a & ~b & ~c)  (as in the first solution).
+
+To create a structurally different design, let's implement the logic using a combination of NOR and NAND gates:
+
+- First, use a 3-input NOR gate on a, b, c to detect if all inputs are zero.
+
+- Then invert this signal to get the output.
+
+This effectively matches the expression: out = ~(~a & ~b & ~c) = a | b | c
+
+But structurally it's different, as we explicitly build a NOR gate followed by an inverter.
+
+In Verilog, we can instantiate gate-level primitives to express this.
+
+This approach showcases an alternate gate-level structure corresponding to the same logic.

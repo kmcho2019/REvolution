@@ -1,0 +1,9 @@
+To optimize for power and area, reduce unnecessary logic transitions and simplify expressions. The current design is already minimal, but slight improvements can come from explicitly disabling next state bits not needed in a given condition, avoiding redundant terms (e.g., in next_state[1], B & in is always activating next_state[1], so no need to OR with A or D). Also, we can reorder next state logic to use exactly one active next state bit per input and state (one-hot principle) to reduce glitches. For example, next_state[1] activates on in=1 from states A, B, D; however, the transition from B with in=1 goes to B again, so next_state[1] is high if current state B and in=1. The other activations are for A and D. We can express next_state[1] as in & (A | B | D), same as before but factor order or split to reduce gate fanin or transitions.
+
+Since the machine must activate exactly one next_state bit per input and current state (one-hot), assigning next_state bits directly from AND combinations with current state bits and input/inverted input is the most straightforward and minimal.
+
+The output is already minimal and perfectly assigned to D.
+
+This design is already very efficient; therefore, only minor restructuring and explicit one-hot assignment is performed to avoid any accidental multiple bits active at once. This can help synthesis produce better optimized gates.
+
+Overall, the improvement is a micro-optimization focusing on explicitly assigning next_state bits to ensure single-hot activation and slightly rearranging logic to maintain clarity and minimal fanin.

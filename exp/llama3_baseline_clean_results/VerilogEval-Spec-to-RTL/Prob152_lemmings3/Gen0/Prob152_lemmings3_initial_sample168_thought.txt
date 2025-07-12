@@ -1,0 +1,16 @@
+To implement the Lemming behavior, we need to design a finite state machine (FSM) that can model the walking, falling, and digging states of the Lemming. The FSM should have the following states:
+- Walking left
+- Walking right
+- Falling
+- Digging
+
+We will use a Moore state machine, which means that the outputs are a function of the current state only. The state transitions will be determined by the input signals (bump_left, bump_right, ground, dig) and the current state.
+
+The state transitions can be summarized as follows:
+- If the Lemming is walking and it hits an obstacle (bump_left or bump_right), it will switch direction.
+- If the ground disappears (ground=0), the Lemming will fall.
+- If the Lemming is walking on ground and it is told to dig (dig=1), it will start digging.
+- If the Lemming is digging and it reaches the other side (ground=0), it will fall.
+- If the ground reappears (ground=1) while the Lemming is falling or digging, it will resume walking in the original direction.
+
+We will use two state variables to encode the four states: walk_direction (0 for left, 1 for right) and state (0 for walking, 1 for falling, 2 for digging).

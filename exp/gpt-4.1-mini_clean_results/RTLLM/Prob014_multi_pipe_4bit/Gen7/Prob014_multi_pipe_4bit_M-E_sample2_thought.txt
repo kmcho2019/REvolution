@@ -1,0 +1,32 @@
+Implement a 4-bit unsigned multiplier with exactly two pipeline stages of registers between input and output.
+
+1. Inputs mul_a and mul_b are each zero-extended by "size" bits at MSBs to form 8-bit extended values.
+
+2. On the first clock stage, register the extended inputs.
+
+3. On the second clock stage, generate and register partial products for each bit of the registered multiplier. Each partial product is the registered multiplicand shifted by bit position if the multiplier bit is 1, else zero.
+
+4. Sum these partial products combinationally and register the sum as the final output product on the next clock edge.
+
+Thus, the pipeline is:
+- Stage 0: Input registers (with zero extension)
+- Stage 1: Partial product registers (one per multiplier bit), generating shifted multiplicand or zero
+- Stage 2: Output register holding sum of partial products
+
+The design uses two levels of registers between input and final output:
+- Level 1 registers hold zero-extended inputs.
+- Level 2 registers hold partial products.
+- Final output is registered as product sum.
+
+Reset is asynchronous active-low and clears all registers and output to zero.
+
+This architecture cleanly partitions the pipeline:
+- Inputs registered once with extension.
+- Partial products generated and registered on next cycle.
+- Final product summed and registered next cycle.
+
+The latency is 3 cycles, but the problem requires two levels of registers, so the two pipeline levels correspond to the two register sets before output.
+
+This implementation uses a generate block for partial product generation and parameterized sizes, with all registers updated on clock or reset edge.
+
+The design is modular, synthesizable, and easily testable.

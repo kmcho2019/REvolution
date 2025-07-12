@@ -1,0 +1,24 @@
+Novel Architectural Idea: Carry-Select Adder with Early Overflow Detection
+
+Key Features:
+1. Hierarchical Carry-Select Structure:
+   - Split the 8-bit addition into two 4-bit chunks (lower and upper nibbles)
+   - Compute both possible results for the upper nibble (assuming carry-in 0 and 1)
+   - Select correct result based on actual carry-out from lower nibble
+
+2. Early Overflow Detection:
+   - Detect overflow conditions in parallel with addition
+   - Uses sign bit analysis and carry information to determine overflow
+   - Avoids waiting for full carry propagation
+
+3. Benefits:
+   - Reduced critical path compared to ripple-carry
+   - Parallel computation enables faster operation
+   - Early overflow detection improves timing
+   - Modular structure scales well to wider adders
+
+4. Implementation Details:
+   - Lower 4-bit ripple-carry adder
+   - Upper 4-bit dual-path computation
+   - Multiplexer for final upper nibble selection
+   - Overflow computed from sign bits and carries

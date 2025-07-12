@@ -1,0 +1,15 @@
+This implementation uses a shift-register based approach with saturation detection. The key innovations are:
+
+1. Instead of arithmetic operations, we use shift operations with saturation flags
+2. Implemented as a 2-bit shift register where:
+   - Increment: Shift left (with MSB as saturation flag)
+   - Decrement: Shift right (with LSB as saturation flag)
+3. Special saturation logic prevents overflow/underflow
+4. Reset initializes to 01 by directly setting the register bits
+5. Uses parallel saturation detection for faster critical path
+
+Advantages:
+- Shift operations are typically faster than arithmetic in hardware
+- Saturation detection is parallel and independent of the shift operation
+- Simple logic structure with minimal gates
+- Clear physical implementation as a small register file with control logic

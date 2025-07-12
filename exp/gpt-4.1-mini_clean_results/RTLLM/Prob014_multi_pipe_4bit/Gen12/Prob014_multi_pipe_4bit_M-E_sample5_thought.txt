@@ -1,0 +1,10 @@
+Implement a 4-bit unsigned pipelined multiplier with two pipeline stages that:
+1. Extends both multiplicand and multiplier by adding zeros at MSBs to double their width.
+2. Generates all partial products combinationally as AND results of the multiplicand bits with each bit of the multiplier, shifted appropriately.
+3. The first pipeline stage registers the partial products (one for each bit of the multiplier).
+4. The second pipeline stage sums all the registered partial products sequentially across multiple cycles using an internal counter and accumulator register.
+5. The final pipeline register stores the completed product output.
+6. This design time-multiplexes the addition of partial products over pipeline cycles instead of summing them all at once, reducing combinational logic delay in the second stage at the cost of latency.
+7. The design uses a simple FSM to control addition sequence synchronized with the clock and reset.
+8. Parameterized for scalability, but fixed to size=4 as per spec.
+This novel architecture balances area and timing by pipelining partial product generation and incrementally accumulating the product over cycles.

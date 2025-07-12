@@ -1,0 +1,47 @@
+Instead of requiring the full_module to compute the combinational feedback logic and feed it as q_in, let TopModule encapsulate both the flip-flop with load mux and the combinational logic of the next state bit internally.
+
+We can parameterize TopModule by an index (0,1,2) to know which bit it implements and which bits of q it depends on for the feedback logic.
+
+Inside TopModule, store Q as a register. On each clock edge, if L is asserted, load r_in; else compute the next Q value according to the feedback function from internally stored q-flip-flops and latch it.
+
+Since TopModule instances are independent modules, they cannot share the 3-bit q vector directly, so we need to instantiate three TopModules and connect their Q outputs and q_in inputs internally. To enable this, we can include in TopModule internal registers q0, q1, q2 and connect them through hierarchical wiring or use generate blocks with shared signals.
+
+Alternatively, create a parameterized version where TopModule accepts as inputs the other Q bits to compute the next state bit internally, so that the parent module connects the Q outputs of all instances back to the inputs of each instance.
+
+Thus, the TopModule has inputs: clk, L, r_in, q_in0, q_in1, q_in2, output Q.
+
+On clock edge: if L, load r_in; else compute next Q from the internal feedback function using q_in signals.
+
+This approach encapsulates the feedback logic inside each TopModule instance, and the parent full_module just wires the Q outputs and q_in inputs accordingly.
+
+This is a new design architecture: TopModule is a stateful element that computes its own feedback function from the other bits provided as inputs.
+
+In this problem, only 3 bits exist; thus, the combinational logic for next Q[i] is:
+
+- Q[2] next = q_in0 ^ q_in1   (for i=2)
+- Q[1] next = q_in2           (for i=1)
+- Q[0] next = q_in1           (for i=0)
+
+Mapping from original code q <= {q[1] ^ q[2], q[0], q[2]}
+
+So for each instance i:
+
+- i=2 (top bit): next Q = q[1]^q[2] => q_in1 ^ q_in2
+- i=1: next Q = q[0]
+- i=0: next Q = q[2]
+
+We implement this logic inside each instance based on its index parameter.
+
+Therefore, TopModule requires:
+
+- clk, L, r_in inputs,
+- q_in0, q_in1, q_in2 inputs representing the current Q bits,
+- output Q
+
+Then at posedge clk: if L Q <= r_in else Q <= feedback(i, q_in0,q_in1,q_in2).
+
+This gives a self-contained module with internal feedback.
+
+The full_module will instantiate three TopModules with the three indices, connect their q_in* ports to the Q outputs of other TopModules, and control loading with L and r.
+
+This satisfies the requirement of factoring full_module into hierarchical design with flip-flop, mux, and feedback logic inside TopModule.

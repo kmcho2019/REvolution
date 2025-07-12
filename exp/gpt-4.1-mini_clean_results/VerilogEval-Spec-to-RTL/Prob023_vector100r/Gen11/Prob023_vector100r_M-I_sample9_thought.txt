@@ -1,0 +1,11 @@
+To optimize the existing combinational bit reversal module for better power and timing (PPA), I will introduce a registered output stage. By clocking the reversal output, switching activity is reduced since the output only changes on clock edges rather than continuously propagating combinational input changes. This registered approach also improves timing by breaking the long combinational path into two stages: input-to-register and register-to-output, easing timing closure.
+
+Implementation plan:
+- Add a clock and reset input to TopModule.
+- Register the reversed bits at the clock edge with synchronous reset.
+- Keep the BitRevN combinational module as-is for clarity and modularity.
+- In TopModule, instantiate BitRevN, then register its output.
+- This pipelining step reduces switching activity at the output and improves timing at the expense of one cycle latency.
+- This tradeoff is beneficial in synchronous designs targeting power and timing optimization.
+
+This enhancement maintains modularity and code clarity while improving power and timing characteristics.

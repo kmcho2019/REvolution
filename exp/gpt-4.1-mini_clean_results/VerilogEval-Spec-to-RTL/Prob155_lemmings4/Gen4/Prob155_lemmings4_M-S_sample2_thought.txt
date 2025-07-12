@@ -1,0 +1,9 @@
+Simplify the FSM by combining mode and direction updates more directly and reducing condition nesting.
+- Keep the 2-bit mode and direction register.
+- Use a simple fall_timer counter increment only during falling.
+- Use clear priority fall > dig > bump to choose next state/direction.
+- Simplify bump logic: if bump_left or bump_right is 1, set direction accordingly; if both bumps, toggle direction.
+- For fall_timer, saturate by stopping increment above 20 (no need to saturate at 31).
+- Make outputs depend only on mode and direction, as in Moore FSM.
+- Keep asynchronous reset to walk left.
+This keeps logic minimal and easy to follow while retaining all functionality.

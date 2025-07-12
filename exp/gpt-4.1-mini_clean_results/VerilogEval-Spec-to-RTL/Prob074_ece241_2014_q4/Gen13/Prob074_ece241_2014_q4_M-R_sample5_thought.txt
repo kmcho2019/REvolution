@@ -1,0 +1,9 @@
+To ensure the flip-flops are initialized to zero and keep the core FSM behavior unchanged, I will restructure the design by explicitly coding the flip-flops using a synchronous reset internally generated via a simple power-on reset signal. Since the problem does not provide a reset input, I will create an internal reset that is asserted only at simulation time zero, then de-asserted after the first clock edge to ensure the flip-flops start from zero deterministically.
+
+This internal reset signal is implemented with a one-bit register initialized to 1, which clears on the first clock edge. This way, the flip-flops are synchronously reset on the first clock, guaranteeing zero initialization for synthesis and simulation alike, without violating the interface constraints.
+
+The combinational logic remains the same: the three D inputs are computed from x and the current states as specified (XOR with Q, AND with ~Q, OR with ~Q). On the positive clock edge, if reset is asserted, all flip-flops reset to zero; else they capture the computed D inputs.
+
+Output z is still the NOR of all three flip-flop outputs.
+
+This approach is synthesizable, fully self-contained, and respects the requirement that flip-flops are initially zero before the machine operates, without needing external reset inputs or relying on reg initializations which are not guaranteed in synthesis.

@@ -1,0 +1,16 @@
+Refactoring Approach:
+1. Eliminate submodules entirely and implement the logic directly in the top module using continuous assignments
+2. Recognize that ModuleA (x & ~y) and ModuleB (x ~^ y) can be combined into a single optimized expression
+3. Observe that the final output z = (a_out | b_out) ^ (a_out & b_out) simplifies to a_out ^ b_out
+4. Further optimize by substituting the expressions for a_out and b_out directly into the final XOR
+5. Result is a minimal, flat implementation with:
+   - No hierarchy (removes module instantiation overhead)
+   - Single optimized Boolean expression
+   - Reduced gate count and improved timing
+   - Same functionality with better PPA metrics
+
+Key Changes:
+- Removed module hierarchy for direct implementation
+- Collapsed logic into minimal Boolean expression
+- Maintained same I/O behavior
+- Improved power and area by eliminating intermediate signals

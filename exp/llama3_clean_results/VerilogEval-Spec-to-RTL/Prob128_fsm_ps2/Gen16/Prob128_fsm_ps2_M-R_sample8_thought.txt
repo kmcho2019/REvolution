@@ -1,0 +1,9 @@
+The existing Verilog code implements a finite state machine (FSM) to detect message boundaries in a PS/2 mouse protocol byte stream. To refactor this code with a different structure, we can utilize a parameterized state machine with enumerated states and employ a more explicit state transition mechanism. 
+
+We will define an enumeration for the states (SEARCH, BYTE1, BYTE2) and use a `case` statement within a combinational logic block to determine the next state based on the current state and input conditions. This approach maintains the simplicity of the original state machine while potentially making the code more readable and easier to understand.
+
+Additionally, we will keep the `msg_received` signal to indicate when a message is fully received, which allows us to assert the `done` signal in the next cycle after the third byte of each message was successfully received. This ensures correct timing and avoids potential glitches.
+
+The new structure will aim to minimize area and power consumption by reducing unnecessary state transitions and combinational logic complexity. We will also ensure that the state machine only changes state when necessary, reducing unnecessary transitions and potentially leading to better performance.
+
+By using enumerated states and a more explicit state transition mechanism, we aim to create a refactored solution that maintains functional correctness while optimizing for PPA metrics.

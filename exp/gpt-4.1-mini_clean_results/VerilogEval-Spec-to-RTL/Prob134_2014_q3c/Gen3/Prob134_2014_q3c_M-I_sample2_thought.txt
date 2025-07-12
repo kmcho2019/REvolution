@@ -1,0 +1,9 @@
+To improve power and area while preserving function, convert output z from reg to wire and assign it combinationally alongside the next state logic. This avoids unnecessary flip-flops or latch inference for z and reduces signal storage. Use a single combinational always block or better, a combinational function or continuous assignment to define Y_next and z without registers.
+
+Since y is input state, no state register is needed internally. By making z a wire and combining the assignments into continuous assignments or a single always_comb with nonblocking assignments, the logic becomes simpler and potentially more power- and area-efficient.
+
+Also, replacing the if-else inside case with a 2D lookup (e.g., a small function or combinational expression) can marginally reduce logic.
+
+Overall, make z a wire assigned in combinational logic, keep Y_next as reg (for clear combinational assignments), and assign Y0 as before from Y_next[0].
+
+This yields minimal combinational logic with no unnecessary register for z, improving power and area.

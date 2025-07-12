@@ -1,0 +1,21 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Register read_data output to improve timing closure
+   - Move reset logic to synchronous blocks only
+   - Remove combinational reset from read path
+
+2. Power Optimization:
+   - Maintain read_data value when read_en is low instead of forcing to zero
+   - Simplify reset implementation to reduce unnecessary toggles
+
+3. Area Optimization:
+   - Remove redundant reset logic
+   - Simplify control paths
+   - Keep memory array implementation compact
+
+Key Changes:
+- Make read_data fully synchronous
+- Remove combinational reset from read path
+- Only update read_data when read_en is active
+- Clean up reset implementation
+- Maintain same functionality with better PPA

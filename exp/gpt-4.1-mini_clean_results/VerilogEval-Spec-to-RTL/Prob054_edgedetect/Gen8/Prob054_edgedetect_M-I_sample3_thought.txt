@@ -1,0 +1,5 @@
+The existing design is already minimal and functional, but to optimize power slightly, we can add an enable signal for updating the prev_in register only when a rising edge is detected on any bit. This reduces unnecessary register toggling when the input is stable. We create a wire that detects if any bit has a rising edge by comparing prev_in and in, and update prev_in only if that condition is true.
+
+This selective updating minimizes register toggling and combinational switching in the pedge calculation, improving dynamic power slightly without adding complex logic. The timing impact is minimal as the enable is a simple OR reduction, and the area overhead is a small AND gate and logic to generate the enable signal.
+
+Thus, the power is improved by gating register updates, with negligible impact on timing and area. The code remains clean and easy to understand.

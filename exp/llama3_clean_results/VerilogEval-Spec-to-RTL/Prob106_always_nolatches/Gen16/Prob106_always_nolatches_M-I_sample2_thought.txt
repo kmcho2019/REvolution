@@ -1,0 +1,10 @@
+To improve the existing solution and optimize it for better PPA metrics, we can adopt a more centralized approach by using a single module to perform all scancode comparisons. This approach reduces the replication of logic, potentially leading to area and power savings. 
+
+The strategy involves designing a single module, `TopModule`, which takes the scancode as input and directly asserts the corresponding arrow key outputs based on the scancode mapping. This design utilizes a case statement within an always_comb block to perform the comparisons and assign the outputs. 
+
+By minimizing the number of modules and leveraging a case statement, which is typically optimized by synthesis tools, we can potentially reduce the area and power consumption of the design. Additionally, since the design is combinatorial and does not contain any sequential logic, the timing performance (tns, wns) should remain unaffected.
+
+The key improvements are:
+1. Reduced area consumption by minimizing module instantiation.
+2. Potential power savings due to reduced switching activity in the single, centralized module.
+3. Simplified design with improved maintainability due to reduced code duplication.

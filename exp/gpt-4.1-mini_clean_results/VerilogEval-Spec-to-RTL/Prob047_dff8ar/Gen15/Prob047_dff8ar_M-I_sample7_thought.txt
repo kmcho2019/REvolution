@@ -1,0 +1,7 @@
+To improve PPA while preserving functionality, implement clock enable logic to reduce switching activity and dynamic power. Introduce an enable signal that only loads new data when the input `d` differs from the current output `q`. This selective loading avoids unnecessary toggling inside the flip-flops, reducing dynamic power without impacting timing or area significantly.
+
+The asynchronous reset remains intact to clear outputs immediately when asserted. The design still uses a single vector DFF with asynchronous reset for modularity and scalability.
+
+This approach improves power efficiency by gating unnecessary data writes while keeping the design clean and minimal in additional logic. The impact on area is negligible due to the small comparator and gating logic for only 8 bits. The critical path is unlikely to degrade since the comparator runs combinationally alongside the DFF input mux controlled by enable.
+
+Overall, this strikes a better PPA balance by trading minimal extra logic for reduced switching power.

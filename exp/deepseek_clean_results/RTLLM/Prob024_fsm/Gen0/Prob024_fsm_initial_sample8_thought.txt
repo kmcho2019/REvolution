@@ -1,0 +1,9 @@
+To implement a Mealy FSM that detects the sequence "10011" in a continuous input stream, we need to design a state machine with 6 states:
+1. IDLE: Initial state, waiting for first '1'
+2. S1: Received '1' (first bit)
+3. S10: Received '1' followed by '0'
+4. S100: Received '1','0','0'
+5. S1001: Received '1','0','0','1'
+6. S10011: Received full sequence '1','0','0','1','1'
+
+The FSM transitions between these states based on the input IN. The output MATCH is 1 only when we're in state S10011 and the current input is '1'. The FSM should handle continuous detection by properly transitioning back to previous states when partial sequences are detected within new sequences.

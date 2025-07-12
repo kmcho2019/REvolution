@@ -1,0 +1,12 @@
+Fuse the direct, arithmetic-based state update from Example 1 with the explicit next-state combinational logic and clear FSM style from Example 2. 
+
+Specifically:
+
+- Use a combinational always block to compute next_q, improving readability and separating next-state logic from state register updates, as in Example 2.
+- Inside the combinational block, leverage the concise arithmetic increment modulo 7 logic from Example 1 to efficiently calculate the next state when a=0.
+- For a=1, next_q is set directly to 4.
+- Use a synchronous always block to update q at the clock's rising edge with next_q.
+- Add an initial reset behavior (via initial block) to avoid x states at simulation start, improving simulation clarity and possible synthesis of reset circuitry.
+- This fusion keeps the clarity and modularity of a FSM style, while retaining the performance and area benefits of simplified arithmetic increment logic.
+
+This approach offers the clarity and extensibility of FSM design with the reduced logic complexity and straightforward increment from arithmetic. It also safeguards from invalid states by resetting to 4 on a=1 and cycling 0..6 on a=0.

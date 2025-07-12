@@ -1,0 +1,13 @@
+The original solution has Y3 = (~w) & (y[1] | y[2] | y[4] | y[5]). Observing the state encoding and transitions, states y[2] (C), y[4] (E), and y[5] (F) always have their respective bits set uniquely, and y[1] corresponds to B. Since the FSM transitions to D (y[3]) from states B, C, E, F on input w=0, it's sufficient to OR all these states together with w complemented.
+
+To simplify further, notice y[2], y[4], and y[5] are distinct bits and can be combined as y[2]|y[4]|y[5]. But y[1]|y[2]|y[4]|y[5] can be simplified by assigning an intermediate wire to reduce code duplication.
+
+Alternatively, since y is 6 bits, and bits [1,2,4,5] appear in the expression, the simplest form remains (~w) & (y[1]|y[2]|y[4]|y[5]). Any further logic reduction risks readability or is not simpler.
+
+Hence, a simpler version is to directly assign Y1 and Y3 as before but compactly:
+
+Y1 = y[0] & w;
+
+Y3 = ~w & (|{y[1], y[2], y[4], y[5]}); // Using reduction OR to make code succinct.
+
+This reduces explicit OR chains and uses Verilog reduction operators for succinctness.

@@ -1,0 +1,8 @@
+To implement a 12-hour clock with AM/PM indicator, we need to create three counters for hours, minutes, and seconds. Each counter should be in BCD format (two digits each) and roll over appropriately. The design should:
+1. Use synchronous reset (highest priority)
+2. Increment counters only when enabled (ena)
+3. Handle BCD rollover logic for each counter
+4. Track AM/PM state (pm signal)
+5. Reset to 12:00:00 AM when reset is asserted
+
+The seconds counter rolls over at 59, triggering minutes. Minutes roll over at 59, triggering hours. Hours roll over at 12 (not 13) and toggle AM/PM. All counters are synchronous to the positive clock edge.

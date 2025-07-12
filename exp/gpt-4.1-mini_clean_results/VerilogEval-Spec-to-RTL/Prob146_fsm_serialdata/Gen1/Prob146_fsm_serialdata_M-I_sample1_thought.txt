@@ -1,0 +1,17 @@
+The main functional issue is the bit order in the shift register. Since the protocol sends LSB first, we must shift the existing bits left and insert the new bit into bit 0, not bit 7. So the correct shift is `shift_reg <= {in, shift_reg[7:1]}` inverted to `shift_reg <= {in, shift_reg[7:1]}`? Actually, that shifts new bit into MSB. Instead, we want `shift_reg <= {in, shift_reg[7:1]}` flips the order.
+
+To fix, shift left by one and insert new bit at LSB: `shift_reg <= {in, shift_reg[7:1]}` means the MSB is replaced by `in` and bits shift right.
+
+Instead, to get LSB first, shift left: `shift_reg <= {in, shift_reg[7:1]}` wrong.
+
+Better: `shift_reg <= {in, shift_reg[7:1]}` same as before.
+
+Wait, clarifying the logic:
+
+- Suppose we want the first received bit to be bit 0 (LSB). On each clock cycle, we get one bit `in`.
+
+- If shift_reg is shifted right, and we put `in` in MSB, first bit goes to bit 7.
+
+- If we shift left, and put `in` in LSB, first bit goes to bit 0.
+
+Therefore, to maintain LSB first, the shift must be:

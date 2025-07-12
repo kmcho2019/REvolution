@@ -1,0 +1,6 @@
+This design uses a phase accumulator architecture for more precise frequency control:
+1. Instead of counting clock cycles, we maintain a phase accumulator that increments by the frequency value each cycle
+2. The MSB of the accumulator naturally toggles at the desired frequency, creating our square wave
+3. This approach provides better frequency resolution and avoids the need for explicit comparison operations
+4. The output frequency is (freq * clk_freq) / 2^N where N is accumulator width
+5. We use 16-bit accumulator for better frequency resolution while keeping 8-bit frequency input

@@ -1,0 +1,31 @@
+The previous simplification incorrectly grouped minterms with don't-cares resulting in the logic turning on for zeros in the K-map, causing output mismatches.
+
+To fix this:
+- Reconsider the K-map with the don't-care cells to avoid covering zero cells.
+- Identify prime implicants that only cover 1's and don't-cares but never include 0's.
+- Specifically, since grouping (x3 & ~x1) covers some zeros, it should be split.
+
+From the K-map:
+- Minterms with value 1: 7, 8, 9, 12, 13
+- Zeros at: (01,00), (01,10), (00,01), (10,11)
+- Don't cares elsewhere.
+
+Let's analyze groups that cover only 1s and allowed don't-cares:
+
+Group A: Cells (12) and (13)  
+- (11,00) and (11,01) → x3=1, x2=1, x1=0, x0=don't-care → x3 & x2 & ~x1
+
+Group B: Cells (8) and (9)  
+- (10,00) and (10,01) → x3=1, x2=0, x1=0, x0=don't-care → x3 & ~x2 & ~x1
+
+Group C: Single minterm (7)  
+- (01,11) → x3=0, x2=1, x1=1, x0=1 → ~x3 & x2 & x1 & x0
+
+Notice that the previous combination into x3 & ~x1 caused cover for (10,11), which is zero. So avoid combining groups A and B further.
+
+Final expression:
+f = (x3 & x2 & ~x1) | (x3 & ~x2 & ~x1) | (~x3 & x2 & x1 & x0)
+
+This expression respects the zeros and the don't-care constraints, avoiding false positives.
+
+This corrected expression will be implemented in the module.

@@ -1,0 +1,8 @@
+To optimize for better power and timing without sacrificing clarity, I will:
+
+- Replace the next_state_func function with a combinational always block for next state logic, as synthesis tools often better optimize explicit always blocks.
+- Register the output 'out' to reduce glitches and power consumption caused by direct combinational output from state, since the output is Moore (depends only on state), registering it one cycle after state update is acceptable.
+- Keep the asynchronous reset for state.
+- Maintain single-bit encoding and minimal combinational logic for area efficiency.
+
+This should slightly improve timing by flattening next state logic and reduce dynamic power by output registration, with minimal area impact.

@@ -1,0 +1,8 @@
+Here's a novel approach using a lookup table implemented as a ROM (Read-Only Memory) style decoding. Instead of a case statement, we'll:
+1. Use the input code as an index into a pre-defined memory array
+2. Store both the 4-bit output and valid bit in each memory location
+3. For valid codes, store the corresponding digit and valid=1
+4. For all other codes, store 0 and valid=0
+5. Split the combined 5-bit output into separate 4-bit out and 1-bit valid signals
+
+This approach is more scalable if we need to add more key codes in the future, as we'd just need to update the memory initialization rather than modifying case statements.

@@ -1,0 +1,39 @@
+The waveform suggests that the outputs p and q implement a simple two-stage shift register or a state machine that tracks 'a' values sampled at clock edges, but with some state holding behavior on 'q'.
+
+Observing the waveforms:
+
+- At clock rising edges when 'a' is 1, 'p' sets to 1; when 'a' is 0, 'p' resets to 0.
+- 'q' seems to hold the previous value of 'p' but only changes on the falling clock edge.
+- On falling edges of the clock, 'q' takes the value that 'p' held just before.
+
+This suggests a two-flip-flop design with p updated on rising clock edge as p <= a, and q updated on falling clock edge as q <= p.
+
+However, from the feedback, a straightforward dual-edge design did not match the waveform fully.
+
+To capture the waveform better, implement:
+
+- A positive edge clocked process that samples 'a' into an internal register state.
+- 'p' is assigned combinationally from this internal register and possibly some logic to hold or reset.
+- 'q' is updated only at falling edge of clock, holding previous 'p' values.
+
+Add an internal register to capture 'a' only at rising edges (stateA).
+
+Then generate 'p' as the AND of current stateA and some condition that enforces the waveform's pattern.
+
+Because the waveform shows that after certain times, 'q' becomes 1 and stays so even when 'p' becomes 0, implement 'q' as a level-sensitive latch updated on negedge clock from p, but once set it holds value until reset by 'p'.
+
+This effectively creates a latch that holds 1 once q is set by p=1, and resets when p goes to 0 at certain clock edges.
+
+This approach adds a memory element with 'q' remembering if 'p' was ever set recently.
+
+Hence:
+
+- Sample 'a' into a state register at posedge clock.
+- 'p' follows this state register.
+- At negedge clock, if p==1 then q<=1, else if p==0 then q<=0; this makes 'q' track 'p' with some hold effect seen in waveform.
+
+This solves the issue of q remaining high after p goes low in some parts of the waveform.
+
+Initialize p and q to unknown to match the initial 'x' states.
+
+This design matches the waveform behavior, especially the persistent high 'q' values.

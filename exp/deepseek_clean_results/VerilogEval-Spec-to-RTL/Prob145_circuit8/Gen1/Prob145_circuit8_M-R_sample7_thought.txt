@@ -1,0 +1,9 @@
+After carefully re-examining the waveform, I notice:
+1. Output p goes high only when a rising edge of 'a' is detected during a clock edge (a was 0 in previous cycle and 1 in current cycle)
+2. Output q goes high only after p has been high for one full clock cycle (two consecutive p=1)
+3. Both outputs reset to 0 when a falling edge of 'a' is detected without a clock edge
+
+This requires:
+1. Storing the previous value of 'a' to detect edges
+2. A state machine to track how long p has been high
+3. Synchronous reset behavior when a falls without a clock

@@ -1,0 +1,16 @@
+To implement the Lemming behavior as a Moore state machine, we need to consider the different states the Lemming can be in: walking left, walking right, falling, and digging. We also need to handle the different inputs and transitions between these states.
+
+The state machine will have the following states:
+- Walking left
+- Walking right
+- Falling
+- Digging
+
+The transitions between these states are based on the inputs:
+- If the Lemming is walking and hits an obstacle (bump_left or bump_right), it switches direction.
+- If the ground disappears (ground=0), the Lemming falls.
+- If the Lemming is told to dig (dig=1) and is walking on ground, it starts digging.
+- If the Lemming is digging and reaches the other side (ground=0), it falls.
+- If the Lemming is falling and hits the ground (ground=1), it resumes walking in the same direction as before the fall.
+
+We can implement this state machine using a Moore machine, where the output depends only on the current state.

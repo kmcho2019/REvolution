@@ -1,0 +1,28 @@
+Both examples provide the same minimal sum-of-products expression derived from the Karnaugh map. The key strengths are:
+
+- Clear factoring of terms, minimizing literal counts per product.
+- Sharing of inverted inputs (na, nb, nc, nd) to avoid repeated negations.
+- Factoring common expressions like (a | b) and (~a | ~b).
+
+To improve further, the fusion strategy is:
+
+- Extract common sub-expressions explicitly to share logic and reduce gate count and switching.
+- Implement shared intermediate wires for (a | b) and (~a | ~b).
+- Use these shared signals in the main expression to avoid redundant OR gates.
+- This approach will reduce dynamic power by limiting repeated toggling of identical gates and minimize area by sharing logic.
+
+This yields a minimal and clean implementation with optimized PPA by leveraging both examples' clear expressions and factoring common sub-expressions.
+
+The final expression:
+
+out =
+    (~c & ~d & (~a | ~b)) |
+    (~c & d & ~b) |
+    (c & ~d & ~a) |
+    (c & d & (a | b))
+
+Shared sub-expressions:
+w1 = a | b
+w2 = ~a | ~b
+
+This design balances simplicity, low depth, and gate sharing for improved PPA.

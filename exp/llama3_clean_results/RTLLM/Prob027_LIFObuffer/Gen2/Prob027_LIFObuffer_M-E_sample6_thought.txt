@@ -1,0 +1,13 @@
+The novel approach is to implement the LIFO buffer using a combination of a memory array and a dual-pointer management system with a twist: incorporating a circular buffer management system. Instead of using traditional stack pointers, two separate pointers (write pointer and read pointer) will be used to track the location of the next write operation and the next read operation, respectively. This approach allows for efficient management of the buffer, especially when dealing with concurrent read and write operations. To improve the management, a counter will keep track of the number of elements in the buffer, making it easier to determine if the buffer is empty or full. The EMPTY and FULL flags will be updated based on the counter value.
+
+The LIFObuffer module will be designed as follows:
+
+- A 4x4-bit register array (buffer_mem) will store the data.
+- Two 2-bit pointers, `wr_ptr` and `rd_ptr`, will track the next write and read locations, respectively.
+- A 2-bit counter, `count`, will keep track of the number of elements in the buffer.
+- The `wr_ptr` will be incremented after each write operation, and the `rd_ptr` will be incremented after each read operation. Both pointers will wrap around to 0 after reaching the end of the buffer.
+- The buffer will be considered FULL when the `count` equals 4, and EMPTY when the `count` equals 0.
+- The dataOut will be assigned the value from the buffer_mem at the location pointed to by `rd_ptr` during a read operation.
+- The buffer will be reset by setting both pointers to 0, the counter to 0, and clearing the buffer_mem.
+
+This design ensures that the LIFO buffer operates correctly, handling both read and write operations efficiently, and provides accurate EMPTY and FULL flags based on the buffer's state.

@@ -1,0 +1,13 @@
+The Radix-4 Booth multiplier reduces the number of partial products by examining 3 bits at a time (current bit and previous bit) to determine the operation (add, subtract, or shift). Here's the design approach:
+
+1. Sign-extend inputs to 16 bits for proper handling of negative numbers
+2. Initialize registers on reset
+3. Use a 4-bit counter (since 8 bits/2 bits per step = 4 steps)
+4. At each clock cycle, examine 3 bits of the multiplier (b) to determine operation:
+   - 000 or 111: no operation
+   - 001 or 010: add multiplicand (a)
+   - 101 or 110: subtract multiplicand (a)
+   - 011: add 2*multiplicand
+   - 100: subtract 2*multiplicand
+5. Shift the multiplicand by 2 bits each step (Radix-4)
+6. Set ready signal when counter completes 4 steps

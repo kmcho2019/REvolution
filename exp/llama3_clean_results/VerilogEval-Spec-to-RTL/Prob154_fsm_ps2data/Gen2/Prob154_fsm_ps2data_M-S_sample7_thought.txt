@@ -1,0 +1,5 @@
+To simplify the existing solution, we can maintain the two-state approach (IDLE and RECV_BYTES) but improve the state machine's logic and the condition for asserting 'done'. 
+The main simplification comes from recognizing that we can directly use the 'byte_count' to determine when the message is complete and thus eliminate the need for an additional 'done' signal in the FSM logic. 
+Additionally, ensuring that 'out_bytes' is valid only when 'done' is asserted simplifies the output logic.
+We will keep the 'byte1' and 'byte2' registers to store the first two bytes of the message and a 'byte_count' to track the number of bytes received.
+The 'out_bytes_reg' will be updated with the complete message when the third byte is received.

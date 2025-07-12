@@ -1,0 +1,15 @@
+To optimize the 64-bit subtractor for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. **Performance Optimization**:
+   - Break the critical path by pipelining the subtraction operation into two stages (registering intermediate results)
+   - This allows higher clock frequencies at the cost of 1 cycle latency
+
+2. **Power Optimization**:
+   - Add clock gating enable signals to reduce dynamic power when the module is idle
+   - Use operand isolation for the pipeline registers
+
+3. **Area Optimization**:
+   - Simplify the overflow detection logic by using XOR operations which are more area-efficient
+   - Share common sub-expressions in the overflow calculation
+
+The improved version will maintain the same functionality while achieving better PPA metrics.

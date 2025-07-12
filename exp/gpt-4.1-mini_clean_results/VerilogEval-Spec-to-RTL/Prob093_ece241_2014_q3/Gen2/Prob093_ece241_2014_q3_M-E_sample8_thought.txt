@@ -1,0 +1,96 @@
+The problem requires implementing a 4-to-1 mux driven by selector inputs a,b (not given in this module) with 4 inputs mux_in[3:0], each a function of c,d only, to produce the overall function from the given K-map. 
+
+Our module TopModule gets inputs c,d and outputs mux_in[3:0] (the 4 inputs to the external 4-to-1 mux with selectors a,b).
+
+We must implement each mux_in[i] as a function of c and d using only 2-to-1 muxes (and constants), and no other logic gates.
+
+Key point: The four mux_in bits correspond to the columns for ab=00,01,11,10 respectively. For each mux_in[i], the 4-bit values come from the K-map rows cd=00,01,11,10.
+
+Analyzing the 4 rows for each mux_in[i]:
+
+- mux_in[0] (ab=00): 0 1 1 1  
+- mux_in[1] (ab=01): all zeros  
+- mux_in[2] (ab=11): 0 0 1 0  
+- mux_in[3] (ab=10): 1 0 1 1  
+
+We will implement each mux_in[i] using a hierarchical combination of 2-to-1 muxes selecting on c and d.
+
+We choose c as the first selector for all mux_in[i] to simplify the structure:
+
+Let’s define:
+
+For each mux_in[i], a 2-to-1 mux with sel = c:  
+mux_in[i] = mux2to1(c, low, high)
+
+where low = mux2to1(d, value_cd00, value_cd01)  
+      high= mux2to1(d, value_cd10, value_cd11)
+
+Note: row order is cd=00,01,11,10. For d selector, d=0 means cd=00 or 10, d=1 means cd=01 or 11, for fixed c.
+
+Rearranged for consistent decoding:
+
+We define d selector muxes as:
+
+low  = mux2to1(d, out_for_c=0 & d=0, out_for_c=0 & d=1)  
+high = mux2to1(d, out_for_c=1 & d=0, out_for_c=1 & d=1)
+
+For each mux_in[i]:
+
+- mux_in[0]:
+
+ cd=00(0,0):0  
+ cd=01(0,1):1  
+ cd=10(1,0):1  
+ cd=11(1,1):1  
+
+So:
+
+low  = mux2to1(d,0,1)    // c=0 row, d=0=>0 d=1=>1  
+high = mux2to1(d,1,1)   // c=1 row, d=0=>1 d=1=>1
+
+- mux_in[1]:
+
+ all zeros
+
+ low  = mux2to1(d,0,0)  
+ high = mux2to1(d,0,0)
+
+- mux_in[2]:
+
+ cd=00(0,0):0  
+ cd=01(0,1):0  
+ cd=10(1,0):0  
+ cd=11(1,1):1  
+
+So:
+
+low  = mux2to1(d,0,0)  
+high = mux2to1(d,0,1)
+
+- mux_in[3]:
+
+ cd=00(0,0):1  
+ cd=01(0,1):0  
+ cd=10(1,0):1  
+ cd=11(1,1):1  
+
+low  = mux2to1(d,1,0)  
+high = mux2to1(d,1,1)
+
+Finally, for each mux_in[i]:
+
+mux_in[i] = mux2to1(c, low, high)
+
+This uses 2 muxes per mux_in bit except mux_in[1] which is constant zero and can be assigned directly.
+
+This approach cleanly implements the K-map functions using only 2-to-1 muxes, no other gates, and clearly separated selector order.
+
+No external inputs a,b needed since TopModule only outputs mux_in[3:0].
+
+This is a minimal, clean, and systematic solution.
+
+We will implement a 2-to-1 mux module, then build TopModule instantiating these muxes.
+
+Constants 0 and 1 are assigned using 1-bit wires.
+
+This approach satisfies all problem constraints and is easy to verify against the K-map.

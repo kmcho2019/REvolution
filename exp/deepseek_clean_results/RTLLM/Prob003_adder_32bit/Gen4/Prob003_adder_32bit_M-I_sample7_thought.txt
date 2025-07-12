@@ -1,0 +1,20 @@
+To optimize the 32-bit carry-lookahead adder for better PPA (Power, Performance, Area), I propose the following improvements:
+
+1. Performance Optimization:
+   - Increase block size from 4-bit to 8-bit CLA blocks to reduce carry propagation levels
+   - Implement parallel prefix computation (Brent-Kung) for carry generation
+   - This reduces critical path delay while maintaining reasonable area overhead
+
+2. Power Optimization:
+   - Use hierarchical lookahead to minimize unnecessary switching activity
+   - Group generate/propagate signals more efficiently to reduce dynamic power
+
+3. Area Optimization:
+   - Share common PG logic between blocks where possible
+   - Simplify carry chain wiring by using more compact prefix structures
+   - Remove redundant intermediate signals
+
+The new architecture will use:
+- 8-bit CLA blocks with internal 4-bit lookahead
+- Two-level hierarchy (8-bit → 32-bit)
+- Optimized carry generation logic

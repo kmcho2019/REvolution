@@ -1,5 +1,0 @@
-The primary issue in the code is with the timing of when the `done` signal is asserted. The FSM is transitioning to the `DONE` state when the third byte is detected, however, the `done` signal is immediately set high in the same cycle. This violates the requirement that `done` should only be set high in the cycle immediately after the third byte of each message was successfully received. This early assertion of `done` is causing mismatches in the simulation results.
-
-Additionally, the code does not handle all edge cases properly. For example, the FSM does not correctly transition back to the `IDLE` state if the third byte does not have `in[3]` equal to 1, leading to a potential issue in handling incomplete or incorrect messages.
-
-To improve the functionality of the FSM, adjustments need to be made in the logic to ensure that the `done` signal is asserted at the correct time and that all edge cases are properly handled for robust message detection.

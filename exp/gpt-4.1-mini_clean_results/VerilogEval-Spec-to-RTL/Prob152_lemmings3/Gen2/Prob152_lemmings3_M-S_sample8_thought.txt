@@ -1,0 +1,31 @@
+Simplify the FSM by using three states: WALK_LEFT, WALK_RIGHT, and FALLING. Use the state itself to encode direction and whether the Lemming is falling or walking. Manage digging as a separate register only active in walking states.
+
+- States:
+  - WALK_LEFT: walking left on ground (digging may be active or not)
+  - WALK_RIGHT: walking right on ground (digging may be active or not)
+  - FALLING: falling (no digging)
+- On reset, start in WALK_LEFT, digging=0.
+- On each clock:
+  - If falling:
+    - If ground=1, return to previous walking state (saved by direction) and digging=0.
+    - Else remain falling.
+  - If walking (left or right):
+    - If ground=0, transition to FALLING, save current direction, digging=0.
+    - Else if digging:
+      - Continue digging if ground=1.
+      - If ground=0, start falling, digging=0.
+    - Else (not digging):
+      - If dig=1, start digging.
+      - Else if bump detected, switch walking direction.
+      - Else remain same.
+- Bumps only affect walking direction when walking (not digging or falling) and ground=1.
+- Store current direction in a reg to restore after falling.
+- Outputs:
+  - walk_left=1 if walking left and not digging.
+  - walk_right=1 if walking right and not digging.
+  - digging=1 if digging active.
+  - aaah=1 if falling.
+
+This approach reduces complexity by encoding direction into states and simplifying digging logic to a single flag. It matches problem requirements clearly.
+
+Use asynchronous positive edge reset. Moore outputs depend only on current state and digging.

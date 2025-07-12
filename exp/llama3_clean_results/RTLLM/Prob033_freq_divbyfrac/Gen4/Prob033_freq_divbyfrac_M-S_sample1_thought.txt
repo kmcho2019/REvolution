@@ -1,0 +1,14 @@
+To simplify the frequency divider code, we can streamline the logic for generating the intermediate clocks and the final fractional divided clock output. We will use a single counter to cycle through the 7 clock cycles required for 3.5x division and generate two intermediate divided clocks: one with 4 cycles (clk_div_int1) and another with 3 cycles (clk_div_int2).
+
+We can then simplify the phase-shifting logic and the duty cycle correction to ensure that the final fractional divided clock output has a uniform period. To improve the design, we will focus on minimizing the number of flip-flops and combinational logic gates used.
+
+The key parameters for this design remain the same:
+- MUL2_DIV_CLK: The number of clock cycles to divide the input clock frequency. For 3.5x division, MUL2_DIV_CLK = 7.
+
+We will generate the intermediate divided clocks as follows:
+- When the counter is between 0 and 3 (4 cycles), generate the first intermediate clock (clk_div_int1).
+- When the counter is between 4 and 6 (3 cycles), generate the second intermediate clock (clk_div_int2).
+
+We will then logically OR these clocks to produce the final fractional divided clock output (clk_div), ensuring the divided clock signal has a uniform period.
+
+To optimize the design for better PPA, we will minimize the number of flip-flops and combinational logic gates used, reducing the complexity of the logic to improve the area and power consumption of the design.

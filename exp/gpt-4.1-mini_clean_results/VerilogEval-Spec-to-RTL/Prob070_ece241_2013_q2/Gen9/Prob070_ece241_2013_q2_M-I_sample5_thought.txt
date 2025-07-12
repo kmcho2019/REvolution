@@ -1,0 +1,76 @@
+To correct and optimize the design, first clarify the input bit significance: treat `a` as MSB and `d` as LSB forming a 4-bit binary number.
+
+The outputs are defined as:
+
+- `out_sop` is a minimal sum-of-products (SOP) that produces 1 for decimal inputs 2, 7, 15.
+- `out_pos` is a minimal product-of-sums (POS) that produces 1 for the same inputs (2,7,15) but implemented in minimal POS form.
+
+The logic levels for outputs must be consistent: both outputs reflect the same function but realized differently.
+
+**Step 1: Derive minimal SOP expression for the function:**
+
+Inputs where output = 1:
+
+- 2 (0010)
+- 7 (0111)
+- 15(1111)
+
+Using inputs `a b c d` (a = MSB, d = LSB):
+
+- For 2: a=0,b=0,c=1,d=0
+- For 7: a=0,b=1,c=1,d=1
+- For 15:a=1,b=1,c=1,d=1
+
+From these minterms:
+
+`out_sop = m2 + m7 + m15`
+
+From Karnaugh map or Boolean algebra, minimal SOP:
+
+`out_sop = c d + a b c d'` is too complex; better express as:
+
+Check overlap in 1 minterms:
+
+- 7 and 15 share `b=1,c=1,d=1`
+- 2 has `c=1,d=0`
+
+Group terms:
+
+- For 7 and 15: b c d
+- For 2: ~a ~b c ~d
+
+So:
+
+`out_sop = (b & c & d) | (~a & ~b & c & ~d) | (a & b & c & d)`
+
+But since 7 and 15 have `b=1, c=1`, and differ in a and d, we can simplify:
+
+Minterms 7 (0 1 1 1) and 15 (1 1 1 1):
+
+Common: b=1, c=1, d=1
+
+Thus, SOP:
+
+`out_sop = (b & c & d) | (~a & ~b & c & ~d)`
+
+**Step 2: Derive minimal POS:**
+
+Positions where output=0:
+
+0,1,4,5,6,9,10,13,14
+
+Form maxterms for zeros and factor:
+
+The minimal POS expression obtained from maxterms is:
+
+`out_pos = (a + b + ~c + d) (a + ~b + c + d)`
+
+**Step 3: Implement both `out_sop` and `out_pos` with these minimal expressions using continuous assignments.**
+
+No need for case statements or combinational always blocks, which improves clarity and synthesis.
+
+**Step 4: Assign outputs as wires (combinational logic).**
+
+Inputs 3,8,11,12 are don't cares and can be ignored.
+
+This approach ensures minimal forms are explicitly implemented, consistent logic levels, and better PPA.

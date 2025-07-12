@@ -1,0 +1,15 @@
+Novel Circular Buffer Architecture:
+1. Instead of shifting all bits on each update, maintain a head pointer to track the "youngest" branch position
+2. Use a circular buffer approach where only the head pointer moves during predictions
+3. For mispredictions, directly write the correct history pattern and reset the head pointer
+4. This reduces power by minimizing bit toggles (only 1 bit changes during predictions)
+5. Improves timing by eliminating the 32-bit shifter in the critical path
+6. Simplifies rollback operations during mispredictions
+7. Uses XOR-based update logic for more efficient implementation
+
+Key Benefits:
+- Predictions only require updating the head pointer and one bit
+- Mispredictions perform a direct write with pointer reset
+- No need for full 32-bit shifts during normal operation
+- Reduced switching activity and power consumption
+- Better timing due to simpler update logic

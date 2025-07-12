@@ -1,0 +1,8 @@
+Refactor the traffic light controller by separating the state and output logic more explicitly:  
+1. Implement the FSM using a one-hot style encoding with individual state registers for clarity and to facilitate synthesis tools that optimize one-hot encoding.  
+2. Use a combinational always block to determine the next state based on the current state and counter value, and implement the pedestrian button logic by adjusting the countdown directly in the counter update block.  
+3. Manage the countdown in a single synchronous always block with a clear priority: reset, state transitions, pedestrian shortening, and normal decrement.  
+4. Drive output signals (`red`, `yellow`, `green`) using continuous assignments from the current state registers to reduce flip-flop usage and simplify timing.  
+5. Replace the ped_shortened flag by implicitly controlling shortening via checking the counter and pass_request directly, leveraging state and counter values to avoid extra registers, thus reducing area.  
+6. Provide synchronous reset and clocking for all registers to ensure consistent timing and avoid glitches.  
+This approach keeps all required logic but with a different structural style (one-hot state bits, simplified counter logic, combinational output assignments), improving code readability and potentially allowing better synthesis optimization on some toolchains.

@@ -1,0 +1,16 @@
+Simplified Rotation Logic:
+1. Remove the pre-computation of rotation outcomes to reduce unnecessary switching activity and area
+2. Use a single always block with a case statement that directly implements:
+   - Load operation when load is high
+   - Right rotation when ena=2'b01
+   - Left rotation when ena=2'b10
+   - No change otherwise
+3. The rotation logic is now computed only when needed, reducing power consumption
+4. The case statement priority matches the specification (load has highest priority)
+5. Eliminate intermediate wires to reduce area
+
+Key improvements:
+- Reduced power by computing rotations only when needed
+- Smaller area by removing redundant mux logic
+- Simpler control flow that directly matches specification
+- Maintains same functionality with cleaner implementation

@@ -1,0 +1,16 @@
+I will implement a radix-2 divider that processes the division iteratively over 8 clock cycles after input is captured. The division algorithm will be:
+
+- On opn_valid, latch inputs and initialize internal states.
+- For signed division, extract signs of dividend and divisor, convert operands to absolute values.
+- Use a 17-bit shift register to hold remainder (initially zero) and quotient (initially zero).
+- Each iteration:
+  - Shift the remainder left by 1, bring down the next bit of dividend.
+  - Subtract divisor_abs from the remainder.
+  - If subtraction result >= 0, set current quotient bit to 1 and update remainder to subtraction result.
+  - Else, keep remainder unchanged and quotient bit 0.
+- After 8 iterations, apply sign correction on quotient and remainder if signed division.
+- Output 16-bit result {remainder[7:0], quotient[7:0]}.
+- Use res_valid to indicate output is ready, clear it on start of next operation.
+- Ensure synchronous reset clears all states.
+
+This approach strictly separates remainder and quotient parts in registers and manages sign corrections after division is complete. It uses simple sequential logic and is easy to follow.

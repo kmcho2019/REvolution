@@ -1,0 +1,19 @@
+To implement a fractional frequency divider by 3.5x using double-edge clocking, I propose a novel approach leveraging a modulus-7 counter and generating a clock with uneven high and low intervals (4 and 3 input clock cycles), then combining two versions of this divided clock shifted by half a clock period using the input clock edges themselves.
+
+Specifically:
+
+1. Use a 3-bit counter `cnt` that counts from 0 to 6 repeatedly.
+
+2. Generate a base divided clock `clk_base` which is high for counts 0..3 (4 cycles) and low for counts 4..6 (3 cycles), thus dividing by 7 with an uneven duty cycle.
+
+3. Generate two phase-shifted versions of `clk_base`:
+   - `clk_base_pos`: updated on rising edges, representing the clock aligned with rising edges.
+   - `clk_base_neg`: updated on falling edges, representing the clock aligned with falling edges (phase shifted by half input clock period).
+
+4. Both `clk_base_pos` and `clk_base_neg` represent the same divide-by-7 clock but shifted by half a clock cycle.
+
+5. The final output clock `clk_div` is the OR of `clk_base_pos` and `clk_base_neg`, producing a clock with half-cycle phase interleaving that approximates a frequency division by 3.5 with improved duty cycle.
+
+This architecture cleanly separates the base waveform generation (high for 4 cycles, low for 3 cycles) from the phase shifting by using the input clock edges directly, avoiding complicated toggling logic or sampled counters. It also naturally works with the double-edge clocking technique and is synthesis-friendly.
+
+The output frequency is f_in / 3.5, with nearly 50% duty cycle due to the phase shifted combined waveform. This approach ensures a glitch-free, balanced fractional frequency divider output.

@@ -1,0 +1,15 @@
+The current implementation `assign f = x3 ? x1 : x2;` is already optimal in terms of logic complexity, area, and timing, since it maps directly to a 2-to-1 mux which is minimal hardware for the function.
+
+To improve power slightly, we can consider decomposing the logic into explicit AND/OR gates with inverted inputs only when necessary, which might help some synthesis tools optimize signal toggling or use clock gating internally. However, modern synthesis tools typically produce equivalent or better results from the mux form.
+
+Alternatively, to aid testability or power gating in larger designs, the explicit sum-of-products form can be used:
+
+    f = (~x3 & x2) | (x3 & x1);
+
+This expression clearly separates the two product terms and may allow better local gating optimizations.
+
+For area and delay, both forms are equivalent, but the sum-of-products form can sometimes provide a slight power advantage by limiting switching on specific nets.
+
+Therefore, the improvement strategy is to rewrite the logic as an explicit sum-of-products using continuous assignment. This can aid some synthesis tools in better optimizing power without increasing area or delay.
+
+This yields a functionally identical, equally minimal implementation with potential power benefits.

@@ -1,0 +1,7 @@
+Optimize the design by replacing the explicit `case` state transitions with an arithmetic calculation to reduce logic complexity and improve timing and area. The state machine cycles through 7 states (0 to 6) but starts from 4 when `a` is high, and counts upward modulo 7 when `a` is low. We can represent this as `next_q = (q + 1) % 7` when `a` is low, and `next_q = 4` when `a` is high.
+
+Instead of a case statement, use a small combinational arithmetic operation with conditional logic. To avoid using the `%` operator (which is costly in hardware), use comparison and conditional subtraction: if `q` is 6, next state is 0; else increment by 1.
+
+This reduces combinational logic depth and mux complexity, improving timing (WNS), reducing area (less LUTs needed), and reducing power by simplifying the logic. The logic to recover invalid states still applies by forcing q=4 if it's outside 0-6.
+
+Overall, the update simplifies next-state logic and maintains clear, efficient sequential logic.

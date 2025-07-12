@@ -1,0 +1,14 @@
+A novel approach using a 3-state FSM with explicit state encoding:
+1. Use three states: IDLE (waiting for first '1'), GOT1 (received '1'), GOT10 (received '1' followed by '0')
+2. Implement Mealy output that checks for '1' when in GOT10 state
+3. Use binary encoding for states to minimize flip-flop usage
+4. Maintain negative-edge asynchronous reset for initialization
+5. Detect overlapping sequences by proper state transitions
+6. Output is purely combinational based on current state and input
+
+Key advantages:
+- Explicit state machine makes behavior more readable and maintainable
+- Binary encoding uses minimal flip-flops (2 bits for 3 states)
+- Clear separation between sequential state transitions and combinational output
+- Efficient pattern matching with minimal logic
+- Naturally handles overlapping sequences through state transitions

@@ -1,0 +1,10 @@
+To improve the given decade counter for better PPA (Timing, Power, Area), I propose the following optimizations:
+
+- Replace the combinational equality check for 10 (1010) with a simple numerical comparison (q == 4'd10). This makes the condition clearer and easier for synthesis tools to optimize and may reduce logic depth.
+- Use a simple increment and modulo operation implicitly: if q == 10 then reset to 1 else increment. This avoids bitwise logic and potentially simplifies the combinational path.
+- Use a synchronous reset in the sequential block only, removing the reset check from combinational logic to reduce redundant logic and unnecessary muxes.
+- Keep next_q as a combinational signal for clarity, but implement reset handling directly in the sequential block, which can simplify timing paths for reset.
+- Using non-blocking assignments consistently in sequential block to avoid glitches.
+- Overall, simplify the combinational logic for next_q to a minimal increment or reset decision, which can reduce critical path and power by reducing complex bitwise comparisons and muxes.
+
+This approach focuses on reducing combinational complexity in the critical path and removes reset muxing from combinational logic, potentially improving timing, power, and area slightly without changing functionality.

@@ -1,0 +1,9 @@
+The original code implements a finite-state machine (FSM) to detect the sequence '1101' in a bit stream. However, it has several issues, including incorrect handling of the reset condition and updating of the `start_shifting` signal. To refactor this code, we will reconsider the state machine's structure and implement it using a different approach.
+
+One possible refactoring is to use a single `always` block for the sequential logic, eliminating the need for a separate combinational logic block for next state determination. We will also directly set the `start_shifting` signal when the target sequence is detected, ensuring it remains set until reset.
+
+Furthermore, we will introduce a separate `reg` variable to track whether the sequence has been detected, allowing us to simplify the logic for setting `start_shifting`.
+
+To optimize the design for better PPA metrics, we will minimize the number of state transitions, reduce unnecessary switching activity, and ensure efficient state encoding.
+
+Overall, the refactored code aims to improve the FSM's logic, simplify the implementation, and optimize the design for performance, area, and power.

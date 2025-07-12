@@ -1,0 +1,10 @@
+Refactor the BCD counter to separate combinational next-state logic from sequential registers explicitly. Instead of nested if-else blocks inside the always block, compute all next digit values and enables using combinational assignments first, then update the registers synchronously. This flattening simplifies the carry logic and can reduce critical path delay by avoiding deeply nested logic.
+
+The next-state logic will:
+- Increment ones digit and detect rollover.
+- Based on ones rollover, increment tens and detect its rollover.
+- Continue similarly for hundreds and thousands digits.
+
+The ena signals will be derived combinationally from these rollover signals, reflecting when upper digits increment.
+
+This structure also makes the design more scalable and easier to optimize for timing, since combinational logic for next values and enables is clear and separated from sequential storage. It also facilitates easier insertion of pipeline registers or clock enables if needed.

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. State Machine: Keep the same 3-state FSM (IDLE, BYTE1, BYTE2) but simplify the logic
+2. Output Handling: Only update out_bytes when storing new bytes, don't need to reset to don't-care
+3. Done Signal: Generate it purely combinationally from the state being BYTE2
+4. Reset Handling: Only reset state, let other registers initialize naturally
+5. Remove unnecessary default assignments and simplify case structure
+
+Key Simplifications:
+- Done is now combinational, saving a flip-flop
+- Removed explicit don't-care assignments
+- Simplified state machine transitions
+- Reduced register updates
+- Cleaner overall structure

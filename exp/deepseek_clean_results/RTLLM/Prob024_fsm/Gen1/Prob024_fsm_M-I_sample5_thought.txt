@@ -1,0 +1,18 @@
+The original solution has correct state transitions but needs optimization in the S10011 state handling and output logic. Here are the improvements:
+
+1. State Optimization: Reduce states from 6 to 5 by combining S10011 with S1 since after a match we want to immediately look for the next sequence (allowing overlaps).
+
+2. Output Logic: Make the Mealy output purely combinatorial for correct timing.
+
+3. Reset Handling: Ensure MATCH is properly synchronized with reset.
+
+4. Continuous Detection: Properly handle overlapping sequences by transitioning to appropriate states after a match.
+
+The improved FSM will have these states:
+- IDLE: Initial state
+- S1: Received '1'
+- S10: Received '10'
+- S100: Received '100'
+- S1001: Received '1001'
+
+When in S1001 and input is '1', we get a match and transition to S1 (not IDLE) to allow immediate detection of the next sequence.

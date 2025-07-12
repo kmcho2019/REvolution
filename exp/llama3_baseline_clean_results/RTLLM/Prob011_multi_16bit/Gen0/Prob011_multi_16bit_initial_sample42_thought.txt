@@ -1,0 +1,17 @@
+To design an unsigned 16-bit multiplier using shift and accumulate operations, we will utilize a finite state machine to control the multiplication process. The multiplier will iterate through each bit of the multiplicand, shifting and accumulating the product accordingly. We will use a counter (i) to track the current bit position being processed. The multiplier will be implemented using a modular approach, with separate sections for updating the counter, generating the completion flag, performing the shift and accumulate operation, and assigning the output.
+
+The module will have the following components:
+1. A counter (i) to track the current bit position.
+2. A completion flag (done_r) to indicate when the multiplication operation is complete.
+3. Registers to store the multiplicand (areg) and multiplier (breg).
+4. A product register (yout_r) to accumulate the result.
+
+We will use always blocks to update the counter, completion flag, and registers on the positive edge of the clock signal or the falling edge of the reset signal.
+
+The counter will be updated based on the start signal and its current value. If the start signal is active and the counter is less than 17, it will increment by 1. If the start signal is inactive, the counter will reset to 0.
+
+The completion flag will be set to 1 when the counter reaches 16, indicating the completion of the multiplication operation, and reset to 0 when the counter reaches 17.
+
+The shift and accumulate operation will be performed based on the counter value and the multiplicand register. If the counter is greater than 0 and less than 17, and the bit at position i-1 in the multiplicand register is high, the product register will accumulate the shifted value of the multiplier register.
+
+Finally, the product output will be assigned the value of the product register.

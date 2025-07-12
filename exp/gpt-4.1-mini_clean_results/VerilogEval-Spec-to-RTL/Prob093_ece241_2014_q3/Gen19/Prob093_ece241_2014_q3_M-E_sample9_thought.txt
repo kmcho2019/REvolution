@@ -1,0 +1,75 @@
+We need to produce mux_in[3:0] outputs such that when fed into a single 4-to-1 mux with selectors a and b, the entire circuit implements the given K-map.
+
+The inputs c and d select rows of the K-map; a and b select columns and are used as selectors for the 4-to-1 mux. Therefore, mux_in[3:0] are the values for fixed (a,b) at each (c,d) input.
+
+Given the constraint: no logic gates, only one 4-to-1 mux with selectors a,b, and as few 2-to-1 muxes as needed, using only multiplexers with selectors a and b.
+
+Key insight:
+
+- The final 4-to-1 mux's inputs mux_in[3:0] depend only on c and d.
+- Each mux_in[i] (for i=0..3 corresponding to ab=00..11) is a 2-input function of c,d.
+- Since no other logic is allowed, mux_in[i] must be constructed from 2-to-1 muxes with selectors a or b (or combinations thereof).
+
+Architectural approach:
+
+1. Observe that the final large 4-to-1 mux uses selectors {a,b} to select which mux_in bit is output.
+
+2. So the mux_in bits can depend arbitrarily on c,d but must be realized by 2-to-1 muxes controlled only by a or b or their inverses (if allowed) — but problem states no other logic gates, so no NOT gates.
+
+3. Since only one 4-to-1 mux with selectors a,b is allowed, the rest must be implemented with 2-to-1 muxes controlled by a or b.
+
+4. Therefore, build each mux_in[i] as a tree of 2-to-1 muxes selected by c or d only (allowed since c and d are inputs, no restriction against using them as selectors in 2-to-1 muxes for mux_in). We can use ternary operators to represent 2-to-1 muxes with c or d as selectors.
+
+5. For example, mux_in[0] depends on c and d values as per the K-map:
+
+   For ab=00 (mux_in[0]):
+
+   cd=00(0), 01(1), 11(1), 10(1)
+
+   - When c=0,d=0 →0
+
+   - When c=0,d=1 →1
+
+   - When c=1,d=0 →1
+
+   - When c=1,d=1 →1
+
+   Thus, mux_in[0] = c OR d
+
+   Since no OR gate allowed, express via muxes:
+
+   mux_in[0] = c ? 1 : d
+
+6. Similarly for others:
+
+   mux_in[1] (ab=01): all zeros → assign 0
+
+   mux_in[2] (ab=11): cd=00:0, 01:0, 11:1, 10:0
+
+   This is c & d (only 1 when c=1 and d=1)
+
+   Implement with mux: mux_in[2] = c ? d : 0
+
+7. mux_in[3] (ab=10): cd=00:1, 01:0, 11:1, 10:1
+
+   That is (c' d')=1, (c' d)=0, (c d)=1, (c d')=1
+
+   This equals (~c & ~d) + (c) = (c) + (~c & ~d)
+
+   Without NOT gates, implement ~d as mux:
+
+   For c=0: output is ~d → (d ? 0 : 1)
+
+   For c=1: output 1
+
+   So mux_in[3] = c ? 1 : (d ? 0 : 1)
+
+Implement each mux_in[i] as nested 2-to-1 muxes using ternary operators with c and d as selectors (allowed inputs).
+
+Finally, mux_in feeds into one 4-to-1 mux selected by a,b to produce output F = f(a,b,c,d).
+
+The problem asks only for TopModule that generates mux_in[3:0], inputs c and d, so we just implement mux_in as above.
+
+This meets the constraint: no other logic gates, uses only 2-to-1 muxes (ternary operators) with selectors c and d, outputs mux_in for the 4-to-1 mux selected by a,b.
+
+Hence, the new design matches the Karnaugh map and obeys all constraints.

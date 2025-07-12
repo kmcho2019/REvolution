@@ -1,0 +1,17 @@
+To improve the PPA metrics while maintaining the same functionality, I'll refactor the code with these optimizations:
+
+1. **Logic Simplification**: Keep the efficient Boolean expression (center ^ right) | (~left & (center | right)) but implement it using continuous assignments for better synthesis.
+
+2. **Boundary Handling**: Use a concatenation approach for boundary conditions to reduce logic depth and improve timing.
+
+3. **Structural Changes**:
+   - Replace the generate block with direct bitwise operations for better synthesis optimization
+   - Use a temporary extended register to handle boundary conditions more efficiently
+   - Implement the state update with a single always block for clarity
+
+4. **PPA Improvements Expected**:
+   - Better timing from reduced logic depth (removing generate block overhead)
+   - Lower power from more optimized combinational logic
+   - Potentially smaller area from more efficient synthesis of direct bitwise operations
+
+The key insight is that we can treat the 512-bit vector as a whole and use bitwise operations with shifted versions to implement the neighbor logic, which should be more efficient than individual cell processing.

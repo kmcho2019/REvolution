@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by using a binary-encoded FSM with clearly separated combinational and sequential logic blocks for state and outputs, improving clarity and synthesis friendliness. Maintain LSB-first reception by shifting the data register right, inserting the new bit into the MSB, which aligns with both examples and the protocol.
+
+Assert the done signal as a one-cycle pulse synchronously registered, triggered in the CHECK_STOP state when the stop bit is correct. Use a WAIT_STOP (or ERROR) state to wait for a proper stop bit if the received stop bit was invalid.
+
+Optimize power by resetting bit counter and shift register only in IDLE and WAIT_STOP states, avoiding unnecessary toggling during RECEIVE. Keep done and state registers updated synchronously on clock edges with active-high synchronous reset.
+
+Use typedef enum for states to improve code readability and enable better tool optimization.
+
+This design is clean, explicit, and efficient: it clearly separates next-state and output combinational logic from state and datapath sequential logic, handles all edge cases, aligns the shifting direction with the protocol, and generates the done pulse correctly. This fusion provides a robust, easily maintainable, and well-structured FSM for serial byte detection with start and stop bits.

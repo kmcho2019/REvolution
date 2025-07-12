@@ -1,0 +1,13 @@
+To implement the unsigned 8-bit multiplier based on pipelining processing, we need to break down the multiplication operation into several stages and utilize registers to store intermediate results. The design will consist of input control, input registers, partial product generation, partial sum calculation, and final product calculation. Each stage will be clocked to ensure synchronous operation.
+
+1. Input Control: Sample the input enable signal (mul_en_in) and store it in a register (mul_en_out_reg) on the positive edge of the clock signal. Derive the output enable signal (mul_en_out) from the most significant bit of mul_en_out_reg.
+
+2. Input Registers: Use registers (mul_a_reg and mul_b_reg) to store the input multiplicand (mul_a) and multiplier (mul_b), respectively, on the positive edge of the clock signal, but only update them when the input enable signal is active.
+
+3. Partial Product Generation: Perform bitwise operations between the multiplicand and the individual bits of the multiplier, and store the partial products in wires (temp).
+
+4. Partial Sum Calculation: Use registers (sum) to store the intermediate sum values, updating them on the positive edge of the clock signal.
+
+5. Final Product Calculation: Sum up all the partial sums and store the result in a register (mul_out_reg).
+
+6. Output Assignment: Assign the output product value (mul_out) based on the output enable signal and the value in mul_out_reg. If the output enable signal is active, assign the value in mul_out_reg to mul_out; otherwise, set mul_out to 0.

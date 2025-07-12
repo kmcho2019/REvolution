@@ -1,0 +1,5 @@
+Combine the simplicity and directness of the first example's shift and decrement operations inside the clocked always block with the clarity and synthesis friendliness of the second example's explicit next-state mux logic. Specifically, compute the shifted value and decremented value combinationally outside the always block, then assign the next register value inside the clocked block based on priority (shift first, then count), but implement the update using non-blocking assignments exactly as in the first example to minimize glitches and keep timing clean.
+
+Additionally, incorporate a clock enable signal derived from (shift_ena | count_ena) to enable register updates only when needed, thus reducing power by preventing unnecessary toggling. This yields a minimal, clear, power-efficient design that respects the problem constraints and maximizes synthesis and PPA benefits.
+
+This fusion keeps the simple shift-left-by-1 with MSB-first data insertion, a decrement operation, and ensures only one register update per clock, gated by a combined enable to reduce switching activity.

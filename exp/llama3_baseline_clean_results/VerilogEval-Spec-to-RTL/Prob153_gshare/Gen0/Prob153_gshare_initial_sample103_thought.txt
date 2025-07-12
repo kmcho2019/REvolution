@@ -1,0 +1,9 @@
+To implement the gshare branch predictor, we need to follow these steps:
+1. Design a global history register (GHR) that can store the history of the last 7 branch outcomes.
+2. Design a pattern history table (PHT) with 128 entries, each containing a 2-bit saturating counter.
+3. Implement the prediction logic, which uses the current PC and GHR to index into the PHT and produce a prediction.
+4. Implement the training logic, which updates the PHT based on the actual branch outcome and updates the GHR if the branch was mispredicted.
+5. Handle the case where training and prediction occur in the same cycle, giving precedence to training.
+6. Implement the reset logic to reset the GHR and PHT when the asynchronous active-high reset signal is asserted.
+
+The design will consist of three main components: the GHR, the PHT, and the prediction/training logic. The GHR will be implemented as a 7-bit register. The PHT will be implemented as a 128-entry array of 2-bit counters. The prediction/training logic will be implemented using combinational logic and will be triggered on the positive edge of the clock.

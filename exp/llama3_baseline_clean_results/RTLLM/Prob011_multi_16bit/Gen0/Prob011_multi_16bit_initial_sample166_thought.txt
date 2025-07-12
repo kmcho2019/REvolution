@@ -1,0 +1,18 @@
+The provided specification describes a sequential multiplier that uses shift and accumulate operations to multiply two 16-bit unsigned numbers. 
+The module, named multi_16bit, has several input and output ports: 
+- clk: The clock signal that drives the sequential operation.
+- rst_n: An active-low reset signal that resets the module when it is low.
+- start: A signal that indicates when to start the multiplication.
+- ain and bin: The two input numbers to be multiplied.
+- yout: The output product, which is 32 bits wide.
+- done: A flag that indicates when the multiplication is complete.
+
+The multiplier uses a shift count register (i) to keep track of the current bit position during the multiplication process. 
+On every clock cycle or reset, the shift count register is updated based on the start signal and its current value. 
+The multiplication completion flag (done_r) is set to 1 when the shift count register reaches 16, indicating the completion of the multiplication operation, and is reset to 0 when it reaches 17.
+
+The module performs the shift and accumulate operation on every clock cycle or reset. 
+If the start signal is active, the multiplicand (ain) and multiplier (bin) are stored in their respective registers (areg and breg) when the shift count is 0. 
+For shift counts greater than 0 and less than 17, if the bit at position i-1 in the multiplicand register (areg) is high, the product register (yout_r) accumulates the shifted value of the multiplier register (breg).
+
+Finally, the product output (yout) is assigned the value of the product register (yout_r).

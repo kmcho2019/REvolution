@@ -1,0 +1,21 @@
+The main issue was an off-by-one error in counting and updating the output `count`. The original logic decremented `tick_counter` at the end of each 1000-cycle interval, but the `count` output was updated as `tick_counter - 2` or zero, leading to incorrect timing and longer-than-expected counting.
+
+To fix this:
+
+- Initialize `tick_counter` with `delay + 1` intervals at the start of counting.
+
+- Use a `cycle_counter` counting from 0 to 999 to represent 1000 clock cycles.
+
+- Keep `count` output stable for each 1000-cycle interval, equal to the number of intervals remaining minus 1. For example, at the start of counting (tick_counter = delay+1), output `count = delay`.
+
+- When `cycle_counter` reaches 999 (end of current interval), decrement `tick_counter` by 1 and update `count` accordingly (`count = tick_counter - 1` if `tick_counter > 0`, else 0).
+
+- When `tick_counter` reaches zero (all intervals counted), transition to `WAIT_ACK`.
+
+This approach aligns `count` output with the real-time countdown, ensuring each value holds for exactly 1000 cycles and that the timer stops precisely at `(delay+1)*1000` cycles.
+
+The pattern detection and load logic remain unchanged, as they were correct.
+
+The output `done` is asserted only in `WAIT_ACK` state; `count` is zero (don't care) outside counting, which is acceptable.
+
+This clean design guarantees precise timing, correct count output, and proper handshake on `ack` to reset the timer.

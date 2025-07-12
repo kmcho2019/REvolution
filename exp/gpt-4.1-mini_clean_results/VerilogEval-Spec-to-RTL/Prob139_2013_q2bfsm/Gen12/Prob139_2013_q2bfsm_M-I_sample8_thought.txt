@@ -1,0 +1,15 @@
+To correct the FSM behavior, I will assign outputs f and g based solely on the current state (Moore machine style), not next_state, to avoid output misalignment by one clock cycle. I will update internal counters and the x input shift register in the sequential block correctly with each clock, aligned with current state transitions.
+
+For pattern detection, I will maintain the x shift register continuously in the pattern detection state and reset it properly on entering other states.
+
+For the y-monitoring timer, I will increment it in the sequential block and use its value for next-state logic, ensuring no race conditions by capturing all signals as registers before evaluating next_state.
+
+The FSM states will be encoded as a simple binary code for smaller area and faster logic compared to one-hot, since we only have 6 states.
+
+Upon reset (active-low), the FSM will stay in state A. When resetn de-asserts (goes high), it will go to state B at next clock, assert f=1 for one cycle, then move to pattern detection state C. State C shifts in x each cycle and detects "101". On detection, move to state D (g=1), start y monitoring with a 2-cycle timer.
+
+If y=1 detected within 2 cycles, move to state E (g=1 permanently), else after timeout move to state F (g=0 permanently).
+
+Outputs f and g will be combinationally generated from current state for immediate and glitch-free output transitions.
+
+This will eliminate the output and timing mismatch issues, fix the timer race condition, and simplify the design for improved area, power, and speed.

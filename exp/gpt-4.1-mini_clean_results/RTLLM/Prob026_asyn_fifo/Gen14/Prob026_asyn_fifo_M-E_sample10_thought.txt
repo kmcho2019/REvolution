@@ -1,0 +1,20 @@
+I will implement an asynchronous FIFO with parameterizable WIDTH and DEPTH using a slightly different architectural approach:
+
+1. Use separate modules:
+   - A dual-port RAM submodule as required for storage.
+   - Separate write and read pointer controllers implemented in binary, converted to Gray code for synchronization.
+   - Two independent synchronizer chains for read pointer into write clock domain and write pointer into read clock domain.
+   
+2. Instead of using a combined PTR_EXT = $clog2(DEPTH)+1 for Gray code width, I will strictly use 4-bit Gray pointers for DEPTH=16, and explicitly enforce it for DEPTH=16 (address width = 4). For other depths less than or equal 16, I'll pad with zeros accordingly.
+
+3. The FIFO fullness logic uses the classical "write pointer = read pointer with top two MSBs inverted" check on Gray code (classic async FIFO full detection).
+
+4. The empty logic is simply when read pointer equals write pointer.
+
+5. RAM address will use the binary pointer's lower bits.
+
+6. Pointer synchronizers use two-flop synchronizers to avoid metastability.
+
+7. The read data output is registered on the read clock, updated only when read enable (rinc & ~rempty) is asserted.
+
+This design ensures clean separation of concerns and precise control of asynchronous pointer crossing, and it will be easy to scale for different depths (up to 16). The code will be clearly structured with comments.

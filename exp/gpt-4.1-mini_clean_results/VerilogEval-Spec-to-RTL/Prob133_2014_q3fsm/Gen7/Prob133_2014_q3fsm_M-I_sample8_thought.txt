@@ -1,0 +1,11 @@
+To optimize PPA, split the FSM into two always blocks: one for state and counters update, another for output logic. This reduces combinational logic complexity per block, improving timing (negative WNS and TNS indicate room for improvement).
+
+Use non-blocking assignments consistently for synchronous logic.
+
+Gate increment operations for cycle counter and w_count only in state B to reduce unnecessary toggling, slightly lowering dynamic power.
+
+Update output z only once per 3-cycle group, holding zero otherwise, to reduce switching.
+
+Keep minimal states (1 bit) and registers, preserving area efficiency.
+
+These changes should improve timing and reduce power without increasing area noticeably.

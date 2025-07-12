@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by implementing a two-stage synchronization of input 'a' for robustness (Example 2), while registering the edge detection results (rise and down) so that outputs assert for exactly one clock cycle after the detected edge (Example 1). This approach ensures glitch-free, synchronized outputs aligned with clk, properly synchronized inputs, and minimal combinational logic delay.
+
+Specifically:
+- Use two flip-flops (a_sync and a_prev) to synchronize and store previous state of 'a', improving metastability tolerance.
+- Detect edges combinationally from these registered values.
+- Register rise and down outputs so they pulse for exactly one clock cycle on the next clock cycle after edge detection.
+- This guarantees outputs are fully synchronous, avoids combinational glitch on outputs, and meets the requirement that outputs assert for one clock cycle after edge occurrence.
+
+This fusion maximizes reliability, clarity, and timing control for the edge detection module.

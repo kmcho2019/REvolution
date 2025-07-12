@@ -1,0 +1,14 @@
+Here's a novel approach using a down counter instead of a traditional state machine:
+
+1. Use a 2-bit counter to count down from 3 (covering 4 cycles including the initial state)
+2. Initialize counter to 3 on reset
+3. Decrement counter each cycle while it's not zero
+4. shift_ena is simply the "not zero" signal of the counter
+5. After reaching zero, counter stays at zero until next reset
+
+Advantages:
+- More compact implementation than state machine
+- Clear relationship between counter value and cycles remaining
+- Easily extensible if cycle count needs to change
+- Simple logic with minimal gates
+- Naturally handles the 4-cycle requirement

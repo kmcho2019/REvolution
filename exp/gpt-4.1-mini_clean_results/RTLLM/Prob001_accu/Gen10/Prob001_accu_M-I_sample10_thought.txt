@@ -1,0 +1,10 @@
+To optimize the original design for better PPA (performance, power, area), the following improvements are applied:
+
+1. Register `data_in` on valid_in before adding it to the accumulator. This reduces the combinational logic depth in the critical path by decoupling the input data and the adder, improving timing.
+2. Use a gated enable signal to update the accumulator and count only when valid_in is high, minimizing unnecessary toggling and dynamic power.
+3. Change `acc_next` into a registered value that sums the registered input data with the accumulator to help the synthesis tool optimize the adder and timing.
+4. Keep the output valid_out as a one-cycle pulse and reset accumulator and count immediately after output, maintaining functional correctness.
+5. Maintain minimal area by reusing the existing registers without adding extra pipeline stages.
+6. Use non-blocking assignments consistently for all sequential logic.
+
+This approach reduces the critical path and toggling activity, potentially improving timing and lowering power while preserving the original logic and area constraints.

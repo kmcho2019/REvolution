@@ -1,0 +1,8 @@
+Refactor the shift register implementation by using individual flip-flop registers for each stage instead of a vector.  
+Implement the 4-stage shift register as four separate reg signals updated on the clock's positive edge with synchronous active-low reset.  
+Chain the shift operation through these individual registers explicitly.  
+This approach explicitly shows the data flow between stages, which can aid understanding and debugging.  
+The output is connected to the last stage's register.  
+Maintain synchronous reset and use non-blocking assignments to ensure correct behavior.  
+Avoid vector concatenation in the always block, instead explicitly assign each register.  
+This structure offers a more manual but clear data-path flow with the same functionality.

@@ -1,5 +1,0 @@
-The issue in the provided Verilog code lies in the way the reset signal is handled within the always block. The asynchronous reset signal `reset` is being checked in the sensitivity list along with the clock signal, which is not the recommended practice for synchronous designs. This can lead to metastability issues and simulation mismatches. 
-
-In this case, when the reset signal transitions asynchronously (without regard to the clock), it causes the LFSR output to be set to `1` without proper synchronization to the clock edge. Consequently, the LFSR state is being incorrectly initialized, leading to mismatches in the simulation results. To resolve this, the reset signal should be synchronized to the clock domain using proper synchronization techniques (like double synchronization or using a proper reset synchronizer circuit).
-
-Therefore, to improve the design, the reset signal handling should be revised to ensure proper synchronization with the clock signal, preventing metastability issues and simulation mismatches.

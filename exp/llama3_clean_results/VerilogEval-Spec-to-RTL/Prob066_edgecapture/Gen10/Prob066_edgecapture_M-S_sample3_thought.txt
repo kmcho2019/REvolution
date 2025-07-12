@@ -1,0 +1,7 @@
+To simplify the existing solution, we can maintain the overall architecture of using a separate register for each bit of the input signal but refine the logic to correctly capture the transition from 1 to 0 and retain the output high until reset. 
+
+1. We initialize the `prev_in` register to all zeros, but we should be cautious of potential false triggering on the first cycle if any input bits are 0.
+2. To correctly capture the transition and retain the output high, we need to modify the logic within the for loop to not only detect the falling edge but also to keep the output bit high once it's set, until the register is reset.
+3. We should ensure that each output bit remains high once a falling edge is detected for that bit, which means we should not explicitly reset the output bits unless a reset signal is received.
+
+Given the requirements, we can simplify the code by making sure that once an output bit is set due to a falling edge, it stays set until the reset condition is met. This involves modifying the logic inside the for loop to correctly handle the retention of the output state.

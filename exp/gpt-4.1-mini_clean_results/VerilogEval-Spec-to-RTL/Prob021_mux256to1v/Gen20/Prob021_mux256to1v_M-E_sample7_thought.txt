@@ -1,0 +1,12 @@
+Implement a flat combinational 256-to-1 4-bit multiplexer using Verilog's arithmetic bit slicing and array indexing. 
+
+Instead of a hierarchical mux tree, directly index the input vector using the selection signal `sel`, exploiting the Verilog bit-slice operator `[start +: width]`. Since each input slice is 4 bits wide, the selected 4-bit output can be obtained by slicing 4 bits starting from `sel * 4`.
+
+This approach results in a clean and efficient single-level combinational mux. It reduces module instantiation overhead and hierarchical mux logic. The flat mux uses a continuous assignment with no explicit arrays or generate loops, minimizing extra wiring and logic duplication. This can yield better synthesis results with less area and possibly shorter delay.
+
+The module interface remains the same: 
+- `in` is 1024-bit wide representing 256 inputs of 4 bits each,
+- `sel` is 8 bits selecting one of those 256 inputs,
+- `out` is 4 bits outputting the selected slice.
+
+This design is simple, elegant, and maps well to Verilog synthesis tools.

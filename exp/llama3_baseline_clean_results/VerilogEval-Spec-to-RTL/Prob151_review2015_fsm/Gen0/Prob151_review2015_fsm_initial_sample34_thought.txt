@@ -1,0 +1,9 @@
+The finite-state machine can be designed with five states: IDLE, PATTERN_MATCHED, SHIFTING, COUNTING, and DONE. 
+The IDLE state is the initial state where the machine waits for the pattern 1101 to be detected on the data input pin. 
+Once the pattern is matched, the machine transitions to the PATTERN_MATCHED state and then to the SHIFTING state, 
+where it asserts the shift_ena output for exactly 4 clock cycles. 
+After the shifting is complete, the machine transitions to the COUNTING state, where it asserts the counting output 
+and waits for the done_counting input to be high. 
+When the done_counting input is high, the machine transitions to the DONE state, where it asserts the done output 
+and waits for the ack input to be high before transitioning back to the IDLE state.
+The state machine will be reset to the IDLE state when the reset input is high.

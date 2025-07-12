@@ -1,0 +1,14 @@
+The existing solution uses a ripple carry adder-subtractor implemented with generate loops and carry wires, which is functionally correct but can be improved for better performance by replacing the ripple carry chain with a carry-lookahead adder (CLA) structure. A CLA will reduce the carry propagation delay by computing carry signals in parallel. For an 8-bit adder, the CLA can be efficiently implemented with propagate and generate signals and a small carry-lookahead logic.
+
+Furthermore, the zero detection logic using reduction NOR is optimal and kept as-is.
+
+By restructuring the adder to a CLA-based approach, we achieve a faster critical path, improving timing (worst negative slack and effective clock period), while keeping power and area reasonable given the modest size. The combinational outputs remain as wires, preserving a clean combinational interface.
+
+In summary, the improvement strategy is:
+
+- Replace ripple carry adder with carry-lookahead adder for faster carry computation.  
+- Keep the conditional bit inversion of B to support subtraction using two’s complement.  
+- Use generate and propagate signals for CLA and compute carries in parallel.  
+- Keep zero flag detection via reduction NOR.
+
+This approach optimizes performance while maintaining or slightly improving power and area.

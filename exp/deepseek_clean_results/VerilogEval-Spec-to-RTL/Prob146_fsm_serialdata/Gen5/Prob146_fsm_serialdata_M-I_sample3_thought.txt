@@ -1,0 +1,15 @@
+To fix the issues in the original solution, I'll implement a more robust FSM approach with clear state transitions:
+
+1. Use explicit states for IDLE, START, DATA, and STOP to clearly separate protocol phases
+2. Implement a 3-bit counter to track the 8 data bits (0-7)
+3. Properly verify start bit at the beginning and stop bit at the end
+4. Only capture the data byte when all bits are received and stop bit is valid
+5. Ensure done pulses for exactly one cycle when a valid frame is received
+6. Handle reset cases properly and wait for line to return to idle after errors
+7. Shift in data bits LSB first as per protocol requirements
+
+The improved FSM will have these states:
+- IDLE: Waiting for start bit (line=0)
+- START: Start bit detected
+- DATA: Receiving 8 data bits
+- STOP: Verifying stop bit

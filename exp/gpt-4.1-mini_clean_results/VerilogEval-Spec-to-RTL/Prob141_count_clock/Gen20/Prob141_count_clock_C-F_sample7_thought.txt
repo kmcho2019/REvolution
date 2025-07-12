@@ -1,0 +1,14 @@
+Fuse the strengths of both examples by implementing BCD counters for seconds and minutes with separate tens and units digits to maintain clarity and area efficiency, like Example 1. For the hour counter, keep a binary 4-bit counter (1–12) internally for simplicity and smaller area, but convert it to BCD using combinational logic with minimal complexity.
+
+To reduce combinational logic depth and improve timing (better WNS and TNS), split the sequential logic for seconds, minutes, and hours into clearly separated sequential steps within the same clock edge, but restructure the carry propagation carefully to avoid nested if-else chains deeper than necessary.
+
+The PM toggle logic is implemented cleanly on hour rollover from 11 to 12. Reset synchronously initializes to 12:00:00 AM.
+
+Outputs are always combinational, formed by direct concatenation for minutes and seconds and simple conditional BCD conversion for hours.
+
+Using non-blocking assignments ensures correct synchronous behavior. The key fusion is:  
+- Keep BCD counting for seconds and minutes from Example 1 (simple, less combinational logic, and more power efficient)  
+- Keep binary hour counter with simple BCD output conversion from Example 1 (area and clarity advantage)  
+- Organize the always block to minimize nested if depth and simplify carry propagation to improve timing over Example 2
+
+This combined approach balances clarity, timing, power, and area, leveraging best practices and the simplest possible combinational logic for BCD conversion.

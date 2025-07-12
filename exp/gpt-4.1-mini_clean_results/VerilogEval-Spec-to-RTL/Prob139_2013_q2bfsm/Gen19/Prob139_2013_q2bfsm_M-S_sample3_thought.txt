@@ -1,0 +1,13 @@
+Simplify the FSM by representing it with fewer states and using shift registers for pattern detection.
+
+- Use synchronous active-low reset to initialize state and outputs.
+- After reset release, pulse f=1 for exactly one clock cycle.
+- For detecting the '101' pattern on x, use a 3-bit shift register that captures the last three x inputs on each clock.
+- When the shift register matches 3'b101, assert g=1 for one clock cycle.
+- Then enter a two-cycle window monitoring y:
+   - If y==1 in any of these two cycles, hold g=1 permanently.
+   - Else hold g=0 permanently.
+- This removes explicit pattern detection states by using shift register comparison.
+- Maintain Moore outputs based on the current FSM state.
+- The FSM states are: RESET, F_PULSE, PATTERN_WAIT, G_PULSE, Y_MONITOR_1, Y_MONITOR_2, G1_PERMANENT, G0_PERMANENT.
+- This approach simplifies the logic, reduces states, and clearly separates output pulses and permanent holding states.

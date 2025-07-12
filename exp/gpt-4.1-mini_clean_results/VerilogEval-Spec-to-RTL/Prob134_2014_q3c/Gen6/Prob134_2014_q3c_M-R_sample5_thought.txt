@@ -1,0 +1,8 @@
+Refactor the FSM logic to a fully combinational implementation using continuous assignments and nested ternary operators instead of a function and an always block. This eliminates the need for a reg-type next_state, making the code more concise. The next state is computed directly in a wire by encoding the cases with ternary operators based on the inputs y and x. Output Y0 is assigned from the next state LSB as before, and output z remains combinational from the present state y.
+
+This approach reduces the number of procedural blocks, relying purely on continuous combinational logic, which is equally synthesis-friendly. It trades modular abstraction (function) for compactness and direct combinational assignments, improving readability for simple FSMs with small state spaces.
+
+Key points:
+- Use a wire next_state assigned by nested ternary operations based on y and x.
+- Assign Y0 and z combinationally.
+- No procedural always blocks or functions used.

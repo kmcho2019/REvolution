@@ -1,0 +1,5 @@
+Instead of using a 2-bit shift register or separate registers per bit, maintain a single 8-bit register to hold the previous cycle's input vector. On each clock, compare the current input vector with the previous one to detect bitwise transitions from 0 to 1 by checking which bits are '1' now and were '0' previously.
+
+The pedge output is then registered (delayed by one clock) to meet the requirement of producing the positive edge detection one cycle after the transition occurs.
+
+This approach minimizes storage (only one 8-bit register), avoids arrays, and registers the output for timing closure. The design is scalable, clean, and leverages bitwise operations for efficient edge detection.

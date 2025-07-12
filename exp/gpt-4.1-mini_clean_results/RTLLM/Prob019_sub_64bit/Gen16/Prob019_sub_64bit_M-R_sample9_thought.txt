@@ -1,0 +1,7 @@
+Refactor the 64-bit subtractor to use a purely combinational structural style with explicit bitwise assignments and no generate loops for carry propagation, by implementing carry signals as a separate wire vector computed through a hierarchical prefix tree structure (Kogge-Stone style) for faster carry generation. This approach improves timing by parallelizing carry computations, reducing the carry propagation delay compared to ripple carry or flat CLA.
+
+The subtraction remains A + (~B + 1) for two's complement subtraction, and overflow logic is retained as before. The hierarchical carry computation is done in stages with explicit propagate and generate signals combined to compute all carries in log2(64) = 6 stages.
+
+This prefix adder approach keeps the logic purely combinational and uses only `assign` statements without `always` blocks or loops, enhancing synthesis friendliness and clarity while improving performance.
+
+The top module `sub_64bit` instantiates this prefix adder as a separate module, and overflow is detected by comparing sign bits of inputs and result.

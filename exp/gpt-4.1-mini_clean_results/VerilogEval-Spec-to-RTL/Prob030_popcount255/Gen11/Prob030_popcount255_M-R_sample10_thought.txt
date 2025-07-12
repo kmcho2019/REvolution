@@ -1,0 +1,7 @@
+Refactor the recursive popcount_generic module to use purely combinational assign statements without always blocks, simplifying the code and potentially improving synthesis readability. Replace the recursive approach with a balanced binary tree structure using generate loops and fixed small-width popcount modules (popcount2 and popcount3) to handle bottom cases. For the 51-bit popcount, implement a binary tree of partial sums explicitly, cutting the input roughly in halves repeatedly, until base cases of 3 or fewer bits are reached. This avoids recursion with always blocks, uses only assign statements, and keeps the hierarchical approach but with clearer combinational logic.
+
+At the top module, maintain splitting the 255-bit input into five 51-bit segments, compute their popcounts with the new combinational binary-tree popcount module, then sum the five 6-bit results in a balanced 3-stage adder tree, using only assign statements.
+
+This structure keeps the recursive divide-and-conquer idea but is fully combinational with only assign statements, no reg or always blocks, leading to simpler synthesis and potential PPA benefits.
+
+Also, implement a clog2 function outside modules to compute required bitwidths at compile time.

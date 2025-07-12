@@ -1,0 +1,5 @@
+Refactor the design to use a simple state machine with two states: ENABLE and DISABLE. On synchronous reset, move to the ENABLE state and assert shift_ena. Maintain a 3-bit counter that increments each clock cycle while in ENABLE. After counting exactly 4 cycles (0 to 3), transition to the DISABLE state and deassert shift_ena permanently until the next reset.
+
+This approach cleanly separates counting and enable logic, avoids explicit count saturation, and makes the output a direct combinational function of the state, improving clarity and potentially avoiding off-by-one errors. The synchronous reset transitions the FSM back to the ENABLE state with counter zeroed, ensuring consistent timing and behavior.
+
+This refactoring should maintain the same functionality but with clearer control flow and no ambiguous counter values after completion.

@@ -1,0 +1,23 @@
+Analyze the Karnaugh map to find larger groups for simplification instead of enumerating all minterms. Using the row (x[2], x[3]) and column (x[0], x[1]) bit assignments, identify implicants:
+
+- Column 00 (x[0]=0, x[1]=0) has f=1 for rows 00, 11, 10 => group includes all except 01 row
+- For rows 10 and 11, columns 00 and 01 have f=1 (grouping these four cells)
+- For row 00, columns 00 and 10 have f=1 (grouping these two cells)
+
+From these groupings, extract the simplified Boolean expression:
+
+- Group 1 (col=00): ~x[0] & ~x[1]
+- Group 2 (rows=11 or 10, cols=00 or 01): x[2] & ~x[3]'s don't all match, but rows with x[2]=1 and x[1]=0
+  Actually, more precisely:
+  - For rows 10 (x[2]=1,x[3]=0) and 11(x[2]=1,x[3]=1), cols 00 (x[0]=0,x[1]=0) and 01(x[0]=0,x[1]=1) have f=1
+  - This group can be expressed as x[2] & ~x[0]
+- Group 3 (row 00, cols 00 and 10): x[2]=0,x[3]=0 and cols 00(0,0), 10(1,0)
+  - The common factor here is x[3]=0 and x[1]=0 (since col 00 and 10 both have x[1]=0)
+  - So group is ~x[3] & ~x[1]
+
+Combining groups:
+f = (~x[0] & ~x[1]) | (x[2] & ~x[0]) | (~x[3] & ~x[1])
+
+This expression has fewer terms and literals than the original and implements the same logic.
+
+Implement this simplified expression in a single assign statement to reduce logic complexity, area, and power.

@@ -1,0 +1,22 @@
+Fusion Strategy:
+1. State Representation:
+   - Adopt the single-register approach from Example 2 (state_A only) since it's more area-efficient for a 2-state machine
+   - Implicitly represent state_B as ~state_A, reducing register count while maintaining one-hot semantics
+
+2. State Transition Logic:
+   - Keep the simple transition logic from Example 2 (state_A & ~x) which is most direct
+   - This eliminates the need for separate next_state logic wires, reducing combinational complexity
+
+3. Output Logic:
+   - Maintain the efficient Mealy output from both examples (state_A ? x : ~x)
+   - This provides correct functionality with minimal logic
+
+4. Reset Handling:
+   - Preserve the clear asynchronous reset behavior from both examples
+   - Reset to state A (state_A = 1) as specified
+
+Key Improvements:
+- Combines area efficiency of Example 2 with the clean design of Example 1
+- Simplifies state management while maintaining correct functionality
+- Minimal combinational logic for both state transitions and output
+- Fully compliant with one-hot encoding requirement (though optimized for 2 states)

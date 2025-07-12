@@ -1,0 +1,17 @@
+Novel Architectural Approach:
+1. Circular Buffer Implementation:
+   - Instead of traditional shifting, use a circular buffer with a write pointer
+   - The pointer tracks where to insert the new bit while maintaining the shifted order
+   - This eliminates the need for actual bit shifting operations
+
+2. Key Features:
+   - Uses a modulo-8 counter to manage the insertion point
+   - Implements a barrel shifter effect without actual shifting
+   - More efficient for larger shift registers as it avoids propagating all bits
+   - Easily scalable to different widths
+
+3. Advantages:
+   - Potentially better timing as no long combinational paths from shifting
+   - Lower dynamic power since only one bit changes position per cycle
+   - Clear separation between control and data paths
+   - Can be easily modified for different shift directions or amounts

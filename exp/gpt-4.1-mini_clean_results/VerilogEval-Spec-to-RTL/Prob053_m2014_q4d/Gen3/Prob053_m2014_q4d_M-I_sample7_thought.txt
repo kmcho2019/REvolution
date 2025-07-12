@@ -1,0 +1,6 @@
+The original design is functionally correct but suffers from an unknown initial state of the register `q` which causes simulation mismatches early on. Since the specification disallows resets, one way to improve correctness is to initialize `q` to a known value using Verilog's initialization syntax (e.g., `reg q = 0;`). This doesn't add extra logic in synthesis for FPGAs and many ASIC flows and eliminates unknown startup states in simulation, improving initial behavior without changing the functional logic or critical path.
+
+No further logic optimization is possible due to the minimal XOR + flip-flop circuit. The initialization improves simulation correctness and ensures deterministic startup behavior, beneficial for verification and simulation runs.
+
+Thus, the improvement strategy is: 
+- Add an initial value to the flip-flop register `q` to avoid unknown startup states.

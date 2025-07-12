@@ -1,0 +1,12 @@
+To fix the implementation based on the feedback, we need to ensure:
+1. The shift pattern is properly initialized to '1111' on reset
+2. The shift operation maintains exactly 4 cycles of '1' output
+3. The shift_ena output remains low after the 4 cycles until next reset
+4. All operations are synchronous to the clock edge
+
+Key improvements:
+1. Maintain the shift register approach but ensure proper reset behavior
+2. Add a counter to track the number of shifts to guarantee exactly 4 cycles
+3. Use the counter to disable shifting after 4 cycles
+4. Keep the design purely synchronous with no combinational paths
+5. Ensure shift_ena goes low precisely after 4 cycles

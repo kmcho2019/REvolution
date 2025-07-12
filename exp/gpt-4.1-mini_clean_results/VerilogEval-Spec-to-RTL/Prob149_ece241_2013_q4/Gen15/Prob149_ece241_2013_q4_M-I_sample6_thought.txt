@@ -1,0 +1,7 @@
+To fix the incorrect dfr behavior, improve previous level tracking so that dfr correctly reflects upward transitions by capturing the previous stable level before the latest sensor change. Also, handle all sensor patterns explicitly by mapping invalid sensor inputs to the closest legitimate water level, avoiding spurious transitions that cause dfr glitches.
+
+Implement a two-stage update: when the sensor input changes, latch the new stable level and store the old stable level as the previous level for comparison on next cycle, generating dfr only on upward transitions. Keep dfr asserted only for one cycle on rising transitions as supplemental flow is a transient response.
+
+This also makes dfr a pulse on the cycle after the level changes upward, which is generally a cleaner interface and easier to use downstream. Nominal flows remain combinational and derived from the stable level.
+
+This ensures correct previous-level tracking and robust handling of all sensor inputs, eliminating dfr glitches and mismatches.

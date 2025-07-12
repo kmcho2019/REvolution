@@ -1,0 +1,7 @@
+Instead of shifting the input bits every clock cycle, this design uses an 8-bit register as a buffer where each received serial bit is assigned directly to the corresponding bit position based on a counter.
+
+The counter `bit_count` increments only when `din_valid` is high and indexes which bit of the 8-bit register to write. Since the first bit received should be the most significant bit (bit 7) and the last bit the least significant bit (bit 0), we assign the incoming bit to `shift_reg[7 - bit_count]`.
+
+Once 8 bits are collected (i.e., `bit_count` reaches 7), the output register `dout_parallel` is loaded from the buffer, and `dout_valid` is asserted for one clock cycle, then the counter resets to zero to start the next batch.
+
+This approach avoids shifting every clock cycle, simplifies timing, and explicitly assigns bits in place, improving clarity and potentially easing timing closure.

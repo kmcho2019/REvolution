@@ -1,0 +1,71 @@
+First, note the 4-bit input as a,b,c,d representing a 4-bit number with a as MSB and d as LSB.
+
+Given values outputting 1: 2, 7, 15
+- 2 in binary: 0010 -> a=0,b=0,c=1,d=0
+- 7 in binary: 0111 -> a=0,b=1,c=1,d=1
+- 15 in binary: 1111 -> a=1,b=1,c=1,d=1
+
+Given values outputting 0: 0,1,4,5,6,9,10,13,14
+
+Values that never occur: 3,8,11,12
+
+We want to implement out_sop (minimum sum of products) and out_pos (minimum product of sums).
+
+Step 1: Express the minterms for output=1 (2,7,15):
+- 2 = 0 0 1 0 = a' b' c d'
+- 7 = 0 1 1 1 = a' b c d
+- 15= 1 1 1 1 = a b c d
+
+Step 2: Simplify sum of products
+Write minterms:
+m2 = a' b' c d'
+m7 = a' b c d
+m15= a b c d
+
+Try to simplify:
+
+Group m7 and m15:
+a' b c d + a b c d = c d (a' b + a b) = c d b (a' + a) = b c d
+
+Now, m2 + b c d = a' b' c d' + b c d
+
+No common factor there; final SOP is:
+out_sop = a' b' c d' + b c d
+
+Step 3: Write the maxterms for output=0 (0,1,4,5,6,9,10,13,14)
+
+Alternatively, find POS from maxterms corresponding to zeros.
+
+Step 4: POS form corresponds to the product of maxterms covering 0 outputs:
+
+Zero outputs: 0,1,4,5,6,9,10,13,14
+
+Binary of these:
+
+0:  0000
+1:  0001
+4:  0100
+5:  0101
+6:  0110
+9:  1001
+10: 1010
+13: 1101
+14: 1110
+
+We write the maxterms M0, M1, M4, M5, M6, M9, M10, M13, M14.
+
+Then simplify the POS.
+
+Step 5: Group the zeros to simplify:
+
+Group 1: 0(0000),1(0001),4(0100),5(0101) share a' c' (a=0,c=0) and differ in b and d.
+
+Group 2: 6(0110),10(1010),14(1110): These have d=0 and c=1, but differ.
+
+Group 3: 9(1001),13(1101): Both have b=0 or 1, but differ.
+
+Step 6: After simplification, minimal POS form is:
+
+out_pos = (a + c)(b' + d)(a' + b + d')
+
+Step 7: Implement both expressions in Verilog

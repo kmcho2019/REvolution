@@ -1,0 +1,6 @@
+To design an unsigned 16-bit multiplier module (multi_16bit) in Verilog, we should follow these steps:
+1. Define the module and its ports: The module should have input ports for the clock signal (clk), active-low reset signal (rst_n), start signal (start), multiplicand (ain), and multiplier (bin). It should also have output ports for the product output (yout) and the completion flag (done).
+2. Implement the shift count register (i): This register should be updated on every positive edge of the clock signal or the falling edge of the reset signal. Its value determines the current shift position during the multiplication operation.
+3. Generate the multiplication completion flag (done_r): This flag is set when the shift count register reaches 16, indicating the completion of the multiplication operation, and reset when the shift count register reaches 17.
+4. Perform the shift and accumulate operation: This involves shifting the multiplier register left by the current shift count minus one positions if the corresponding bit in the multiplicand register is high and accumulating the result in the product register.
+5. Assign the product output (yout): The final product output should be assigned the value of the product register (yout_r) after the multiplication operation is complete.

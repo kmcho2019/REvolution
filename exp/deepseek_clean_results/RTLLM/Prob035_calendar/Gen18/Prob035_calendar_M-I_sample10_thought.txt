@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Merge the combinational hours_next logic into the sequential block to reduce logic levels
+   - Simplify rollover conditions by using direct comparisons in the sequential logic
+   - Remove intermediate rollover wires to reduce critical path
+
+2. Power Optimization:
+   - Eliminate redundant combinational logic (hours_next block)
+   - Use more efficient comparison logic that only evaluates when needed
+   - Remove unnecessary signal transitions by better structuring the always block
+
+3. Area Optimization:
+   - Properly size all registers (5 bits for hours, 6 bits for others)
+   - Remove redundant logic and signals
+   - Consolidate conditions to minimize comparison logic
+
+Key Changes:
+- Single always block with optimized rollover logic
+- Proper bit-width usage throughout
+- Direct comparisons without intermediate wires
+- Cleaner state transitions
+- Zero-extension handled at output

@@ -1,0 +1,9 @@
+Novel approach using a parallel edge detection with sticky state:
+
+1. Instead of tracking previous values, we'll use a two-stage pipeline for each bit to detect transitions
+2. First stage captures the current input value
+3. Second stage compares with previous value to detect falling edges
+4. Each bit has a dedicated sticky flip-flop that gets set on falling edge and only clears on reset
+5. The sticky outputs are OR'd with new falling edge detections to maintain the captured state
+6. This approach provides clear separation between edge detection and state maintenance
+7. The parallel structure ensures all bits are processed simultaneously with minimal logic delay

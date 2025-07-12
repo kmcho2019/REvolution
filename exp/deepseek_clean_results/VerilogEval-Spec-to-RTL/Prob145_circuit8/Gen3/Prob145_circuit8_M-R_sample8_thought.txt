@@ -1,0 +1,12 @@
+The key insights from analyzing the waveform are:
+1. p is set to 1 when a rising edge of 'a' is detected during a clock high phase
+2. q follows p with a one-cycle delay
+3. Both outputs are synchronous to the positive clock edge
+4. There's no explicit reset condition visible in the waveform
+
+Refactoring approach:
+1. Use standard positive-edge triggered logic
+2. Implement edge detection for 'a' using a flip-flop
+3. Use another flip-flop to create the one-cycle delayed q output
+4. Remove the unnecessary clock low behavior since it doesn't match the waveform
+5. Simplify the state tracking to just what's needed

@@ -1,0 +1,16 @@
+To implement an 8-bit adder using multiple bit-level adders but with a novel architectural idea different from a simple ripple carry, I will design a two-stage hierarchical adder:
+
+1. Split the 8-bit operands into two 4-bit halves: lower nibble (bits [3:0]) and upper nibble (bits [7:4]).
+2. Use 4 separate full adders chained to form a 4-bit ripple carry adder for the lower nibble.
+3. Compute two possible sums and carries for the upper nibble in parallel:
+   - One assuming the carry-in to the upper nibble is 0.
+   - One assuming the carry-in to the upper nibble is 1.
+4. After the lower nibble sum and carry-out are computed, select the correct upper nibble sum and carry-out using a 2-to-1 multiplexer controlled by the carry-out from the lower nibble.
+
+This architecture is a simple carry-select adder (CSA) for 8-bit addition. It reduces the carry propagation delay by computing upper nibble sums speculatively for both possible carry-in values and selecting the correct result once the lower nibble carry-out is known.
+
+This design still uses bit-level full adders for sum and carry but organizes them into two 4-bit groups with parallelism to reduce the critical path compared to a pure ripple carry adder.
+
+The module will contain a reusable bit_full_adder submodule for single-bit addition.
+
+I will implement this fully combinationally without clocking, as requested.

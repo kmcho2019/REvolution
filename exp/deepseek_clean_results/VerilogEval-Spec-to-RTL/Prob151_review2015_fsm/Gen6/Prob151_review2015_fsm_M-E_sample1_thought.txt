@@ -1,0 +1,15 @@
+Novel Approach: Pattern-Aware Shift Controller with Edge Detection
+
+Key Innovations:
+1. Pattern detection using a sliding window comparator that continuously checks for 1101
+2. Edge-triggered state transitions to precisely control timing
+3. Dedicated shift controller with cycle-accurate counting
+4. Output generation synchronized with state transitions
+5. Explicit state encoding for better synthesis and debugging
+
+State Machine Flow:
+- IDLE: Continuously monitors for pattern 1101
+- SHIFT_DELAY: Enters on pattern detection, asserts shift_ena for exactly 4 cycles
+- COUNTING: Waits for done_counting with counting asserted
+- NOTIFY: Asserts done until ack received
+- All transitions occur on clock edges with clean output timing

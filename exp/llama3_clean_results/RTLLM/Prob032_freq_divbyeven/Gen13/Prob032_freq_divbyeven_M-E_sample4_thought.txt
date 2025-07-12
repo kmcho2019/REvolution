@@ -1,0 +1,8 @@
+The new architectural idea is to implement the frequency divider using a modular arithmetic approach. Instead of using a state machine or conditional statements, we can utilize the properties of modular arithmetic to achieve the division by even numbers. This approach involves using a counter that increments modulo the specified division factor (`NUM_DIV`). The divided clock signal (`clk_div`) will toggle whenever the counter wraps around to zero. To handle the even division, we can use the least significant bit of the counter to control the toggling of `clk_div`, ensuring that the output clock is divided by an even number.
+
+Key components of this approach include:
+1. **Modular Counter**: Implement a counter that increments modulo `NUM_DIV`. This will ensure that the counter wraps around to zero after reaching the specified limit.
+2. **LSB-controlled Toggling**: Use the least significant bit (LSB) of the counter to control the toggling of `clk_div`. When the LSB is high, `clk_div` will toggle on the next wrap-around.
+3. **Reset and Initialization**: Implement an active-low reset signal (`rst_n`) to initialize the counter and `clk_div` to zero.
+
+This approach simplifies the logic and reduces the number of states, making it more efficient and easier to understand.

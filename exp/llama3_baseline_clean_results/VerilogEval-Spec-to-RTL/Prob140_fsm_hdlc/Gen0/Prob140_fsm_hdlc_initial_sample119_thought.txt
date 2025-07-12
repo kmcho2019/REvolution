@@ -1,0 +1,12 @@
+The problem requires implementing a Moore-type finite state machine (FSM) in Verilog to recognize specific bit sequences in a continuous data stream. The FSM should have states to track consecutive 1s, detect flags, and discard bits as necessary. It should also handle errors for sequences with 7 or more consecutive 1s. 
+
+To solve this, we'll define states for tracking the number of consecutive 1s and for signaling flags, discarded bits, and errors. We will use a reset signal to initialize the FSM to a state that assumes the previous input was 0. The FSM will be designed to transition between states based on the current input bit and the current state, and output signals will be asserted based on the current state.
+
+The key states will include:
+- An initial state assuming the previous bit was 0.
+- States for tracking 1 to 5 consecutive 1s.
+- A state to indicate a flag has been detected (6 consecutive 1s followed by a 0).
+- A state to signal an error for 7 or more consecutive 1s.
+- A state to signal that a bit needs to be discarded (after 5 consecutive 1s, a 0 is inserted by the sender).
+
+Transitions between these states will be based on the current input bit (in) and the current state of the FSM. Outputs (disc, flag, err) will be determined by the current state.

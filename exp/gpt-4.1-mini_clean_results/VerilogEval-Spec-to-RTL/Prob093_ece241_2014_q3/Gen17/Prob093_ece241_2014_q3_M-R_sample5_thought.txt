@@ -1,0 +1,19 @@
+The original code correctly decodes the K-map but is structured using multiple intermediate 2-to-1 mux instantiations, which might have caused confusion or mismatches in signal ordering or clarity.
+
+To improve clarity and correctness, we can directly express each mux_in bit as a combinational assignment using nested conditional operators (`?:`), which emulate 2-to-1 muxes naturally.
+
+This approach:
+
+- Avoids intermediate wire naming and potential wiring mistakes.
+- Explicitly models 2-to-1 mux functionality in a concise way.
+- Clearly maps the K-map outputs with respect to inputs c and d.
+- Retains the minimal use of 2-to-1 mux operations, as the conditional operator is equivalent to a mux.
+- Makes the output vector assignment straightforward and less error-prone.
+
+Each bit of mux_in corresponds to fixed selector inputs {a,b}, so mux_in[0] is the output when ab=00, mux_in[1] when ab=01, mux_in[2] when ab=11, mux_in[3] when ab=10.
+
+Given that only c and d are inputs to TopModule, mux_in bits depend only on c and d.
+
+This refactoring enhances readability and avoids confusion about intermediate wires and mux hierarchies, while maintaining the minimal 2-to-1 mux logic implementation.
+
+Note: The conditional operator is synthesizable as a 2-to-1 mux in Verilog.

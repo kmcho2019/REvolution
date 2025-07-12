@@ -1,0 +1,14 @@
+To solve this problem, we need to implement a combinational logic circuit that outputs 1 when the input combination represents decimal 2, 7, or 15, and outputs 0 for other specified numbers. The numbers are represented by the 4-bit input {a,b,c,d} where 'a' is the MSB.
+
+First, we'll create a truth table based on the given specifications:
+- Output 1 for inputs: 0010 (2), 0111 (7), 1111 (15)
+- Output 0 for inputs: 0000 (0), 0001 (1), 0100 (4), 0101 (5), 0110 (6), 1001 (9), 1010 (10), 1101 (13), 1110 (14)
+- Don't care for inputs: 0011 (3), 1000 (8), 1011 (11), 1100 (12)
+
+For out_sop (sum-of-products):
+We'll OR the minterms where output is 1:
+(¬a ∧ ¬b ∧ c ∧ ¬d) ∨ (¬a ∧ b ∧ c ∧ d) ∨ (a ∧ b ∧ c ∧ d)
+
+For out_pos (product-of-sums):
+We'll AND the maxterms where output is 0, but first we need to find the complement function (where output would be 0) and then apply De Morgan's:
+The complement function would be 1 for all inputs except 2,7,15. Then we find POS for this complement and invert it to get the original function.

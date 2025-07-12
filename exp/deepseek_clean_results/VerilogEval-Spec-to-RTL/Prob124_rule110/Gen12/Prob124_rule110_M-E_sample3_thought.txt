@@ -1,0 +1,16 @@
+Novel Architecture Idea: Shift Register with Parallel Rule Computation
+
+1. **Shift Register Core**: Instead of treating each cell independently, implement a circular shift register that rotates the entire state each cycle. This allows neighbor access through simple bit shifts.
+
+2. **Pipelined Rule Computation**: Compute the next state in parallel using the shifted versions of the current state. This eliminates the need for boundary condition checks and reduces logic complexity.
+
+3. **Triple Buffering**: Maintain three versions of the state (left-shifted, original, right-shifted) to efficiently access all neighbor combinations in parallel.
+
+4. **Optimized Rule Logic**: Express Rule 110 as a simple logical expression: next_state = (~left & (center | right)) | (left & center & ~right)
+
+Key Advantages:
+- Eliminates boundary condition logic entirely
+- Reduces area by sharing shift operations
+- Improves timing through pipelined computation
+- Maintains full parallel processing capability
+- Simplifies the Rule 110 logic to a single expression

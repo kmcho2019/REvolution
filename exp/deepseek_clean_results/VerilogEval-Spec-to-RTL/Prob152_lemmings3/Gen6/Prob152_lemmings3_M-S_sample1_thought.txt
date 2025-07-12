@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. State Encoding: Use 3 states (WALK, FALL, DIG) with direction embedded in the WALK state (total 3 bits: 2 for state + 1 for direction)
+2. Priority Handling: Implement fall > dig > bump priority directly in state transitions
+3. Output Logic: Make outputs purely dependent on current state and direction
+4. Simplifications:
+   - Remove separate direction register by including it in state transitions
+   - Combine state and direction logic into single case statement
+   - Make outputs simple combinatorial functions of state
+5. Reset: Initialize to WALK_LEFT state on areset
+
+Key Benefits:
+- Fewer registers (combined state+direction)
+- Clearer state transitions
+- Maintains all functionality with simpler logic

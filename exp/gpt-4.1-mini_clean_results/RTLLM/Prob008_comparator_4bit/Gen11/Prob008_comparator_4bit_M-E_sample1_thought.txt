@@ -1,0 +1,23 @@
+An alternative approach is to directly compare bits from the MSB down to LSB using priority logic to determine the relationship between A and B.  
+Instead of relying on borrow signals from subtraction, the comparator will:
+- Check each bit starting from the most significant bit (bit 3) to the least significant bit (bit 0).
+- For each bit position, if A[i] > B[i], then A is greater.
+- If A[i] < B[i], then A is less.
+- If bits are equal, proceed to the next bit.
+- If all bits are equal, A equals B.
+
+This priority logic can be implemented with combinational gates:  
+- Generate "greater" and "less" signals per bit.
+- Propagate equality down the chain.
+- Final outputs are mutually exclusive by construction.
+
+This approach avoids borrow logic, provides a simple, easy-to-understand structure, and tends to synthesize efficiently with minimal logic depth due to the priority structure.
+
+Outputs:  
+- A_greater = first bit where A[i] > B[i] and all more significant bits are equal.  
+- A_less = first bit where A[i] < B[i] and all more significant bits are equal.  
+- A_equal = all bits equal.
+
+No sequential logic, all combinational.
+
+This approach is fully synthesizable and robust for 4-bit comparison.

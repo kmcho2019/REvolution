@@ -1,0 +1,9 @@
+Implement the decade counter using a one-hot encoding scheme instead of binary counting. This means the 4-bit output 'q' will have exactly one bit set corresponding to the current count (0 to 9 mapped onto a 10-bit one-hot vector internally). Since 'q' has only 4 bits, we can encode states 0 to 9 over 10 flip-flops internally but output a binary equivalent on q by priority encoding the one-hot state.
+
+The one-hot approach simplifies state transitions to a simple shift or state move, which can be power-efficient by minimizing combinational logic, as only one bit changes per clock cycle.
+
+To fit the 4-bit output q, we convert the one-hot internal state to the binary count value via a priority encoder combinational logic. Reset synchronously sets the first one-hot bit. Counting proceeds only when slowena is high, else state holds.
+
+This architecture uses a 10-bit one-hot internal register but outputs a 4-bit binary count, enabling clear separation between internal state encoding and output representation.
+
+It can also reduce glitching in output since only one bit in internal state changes per cycle.

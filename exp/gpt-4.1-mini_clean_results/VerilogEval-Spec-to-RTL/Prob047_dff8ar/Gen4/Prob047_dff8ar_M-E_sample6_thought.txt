@@ -1,0 +1,5 @@
+Instead of instantiating individual flip-flops, I will implement the 8-bit register using a single always block with asynchronous reset. The asynchronous reset will be handled in the sensitivity list along with the positive edge of clk. This approach uses vector registers to store all bits collectively, reducing code verbosity and improving area and power efficiency.
+
+To achieve asynchronous reset in a single always block, I will use a sensitivity list that triggers on posedge clk or posedge areset. Inside the always block, if areset is asserted, the entire 8-bit output register is reset to zero immediately. Otherwise, on the rising edge of clk, the register captures the input vector d.
+
+This implementation is functionally equivalent to the previous one but simpler, more compact, and potentially more power and area efficient due to the absence of multiple module instantiations.

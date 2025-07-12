@@ -1,0 +1,11 @@
+Fuse the best aspects of both examples by implementing a clean, synchronous counter with power gating when freq=0 and a direct toggle condition comparing count to freq-1 without extra registers for the toggle signal. Use a combinational wire for threshold (freq - 1) to minimize registers and logic. Perform counting only when freq is nonzero to save power and avoid unnecessary toggling. Use synchronous active-low reset for reliable initialization.
+
+This design merges the clarity and modularity of Example 2 with the power gating and straightforward comparator logic of Example 1, removing the toggle_req register to reduce switching and area. The counter counts up from 0 to freq-1; when reaching freq-1, it resets to 0 and toggles wave_out. When freq=0, counting and toggling are disabled and count is held at 0, keeping wave_out steady.
+
+Non-blocking assignments maintain correct sequential behavior. The combinational wires improve timing and synthesis. This approach optimizes power, performance, and area (PPA) by:
+- Gating counting and toggling when freq=0,
+- Using minimal combinational logic,
+- Reducing registers by removing toggle_req,
+- Providing clear, simple comparator logic.
+
+Overall, this fusion yields an elegant, resource-efficient, and well-structured square wave generator fully meeting the specification.

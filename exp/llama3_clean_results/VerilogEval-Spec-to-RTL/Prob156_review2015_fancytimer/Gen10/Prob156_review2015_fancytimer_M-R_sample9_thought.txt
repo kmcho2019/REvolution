@@ -1,0 +1,13 @@
+To refactor the existing code, we will maintain the same finite state machine (FSM) states, but implement the state transitions and signal assignments using a different structure. The FSM states will be IDLE, DELAY_DETECTION, COUNTING, and DONE.
+
+We will use a more explicit state machine with separate always blocks for the next state logic and output assignments. The 'count' output will be driven based on the current state and the remaining time. A separate counter will be used to track the remaining time, which will be decremented every clock cycle until it reaches zero.
+
+To improve the code's efficiency and readability, we will use the 'assign' statement for signal assignments instead of within the 'always' block. This approach will reduce the complexity of the combinational logic and make the code easier to understand.
+
+The 'delay_reg' will be loaded with the next 4 bits after the pattern '1101' is detected. Then, the remaining time will be set to 'delay_reg' and the counter will be set to '(delay_reg + 1) * 1000 - 1'. The state machine will then transition to the COUNTING state.
+
+During the COUNTING state, the counter will decrement every clock cycle until it reaches zero. When the counter is a multiple of 1000, the remaining time will decrement by 1.
+
+Once the counter reaches zero, the state machine will transition to the DONE state, where it will assert the 'done' signal. The state machine will then wait for the 'ack' signal to be asserted before transitioning back to the IDLE state.
+
+We will also add more comments to explain the functionality of each state and the logic behind the transitions between states. This will make the code easier to understand and debug.

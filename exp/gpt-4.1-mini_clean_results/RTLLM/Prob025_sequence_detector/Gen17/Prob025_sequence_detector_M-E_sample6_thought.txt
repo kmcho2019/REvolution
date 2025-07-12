@@ -1,0 +1,9 @@
+I will implement the sequence detector for "1001" using a Mealy FSM rather than Moore, where the output sequence_detected is combinationally derived based on both the current state and input. This allows the output pulse to be generated immediately when the last bit of the sequence is received, reducing output latency by a clock cycle compared to Moore FSM. 
+
+The FSM will have five states: IDLE, S1, S2, S3, and a reset to earlier states when inputs don't match the pattern. Each state corresponds to how much of the sequence has been matched so far. The transition and output logic will incorporate overlaps to detect consecutive sequences without loss.
+
+Active-high asynchronous reset (reset_n) will be used to allow quick reset response, as many real designs use this style. The state register updates on the positive edge of the clock, and the reset overrides state asynchronously.
+
+I will encode the states using one-hot encoding to reduce the critical path in next-state logic and improve timing at the expense of using 5 flip-flops. The output will be combinational logic derived from state and input to produce a one-clock-cycle pulse the moment the full sequence completes.
+
+This approach yields a more responsive sequence detection output (zero cycle latency), reduces complexity in combinational output logic, and uses simple one-hot FSM for better timing, trading off modestly increased area.

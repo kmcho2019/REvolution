@@ -1,0 +1,8 @@
+To design the TopModule as a one-input one-output serial 2's complementer Moore state machine, we can consider the following steps:
+1. Initialize a register to store the cumulative sum of the input bits. 
+2. When the reset is released, start processing the input bits from the least significant bit.
+3. For each input bit, add it to the cumulative sum, but with a twist: if the cumulative sum is already 1 and we encounter a 1, we should actually add 2 to the cumulative sum (to handle the borrow in 2's complement).
+4. After each addition, if the cumulative sum is 2, we need to store 0 as the current bit of the result and carry 1 to the next bit (to handle the borrow in 2's complement).
+5. We also need to store the output bit (Z) which is 1 if the cumulative sum is 1 (after considering the borrow), otherwise it's 0.
+6. We use an asynchronous reset to reset the cumulative sum and output.
+We'll use a simple state machine with a 2-bit state to keep track of the current state of the cumulative sum (00 for 0, 01 for 1, 10 for the "borrow" state).

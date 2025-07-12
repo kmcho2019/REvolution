@@ -1,0 +1,13 @@
+To improve the existing solution, we will address the issues mentioned in the feedback. 
+
+1. **Correct State Transition Logic**: We will correct the state transition logic to ensure that the FSM accurately transitions between states A and B based on the input 's'. When 's' is high, the FSM should transition from state A to state B and reset the 'clock_cycles' and 'count' counters. When in state B, we will evaluate the output 'z' based on the count of 'w' occurrences over a 3-clock cycle window.
+
+2. **Accurate Output Evaluation**: We will modify the output evaluation logic to accurately set the output 'z' based on the count of 'w' occurrences in the previous 3-clock cycle window. If the count is exactly 2, we will set 'z' high; otherwise, we will set it low. We will also ensure that 'z' is set high in the clock cycle following the evaluation of 'w' occurrences.
+
+3. **Proper Reset Logic**: We will ensure that the reset logic correctly resets all counters, the state variable, and the output 'z' to their initial values when the 'reset' input is high.
+
+4. **Optimization**: To optimize the design for better PPA, we will aim to minimize the number of states, reduce the complexity of the combinational logic, and avoid unnecessary signal assignments.
+
+By addressing these points, we can improve the existing solution to accurately implement the required finite state machine behavior while optimizing for better PPA.
+
+We will use a two-state FSM, with state A being the initial state and state B being the state where we count the 'w' occurrences. We will use two counters, 'clock_cycles' and 'count', to keep track of the clock cycles and 'w' occurrences in state B. We will evaluate the output 'z' after three clock cycles in state B and reset the counters accordingly.

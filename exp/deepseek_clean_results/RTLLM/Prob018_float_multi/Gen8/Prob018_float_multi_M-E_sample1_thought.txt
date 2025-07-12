@@ -1,0 +1,21 @@
+Novel Architecture Concept:
+1. Split-Mantissa Multiplication:
+   - Divide each 24-bit mantissa into upper (16-bit) and lower (8-bit) segments
+   - Perform partial multiplications (UxU, UxL, LxU, LxL) separately
+   - Combine results with proper alignment to reduce critical path
+
+2. Early Special Case Detection:
+   - Detect NaN, infinity, and zero cases in the first cycle
+   - Bypass normal computation path for these cases to save power
+
+3. Exponent Pre-Calculation:
+   - Calculate potential exponent outcomes in parallel with mantissa multiplication
+   - Select correct exponent after normalization
+
+4. Progressive Rounding:
+   - Implement rounding in stages as partial products are accumulated
+   - Reduce final rounding complexity
+
+5. Dynamic Pipeline Control:
+   - Only activate necessary pipeline stages based on input characteristics
+   - Power-gate unused computation blocks

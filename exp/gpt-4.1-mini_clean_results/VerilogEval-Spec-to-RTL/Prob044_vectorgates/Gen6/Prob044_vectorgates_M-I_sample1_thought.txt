@@ -1,0 +1,9 @@
+The original design is already minimal and efficient for a simple combinational module performing bitwise OR, logical OR, and NOT operations on small 3-bit vectors. 
+
+To potentially optimize for PPA (performance, power, area) further, I will:
+- Eliminate the intermediate wire `or_result` to reduce net count and potentially minimize routing resources and area.
+- Compute `out_or_bitwise` and `out_or_logical` directly from inputs `a` and `b`, trusting the synthesis tool to efficiently share logic.
+- Use continuous assignments only, no registers, preserving zero logic depth beyond the inherent gates.
+- This minor code simplification reduces netlist size and may slightly reduce area and power without affecting timing.
+
+Given the very small scale of the logic, these changes are subtle but can slightly improve area and power metrics.

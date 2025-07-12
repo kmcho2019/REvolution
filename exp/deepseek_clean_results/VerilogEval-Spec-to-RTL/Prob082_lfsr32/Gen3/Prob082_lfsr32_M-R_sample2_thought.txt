@@ -1,0 +1,11 @@
+To correctly implement the 32-bit Galois LFSR with taps at positions 31, 21, 1, and 0 (equivalent to 32, 22, 2, and 1 in 1-based indexing):
+1. Use a sequential always block triggered by posedge clk for the register
+2. Implement the feedback term as q[0] (LSB)
+3. For each clock cycle:
+   - If reset is active, initialize q to 32'h1
+   - Otherwise:
+     * XOR only the tap positions (31, 21, 1, 0) with feedback
+     * Shift all bits right by 1 position
+     * Insert feedback as the new MSB
+4. The XOR operations should be applied individually to each tap position while other bits shift unchanged
+5. This maintains the correct Galois LFSR structure while being functionally accurate

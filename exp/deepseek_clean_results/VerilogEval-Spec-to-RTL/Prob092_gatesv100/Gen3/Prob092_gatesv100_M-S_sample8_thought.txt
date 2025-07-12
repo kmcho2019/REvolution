@@ -1,0 +1,21 @@
+Simplified design approach:
+
+1. Combine all operations into a single always block with parallel assignments instead of for-loops. This eliminates loop overhead and makes the code more straightforward.
+
+2. For out_both:
+   - Set bit 99 to 0 directly
+   - Use bitwise AND with left neighbor for bits 98:0 in a single assignment
+
+3. For out_any:
+   - Set bit 0 to 0 directly
+   - Use bitwise OR with right neighbor for bits 99:1 in a single assignment
+
+4. For out_different:
+   - Use XOR between each bit and its left neighbor (with wrap-around for bit 99)
+   - This can be done by XORing the input with a left-rotated version of itself
+
+Key simplifications:
+- Eliminated for-loops in favor of parallel bitwise operations
+- More concise code while maintaining same functionality
+- Reduced control logic overhead
+- Maintained all edge case handling

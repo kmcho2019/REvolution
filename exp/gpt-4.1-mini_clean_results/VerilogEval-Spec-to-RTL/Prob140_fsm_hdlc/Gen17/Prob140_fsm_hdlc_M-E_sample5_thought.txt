@@ -1,0 +1,14 @@
+I will implement the HDLC bit-stuffing decoder as a state machine using explicit binary states representing the number of consecutive 1s encountered (from 0 to 6), plus an error state. This is a classic Moore FSM approach with one-hot style outputs.
+
+- States 0 to 6 represent counting consecutive ones.
+- Upon receiving a '0', the FSM transitions based on the current count:
+  - If count is 5 and input is 0, this corresponds to the stuffed zero (discard bit next cycle).
+  - If count is 6 and input is 0, this corresponds to the flag pattern (flag output next cycle).
+  - Otherwise, reset to state 0.
+- Upon receiving a '1', increment the consecutive ones count.
+  - If we reach 7 ones (beyond state 6), enter an error state.
+- Outputs disc, flag, err are Moore outputs driven purely by the current state.
+- All outputs are registered and asserted for one full clock cycle after detecting the pattern.
+- The FSM has a synchronous reset going to state 0.
+  
+This explicit FSM design clarifies the state transitions, keeps outputs clean and glitch-free, and eases debugging. It also avoids counting with saturating counters by using explicit states which can simplify synthesis optimizations.

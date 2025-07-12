@@ -1,0 +1,20 @@
+Here's the corrected design addressing the feedback:
+
+1. **Cycle Counting Fix**: The main issue was off-by-one errors in counting. The corrected version:
+   - Starts counting immediately after delay capture (no extra cycle)
+   - Decrements main_counter at the exact 1000-cycle boundary
+   - Uses sub_counter == 999 as the boundary condition
+
+2. **Pattern Detection Timing**: 
+   - Shifts pattern_reg first, then checks for match
+   - Ensures full 4-bit pattern is captured before transition
+
+3. **State Transition Fix**:
+   - Properly synchronizes DONE transition with final count
+   - Only transitions after completing the full countdown
+
+4. **Output Timing**:
+   - Updates count output immediately when entering COUNTING state
+   - Maintains correct count value throughout counting period
+
+The key changes ensure precise cycle counting and proper state transitions aligned with the specification.

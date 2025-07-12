@@ -1,6 +1,0 @@
-The code has a few issues that are leading to the simulation failures:
-1. In the state transition logic, the way 'next_state' is assigned in the `case` statement for `pq_active` is incorrect. The condition `(a) ? pq_active : idle` should depend on both inputs `a` and `clock`, similar to how the other states consider `a` to define transitions.
-2. The state machine might not be resetting correctly. It's crucial to ensure the state machine initializes to a known state at the start (`idle` in this case) before transitioning based on inputs.
-3. The outputs `p` and `q` are being driven within both the combinatorial logic (`always @*`) and sequential logic (`always @(posedge clock)`). This can lead to conflicts and unexpected behavior due to multiple drivers for these signals.
-
-These issues are causing the mismatches seen in the simulation log.

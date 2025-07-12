@@ -1,0 +1,14 @@
+Implement the 100-bit rotate register as a ring buffer with a rotating "head" pointer indicating the logical zero index. Instead of physically shifting bits left or right each clock cycle, the design logically rotates by adjusting the head pointer. 
+
+On load, the entire data is loaded into a fixed array/register. On rotate left or right, the head pointer is incremented or decremented modulo 100. The output q is formed by mapping indices starting from the current head pointer. This way, rotation is achieved via pointer arithmetic rather than bit shifting.
+
+This approach reduces combinational logic on the datapath to just pointer arithmetic and a rotate address mapping. It significantly reduces critical path delay because:
+- Only a small pointer register (7 bits for 0-99) is updated.
+- The 100-bit output q is assembled using a combinational barrel-like multiplexer indexed by the head pointer, which can be done with a barrel shifter construct.
+
+This architecture is similar to a circular buffer or rotating index addressing:
+- load synchronously loads the register
+- ena controls head pointer increment/decrement or no change
+- q outputs rotated view by pointer-based indexing
+
+This approach enhances timing and power by minimizing combinational wide shifting and avoids unnecessary data movement inside the 100-bit register.

@@ -1,0 +1,8 @@
+To improve PPA, the existing design is already optimal for area and power due to minimal state encoding and simple logic. However, timing (TNS and WNS of -0.19ns) can be improved by simplifying the combinational next_state logic to eliminate the case statement and replace it with direct Boolean expressions, which reduces logic levels and may improve critical path timing. Additionally, making output logic synchronous to state updates (Moore machine) avoids any combinational glitches on output, which can reduce power by minimizing output switching noise.
+
+Specifically:
+- Replace the case statement with straightforward combinational assignments using ternary operators.
+- Make the output register-based synchronous Moore output by registering output along with state updates.
+- Use non-blocking assignments consistently.
+- Keep the asynchronous reset on state and synchronous reset on output register for glitch-free output.
+This approach may slightly increase flip-flop count by one but can improve timing and power by reducing logic depth and glitches, improving the PPA metrics.

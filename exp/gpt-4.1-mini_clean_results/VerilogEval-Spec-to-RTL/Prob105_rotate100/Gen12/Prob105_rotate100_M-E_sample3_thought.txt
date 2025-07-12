@@ -1,0 +1,15 @@
+Implement the 100-bit rotator as a shift register with separate dedicated logic for load and rotation operations, but instead of rotating the entire 100-bit vector at once via concatenation, store the bits in an array of 100 flip-flops internally to facilitate easier bitwise manipulation.
+
+To perform rotation without large concatenation, implement rotation by capturing the bit shifted out at one end and inserting it at the other end explicitly using bitwise assignments inside the always block.
+
+The rotation direction and load control signals will govern the sequential logic, and if no load or rotation is requested, maintain the register unchanged.
+
+This approach explicitly manages the boundary bits to create the rotator effect, providing an alternative coding style avoiding wide concatenation syntax, possibly giving more control over the mapping in synthesis.
+
+Additionally, use an internal register array to better visualize bitwise rotation and help understand or customize individual bit-level operations.
+
+Since all operations are synchronous with clk, use one always @(posedge clk) block.
+
+Finally, the output q is formed by packing the internal register array into a vector.
+
+This structure is different architecturally from the concatenation-based implementation and offers a fresh perspective on handling wide bit rotators.

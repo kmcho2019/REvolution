@@ -1,0 +1,14 @@
+Since the FSM only has two states and requires one-hot encoding, we can represent states A and B with two flip-flops, each corresponding to one state. This is the most straightforward one-hot encoding method.
+
+To simplify the design:
+- Use two state flip-flops: state_A and state_B.
+- At reset, set state_A=1 and state_B=0.
+- Next state logic is combinational: 
+  - From A, if x=0 stay in A, if x=1 go to B.
+  - From B, stay in B regardless of x.
+- Output z is Mealy: 
+  - z=0 in A when x=0, z=1 in A when x=1
+  - z=1 in B when x=0, z=0 in B when x=1
+- The next state and output logic can be computed combinationally.
+- Asynchronous active-high reset sets the FSM to A.
+- This approach is conceptually simpler and directly follows the FSM description with true one-hot encoding.

@@ -1,0 +1,20 @@
+Here's a novel approach using shift registers and circular comparison logic:
+
+1. For out_both: 
+   - Create a left-shifted version of the input (shifted by 1)
+   - Perform bitwise AND between original and shifted inputs
+   - The result shows where both a bit and its left neighbor are '1'
+   - Mask the MSB since it has no left neighbor
+
+2. For out_any:
+   - Create a right-shifted version of the input (shifted by 1)
+   - Perform bitwise OR between original and shifted inputs
+   - The result shows where either a bit or its right neighbor is '1'
+   - Mask the LSB since it has no right neighbor
+
+3. For out_different:
+   - Create a circular left-shifted version of the input
+   - Perform bitwise XOR between original and circular-shifted inputs
+   - This naturally implements the wrap-around comparison
+
+This approach leverages shift operations to elegantly handle the neighbor relationships, reducing the explicit bit-by-bit operations in the original solution.

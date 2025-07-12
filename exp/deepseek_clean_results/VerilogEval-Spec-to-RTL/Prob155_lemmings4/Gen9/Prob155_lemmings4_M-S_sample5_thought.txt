@@ -1,0 +1,24 @@
+Simplified Lemming State Machine Design:
+
+1. State Reduction:
+   - Combine DIG_L and DIG_R into a single DIG state since digging behavior is direction-independent
+   - Use walking_left register to track direction during digging/falling
+
+2. Priority Handling:
+   - Implement clear priority order: FALL > DIG > BUMP
+   - Simplify conditions by checking priorities in order
+
+3. Counter Logic:
+   - Only count when actually falling (state == FALL && !ground)
+   - Reset counter when not falling
+
+4. Output Logic:
+   - Directly map states to outputs
+   - aaah is active during FALL and transition to SPLAT
+   - digging is active only in DIG state
+
+Key Simplifications:
+- Reduced states from 6 to 5 by merging digging directions
+- Simplified transition logic with clear priority order
+- More straightforward counter management
+- Cleaner output mapping

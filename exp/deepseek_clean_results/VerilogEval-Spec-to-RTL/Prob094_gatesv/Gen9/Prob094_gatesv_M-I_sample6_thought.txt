@@ -1,0 +1,14 @@
+The current implementation is already quite efficient, but we can make some minor optimizations:
+
+1. For out_both[3] and out_any[0], instead of assigning don't-care values, we can leave them unassigned to potentially save a tiny bit of logic.
+
+2. We can combine the left-shift and right-shift operations for out_both and out_any into single expressions for cleaner code.
+
+3. The out_different implementation using XOR with rotated input is already optimal.
+
+4. We'll maintain the same functionality while making the code slightly more concise.
+
+The improved version will:
+- Remove explicit don't-care assignments (letting synthesis optimize them)
+- Use more compact expressions for out_both and out_any
+- Keep the efficient XOR implementation for out_different

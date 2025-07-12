@@ -1,0 +1,11 @@
+The current implementation is functionally correct but can be optimized for better PPA (Power, Performance, Area) by leveraging the one-hot encoding property more effectively. Since only one state bit is active at any time in one-hot encoding, we can simplify the next state logic by:
+
+1. Eliminating redundant OR operations in next_state[3] since only one input can be active
+2. Simplifying next_state[2] by recognizing that F->C and B->C transitions can't happen simultaneously
+3. Using direct state transitions without OR operations where possible
+4. Maintaining the same functionality while reducing logic complexity
+
+This optimization will:
+- Reduce area by eliminating unnecessary logic gates
+- Improve timing by reducing logic depth
+- Lower power consumption by reducing switching activity

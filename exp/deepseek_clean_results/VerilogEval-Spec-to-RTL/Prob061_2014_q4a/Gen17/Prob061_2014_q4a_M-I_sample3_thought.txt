@@ -1,0 +1,20 @@
+To further optimize the design for better PPA metrics, I'll implement these improvements:
+
+1. **Power Optimization**:
+   - Separate the L and E conditions to avoid evaluating (L || E) every cycle
+   - This reduces switching activity in the control logic
+
+2. **Timing Optimization**:
+   - Prioritize L over E explicitly with nested if-else
+   - This creates a cleaner critical path that tools can optimize better
+   - The priority structure is more visible to synthesis tools
+
+3. **Area Optimization**:
+   - The nested if-else structure may map better to standard library cells
+   - Removes the OR gate from the original implementation
+
+The improved version will:
+- Reduce power slightly by eliminating the OR operation
+- Maintain or slightly improve timing by clarifying the priority structure
+- Potentially reduce area through better tool mapping
+- Keep the functionality identical but with cleaner implementation

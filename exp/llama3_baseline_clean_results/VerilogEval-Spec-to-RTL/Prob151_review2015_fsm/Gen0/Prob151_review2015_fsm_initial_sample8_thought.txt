@@ -1,0 +1,11 @@
+To solve this problem, we can design a finite-state machine (FSM) with the following states:
+- IDLE: searching for the start sequence 1101
+- SHIFT: shifting in 4 bits to determine the duration to delay
+- COUNT: waiting for the counters to finish counting
+- DONE: notifying the user that the timer has timed out and waiting for acknowledgement
+
+The FSM transitions between these states based on the current state, input data, done_counting, and ack signals.
+We will use a 4-bit shift register to store the received data and compare it with the start sequence.
+When the start sequence is detected, we enter the SHIFT state and assert shift_ena for exactly 4 clock cycles.
+After that, we enter the COUNT state and assert counting until done_counting is high.
+Then, we enter the DONE state, assert done, and wait until ack is high before returning to the IDLE state.

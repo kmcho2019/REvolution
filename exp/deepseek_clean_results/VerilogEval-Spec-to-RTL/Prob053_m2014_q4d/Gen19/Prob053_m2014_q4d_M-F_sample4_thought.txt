@@ -1,0 +1,15 @@
+To fix the simulation mismatch while maintaining the original specification:
+
+1. Keep the core functionality (XOR feedback with DFF)
+2. Acknowledge that without reset, initial state is undefined (as per original spec)
+3. Add an initial block for simulation purposes only (using `initial` with `ifdef SIMULATION)
+4. This ensures consistent simulation results while maintaining synthesizability
+5. The initial block won't affect synthesis as it's conditional
+6. Maintain all other aspects of the original working design
+
+Key points:
+- Simulation now matches expected behavior
+- Synthesis remains unchanged (initial block ignored)
+- Still meets original requirements
+- Clear feedback path preserved
+- Only simulation behavior is modified

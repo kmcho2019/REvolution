@@ -1,0 +1,8 @@
+Since the goal is to detect falling edges (1 to 0 transitions) on each bit of the 32-bit input and latch that event in the output until reset, the simplest approach is:
+
+- Use a single register `prev_in` to hold the previous cycle's input.
+- On every clock cycle, compare `prev_in` and current `in` to detect falling edges: bits where `prev_in` is 1 and `in` is 0.
+- Set output bits by OR'ing the previous `out` with these detected falling edges.
+- Clear `prev_in` and `out` synchronously on reset.
+
+This direct approach avoids unnecessary synchronization or complex logic, keeping the design minimal and functional.

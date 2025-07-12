@@ -1,0 +1,15 @@
+The existing solution utilizes two separate always blocks to capture the data input on both the positive and negative edges of the clock and then uses an assign statement to select between these values based on the current state of the clock. To refactor this code, we can explore the use of a different structure while maintaining the core idea. 
+
+One approach to refactoring is to consider the use of a single always block that can handle both edges of the clock. However, since the sensitivity list in Verilog cannot include both posedge and negedge of a signal, we need to think of an alternative method to achieve this. 
+
+Another potential refactoring could involve utilizing the inherent properties of digital circuits and the behavior of flip-flops to capture the data on both edges without needing two separate always blocks. 
+
+Considering the use of combinational logic to create a signal that effectively captures the data on both edges and then drives a single flip-flop could be a promising direction. This would require creating a circuit that can detect both rising and falling edges of the clock and use this detection mechanism to drive the flip-flop.
+
+However, given the nature of FPGAs and the constraints on using both posedge and negedge in an always block's sensitivity list, the most straightforward refactoring might involve sticking with the principle of using two flip-flops but exploring alternative ways to express the output selection logic.
+
+For instance, instead of using an assign statement with a conditional expression to select between pos_edge_q and neg_edge_q, we could use a different type of logic gate or a more explicit multiplexer structure, though the essence of the logic would remain similar.
+
+Upon further consideration, it becomes apparent that the original code is already quite optimized for its purpose. The key to a successful refactoring, therefore, lies not in drastically altering the architecture but in ensuring that the code is expressed in the most clear, concise, and maintainable way possible.
+
+Thus, the refactoring effort will focus on minor adjustments to improve readability, potentially simplifying the expression of the output logic, and ensuring that the code adheres to best practices for Verilog coding.

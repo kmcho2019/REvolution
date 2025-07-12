@@ -1,0 +1,9 @@
+To implement the 32-bit global history shift register with rollback capability:
+1. Use a 32-bit register to store the current history
+2. On reset (areset), clear the history register
+3. Handle misprediction case first (higher priority):
+   - When train_mispredicted=1, update history by concatenating train_history with train_taken
+4. For normal prediction case:
+   - When predict_valid=1, shift in predict_taken from LSB
+5. Output the current history register value as predict_history
+6. All updates occur on positive clock edge

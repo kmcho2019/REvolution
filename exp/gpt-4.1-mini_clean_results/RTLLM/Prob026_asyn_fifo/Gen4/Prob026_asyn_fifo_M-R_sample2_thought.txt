@@ -1,0 +1,19 @@
+I will refactor the design by separating pointer increment logic from Gray code conversion more clearly, and replacing some registers updated inside always blocks with combinational assigns where safe, to clarify datapath vs control logic.
+
+For synchronization, I will keep two-stage synchronizers but express them as nonblocking assignments inside always blocks triggered by the clock, same as before, to ensure metastability handling.
+
+To manage read and write pointers, I will explicitly maintain binary pointers and convert to Gray code combinationally. This reduces sequential logic dependencies and clarifies dataflow.
+
+For empty/full detection, I will implement combinational functions based on the synchronized Gray pointers.
+
+The dual-port RAM stays the same in functionality, but I will explicitly register read data to avoid latch inference.
+
+The addresses into RAM will be derived from binary pointers.
+
+This refactor splits responsibilities explicitly: pointer increments are sequential, Gray conversion is combinational, full/empty detection is combinational, and synchronization uses two-stage flip-flops with resets.
+
+This approach can improve readability, making clear which logic is synchronous vs combinational, and may ease synthesis and verification.
+
+I will maintain the same interface and parameterization, ensuring identical function to the original.
+
+The module naming and parameter names remain unchanged for compatibility.

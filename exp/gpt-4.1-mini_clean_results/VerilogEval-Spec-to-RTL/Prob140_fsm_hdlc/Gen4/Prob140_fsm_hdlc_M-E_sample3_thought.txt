@@ -1,0 +1,15 @@
+Implement a Moore FSM that explicitly counts consecutive ones using a 3-bit counter state, ranging from 0 to 7+. The FSM transitions based on the input bit: on '1', increment count (capped at 7), on '0', reset count to 0.
+
+To meet output timing requirements (outputs asserted one cycle after detection), create separate internal flags triggered when certain patterns are detected during transitions:
+
+- disc asserted one cycle after seeing exactly 5 consecutive ones followed by a zero (transition from count 5 to 0 with input=0)
+- flag asserted one cycle after seeing exactly 6 consecutive ones followed by zero (transition from count 6 to 0 with input=0)
+- err asserted one cycle after detecting 7 or more consecutive ones (counter saturated at 7 and input=1), and remains asserted as long as count=7 (error state)
+
+All outputs are registered signals driven by internal flags latched on clock edges to maintain Moore FSM output timing.
+
+This design uses a simple counter-based state machine (0-7), avoiding multiple state encodings for each count. This simplifies logic and cleanly handles error saturation at count=7.
+
+Reset synchronously clears count and all outputs, assuming previous input was zero.
+
+This architecture clearly separates output generation from state transitions and provides precise cycle-accurate output assertions.

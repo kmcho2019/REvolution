@@ -1,0 +1,12 @@
+To better mimic the waveform, where p updates on the rising edge of clock and q updates on the falling edge, we can explicitly use two always blocks: one triggered on posedge clock to update p, and another on negedge clock to update q.
+
+This captures the behavior of the waveform more accurately without relying on tricky delayed registers within a single always block.
+
+- On posedge clock, p <= a & q (using the old q value)
+- On negedge clock, q <= p
+
+This cleanly models the shifting effect and separate timing for p and q as in the waveform.
+
+Initial values remain undefined as the waveform shows 'x' at time 0.
+
+This approach avoids race conditions and timing ambiguities present in a single always block and better matches the dual-edge sequential behavior in the original waveforms.

@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break the critical path by separating the shift operation and bit counting into different always blocks
+   - Use one-hot encoding for state machine to reduce decoding logic and improve timing
+2. Power Optimization:
+   - Add enable signals to prevent unnecessary toggling of data_reg and bit_count
+   - Only update shift register when in RECEIVE state and bit_count is valid
+3. Area Optimization:
+   - Merge STOP and WAIT states since they have similar transition conditions
+   - Simplify done logic by making it purely combinational
+4. Functional Improvement:
+   - Add explicit handling of reset conditions for all registers
+   - Make done signal assertion more precise with state checking
+
+Key Changes:
+- One-hot state encoding (4 bits) for better timing
+- Separate always blocks for state transitions and data handling
+- Reduced switching activity with enable signals
+- Merged STOP/WAIT states into single ERROR state
+- Simplified done logic

@@ -1,0 +1,16 @@
+To simplify the sequence detector while maintaining functionality, I'll implement these changes:
+
+1. **Minimal State Machine**: Use only 4 states (IDLE, S1, S2, S3) to track progress through the sequence, eliminating the need for bitmask operations.
+
+2. **Direct State Transitions**: Each state directly represents progress in detecting the sequence (1→10→100→1001), making the logic more intuitive.
+
+3. **Combined Output Logic**: Generate the output directly from the state transition to S3 when the final bit is detected, eliminating separate output logic.
+
+4. **Simpler Reset Handling**: Maintain asynchronous reset but with straightforward state initialization.
+
+The simplified version will:
+- Use fewer states (4 vs previous 8 possible states)
+- Have clearer state transitions
+- Maintain registered output
+- Keep the same detection functionality
+- Be easier to understand and modify

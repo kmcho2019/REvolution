@@ -1,0 +1,24 @@
+Simplified Design Strategy:
+
+1. Pattern Detection:
+- Use a 4-bit shift register to track incoming data serially
+- Only check for pattern "1101" when in IDLE state
+- Clear pattern register on reset and when leaving IDLE state
+
+2. State Machine:
+- Reduce to 4 essential states: IDLE, SHIFT, COUNT, DONE
+- Transition to SHIFT immediately when pattern detected
+- Stay in SHIFT for exactly 4 cycles using a simple counter
+- Move to COUNT after shifting, then to DONE when counting completes
+- Return to IDLE on acknowledgment
+
+3. Output Logic:
+- Direct combinatorial assignments from current state
+- No output registers for immediate response
+- Clear mapping: SHIFT->shift_ena, COUNT->counting, DONE->done
+
+Key Simplifications:
+- Pattern detection only active in IDLE state
+- Simplified counter for shift duration
+- Clear state transitions with minimal conditions
+- Removed unnecessary intermediate logic

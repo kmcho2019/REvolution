@@ -1,0 +1,8 @@
+To implement the pulse detection module, we need to design a finite state machine (FSM) that can track the sequence of the input signal data_in and identify when a "pulse" occurs. The FSM will have multiple states to track the progress of the pulse detection. We'll use an enum to define the states and a case statement to handle the transitions between states. The states can be defined as follows: 
+- IDLE: Initial state, waiting for the rising edge of data_in.
+- RISE: Data_in has risen, waiting for the falling edge of data_in.
+- FALL: Data_in has fallen, this is the end of a pulse, so data_out should be 1.
+
+The state transitions will be determined by the current state and the value of data_in. If the current state is IDLE and data_in is 1, the state transitions to RISE. If the current state is RISE and data_in is 0, the state transitions to FALL. If the current state is FALL, it transitions back to IDLE. 
+
+In the case of the FALL state, we need to set data_out to 1, indicating the end of a pulse. For all other states, data_out should be 0.

@@ -1,0 +1,9 @@
+Refactor the design by removing the generate loop and instead using vector-level bitwise operations and concatenations to handle neighbor relationships compactly. This approach avoids explicit per-bit conditional operators and ternaries inside generate blocks, potentially simplifying synthesis. 
+
+For out_both, shift the input vector left by 1 bit and AND with the original vector, explicitly zeroing the MSB as required.
+
+For out_any, shift the input vector right by 1 bit and OR with the original vector, explicitly zeroing the LSB as required.
+
+For out_different, create a vector with a rotated version of the input (left neighbor with wrap-around) and XOR with the original vector.
+
+This vectorized approach improves readability and may enhance synthesis optimization by eliminating per-bit conditional assignments.

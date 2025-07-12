@@ -1,0 +1,7 @@
+The original design is already optimal in terms of functionality and simplicity for a single-bit D flip-flop with asynchronous active-high reset. The asynchronous reset inherently adds some timing complexity, but it is required by specification. 
+
+To optimize for power and area, we can consider suppressing output toggling just after reset release by synchronizing the reset release internally. This reduces glitches and toggling on the q output which may reduce dynamic power slightly. The implementation uses a two-stage synchronizer for the asynchronous reset release and then uses this synchronized reset signal inside the clocked process. The asynchronous reset is still effective immediately for reset assertion, but the release is synchronized.
+
+This change adds minor logic but may improve power by eliminating glitches at reset release. The area increase is minimal as it uses two small flip-flops for synchronization. Timing-wise, the critical path through the DFF remains unchanged.
+
+Overall, this enhancement balances power and glitch reduction while preserving original functional behavior and timing on reset assertion.

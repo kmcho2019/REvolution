@@ -1,0 +1,20 @@
+Fuse the strengths of both examples by implementing a 10-bit binary counter with a synchronous reset and modulo 1000 wrap-around, using a parameterized max count for clarity and maintainability. To improve performance and power slightly over the straightforward comparator approach, avoid a direct equality comparator by checking the rollover condition via arithmetic: detect overflow by precomputing whether q is at 999 before incrementing, then reset.
+
+This can be done by using a carry-out generated from adding 1 to q and checking if the count will exceed 999. Since 999 + 1 = 1000, which is outside the counter range, we can compare q with MAX_COUNT - 1 (998) or use a 10-bit adder and observe the carry-out. However, implementing a carry-out signal explicitly adds complexity.
+
+Alternatively, to keep code simple and synthesizable with minimal comparator delay, use the ternary operator with a parameter for MAX_COUNT (999). To reduce switching power, implement a clock enable internally that disables counting right before reset; although in this design the counter runs continuously, so minimal savings.
+
+Also, since the max count is 999 (not a power of two), we cannot rely on a natural wrap via binary overflow, so explicit modulo is needed.
+
+Hence, the chosen solution:
+
+- Use a parameter MAX_COUNT = 999
+- Use a single always block with non-blocking assignment
+- Use a ternary operator to reset to zero when q hits MAX_COUNT, else increment q
+- Use synchronous reset active high
+
+This merges the clarity and maintainability of Example 2 with the straightforwardness and minimal logic of Example 1.
+
+No BCD counters to avoid unnecessary area and complexity, keeping the design minimal and clean.
+
+This also aligns with typical best practices for counters in RTL.

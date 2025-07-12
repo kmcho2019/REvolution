@@ -1,0 +1,15 @@
+Implement the 256-to-1 mux using an 8-bit one-hot decoder driving an array of AND gates followed by a large OR tree.
+
+Architecture:
+- Use the 8-bit sel input to generate a 256-bit one-hot signal, where only one bit is high corresponding to the selected index.
+- AND each bit of the input vector with the corresponding one-hot bit (only one AND gate output is active).
+- OR all 256 AND outputs together to produce the final selected bit.
+
+Advantages:
+- Flat combinational structure with only one decoding and simple bitwise AND plus a big OR reduction.
+- Critical path mainly consists of decoder logic and a wide OR tree, which can be balanced hierarchically inside synthesis.
+- Avoids multiple levels of mux modules, simplifies logic reuse, and is easy to understand.
+- Decoder can be a simple combinational decoder implemented with one-hot assignment.
+- OR reduction implemented efficiently with a balanced binary tree using generate loops.
+
+This approach leverages a simple and direct decoding-and-masking style multiplexer, trading fan-in for a clear and concise structure.

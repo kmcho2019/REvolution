@@ -1,0 +1,24 @@
+Refactored Lemming State Machine Design:
+
+1. Simplified State Encoding:
+   - Use binary encoding for states instead of enums for better compatibility
+   - Combine direction with state to reduce separate registers
+
+2. Streamlined Transition Logic:
+   - Move all combinational logic to continuous assignments
+   - Use ternary operators for clear priority ordering (fall > dig > bump)
+
+3. Optimized Fall Timer:
+   - Implement as a separate always block for clarity
+   - Clear reset behavior matches specification
+
+4. Output Generation:
+   - Directly derive outputs from current state
+   - No intermediate wires needed
+
+Key Improvements:
+- Eliminates enum type casting issues
+- More explicit state transitions
+- Clearer separation of sequential and combinational logic
+- Maintains all original functionality
+- Better compatibility with standard Verilog tools

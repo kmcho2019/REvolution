@@ -1,0 +1,11 @@
+To solve this problem, I will design a Moore-type finite state machine (FSM) with multiple states to recognize the specified sequences. The FSM will have states to track the number of consecutive 1s and a state to handle the "flag" detection. I will use a counter to keep track of the consecutive 1s and reset it when a 0 is encountered or when the FSM is in a state where it needs to discard a bit. I will also use a separate state to handle the error condition where there are 7 or more consecutive 1s.
+The states of the FSM will be:
+- S0: Initial state, waiting for the start of a sequence.
+- S1: One 1 has been seen.
+- S2: Two 1s have been seen.
+- S3: Three 1s have been seen.
+- S4: Four 1s have been seen.
+- S5: Five 1s have been seen, discard the next bit.
+- S6: Six 1s have been seen, check for flag.
+- S7: Seven or more 1s have been seen, error.
+The outputs will be asserted based on the current state and the next input.

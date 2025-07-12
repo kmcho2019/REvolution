@@ -1,0 +1,21 @@
+Implement a single global history register (GHR) updated only at the clock edge, which holds the architectural branch history state.
+
+- For prediction, the GHR is read combinationally and combined with the PC to index the PHT and produce the prediction.
+
+- The prediction interface outputs the predicted taken bit and the GHR value used for prediction (the current GHR before update).
+
+- On predict_valid, the GHR is updated speculatively with the predicted outcome.
+
+- On training (train_valid), the PHT entry indexed by train_pc XOR train_history is updated with the actual outcome.
+
+- If the training is for a misprediction (train_mispredicted = 1), the GHR is restored to the training history (train_history), recovering the architecture state after the mispredicted branch.
+
+- When both training and prediction happen in the same cycle with a misprediction, training recovery takes precedence and updates the GHR to train_history; the prediction uses the old GHR and PHT state.
+
+- Prediction updates to GHR occur only if there is no misprediction training in the same cycle.
+
+- Prediction outputs are registered to hold stable values when predict_valid is low.
+
+This approach simplifies the design by using only one GHR and enforces correct priority of misprediction recovery over speculative prediction updates. It also guarantees that predictions see the PHT state prior to any training updates in the same cycle.
+
+Asynchronous reset sets GHR to zero and PHT to weakly not taken (01).

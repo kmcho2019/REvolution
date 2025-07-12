@@ -1,0 +1,8 @@
+Instead of using a traditional FSM with separate states for each phase, I'll implement a shift register that continuously monitors the input stream. The key innovations are:
+1. A 10-bit shift register captures the entire frame (start + 8 data + stop bits)
+2. Parallel detection of valid frames by checking start/stop bits simultaneously
+3. Early termination if an invalid stop bit is detected
+4. Edge detection for the start bit to initiate capture
+5. Uses minimal state (just IDLE and CAPTURE states) with most logic being combinational
+
+This approach reduces state transitions and allows for more parallel processing, potentially improving timing. The shift register acts as a sliding window over the input stream.

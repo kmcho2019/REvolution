@@ -1,0 +1,11 @@
+To optimize the original design for better PPA while maintaining correctness, I will:
+
+1. Remove redundant non-blocking assignments like `bit_count <= bit_count;` and `data_shift <= data_shift;` in default cases to reduce unnecessary mux logic.
+2. Introduce enable signals to the data shift register and bit counter, so they only update when needed, reducing switching power.
+3. Simplify state encoding by using `localparam` constants instead of `typedef enum` for potentially reduced area in some synthesis tools.
+4. Shift the data shift register right to naturally insert the new LSB bit at the MSB side, as before, but ensure the enable controls toggling.
+5. Generate the `done` signal purely combinationally based on the current state and input to remove one register and potentially reduce timing path length. However, keeping it registered is beneficial for timing; thus, I will keep it registered but only assert when needed.
+6. Clear data_shift and bit_count immediately on detecting start bit to prepare for new byte reception.
+7. Reduce combinational logic in next state by using compact logic, but keep readability.
+
+This should slightly reduce switching activity, area, and improve timing margins while keeping all functional requirements intact.

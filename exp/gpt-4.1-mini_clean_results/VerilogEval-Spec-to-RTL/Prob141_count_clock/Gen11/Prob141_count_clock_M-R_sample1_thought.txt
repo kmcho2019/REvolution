@@ -1,0 +1,7 @@
+Refactor the clock by splitting the counters for seconds, minutes, and hours into separate always blocks triggered by ena pulses for clarity and modularity.  
+Use synchronous reset in each block with priority over enable.  
+Keep the hour as a binary counter internally and convert to BCD for output combinationally.  
+Toggle the pm flag only on the hour rollover from 11 to 12 within the hour block.  
+Use separate always blocks improves readability and may help synthesis tools optimize the critical path by decoupling counters.  
+Maintain all outputs as reg, but perform BCD conversion for hour output in a separate combinational block with a pure assign for mm and ss from combined digits, reducing logic inside sequential always blocks.  
+This restructuring keeps the same functional behavior while clarifying the design and potentially easing timing closure.

@@ -1,0 +1,8 @@
+The TopModule can be implemented as a finite-state machine with five states: 
+- IDLE (initial state): In this state, the machine waits for the input '1' to start searching for the sequence.
+- S1 (first '1' detected): After detecting the first '1', the machine moves to this state and waits for the next '1'.
+- S2 (sequence '11' detected): In this state, the machine checks for '0' to continue the sequence.
+- S3 (sequence '110' detected): After detecting '0' in the previous state, the machine moves to this state and waits for the final '1' in the sequence.
+- FOUND (sequence '1101' detected): Once the sequence '1101' is detected, the machine moves to this state, sets start_shifting to 1, and stays in this state until reset.
+
+Each state transition is triggered by the positive edge of the clock and the current input data. The machine resets to the IDLE state when the reset signal is high.

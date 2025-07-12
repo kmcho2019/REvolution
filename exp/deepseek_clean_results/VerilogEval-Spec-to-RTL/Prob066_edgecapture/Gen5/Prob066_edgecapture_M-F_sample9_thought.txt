@@ -1,0 +1,9 @@
+To fix the issues identified in the feedback, here's the corrected approach:
+1. **Correct Edge Timing**: Compare the current input with the previous cycle's input (in_ff) to detect transitions between consecutive cycles
+2. **Proper Latching**: Only capture the falling edges when they occur, without accumulating historical edges
+3. **Reset Behavior**: Clear all outputs on reset
+4. **Implementation**:
+   - Use single-stage input register (in_ff) to store previous cycle's value
+   - Detect falling edges by comparing current input with registered value
+   - Set output bits when falling edges are detected, maintaining them until reset
+   - All operations synchronized to posedge clk

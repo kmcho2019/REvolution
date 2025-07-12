@@ -1,0 +1,8 @@
+The two examples provided are functionally identical, both using the efficient `+:` part-select operator with multiplication to select the appropriate 4-bit slice. To create a superior solution, we should focus on optimizing the implementation for better PPA (Power, Performance, Area) metrics while maintaining the same functionality.
+
+Fusion Strategy:
+1. Performance: Replace the multiplication (`sel * 4`) with a left shift (`sel << 2`) which is more hardware-friendly and typically synthesizes to simpler logic.
+2. Power: While we can't reduce the input width, we can make the selection logic more power-efficient by using the shift operation.
+3. Area: The shift operation might result in slightly better area utilization compared to multiplication.
+
+The resulting solution maintains the clean one-line assignment but uses a more optimal bit selection method.

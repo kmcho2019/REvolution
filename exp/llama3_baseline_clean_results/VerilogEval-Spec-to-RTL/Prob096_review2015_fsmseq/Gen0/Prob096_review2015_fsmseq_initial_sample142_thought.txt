@@ -1,0 +1,8 @@
+The finite-state machine (FSM) needs to track the sequence of input bits to identify the pattern 1101. We can implement this by using a series of states, each representing a position in the sequence. The states can be defined as follows: 
+- Idle: Initial state, waiting for the first '1'
+- Got_1: First '1' received
+- Got_11: First two bits ('11') received
+- Got_110: First three bits ('110') received
+- Got_1101: Sequence '1101' received, set start_shifting to 1
+
+We will use a state register to keep track of the current state and transition between states based on the input 'data'. When the sequence '1101' is detected, we set start_shifting to 1 and stay in that state until reset is asserted. The reset will return the FSM to the Idle state and clear start_shifting.

@@ -1,0 +1,12 @@
+Instead of using borrow lookahead logic or direct subtraction, I will implement the 4-bit comparator by cascading four 1-bit comparators that compare each bit starting from the most significant bit (MSB) to the least significant bit (LSB). 
+
+Each 1-bit comparator outputs signals indicating whether A is greater, equal, or less than B for that bit, assuming the higher bits are equal so far. By cascading these, the final outputs are determined combinationally based on the first bit position where A and B differ.
+
+This approach models the comparison as a priority encoder of bit comparisons from MSB to LSB, which aligns well with hardware priority logic and is easy to understand and synthesize.
+
+Advantages:
+- Clear bitwise hierarchical decision making.
+- Naturally mutual exclusive outputs, as only the first differing bit determines result.
+- Uses simple bitwise logic and multiplexing without subtraction or borrow logic.
+
+This design is fully combinational, with no borrow chain or subtraction logic, providing a structurally different approach from borrow lookahead or full subtraction.

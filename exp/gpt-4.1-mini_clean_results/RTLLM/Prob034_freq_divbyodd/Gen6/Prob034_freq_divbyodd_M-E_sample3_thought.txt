@@ -1,0 +1,15 @@
+To achieve a frequency divider by an odd number NUM_DIV, a well-known approach is to generate a duty cycle close to 50% by counting clock edges and toggling the output at specific count values. Since NUM_DIV is odd, a perfect 50% duty cycle is impossible, but a symmetrical waveform can be approximated by toggling the output once every NUM_DIV clock cycles, with the high and low times differing by only one clock cycle.
+
+A novel architectural idea is to implement a single up-counter counting from 0 to NUM_DIV-1 on the rising edge of clk, with a compare value HALF_DIV = (NUM_DIV-1)/2. The output clk_div is set high when the counter is less than or equal to HALF_DIV and low otherwise. This produces a divided clock with a duty cycle of (HALF_DIV + 1)/NUM_DIV, which is nearly 50% for odd divisors.
+
+Because the counter rolls over every NUM_DIV cycles, the output clk_div frequency is clk frequency divided by NUM_DIV.
+
+This approach:
+
+- Uses only one clock domain and one counter (simpler and glitch-free).
+- No toggling of multiple signals on different edges and no OR gate needed.
+- The duty cycle is as close to 50% as possible given an odd divisor.
+- Synchronous reset initializes counter to zero and clk_div to zero.
+- The design is parameterized by NUM_DIV (odd number) with compile-time check.
+
+This technique guarantees a clean output with correct frequency division and stable timing.

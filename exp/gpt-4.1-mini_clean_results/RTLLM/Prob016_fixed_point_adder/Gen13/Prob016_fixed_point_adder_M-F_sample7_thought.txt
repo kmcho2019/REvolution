@@ -1,0 +1,19 @@
+To fix the issues and improve synthesizability, we will leverage Verilog's built-in signed arithmetic instead of manually manipulating sign and magnitude. Since inputs are two's complement fixed-point numbers, adding them directly as signed values naturally accounts for sign and magnitude, simplifying the code. The only additional step is to handle the case when the signs differ, where subtraction happens implicitly by signed addition.
+
+We keep the parameters Q (fractional bits) and N (total bits) to maintain fixed-point precision. The output is assigned as a signed addition result truncated to N bits, matching the input width.
+
+To implement the spec's handling of sign bits and absolute value addition/subtraction logic explicitly:
+
+- We extract the sign bits of a and b.
+
+- If the sign bits match, sum a + b directly.
+
+- If signs differ, subtract the smaller magnitude from the larger and assign sign accordingly.
+
+However, because two's complement signed addition and subtraction already manage sign logic and overflow, we can rely on signed arithmetic operators.
+
+This leads to much cleaner code, with fewer intermediate signals, fully combinational logic, and better tool support.
+
+The result is assigned to output c (reg type in an always block). We also include zero detection to force positive zero.
+
+This approach resolves parameter passing issues and synthesis problems, since it relies on standard signed arithmetic operators and simpler logic.

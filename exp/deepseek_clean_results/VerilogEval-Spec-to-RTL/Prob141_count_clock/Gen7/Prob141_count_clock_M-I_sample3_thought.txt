@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break down the long combinatorial path in hour counter by using registered enable signals
+   - Pre-compute BCD values for hour output to eliminate subtraction in critical path
+   - Use separate always blocks for PM indicator to reduce logic depth
+
+2. Power Optimization:
+   - Implement clock gating for PM indicator register
+   - Register all outputs to prevent unnecessary combinatorial switching
+   - Use narrower registers where possible
+
+3. Area Optimization:
+   - Reduce hour counter to 4 bits (1-12) by using modulo arithmetic
+   - Eliminate redundant bits in ss_hi and mm_hi registers
+   - Simplify BCD conversion with direct mapping for hour values
+
+Key Changes:
+- Registered cascade enables for cleaner timing
+- Pre-computed BCD outputs
+- Narrower registers
+- Clock gating for PM indicator
+- Registered outputs

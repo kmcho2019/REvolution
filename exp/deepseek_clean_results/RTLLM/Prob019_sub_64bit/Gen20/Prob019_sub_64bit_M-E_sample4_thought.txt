@@ -1,0 +1,22 @@
+Novel Architecture: Hybrid Prefix Adder with Conditional Carry Select
+1. Core Concept:
+   - Divide the 64-bit operation into 8-bit segments (8 segments total)
+   - Use Kogge-Stone prefix adder for fast carry propagation within each 8-bit segment
+   - Implement conditional carry select between segments to reduce critical path
+   - Special handling for the first segment to optimize initial carry-in
+
+2. Overflow Detection Innovation:
+   - Dual-path overflow checking:
+     * Traditional sign comparison
+     * Additional check using carry-out from MSB and penultimate bit
+   - This provides more robust overflow detection with minimal overhead
+
+3. Power Optimization:
+   - Dynamic operand inversion to avoid explicit ~B computation
+   - Segment enable signals to gate inactive portions
+   - Shared prefix computation resources between segments
+
+4. Area Efficiency:
+   - Reuse prefix computation logic across segments
+   - Compact carry select muxing
+   - Minimal intermediate signal storage

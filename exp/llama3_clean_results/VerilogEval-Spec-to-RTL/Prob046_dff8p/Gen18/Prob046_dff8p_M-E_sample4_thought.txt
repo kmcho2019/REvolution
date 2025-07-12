@@ -1,0 +1,9 @@
+To create a novel architectural solution for the TopModule, we can employ a shift register-based approach. Instead of using 8 separate D flip-flops, we can design a single 8-bit shift register with a load signal. When the load signal is high, the shift register loads the input data `d` into its internal registers. When the load signal is low, the shift register shifts its contents one bit to the right, effectively maintaining the previous state.
+
+To implement the active high synchronous reset, we can add a reset signal to the shift register. When the reset signal is high, the shift register loads a predefined reset value (0x34 in this case) into its internal registers.
+
+The advantage of this approach is that it reduces the number of flip-flops required, potentially leading to area savings. Additionally, the shift register-based design can be more efficient in terms of power consumption, as only the load signal and reset signal need to be driven, rather than individual clock signals for each flip-flop.
+
+However, this approach may introduce additional latency, as the shift register needs to shift its contents one bit to the right on each clock cycle. To mitigate this, we can use a parallel load shift register, which loads the input data in parallel rather than shifting it in serially.
+
+Overall, the shift register-based approach offers a unique architectural solution for the TopModule, with potential benefits in terms of area and power efficiency.

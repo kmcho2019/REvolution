@@ -1,0 +1,11 @@
+To optimize the existing design for better power, performance, and area (PPA), we focus on simplifying the combinational logic and reducing switching activity:
+
+1. Combine next state logic and output z logic to share decoding of present state y, since z is a function only of y. This can reduce duplicated comparators.
+2. Implement next_state logic via simple combinational expressions instead of a large case statement, leveraging common patterns seen in the state transitions.
+3. Use a smaller LUT or simple mux logic by encoding next state bits directly from y and x.
+4. Since unused states (101, 110, 111) are possible but not specified, default them to 000 to simplify logic and avoid glitches.
+5. Implement z as a simple combinational expression instead of explicit OR of state comparisons to reduce logic.
+6. Keep the function for next_state but optimize inside it using conditional expressions or lookup vectors to reduce mux complexity.
+7. Keep outputs as continuous assignments for easy synthesis and minimal register usage.
+
+This approach maintains the correct FSM behavior and outputs but reduces redundant logic and mux levels, potentially improving area and power while preserving timing performance.

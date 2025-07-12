@@ -1,0 +1,10 @@
+To combine the strengths of both examples, I will keep the clear state-machine style sequence from Example 1 for explicit control of the modulo-7 sequence starting at 4, which aids readability and ensures correct state transitions even from unknown or invalid states. From Example 2, I retain the simple modulo-7 increment logic when a=0 to minimize logic complexity and potentially improve timing and area.
+
+Fusion strategy:
+- When 'a' is 1, force q=4.
+- When 'a' is 0, increment q modulo 7 (0-6).
+- If q is outside the 0-6 range (e.g., unknown or invalid), reset to 4 for robustness.
+- This ensures minimal combinational logic by using arithmetic for counting, but with a safeguard for invalid states, combining clarity, simplicity, and robustness.
+- This approach supports clean synthesis, is easy to maintain, and matches the waveform behavior precisely.
+
+Initial q is left undefined to match waveform at time 0.

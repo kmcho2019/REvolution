@@ -1,0 +1,7 @@
+To implement the serial byte receiver, we'll design a finite state machine (FSM) that goes through several states:
+1. Idle: Wait for the start bit (0) to begin receiving a byte.
+2. Receive: Shift in the 8 data bits, storing them in a register. 
+3. Stop: Check for the stop bit (1) after receiving all 8 data bits.
+The FSM will use a counter to keep track of how many bits have been received.
+It will also use a flag (done) to signal when a valid byte has been received.
+We'll handle the case where the stop bit is not received by waiting in the stop state until a stop bit is detected.

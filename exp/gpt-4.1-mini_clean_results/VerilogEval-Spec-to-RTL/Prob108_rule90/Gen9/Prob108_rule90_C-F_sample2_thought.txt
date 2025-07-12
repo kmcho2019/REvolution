@@ -1,0 +1,13 @@
+Fuse the modular 8-block partitioning approach with local bitwise neighbor logic, but further improve timing, power, and area by reducing inter-block boundary signals from arrays to simple signals to minimize fanout and routing complexity.
+
+- Partition the 512-bit system into 8 blocks of 64 bits.
+- In each block, compute next_state per bit by XOR of left and right neighbors explicitly.
+- Pass boundary bits between blocks as single wires (not arrays), which reduces wiring fanout and routing overhead.
+- For boundaries at system edges, use zero.
+- Keep synchronous load and nonblocking assignments.
+- To reduce power, add a clock enable (ce) signal internally that activates state updates only if load is high or state changes. This avoids unnecessary toggling.
+- Implement this with a small bitwise comparison for q_out vs next_state to generate an enable, or at minimum enable register update only when load or enable signal is asserted.
+- Combine block outputs into full 512-bit output cleanly.
+- Keep code clear and synthesizable with proper generate blocks and indexing.
+
+This fusion combines clarity, modularity, explicit neighbor handling, reduced wiring fanout, and introduces clock gating for power optimization, improving timing, power, and area simultaneously.

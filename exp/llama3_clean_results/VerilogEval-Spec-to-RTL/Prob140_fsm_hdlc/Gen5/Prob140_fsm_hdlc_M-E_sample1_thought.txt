@@ -1,0 +1,7 @@
+To address the HDLC framing problem, we can design a novel architecture that utilizes a combination of counters and shift registers to track the incoming bit stream and detect the required patterns. The key idea is to use a shift register to store the last 8 bits of the input stream, which allows us to easily check for the 'flag', 'disc', and 'err' conditions.
+
+We will use two counters: one to track the number of consecutive '1's and another to track the total number of bits in the current sequence. The shift register will be updated on each clock cycle, and the counters will be incremented or reset based on the input bit and the current state of the shift register.
+
+The 'flag' condition will be detected when the shift register contains the pattern '01111110'. The 'disc' condition will be detected when the shift register contains the pattern '0111110' followed by a '0'. The 'err' condition will be detected when the shift register contains 7 or more consecutive '1's.
+
+This approach allows for efficient detection of the required patterns and minimizes the number of states and transitions, making it more scalable and easier to implement.

@@ -1,0 +1,15 @@
+The original design attempts to divide the clock frequency by an odd number using two counters and toggling two clock divider outputs at half and full count points on opposite clock edges, then OR'ing these outputs to produce the final divided clock. The feedback points out that toggling clk_div1 and clk_div2 twice per cycle and the ordering of toggles and counts cause glitches and incorrect waveforms.
+
+To fix this, the key insight is:
+
+- Each clock divider output (clk_div1 and clk_div2) should toggle only once per full cycle of their respective counters to create two interleaved clock pulses on positive and negative edges.
+- For an odd divisor NUM_DIV, the toggle point is at half count + 1 (i.e., (NUM_DIV+1)/2).
+- On the positive edge of clk, cnt1 counts from 0 up to NUM_DIV-1; when it reaches HALF_DIV (=(NUM_DIV-1)/2), clk_div1 toggles and cnt1 resets.
+- Similarly, on the negative edge of clk, cnt2 counts and toggles clk_div2 with the same logic.
+- By toggling at the half count value and resetting counters thereafter, clk_div1 and clk_div2 produce clock pulses that, when OR'ed, form a glitch-free divided clock at clk/(NUM_DIV).
+- This approach guarantees no double toggling in one cycle and ensures correct phase alignment between clk_div1 and clk_div2.
+- The reset synchronously initializes counters and dividers to zero.
+
+Also, the OR of clk_div1 and clk_div2 produces a stable clock because their toggle events occur alternately on opposite edges of clk, resulting in a clean frequency division with good duty cycle.
+
+Implementing these changes leads to correct functional behavior matching the specification.

@@ -1,0 +1,30 @@
+Improvement Strategy: "Optimized Unified Datapath with Shared Resources"
+
+Key Optimizations:
+1. Resource Sharing:
+   - Combine arithmetic operations into a single adder/subtractor with mode control
+   - Use shared logic for similar operations (AND/OR/XOR/NOR)
+
+2. Flag Generation Optimization:
+   - Compute zero flag directly from result bus
+   - Simplify overflow logic using common detection circuit
+   - Combine carry and flag generation where possible
+
+3. Shift Operation Enhancement:
+   - Unified shifter with mode control
+   - Direct shift amount selection without extra muxing
+
+4. Power Optimization:
+   - Explicit operation gating to prevent unnecessary toggling
+   - Default assignments only when needed
+
+5. Area Reduction:
+   - Remove redundant intermediate registers
+   - Share comparison logic between SLT/SLTU
+
+Implementation Highlights:
+- Single always block with prioritized case statement
+- Unified adder/subtractor with carry/overflow generation
+- Combined logic operations
+- Optimized shift amount handling
+- Minimal flag generation logic

@@ -1,0 +1,13 @@
+Implement a 32-bit carry-lookahead adder using an 8-bit block hierarchical approach. 
+
+Design an 8-bit CLA block that outputs sum, carry-out, and block propagate/generate signals. Use four such blocks in the 32-bit adder to improve parallelism and reduce the carry propagation chain length compared to a 2-block (16-bit) hierarchy.
+
+At the 32-bit top level, compute the carry-in for each 8-bit block using a 4-entry carry-lookahead tree that combines the block propagate/generate signals of the four 8-bit blocks and the external carry-in (fixed zero). This parallel prefix computation is explicit and simple since the carry-in is zero, but the structure can easily adapt to a general carry-in.
+
+This 4-block hierarchy reduces the longest carry chain from 16 bits to 8 bits inside a block plus 3 hierarchical levels between blocks, improving performance while maintaining modularity.
+
+Indexing inside blocks is zero-based for clarity; port vectors remain [32:1] as per specification.
+
+The carry-lookahead logic for inter-block carry is explicitly implemented to compute carry-ins of block1..block3 from block0 signals.
+
+This architecture offers a scalable, low latency 32-bit CLA adder with moderate complexity and explicit hierarchical carry computation.

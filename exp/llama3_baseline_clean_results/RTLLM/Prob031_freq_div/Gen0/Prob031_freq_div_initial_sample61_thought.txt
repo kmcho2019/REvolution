@@ -1,0 +1,9 @@
+The freq_div module will be designed using three counters to divide the input clock frequency. 
+For CLK_50, we simply need to toggle the signal on every positive edge of the input clock.
+For CLK_10, a counter cnt_10 will be used to count the number of input clock cycles. 
+When cnt_10 reaches 4 (which is half of the division factor 10 for the input frequency of 100MHz), 
+CLK_10 will be toggled, and cnt_10 will be reset to 0.
+For CLK_1, a similar approach will be used with a counter cnt_100. 
+When cnt_100 reaches 49 (which is half of the division factor 100 for the input frequency of 100MHz), 
+CLK_1 will be toggled, and cnt_100 will be reset to 0.
+The reset signal RST will be used to reset all the counters and clock signals when it is active.

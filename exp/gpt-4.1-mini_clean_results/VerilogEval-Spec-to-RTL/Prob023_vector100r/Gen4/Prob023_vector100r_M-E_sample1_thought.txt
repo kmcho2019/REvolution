@@ -1,0 +1,13 @@
+Implement a hierarchical bit-reversal by dividing the 100-bit input into 10 chunks of 10 bits each, reversing each chunk internally using a dedicated BitRev10 module, then reversing the order of these chunks at the TopModule level to produce the final 100-bit reversed output. 
+
+This approach leverages hierarchical composition:
+- BitRev10 reverses the bits inside each 10-bit chunk using direct wiring.
+- TopModule reverses the order of chunks, effectively flipping chunks in the higher dimension.
+- Combining chunk-level bit reversal with chunk order reversal achieves a full 100-bit reversal.
+  
+Advantages:
+- Smaller, reusable building block BitRev10 is simpler and can be easily tested and optimized.
+- The top module rearranges chunks with simple wiring, reducing long-distance connections.
+- This hierarchical design might improve routability and timing since bit reversal is localized.
+- The code remains clear and parameterizable at the chunk level.
+- This approach is novel compared to direct flat reversal, emphasizing modularity at two hierarchy levels.

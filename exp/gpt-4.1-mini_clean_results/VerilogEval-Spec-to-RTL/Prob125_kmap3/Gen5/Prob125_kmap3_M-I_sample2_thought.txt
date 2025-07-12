@@ -1,0 +1,19 @@
+The expression `out = a | (c & ~b)` is already minimal and optimized for the given K-map with don't-cares. The current design uses just one AND gate, one inverter, and one OR gate, which is minimal in terms of area and logical depth.
+
+To potentially improve power slightly, we can replace the explicit inverter (~b) with a NAND-based structure or use De Morgan's law to express `c & ~b` as `~( ~c | b )`, but this would add complexity rather than reduce it.
+
+Since `d` is don't-care and unused, ignoring it is optimal.
+
+For performance, no change is needed as logic depth is minimal (one AND + one OR).
+
+For area, the current gates are minimal.
+
+Thus, no further optimization is realistically possible in logic expression.
+
+However, as a minor enhancement, we can define intermediate wire(s) to improve readability or prepare for synthesis optimizations, but it won't affect PPA significantly.
+
+Therefore, the best approach is to keep the same logic but explicitly instantiate gates to help synthesis tools optimize better or add comments clarifying that `d` is unused.
+
+Final implementation remains as:
+
+out = a | (c & ~b);

@@ -1,0 +1,7 @@
+Refactor the 4-bit comparator by leveraging vector operations and a structural approach without explicit borrow generate/propagate signals per bit. Instead, perform a simple combinational subtraction using Verilog arithmetic, check the result and the borrow flag indirectly, and determine the outputs accordingly.
+
+Since pure subtraction in Verilog can give the difference and carry implicitly, use the result of (A - B) with an extra bit to capture borrow (underflow). Use this to identify A_less (borrow occurred), A_equal (difference zero), and A_greater (difference non-zero and no borrow).
+
+This simplifies the logic and improves readability without losing the combinational property and ensures mutual exclusivity of outputs. Also, vectorize equality check using reduction operators.
+
+This refactoring keeps combinational logic but changes the approach from borrow lookahead to direct arithmetic subtraction and comparisons.

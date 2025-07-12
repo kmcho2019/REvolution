@@ -1,0 +1,45 @@
+To implement the logic function from the Karnaugh map differently, decompose the K-map into simplified groups to obtain minimal sum-of-products expression. Then implement the function as a combination of AND-OR gates accordingly.
+
+Step 1: Identify groups of 1's in the K-map and derive simplified product terms.
+
+Given K-map (cd rows, ab columns):
+
+       ab
+ cd   00  01  11  10
+ 00 | 1 | 1 | 0 | 1 |
+ 01 | 1 | 0 | 0 | 1 |
+ 11 | 0 | 1 | 1 | 1 |
+ 10 | 1 | 1 | 0 | 0 |
+
+Groups:
+- Group 1: four 1's at cd=00 & 01, ab=00 (cells (00,00), (01,00), (00,01), (10,00)) — corresponds to c'd' & b' & a' (but more precise grouping needed)
+- More practical approach is to manually identify prime implicants.
+
+Listing all minterms for '1':
+(0,0,0,0) = 0
+(0,0,0,1) = 1
+(0,1,0,0) = 2
+(1,0,0,0) = 8
+(0,0,1,0) = 4
+(0,1,1,0) = 6
+(0,1,1,1) = 7
+(1,0,0,1) = 9
+(1,1,1,1) = 15
+(1,1,1,0) = 14? No, K-map says 11,10 cell = 0 at cd=10, ab=11 = 0; so 14 is zero.
+
+But better to define the function as a case statement for the given inputs, effectively a LUT (lookup table) realized by a case.
+
+Step 2: Implement a 4-to-1 mux tree:
+
+- Use intermediate signals grouping bits to create a hierarchy of multiplexers, which can be efficient.
+
+Step 3: Implement the function using case statement over {c,d,a,b} vector to show different approach, or even better, use a ROM-like LUT approach.
+
+New Idea:
+
+- Implement the output as a ROM (lookup table) indexed by {a,b,c,d} in a different order (e.g., {c,d,a,b}) or {b,a,d,c} to alter implementation.
+- Use a combinational always block with a case statement enumerating all 16 input combinations, outputting '1' or '0' according to K-map.
+
+This is novel compared to prior code using only comparison operators.
+
+This architecture is scalable and explicit, easy to verify, and provides direct mapping from inputs to output.

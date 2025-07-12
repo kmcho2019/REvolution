@@ -1,0 +1,9 @@
+I will combine the power efficiency of Example 2's clock gating approach with the clean priority mux logic and asynchronous reset of Example 1. Specifically, I will:
+
+- Keep the asynchronous reset as in Example 1 to meet the spec.
+- Use a combinational priority mux to select the next history value between misprediction update, prediction update, or hold state, as in Example 1, for minimal critical path.
+- Introduce an explicit clock enable signal to update the register only when necessary (when misprediction or prediction occurs), reducing unnecessary toggling and saving power like Example 2.
+- Retain all non-blocking assignments and clean separation of combinational and sequential logic for synthesis friendliness.
+- The priority of misprediction over prediction is maintained by ordering conditions in the priority mux.
+- The design will hold the current history when no valid update signal is asserted, minimizing switching activity.
+This fusion yields a low-power, timing-efficient, clean design with precise control over updates and asynchronous reset support.

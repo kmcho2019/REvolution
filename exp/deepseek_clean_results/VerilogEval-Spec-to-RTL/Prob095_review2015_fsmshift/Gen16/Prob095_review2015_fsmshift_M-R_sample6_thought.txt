@@ -1,0 +1,13 @@
+Refactored approach using a counter-based implementation:
+1. Use a 2-bit counter to track the number of cycles (0-3)
+2. Add a 'done' flag to indicate when 4 cycles are complete
+3. On reset, initialize counter to 0 and clear done flag
+4. Each clock cycle, increment counter until it reaches 3
+5. When counter reaches 3, set done flag and freeze counter
+6. shift_ena is active when counter is counting (done flag is 0)
+7. Benefits:
+   - Simpler implementation than one-hot FSM
+   - Explicit cycle counting matches requirements
+   - Clear separation between counting and done states
+   - Easily verifiable behavior
+   - Uses fewer flip-flops (3 bits total vs 5 in one-hot)

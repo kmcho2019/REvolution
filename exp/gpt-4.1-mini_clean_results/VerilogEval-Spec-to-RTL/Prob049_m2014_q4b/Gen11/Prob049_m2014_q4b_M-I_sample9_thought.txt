@@ -1,0 +1,7 @@
+To improve the original design for better power, performance, and area (PPA), I will remove the simulation-only initial block that initializes q to zero since synthesis tools ignore it but it can sometimes cause simulator-synthesis mismatches or confusion in flow. The initial block is not necessary as asynchronous reset already initializes q to zero reliably in hardware.
+
+I will keep the asynchronous reset as specified because synchronous reset could reduce power slightly but is a different functionality.
+
+Additionally, I will use non-blocking assignment consistently and maintain clean code style.
+
+This will reduce simulation-synthesis mismatch risks and keep the design minimal and optimal for synthesis, improving power (by removing unused simulation logic) and maintaining clean performance and area characteristics.

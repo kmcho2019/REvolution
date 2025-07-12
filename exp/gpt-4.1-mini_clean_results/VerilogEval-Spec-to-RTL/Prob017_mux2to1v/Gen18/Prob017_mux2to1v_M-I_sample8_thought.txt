@@ -1,0 +1,5 @@
+The original hierarchical 2-bit mux approach is functionally correct but unnecessarily complex for a simple 2-to-1 multiplexer on wide buses with a common select signal. Since all bits share the same `sel`, a single vectorized conditional assignment (`assign out = sel ? b : a;`) achieves the same function with less logic, lower power, and simpler routing.
+
+This approach reduces logic duplication, net switching, and area by removing intermediate nets and modules. It also improves timing by flattening the mux logic into a single level, minimizing fanout and critical path length.
+
+Hence, the improvement is to remove the 2-bit mux modules and hierarchical instantiation and replace them with a straightforward, single-line vector mux assignment. This results in better PPA while maintaining full correctness.

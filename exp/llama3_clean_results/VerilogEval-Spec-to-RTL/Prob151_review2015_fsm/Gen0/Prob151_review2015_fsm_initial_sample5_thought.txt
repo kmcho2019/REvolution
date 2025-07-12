@@ -1,0 +1,8 @@
+The design idea is to create a finite-state machine (FSM) that controls the timer. The FSM will have several states: 
+- IDLE: searching for the start sequence (1101)
+- SHIFT: shifting in 4 more bits to determine the duration
+- COUNT: waiting for the counters to finish counting
+- DONE: notifying the user and waiting for acknowledgment
+The FSM will transition between these states based on the input signals (data, done_counting, ack) and internal counters.
+We will use a 4-bit shift register to detect the start sequence (1101) and a counter to count the number of shifts.
+We will also use a state variable to keep track of the current state.

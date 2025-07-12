@@ -1,0 +1,9 @@
+To refactor the given Verilog code for the TopModule, we will maintain the core functionality of the 2's complementer state machine but alter the structure of the implementation. The original code uses one-hot encoding for the state machine, with two states (A and B), and utilizes a combination of always blocks for sequential logic and combinational logic for output generation.
+
+The refactored version will still implement the 2's complementer logic but will structure the code differently. We will use a similar one-hot encoding scheme but simplify the output logic by directly assigning 'z' based on the current state and input 'x'. The state transitions will be managed within a single always block, maintaining the current state encoding but potentially simplifying the logic for transitioning between states A and B.
+
+One potential approach to refactoring is to maintain the current use of one-hot encoding for the state machine (where state A is 1'b0 and state B is 1'b1) but re-evaluate the logic for state transitions and output 'z' generation. The current implementation uses a case statement within an always block for state transitions, which is clear and maintainable. However, for simplicity and potential improvement in synthesis, we can directly assign the next state based on the current state and input 'x' without using a case statement.
+
+The output 'z' is currently generated based on the current state and input 'x' using a straightforward logic expression. This logic can be maintained as it directly reflects the functionality of the 2's complementer state machine.
+
+Given the original code's efficiency and the provided PPA metrics, the primary goal of the refactoring will be to ensure that the new structure does not introduce any performance, power, or area degradation while potentially making the code more readable or maintainable.

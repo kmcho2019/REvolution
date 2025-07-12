@@ -1,0 +1,12 @@
+To optimize the original solution for better power and area without sacrificing timing or clarity, I will:
+
+- Add clock enables to the byte registers so that they update only when needed, reducing unnecessary toggling and dynamic power.
+- Avoid updating the done and out_bytes registers except when done is asserted to reduce switching activity.
+- Keep the FSM and state encoding unchanged for minimal logic and good timing.
+- Keep synchronous reset as before.
+- This selective updating reduces overall register toggling, which should improve power and potentially area due to smaller inferred clock gating or mux logic.
+- The combinational next_state logic remains simple and minimal.
+- The done signal will be registered and asserted only in the cycle after the third byte.
+- out_bytes will be updated only on done cycle, minimizing data path toggling.
+
+Overall, the design remains simple and robust with incremental improvements in power and area by gating register updates.

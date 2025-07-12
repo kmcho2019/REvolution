@@ -1,0 +1,23 @@
+Refactoring Approach:
+1. **Shift Logic Simplification**:
+   - Replace cascaded muxes with direct shift operations using concatenation
+   - Eliminate intermediate wires for shift operations to reduce logic levels
+   - Maintain arithmetic right shift by directly handling sign extension
+
+2. **Register Implementation**:
+   - Keep the register in an always block for clear sequential logic
+   - Simplify next-state logic by moving shift operations directly into the always block
+
+3. **Control Signal Optimization**:
+   - Remove redundant control signals (do_load, do_shift)
+   - Use direct expressions in the always block for clearer intent
+
+4. **Output Assignment**:
+   - Keep simple continuous assignment for output
+   - Remove unnecessary intermediate wires
+
+Key Improvements:
+- More direct implementation of shift operations
+- Reduced logic levels in critical path
+- Clearer control flow
+- Maintains same functionality with potentially better timing

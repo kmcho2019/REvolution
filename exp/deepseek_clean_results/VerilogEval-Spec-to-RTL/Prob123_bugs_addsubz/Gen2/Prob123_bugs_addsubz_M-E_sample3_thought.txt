@@ -1,0 +1,11 @@
+This solution leverages the observation that we can compute the zero flag in parallel with the arithmetic operation by:
+1. Using a temporary wire to hold the arithmetic result
+2. Computing both the result and zero flag simultaneously in one always block
+3. Avoiding any potential race conditions by using blocking assignments
+
+Key advantages:
+- Single always block ensures atomic operation
+- Zero flag is computed directly from the arithmetic result before it's assigned to 'out'
+- Eliminates any potential glitches in zero flag detection
+- More efficient as it doesn't require separate comparison logic
+- Maintains clear data flow while being more compact

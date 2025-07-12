@@ -1,0 +1,12 @@
+Instead of treating each state bit independently, we can implement a priority-based transition scheme that:
+1. Uses a priority encoder to identify the current state (since it's one-hot, only one bit is active)
+2. Implements the transitions using multiplexers controlled by the input
+3. Generates the output directly from the MSB of the state (state[3])
+
+This approach:
+- Uses a 4:1 mux for each next_state bit
+- The select lines are derived from a priority encoder of the current state
+- Each mux implements the transition rules based on the input
+- Output is simply the D state indicator (state[3])
+
+The priority encoding allows us to handle state transitions in a more structured way while still benefiting from one-hot properties.

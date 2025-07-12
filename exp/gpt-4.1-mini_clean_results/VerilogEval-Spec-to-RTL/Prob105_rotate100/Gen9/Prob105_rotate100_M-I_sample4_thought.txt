@@ -1,0 +1,9 @@
+To optimize the PPA metrics, especially timing and power, we can reduce the combinational logic inside the always block by splitting the rotation operation into a two-stage approach using a multiplexing method on smaller bit slices. Instead of rotating the entire 100 bits with concatenation each clock, we'll isolate the two rotation cases separately with minimal data routing. 
+
+Furthermore, adding a clock enable to gate clock toggling when no rotation or load is requested reduces unnecessary switching and power consumption. This helps since the register should only update on load or valid rotation. 
+
+By using a clock enable derived from (load | ena == 2'b01 | ena == 2'b10), the register only toggles when necessary. 
+
+This reduces switching activity, critical path length, and potentially the area related to muxing logic. 
+
+The functional behavior is maintained exactly as specified.

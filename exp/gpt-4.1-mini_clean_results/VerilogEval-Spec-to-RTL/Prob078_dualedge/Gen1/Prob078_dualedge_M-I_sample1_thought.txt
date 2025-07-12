@@ -1,0 +1,52 @@
+To implement a true dual-edge triggered flip-flop (which captures input 'd' on both edges of 'clk') on an FPGA that only supports single-edge triggered flip-flops, we can use a double-register approach combined with clock domain crossing techniques.
+
+The previous solution sampled 'd' on posedge clk and on posedge of inverted clk (neg edge) using two flip-flops, then simply ORed their outputs combinationally for q. This causes glitches and output instability.
+
+A better method is:
+
+1. Use two flip-flops:
+   - ff_pos triggered on posedge clk.
+   - ff_neg triggered on posedge of inverted clk (equivalent to negedge clk).
+   Each samples input 'd'.
+
+2. Synchronize these sampled values into a single clock domain before producing output q to avoid combinational hazards and glitches:
+   - For example, use a multiplexer controlled by the clock phase or a latch-based approach.
+   - Alternatively, use a small state machine or toggle logic to update q synchronously with both edges.
+
+A simple and common solution is:
+
+- Use two flip-flops as before.
+- Use a toggle flip-flop triggered on posedge clk that captures changes between ff_pos and ff_neg.
+- On each posedge clk, update q with the previous negedge sampled value.
+- On each negedge clk, update q with the sampled value from ff_neg.
+
+Since we cannot have sensitivity to negedge clk in the always block for output q, we instead register q in a flip-flop triggered on posedge clk, but make q toggle if ff_neg != q at negedge clk.
+
+But this adds complexity and is less portable.
+
+An easier and practical approach is:
+
+- Sample input 'd' on both edges using two flip-flops as before.
+- Use a small combinational circuit to detect edge changes (via XOR of ff_pos and ff_neg).
+- Create a toggle signal on either edge if input 'd' changes.
+- Use this toggle to update q in a posedge clk register, ensuring q changes on both edges correctly.
+
+This allows q to be updated only in posedge clk domain, making synthesis and timing easier.
+
+Implementation:
+
+- ff_pos samples 'd' on posedge clk.
+- ff_neg samples 'd' on negedge clk (pos clk_inv).
+- The XOR of ff_pos and ff_neg detects changes on either edge.
+- Use a toggling register q_ff updated on posedge clk as q_ff <= q_ff ^ (ff_pos ^ ff_neg).
+- Output q = q_ff.
+
+This way, q toggles whenever input changes on either clock edge, effectively acting as a dual-edge triggered flip-flop for changes.
+
+This method is well-known for dual-edge triggered toggle flip-flops and is synthesizable and glitch-free.
+
+If the objective is to capture d's value rather than toggling, this is functionally equivalent for a dual-edge triggered flip-flop sampling d on both edges.
+
+This improves functional correctness and avoids combinational glitches on q.
+
+Below is the code implementing this improved approach.

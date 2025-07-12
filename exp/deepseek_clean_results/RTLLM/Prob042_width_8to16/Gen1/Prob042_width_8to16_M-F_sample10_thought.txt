@@ -1,0 +1,13 @@
+To address the synthesis challenges while maintaining the same functionality:
+1. Keep the asynchronous reset but ensure it's properly handled in synthesis
+2. Replace the explicit has_first_byte flag with a more synthesis-friendly approach using the MSB of data_lock as a marker
+3. Maintain the same timing behavior where output only occurs after receiving two valid inputs
+4. Simplify the state tracking by using data_lock[8] as both storage and flag
+5. Ensure all registers are properly initialized on reset
+
+The improved design will:
+- Use data_lock[8] to store both the first byte and a valid flag (bit 8)
+- Clear this marker bit on reset
+- Set the marker when storing the first byte
+- Only produce output when we have both a marked first byte and new valid input
+- Maintain the same clock cycle timing for outputs

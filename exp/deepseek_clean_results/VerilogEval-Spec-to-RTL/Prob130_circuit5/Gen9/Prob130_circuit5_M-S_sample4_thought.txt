@@ -1,0 +1,14 @@
+Simplified Design Approach:
+1. **Direct Multiplexing**: Instead of using a decoder and bitwise operations, implement a simple 4:1 multiplexer controlled by the lower 2 bits of 'c' to select between b, e, a, and d.
+2. **Default Handling**: Check if any of the upper 2 bits of 'c' are set (c[3:2] != 0) to output 'f' (4'b1111) as the default case.
+3. **Optimizations**:
+   - Eliminate decoder logic by using direct case statement
+   - Combine selection and default logic in a single always block
+   - Use simple bit checks for default condition
+   - Output is purely combinational with minimal logic
+
+Advantages:
+- Simpler and more readable implementation
+- Reduced logic complexity
+- Maintains same functionality as original
+- Better area efficiency with single multiplexer

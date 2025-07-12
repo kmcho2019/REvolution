@@ -1,0 +1,13 @@
+To optimize the FSM for better PPA, the following improvements are made:
+
+1. Separate output logic from next-state logic by registering the output 'z' in the sequential block. This reduces combinational path delay from inputs/state to output and improves timing, at the cost of one cycle output latency, acceptable for many designs.
+
+2. Use one-hot encoding for the three states to simplify combinational logic and potentially reduce power and area in FPGA/ASIC since one-hot FSMs often map to simpler logic and faster clock paths.
+
+3. The asynchronous negative-edge reset remains as per spec.
+
+4. Keep the FSM transitions and sequence detection logic equivalent, preserving overlapping sequence detection.
+
+This approach balances minimal area overhead from one-hot encoding against likely better timing and power results due to reduced combinational logic depth and registered output.
+
+The output 'z' is asserted for one cycle after the clock edge when the sequence "101" is detected.

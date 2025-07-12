@@ -1,0 +1,15 @@
+To fuse the best ideas from both examples, I will keep the clear naming and explicit "state" register as per the specification, using a 1-bit state to control increment or decrement direction. From Example 1, I adopt the approach of holding the wave value at the boundary (31 or 0) for a full clock cycle during the state transition, preventing skipping peak values and ensuring the triangle waveform includes the boundary points for one full cycle. This also avoids unnecessary toggling by not updating wave in these hold cycles.
+
+From Example 2, I retain the case statement structure and asynchronous active-low reset for clarity, robustness, and straightforward state management.
+
+Additionally, I will optimize the wave update to only change when needed, helping reduce power by preventing unnecessary toggles.
+
+This fusion creates a stable, readable, and efficient design that perfectly meets the spec: wave counts up from 0 to 31, holds 31 for one cycle, switches direction, counts down to 0, holds 0 for one cycle, and repeats. The waveform thus cleanly cycles between 0 and 31 inclusive.
+
+Key features:
+- Asynchronous reset to initialize state and wave to 0.
+- State = 0 means increment, state = 1 means decrement.
+- On reaching boundary, state toggles next cycle, wave holds boundary value for one cycle.
+- Single always block with posedge clk and negedge rst_n.
+- Non-blocking assignments.
+- Avoid unnecessary toggling on wave at boundaries.

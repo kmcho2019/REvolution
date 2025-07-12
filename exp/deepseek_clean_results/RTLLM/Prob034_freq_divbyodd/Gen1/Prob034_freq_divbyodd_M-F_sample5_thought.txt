@@ -1,0 +1,9 @@
+To properly implement an odd frequency divider with 50% duty cycle, we need to:
+1. Use dual counters (cnt1 for posedge, cnt2 for negedge) counting up to NUM_DIV-1
+2. Toggle clk_div1 when cnt1 reaches (NUM_DIV-1)/2 and NUM_DIV-1
+3. Toggle clk_div2 when cnt2 reaches (NUM_DIV-1)/2 and NUM_DIV-1
+4. The key fix is to ensure proper synchronization between the two counters:
+   - Reset both counters and divider outputs to 0
+   - Toggle exactly at the midpoint and end of counting period
+   - Use floor division for odd NUM_DIV values
+5. Combine the two half-cycle clocks with OR operation to create full 50% duty cycle

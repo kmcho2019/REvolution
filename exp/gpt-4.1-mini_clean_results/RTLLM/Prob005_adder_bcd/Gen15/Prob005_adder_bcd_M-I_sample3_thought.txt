@@ -1,0 +1,22 @@
+To optimize the original design for better PPA, the main improvements focus on reducing the complexity of the comparator and minimizing redundant addition logic:
+
+1. Comparator Optimization:
+   Instead of using (raw_sum > 9), implement the condition using bitwise logic that detects if raw_sum > 9 without a numeric comparator. For 5-bit raw_sum, the condition (raw_sum > 9) is true if:
+   - raw_sum[4] == 1 (means raw_sum ≥ 16), or
+   - raw_sum[3] & (raw_sum[2] | raw_sum[1]) (i.e., raw_sum ≥ 10 and ≤ 15)
+   This reduces gate levels and improves timing.
+
+2. Correction Addition Optimization:
+   The correction adds either 0 or 6 (0110). Instead of a full 5-bit adder for correction, use a small custom adder or combinational logic to add 6 only when correction is needed:
+   - The lower bit (bit 0) remains unchanged (since 6's LSB is 0).
+   - Bit 1: sum_bit1 XOR correction_needed (carry from bit 0 is zero)
+   - Bit 2: sum_bit2 XOR correction_needed (carry logic accordingly)
+   - Bit 3: sum_bit3 XOR correction_needed
+   This can be simplified, but to keep clarity and correctness, a small 4-bit adder with the correction mask can be used.
+
+3. Carry-out:
+   Remain driven by correction_needed, as in the original.
+
+This approach keeps the addition minimal and faster while still preserving clarity and correctness, improving timing and slightly reducing area and power by avoiding a numeric comparison operator and a full adder for correction.
+
+Below is the improved code implementing these optimizations.

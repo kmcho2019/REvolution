@@ -1,0 +1,8 @@
+To implement the module TopModule as described, we need to design a finite-state machine (FSM) that scans the input data stream for the sequence 1101. The FSM should transition through states as it matches parts of the sequence. Once the entire sequence is matched, it should set the start_shifting signal to 1. The FSM should remain in this final state (with start_shifting = 1) until reset is asserted high. Given the sequence 1101, we can define states as follows: 
+- State 0 (S0): Initial state, waiting for '1'
+- State 1 (S1): First '1' received
+- State 2 (S2): '1' followed by '1'
+- State 3 (S3): '1' followed by '1' then '0'
+- State 4 (S4): Sequence '1101' matched, set start_shifting to 1
+
+Upon reset, the FSM should return to S0. The transitions between states will be based on the current state and the input data.

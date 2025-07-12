@@ -1,0 +1,9 @@
+The previous approach failed because the simulation tool does not support assignments to the entire vector using concatenation syntax. To fix this, we can update the output bit by bit without relying on full vector concatenation assignments.
+
+Instead of circularly shifting the entire vector at once, we can use a state register of 3 bits to hold the current position (0 to 7) of the single '1' bit. Then, in each clock cycle, increment the position modulo 8, and assign `out` with only one bit set at that position by using a simple bitwise shift of a constant 1.
+
+This method uses only a 3-bit register plus combinational logic for output, which improves PPA and avoids the unsupported assignment style.
+
+When reset is asserted, the position is set to 0 (LSB).
+
+This way, the tool limitation is bypassed, and the ring counter behavior is preserved and easy to verify.

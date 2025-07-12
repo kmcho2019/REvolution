@@ -1,0 +1,6 @@
+To improve the existing 2-stage pipelined 8-bit unsigned multiplier for better performance and power, I will:
+1. Split the large combinational summation of 8 partial 16-bit operands into two pipeline stages, reducing critical path delay by performing partial sum additions in two separate clock cycles.
+2. Introduce an additional pipeline register stage after partial product generation to store intermediate sums.
+3. Propagate the enable signal through a 3-stage pipeline aligned with the data path, ensuring correct output enable timing.
+4. Retain input sampling only when mul_en_in is high.
+5. This approach balances pipeline depth (now 3 cycles), reducing max combinational delay, allowing higher frequency and lower power due to reduced switching at each stage, at the cost of a slightly longer latency.

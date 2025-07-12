@@ -1,0 +1,25 @@
+Novel Architecture Idea:
+1. Unified Counter Approach:
+   - Use a single 17-bit counter (seconds_since_midnight) to track total seconds
+   - This eliminates cascaded counters and reduces combinatorial paths
+   - Calculate time components mathematically from this counter
+
+2. Optimized BCD Conversion:
+   - Implement division/modulo operations using shift-and-add for BCD conversion
+   - Pre-compute all BCD digits in parallel for better timing
+
+3. Smart State Machine:
+   - Use a state machine to track AM/PM transitions
+   - Implement 12-hour wrap-around logic in state transitions
+   - Reset state handles initialization to 12:00 AM
+
+4. Power Optimization:
+   - Only update outputs when ena is active
+   - Use clock gating for the main counter
+   - Minimize switching activity through careful state encoding
+
+Key Advantages:
+- Single counter reduces area and improves timing
+- Mathematical time calculation is more elegant and scalable
+- Parallel BCD conversion improves performance
+- State machine makes AM/PM transitions explicit and clear

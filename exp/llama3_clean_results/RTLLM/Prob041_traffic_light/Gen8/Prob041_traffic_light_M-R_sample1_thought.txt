@@ -1,0 +1,15 @@
+To refactor the existing traffic light controller code, we can consider several changes to improve its structure and performance. 
+
+1.  **State Machine Structure:** We can maintain a separate always block for the state transition logic and counting logic. However, instead of using a case statement for the next state logic, we can use a more explicit approach with if-else statements to improve readability.
+2.  **Counting Logic:** The counting logic can be implemented using a single always block that decrements the counter on every positive edge of the clock or negative edge of the reset signal. We can adjust the counter values based on various conditions.
+3.  **State Encoding:** The existing state encoding is already efficient, so we can keep it the same.
+4.  **Output Signal Assignments:** Instead of using an always block to assign the output signals, we can use assign statements to directly drive the output signals based on the current state.
+5.  **Power-Saving Techniques:** We can implement clock gating to reduce dynamic power consumption.
+
+Additionally, we can consider the following optimizations:
+
+1.  **Simplify Combinational Logic:** Reduce the complexity of the if-else statements within the state transition logic and next state logic.
+2.  **Minimize Switching Activity:** Implement clock gating for the internal counter when it is not being used or when the state machine is in a stable state.
+3.  **Optimize State Machine Implementation:** Re-examine the state machine to see if a more compact state encoding can be used or if any redundant logic can be removed.
+
+By implementing these changes and optimizations, we can create a refactored solution that balances performance, power consumption, and area utilization.

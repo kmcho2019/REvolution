@@ -1,0 +1,17 @@
+Implement a synchronous counter that counts from 0 to 999 by dividing the 10-bit count into two separate parts: a 4-bit "high" counter counting the hundreds digit and a 6-bit "low" counter counting units and tens digits (0-99). 
+
+The low counter increments every clock cycle until it reaches 99, then resets to 0 and increments the high counter by one. When the high counter reaches 9 and the low counter reaches 99, the overall count reaches 999, and the next increment resets both counters to 0.
+
+This approach breaks down the terminal count logic into smaller, simpler counters, which can reduce the complexity of the comparator for terminal count detection and may result in simpler and faster logic.
+
+The reset is synchronous and active high, setting both counters to zero.
+
+Finally, combine the two counters to output a single 10-bit count value.
+
+Summary:
+- Use two registers: high_count[3:0] (0-9) and low_count[5:0] (0-99).
+- Increment low_count each clock cycle.
+- When low_count == 99, reset it and increment high_count.
+- When high_count == 9 and low_count == 99, wrap around to zero.
+- Synchronous active-high reset resets both counters to zero.
+- Output q = {high_count, low_count}, making q range from 0 to 999.

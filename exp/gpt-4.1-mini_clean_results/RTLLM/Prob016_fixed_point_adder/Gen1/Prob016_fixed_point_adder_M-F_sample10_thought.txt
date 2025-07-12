@@ -1,0 +1,12 @@
+The main issue reported is parameter passing in the testbench (outside this module), but internally the module is functionally correct. To improve synthesis friendliness and avoid subtle combinational issues, I will:
+
+- Use blocking assignments inside the combinational always block.
+- Avoid the function for absolute value to keep clarity; instead, inline the absolute value logic explicitly.
+- Carefully compute the absolute values using two's complement when the sign bit is 1.
+- Keep all operations within one combinational block for clarity and synthesis.
+- Make sure that the output 'c' is assigned via blocking assignment in the combinational always block.
+- Retain parameters Q and N as before for fixed-point precision.
+- The sign bit is the MSB (N-1).
+- The logic for addition or subtraction will follow the same conceptual approach.
+
+These changes improve synthesis friendliness and simulation stability, addressing the subtle issues noted. The parameter passing error is not addressed here since it is external to this module, but this module is now clean and straightforward for integration.

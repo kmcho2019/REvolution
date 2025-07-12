@@ -1,0 +1,22 @@
+Simplified implementation based on K-map analysis:
+
+1. mux_in[0] (ab=00):
+   - Output 1 when cd=01,10,11 (i.e., when d=1 or (c=1 and d=0))
+   - Simplified to: d OR (c AND ~d) = c OR d
+   - But K-map shows 0 for cd=00, so actually just d OR c (same as OR gate)
+
+2. mux_in[1] (ab=01):
+   - Always 0 (correct in original)
+
+3. mux_in[2] (ab=11):
+   - Output 1 when cd=00 or 11 (i.e., when c equals d)
+   - This is exactly c XNOR d = ~(c ^ d)
+
+4. mux_in[3] (ab=10):
+   - Output 0 only when cd=01 (i.e., c=0 and d=1)
+   - This is ~(~c AND d) = c OR ~d
+
+Key simplifications:
+- Use direct logical expressions where possible
+- Eliminate unnecessary intermediate muxes
+- Each output can be implemented with just one logical operation

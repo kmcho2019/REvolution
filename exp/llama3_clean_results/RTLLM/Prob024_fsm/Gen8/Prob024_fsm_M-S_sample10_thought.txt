@@ -1,0 +1,13 @@
+To simplify the Mealy FSM detection circuit, we can utilize a state machine with a minimal number of states. Instead of using a 5-bit shift register, we can design a 5-state FSM where each state represents a specific position in the input sequence. This approach reduces the complexity of the design and minimizes the number of flip-flops required.
+
+The FSM can be designed as follows:
+
+- State 0 (initial state): Wait for the first '1' in the sequence.
+- State 1: Wait for the first '0' after the initial '1'.
+- State 2: Wait for the second '0' after the first '0'.
+- State 3: Wait for the first '1' after the two '0's.
+- State 4: Wait for the second '1' after the first '1', which indicates a match.
+
+By using a state machine, we can eliminate the need for a shift register and reduce the overall complexity of the design. The MATCH signal can be set to 1 when the FSM reaches the final state (State 4) and the input is '1'.
+
+This simplified approach maintains the functionality of the original design while reducing the complexity and area requirements.

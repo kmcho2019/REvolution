@@ -1,0 +1,11 @@
+I will implement the 512-cell Rule 90 automaton as a single 512-bit shift register-style module without splitting into smaller blocks. To handle neighbor dependencies, I will create the next state combinationally by computing the XOR of the left and right neighbors for each bit, treating the boundaries as zero.
+
+Key points of this design:
+
+- Use a single 512-bit register to hold the state (q).
+- On each clock, either load the input data (if load is asserted) or update q with the next state computed as q[i] = q[i-1] ^ q[i+1], with q[-1]=0 and q[512]=0.
+- Implement the next state logic fully combinationally, generating the full 512-bit next_state in a single step.
+- Use generate statements to create the XOR computations for each bit.
+- This design keeps all state in a single vector, simplifying wiring and potentially reducing area by avoiding block interfaces.
+- Potential drawback: the long 512-bit XOR logic may increase combinational delay, but it is simple and symmetric, possibly enabling balanced routing.
+- Overall, this approach favors straightforwardness and minimal hierarchy, beneficial for ease of understanding and small area overhead.

@@ -1,0 +1,8 @@
+Implement a three-state FSM: IDLE, BYTE1, BYTE2, to explicitly manage the message reception stages.  
+- In IDLE, ignore all bytes until a byte with in[3]=1 arrives, marking the first byte of a message.  
+- On this detection, transition to BYTE1 state and store the first byte.  
+- Then move to BYTE2, storing the second byte on the next clock, and finally move to a third state BYTE3 where the third byte is stored.  
+- Once the third byte is stored, assemble out_bytes from the three bytes and assert done in the same cycle.  
+- Immediately after signaling done, return to IDLE awaiting the next message start.  
+The FSM states are encoded with a small enumeration for clarity. The done signal is asserted just for one cycle when the full message is available, and out_bytes is updated simultaneously. This approach gives clear state visibility and modularity and meets the timing requirements by pipelining one byte per state.  
+All logic is synchronous with a synchronous reset, and the done signal and output are valid on the same cycle the message is completed.

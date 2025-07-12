@@ -1,0 +1,19 @@
+To improve the PPA metrics while maintaining correct functionality:
+
+1. Timing Optimization:
+   - The negative WNS (-0.23ns) suggests timing violations in the XOR path
+   - Break the critical path by precomputing the feedback term (q[0]) and using it consistently
+   - Register the feedback term to improve timing at the cost of 1 cycle latency
+
+2. Power Optimization:
+   - The current power is already good (0.0248W vs 0.0252W reference)
+   - Maintain the same tap structure since it's already power-efficient
+
+3. Area Optimization:
+   - Current area (198um²) is better than reference (221um²)
+   - Keep the compact implementation but add the feedback register
+
+The improved version will:
+- Add a registered feedback path to break timing critical path
+- Maintain same tap positions and reset behavior
+- Slightly increase area for the register but improve timing

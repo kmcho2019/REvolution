@@ -1,0 +1,5 @@
+To fuse the best ideas from both examples, we keep the single-bit state encoding for two states (A=0, B=1) and the asynchronous reset to state B. From Example 1, the state update uses a minimal XOR expression, reducing logic depth and simplifying next-state computation. From Example 2, the state and output are kept separate by declaring output as reg and assigning it in a combinational always block for clear timing, which is good practice when output depends directly on state.
+
+Thus, we use the minimal XOR next-state update inside a sequential always block with asynchronous reset, and separately assign output combinationally from the state, keeping output declared as reg. This combination yields minimal combinational logic, clear output timing semantics, and asynchronous reset behavior with a concise and easy-to-understand code. It potentially improves PPA by minimizing logic depth and making output timing explicit.
+
+This approach merges Example 1’s elegant minimal logic expression with Example 2’s explicit and clean output assignment style for better code clarity and timing control.

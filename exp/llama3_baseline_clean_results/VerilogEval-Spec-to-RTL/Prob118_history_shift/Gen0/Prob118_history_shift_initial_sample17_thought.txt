@@ -1,0 +1,6 @@
+To implement the TopModule, we can use a 32-bit register to store the branch history. 
+We'll have two main operations: shifting in a new prediction and rolling back the history after a misprediction. 
+For the shifting operation, we'll use the predict_taken signal and shift it into the LSB of the history register when a prediction is made. 
+For the roll-back operation, we'll use the train_history and train_taken signals to load the history register with the correct history after a misprediction. 
+We'll use the predict_valid and train_mispredicted signals to determine which operation to perform, with misprediction taking precedence over prediction. 
+Finally, we'll use the areset signal to asynchronously reset the history register to zero.

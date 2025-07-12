@@ -1,0 +1,11 @@
+Fuse the strengths of both examples by maintaining the clean FSM structure with four states (IDLE, RECEIVE, CHECK_STOP, WAIT_STOP) and synchronous reset. Use consistent non-blocking assignments for all sequential logic to ensure clean synthesis and timing. 
+
+Improve done signal handling by assigning it only in one place as a registered signal, asserted one cycle exactly after validating a correct stop bit. Adopt the correct bit order for LSB-first data reception by shifting the received bit into the LSB side each clock during RECEIVE state.
+
+Optimize toggling by resetting the bit_count precisely at IDLE and WAIT_STOP states, and only incrementing bit_count in RECEIVE before hitting the terminal count (7). Also, shift the shift register only during RECEIVE to capture bits correctly, and keep it stable otherwise.
+
+To reduce critical path and glitches, generate done in the sequential block based on the stop bit validation state and input signal, avoiding combinational dependencies on done.
+
+Use a clean FSM encoding (2-bit enum) for clarity and synthesis friendliness. Keep the design minimal in area by only using essential registers and no extra logic.
+
+Overall, this approach yields a clear, robust, and efficient FSM detecting correctly framed bytes with proper error recovery and single-cycle done pulse, balancing readability, timing, and power.

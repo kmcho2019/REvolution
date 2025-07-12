@@ -1,0 +1,11 @@
+To optimize PPA (performance, power, and area), we can reduce redundant logic in next-state equations by factoring and minimizing expressions, especially for S_next, which currently ORs four terms. Also, explicitly assign all next states as output signals for clarity and allow synthesis tools better optimization.
+
+For example, S_next covers S, S1, S110 with d=0 and Wait with ack=1. We can factor the first three terms as (~d) & (S|S1|S110) and then OR with (WAIT & ack). Similarly, for Count_next, currently it includes B3 and COUNT & ~done_counting — no change needed as it’s minimal.
+
+Also, for shift_ena output, the original code assigns it combinationally to B0..B3 states, but the problem states shift_ena is output when the FSM is in B0, B1, B2, or B3 states. It's better to base it on the current state, not the next state. 
+
+Ensure no intermediate signals interfere and the outputs (B3_next, S_next, S1_next, Count_next, Wait_next, done, counting, shift_ena) precisely match their meaning.
+
+Final code improvement focuses on factoring logic to reduce logic depth and clearly assign all next state signals as outputs (as requested) while keeping it easy to understand and synthesizable.
+
+This keeps the FSM combinational next state and output logic clean, minimal, and optimized for synthesis.

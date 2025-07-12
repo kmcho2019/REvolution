@@ -1,0 +1,11 @@
+The circuit implements a 4-input even parity function, outputting 1 when the number of 1s on inputs a, b, c, d is even, and 0 otherwise. The prior solution used the XOR reduction followed by negation, which is optimal and minimal in RTL.
+
+To further optimize for PPA:
+- Use the reduction XOR and negation as before, since it maps efficiently to hardware.
+- To slightly improve power by reducing toggling at q, implement q as XNOR using the reduction XOR operator inside the negation, as done.
+- We can use the Verilog reduction XNOR operator (~^) directly, which is the complement of XOR, potentially allowing synthesis tools to optimize better or use dedicated parity logic.
+- The reduction XNOR (~^) of all inputs yields 1 for even parity directly.
+
+Hence, implementing q as the reduction XNOR of all inputs, i.e., q = a ~^ b ~^ c ~^ d, in a single assign statement reduces gate count by eliminating the explicit negation and slightly improves clarity and possibly power.
+
+This is functionally equivalent to the previous version but uses a different operator that may map better in synthesis.

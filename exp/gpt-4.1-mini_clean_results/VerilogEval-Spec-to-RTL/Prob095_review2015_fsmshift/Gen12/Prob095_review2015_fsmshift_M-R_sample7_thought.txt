@@ -1,0 +1,5 @@
+Refactor the design by explicitly using a 3-bit down counter that counts from 4 down to 1 for exactly 4 clock cycles. shift_ena is asserted when the counter is nonzero. The counter is synchronously loaded to 4 on reset, and decremented each clock cycle if not zero. After counting down 4 cycles, shift_ena goes low and remains low until the next reset.
+
+To structure differently, implement the counter as a state machine with two states: IDLE and COUNT. On reset, go to COUNT state with counter=4, assert shift_ena. Each cycle decrement counter. When counter reaches zero, move to IDLE and deassert shift_ena.
+
+This approach makes the FSM explicit, improves clarity, and uses a separate state register, differing from the original simple counter-only solution.

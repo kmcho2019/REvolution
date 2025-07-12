@@ -1,0 +1,15 @@
+An alternative way to create a dual-edge triggered flip-flop without using two flip-flops triggered on opposite edges and without an explicit latch mux is to use a single positive-edge triggered flip-flop combined with a toggle flip-flop and combinational logic that samples the input at both clock edges internally.
+
+Specifically:
+- Use a positive-edge triggered D flip-flop to hold the last sampled data.
+- Use a negative-edge triggered latch to sample the data at the falling edge.
+- On each clock edge, update the output by toggling between these samples.
+- Use a small state machine or control logic that updates output at posedge and at the negative edge of the clock by using the positive edge flip-flop and a latch.
+- The output q is updated at both edges by using a clocked process on the posedge and a separate always block triggered by the inverted clock's posedge (which effectively is the negedge of clk).
+- This method avoids combining sensitivity lists with negedge clk in one block and also avoids transparent latches explicitly controlled by clock level.
+- The core idea is to have two sample registers clocked on positive edges of clk and inverted clk (i.e., posedge clk and posedge ~clk), capturing d alternately.
+- Then, use a toggle flip-flop clocked at posedge clk to select between them for output.
+- This implementation uses two positive-edge flip-flops clocked by clk and inverted clk separately, and a mux controlled by the toggle flip-flop to output the data sampled on either edge.
+- This technique uses only positive edge triggered flip-flops, which FPGA tools support well, and does not require any latch.
+
+This design is synthesis-friendly, clean, and uses only positive-edge triggered flip-flops clocked by clk and ~clk.

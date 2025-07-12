@@ -1,0 +1,14 @@
+The original problem expects an 8-bit 2-to-1 mux that outputs an 8-bit vector, but the initial code declared output 'out' as a single bit and tried to operate bitwise on multi-bit vectors, causing width mismatch and functional errors.
+
+To fix this correctly, the output 'out' should be declared as an 8-bit vector, matching the width of inputs 'a' and 'b'. The multiplexing should select the entire 8-bit input 'a' or 'b' based on the select signal 'sel'.
+
+This approach properly matches port widths, fulfills functional requirements, and synthesizes efficiently as a simple 2-to-1 mux on 8-bit vectors.
+
+For improved clarity and performance, using a conditional operator (ternary) is preferable for synthesis and readability rather than bitwise AND/OR operations on vectors.
+
+Thus, the improved design:
+- Declares output 'out' as 8 bits.
+- Uses assign with ternary operator for mux.
+- No unnecessary bitwise operations.
+
+This corrects the interface mismatch and functional bug, while maintaining minimal, clear, and synthesizable code.

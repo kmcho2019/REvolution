@@ -1,0 +1,18 @@
+To fuse the strengths of both examples, use two dedicated 8-bit registers ins_p1 and ins_p2 to separately store instructions from the two fetch sources. This matches the original spec more closely, which helps timing and modularity by localizing storage and reducing mux complexity at outputs.
+
+On the rising clock edge or active low reset:
+- Reset both registers to zero when rst is low.
+- Update ins_p1 if fetch == 2'b01
+- Update ins_p2 if fetch == 2'b10
+- Otherwise, retain previous values.
+
+Outputs are derived combinationally from the stored values:
+- ins and ad1 come from ins_p1 (only valid when fetch==01)
+- ad2 comes from ins_p2 (only valid when fetch==10)
+- For outputs not relevant at the moment, output zeros.
+
+This approach preserves clarity, separates storage paths, and reduces output multiplexing to simple direct slicing from registers, minimizing critical path delays. It also avoids unnecessary register updates, potentially lowering power.
+
+The reset is asynchronous active low for quick initialization, and all data capture is synchronous to clk.
+
+This fusion retains the clean modularity of Example 1’s separate registers and explicit tracking of both sources, plus the simplicity and correctness of Example 2’s output logic selection.

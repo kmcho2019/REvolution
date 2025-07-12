@@ -1,0 +1,12 @@
+Refactor the 64-bit subtractor by implementing a straightforward 64-bit adder-subtractor using a single 64-bit carry-lookahead adder (CLA). The subtraction is performed as A + (~B + 1). Instead of carry-select blocks, use a flat CLA for the entire 64 bits with a generate-propagate structure for faster carry computation.
+
+This eliminates duplicated logic and multiplexers from the carry-select approach, improving area and power efficiency while maintaining good performance. The overflow detection logic remains the same, directly comparing sign bits of A, B, and the result.
+
+The design will use continuous assignments (`assign`) and structural approach, avoiding `always` blocks and generate loops for the CLA to clarify the carry calculation. This approach simplifies the design and reduces logic duplication.
+
+The key modules are:
+- `sub_64bit`: Top module performing subtraction and overflow detection.
+- `cla_64bit`: 64-bit carry-lookahead adder implementing fast addition.
+- Internally, propagate/generate signals are computed for each bit, and hierarchical carry-lookahead for all 64 bits is done explicitly.
+
+This refactoring balances clarity, area, and speed, removing carry-select redundancy while keeping the overflow logic simple and efficient.

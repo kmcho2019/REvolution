@@ -1,0 +1,12 @@
+A new approach to achieve fractional division by 3.5x without relying on counters triggered on opposite clock edges is to use a single clock domain and implement a pulse density modulation (PDM) method to approximate the fractional division over multiple cycles.
+
+The idea:
+- Since dividing by 3.5 means that over 7 input clock cycles the output toggles twice (7 / 2 = 3.5), we can generate an output clock that toggles every 3 or 4 input clock cycles alternately.
+- Maintain a counter and a variable toggle period that alternates between 3 and 4 cycles.
+- On each output toggle, switch the toggle period to the other value (3 → 4 → 3 → 4 ...).
+- This achieves an average output clock period of 7 input clock cycles for two toggles, resulting in a 3.5 division.
+- This method avoids the complexities and glitches of double-edge triggering, producing a clean output clock with a nearly 50% duty cycle.
+- The output clock toggles only on the rising edge of the input clock for simplicity.
+- The module resets to a known state with output clock low and period set to 4 initially.
+
+This approach is conceptually simple and robust for fractional division with half-integer values.

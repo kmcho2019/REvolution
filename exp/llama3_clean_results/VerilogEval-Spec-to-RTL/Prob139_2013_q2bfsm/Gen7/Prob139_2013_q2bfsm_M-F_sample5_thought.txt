@@ -1,0 +1,13 @@
+To address the issues identified in the feedback, we need to revisit the finite state machine (FSM) implementation. 
+
+First, we need to correct the state transition logic. The transition from the `IDLE` state to the `PULSE_F` state should be handled in the next state logic, not within the current state's logic. This will ensure that the state transition occurs only when the reset signal is de-asserted.
+
+Next, we need to correct the `PULSE_F` state logic. Instead of setting `f_pulse` to 1 within the `IDLE` state's logic, we should set it to 1 only when we are in the `PULSE_F` state. This will ensure that `f` is set high for only one clock cycle.
+
+We also need to correct the `x` sequence detection logic in the `WAIT_X_SEQUENCE` state. Instead of using a 3-bit vector `x_seq_det`, we can use a simpler approach with two counters, `x_prev` and `x_count`, to track the sequence of `x` inputs.
+
+Finally, we need to correct the logic for setting `g` high permanently when `y` is high within two clock cycles in the `CONTROL_G` state. We can use a counter `y_count` to track the number of clock cycles since `y` was last high. If `y` is high within two clock cycles, we set `g` to 1 permanently.
+
+To improve the design's Power, Performance, and Area (PPA) metrics, we can consider reducing the number of flip-flops used in the state machine and using a more efficient encoding for the state machine.
+
+By addressing these issues, we can ensure that the FSM functions correctly and efficiently.

@@ -1,0 +1,14 @@
+To implement this timer module, we need a finite state machine (FSM) with the following states:
+1. IDLE: Waiting for the 1101 pattern
+2. READ_DELAY: Reading the next 4 bits after pattern detection
+3. COUNTING: Counting down the delay cycles
+4. DONE: Timer finished, waiting for acknowledgment
+
+We'll use a shift register to detect the 1101 pattern and another to capture the delay value. A counter will track the remaining cycles (1000 cycles per delay step). The count output reflects the current delay value during counting.
+
+Key components:
+- Pattern detection shift register (4 bits)
+- Delay value shift register (4 bits)
+- Main counter for timing (needs to count up to 1000 cycles per delay step)
+- Delay value decrement logic
+- FSM control logic

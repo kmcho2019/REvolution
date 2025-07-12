@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pre-compute (freq - 1) in a register to reduce combinational path
+   - Simplify counter enable logic by separating freq=0 case
+   - Remove redundant comparisons by restructuring control logic
+
+2. Power Optimization:
+   - Add explicit minimum frequency limit (freq=1) to prevent max switching
+   - Simplify clock gating logic for freq[7] case
+   - Remove unnecessary else branch by integrating special case into main logic
+
+3. Area Optimization:
+   - Combine counter and wave_out update logic
+   - Remove redundant comparators by sharing logic
+   - Use parallel case structure for clearer synthesis
+
+Key Changes:
+- Single always block with clear priority structure
+- Pre-computed comparison value in register
+- Simplified control logic with fewer conditions
+- More efficient special case handling
+- Maintained all functionality while improving PPA

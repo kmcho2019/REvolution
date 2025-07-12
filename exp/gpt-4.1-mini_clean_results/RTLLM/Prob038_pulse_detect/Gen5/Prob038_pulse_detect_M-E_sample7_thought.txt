@@ -1,0 +1,23 @@
+Instead of using a state machine that tracks the pulse sequence over multiple states, this design uses edge and level detection logic with registers to remember recent data_in values.
+
+The key idea is to detect a "pulse" defined as the sequence 0 → 1 → 0 over 3 consecutive clock cycles:
+- At cycle N-2, data_in = 0
+- At cycle N-1, data_in = 1
+- At cycle N, data_in = 0
+
+We implement this by:
+- Sampling data_in into three shift registers (or just registers holding data_in delayed by 1 and 2 cycles).
+- On every clock edge, check if the three-sample pattern matches (0,1,0).
+- When matched, assert data_out for one cycle (the current cycle) and then go back to 0.
+
+This approach:
+- Uses no explicit FSM.
+- Cleanly detects the pulse pattern anywhere in the stream.
+- Ensures data_out is asserted exactly on the third cycle of the pattern.
+- Is easy to understand and verify.
+
+This method handles consecutive pulses well; pulses that overlap or are separated by any number of cycles will all be detected as long as the pattern appears.
+
+The reset initializes the delay registers and data_out to zero.
+
+This solution fully meets the spec: detecting 0-1-0 over three cycles and asserting data_out only on the last cycle.

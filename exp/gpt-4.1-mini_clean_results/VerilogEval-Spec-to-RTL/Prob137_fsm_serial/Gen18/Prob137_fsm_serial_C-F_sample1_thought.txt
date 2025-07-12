@@ -1,0 +1,13 @@
+Fuse the minimal-area, clear state machine encoding and explicit combinational next-state logic from Example 1 with the concise, single always-block sequential update style from Example 2. 
+
+Key enhancements:
+- Keep a binary 2-bit state encoding with explicit next_state combinational logic for clarity and easier timing optimization.
+- Generate 'done' as a registered one-clock pulse only when a valid stop bit is detected.
+- Update the shift register and bit counter only in the DATA state to reduce toggling.
+- Reset registers synchronously and cleanly.
+- Keep shift register shifting LSB-first by shifting left and inserting new bit at LSB.
+- Clear 'done' only when needed to minimize unnecessary toggling.
+- Separate sequential logic and combinational next-state logic improves timing and synthesis optimization.
+- This fusion yields clear state sequencing, efficient power usage, minimal area, and straightforward verification.
+
+Overall, combine Example 1's FSM clarity, explicit next-state logic, and gated shift register update with Example 2's compact sequential code style, careful 'done' pulse generation, and state transitions to improve PPA while maintaining full protocol compliance.

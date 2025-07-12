@@ -1,0 +1,17 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the edge detection by adding an extra register stage to break the critical path
+   - This will improve WNS by reducing combinational path between registers
+
+2. Power Optimization:
+   - Add clock gating for the prev_in register when input is stable
+   - Only update prev_in when an edge is detected, reducing unnecessary switching
+
+3. Area Optimization:
+   - Maintain bit-parallel processing but optimize register usage
+   - Use shared control logic for clock gating
+
+Key Changes:
+- Two-stage pipeline for edge detection
+- Clock gating based on input stability
+- Maintain same functionality with better PPA

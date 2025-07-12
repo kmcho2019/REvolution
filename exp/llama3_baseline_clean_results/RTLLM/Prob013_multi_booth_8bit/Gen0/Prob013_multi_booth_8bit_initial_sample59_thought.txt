@@ -1,0 +1,15 @@
+The Radix-4 Booth multiplier is a type of multiplier that uses the Booth algorithm to multiply two binary numbers. To implement an 8-bit Radix-4 Booth multiplier in Verilog, we can follow these steps:
+- Initialize two 16-bit registers to store the multiplicand and the multiplier. 
+- On the positive edge of the clock signal, check if the reset signal is high or low. 
+- If the reset signal is high, reset the multiplier and multiplicand registers. 
+- If the reset signal is low, indicating normal operation, check if the counter (ctr) is less than 16.
+- If the counter (ctr) is less than 16, perform the Booth multiplication by left-shifting the multiplicand register and accumulating the product if the current bit of the multiplier register is 1.
+- Once the counter (ctr) reaches 16, set the ready signal (rdy) to 1 to indicate the completion of the multiplication process.
+- Use a 5-bit counter to keep track of the number of bits processed.
+
+To simplify the code, we can use the following Verilog constructs:
+- The `always` block to handle the clock signal and the reset signal.
+- The `if-else` statement to handle different conditions based on the reset signal and the counter value.
+- The `<<` operator to left-shift the multiplicand register.
+- The `+` operator to accumulate the product.
+- The `<=` operator to assign values to registers.

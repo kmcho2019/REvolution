@@ -1,0 +1,5 @@
+To improve the PPA, focus on optimizing the decimal 10 detection logic which lies on the critical path. Replace the bitwise logic for detecting decimal 10 (`q == 4'b1010`) with a simple equality comparison, which synthesis tools can optimize efficiently and may reduce combinational delay. Also, minimize combinational logic in the next state computation by using a conditional operator instead of an if-else block, ensuring synthesis friendliness.
+
+Additionally, make the next-state logic a purely combinational assignment using a continuous assignment (assign) to further simplify the logic, reducing registers and possibly improving timing. Maintain synchronous active-high reset in the sequential block.
+
+This approach can reduce logic depth and delay in the critical path without increasing area or power significantly, yielding better timing closure while keeping the design clean and small.

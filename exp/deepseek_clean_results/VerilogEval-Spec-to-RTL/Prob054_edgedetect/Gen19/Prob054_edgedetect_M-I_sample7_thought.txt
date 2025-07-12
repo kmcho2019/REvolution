@@ -1,0 +1,9 @@
+To optimize this design further, I'll focus on improving the timing (eff_clk_period) while maintaining the same functionality. The key improvements are:
+
+1. **Register Retiming:** Move the combinational logic (edge detection) into the same always block as the pipeline registers to potentially improve timing by reducing the critical path between registers.
+
+2. **Simplified Logic:** Since we only need to compare the current and previous state (not two previous states), we can eliminate one pipeline stage (prev_prev_in) and use just prev_in.
+
+3. **Direct Edge Detection:** Compute the edge detection in the same clock cycle as the register update, which may allow better optimization during synthesis.
+
+This reduces the register count by half (from 16 to 8) while maintaining the same functionality, which should improve both power and area metrics. The timing should improve as we've eliminated one stage of logic from the critical path.

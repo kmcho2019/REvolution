@@ -1,0 +1,12 @@
+Use a Moore FSM with one-hot encoded states to clearly separate state transitions from outputs and counters. Implement the FSM as follows:
+
+- Use a state register and next_state logic.
+- Outputs f and g are assigned purely combinationally based on current state.
+- The reset is synchronous active low and holds the FSM in an initial reset state.
+- On reset release, FSM moves to a "PulseF" state where f=1 for exactly one clock cycle.
+- Then FSM moves to sequence detection states that track the sequence x=1,0,1 with explicit one-hot states (SEQ1, SEQ10, SEQ101).
+- Upon detecting the sequence, transition to a monitor_y state with an explicit 2-cycle counter implemented as a small register incremented synchronously.
+- The monitor_y state outputs g=1 and watches y input. If y=1 within two cycles, transition to a hold_g1 state (g=1 permanently). If y not observed in two cycles, move to hold_g0 state (g=0 permanently).
+- All outputs depend only on current state; counters and internal flags update synchronously on clock edge.
+- This architecture avoids off-by-one timing errors by cleanly separating state and output assignments, using one-hot states simplifies decoding and reduces logic.
+- The 2-cycle counter is advanced only in the monitor_y state and cleared elsewhere.

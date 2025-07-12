@@ -1,0 +1,12 @@
+The feedback indicates the main issue is with the clock division logic implementation. The current design creates a level-sensitive output rather than proper edge-triggered toggling. To fix this:
+
+1. We'll keep the same counter logic which correctly counts cycles and resets
+2. Instead of comparing against NUM_DIV/2, we'll toggle the divided clock only when the counter reaches its maximum value (NUM_DIV-1)
+3. This ensures the output toggles exactly once per full count cycle, creating proper frequency division
+4. We'll use a register for clk_div to store the divided clock state
+5. The duty cycle will naturally be 50% since we toggle on every full count cycle (for even division factors)
+
+The key changes are:
+- Changing from combinational assignment to sequential toggling
+- Triggering the toggle only at counter rollover
+- Maintaining all other functionality (parameter, counter size, reset)

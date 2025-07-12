@@ -1,0 +1,5 @@
+Instead of fully unpacking the input into 256 separate 4-bit signals or implementing a hierarchical mux, we can directly compute the bit indices within the packed input vector. Since each of the 256 elements is 4 bits wide, the selected 4-bit output is located at bits [sel*4 +: 4]. Using Verilog's indexed part-select syntax, we can implement this as a purely combinational one-liner without any unpacking or generate blocks.
+
+This approach minimizes logic, area, and power by avoiding intermediate arrays and mux trees, while also simplifying the design and reducing combinational delay. It relies on the synthesis tool's ability to handle variable part-selects efficiently, which is common in modern tools.
+
+The key insight is that the input bits for each element are contiguous and uniformly spaced, enabling direct, variable offset extraction from the input vector based on the selector.

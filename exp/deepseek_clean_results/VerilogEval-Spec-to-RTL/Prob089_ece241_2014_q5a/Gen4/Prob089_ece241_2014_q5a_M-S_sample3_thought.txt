@@ -1,0 +1,16 @@
+Simplified design approach:
+
+1. State Reduction: Since we only need to track whether we've seen the first '1' or not, we can use a single bit state register (0 = searching, 1 = complementing).
+
+2. Output Logic: The output is simply:
+   - x when in search state (before first '1')
+   - ~x when in complement state (after first '1')
+
+3. Reset Handling: 
+   - Asynchronous reset forces immediate return to search state
+   - Output is cleared during reset (though this doesn't affect functionality)
+
+4. Optimization:
+   - Remove default case since state is binary
+   - Combine state transition and output assignment
+   - Eliminate redundant assignments

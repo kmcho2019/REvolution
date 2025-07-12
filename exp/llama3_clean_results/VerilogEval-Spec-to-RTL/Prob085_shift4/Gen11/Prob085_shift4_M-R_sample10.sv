@@ -1,0 +1,37 @@
+module TopModule (
+    input           clk,      // Clock signal
+    input           areset,   // Asynchronous reset signal
+    input           load,     // Load signal
+    input           ena,      // Enable signal
+    input   [3:0]   data,     // Input data
+    output  [3:0]   q         // Output data
+);
+
+// 4-bit shift register
+reg [3:0] q_reg;
+
+// Asynchronous reset
+initial begin
+    q_reg = 4'b0;
+end
+
+// Synchronous operations
+always @(posedge clk) begin
+    if (areset) begin
+        // Reset takes priority
+        q_reg <= 4'b0;
+    end else begin
+        if (load) begin
+            // Load has higher priority than shift
+            q_reg <= data;
+        end else if (ena) begin
+            // Shift right operation
+            q_reg <= {1'b0, q_reg[3:1]};
+        end
+    end
+end
+
+// Assign output
+assign q = q_reg;
+
+endmodule

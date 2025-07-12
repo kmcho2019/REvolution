@@ -1,0 +1,5 @@
+To optimize PPA, reduce the critical path by separating the count update and output generation into two sequential stages: first update a raw count next state in combinational logic, then on clock edge update the register. Generate outputs based on the registered count and input delayed by one cycle. This decouples counting and output logic, shortening combinational paths and enabling higher frequency.
+
+Additionally, avoid saturating at 7 by using a 4-bit counter capped at 7 to ease logic for error detection, then clamp count updates to limit toggling and power. Insert a pipeline register for 'in' to align with count updates for precise output timing. This also clarifies output assertion: outputs appear one cycle after detecting the pattern.
+
+These changes slightly increase registers but improve timing by breaking combinational dependencies and reducing maximum logic depth in the cycle, with minor power tradeoff due to pipeline register. The approach maintains minimal area increase and simpler output expressions, improving timing slack (tns, wns) and enabling tighter clock periods with little impact on power and area.

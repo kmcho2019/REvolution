@@ -1,0 +1,9 @@
+The bug in the original module is that it doesn't handle the case when `cpu_overheated` is not true and `arrived` is true. In this case, the `shut_off_computer` and `keep_driving` signals are not updated. To fix this bug, we need to add an `else` clause for the `cpu_overheated` condition to ensure `shut_off_computer` is set to 0 when the CPU is not overheated. Similarly, we need to add an `else` clause for the `arrived` condition to ensure `keep_driving` is set to 0 when the destination is arrived.
+
+The new module should have the following logic:
+- If `cpu_overheated` is true, `shut_off_computer` should be set to 1.
+- If `cpu_overheated` is false, `shut_off_computer` should be set to 0.
+- If `arrived` is false, `keep_driving` should be set to the inverse of `gas_tank_empty`.
+- If `arrived` is true, `keep_driving` should be set to 0.
+
+By adding these `else` clauses, we ensure that all possible conditions are handled, and the module functions as intended.

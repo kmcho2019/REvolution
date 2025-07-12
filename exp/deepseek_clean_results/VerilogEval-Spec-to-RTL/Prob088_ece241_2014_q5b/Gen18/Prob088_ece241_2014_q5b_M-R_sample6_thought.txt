@@ -1,0 +1,14 @@
+Refactoring Approach:
+1. Convert the state machine to use continuous assignments instead of procedural blocks for combinational logic
+2. Represent state transitions using direct assignment expressions
+3. Maintain one-hot encoding but express it more compactly
+4. Keep the same Mealy output logic but express it more directly
+5. Use a single always block for sequential elements (state registers)
+6. Simplify the state transition logic by recognizing that state_B is simply the complement of state_A in this FSM
+
+Key Changes:
+- Eliminated separate next_state wires by directly computing transitions
+- Simplified state representation since this FSM only needs to track one state bit (state_B is ~state_A)
+- Combined all combinational logic into continuous assignments
+- Maintained asynchronous reset functionality
+- Reduced code verbosity while preserving functionality

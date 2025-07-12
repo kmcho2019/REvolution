@@ -1,0 +1,16 @@
+Optimization Strategy:
+1. Critical Path Optimization:
+   - Replace the 3-input adder with a balanced adder tree (1+1 then +1) to reduce worst-case delay
+   - Simplify window_complete to single-bit comparison (counter[1] && !counter[0])
+
+2. Power Optimization:
+   - Gate the w_samples register updates only when in state B and counter changes
+   - Compute ones_count only when needed (during evaluate window)
+
+3. Area Optimization:
+   - Replace w_samples register with a 2-bit ones counter (reduces from 3 bits to 2 bits)
+   - Simplify counter logic by removing unused state (2'd3 never occurs)
+
+4. Timing Closure:
+   - Pipeline the ones_count calculation by precomputing partial sums
+   - Move evaluate logic to be purely combinational based on current state

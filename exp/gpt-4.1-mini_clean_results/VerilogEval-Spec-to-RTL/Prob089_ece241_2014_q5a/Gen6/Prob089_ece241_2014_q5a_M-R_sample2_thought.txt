@@ -1,0 +1,15 @@
+Refactor the original Moore FSM by separating combinational next-state and output logic from the synchronous state and input registers, and implement output using a combinational `assign` statement instead of always block.
+
+Key changes:
+
+- Use a single always block for synchronous state and input register updates with async reset.
+- Compute next_state combinationally using a function-style case statement.
+- Drive output z with a continuous assignment depending on registered input and state.
+- Avoid an explicit always block for output; instead, use a combinational assign statement based on registered signals, preserving the Moore FSM output nature.
+- This enhances clarity by distinctly separating sequential logic and combinational logic, and may facilitate synthesis optimizations.
+
+Functionally, the FSM behavior remains the same:
+
+- Start in S0, output input bit directly.
+- On detecting the first '1', transition to S1, and output inverted bits thereafter.
+- Registers hold both state and input bit synchronously with clk and async reset.

@@ -1,0 +1,10 @@
+To optimize the shift register for better power efficiency without altering the functional behavior or interface, I will introduce a clock enable signal that gates the shift operation only when the input changes or when the shift register contents need to change. Since the original spec does not specify an enable signal, I will generate a simple enable signal internally that triggers a shift only when the input differs from the current LSB of the shift register. This reduces unnecessary toggling in the flip-flops when the input remains stable and no new data shifts through.
+
+This approach:
+- Maintains synchronous active-low reset and positive edge clocking.
+- Avoids external changes to interface; no clock gating primitives are added, keeping the design simple and synthesizable on any standard cell library.
+- Reduces flip-flop toggling and power by only updating the register when needed.
+- Uses a single vector register and the same output logic for minimal area impact.
+- Has minimal impact on timing, as the enable logic is simple and local.
+
+While actual power reduction depends on input data patterns, this technique can reduce dynamic power when the input is constant for multiple cycles. It balances power savings and design simplicity within the original specification constraints.

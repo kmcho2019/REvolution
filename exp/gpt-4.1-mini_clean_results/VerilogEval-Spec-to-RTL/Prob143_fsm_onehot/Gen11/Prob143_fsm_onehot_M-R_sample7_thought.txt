@@ -1,0 +1,7 @@
+The original solution directly computes each next_state bit with OR of conditions for transitions from multiple active states. To refactor, I will implement the next_state logic by individually computing partial next state vectors for each input value (0 or 1), then combine them based on 'in'. This separates the logic for the two input cases, making it clearer which transitions happen on input=0 and which on input=1, while preserving full combinational logic with no always block.
+
+This approach uses two intermediate wires for next_state when in=0 and in=1, then selects between them with a multiplexer. This structure is beneficial for clarity and can sometimes lead to better pipelining or easier modifications.
+
+Outputs remain computed by masking the current state bits and reduction operators, which is the simplest and most efficient way.
+
+Overall, the refactor preserves the same logic functionally, but restructures the combinational next_state generation into two distinct parts combined by input muxing.

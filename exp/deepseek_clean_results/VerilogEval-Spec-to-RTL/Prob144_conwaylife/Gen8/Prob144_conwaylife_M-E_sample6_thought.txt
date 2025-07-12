@@ -1,0 +1,12 @@
+Novel Architecture: Parallel Processing with Shared Neighbor Counting
+1. Grid Partitioning: Divide the 16x16 grid into 4x4 blocks (16 total blocks) for localized processing
+2. Shared Neighbor Counting: Each block computes neighbor counts for its 16 cells in parallel, sharing common neighbor calculations
+3. Pipelined Processing: Implement a 2-stage pipeline (neighbor count + state update) to improve timing
+4. Optimized Wrapping: Use bitwise operations for efficient toroidal neighbor indexing
+5. Block-wise Processing: Process each 4x4 block in parallel with dedicated counters, reducing critical path
+
+Key Innovations:
+- Block-based processing reduces neighbor calculation redundancy
+- Shared counting logic within blocks minimizes duplicate operations
+- Pipelining improves clock frequency
+- Bitwise wrapping avoids expensive modulo operations

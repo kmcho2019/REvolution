@@ -1,0 +1,10 @@
+Fuse the modular clarity of Example 1's explicit per-flip-flop structure with the compact, tool-friendly vector register and synchronous reset style of Example 2 for optimal PPA and readability:
+
+- Internally, implement the shift register as a vector register (like Example 2) for efficient synthesis and area optimization.
+- Externally, provide a modular parameterized ShiftReg module but expose internal signals so that each stage output is accessible internally.
+- Add explicit individual output wires corresponding to each shift stage inside the module, enabling easy debugging and tracing like Example 1.
+- Use generate blocks internally to assign each stage bit to a named wire, preserving modularity and clarity.
+- Maintain synchronous active-low reset in a single always block with non-blocking assignments for safe sequential semantics.
+- In TopModule, instantiate ShiftReg with width=4 and connect only the final output to the output port, preserving the original interface.
+- This hybrid approach offers clear internal observability of each stage and the power, area, and performance benefits of vectorized registers with single-block synchronous reset handling.
+- The code is compact, parameterized, and friendly for simulation debug and synthesis optimization.

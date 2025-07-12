@@ -1,0 +1,7 @@
+Fuse the minimal state flip-flop count from Example 1 (single-bit state_A) with strict one-hot style explicitness by encoding state_A=1 as state A and state_B=1 as state B, but optimize so only one flip-flop is used and the other state is implied (like Example 1). Use the explicit two-bit one-hot signals internally (state_A and state_B), but encode only state_A as a register and derive state_B as its complement, preserving one-hot semantics with minimal flip-flops.
+
+Next-state logic from Example 2 is clearer and simpler: next_state_A = state_A & ~x; so when x=1, go to B (state_A=0), else remain in A. Output z is Mealy type: z= (state_A && x) || (state_B && ~x). Replace the combinational always block for output with a continuous assign for cleaner synthesis and better optimization.
+
+Implement asynchronous active-high reset initializing state_A=1 (state A). Use non-blocking assignments in sequential always block. This fusion reduces flip-flop count and complexity (better area and power), maintains one-hot semantics, and keeps clear next-state and output logic, while improving synthesis friendliness by using assign for output.
+
+This gives a compact, strictly one-hot FSM with minimal registers, clean logic expressions, and good PPA tradeoffs.

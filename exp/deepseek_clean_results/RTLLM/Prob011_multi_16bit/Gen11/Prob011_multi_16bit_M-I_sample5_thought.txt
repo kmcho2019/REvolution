@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Replace binary state encoding with one-hot encoding to reduce state decoding logic
+   - Pre-compute shifted versions of breg in parallel to eliminate variable-width shifter
+   - Pipeline the accumulation operation to break the critical path
+
+2. Power Optimization:
+   - Add clock gating for registers when in IDLE state
+   - Use bitwise masking for partial product selection instead of full comparison
+   - Reduce switching activity by only updating registers when needed
+
+3. Area Optimization:
+   - Replace 4-bit counter with 3-bit counter and adjusted comparison logic
+   - Remove redundant default case in state machine
+   - Use carry-save adder structure for accumulation
+
+Key Changes:
+1. One-hot state encoding (4 bits) for faster state transitions
+2. Parallel barrel shifter with 16 pre-computed shifted versions
+3. Clock gating for power reduction
+4. 3-bit counter with modified comparison logic
+5. Optimized datapath with reduced switching activity

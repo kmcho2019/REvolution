@@ -1,0 +1,11 @@
+Simplify the 4-bit comparator by directly comparing A and B using bitwise comparison for equality and simple hierarchical logic for greater-than and less-than detection.
+
+Instead of using borrow generation and propagation, determine equality with a single equality operator (A == B).
+
+Derive A_greater and A_less by comparing bits from MSB to LSB:
+- A_greater is true if at the highest index where A and B differ, A's bit is 1 and B's bit is 0.
+- A_less is true if at the highest differing bit, A's bit is 0 and B's bit is 1.
+
+This approach uses pure combinational logic, is minimal in code and gate count, and outputs remain mutually exclusive as only one of greater, equal, or less can be true.
+
+This design is compact, easy to understand, and efficient in area and power, while maintaining the required functionality.

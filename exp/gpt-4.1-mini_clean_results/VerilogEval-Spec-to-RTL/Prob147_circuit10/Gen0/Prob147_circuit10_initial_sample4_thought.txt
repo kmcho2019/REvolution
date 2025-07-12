@@ -1,0 +1,13 @@
+The circuit has one state bit (flip-flop). The output `q` is combinational, depending on current inputs and state.
+
+From the waveform:
+- At each rising edge of clk, the state updates with the current `q` value.
+- The output `q` depends on inputs `a`, `b` and current state.
+- Observing the waveform, the next `state` equals current `q`.
+- `q` is high when either:
+  * Current state is high and `b` is low, or
+  * Current state is low and `a` and `b` are both 1.
+- So, `q = (state & ~b) | (~state & a & b)`
+- On clk posedge, `state <= q`.
+
+Implement this logic with one flip-flop holding `state`, output `state` is state bit, output `q` is combinational from state and inputs.

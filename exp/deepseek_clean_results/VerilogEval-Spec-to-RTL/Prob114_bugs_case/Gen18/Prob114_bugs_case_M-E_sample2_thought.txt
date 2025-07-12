@@ -1,0 +1,11 @@
+Instead of using a case statement, we can implement this as a small read-only memory (ROM) that maps input scancodes to output digits. The key advantages are:
+1. More scalable if we need to add more key mappings in the future
+2. Potentially more area-efficient for larger mappings
+3. Clear separation between data (mapping table) and control logic
+
+We'll:
+1. Create a 256-entry ROM (covering all 8-bit inputs)
+2. Initialize it with default zeros (invalid case)
+3. Set the specific valid entries at their respective addresses
+4. Use the input code as the ROM address
+5. Split the ROM output into valid bit and digit value

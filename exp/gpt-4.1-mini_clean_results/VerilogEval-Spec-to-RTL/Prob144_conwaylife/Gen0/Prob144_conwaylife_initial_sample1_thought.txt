@@ -1,0 +1,10 @@
+Implement a 16x16 toroidal Game of Life variant using a 256-bit register `q` that updates every clock cycle. On load, the input `data` is synchronously loaded into `q`. Otherwise, on each clock, compute the next state of each cell based on the current `q` state:
+
+- Extract each cell's neighbors with wrapping, sum their values to count live neighbors.
+- Apply rules:
+  - 0 or 1 neighbor -> dead (0)
+  - 2 neighbors -> unchanged
+  - 3 neighbors -> alive (1)
+  - 4+ neighbors -> dead (0)
+
+Use nested loops in a combinational block to calculate the next state for all 256 cells, then register the result on the clock edge. Represent `q` as a 2D array internally for clarity, map input/output accordingly.

@@ -1,0 +1,5 @@
+Refactor the design by implementing a small FSM with two states: WAIT_FIRST and WAIT_SECOND.  
+- In WAIT_FIRST, when a valid_in arrives, store the data in data_lock and move to WAIT_SECOND.  
+- In WAIT_SECOND, when the next valid_in arrives, concatenate data_lock (higher 8 bits) and the new data_in (lower 8 bits), then assert valid_out in the next clock cycle. After outputting, return to WAIT_FIRST.  
+Output valid_out and data_out are registered and asserted only one cycle after receiving the second valid_in input, ensuring proper timing.  
+Use clear and explicit state transitions and output signal assignments, minimizing glitches and ensuring correct behavior across resets and irregular input valid signals.

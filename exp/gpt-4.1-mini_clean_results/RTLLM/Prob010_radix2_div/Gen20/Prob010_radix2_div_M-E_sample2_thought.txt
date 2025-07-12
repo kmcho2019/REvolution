@@ -1,0 +1,14 @@
+Implement a radix-2 divider using a shift-and-subtract iterative algorithm with a simple synchronous controller. The design will:
+
+- Use a start signal (opn_valid & !busy) to latch inputs and sign info.
+- Compute absolute values combinationally upon start to simplify division.
+- Use a 17-bit shift register holding the remainder and quotient combined: [remainder(9 bits): quotient(8 bits)].
+- On each clock cycle during division, shift left the shift register by 1 bit, subtract the divisor from the upper 9 bits (remainder portion), and if the result is non-negative, update remainder and set the corresponding quotient bit.
+- Count cycles up to 8 iterations.
+- After division completes, apply sign corrections to quotient and remainder based on initial signs.
+- Provide a res_valid flag when the result is ready.
+- Keep the design purely synchronous, with combinational absolute value and sign correction done in functions.
+- Use minimal states, controlled by a busy flag and counter.
+- Avoid combinational loops and always use synchronous reset.
+
+This design achieves clarity, simplicity, and meets the requirement to support signed/unsigned 8-bit division with quotient and remainder returned in a 16-bit output.

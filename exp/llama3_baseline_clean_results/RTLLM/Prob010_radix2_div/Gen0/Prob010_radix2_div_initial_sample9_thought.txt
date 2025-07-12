@@ -1,0 +1,11 @@
+To implement a simplified radix-2 divider on 8-bit signed or unsigned integers, we need to create a Verilog module named radix2_div. The module will accept two 8-bit operands, a dividend and a divisor, and provide a 16-bit result containing both the quotient and the remainder. We will use a synchronous design with a clock signal (clk) and a reset signal (rst). The module will also have a sign bit (sign) to indicate if the operation is signed or unsigned. 
+
+The division process will be performed in a series of steps. First, when a valid operation request (opn_valid) is present and the result is not valid (res_valid is low), the module will save the inputs, initialize a shift register (SR) with the absolute value of the dividend shifted left by one bit, and set the negated absolute value of the divisor. 
+
+Then, the module will perform the division process by iterating through each bit of the dividend. In each iteration, it will compute the subtraction of the negated divisor, use a multiplexer to select the appropriate result based on the carry-out, and update the shift register by shifting left and inserting the carry-out. 
+
+The division process will continue until all bits of the dividend have been processed (i.e., the counter reaches 8). Once the division is complete, the module will update the shift register with the final remainder and quotient, and set the result valid signal (res_valid) high. 
+
+The result valid signal will be managed based on the reset signal, the counter, and whether the result has been consumed. 
+
+We will use a 16-bit result output to contain both the remainder in the upper 8 bits and the quotient in the lower 8 bits.

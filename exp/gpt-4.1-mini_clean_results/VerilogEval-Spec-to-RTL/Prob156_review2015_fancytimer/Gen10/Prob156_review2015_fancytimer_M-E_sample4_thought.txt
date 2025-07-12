@@ -1,0 +1,51 @@
+To address the complexity and off-by-one errors, I will implement a clear, modular FSM with four distinct states:
+
+1. **SEARCH** - continuously shift in serial bits to detect the start pattern `1101`. Since the bits arrive MSB first, I will shift left and insert new bits at LSB, and compare to `4'b1101`.
+
+2. **LOAD** - after detecting the pattern, shift in the next 4 bits (delay) MSB first similarly.
+
+3. **COUNT** - when the delay value is loaded, start counting cycles. Instead of tracking blocks and cycles separately, I will use a single 14-bit counter representing the total cycles to count: `(delay + 1) * 1000`.
+
+   - To provide the output `count` (remaining blocks), I will track how many full 1000-cycle blocks remain by dividing remaining cycles by 1000 (using simple integer division with counters).
+
+   - On every clock, decrement the total cycles left.
+
+4. **DONE** - when total count reaches zero, assert done, wait for ack to go back to SEARCH.
+
+This approach:
+
+- Uses one 14-bit counter for cycles, so total cycles are exact and off-by-one errors are eliminated.
+
+- Provides the count output by dividing remaining cycles by 1000 (integer division). Since `(delay+1)*1000` total cycles, the count output is `(remaining_cycles + 999) / 1000 - 1` which simplifies to remaining blocks counted down from delay to 0, stable for 1000 cycles each.
+
+- Keeps all synchronous state updates within a single always block to avoid multiple drivers.
+
+- Uses an explicit pattern shift register for detection, and another shift register to load delay bits.
+
+- Provides stable output `count` and asserts `counting` only during counting.
+
+- During SEARCH and LOAD states, the circuit ignores the timer counting and resets count and done accordingly.
+
+- Resets synchronous active high.
+
+This design is straightforward, clean, and matches the spec exactly with less complexity and clearer timing.
+
+Implementation details:
+
+- Pattern detection shift register: 4 bits shifted left, insert new bit at LSB each clk in SEARCH state.
+
+- Delay shift register: 4 bits, shifted similarly in LOAD state.
+
+- Counting logic: 14-bit `cycle_counter` initialized to `(delay+1)*1000`, decremented every clock in COUNT state until zero.
+
+- `count` output: integer division of `cycle_counter` by 1000 (use counters to track this efficiently).
+
+- FSM states encoded as parameters.
+
+- All outputs assigned in synchronous block.
+
+- `done` asserted in DONE state.
+
+- Wait for `ack` input to return to SEARCH.
+
+This will yield a robust and correct timer.

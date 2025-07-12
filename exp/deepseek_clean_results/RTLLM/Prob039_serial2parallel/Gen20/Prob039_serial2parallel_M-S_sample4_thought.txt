@@ -1,0 +1,12 @@
+Simplified Design Approach:
+1. Remove the explicit state machine - tracking the bit count is sufficient to determine when to output
+2. Use a single shift register to accumulate bits and directly output when full
+3. Generate dout_valid as a single-cycle pulse when 8 bits are collected
+4. Maintain synchronous reset for all registers
+5. Simplify counter logic by using a 3-bit counter (0-7)
+
+Key Simplifications:
+- Eliminated separate state machine states
+- Removed intermediate registers (only shift register needed)
+- Simplified control logic by using counter value directly
+- Reduced number of registers while maintaining functionality

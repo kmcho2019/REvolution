@@ -1,0 +1,12 @@
+To fix the toggling logic so that the output clk_div toggles only once every NUM_DIV/2 input clock cycles, I'll use a single always block triggered on the positive edge of clk or negative edge of rst_n.
+
+- The counter counts from 0 up to (NUM_DIV/2 - 1).
+- On each positive edge, if rst_n is low, reset cnt and clk_div to zero.
+- Otherwise, increment cnt.
+- When cnt reaches (NUM_DIV/2 - 1), reset it to zero and toggle clk_div.
+
+This toggling every half the division period produces the desired frequency division by the even number NUM_DIV, with a 50% duty cycle output.
+
+Additionally, I will use a fixed 4-bit counter register as specified and include a compile-time check for evenness.
+
+This structure is simpler and avoids toggling clk_div twice per full cycle, ensuring proper frequency division.

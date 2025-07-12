@@ -1,9 +1,0 @@
-Implement a gshare branch predictor with 7-bit PC and 7-bit global history register (GHR). The prediction index is formed by XOR-ing the PC and GHR to get a 7-bit index into a 128-entry 2-bit saturating counter table (PHT). On prediction (predict_valid=1), output the predicted branch direction based on the MSB of the 2-bit counter and output the GHR state used for the prediction. Update the GHR on the next clock edge with the predicted direction.
-
-On training (train_valid=1), update the PHT entry indexed by XOR of train_pc and train_history according to the actual branch outcome (train_taken) with standard 2-bit saturating counter rules. If the branch was mispredicted (train_mispredicted=1), restore the GHR to the train_history value to recover the state after the mispredicted branch.
-
-When both prediction and training happen in the same cycle, training takes precedence for GHR updates to avoid corrupting the history state. Prediction sees the PHT state before training because training updates the PHT only at the next clock edge.
-
-Asynchronous active-high reset initializes the GHR to zero and PHT entries to weakly taken (e.g., 2'b10).
-
-The module uses a single clock domain. All updates to PHT and GHR occur on the positive edge of clk.

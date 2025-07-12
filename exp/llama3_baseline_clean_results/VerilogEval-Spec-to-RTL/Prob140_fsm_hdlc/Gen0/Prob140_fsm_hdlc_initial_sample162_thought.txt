@@ -1,0 +1,19 @@
+To solve this problem, we need to design a Moore-type finite state machine (FSM) that recognizes specific bit patterns in a continuous bit stream. The FSM will have several states to track the sequence of 1s and 0s. 
+
+The states can be defined as follows:
+- State 0: The initial state, assuming the previous input was 0.
+- State 1: One 1 has been seen.
+- State 2 to State 5: 2 to 5 consecutive 1s have been seen.
+- State 6: 6 consecutive 1s have been seen, and we're checking for the next bit to decide between flag and error.
+- State 7: 7 or more consecutive 1s have been seen, indicating an error.
+
+We will also define output signals disc, flag, and err based on the current state and the next input bit.
+
+The state transitions will be as follows:
+- From State 0: If the input is 1, move to State 1. If the input is 0, stay in State 0.
+- From State 1 to State 5: If the input is 1, move to the next state. If the input is 0, move back to State 0.
+- From State 5: If the input is 1, move to State 6. If the input is 0, move to State 0 and assert disc.
+- From State 6: If the input is 0, move to State 0 and assert flag. If the input is 1, move to State 7 and assert err.
+- From State 7: Stay in State 7 and assert err as long as the input is 1. Move back to State 0 when the input is 0.
+
+We will use a single always block with a case statement to implement the state transitions and output logic.

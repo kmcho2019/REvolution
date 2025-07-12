@@ -1,0 +1,13 @@
+Fuse the hierarchical OR-tree approach for next_state[0] to keep low fan-in and good timing, like in both examples, but slightly enhance grouping by introducing an extra intermediate wire level for further balancing and clearer modularity.
+
+For other next_state bits, use direct, clear assignments as in both examples to keep minimal logic depth, straightforward synthesis, and easy maintainability.
+
+For outputs, combine explicit bitwise OR assignments (like Example 1) with localparam masks and reduction OR (like Example 2) to clarify intent, enable synthesis optimizations, and maintain conciseness.
+
+This fusion strategy:
+- Improves next_state[0] fan-in and timing via a three-level hierarchical OR tree, splitting states into smaller balanced groups.
+- Uses simple, flat logic for other next_state signals, reducing combinational depth and gate count.
+- Makes outputs concise and clear with synthesis-friendly mask usage and explicit OR reduction.
+- Fully supports multiple simultaneous active states with combinational logic.
+- Balances timing (balanced OR trees), power (minimal redundant logic), area (simple logic, shared expressions), and code clarity (explicit wires, meaningful names).
+Overall, this design integrates the best of both examples while adding an extra layer of hierarchy to next_state[0] logic for enhanced PPA without sacrificing readability.

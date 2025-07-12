@@ -1,0 +1,9 @@
+I will refactor the frequency divider to use a synchronous process that counts clock cycles and toggles the output when the count reaches half of NUM_DIV, but this time I will implement the counter and output toggle logic using a slightly different structure.
+
+Specifically:
+- The counter counts from 0 up to (NUM_DIV/2 - 1).
+- When the count reaches the terminal value, the next clock edge resets the counter and toggles clk_div.
+- I will separate the combinational calculation of the next counter value and the toggle condition using internal wires.
+- The counter will increment up to the terminal count, and the toggle of clk_div will be controlled via an enable signal.
+- This approach maintains synthesizability, clarity, and correctness, while showing an alternative coding style.
+- I keep the same parameterization and reset behavior.

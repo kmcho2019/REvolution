@@ -1,0 +1,14 @@
+The original design is already efficient and clean. To improve PPA further, we can reduce the output register load by generating pedge combinationally from the stored previous input and the current input without additional flip-flops. Since pedge is used immediately after detection and output registered in the same clock domain, generating it as a combinational output reduces register usage and can slightly reduce latency and power.
+
+Specifically:
+- Make `pedge` a combinational output.
+- Keep `prev_in` registered on `clk` to hold the previous cycle input.
+- Drive `pedge` continuously as (~prev_in) & in, reflecting the 0-to-1 transitions detected relative to the previous cycle.
+  
+This removes one level of output register, potentially saving area and dynamic power on clocked logic, while keeping timing tight since the combinational logic is minimal. This approach is good if downstream logic can accept combinational signals or if timing allows.
+
+If synchronous output is strictly required, the previous design is preferred. Otherwise, this modification slightly optimizes PPA by reducing clocked elements and dynamic power on the output register.
+
+No extra logic or complexity is introduced, so area is reduced by one register and power is minimized due to less clocked toggling.
+
+This is a straightforward, minimal PPA improvement that maintains correctness and simplicity.

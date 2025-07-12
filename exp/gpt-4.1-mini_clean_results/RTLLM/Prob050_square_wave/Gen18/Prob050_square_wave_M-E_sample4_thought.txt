@@ -1,0 +1,13 @@
+To implement the square wave generator with a novel architectural idea, I will use a down-counter instead of an up-counter. The counter will be initialized with the freq value on each toggle and counts down to zero. When it reaches zero, it reloads freq and toggles the output.
+
+This approach avoids the need for subtracting 1 in the comparison. The counter simply checks if it is zero, which is simpler logic.
+
+Additionally, to avoid toggling the wave_out too fast or in case freq=0 (which would cause continuous toggling), I will implement a gating condition: when freq is zero, the output is held steady at zero (no toggling), and the counter stays loaded with zero.
+
+Reset is asynchronous active-high for quick initialization.
+
+This design potentially improves timing by replacing the comparator (count == freq-1) with a zero-check, which is simpler and faster.
+
+Non-blocking assignments and a single always block for sequential logic are used for clean synthesis.
+
+Ports are clk, rst, freq, and output wave_out as specified.

@@ -1,0 +1,21 @@
+After carefully analyzing the feedback and waveform, here's the corrected approach:
+
+1. Key observations:
+   - p is high only when 'a' is high on a positive clock edge AND there was at least one previous cycle where 'a' was high
+   - q becomes high only after p has been high for at least one complete cycle
+   - Both outputs reset to 0 when 'a' is low on a positive clock edge
+
+2. New approach:
+   - Use a state machine with 3 states:
+     * IDLE: Initial state, outputs are 0
+     * DETECTED: First 'a' high detected (p=1, q=0)
+     * CONFIRMED: Second consecutive 'a' high (p=1, q=1)
+   - Transition logic:
+     * From IDLE: move to DETECTED when 'a' is high on clock edge
+     * From DETECTED: move to CONFIRMED if 'a' is high, else back to IDLE
+     * From CONFIRMED: stay if 'a' is high, else back to IDLE
+
+3. Benefits:
+   - Correctly captures the multi-cycle behavior
+   - Matches the waveform's requirement for consecutive 'a' highs
+   - Handles the reset condition properly

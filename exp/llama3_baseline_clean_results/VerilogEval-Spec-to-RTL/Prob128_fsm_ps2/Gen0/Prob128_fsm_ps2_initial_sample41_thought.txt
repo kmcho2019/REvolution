@@ -1,0 +1,7 @@
+To solve this problem, we will implement a finite state machine (FSM) with the following states:
+- IDLE: This is the initial state where the FSM waits for a byte with in[3] = 1.
+- BYTE1: After finding the first byte of a message (in[3] = 1), the FSM transitions to this state and waits for the next two bytes.
+- BYTE2: After receiving the second byte, the FSM transitions to this state and waits for the third byte.
+- BYTE3: After receiving the third byte, the FSM transitions to this state and signals done in the next cycle.
+
+The FSM will reset to the IDLE state when the reset signal is high. The done signal will be asserted in the cycle immediately after the third byte of each message is received.

@@ -1,0 +1,11 @@
+To address the issues identified in the feedback, a systematic approach to designing a Moore state machine is necessary. The first step is to define the states of the state machine based on the problem description. These states include walking left, walking right, falling, digging, and splattered. The next step is to identify the inputs and their effects on state transitions. The inputs are `bump_left`, `bump_right`, `ground`, `dig`, and `areset`. The state machine should also keep track of the fall duration to handle the splattering condition.
+
+Upon analyzing the provided code, several areas require attention. Firstly, the variable `new_walk_direction` should be declared as a `reg` type to ensure it can hold its value between clock cycles. Secondly, the precedence of falling, digging, and direction switching should be correctly handled in the state transition logic. This involves ensuring that falling has higher precedence than digging, which in turn has higher precedence than switching directions.
+
+The timing of signals such as `dig` and changes in `ground` status must be carefully considered. The state machine should transition to the digging state only when `dig` is asserted and the Lemming is on the ground and not falling. When the ground disappears while the Lemming is digging, it should transition to the falling state.
+
+The fall counter and splattering logic require special attention. The fall counter should be incremented whenever the Lemming is in the falling state, and it should be reset when the Lemming hits the ground. If the fall duration exceeds 20 cycles when the Lemming hits the ground, it should transition to the splattered state.
+
+Lastly, edge cases such as the `dig` signal being asserted while the Lemming is already digging or the ground reappearing while the Lemming is falling should be explicitly handled. Redundant or inconsistent logic should be removed to minimize errors.
+
+By addressing these areas and implementing a systematic approach to state transitions and output signal assignments, the corrected code should accurately model the behavior of a Lemming in the game.

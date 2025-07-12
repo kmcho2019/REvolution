@@ -1,0 +1,18 @@
+Improve the FSM and data buffering logic to robustly handle consecutive and possibly irregular valid_in signals. 
+
+Key refinements:
+- Use three states: IDLE (waiting for first input), WAIT_SECOND (have first input, waiting for second), OUTPUT (one cycle output stage).
+- On first valid_in, latch data_in into data_lock and move to WAIT_SECOND.
+- In WAIT_SECOND:
+  - If valid_in is high, latch second data_in, move to OUTPUT.
+  - If valid_in is low, remain in WAIT_SECOND, continue waiting without losing first data.
+- In OUTPUT:
+  - Output concatenated data {data_lock, second_data} with valid_out asserted.
+  - If valid_in is high simultaneously with output, treat this input as the next first input and move to WAIT_SECOND.
+  - Else, go back to IDLE.
+- This approach enables pipeline-like operation and prevents missing inputs arriving during output cycle.
+- Use registered signals for data_out and valid_out to meet timing requirements.
+- Clear internal registers only when appropriate to avoid data loss.
+- This FSM structure clarifies input handling and output timing exactly one cycle after the second data arrives, fulfilling the problem specification reliably.
+
+This solves race conditions by explicitly managing the output cycle as a distinct state and allowing input sampling during output.

@@ -1,0 +1,13 @@
+Fuse the best features of both examples to create a clean, minimal, and power-efficient FSM for PS/2 mouse message detection:
+
+- Use a simple 2-bit counter to track byte position within a message: 0 = waiting for start byte (in[3] == 1), 1 and 2 = bytes 2 and 3 of the message.
+- On reset, clear count and done.
+- Default done to 0 every cycle to avoid glitches.
+- Only update the counter when necessary, gating updates to reduce toggling: update count either when waiting and a start byte arrives, or when inside a message (count!=0).
+- Assert done as a single-cycle pulse immediately after the third byte (count==2) is received, then reset count to 0.
+- To minimize logic levels and keep timing robust, avoid complex enable gating logic by directly encoding the conditions inside the always block.
+- Avoid extra combinational signals; check start byte inline to reduce area.
+- Use non-blocking assignments consistently.
+- Maintain synchronous active-high reset.
+
+This fusion keeps the FSM logic minimal and straightforward like Example 1, while incorporating enable gating to reduce toggling as in Example 2, but without adding extra combinational logic that could degrade timing. It pulses done exactly one cycle after the third byte, minimizing spurious toggles. The design is simple, robust, and efficient in terms of power, area, and performance.

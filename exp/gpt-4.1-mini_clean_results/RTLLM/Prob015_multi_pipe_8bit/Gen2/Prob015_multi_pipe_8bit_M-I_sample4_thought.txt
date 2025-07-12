@@ -1,0 +1,29 @@
+The original design correctly implements a 4-stage pipelined multiplier with clean staging of partial product sums and enable signals, matching the problem description. 
+
+To improve PPA (performance, power, and area), I will focus on the critical path in the addition tree and power optimizations:
+
+1. **Adder Tree Optimization**: Instead of fully summing partial products in pairs and then final sums, use a Carry-Save Adder (CSA) structure in the middle stages. CSAs reduce carry propagation delay by accumulating sums and carries separately before final carry-propagate addition at the last stage.
+
+2. **Register Addition Inputs**: Register partial products before summation to reduce combinational fanout and isolate pipeline stages better.
+
+3. **Enable Signal Propagation**: Keep consistent enable pipelining as before, but gate registers such that when enable is low, registers hold their previous values instead of resetting to zero. This reduces switching activity and power consumption.
+
+4. **Clock Gating (Optional)**: While explicit clock gating is often tool handled, enabling registers only on enable signal reduces unnecessary toggling.
+
+5. **Partial Product Generation**: Keep combinational generation but latch multiplicand/multiplier inputs only when enable is asserted to reduce switching.
+
+These improvements aim to reduce critical path by limiting the carry propagation to only the final addition stage, reduce dynamic power by gating register writes, and keep area roughly the same with better performance and power profile.
+
+Implementation-wise:
+
+- Stage 1: Register inputs and enable.
+
+- Stage 2: Generate partial products and register them.
+
+- Stage 3: Use CSA tree to reduce partial products from 8 to 2 operands (sum and carry vectors), register sum and carry, propagate enable.
+
+- Stage 4: Final addition using a fast adder (sum + carry), register output and enable.
+
+- Output stage: Assign output based on enable.
+
+The module interface remains the same, maintaining proper resets and synchronous design.

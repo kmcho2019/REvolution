@@ -1,0 +1,24 @@
+I will simplify the design by implementing a clear FSM with the following states: SEARCH, LOAD_DELAY, COUNT, and DONE.
+
+- In SEARCH, I will shift in the data serially into a 4-bit pattern shift register each clock, and check for the start pattern 1101.
+- Upon detection, transition to LOAD_DELAY where we shift in the 4 delay bits (MSB first) serially into a 4-bit delay register.
+- After loading the 4 bits, transition to COUNT state.
+
+For counting:
+- Instead of using division by 1000, I will implement a micro counter that counts clock cycles from 0 to 999.
+- Each time the micro counter overflows (reaches 999), we decrement the remaining delay count (4-bit).
+- We initialize the remaining count to delay + 1 because counting is for (delay+1)*1000 clocks.
+- We output the current remaining delay count on count.
+
+- When remaining delay reaches 0 and micro counter overflows, counting finishes, transition to DONE state.
+
+- DONE state asserts done output until ack input is asserted, then returns to SEARCH.
+
+This approach avoids complex division/multiplication, uses simple counters, and makes FSM transitions and output straightforward.
+
+All registers update on the posedge clock with synchronous reset.
+
+During counting, counting=1, done=0, and count outputs remaining delay.
+Outside counting, count is don't care (will drive zero for simplicity).
+
+This makes the design easier to understand, reliable, and synthesizable.

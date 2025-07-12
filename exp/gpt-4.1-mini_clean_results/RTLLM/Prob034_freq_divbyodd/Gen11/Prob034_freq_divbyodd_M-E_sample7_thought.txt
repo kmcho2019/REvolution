@@ -1,0 +1,9 @@
+To accurately divide the input clock frequency by an odd number using the specified two-counter approach, the design employs two separate counters: one incremented on the positive edge (cnt1) and one on the negative edge (cnt2) of the input clock. 
+
+Each counter counts from 0 up to NUM_DIV-1. When each counter reaches half of NUM_DIV (integer division), it toggles its respective divided clock (clk_div1 or clk_div2) and resets to zero. This ensures that clk_div1 toggles at the midpoint of the positive edge counts, and clk_div2 toggles at the midpoint of the negative edge counts.
+
+Finally, clk_div is obtained by OR-ing clk_div1 and clk_div2. This merges the two half-frequency clocks staggered on positive and negative edges, producing a clock divided by the odd NUM_DIV with a more balanced duty cycle.
+
+Reset initializes counters and divided clocks. The design strictly enforces an odd divisor via a runtime check. All counters and toggles are synchronous with the clock edges they observe, and asynchronous active-low reset is handled properly.
+
+This architecture fulfills the requirement to use two counters, two divided clocks on different clock edges, and combine them logically to generate the output clock divided by an odd number.

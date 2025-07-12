@@ -1,0 +1,7 @@
+To refactor the original code, I will replace the always block and reg with a purely combinational assign statement. This assign will directly compute y1_next based on the current state bits y and input w. This is simpler and makes the next-state logic explicit as a combinational expression. 
+
+Because the problem requires implementing only the next state logic for y[1], and output Y1 = y[1], the output Y1 remains the current y[1]. I will also add a separate output y1_next_out to explicitly expose the computed next-state y[1] bit, making the next-state logic visible externally for testing or further logic. If needed, this output can be removed or changed, but it clarifies the intended next state.
+
+The next-state logic expression follows directly from the state transition diagram and the encoding of each state (A=000 ... F=101) and their next states depending on w. Using a combinational assign statement with a casez and embedded conditions makes the code compact and easy to verify.
+
+This approach improves clarity, eliminates unnecessary reg and always block, and aligns the outputs explicitly with the required next-state logic.

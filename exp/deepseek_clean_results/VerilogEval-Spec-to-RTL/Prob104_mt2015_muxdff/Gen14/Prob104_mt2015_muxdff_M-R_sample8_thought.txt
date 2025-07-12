@@ -1,0 +1,14 @@
+The key insight is that the feedback logic needs to properly reflect the original full_module's behavior where:
+- For POS=2 (MSB): feedback = q[1] ^ q[2]
+- For POS=1 (middle): feedback = q[0]
+- For POS=0 (LSB): feedback = q[2]
+
+The issue in the original implementation was that for POS=0, it used q_in when it should have used Q (current state). To fix this while maintaining the same core idea, we'll:
+
+1. Keep the parameterized position approach
+2. For POS=0, use Q directly as feedback (since this flip-flop's current state represents q[2] when connected properly in full_module)
+3. Use continuous assignments for combinational logic
+4. Keep the flip-flop synchronous with clock
+5. Make the feedback selection more explicit with a case statement in an assign
+
+This maintains the hierarchical structure while correctly implementing the feedback paths.

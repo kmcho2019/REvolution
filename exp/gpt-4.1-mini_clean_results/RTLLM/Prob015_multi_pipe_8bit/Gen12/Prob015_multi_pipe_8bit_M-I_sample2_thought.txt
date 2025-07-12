@@ -1,0 +1,15 @@
+To improve PPA and timing of the original design, split the partial product addition into multiple pipeline stages using an adder tree approach. This reduces the large combinational critical path caused by summing all partial products in a single cycle. 
+
+Implementation details:
+1. Keep input sampling stage (stage 1).
+2. Generate partial products combinationally from registered inputs (stage 2).
+3. Use a balanced pipeline of adders over 3 pipeline stages:
+   - Stage 3: Add pairs of partial products to form 4 intermediate sums.
+   - Stage 4: Add pairs of intermediate sums to form 2 partial sums.
+   - Stage 5: Add the last 2 partial sums to produce the final product.
+4. Propagate mul_en_in through a 5-bit shift register to produce mul_en_out aligned with the final output.
+5. Register intermediate sums and final output in each pipeline stage to balance delay and reduce glitches.
+6. Reset registers on active-low reset.
+7. Output mul_out only when mul_en_out is asserted; otherwise zero.
+
+This pipelined adder tree approach improves max frequency by significantly reducing combinational addition depth per clock cycle, lowers glitching dynamic power, and balances pipeline latency and throughput. It incurs modest additional register overhead but greatly improves timing and power metrics.

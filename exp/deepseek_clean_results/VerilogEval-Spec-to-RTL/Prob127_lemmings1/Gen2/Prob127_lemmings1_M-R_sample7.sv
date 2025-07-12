@@ -1,0 +1,35 @@
+module TopModule (
+    input clk,
+    input areset,
+    input bump_left,
+    input bump_right,
+    output walk_left,
+    output walk_right
+);
+
+    // State encoding
+    parameter LEFT = 1'b0;
+    parameter RIGHT = 1'b1;
+    
+    reg state;
+    wire next_state;
+
+    // Next state logic (combinational)
+    assign next_state = (state == LEFT) ? 
+                       (bump_left ? RIGHT : LEFT) :
+                       (bump_right ? LEFT : RIGHT);
+
+    // State register with async reset
+    always @(posedge clk or posedge areset) begin
+        if (areset) begin
+            state <= LEFT;
+        end else begin
+            state <= next_state;
+        end
+    end
+
+    // Output logic remains the same
+    assign walk_left = (state == LEFT);
+    assign walk_right = (state == RIGHT);
+
+endmodule

@@ -1,0 +1,21 @@
+Here's a simplified approach with a more straightforward state machine:
+
+1. Pattern Detection:
+   - Use a 4-bit shift register to detect the 1101 pattern
+   - Only transition to SHIFT state when full pattern is matched
+
+2. State Machine:
+   - IDLE: Wait for pattern match
+   - SHIFT: Enable shifting for exactly 4 cycles (using a counter)
+   - COUNT: Wait for done_counting signal
+   - DONE: Assert done and wait for ack
+
+3. Output Control:
+   - shift_ena only during SHIFT state
+   - counting only during COUNT state
+   - done only during DONE state
+
+4. Simplifications:
+   - Remove unnecessary intermediate states
+   - Direct state transitions based on clear conditions
+   - Simple counter for shift cycles

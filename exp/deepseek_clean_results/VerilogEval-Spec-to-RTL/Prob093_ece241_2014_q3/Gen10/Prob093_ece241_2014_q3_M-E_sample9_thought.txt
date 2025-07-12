@@ -1,0 +1,22 @@
+Novel Approach: Implement each mux_in output by focusing on the specific patterns in each K-map column and using cascaded 2-to-1 multiplexers creatively:
+
+1. For mux_in[0] (ab=00):
+   - Output is 1 only when cd=10 (a=0,b=0,c=1,d=0)
+   - Implement as: select 0 when d=1, else select c when d=0
+
+2. For mux_in[1] (ab=01):
+   - Always 0 (no logic needed)
+
+3. For mux_in[2] (ab=11):
+   - Output is 0 only when cd=01
+   - Implement as: select d when c=1, else 1 (since cd=01 is only case where output is 0)
+
+4. For mux_in[3] (ab=10):
+   - Output is 0 only when cd=01
+   - Implement as: select ~d when c=0, else 1
+
+Key Innovations:
+1. Each output uses at most one 2-to-1 mux (except mux_in[0] which needs two)
+2. Directly implements the specific patterns from the K-map
+3. Uses cascaded muxes for mux_in[0] to precisely capture the single '1' case
+4. Total of 3 2-to-1 muxes used (same as before but with correct functionality)

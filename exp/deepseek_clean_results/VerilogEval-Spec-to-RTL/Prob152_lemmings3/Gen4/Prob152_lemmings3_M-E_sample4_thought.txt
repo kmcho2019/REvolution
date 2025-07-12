@@ -1,0 +1,13 @@
+Here's a novel approach using a direction flag and fewer states to optimize the design:
+
+1. Instead of separate states for left/right variants of falling and digging, we'll use a direction flag (dir) to track the walking direction.
+2. We'll reduce the state machine to just 4 states:
+   - WALK: Normal walking state (direction determined by dir)
+   - FALL: Falling state (direction preserved in dir)
+   - DIG: Digging state (direction preserved in dir)
+3. The direction flag (dir) will be updated only in WALK state when bumped.
+4. This reduces the number of states from 6 to 4 while maintaining the same functionality.
+5. Outputs are generated based on both state and direction flag.
+6. The priority logic (fall > dig > bump) is maintained in the state transitions.
+
+This approach reduces area and power while maintaining the same functionality, with potential timing improvements due to simpler state decoding.

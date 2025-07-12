@@ -1,0 +1,7 @@
+Optimize the population count logic for 3 bits by directly deriving minimal combinational logic expressions for the 2-bit output. The output can represent counts 0 to 3, which fits in 2 bits. 
+
+Let inputs be A, B, and C. The count bits can be derived as:
+- out[0] (LSB) = A XOR B XOR C (odd parity, indicating if count is odd)
+- out[1] (MSB) = (A & B) | (B & C) | (A & C) (majority function to detect counts 2 or 3)
+
+This eliminates the use of adders, reducing gate count and power, improving area and performance slightly, while maintaining correctness.

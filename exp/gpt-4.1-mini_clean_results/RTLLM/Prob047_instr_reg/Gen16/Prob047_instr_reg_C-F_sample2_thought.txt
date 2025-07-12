@@ -1,0 +1,15 @@
+Fuse the two solutions by maintaining two separate 8-bit registers (`ins_p1` and `ins_p2`) as originally specified, capturing instructions distinctly from each source based on `fetch`. This preserves clear separation of instructions from different sources, aiding debugging and potential future extension.
+
+Use a single always block synchronized on the rising clock and asynchronous active-low reset for clarity and synthesis friendliness. Update the relevant register based on the fetch signal; if `fetch` is `2'b01` load `ins_p1`, if `2'b10` load `ins_p2`; otherwise retain previous values.
+
+Derive outputs combinationally: `ins` and `ad1` always from `ins_p1` (instruction from source 1, register), and `ad2` always from `ins_p2` (instruction from source 2, RAM/ROM). This matches the original spec, simplifies output logic without needing to track the last fetch signal, and avoids glitches or combinational complexity on output multiplexing.
+
+This approach combines:
+
+- The clear state separation of Example 1's dual registers.
+- The clean and synchronous reset style of Example 2.
+- Avoids tracking last_fetch (Example 1 overhead) and conditional output multiplexing based on fetch (Example 2 ambiguity on outputs).
+- Facilitates easy extensions or separate pipeline stages if needed.
+- Keeps output decoding straightforward and stable across cycles, reducing hazards.
+
+This fusion offers improved readability, synthesis friendliness, and a faithful interpretation of the original problem statement, while maintaining efficient and minimal logic.

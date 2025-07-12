@@ -1,0 +1,7 @@
+To optimize the original design, we aim to simplify the combinational logic for indexing the shift register bits, eliminating the subtraction operation which adds delay and power. Since Q[0] corresponds to shift_reg[7] (MSB) and Q[7] to shift_reg[0] (LSB), instead of inverting the select index, we can reverse the shift register bits after shifting so that Q[0] aligns with shift_reg[0]. This way, the ABC input (as an index) can be used directly without inversion to select the correct bit.
+
+Concretely, shift in S at the MSB side (shift_reg[7]) shifting towards LSBs, but store the shifted data reversed in another wire to represent Q[0..7]. Then use the ABC input as a direct select index to access Z = Q[ABC].
+
+This removes subtraction from the critical path, reducing logic depth and power. The shift register still shifts on enable synchronously and the MUX logic is now a direct indexed selection with no inversion.
+
+This optimization maintains the same functionality while improving performance (timing and power) by simplifying combinational logic and slightly reducing area used by removing the subtraction circuit.

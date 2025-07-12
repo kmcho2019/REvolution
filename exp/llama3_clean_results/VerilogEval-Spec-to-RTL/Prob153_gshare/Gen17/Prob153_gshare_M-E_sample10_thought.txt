@@ -1,0 +1,14 @@
+To implement a novel architectural idea for the gshare branch predictor, we can consider using a hybrid approach that combines the benefits of both gshare and bimodal predictors. This can be achieved by using two separate tables: one for the gshare predictor and another for the bimodal predictor.
+
+The key steps to implement this idea are:
+1. **Dual-Table Architecture**: Design a dual-table architecture, where one table is used for the gshare predictor and the other for the bimodal predictor. The gshare table will store the branch history information, while the bimodal table will store the branch direction information.
+
+2. **Hybrid Prediction**: When a prediction is requested, use both tables to make a prediction. The gshare table will provide a prediction based on the branch history, while the bimodal table will provide a prediction based on the branch direction. The final prediction can be made by combining the results of both tables.
+
+3. **Training**: When training is requested, update both tables accordingly. The gshare table will be updated based on the branch history, while the bimodal table will be updated based on the branch direction.
+
+4. **Arbitration**: In cases where both 'train_valid' and 'predict_valid' are high in the same cycle, implement an arbitration mechanism to prioritize training over prediction.
+
+5. **Saturation Logic**: Implement correct saturation logic for the counters in both tables to ensure that they do not overflow or underflow.
+
+By using a dual-table architecture and hybrid prediction, we can create a more accurate and robust branch predictor that combines the benefits of both gshare and bimodal predictors.

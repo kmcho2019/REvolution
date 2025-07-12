@@ -1,0 +1,11 @@
+Fuse the clarity of separate combinational next-state logic from Example 1 with the explicit mutual exclusivity of shift and count enables from Example 2 to create a clean, power-efficient, and easy-to-optimize design.
+
+Specifically:
+- Use combinational logic to generate mutually exclusive enable signals: shift_en = shift_ena; count_en = count_ena & ~shift_ena, ensuring no ambiguous behavior when both inputs are high.
+- Use a combinational always block to compute next_q based on these mutually exclusive enables, clearly separating next-state logic.
+- Use a synchronous always block to update q from next_q.
+- This fusion retains the single next-state calculation for clarity and optimization while ensuring shift and count don't overlap, which aids power and potential synthesis optimizations.
+- Avoid unnecessary signals or redundant assignments to keep area minimal.
+- The resulting design balances performance, power, and area while improving readability and maintainability.
+
+This approach clearly isolates each operation, enforces mutual exclusion, and separates combinational and sequential logic, enabling synthesis tools to better optimize the circuit.

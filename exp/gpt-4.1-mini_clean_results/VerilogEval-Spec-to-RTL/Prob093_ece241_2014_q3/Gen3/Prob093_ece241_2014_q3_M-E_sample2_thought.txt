@@ -1,0 +1,51 @@
+To implement the given Karnaugh map using one 4-to-1 multiplexer with selectors {a,b} (not inputs to TopModule) and input signals c and d, we must produce the data inputs (mux_in[3:0]) for the 4-to-1 mux, each as a function of c and d only.
+
+The K-map is defined for outputs indexed by c,d, selected by a,b via the 4-to-1 mux, where:
+- mux_in[0] corresponds to ab=00 column
+- mux_in[1] corresponds to ab=01 column
+- mux_in[2] corresponds to ab=11 column
+- mux_in[3] corresponds to ab=10 column
+
+We need to implement the K-map output for each ab column as a function of cd = (c,d):
+
+From the table:
+
+| c d | ab=00 | ab=01 | ab=11 | ab=10 |
+|-----|--------|--------|--------|--------|
+| 00  | 0      | 0      | 0      | 1      |
+| 01  | 1      | 0      | 0      | 0      |
+| 11  | 1      | 0      | 1      | 1      |
+| 10  | 1      | 0      | 0      | 1      |
+
+Let’s express each mux_in[i] with minimal 2-to-1 multiplexers only:
+
+1. mux_in[0] (ab=00): outputs 0,1,1,1 for cd=00,01,11,10  
+   Observing, mux_in[0] is 0 only at cd=00, otherwise 1.  
+   Implement as mux with selector c: if c=0, output d; else 1.  
+   For c=0: d=0 -> 0, d=1 ->1; matches cd=00->0, 01->1.  
+   For c=1: always 1.  
+   This matches perfectly.
+
+2. mux_in[1] (ab=01): always 0, so constant zero.
+
+3. mux_in[2] (ab=11): outputs 0,0,1,0 for cd=00,01,11,10  
+   This can be implemented as mux with selector d: if d=1 output c; else 0.  
+   For d=0: 0  
+   For d=1: output c (0 or 1), matches cd=11=1 only when c=1,d=1.
+
+4. mux_in[3] (ab=10): outputs 1,0,1,1 for cd=00,01,11,10  
+   It is 1 for cd=00,11,10 and 0 for cd=01.  
+   We can implement as a mux with selector d: if d=0 output 1; else c.  
+   For d=0: output 1  
+   For d=1: output c  
+   Matches perfectly.
+
+Each 2-to-1 mux can be represented by the conditional operator in Verilog: mux_out = sel ? input1 : input0.
+
+Thus, by computing mux_in[0..3] using only conditional operators (equivalent to 2-to-1 muxes), we meet the problem requirements with minimal multiplexers.
+
+This approach satisfies:
+- Only one 4-to-1 mux is used externally with selector {a,b}.
+- mux_in outputs depend only on inputs c and d.
+- No other logic gates are used.
+- Minimal number of 2-to-1 multiplexers represented by conditional assignments.

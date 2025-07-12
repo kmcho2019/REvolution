@@ -1,0 +1,7 @@
+The original design is already efficient with minimal logic and low toggle rate due to conditional register updates. To further optimize PPA, I will incorporate a clock enable (clk_en) signal derived from the load or ena inputs, allowing synthesis tools to infer clock gating more easily if supported. This can reduce dynamic power by avoiding clock toggling on the register when no operation occurs.
+
+Additionally, the shift operation can be implemented using a right shift operator for clarity and potential optimization by synthesis tools, as it's well supported for small vectors. Also, explicitly defining the priority using if-else remains best.
+
+For asynchronous reset, since it triggers on a positive edge of areset, the sensitivity list and code are already appropriate.
+
+This minor modification potentially reduces power by enabling clock gating optimizations, slightly improves code clarity, and keeps performance and area optimal given the problem constraints.

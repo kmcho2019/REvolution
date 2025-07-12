@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. State Encoding Optimization:
+   - Combine the three state registers (walking_left, is_falling, is_digging) into a more compact 2-bit state encoding
+   - Use one-hot encoding for better timing and simpler output logic
+
+2. Critical Path Reduction:
+   - Parallelize the condition checks instead of nested if-else
+   - Use a next_state variable to compute all transitions simultaneously
+   - Apply priority encoding only in the final state selection
+
+3. Power Optimization:
+   - Minimize state transitions by only updating when necessary
+   - Use clock gating techniques implicitly by careful state encoding
+
+4. Area Optimization:
+   - Share common logic between similar conditions
+   - Simplify output logic by leveraging the one-hot encoding
+
+The improved solution will use:
+- 4 states encoded as one-hot: WALK_LEFT, WALK_RIGHT, FALLING, DIGGING
+- Parallel condition evaluation
+- Optimized output logic

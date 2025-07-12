@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Register the rollover signals to break the critical path
+   - Pre-compute hour BCD values to eliminate combinational logic in output path
+   - Add pipeline registers for rollover conditions
+
+2. Power Optimization:
+   - Gate all BCD conversion logic with 'ena' to prevent unnecessary switching
+   - Use clock gating for infrequently changing signals (PM indicator)
+   - Minimize redundant comparisons by consolidating conditions
+
+3. Area Optimization:
+   - Share arithmetic logic between seconds and minutes counters
+   - Replace subtractor in hour BCD conversion with lookup table
+   - Simplify hour counter logic by using direct encoding
+
+Key Changes:
+- Registered rollover signals
+- Pre-computed hour BCD values
+- Consolidated counter increment logic
+- Clock-gated PM updates
+- Shared arithmetic units

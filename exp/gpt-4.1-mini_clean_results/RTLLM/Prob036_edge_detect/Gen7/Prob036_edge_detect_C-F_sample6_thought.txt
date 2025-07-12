@@ -1,0 +1,9 @@
+Fuse the simplicity and minimal register usage from Example 1 with the clarity and explicit state tracking of Example 2 by implementing a two-stage register for the input signal 'a'. Then, register the outputs 'rise' and 'down' signals inside the sequential logic, making them one-cycle pulses synchronized to the clock with no glitches. This addresses the slight timing and glitch concerns in Example 2 while maintaining low area and power by using minimal flip-flops and avoiding combinational outputs directly from input and register signals.
+
+Specifically, use a two-bit shift register to hold previous and current samples of 'a' and detect edges via combinational logic inside the always block. Then register the edge flags so outputs are stable 1-cycle pulses following the edge detection clock cycle, meeting the requirement that rise and down remain high until the next edge.
+
+This design benefits from:
+- Clear, explicit tracking of previous and current inputs.
+- Outputs registered to avoid glitches and improve timing.
+- Minimal additional flip-flop overhead (just the output registers).
+- Output signals asserted for exactly one clock cycle synchronized to clk after the detected edge.

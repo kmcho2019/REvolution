@@ -1,0 +1,9 @@
+Implement the 32-bit multiplying accumulator with a full 64-bit accumulation register internally to avoid overflow and loss of precision in the accumulation process. Each cycle, multiply inputs a and b to produce a 64-bit product, then add this product to the 64-bit accumulator register. The output c is assigned as the lower 32 bits of the accumulator register, effectively truncating the accumulated value on output.
+
+The reset is synchronous and clears the entire 64-bit accumulator to zero. Multiplication and accumulation occur on the positive clock edge. The output c is a registered output updated every clock cycle, reflecting the truncated accumulator value.
+
+This approach provides precise accumulation with no saturation or overflow in the accumulation itself, and preserves the complete product sum internally while exposing a 32-bit truncated output, suitable for applications requiring accurate summation but a limited output width.
+
+It differs from the previous saturated 32-bit accumulator by maintaining a full 64-bit internal state, which removes saturation or wrap-around issues and maximizes numerical accuracy internally.
+
+This is a straightforward architecture using a 64-bit accumulator register, simple control, and direct truncation on output, which should be easily synthesizable on modern FPGAs or ASICs with 64-bit wide registers.

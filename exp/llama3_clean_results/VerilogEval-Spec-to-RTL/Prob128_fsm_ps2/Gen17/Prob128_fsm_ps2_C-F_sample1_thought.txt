@@ -1,0 +1,11 @@
+To create a superior solution, we will analyze the strengths of both examples and combine them. The provided examples already implement a finite state machine to identify message boundaries in a PS/2 mouse protocol byte stream. Both examples use a simple state machine with three states (SEARCH, BYTE1, BYTE2) and introduce a separate signal 'msg_received' to indicate when a message is fully received. 
+
+Our fusion strategy will involve:
+1. Adopting the simpler state machine from both examples to minimize area and power consumption.
+2. Implementing the 'msg_received' signal to ensure the correct timing of the 'done' signal.
+3. Simplifying the combinational logic to reduce the number of operations and minimize glitches.
+4. Ensuring that the state machine only changes state when necessary to reduce unnecessary transitions.
+5. Applying clock gating techniques to reduce power consumption by only changing the 'done' output when the FSM is in the BYTE2 state.
+6. Optimizing the state encoding to reduce the number of bits required to represent each state.
+
+By combining these strategies, we aim to create a solution that balances functional correctness with optimized PPA metrics.

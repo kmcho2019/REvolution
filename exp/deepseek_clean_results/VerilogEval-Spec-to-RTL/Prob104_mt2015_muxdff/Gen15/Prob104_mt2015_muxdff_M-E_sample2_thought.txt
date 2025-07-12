@@ -1,0 +1,16 @@
+Here's a novel approach using a shift register with conditional feedback. The key idea is to implement each bit cell as a self-contained unit that:
+1. Takes only the necessary adjacent bits for its operation
+2. Uses a parameter to determine its role in the sequence
+3. Implements both load and shift operations in a compact way
+
+For position 0 (LSB), it needs q[1] and q[2] for XOR feedback
+For position 1, it just needs q[0]
+For position 2 (MSB), it just needs its own value
+
+Each instance will have:
+- Position parameter (0,1,2)
+- Input from right neighbor (for positions 1,2)
+- Input from two positions right (for position 0)
+- Standard clk, L, r_in, Q ports
+
+This creates a daisy-chained structure where each cell only knows about the bits it needs.

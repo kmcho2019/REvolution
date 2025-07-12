@@ -1,0 +1,10 @@
+Fuse the strengths of both examples by implementing a clean, power-efficient accumulator with clock enable gating and minimal toggling:
+
+- Use valid_in as a clock enable to update accumulator and count only when new data arrives, reducing unnecessary toggling and dynamic power.
+- Compute the next accumulator sum only when valid_in is high, preventing continuous combinational activity.
+- On the 4th valid input (count==3), output the sum (accumulator + data_in) and assert valid_out for one cycle.
+- Immediately reset accumulator and count after outputting the accumulated sum to prepare for the next batch.
+- Keep non-blocking assignments for proper sequential behavior.
+- Make data_out update only when four inputs have been accumulated to avoid glitches.
+- Maintain synchronous active-low reset for reliability and clean initialization.
+- This approach balances clarity, minimal power consumption by gating updates, minimal logic, and optimized timing by limiting combinational computation to valid_in cycles only.

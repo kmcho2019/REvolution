@@ -1,0 +1,9 @@
+To implement the unsigned 16-bit multiplier module (multi_16bit), we will use a Finite State Machine (FSM) that utilizes shift and accumulate operations to generate the product output. The module has several control signals such as clock (clk), reset (rst_n), and start (start), along with a completion flag (done) indicating the completion of the multiplication operation.
+
+We'll start by defining the module inputs, outputs, and internal registers. Then, we'll implement the shift count register (i) update logic, multiplication completion flag generation, and the shift and accumulate operation. Finally, we'll assign the product output (yout) based on the product register (yout_r).
+
+The shift count register (i) is updated on every positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n). The multiplication completion flag (done_r) is set to 1 when the shift count register (i) reaches 16 and reset to 0 when it reaches 17.
+
+The shift and accumulate operation is performed on every positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n). If the reset signal (rst_n) is low, the multiplicand register (areg), multiplier register (breg), and product register (yout_r) are reset to 0. If the start signal is active (start), the module starts the multiplication operation.
+
+We will use always blocks in Verilog to describe the combinational and sequential logic.

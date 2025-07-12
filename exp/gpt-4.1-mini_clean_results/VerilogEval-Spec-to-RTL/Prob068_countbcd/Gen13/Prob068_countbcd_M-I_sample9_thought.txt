@@ -1,0 +1,10 @@
+To optimize the existing BCD counter for better performance and power:
+
+1. Flatten the increment and carry logic to minimize combinational path depth within the clock cycle by computing all carries upfront in combinational logic.
+2. Use a single always block for synchronous updates, but precompute the next state of each digit with simple combinational logic outside the always block.
+3. This reduces nested if-else complexity and the critical path associated with cascading increments.
+4. The enable signals are updated consistently based on carry-outs from each digit rollover.
+5. The synchronous reset remains intact.
+6. Although clock gating could further reduce power, it is not introduced here due to interface simplicity and synthesis friendliness.
+
+This approach balances clarity and improved timing by minimizing sequential carry propagation delay within one clock edge.

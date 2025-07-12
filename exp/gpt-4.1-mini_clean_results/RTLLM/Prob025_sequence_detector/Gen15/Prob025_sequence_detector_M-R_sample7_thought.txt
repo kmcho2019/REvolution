@@ -1,0 +1,7 @@
+I will refactor the sequence detector FSM as a binary-encoded Moore machine with an enumerated type for state encoding. This approach reduces flip-flop count (3 bits instead of 5), simplifies next-state logic, and uses a standard `case` statement on the current state for clarity and tool friendliness.
+
+The output `sequence_detected` is derived directly from the current state (S4), ensuring stable output and minimal glitches. The reset remains active-low synchronous for consistency.
+
+The next-state logic will be implemented combinationally with `always @(*)`, and the state register will update on the clock edge. Output is registered on the clock for timing stability.
+
+This refactor improves area and power by using fewer flip-flops and cleaner logic, potentially enhancing timing by simplifying the combinational logic path. It also adheres to standard FSM coding practices for easier maintenance and synthesis tool optimization.

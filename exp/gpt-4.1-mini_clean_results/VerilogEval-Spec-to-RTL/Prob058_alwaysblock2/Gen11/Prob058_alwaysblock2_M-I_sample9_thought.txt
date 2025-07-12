@@ -1,0 +1,7 @@
+The original code is already minimal and clear, with direct XOR implementations in assign and always blocks. To further optimize for power and area, we can share a single XOR gate's result internally to drive both combinational outputs instead of duplicating the XOR computation twice. This reduces the number of XOR gates synthesized, potentially saving area and power by reusing combinational logic. The clocked flip-flop remains unchanged, capturing the XOR result at the clock edge.
+
+To do this, create an internal wire holding a ^ b and assign both out_assign and out_always_comb from that wire. This eliminates one XOR gate instance in synthesis and keeps the outputs logically identical.
+
+No change is needed for the sequential block, as the flip-flop inherently adds latency.
+
+This approach balances PPA improvements (mainly area and power) by reducing gate count while maintaining timing and code clarity.

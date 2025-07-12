@@ -1,0 +1,19 @@
+I will directly encode the function f as a combinational logic expression derived from the Karnaugh map. Instead of using LUT-style indexing, I will express f in terms of the input bits x[3], x[2], x[1], and x[0] by identifying the minterms where f = 1 or assigning don't-cares as convenient to simplify the logic.
+
+From the Karnaugh map, the minterms where f=1 are at:
+- Row 11 (x[3:2] = 11): col 00 (00), col 01 (01)
+- Row 11: (x[3:2]=11), col=00 or 01 means x[3]=1, x[2]=1 and x[1:0]=00 or 01
+- Row 01 (x[3:2]=01): col 11 (11)
+- Row 10 (x[3:2]=10): col 00 (00), col 01 (01)
+
+Don't-cares can be chosen as 0 to keep expression minimal.
+
+Using these minterms, the logic reduces to:
+
+f = (x[3] & x[2] & ~x[1]) |
+    (~x[3] & x[2] & x[1] & x[0]) |
+    (x[3] & ~x[2] & ~x[1])
+
+This matches the Karnaugh map ones without needing any LUT or complex indexing.
+
+This approach simplifies the code significantly with straightforward combinational logic.

@@ -1,0 +1,14 @@
+Improvement strategy for better PPA:
+1. The current solution has redundant equality comparisons (x == y) which can be optimized.
+2. We can use a single register to store the previous equality state, reducing switching activity.
+3. By making the design synchronous (clocked), we can better control power consumption and timing.
+4. The improved version will:
+   - Use a clock to sample inputs only when needed
+   - Store previous equality state in a flip-flop
+   - Perform the comparison only once per cycle
+   - Reduce unnecessary combinational logic toggling
+
+This should result in:
+- Lower power consumption due to reduced switching activity
+- Potentially better timing as the critical path is simplified
+- Slightly increased area due to the flip-flop, but better overall PPA

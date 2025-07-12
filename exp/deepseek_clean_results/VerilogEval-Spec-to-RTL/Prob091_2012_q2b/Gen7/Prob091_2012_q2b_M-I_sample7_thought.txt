@@ -1,0 +1,14 @@
+To further optimize the design for PPA (Power, Performance, Area), we can consider the following improvements:
+
+1. **Power Optimization**:
+   - The current Y3 logic (~w & ~(y[0] | y[3])) can be rewritten using De Morgan's laws to potentially reduce switching activity.
+   - Instead of computing ~(y[0] | y[3]), we can use positive logic (y[1] | y[2] | y[4] | y[5]) since in one-hot encoding, exactly one bit is high.
+
+2. **Area Optimization**:
+   - The rewritten Y3 logic may use fewer gates when implemented in standard cells.
+   - We can verify if the synthesis tool can better optimize positive logic versus negative logic.
+
+3. **Performance**:
+   - The timing is already excellent (tns/wns = 0), so we maintain the same minimal logic depth.
+
+The key insight is that in one-hot encoding, checking for "not A and not D" is equivalent to checking if any of the other state bits (B, C, E, F) are active. This positive logic formulation might be more efficient in some technology libraries.

@@ -1,0 +1,25 @@
+To optimize the solution further for better PPA (Power, Performance, Area), I'll implement these improvements:
+
+1. Power Optimization:
+   - Eliminate the intermediate wire 'c_case' since it's only used once
+   - Combine operations to reduce switching activity
+
+2. Performance Optimization:
+   - Flatten the logic to a single level where possible
+   - Reduce gate count in critical path
+
+3. Area Optimization:
+   - Merge the OR and NOT operations into a single logical expression
+   - Remove redundant mux structure by observing that when a=1, output is always 1 regardless of other inputs
+
+Key Insights:
+- The original solution already had good timing (0ns)
+- We can maintain the same functionality while reducing gate count
+- The 'a' signal dominates the output, so we can structure the logic to check it first
+
+New Approach:
+1. First check if a=1 (output is immediately 1)
+2. Otherwise, implement the simplified c-dependent logic:
+   - When c=1: output is ~b (from the original a|~b, but since a=0 here)
+   - When c=0: output is 0 (from original a, but a=0 here)
+3. This reduces the logic to just 2 gates (OR + NOT) in the critical path

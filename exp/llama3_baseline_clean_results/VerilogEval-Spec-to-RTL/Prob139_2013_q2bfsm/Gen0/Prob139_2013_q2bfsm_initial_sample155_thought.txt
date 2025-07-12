@@ -1,0 +1,11 @@
+To implement the specified finite state machine, we'll break it down into states and transitions based on the input and output requirements. 
+
+1. The initial state (A) will be maintained as long as `resetn` is low. 
+2. When `resetn` goes high, the FSM transitions to state B, where `f` is set to 1 for one clock cycle.
+3. From state B, the FSM moves to state C, where it starts monitoring `x` for the sequence 1, 0, 1 over three consecutive clock cycles.
+4. Upon detecting the correct sequence on `x`, the FSM transitions to state D, setting `g` to 1.
+5. In state D, the FSM monitors `y`. If `y` becomes 1 within two clock cycles, the FSM remains in state D with `g` = 1. If `y` does not become 1 within two cycles, it transitions to state E, setting `g` to 0.
+
+This can be implemented using a state machine with the mentioned states (A, B, C, D, E) and transitions based on the inputs `x`, `y`, and `resetn`.
+
+The `f` and `g` outputs will be updated based on the current state and input values.

@@ -1,0 +1,13 @@
+Refactor the implementation to explicitly show the use of 2-to-1 multiplexers controlled by c or d using nested conditional (ternary) operators, which clearly represent multiplexers without inferring logic gates like AND or OR. This aligns better with the problem constraints.
+
+Specifically:
+
+- For each mux_in bit, replace expressions like `c ? 1 : d` (which is c + d) with a mux form: select input based on c or d.
+- For mux_in[0]: originally c OR d, implement as a mux controlled by c: if c=0, output d else output 1.
+- For mux_in[1]: constant 0.
+- For mux_in[2]: c AND d implemented as a mux controlled by c: if c=1 output d else 0.
+- For mux_in[3]: c OR ~d implemented as mux controlled by c: if c=1 output 1 else ~d.
+
+Use only conditional operators representing multiplexers, no direct AND or OR gates.
+
+This explicit mux-based implementation avoids any ambiguity, ensuring the synthesis uses only multiplexers and constants as requested.

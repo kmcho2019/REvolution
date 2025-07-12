@@ -1,0 +1,22 @@
+Refactored approach with key improvements:
+
+1. Simplified State Machine:
+   - Use a single bit state (prev_a) to track the previous value of 'a'
+   - Eliminate the 2-bit state machine complexity while maintaining functionality
+
+2. Output Logic:
+   - Use continuous assignments for p and q where possible
+   - Make output generation more explicit and aligned with waveform
+
+3. Timing Fixes:
+   - Ensure outputs only change on positive clock edges
+   - Remove negedge triggered logic to avoid race conditions
+
+4. Initialization:
+   - Properly initialize all registers to 0
+   - Remove x states to match waveform behavior
+
+5. Core Logic:
+   - p becomes high when current 'a' is high and previous 'a' was low (edge detection)
+   - q remembers if p was ever high for a full cycle
+   - q resets when 'a' is high during low clock phase

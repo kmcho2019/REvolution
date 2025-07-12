@@ -1,0 +1,13 @@
+To correctly implement a 3.5x fractional frequency divider:
+1. Maintain the 7-cycle counter (0-6) as the base for division
+2. Generate two separate clock phases with proper non-overlapping periods:
+   - Phase A: High for 3.5 cycles (0 to falling edge of 3)
+   - Phase B: High for 3.5 cycles (3.5 to falling edge of 7)
+3. Use double-edge triggering to create the half-cycle phase shift:
+   - Sample the counter on both clock edges
+   - Generate phase-shifted versions with proper alignment
+4. Combine the phases with OR logic to create the final output:
+   - Ensures continuous coverage of the divided clock period
+   - Maintains proper duty cycle balance
+
+This approach directly implements the problem's requirements while fixing the phase generation and combination issues from the previous solution.

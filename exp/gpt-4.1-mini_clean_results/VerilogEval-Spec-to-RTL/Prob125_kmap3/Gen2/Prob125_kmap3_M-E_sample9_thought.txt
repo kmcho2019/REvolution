@@ -1,0 +1,63 @@
+To provide a novel solution, let's explore a different approach by implementing the Karnaugh map directly using conditional logic reflecting the map structure. Instead of relying on algebraic simplification, we can write the output based on selected minterms.
+
+Analyzing the K-map:
+
+- When (c,d) = 00 and (a,b) = 10 or 11, out=1; also for (a,b)=01, out=d (don't-care), we can treat them as zero or one.
+
+- When (c,d) = 11 or 10 and (a,b) = 01, 10, 11, out=1
+
+- At other positions, out=0 or don't-care
+
+Let's choose to set don't-care terms to 1 where it simplifies the expression.
+
+With that, the output is 1 for these combinations of (a,b,c,d):
+
+- c=0,d=0 and (a,b)=10 or 11 => c=0,d=0,a=1,b=0 or b=1
+
+- c=1,d=1 or d=0 and (a,b) in 01,10,11
+
+Thus, the logic can be written as:
+
+out = (~c & ~d & a) | (c & (b | a))
+
+But since d is don't-care, let's integrate it as a selector only where needed.
+
+We can implement a 4-to-1 MUX with select lines c and d selecting the output for the corresponding (a,b) input.
+
+Specifically:
+
+- For (c,d)=00 => out = a & ~b (from map: 01=don't care, 00=0, 10=1, 11=1, so if a=1 and b=0 or 1, output is 1)
+
+- For (c,d)=01 => out=0 (from map row 01: mostly 0)
+
+- For (c,d)=11 => out=1 if (a,b) in 01,10,11, else 0; So if (a=1 or b=1), out=1
+
+- For (c,d)=10 => out=1 if (a,b) in 01,10,11, else 0; same as above
+
+This leads to the logic:
+
+out = (~c & ~d & a & ~b) | (c & (a | b)) | (~c & d & 0) | (c & d & (a | b))
+
+Since the map for (c,d)=01 is zero, no need to add logic for that.
+
+The expression simplifies to:
+
+out = (~c & ~d & a & ~b) | (c & (a | b))
+
+To implement this, we will use AND, OR, and NOT gates reflecting the logic directly.
+
+This is a different architectural approach: implementing minterms directly from K-map interpretation rather than algebraic minimal expression.
+
+This approach:
+
+- Handles don't-care d explicitly as a control signal.
+
+- Reflects map rows as conditions.
+
+- Could be useful if d control is used in further logic expansions.
+
+- Provides an alternative way to map logic.
+
+Hence, the module implements the logic:
+
+out = (~c & ~d & a & ~b) | (c & (a | b))

@@ -1,0 +1,14 @@
+Fuse the clarity and explicit next-state logic from Example 1 with the robust synchronous enable approach avoiding gated clocks from Example 2. Specifically, keep the combinational logic for the next count value using the optimized bitwise terminal count detection from Example 1 for efficient wrap-around detection, but perform all register updates on the positive edge of the raw clock with a synchronous active-low reset and a valid_count enable signal inside the sequential block.
+
+This eliminates the problematic clock gating from Example 2, improving timing and reliability, while retaining low switching activity by explicitly holding the output when valid_count is low, reducing unnecessary toggling and saving power.
+
+Thus, the design:
+
+- Uses combinational logic for next count based on enable and terminal count detection.
+- Uses synchronous active-low reset and clock.
+- Uses non-blocking assignments.
+- Keeps the count stable when valid_count is low.
+- Uses the minimal bitwise logic for terminal count detection.
+- Avoids glitches or complexity from clock gating.
+  
+This fusion balances performance, power, and area efficiently while maintaining clear, synthesizable, and robust RTL suitable for high-quality ASIC/FPGA implementations.

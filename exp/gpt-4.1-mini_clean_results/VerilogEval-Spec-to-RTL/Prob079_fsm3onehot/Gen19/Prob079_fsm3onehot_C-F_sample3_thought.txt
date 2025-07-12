@@ -1,0 +1,10 @@
+To create a superior solution, I will fuse the clarity and modular decoding of the state bits from both examples with the logic factoring for next_state signals to minimize redundant terms. Specifically, I keep the explicit wires A, B, C, D for readability and direct one-hot decoding. For the next_state logic, I factor terms by combining states with shared transitions and common input conditions, resulting in fewer gates and simpler logic expressions:
+
+- next_state[0] (A): from state A or C when in=0 → (A | C) & ~in
+- next_state[1] (B): from states A, B, or D when in=1 → (A | B | D) & in
+- next_state[2] (C): from states B or D when in=0 → (B | D) & ~in
+- next_state[3] (D): from state C when in=1 → C & in
+
+Output remains simply D, as only state D outputs 1.
+
+This fusion improves clarity, reduces gate count, minimizes switching, and yields a well-structured, easily synthesizable combinational FSM logic block.

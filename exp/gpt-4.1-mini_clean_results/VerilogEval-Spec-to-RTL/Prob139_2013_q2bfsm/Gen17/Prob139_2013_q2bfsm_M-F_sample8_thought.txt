@@ -1,0 +1,21 @@
+Fix the FSM by separating the current state and next state usage cleanly:
+
+- Update outputs `f` and `g` and registers (`x_shift`, `y_count`) based on the current state (after the state register update).
+- Update `x_shift` on the rising clock edge using the current state to decide if shifting should occur.
+- Update `y_count` only in state E.
+- Assign outputs `f` and `g` in a clocked block based on the updated current state after state transition.
+- Keep synchronous active-low reset as is.
+- Update next state combinationally using the current state and registers.
+  
+This alignment ensures outputs reflect the current state, avoiding early or late output changes, matching the timing described in the problem.
+
+Specifically:
+- After reset is released, FSM goes from A to B; on B `f=1` for one cycle.
+- Then to C, shift in `x` each cycle and detect `101`.
+- When detected, go to D; `g=1` for one cycle.
+- Then E, monitor `y` for 2 cycles via a 2-bit counter.
+- If `y=1` within 2 cycles, go to F (`g=1` permanently).
+- Else after 2 cycles go to G (`g=0` permanently).
+- Hold in F or G until reset.
+
+This avoids using `next_state` in sequential blocks, fixing timing errors.

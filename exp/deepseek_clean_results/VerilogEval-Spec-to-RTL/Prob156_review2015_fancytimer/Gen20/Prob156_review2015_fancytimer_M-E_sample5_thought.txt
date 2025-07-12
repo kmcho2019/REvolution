@@ -1,0 +1,27 @@
+Here's a novel architectural approach using a shift register with parallel load for pattern detection and delay capture, combined with a down-counter for precise timing:
+
+1. **Parallel Pattern Detection**:
+   - Use a 4-bit shift register that continuously monitors the data input
+   - Implement pattern matching in parallel rather than serial comparison
+   - This allows immediate detection of the 1101 sequence without additional state tracking
+
+2. **Integrated Delay Capture**:
+   - Upon pattern detection, repurpose the same shift register to capture the next 4 bits
+   - This eliminates the need for separate registers and reduces hardware
+
+3. **Precise Timing with Down-Counter**:
+   - Use a single 14-bit down-counter (since max count is 15*1000=15000 which fits in 14 bits)
+   - Preload counter with (delay+1)*1000 and count down to zero
+   - This simplifies the counting logic compared to phase-based approaches
+
+4. **Smart State Machine**:
+   - Simplified to just 4 states with clear transitions
+   - Eliminates intermediate counters by leveraging the main down-counter
+   - Uses the counter's natural zero detection for state transitions
+
+5. **Output Generation**:
+   - Derive count output directly from the upper bits of the down-counter
+   - Generate counting and done signals based purely on state
+   - This makes the outputs more predictable and easier to verify
+
+The architecture reduces hardware complexity while maintaining precise timing and clear state transitions.

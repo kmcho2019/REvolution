@@ -1,0 +1,11 @@
+To simplify the timer module while maintaining functionality, we can:
+1. Reduce the number of states by combining pattern detection and delay shifting
+2. Use a single counter for both the 1000-cycle intervals and the overall countdown
+3. Eliminate redundant registers by reusing the delay register as the countdown value
+4. Simplify output logic by directly assigning based on current state
+
+Key simplifications:
+- Merge IDLE and SHIFT_DELAY states into a single DETECT state
+- Use delay_reg directly for countdown instead of separate count_value
+- Simplify cycle counting by resetting when reaching 999
+- Make outputs directly dependent on state

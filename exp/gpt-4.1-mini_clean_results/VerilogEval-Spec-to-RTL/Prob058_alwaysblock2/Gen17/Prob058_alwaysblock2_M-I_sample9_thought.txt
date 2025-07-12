@@ -1,0 +1,7 @@
+To optimize the design for better PPA while maintaining clarity and distinct implementation styles, I will remove the structural XOR gate instantiation and replace it with a direct assign statement for out_assign. This eliminates the extra module boundary and wiring overhead, reducing area and potentially improving timing.
+
+For out_always_comb, I will keep the combinational always block using direct XOR as it is clean and concise, ensuring synthesis of minimal logic.
+
+For out_always_ff, I will add a clock enable signal that disables the register update when inputs `a` and `b` have not changed, reducing unnecessary toggling and lowering dynamic power without affecting functionality.
+
+These changes keep three distinct implementations (assign, combinational always, and sequential always with register), improve area by removing one module, and reduce power by clock gating the flip-flop implicitly. Performance remains optimal due to simple logic and controlled register toggling.

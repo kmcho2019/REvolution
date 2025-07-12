@@ -1,0 +1,7 @@
+The original design uses an extra Splitter8 module to split the 16-bit input into two 8-bit outputs, promoting modularity but potentially introducing slight area and power overhead due to module hierarchy.
+
+To optimize power, performance, and area (PPA), I will eliminate the intermediate Splitter8 module and directly implement the slicing within TopModule. This flattening removes unnecessary hierarchy, which synthesis tools may not always fully optimize away, leading to marginally lower area and power.
+
+The direct slicing remains purely combinational and simple, so timing and power remain minimal. This approach is optimal in code size and likely results in slightly better PPA metrics without sacrificing readability or functionality.
+
+Thus, the improvement is a flattened, single-module design with direct bit slicing.

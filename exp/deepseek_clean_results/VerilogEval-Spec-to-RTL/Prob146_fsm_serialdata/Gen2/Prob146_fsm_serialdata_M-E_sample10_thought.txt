@@ -1,0 +1,19 @@
+Here's a novel architectural approach that improves PPA metrics:
+
+1. **Parallel Processing with Early Stop Bit Detection**:
+   - Instead of using a shift register, we'll use parallel registers to capture bits as they arrive, reducing the critical path.
+   - Implement early stop bit detection to minimize the time spent in error states.
+
+2. **Optimized State Encoding**:
+   - Use Gray coding for state transitions to minimize switching power and improve timing.
+   - Combine RECEIVE and STOP states to reduce state transitions.
+
+3. **Power Optimization**:
+   - Use clock gating for the output registers when not in use.
+   - Implement a data-valid signal to reduce unnecessary toggling of 'done'.
+
+4. **Area Reduction**:
+   - Eliminate the separate ERROR state by handling invalid stop bits within the main state machine.
+   - Use a 3-bit down counter with early termination detection.
+
+The key innovation is the parallel bit capture and early stop bit checking, which reduces both latency and power consumption while maintaining the same functionality.

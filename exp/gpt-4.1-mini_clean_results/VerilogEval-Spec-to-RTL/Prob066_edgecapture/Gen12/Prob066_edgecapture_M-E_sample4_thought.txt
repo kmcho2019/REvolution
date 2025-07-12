@@ -1,0 +1,5 @@
+Instead of storing the entire previous input, use a 32-bit register to hold the detected falling edges directly. On each clock cycle, compare the current input bits with the registered stored input bits to find falling edges (bits going from 1 to 0). When such a transition occurs, set the corresponding bit in an output register latch that keeps the history of all detected falling edges. This latch remains set until reset. Then update the stored input register with the current input for next cycle comparison.
+
+This approach uses two registers: one to hold the previous input (for edge detection) and one to hold the captured falling edges (output). By updating the captured bits only when a falling edge is detected, and keeping them latched otherwise, we cleanly separate detection and capture. This avoids combinational logic directly driving output and eases timing by synchronously updating registers.
+
+The synchronous reset clears both registers, ensuring no captured bits after reset. The use of two registers makes it straightforward and robust without complex combinational logic paths.

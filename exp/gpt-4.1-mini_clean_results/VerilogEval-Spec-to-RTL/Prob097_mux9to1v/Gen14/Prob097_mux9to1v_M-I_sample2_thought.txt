@@ -1,0 +1,11 @@
+To improve the PPA of the 9-to-1 multiplexer, I will implement a hierarchical 2:1 mux tree instead of a single flat case statement. This approach breaks down the large 9-input mux into multiple stages of smaller 2:1 muxes, reducing the critical path and overall area. Hierarchical muxing generally reduces switching activity and can lead to lower power consumption as well.
+
+- First stage: mux pairs of inputs with sel[0] as control, producing 5 intermediate 16-bit signals.
+- Second stage: mux pairs of outputs from first stage with sel[1], producing 3 signals.
+- Third stage: mux pairs of outputs from second stage with sel[2], producing 2 signals.
+- Fourth stage: mux the last two signals with sel[3] for final selection.
+- Since only 9 inputs are valid and sel ranges 0-15, for sel > 8 output is 16'hFFFF.
+- To implement this, inputs 9-15 map to default output 16'hFFFF.
+- This structure leads to balanced mux trees with minimal fan-in, better timing, and smaller area.
+- Use continuous assignments for combinational muxes to simplify synthesis.
+- This also reduces the use of reg and always blocks.

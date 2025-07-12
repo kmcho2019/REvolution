@@ -1,0 +1,22 @@
+I'll refactor the solution with these key changes:
+
+1. State Machine Encoding:
+   - Switch from one-hot to binary encoding (2 bits for 4 states) to reduce area and power
+   - Keep the same state logic but with more efficient encoding
+
+2. Output Generation:
+   - Use continuous assignments for outputs where possible
+   - Make 'done' a combinational output based on state
+
+3. Shift Register:
+   - Simplify the shift operation using concatenation
+   - Combine bit counting with shift register position
+
+4. Error Handling:
+   - Merge ERROR state behavior into IDLE since we just need to wait for stop bit
+   - Remove explicit ERROR state to simplify FSM
+
+5. Timing Optimization:
+   - Break down complex operations into simpler steps
+   - Reduce fanout on critical paths
+   - Use registered outputs for better timing closure

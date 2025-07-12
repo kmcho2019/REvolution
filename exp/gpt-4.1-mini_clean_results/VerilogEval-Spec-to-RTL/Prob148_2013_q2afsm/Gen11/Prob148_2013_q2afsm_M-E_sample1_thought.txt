@@ -1,0 +1,5 @@
+Implement the FSM using a one-hot state encoding with four flip-flops representing states A, B, C, and D directly. This simplifies next-state logic to purely combinational checks of the current state and input requests, improving clarity. The synchronous active-low reset clears all states except state A, which is set. Output grants are assigned combinationally based on which one-hot state is active.
+
+The priority scheme is preserved by encoding next state from A: B if r[0], else C if r[1], else D if r[2], else stay in A. For states B, C, and D, remain in that state if the corresponding request is asserted; otherwise, return to A.
+
+This approach uses four flip-flops (one per state), but simplifies the logic and may reduce glitches on state transitions due to one-hot encoding. The output logic is straightforward as well.

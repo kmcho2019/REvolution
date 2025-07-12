@@ -1,0 +1,12 @@
+The current implementation is already quite efficient for a 2-state machine, but we can make some minor optimizations to improve timing and power:
+
+1. Remove the intermediate next_state wire and combine the logic directly in the always block to reduce routing delay
+2. Use a case statement for state transitions which may synthesize more efficiently in some tools
+3. Maintain the parameterized states for readability
+4. Keep output assignment separate (Moore machine property)
+
+These changes should:
+- Reduce the combinational path delay by eliminating the intermediate wire
+- Potentially improve synthesis optimization with case statement
+- Maintain the same area while possibly improving timing
+- Keep the design clean and readable

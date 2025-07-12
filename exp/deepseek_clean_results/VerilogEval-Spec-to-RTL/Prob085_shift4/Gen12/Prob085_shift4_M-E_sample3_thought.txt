@@ -1,0 +1,16 @@
+Novel Architectural Idea: State Machine Controlled Shift Register
+
+Instead of using a simple priority-based approach, we'll implement a state machine that explicitly manages the shift register operations. This provides:
+1. Clear separation of control and data paths
+2. Potential for easier timing closure due to explicit state transitions
+3. Flexibility for future enhancements (like adding more operations)
+
+The state machine will have three states:
+- RESET: Handles asynchronous reset
+- LOAD: Synchronously loads data when requested
+- SHIFT: Performs right shift when enabled
+
+State transitions are controlled by:
+- areset forces RESET state
+- load has priority over ena
+- Default maintains current state

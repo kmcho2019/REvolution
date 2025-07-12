@@ -1,0 +1,8 @@
+The goal is to simplify the existing solution for the instruction register module while maintaining its functionality. This involves reducing the complexity of the clock gating logic, simplifying the reset logic, and minimizing the combinational logic for output assignments. 
+
+Key simplifications:
+1. **Direct Clock Usage**: Instead of using gated clocks (`clk_gated1` and `clk_gated2`), directly use the system clock (`clk`) and control the update of registers based on the `fetch` signal within the always blocks. This approach simplifies the clock tree and reduces potential clock skew issues.
+2. **Simplified Reset Logic**: Combine the reset logic into a single condition within the always blocks, eliminating the need for separate `posedge clk_gated1 or negedge rst` and `posedge clk_gated2 or negedge rst` sensitivity lists. This simplification makes the code more readable and maintainable.
+3. **Minimal Combinational Logic**: Retain the minimal combinational logic for output assignments, as it is already optimized. Ensure that the outputs (`ins`, `ad1`, and `ad2`) are derived directly from the stored instructions without unnecessary intermediate signals.
+
+By applying these simplifications, the solution aims to reduce complexity while preserving the module's functionality, potentially leading to better synthesis results and easier maintenance.

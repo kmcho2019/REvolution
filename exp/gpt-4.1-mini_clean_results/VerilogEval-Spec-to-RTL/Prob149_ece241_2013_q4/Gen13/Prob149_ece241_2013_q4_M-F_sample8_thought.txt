@@ -1,0 +1,23 @@
+Correct the sensor bit significance and decoding to match the problem spec exactly: s[2] is highest sensor, s[1] middle, s[0] lowest.
+
+- "Above s[2]" means all three sensors asserted: s == 3'b111 (s[2]=1, s[1]=1, s[0]=1).
+- "Between s[2] and s[1]" means s[2]=0, s[1]=1, s[0]=1 → s == 3'b011.
+- "Between s[1] and s[0]" means s[2]=0, s[1]=0, s[0]=1 → s == 3'b001.
+- "Below s[0]" means none asserted: s == 3'b000.
+
+Use these exact matches for level decoding. Treat any other sensor combinations as BELOW for safety.
+
+Update the level encoding and flows accordingly.
+
+Maintain previous and current water levels, updating prev_level only on level change. Detect rising level as curr_level > prev_level.
+
+Nominal flows are:
+
+- ABOVE (3'b111): none asserted.
+- BETWEEN s[2]-s[1] (3'b011): fr0 only.
+- BETWEEN s[1]-s[0] (3'b001): fr0, fr1.
+- BELOW (3'b000): fr0, fr1, fr2.
+
+Outputs are synchronous and reset asserted (all flows on, dfr on) on reset.
+
+This correct decoding aligns sensors and levels with the problem statement, eliminating mismatches and producing correct fr2, fr1, fr0, dfr outputs.

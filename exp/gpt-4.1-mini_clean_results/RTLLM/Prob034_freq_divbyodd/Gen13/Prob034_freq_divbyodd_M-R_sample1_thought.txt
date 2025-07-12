@@ -1,0 +1,9 @@
+Refactor the odd frequency divider by splitting the counting and toggle logic into two separate counters triggered on posedge and negedge of the input clock respectively. Each counter counts modulo NUM_DIV, and toggles its respective output (clk_div1 and clk_div2) when reaching the midpoint (half of NUM_DIV). The two counters are independent and properly synchronized to their clock edges, avoiding the timing issues caused by sampling a delayed counter from another clock domain.
+
+The final output clk_div is the OR of clk_div1 and clk_div2, combining the positive and negative edge toggles to form an output clock at frequency clk/(NUM_DIV).
+
+This approach:
+- Uses separate counters for posedge and negedge domains to avoid synchronization issues.
+- Toggles clk_div1 and clk_div2 precisely at half-count points on respective edges.
+- Uses asynchronous reset for initialization.
+- Provides clear separation of logic for rising and falling edge domains, improving timing and reliability.

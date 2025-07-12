@@ -1,0 +1,7 @@
+The best design fuses the clarity and minimalism of direct continuous assignments (from both examples) with the slight optimization of recognizing mutual exclusivity between heater and aircon in the fan logic. Since heater and aircon can never be on simultaneously (mode determines which is active), the fan output logic can be expressed more succinctly without redundant checks.
+
+By directly assigning heater and aircon based on mode and temperature flags, we keep the logic minimal and clear. For the fan output, since heater and aircon are mutually exclusive, we can combine them as a single signal for fan control, then OR with fan_on. This avoids unnecessary OR gate inputs and simplifies the fan logic marginally.
+
+No intermediate wires are needed, preserving minimal netlist overhead and reducing toggling. The design remains purely combinational, ensuring zero latency and minimal critical path delay. This approach yields optimal area, power, and timing metrics while maximizing readability and maintainability.
+
+In summary, fuse direct combinational assigns, eliminate intermediate signals, and optimize fan logic by leveraging heater and aircon mutual exclusivity for a cleaner and slightly more efficient implementation.

@@ -1,0 +1,11 @@
+The original code attempts a rotate-left operation on the output register by concatenating slices of the same register, which some tools reject.
+
+To avoid this, instead of rotating within a single register by slicing and concatenation, explicitly track the position of the '1' bit with an integer index variable that increments and wraps modulo 8 on each clock.
+
+The output can then be generated combinationally by shifting a single '1' bit left by this index.
+
+This approach separates the state (position) from the output, avoiding any slice/concatenation assignments on registers, thus making it compatible with tools lacking slice assignment support.
+
+On reset, the position is set to 0 (corresponding to LSB = 1). Each clock cycle increments the position modulo 8. The output is a combinational '1 << position' mask.
+
+This is a classic way to implement ring counters that works reliably with any Verilog tools.

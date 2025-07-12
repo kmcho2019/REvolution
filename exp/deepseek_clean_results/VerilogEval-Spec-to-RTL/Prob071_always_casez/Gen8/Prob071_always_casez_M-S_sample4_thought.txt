@@ -1,0 +1,11 @@
+To simplify the priority encoder while maintaining functionality, we can use a more straightforward approach:
+
+1. Use a casez statement which is perfect for priority encoders as it naturally handles "don't care" bits
+2. List all possible input patterns in priority order (from LSB to MSB)
+3. Each case item will match the first occurrence of '1' from right to left
+4. The default case handles the all-zeros input
+5. This approach:
+   - Is more readable and maintainable
+   - Likely synthesizes to more efficient logic
+   - Clearly expresses the priority encoding behavior
+   - Has better PPA characteristics than nested ternary operators

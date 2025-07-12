@@ -1,0 +1,12 @@
+The original design fails because it uses a single counter updated only on the rising edge but references it on the falling edge, causing misaligned toggling and incorrect phase relationships. To fix this, I will implement a counter that increments on both rising and falling edges (effectively doubling the count resolution), so that the toggling conditions for both posedge and negedge toggled clocks use synchronized and valid count values.
+
+Specifically:
+- Use a 4-bit counter incremented on both rising and falling edges of the input clock, counting modulo 14 (since 3.5 division means 7 full clock cycles, doubling edges yields 14 half cycles).
+- Generate two intermediate clocks (`clk_pos` and `clk_neg`) toggling at different count values to create the two uneven segments (4 and 3 cycles) in terms of half cycles.
+- `clk_pos` toggles at counts 0 and 8 (4 full clock cycles = 8 half cycles).
+- `clk_neg` toggles at counts 4 and 11 (3.5 cycles offset by half clock cycle).
+- Finally, OR these two to produce the fractional divided clock with a balanced duty cycle and correct 3.5 division.
+  
+This ensures all signals are synchronous to the same counter updated on every clock edge, avoiding asynchronous sampling issues. It also improves phase alignment and reduces glitches.
+
+Reset initializes counters and clocks. This fully synchronous, dual-edge counter based design will produce a precise fractional clock division by 3.5 with balanced duty cycle and smooth transitions.

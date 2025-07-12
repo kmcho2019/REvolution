@@ -1,0 +1,10 @@
+This implementation introduces two key innovations:
+
+1. **Clock Gating**: Instead of using the clock directly, we create a gated clock that only toggles when either:
+   - A reset is asserted (r=1)
+   - The data input changes (d != current q)
+   This significantly reduces power consumption by minimizing clock activity.
+
+2. **Event-Driven Capture**: The flip-flop only updates its state when necessary, using a combinational detection of input changes rather than sampling on every clock edge. This maintains synchronous behavior while being more power efficient.
+
+The design maintains strict synchronous reset behavior (active high) while optimizing for power efficiency in scenarios where the input data remains constant for multiple clock cycles.

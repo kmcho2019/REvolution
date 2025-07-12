@@ -1,0 +1,14 @@
+To model the Lemmings' behavior as a finite state machine, we can employ a hierarchical state machine architecture. This involves dividing the state machine into two main layers: the outer layer handles the overall state (walking, falling, digging, splattered), and the inner layer focuses on the specific actions within each state, such as walking direction and digging. This hierarchical approach simplifies the state transition logic and improves code readability.
+
+The outer layer state machine transitions between four main states: WALKING, FALLING, DIGGING, and SPLATTERED. The inner layer, responsible for walking direction, operates within the WALKING state. A separate counter tracks the fall duration to determine if the Lemming should splatter upon hitting the ground.
+
+To accurately implement the described behavior, we will:
+
+1. Initialize the state machine to the WALKING state with a leftward direction upon reset.
+2. In the WALKING state, check for bumps to update the walking direction. If the Lemming receives a bump, switch the direction accordingly.
+3. Transition to the FALLING state when the ground disappears. While falling, increment the fall counter each clock cycle.
+4. If the Lemming hits the ground after falling, check the fall counter. If the fall duration exceeds 20 clock cycles, transition to the SPLATTERED state; otherwise, resume walking in the previous direction.
+5. Implement the digging functionality within the WALKING state. When the dig signal is high, transition to the DIGGING state and continue digging until the ground disappears, at which point the Lemming falls.
+6. Ensure that being bumped while digging or falling does not affect the walking direction, and being told to dig when falling or with no ground is ignored.
+
+By structuring the state machine in this hierarchical manner, we can clearly define the transitions and behaviors, making the code more organized and easier to understand.

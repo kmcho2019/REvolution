@@ -1,0 +1,25 @@
+To fix this FSM implementation, I'll address all identified issues with a comprehensive solution:
+
+1. **State Machine Redesign**:
+   - Use 5 states (IDLE, F_PULSE, WAIT_X, DETECT_X, FINAL) for clearer state transitions
+   - Explicitly track the 1,0,1 sequence detection with proper timing
+
+2. **Pattern Detection**:
+   - Implement a proper 3-cycle sequence detector for '101' pattern
+   - Use a shift register to track last 3 x values (x_history[2:0])
+
+3. **Timeout Logic**:
+   - Add a proper 2-cycle timeout counter after pattern detection
+   - Reset counter when y=1 is detected
+
+4. **Output Logic**:
+   - Generate f pulse immediately after reset deassertion
+   - Set g only after pattern detection and maintain based on y condition
+   - Make outputs purely combinatorial for correct timing
+
+Key improvements:
+- Correct sequence detection with 3-bit history
+- Proper timeout counting (2 cycles)
+- Clear state transitions
+- Correct output generation timing
+- Maintains all specification requirements

@@ -1,0 +1,13 @@
+Simplification Strategy:
+1. Boolean Analysis:
+   - ModuleA: z = (x^y) & x simplifies to x & ~y (since x^y = x&~y | ~x&y, and AND with x leaves only x&~y)
+   - ModuleB: From waveform, z acts as XNOR (z=1 when x==y)
+
+2. Structural Simplification:
+   - Since both submodules A and B are identical in both instances, we can compute their outputs once and reuse
+   - Final output logic (OR result XOR AND result) can be simplified to just XOR of a_out and b_out
+
+3. Implementation:
+   - Directly implement ModuleA and ModuleB with their simplified forms
+   - Connect outputs through single XOR gate for final output
+   - Eliminate redundant gates by using optimal boolean expressions

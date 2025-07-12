@@ -1,0 +1,11 @@
+Novel Architecture Idea:
+1. Shift Register Approach: Instead of using a counter, maintain a 3-byte shift register to store potential message candidates
+2. Pattern Matching: Continuously check if the oldest byte in the shift register has in[3]=1
+3. Edge Detection: Use the shift register's fill state to determine when we have 3 valid bytes
+4. Output Generation: Assert 'done' when we have a complete 3-byte message where the first byte matches the pattern
+
+Advantages:
+- More robust against false starts (can verify entire message structure if needed)
+- Easily extensible to check other message constraints
+- Naturally handles continuous byte streams without explicit state tracking
+- Potential for pipelining if performance is critical

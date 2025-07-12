@@ -1,0 +1,7 @@
+To optimize the design for better PPA, I will replace the asynchronous reset with a synchronous reset, which can simplify timing closure and reduce potential metastability and reset-related timing issues. This change usually improves performance by simplifying the clock domain and allows better power gating during reset. 
+
+Additionally, instead of an explicit FSM with states encoded as localparams and case statements, I will implement the saturating counter using simple arithmetic and saturation logic: increment the 2-bit state if train_valid and train_taken are asserted (up to max 3), decrement if train_valid and not train_taken (down to min 0), else hold. This reduces combinational logic and should improve timing and power slightly, as arithmetic operations are simpler than case statements.
+
+The initial value after reset remains 2'b01 (weakly not taken).
+
+This approach preserves functionality while aiming for slightly improved timing and power with minimal area impact.

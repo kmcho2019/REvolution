@@ -1,0 +1,12 @@
+To fix the timing issues in the FSM implementation, we need to:
+1. Separate the evaluation window collection from the output generation
+2. Ensure z is set exactly one cycle after the three-cycle window completes
+3. Maintain proper synchronization of all signals
+4. Keep the minimal two-state design (A and B)
+
+Key changes:
+- Move the evaluation to occur one cycle after window completion
+- Use a registered version of the evaluation result for z output
+- Clear evaluation flags at appropriate times
+- Maintain the shift register for clean w value collection
+- Ensure all signals are properly reset

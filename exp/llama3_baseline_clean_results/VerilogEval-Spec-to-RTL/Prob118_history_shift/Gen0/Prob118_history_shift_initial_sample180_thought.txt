@@ -1,0 +1,8 @@
+To implement the TopModule, we need to follow these steps:
+1. Create a 32-bit global history shift register to store the branch history.
+2. When a branch prediction is made (predict_valid = 1), shift in predict_taken from the LSB side to update the branch history for the predicted branch.
+3. When a branch misprediction occurs (train_mispredicted = 1), load the branch history register with the history after the completion of the mispredicted branch.
+4. If both a prediction and misprediction occur at the same time, the misprediction takes precedence.
+5. Use an asynchronous reset (areset) to reset the history counter to zero on the positive edge.
+
+The logic can be implemented using a single always block in Verilog, where we check for the asynchronous reset first, and then for the misprediction condition. If neither condition is met, we check for the prediction condition and update the history accordingly.

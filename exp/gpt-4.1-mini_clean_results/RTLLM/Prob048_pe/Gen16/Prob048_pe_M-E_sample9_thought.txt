@@ -1,0 +1,9 @@
+Implement the MAC PE with a 64-bit accumulator register internally to fully capture the full precision of the 32x32 multiplication without overflow or saturation. The module outputs only the lower 32 bits of the accumulator as `c`. This avoids precision loss during accumulation and removes the need for saturation logic.
+
+In each clock cycle, multiply the 32-bit inputs `a` and `b` to produce a 64-bit product and add it to the 64-bit accumulator register `acc`. On synchronous reset, clear the 64-bit accumulator to zero.
+
+This design improves precision by accumulating the full product and thus can be useful in applications where overflow and saturation are not desired or where the final result will be further processed with higher precision.
+
+To implement this cleanly, use a sequential always block triggered on the rising edge of clock or asynchronous reset. Provide a 32-bit output `c` which is a direct truncation of the accumulator’s lower 32 bits, reflecting the current partial sum modulo 2^32.
+
+This architecture is straightforward, synthesizable, and efficient in area since no saturation or overflow detection hardware is needed, and it supports the full accumulation dynamic range.

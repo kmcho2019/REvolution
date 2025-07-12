@@ -1,0 +1,17 @@
+To improve the PPA (power, performance, area) of the existing FSM for serial byte reception, I will optimize as follows:
+
+1. **Remove shift register:** Since the problem only requires detecting correct byte reception and outputting `done`, the data byte itself need not be stored. Eliminating the 8-bit shift register reduces area and switching power.
+
+2. **Simplify state encoding:** Use a 3-state FSM instead of 4 by merging CHECK_STOP and WAIT_STOP states into one stop-bit verification state, with internal logic to handle framing errors by staying in this state until stop bit is detected. This reduces state bits from 2 to 2 or possibly 2 bits but fewer transitions, reducing switching activity.
+
+3. **Done pulse generation:** Generate done as a one-cycle pulse synchronous to clock, asserted only when a correct stop bit is detected.
+
+4. **Simplify bit counting:** Keep 3-bit bit counter for counting 8 data bits, increment only in data reception phase.
+
+5. **Minimize logic toggling:** In idle and wait-for-stop-bit states, keep counters and registers unchanged.
+
+6. **Use a single always block for sequential logic, and a small combinational block for next state logic for clarity and minimal logic depth.**
+
+Overall, by removing the shift register and merging stop bit states, we reduce area, power, and potentially improve maximum clock frequency due to less combinational logic. The FSM still strictly enforces start bit = 0, 8 data bits, and stop bit = 1, and waits for stop bit upon framing error before next byte reception.
+
+This strategy targets reducing area (no shift register), reducing switching (less state bits and registers), and maintaining timing (simpler next state logic).

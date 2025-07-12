@@ -1,0 +1,16 @@
+The key issues in the previous implementation were:
+
+1. The supplemental flow (dfr) logic had reversed comparison - it should trigger when water level is rising (current zone > previous zone), not falling.
+
+2. The zone encoding was numerically inverted (higher numbers for lower physical levels), which made the comparison confusing.
+
+Here's the corrected approach:
+
+1. Maintain the same zone encoding but clarify the comparison logic for dfr.
+2. Fix the dfr condition to trigger when:
+   - Current zone is numerically greater than previous zone (indicating rising water level)
+   - OR when in the lowest zone (below all sensors)
+3. Keep the nominal flow outputs unchanged as they were correct.
+4. Handle undefined sensor patterns by defaulting to previous zone (maintaining last known state).
+
+The reset condition remains correct - it initializes all outputs to 1 and sets the state as if water level was below all sensors.

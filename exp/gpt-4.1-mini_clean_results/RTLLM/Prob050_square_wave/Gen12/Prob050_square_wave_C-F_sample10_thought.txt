@@ -1,0 +1,9 @@
+Fuse the strengths of both examples by using an active-high synchronous reset for broader compatibility and clarity. Use a single always block to handle counting and toggling for minimal latency and simple control flow, but keep combinational signals for counting enable and toggle condition to improve readability and synthesis friendliness.
+
+Gating counting and toggling when freq is zero prevents unnecessary toggling and dynamic power consumption. Hold count and wave_out steady in this case, maintaining output stability.
+
+Use non-blocking assignments consistently to ensure correct sequential logic behavior.
+
+Avoid redundant arithmetic by comparing count directly with freq minus one via a combinational wire. This balances logic simplicity and performance.
+
+The design retains the minimal logic area of Example 1 and the clear signal naming and reset style of Example 2, resulting in clean, efficient, and easily synthesizable code that is power-aware and robust.

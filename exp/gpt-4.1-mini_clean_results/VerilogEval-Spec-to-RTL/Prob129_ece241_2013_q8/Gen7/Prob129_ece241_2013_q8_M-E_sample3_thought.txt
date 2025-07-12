@@ -1,0 +1,12 @@
+Implement the 3-state Mealy FSM for detecting "101" with states tracking how many bits of the pattern have been matched: 
+- S0: no bits matched,
+- S1: matched '1',
+- S2: matched '10'.
+
+From S2, when x=1, output z=1 indicating "101" found. Then return to S1 to detect overlapping sequences starting with this '1'.
+
+Use asynchronous negative-edge reset, but this time implement the FSM with a single always_ff block combining next state and output logic for a more compact, state-machine style coding style.
+
+The output z is registered and asserted synchronously for stable output. The output is set high only at the clock cycle when the sequence is detected.
+
+Use enumerated states with localparam for clarity and keep state and output registers separate for clear timing behavior.

@@ -1,0 +1,30 @@
+To optimize the original design for better PPA (performance, power, and area) while preserving correctness, I propose the following improvements:
+
+1. **Flatten Boundary Signals Without Generate Assignments:**
+   Instead of a generate loop assigning boundary signals one by one, use vector slicing and concatenation to reduce wiring logic and fanout. This reduces routing complexity and area slightly.
+
+2. **Merge Boundary Signals Into Vectors:**
+   Package the left and right boundary inputs for all blocks into single vectors, making logic and wiring cleaner and possibly easier to optimize by synthesis tools.
+
+3. **Optimize the Next-State Logic:**
+   Currently, the XOR operands for each bit are selected using a mux in a generate loop. To reduce logic depth and area, compute the shifted versions of q_out once and XOR them directly:
+   - Create left and right shifted versions of q_out padded by the block boundary signals.
+   - Next state is simply XOR of these shifted vectors, eliminating per-bit mux overhead.
+
+4. **Avoid Conditionals Inside Combinational Loop:**
+   Use concatenation and bit slicing to compute left/right neighbors in a single vector operation, enhancing synthesis optimizations and improving timing.
+
+5. **Avoid Multiple Bit-level Selects:**
+   Replacing per-bit ifs with vector operations leads to fewer muxes and less fanout.
+
+6. **Keep Register Update Simple:**
+   Load operation and next state update logic remains the same, as it is already optimal.
+
+7. **Use Parameters for Block Width:**
+   This aids scalability and reusability.
+
+These changes should reduce combinational complexity, improve timing by flattening logic, and slightly reduce area and power due to simpler routing and fewer muxes.
+
+The overall behavior remains unchanged: On each clock, if load is asserted, load data; else update each cell to XOR of left and right neighbors, with zero padding at array ends.
+
+Finally, the TopModule wiring is simplified by vector operations instead of generate loops for boundary signals, further improving clarity and synthesis friendliness.

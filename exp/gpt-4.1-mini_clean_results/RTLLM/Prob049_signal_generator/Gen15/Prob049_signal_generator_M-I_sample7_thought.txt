@@ -1,0 +1,13 @@
+To optimize the given triangle wave generator for better PPA (performance, power, and area), I will:
+
+1. Integrate the combinational next_wave calculation directly into the sequential always block to avoid the extra combinational register and reduce logic duplication, thus improving area and timing.
+
+2. Use non-blocking assignments consistently and update both wave and state in the same always block for synchronous operation and better timing.
+
+3. Simplify boundary checks by toggling state exactly when wave hits the limits, and update wave accordingly without saturation logic to reduce conditional complexity and glitches.
+
+4. Avoid holding wave constant at boundaries; instead, let wave increment/decrement only if it doesn't cross boundaries, ensuring minimal switching.
+
+5. Maintain active-low asynchronous reset for immediate initialization.
+
+This strategy reduces logic, combinational fanout, and switching activity, leading to improvements in timing and power, with slight area gain due to simpler logic.

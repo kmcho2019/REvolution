@@ -1,0 +1,12 @@
+Instead of using a single parameterized DFF module, I'll implement a distributed reset architecture where:
+1. Each bit has its own dedicated DFF with local reset logic
+2. Reset propagation is pipelined to reduce fanout and improve timing
+3. The reset signal is synchronized through a chain of flip-flops
+4. Each bit's reset is individually controlled by the propagating reset signal
+5. This creates a wave-like reset propagation through the register
+
+Benefits:
+- Better reset timing due to reduced fanout
+- Potential power savings from staggered reset transitions
+- More scalable for larger bit widths
+- Interesting side effect: bits reset sequentially rather than simultaneously

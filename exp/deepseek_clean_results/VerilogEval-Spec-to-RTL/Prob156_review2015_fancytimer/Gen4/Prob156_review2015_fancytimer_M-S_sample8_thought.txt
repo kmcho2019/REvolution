@@ -1,0 +1,31 @@
+Here's a simplified design approach:
+
+1. **Pattern Detection**:
+   - Use a 4-bit shift register to detect "1101" pattern
+   - Clear after detection to prevent false triggers
+
+2. **Delay Capture**:
+   - After pattern match, shift in next 4 bits for delay value
+   - Store this as the initial countdown value
+
+3. **Counting Logic**:
+   - Single counter approach: 14-bit counter (for up to 16*1000=16000 cycles)
+   - Divide counter into:
+     * Higher 4 bits (delay countdown)
+     * Lower 10 bits (1000-cycle counter)
+   - Decrement delay when lower counter wraps
+
+4. **State Machine**:
+   - Simplified to 3 states: IDLE, COUNTING, DONE
+   - Eliminate separate SHIFT_DELAY state by combining with IDLE
+
+5. **Output Control**:
+   - 'counting' active only during COUNTING state
+   - 'done' asserted when counting completes until ack received
+   - 'count' shows delay countdown only when counting
+
+This reduces complexity by:
+- Eliminating one state
+- Using a single combined counter
+- Simplifying state transitions
+- Maintaining all required functionality

@@ -1,0 +1,16 @@
+module TopModule (
+    input clk,
+    input resetn,
+    input in,
+    output out
+);
+
+    reg [3:0] shift_reg = 4'b0;
+
+    always @(posedge clk) begin
+        shift_reg <= !resetn ? 4'b0 : {shift_reg[2:0], in};
+    end
+
+    assign out = shift_reg[3];
+
+endmodule

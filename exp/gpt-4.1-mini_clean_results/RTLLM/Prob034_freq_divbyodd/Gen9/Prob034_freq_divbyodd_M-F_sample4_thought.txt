@@ -1,0 +1,9 @@
+To implement an odd frequency divider per the problem statement, we must use two counters, cnt1 and cnt2, that count on the positive and negative edges of the input clock respectively. Each counter counts from 0 to NUM_DIV - 1. On each counter, we toggle clk_div1 and clk_div2 when the count reaches half of NUM_DIV (floor(NUM_DIV/2)). The final output clk_div is obtained by OR-ing clk_div1 and clk_div2 to capture both edges, which effectively divides the input clock frequency by an odd NUM_DIV while producing a duty cycle closer to 50%.
+
+On reset, all counters and outputs are cleared. We also include a compile-time check ensuring NUM_DIV is odd.
+
+This dual-edge counting approach splits the clock division between posedge and negedge clocks, enabling an even distribution of toggles over the full clock period, which approximates a clean odd divide and a better duty cycle.
+
+The implementation uses two separate always blocks for posedge clk and negedge clk, with synchronous active-low reset logic, ensuring clear separation of counters and toggling logic.
+
+Finally, clk_div is a combinational OR of clk_div1 and clk_div2.

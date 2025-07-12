@@ -1,0 +1,25 @@
+Revised Design Strategy:
+
+1. Three-State FSM Implementation:
+   - Implement a proper 3-state FSM to track the complete 0->1->0 sequence
+   - States: IDLE (initial 0), GOT_RISE (received 1), GOT_FALL (received final 0)
+
+2. Complete Sequence Verification:
+   - Only transition to GOT_RISE when in IDLE state and seeing a rising edge
+   - Only transition to GOT_FALL when in GOT_RISE state and seeing a falling edge
+   - Return to IDLE after successful detection or on any invalid transition
+
+3. Correct Output Timing:
+   - Assert data_out only when in GOT_FALL state
+   - Maintain output for exactly one clock cycle
+   - Clear output immediately after detection
+
+4. Robust Edge Detection:
+   - Keep registered version of data_in for edge detection
+   - Use the same edge detection logic but with proper state transitions
+
+5. Reset Handling:
+   - Maintain asynchronous reset for all registers
+   - Initialize all states and outputs properly
+
+This approach ensures we correctly detect the full 3-cycle pulse pattern while maintaining the specified output timing behavior.

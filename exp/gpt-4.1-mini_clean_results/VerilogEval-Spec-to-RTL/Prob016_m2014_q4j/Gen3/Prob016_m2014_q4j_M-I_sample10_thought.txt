@@ -1,0 +1,5 @@
+To improve the PPA while keeping the same functionality, I will replace the ripple-carry structure with a carry-lookahead logic for faster addition. Since the adder is only 4 bits wide, a carry-lookahead adder (CLA) is a good trade-off to reduce carry propagation delay and improve timing without significant area increase. The carry-lookahead logic computes the carry signals in parallel using generate (g) and propagate (p) signals for each bit.
+
+This reduces the critical path delay compared to the ripple carry approach, improving performance. Power may remain comparable, but the faster timing is a significant improvement. The area may slightly increase due to more complex carry logic, but for 4 bits it remains minimal. The design remains clean and fully combinational.
+
+We implement a single TopModule without separate FullAdder modules to reduce module overhead and clearly integrate the carry-lookahead logic. The sum and final carry-out are computed accordingly.

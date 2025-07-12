@@ -1,0 +1,9 @@
+module TopModule(
+    input  [255:0] in,  // 256-bit input vector
+    input  [7:0] sel,  // 8-bit select lines
+    output out        // 1-bit output
+);
+
+assign out = in[sel];  // Use sel to index into in and select the desired bit
+
+endmodule

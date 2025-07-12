@@ -1,0 +1,7 @@
+The existing design is already minimal and functionally correct. However, the code currently updates each bit of the LFSR with separate non-blocking assignments referencing q[0], which could introduce minor combinational delays in the XOR path.
+
+To improve timing (reduce critical path), I will compute the feedback bit once at the clock edge before assigning the new state to all bits in a single non-blocking assignment. This avoids multiple references to q[0] and potentially shortens the combinational logic chain.
+
+This method uses a temporary wire 'feedback' computed as XOR of q[0] with the taps at positions 5 and 3 (bit indices 4 and 2). Then the entire q vector is shifted in one non-blocking assignment, with q[4] taking the feedback bit.
+
+This approach should preserve the maximal-length property, maintain synchronous reset behavior, and may improve timing by simplifying the combinational logic within the always block.

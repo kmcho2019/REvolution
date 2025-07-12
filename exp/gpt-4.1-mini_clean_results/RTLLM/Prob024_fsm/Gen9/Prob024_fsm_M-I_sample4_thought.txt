@@ -1,0 +1,32 @@
+The original FSM design is clean and functionally correct, but there is room to optimize for better PPA, particularly timing. The main potential bottleneck is the combinational next-state logic implemented as a case statement with multiple nested if-else conditions.
+
+Improvement strategy:
+1. Use one-hot state encoding: This increases flip-flop count but greatly simplifies next-state logic, reducing logic depth and improving maximum clock frequency (reducing TNS and WNS).
+2. Implement next-state logic with straightforward combinational logic (using simple conditional expressions for each one-hot bit), reducing critical path.
+3. Keep the Mealy output combinationally derived from states and input, as before.
+4. Use synchronous reset and nonblocking assignments for the state register for robustness.
+5. This one-hot FSM will use 5 states, each corresponding to partial matches, plus one reset state.
+
+Overall, trading area (more FFs) for timing improvement is common and usually beneficial for sequential logic. Power impact is small due to small FSM size. The reduced combinational logic complexity should improve PPA metrics.
+
+The sequence to detect is "1 0 0 1 1". States represent how many bits matched so far.
+
+State encoding (one-hot):
+- s0: no bits matched
+- s1: matched '1'
+- s2: matched '10'
+- s3: matched '100'
+- s4: matched '1001'
+
+State transitions:
+- s0: if IN=1 -> s1 else s0
+- s1: if IN=0 -> s2 else s1
+- s2: if IN=0 -> s3 else s1 (restart)
+- s3: if IN=1 -> s4 else s0
+- s4: if IN=1 -> s1 else s2 (overlap support)
+
+MATCH output asserted when in s4 and IN=1.
+
+This simple next-state logic with one-hot encoding enables parallel and minimal logic delay.
+
+I'll implement this design now.

@@ -1,0 +1,11 @@
+Instead of using three independent counters, implement a single main counter running from 0 to 99 (to cover the largest division for 1MHz output). Use this counter to generate all output clocks by toggling the outputs when the counter reaches specific counts corresponding to half the period of each desired frequency division.
+
+Specifically:
+- Use a 7-bit counter cnt_main counting from 0 to 99, then reset to 0.
+- CLK_50 (50MHz) toggles every 1 clock cycle (period 2), so toggle on counts 0, 1, 2, ..., but since it's a half period of 1, we toggle every count=0.
+- CLK_10 (10MHz) toggles every 5 cycles (period 10), so toggle on cnt_main == 4, 9, 14,... i.e., every 5 counts.
+- CLK_1 (1MHz) toggles every 50 cycles (period 100), so toggle on cnt_main == 49, 99.
+
+This unified counter reduces logic and improves synthesis optimizations. Reset logic initializes counter and outputs to zero.
+
+Toggling output clocks on the proper counts ensures proper frequency division with only one counter.

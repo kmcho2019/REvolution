@@ -1,0 +1,24 @@
+To solve this problem, we first need to analyze the given state machine and its transitions. Since we are using a one-hot code for state encoding, each state is represented by a unique binary vector where only one bit is high (1) and the rest are low (0). We are tasked with implementing the next-state logic for signals Y2 and Y4, which correspond to bits y[1] and y[3] of the state vector, respectively. By examining the state machine, we can derive the logic equations for Y2 and Y4 based on the current state and input w.
+
+The state machine has the following states and transitions:
+- State A (000001) stays in A if w=1, moves to B if w=0.
+- State B (000010) moves to C if w=0, moves to D if w=1.
+- State C (000100) moves to E if w=0, moves to D if w=1.
+- State D (001000) moves to F if w=0, moves to A if w=1.
+- State E (010000) stays in E if w=0, moves to D if w=1.
+- State F (100000) moves to C if w=0, moves to D if w=1.
+
+Given the one-hot encoding, Y2 corresponds to state B, and Y4 corresponds to state D. Thus, we need to find the conditions under which the next state will be B or D.
+
+For Y2 (next state B):
+- The current state must be A, and w must be 0 for the next state to be B.
+- The current state must already be B, and w must be 1 for the next state to remain in a state that could potentially lead to B in the next cycle, but since we are directly calculating next state, we focus on direct transitions to B.
+
+For Y4 (next state D):
+- The current state could be B, and w must be 1.
+- The current state could be C, and w must be 1.
+- The current state could be D, and w must be 1 (for the transition from D to A and then potentially to D in a subsequent step, but directly D goes to F or A based on w).
+- The current state could be E, and w must be 1.
+- The current state could be F, and w must be 1.
+
+Thus, we can derive the logic equations based on these conditions.

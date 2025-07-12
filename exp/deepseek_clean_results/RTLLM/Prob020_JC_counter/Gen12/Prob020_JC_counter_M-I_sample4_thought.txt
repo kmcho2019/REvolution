@@ -1,0 +1,18 @@
+Improvement Strategy:
+1. **Timing Optimization**: The negative WNS indicates timing violations. To improve this:
+   - Break the 64-bit shift into two stages (32-bit each) to reduce critical path
+   - Register intermediate results to improve pipeline timing
+
+2. **Power Optimization**: 
+   - Add clock gating when the counter isn't changing (all 1s or all 0s)
+   - Only perform bit inversion when needed (transition states)
+
+3. **Area Optimization**:
+   - Maintain minimal combinational logic
+   - Keep the single always block structure for compact implementation
+
+4. **Functionality Enhancement**:
+   - Add a complete cycle detection to prevent unnecessary toggling
+   - Optimize reset state to start from a known pattern (all zeros)
+
+The improved version will use a two-stage shift with clock gating while maintaining the same Johnson counter behavior but with better PPA metrics.

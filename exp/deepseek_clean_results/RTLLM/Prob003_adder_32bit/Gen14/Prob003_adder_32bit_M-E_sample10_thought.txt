@@ -1,0 +1,12 @@
+Novel Architecture: Hierarchical Carry-Lookahead with 8-bit Super Blocks
+1. Use a two-level hierarchical CLA structure for better timing
+2. First level: 8x 4-bit CLA blocks (same as before)
+3. Second level: 4-bit super block CLA that computes group generate/propagate
+4. Benefits:
+   - Reduces critical path by computing higher-level carry lookahead
+   - Maintains modularity while improving performance
+   - Scales better for wider adders
+5. Implementation:
+   - 4-bit super CLA computes carry for each 16-bit segment
+   - Regular 4-bit CLAs handle local sums
+   - Final carry chain combines super block outputs

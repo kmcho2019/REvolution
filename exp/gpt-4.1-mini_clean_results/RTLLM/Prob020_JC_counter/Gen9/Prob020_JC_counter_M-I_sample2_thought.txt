@@ -1,0 +1,5 @@
+The current design is functionally correct and already minimal, but we can enhance power efficiency and potentially improve timing by minimizing switching activity. One way to do this is to register the inverted bit separately and use it to drive the new MSB, which may help synthesis tools optimize. Also, using a localparam to clearly define the initial reset value for clarity and easier adjustments. Additionally, we can use non-blocking assignments consistently and explicitly declare the next state register. This could assist synthesis tools in better pipelining and optimization, possibly improving both timing and power.
+
+While shifting a 64-bit register remains the core operation, these minor refinements can help the tool recognize the structure better for optimization. Clock gating or other advanced power techniques require system-level support and are beyond this module's scope.
+
+Overall, the improvement focuses on coding style and explicit signals to help the synthesis tool achieve better PPA while keeping the exact same functionality.

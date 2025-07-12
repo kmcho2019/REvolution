@@ -1,0 +1,11 @@
+To refactor the provided Verilog code, we can utilize a different approach for handling the sequential logic. One key idea is to leverage the use of `assign` statements for combinational logic and separate `always` blocks for sequential logic, which can improve the readability and maintainability of the code. 
+
+Since the current implementation uses a single 32-bit register (`history`), we can maintain this structure but enhance the logic for handling predictions and mispredictions. 
+
+Instead of using a single `always` block to handle all the sequential logic, we can consider separating the reset logic from the update logic. This can make the code more modular and easier to understand.
+
+Moreover, to further simplify the design, we can directly use non-blocking assignments (`<=`) within the `always` block to update the `history` register based on the input conditions. This approach ensures that the updates are handled correctly on the positive edge of the clock.
+
+Additionally, to emphasize the prioritization of misprediction handling over prediction updates, we can explicitly state the conditions in the `always` block, ensuring that `train_mispredicted` is checked before `predict_valid`. This aligns with the requirement that pipeline flushes due to mispredictions should override prediction updates.
+
+The refactored code aims to improve the design's clarity and maintainability by utilizing separate `always` blocks for reset and update logic, while maintaining the same functionality as the original code.

@@ -1,0 +1,7 @@
+Fuse the hierarchical modularity of example 2 with the bitwise clarity and boundary simplification of example 1. Implement the 512-bit Rule 90 automaton using eight 64-bit Rule90Block64 modules for modularity and potential scalability. Inside each block, use the per-bit neighbor logic from example 1 to cleanly handle boundaries, but avoid passing dynamic neighbor bits between blocks to reduce inter-block dependency and thus improve timing. Instead, treat the block boundaries as zero (static) like the global boundaries to maintain correct Rule 90 behavior with zero padding at the ends of the entire 512-cell array.
+
+This yields a simpler boundary condition for all blocks (edges of entire vector are zero), avoiding complex signals between blocks, which reduces combinational fanout and muxing delays, improving PPA.
+
+The top module loads data in parallel across blocks and updates synchronously each clock cycle, just like example 2. Each 64-bit block computes its next state with the local data and fixed zero boundaries at block edges, matching global boundary conditions.
+
+This hybrid approach keeps modularity and clean per-bit logic with simple XOR and conditional neighbor selection for each bit, minimizing complex inter-block dependencies and muxing, improving performance and power while maintaining clarity and easy scalability.

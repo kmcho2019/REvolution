@@ -1,0 +1,12 @@
+The original design uses an always block triggered on the negative edge of the clock for synchronous reset and data loading. To refactor while keeping the same functionality and core idea, I will replace the single vector always block with per-bit instantiations of a single-bit negative edge triggered DFF module with synchronous reset. This modular per-bit approach will showcase a different structure, promoting fine-grained control over each flip-flop.
+
+The per-bit DFF module will handle the negative edge clocking and synchronous reset to 1-bit reset value. TopModule will instantiate 8 instances of this module, each with corresponding bits of input, output, and reset bits from the reset vector 8'h34.
+
+This refactor:
+- Maintains exact functionality.
+- Changes structure from vector always block to multiple single-bit modules.
+- Uses generate loops for clean repetitive instantiation.
+- Keeps synchronous reset active high on negative edge of clk.
+- Assigns the fixed reset pattern 0x34 across the 8 individual DFF reset inputs.
+
+This approach is more modular and clearly separates each flip-flop instance, allowing potential fine tuning or modifications on a per-bit basis later.

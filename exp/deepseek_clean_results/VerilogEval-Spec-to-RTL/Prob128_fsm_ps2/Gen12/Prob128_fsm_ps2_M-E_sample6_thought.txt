@@ -1,0 +1,10 @@
+Novel Architectural Idea:
+Instead of using a counter-based approach, we'll implement a state machine with explicit states for each byte position in the message. This provides more direct control over the message boundary detection and done signaling. The key innovations are:
+
+1. State Encoding: Use a 3-state FSM (IDLE, BYTE2, BYTE3) to explicitly track message progress
+2. Early Detection: Transition to BYTE2 state immediately when in[3]=1 is detected
+3. Predictive Done: Signal done one cycle early by anticipating the completion during BYTE3 state
+4. Power Optimization: Only evaluate in[3] when in IDLE state, reducing switching activity
+5. Reset Efficiency: Clear all states synchronously with minimal logic
+
+This approach eliminates the need for a counter and provides more precise control over the message boundary detection process.

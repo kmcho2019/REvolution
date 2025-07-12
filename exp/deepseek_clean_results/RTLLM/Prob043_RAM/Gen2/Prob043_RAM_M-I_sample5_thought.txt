@@ -1,0 +1,16 @@
+Improvement strategy based on PPA metrics:
+1. Timing Improvement:
+   - Remove reset from write always block to simplify timing path
+   - Pipeline read operation by adding a register stage for read_addr
+2. Power Optimization:
+   - Remove unnecessary clearing of read_data when read_en is low
+   - Maintain previous read value to reduce switching activity
+3. Area Optimization:
+   - Remove else clause in read operation to reduce mux logic
+   - Simplify reset implementation by using separate initial block for memory initialization
+
+Key changes:
+1. Separate reset logic for memory initialization
+2. Pipelined read operation with registered address
+3. Maintain read_data value when not reading
+4. Simplified write operation without reset

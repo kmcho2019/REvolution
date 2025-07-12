@@ -1,0 +1,7 @@
+To solve this problem, we need to analyze the given state machine and derive the logic equations for the next-state signals Y1 and Y3, which correspond to y[0] and y[2] respectively, by inspection. However, the problem statement asks for Y1 and Y3 which correspond to y[0] and y[2] respectively but the code should generate the next-state signals Y2 and Y4 corresponding to signal y[1] and y[3]. Since the encoding is one-hot, each state is represented by a unique bit set to 1 while all others are 0. We can use this property to derive the next-state logic.
+
+For Y2 (y[1]), which corresponds to state B, we look at the transitions that lead to state B. From the state machine, we see that state B can be reached from state A when w = 1. So, Y2 is 1 when the current state is A (y[0] = 1) and w = 1.
+
+For Y4 (y[3]), which corresponds to state D, we examine the transitions that lead to state D. State D can be reached from states B, C, and E under certain conditions of w. Specifically, D is reached from B when w = 1, from C when w = 1, and from E when w = 0. Thus, Y4 is 1 when the current state is B (y[1] = 1) and w = 1, or the current state is C (y[2] = 1) and w = 1, or the current state is E (y[4] = 1) and w = 0.
+
+Given this analysis, we can now write the Verilog code to implement these next-state signals.

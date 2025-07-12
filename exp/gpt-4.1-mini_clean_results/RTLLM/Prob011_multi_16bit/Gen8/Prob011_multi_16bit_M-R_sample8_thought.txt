@@ -1,0 +1,16 @@
+I will refactor the multiplier design using a small finite state machine (FSM) to clearly separate the IDLE, LOAD, PROCESS, and DONE states. This approach structures the control flow more explicitly:
+
+- IDLE: Wait for start.
+- LOAD: Capture inputs and clear the accumulator.
+- PROCESS: Shift and accumulate bits one by one.
+- DONE: Assert done signal until start deasserts.
+
+This state-driven design enhances readability and modularity, clearly indicating transitions and actions per state.
+
+Additionally, I will use an always block for state and counters, and combinational logic for next-state and outputs, which is a common and robust practice in FSM design.
+
+The registers `areg` and `breg_ext` will be shifted only in PROCESS state, controlled explicitly.
+
+The done flag is asserted in DONE state.
+
+This refactor does not change the underlying functionality or timing, but improves clarity and separates control from data path operations, facilitating easier future modifications or formal verification.

@@ -1,0 +1,8 @@
+Simplify by using direct BCD counters for hours, minutes, and seconds, avoiding internal binary hour encoding and conversion. 
+
+- Use two 4-bit BCD digits for hh, mm, ss directly.
+- Increment seconds on ena; when seconds roll over from 59 to 00, increment minutes similarly.
+- When minutes roll over from 59 to 00, increment hours in BCD from 01 to 12, toggling pm when crossing from 11 to 12.
+- On reset, set to 12:00:00 AM.
+- Implement all logic in one always @(posedge clk) block with reset priority.
+- This reduces combinational next-state logic and removes the hour_bin and bin_to_bcd conversion, yielding simpler, smaller, and easier-to-understand code while preserving functionality.

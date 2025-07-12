@@ -1,0 +1,17 @@
+Fuse the best ideas of both examples: use a compact 3-bit state encoding (as in Example 1) to minimize area and use a combinational case statement (as in Example 2) for next-state logic to improve synthesis friendliness and timing.
+
+Maintain Moore outputs as combinational signals derived from current state and input history to preserve synchronous one-cycle-late assertion of outputs.
+
+Keep a prev_in register to detect the 0 transition after a run of ones, crucial for distinguishing disc and flag conditions.
+
+Outputs (disc, flag, err) are registered to ensure one full cycle assertion starting from the cycle after detection, complying with the synchronous design requirement.
+
+This fusion balances compactness of state representation, clarity of next-state logic (using a combinational case), and correctness of output timing, potentially improving PPA metrics by clearer logic and minimizing state bits.
+
+Specifically:
+- Use 3-bit state to count consecutive ones 0..7, where state 7 is error.
+- Use a combinational case statement keyed on {state, in} for next_state.
+- Maintain prev_in register to detect transitions.
+- Generate outputs disc_int, flag_int, err_int combinationally from state, prev_in, and in.
+- Register outputs to assert for one clock cycle after detection.
+- Synchronous reset active high to initialize state and prev_in to zero.

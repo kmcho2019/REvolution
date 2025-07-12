@@ -1,0 +1,8 @@
+Instead of instantiating individual single-bit D flip-flops, use a single always block with an 8-bit register to model the 8 DFFs collectively. The asynchronous reset will be modeled by including it in the sensitivity list (posedge clk or posedge areset) and clearing the entire register to zero when areset is asserted.
+
+This approach:
+- Uses a vector register for simplicity and compactness,
+- Models asynchronous reset cleanly within one always block,
+- Avoids module instantiations and generate loops,
+- Is efficient in code and synthesis results,
+- Maintains clear semantics for asynchronous reset and synchronous data capture.

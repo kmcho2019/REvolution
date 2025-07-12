@@ -1,0 +1,35 @@
+To correct the FSM, we must carefully ensure exact timing for outputs and sequence detection, avoiding off-by-one errors:
+
+1. **Reset and Start (state A to B):**  
+   State A is the reset state with f=0, g=0.  
+   When resetn is deasserted, we move to state B on the *next* clock cycle and output f=1 for exactly one cycle (state B). The original approach was correct here.
+
+2. **Sequence Detection (states C0, C1, C2):**  
+   The sequence x=1,0,1 must be detected on consecutive clock cycles.  
+   We refine transitions:
+   - C0: wait for x=1 to go to C1, else stay in C0.
+   - C1: wait for x=0 to go to C2; if x=1, stay in C1 would block progress (wrong). Instead, if x=1 again, restart from C1 (overlapping sequences), or more simply, restart from C1 only if x=1, else go to C0.
+   - C2: if x=1, go to D; else back to C0.  
+   This helps capture overlapping sequences and restarts detection properly.
+
+3. **Output 'g' and monitoring y (states D, E, F):**  
+   State D sets g=1 and monitors y for at most 2 cycles (including the current cycle).  
+   The counter logic must count the number of cycles spent in D starting from 0.  
+   If y=1 at any cycle in D (including the first cycle entering D), transition immediately to E (permanent g=1).  
+   If after two full cycles in D y=0, transition to F (permanent g=0).  
+   We implement the counter so that when it reaches 1 (second cycle, counting 0 and 1), if y not asserted, go to F.
+
+4. **Output timing:**  
+   Outputs f and g are purely combinational from the current state, no need to register.  
+   f=1 only in B (one cycle).  
+   g=1 in D and E (D while monitoring, E permanent success), else g=0.  
+   In F, g=0 permanently.
+
+5. **Synchronous reset (active low):**  
+   Use `if (!resetn)` synchronous reset in sequential logic.
+
+This approach guarantees that f and g pulse timing matches spec, and sequence detection restarts correctly on non-matching patterns.
+
+For improved power and area, keep the FSM encoding as is (3-bit), since area is small. The counter is minimal. The logic is clear and synthesizable.
+
+Hence, the corrected FSM with fixed transitions in C1, refined y monitoring counter, and clean synchronous reset is presented below.

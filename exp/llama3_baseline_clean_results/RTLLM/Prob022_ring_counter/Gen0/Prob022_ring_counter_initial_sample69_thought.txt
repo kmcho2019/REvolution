@@ -1,0 +1,8 @@
+To implement the ring_counter module, we need to follow these design steps:
+1. Define the module with the specified input and output ports.
+2. Initialize an 8-bit internal register to keep track of the current state of the ring counter.
+3. On each rising edge of the clock, implement the state transition logic to shift the set bit (1) to the next position in the cyclic sequence.
+4. When the reset signal is high, reset the internal register to its initial state (out = 8'b0000_0001).
+The cyclic behavior can be achieved by shifting the set bit one position to the right and then checking if we've reached the end of the sequence. If so, we wrap around by setting the LSB to 1.
+We can use the always_ff block in Verilog to describe the combinational logic that triggers on the rising edge of the clock or the reset signal.
+To handle the cyclic behavior, we will use bitwise operations to shift the bits of the internal register.

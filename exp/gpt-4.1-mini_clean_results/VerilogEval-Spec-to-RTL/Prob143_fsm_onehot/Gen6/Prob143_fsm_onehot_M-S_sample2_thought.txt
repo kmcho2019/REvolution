@@ -1,0 +1,5 @@
+Simplify the next state logic by directly assigning next_state bits using a set of parallel combinational expressions instead of looping and case statements. Since the state is one-hot encoded (or possibly multiple-hot), we can define next_state[i] as the OR of all transitions that go to Si from any active current state and input 'in'. This avoids the loop and case, making the logic straightforward and easy to read.
+
+For outputs, keep the same masking approach which is concise and clear.
+
+This approach is functionally equivalent but simpler, with potentially better synthesis results due to explicit parallel logic.

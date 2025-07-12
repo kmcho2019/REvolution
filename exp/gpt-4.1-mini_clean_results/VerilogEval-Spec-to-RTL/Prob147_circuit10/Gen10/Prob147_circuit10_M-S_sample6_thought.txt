@@ -1,0 +1,8 @@
+The circuit has one bit of state updated on the positive clock edge, with output 'state' showing the current flip-flop value. By carefully examining the waveform, the 'state' updates to the value of input 'b' at the clock edge when 'a' is low, otherwise it resets to 0. The output 'q' matches the 'state' output except it is also 1 when both inputs 'a' and 'b' are 1.
+
+This leads to a simple implementation:
+
+- next_state = b & ~a; // state set to b only if a=0, else 0
+- q = state | (a & b); // q is 1 if state is 1 or both a and b are 1.
+
+This minimal logic matches the waveform transitions and simplifies the previous logic.

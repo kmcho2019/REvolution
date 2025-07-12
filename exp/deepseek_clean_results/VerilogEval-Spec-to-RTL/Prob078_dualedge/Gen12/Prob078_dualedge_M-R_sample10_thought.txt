@@ -1,0 +1,12 @@
+Refactoring Strategy:
+1. Maintain the same core functionality of capturing data on both clock edges
+2. Instead of using separate always blocks for posedge and negedge, we'll use a single always block with a clock state tracking variable
+3. Use an XOR-based edge detection to trigger updates on both edges
+4. The output will still be selected based on the current clock state
+5. This approach reduces the number of explicit flip-flop declarations while maintaining the same behavior
+
+Key changes:
+- Replace two always blocks with one that tracks clock transitions
+- Use a temporary register to store the last clock state
+- Update the output registers on detected edges
+- Keep the same mux-based output selection

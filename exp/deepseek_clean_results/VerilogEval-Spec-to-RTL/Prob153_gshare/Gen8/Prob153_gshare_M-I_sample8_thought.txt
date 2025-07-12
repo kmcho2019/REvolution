@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the XOR operation for index generation to break critical path
+   - Balance the next_ghr mux paths by making them symmetric
+
+2. Power Optimization:
+   - Implement clock gating for GHR updates when idle
+   - Bank the PHT to only activate relevant entries during access
+
+3. Area Optimization:
+   - Replace for-loop initialization with parameterized reset value
+   - Share XOR resources between prediction and training paths
+   - Use more compact encoding for saturating counters (1-hot encoding)
+
+Key Changes:
+- Added pipeline register for predict_index
+- Implemented clock gating for GHR
+- Banked PHT structure with enable signals
+- Shared XOR resources
+- Optimized counter encoding

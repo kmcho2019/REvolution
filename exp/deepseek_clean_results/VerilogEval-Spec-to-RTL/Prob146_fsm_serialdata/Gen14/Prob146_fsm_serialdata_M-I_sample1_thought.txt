@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Change state encoding to one-hot for better timing at the cost of slightly more area
+   - Pipeline the shift operation and bit count to break the critical path
+2. Power Optimization:
+   - Remove default 'done' assignment to reduce unnecessary toggles
+   - Add an enable signal for shift register to prevent unnecessary updates
+3. Area Optimization:
+   - Merge ERROR state into IDLE since they have similar functionality
+   - Use a simpler 3-state FSM (IDLE, RECEIVE, STOP)
+   - Replace bit counter with shift-based approach to save area
+4. Clock Frequency:
+   - Assume a more reasonable target frequency (1GHz) by adjusting the design
+
+Key Changes:
+- Reduced to 3 states with one-hot encoding
+- Shift-based bit counting instead of explicit counter
+- Conditional shift register updates
+- Simplified error handling by merging with IDLE
+- Removed redundant signal assignments

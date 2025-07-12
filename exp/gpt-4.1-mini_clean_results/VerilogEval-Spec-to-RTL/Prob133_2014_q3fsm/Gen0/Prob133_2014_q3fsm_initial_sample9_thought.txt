@@ -1,0 +1,18 @@
+We have a FSM starting in state A. In state A, if s=0 we stay in A; if s=1 we move to state B. In state B, we analyze the input w over the next three clock cycles and count how many times w=1 occurs. If exactly two of these three times w=1, we assert z=1 in the following clock cycle; otherwise z=0. Then the counting repeats for the next three cycles. The input s is only used in state A, and reset brings the FSM back to state A synchronously.
+
+To minimize states, we can have:
+- State A: waiting for s=1
+- State B: the "counting" state
+
+In state B, we implement a 2-bit counter (from 0 to 3) to count the three clock cycles. We also keep a small register to count how many times w=1 in those three cycles.
+
+At count==3, the FSM outputs z=1 or 0 according to the count of w==1 (exactly two), and resets the count and w counter to start a new three-cycle window. The FSM stays in B until reset.
+
+Thus, we only need two states: A and B. The output z is registered and delayed by one cycle after the 3-cycle window counting.
+
+Implementation details:
+- Use a 1-bit state variable (0 for A, 1 for B).
+- Use a 2-bit cycle counter to count 1 to 3 cycles in B.
+- Use a 2-bit counter to count w=1 occurrences in current window.
+- Output z is registered and updated only after the counting completes, based on whether w_count==2.
+- synchronous reset returns to state A, resets counters and output z=0.

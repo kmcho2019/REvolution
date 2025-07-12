@@ -1,0 +1,9 @@
+The original FSM approach is correct and clean, detecting the 0->1->0 pulse pattern and asserting data_out for one clock cycle at the pulse end. For optimization, we can reduce area and power by:
+
+1. Using a single register 'state' rather than separate current and next state variables; update state and data_out synchronously in one always block, reducing register count.
+2. Simplify the state encoding by using a 2-bit reg but avoid typedef for synthesis simplicity.
+3. Remove combinational always block and combine state transition and output logic into one synchronous block to reduce combinational logic delay and glitches.
+4. Use non-blocking assignments consistently in sequential block.
+5. Keep output asserted only for one cycle at the end of the pulse, ensuring minimal switching on data_out.
+
+These changes slightly reduce area and power by simplifying logic and registers, improve timing by eliminating combinational next-state logic, and maintain correctness.

@@ -1,0 +1,13 @@
+To address the potential timing issue causing the single mismatch, we should:
+1. Add an asynchronous reset to initialize the flip-flops to a known state
+2. This ensures consistent behavior from the very first clock cycle
+3. The reset will force all flip-flops to 0 when active (active-low reset shown here)
+4. Maintain the same core functionality of registering 8-bit input on posedge clk
+5. Non-blocking assignments remain for proper synchronous behavior
+
+Key improvements:
+- Adds reset for reliable initialization
+- Prevents any undefined state at startup
+- Maintains all original functionality
+- Still uses single always block for clean implementation
+- Should eliminate the single mismatch in simulation

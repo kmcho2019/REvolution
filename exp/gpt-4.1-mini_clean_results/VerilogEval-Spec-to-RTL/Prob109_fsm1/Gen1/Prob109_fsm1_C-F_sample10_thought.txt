@@ -1,0 +1,17 @@
+To fuse the best ideas from both examples:
+
+- Both use a single-bit state encoding (A=0, B=1), which is minimal and efficient.
+- Both implement asynchronous reset active high to set state to B.
+- Example 1 uses a single always block for state and output logic separated into two always blocks; Example 2 splits next_state combinational and output combinational blocks.
+- To optimize latency and clarity, we can combine the output logic directly in the state register block to reduce logic levels and ensure the output changes immediately after the state updates.
+- Use a single always block for state (with async reset) and combinational always block for next state to keep FSM standard clear structure.
+- Implement output as a combinational continuous assignment to minimize glitches and power — since output = 1 if in B state, else 0, this can be a wire directly driven by the state register.
+- This fusion keeps the clarity and robustness of example 2’s structure with the clean output logic of example 1, but improves output assignment by making it a continuous assignment instead of an always block. Continuous assignments generally synthesize to combinational logic with less risk of latches or glitches.
+
+Overall:
+- One always block: posedge clk or posedge areset for state update.
+- One always block: combinational next_state logic.
+- Output wire driven continuously by current state.
+- Async reset to B state.
+- Clear parameter naming.
+This results in a clean, minimal, glitch-free, and easily synthesizable FSM design optimized for latency, power, and area.

@@ -1,0 +1,26 @@
+Revised Lemming State Machine:
+
+1. Direction Handling:
+   - Track direction separately (left/right)
+   - Implement proper bump logic: simultaneous bumps toggle direction
+   - Preserve direction during DIG/FALL states
+
+2. State Transitions with Priority:
+   - Explicit priority order: FALL > DIG > BUMP
+   - Only enter DIG when grounded and not falling
+   - Only process bumps when in WALK state with ground=1
+
+3. Fall Counter:
+   - Start counting from 0 when entering FALL
+   - Reset counter when leaving FALL
+   - Splatter when hitting ground after >20 cycles
+
+4. Output Logic:
+   - Direct mapping from state and direction
+   - All outputs 0 in SPLAT state
+   - Proper aaah during FALL, digging during DIG
+
+5. Edge Cases:
+   - Ignore bumps during DIG/FALL
+   - Ignore dig when falling
+   - Proper handling of simultaneous events

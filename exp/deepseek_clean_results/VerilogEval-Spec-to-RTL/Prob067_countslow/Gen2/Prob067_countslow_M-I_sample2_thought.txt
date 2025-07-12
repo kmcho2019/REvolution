@@ -1,0 +1,18 @@
+To optimize the decade counter for better PPA metrics while maintaining functionality:
+
+1. Timing Optimization:
+   - Replace the full comparator (q == 4'b1001) with pattern matching on the MSB (q[3]) and LSB (q[0]) since 9 is 1001 in binary
+   - This reduces the critical path by eliminating the need for a full 4-bit comparison
+
+2. Power Optimization:
+   - Add clock gating for the increment logic when slowena is low
+   - This prevents unnecessary switching in the incrementer and comparator
+
+3. Area Optimization:
+   - Maintain the current minimal structure as it's already efficient
+   - The pattern matching optimization also reduces area slightly by using fewer gates
+
+The improved design should:
+- Reduce negative slack by simplifying the comparison logic
+- Lower power consumption through clock gating
+- Maintain or slightly reduce area

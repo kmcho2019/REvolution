@@ -1,0 +1,20 @@
+The fusion strategy is to combine the clean FSM control and shift-and-add logic from both examples while adding explicit management of the shift count (`i`) per the problem statement, along with the done flag updates that align exactly with the count values 16 and 17. 
+
+Key points from the problem specification:
+- Use a 5-bit shift count register `i`, incrementing on each cycle during multiplication (when start is active).
+- At `i == 0`, load multiplicand and multiplier into registers.
+- For `1 <= i <= 16`, if bit `i-1` of multiplicand is set, accumulate multiplier shifted left by `i-1` into product.
+- When `i == 16`, assert done; when `i == 17`, clear done.
+- On reset, clear all registers.
+
+Improvements fused from examples:
+- Use explicit shift count `i` rather than a binary state and counter combo for clarity and direct control of the multiplication steps.
+- Store multiplicand and multiplier in separate registers (`areg` and `breg`).
+- Accumulate partial products by left-shifting multiplier (`breg << (i-1)`) when the corresponding bit of `areg` is set.
+- Use synchronous logic with non-blocking assignments and asynchronous active-low reset.
+- Use the done flag updating exactly as requested.
+- Keep the design simple, readable, and synthesizable.
+
+This approach matches the problem's description and timing of control signals precisely, avoids shifting the product register itself during calculation (instead accumulating shifted multiplicand portions), and produces correct 32-bit output.
+
+This design favors clarity and correctness per requirements over a typical multiplicand/multiplier shifting scheme but remains efficient and straightforward for synthesis.

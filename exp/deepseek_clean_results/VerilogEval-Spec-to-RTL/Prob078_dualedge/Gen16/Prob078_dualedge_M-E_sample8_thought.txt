@@ -1,0 +1,19 @@
+Novel Architectural Idea: Clock Phase Sampling with Single Flip-Flop
+
+1. Core Concept: Instead of using two separate flip-flops, we can use a single flip-flop combined with clock phase detection and data sampling logic. This reduces the number of storage elements while maintaining dual-edge functionality.
+
+2. Key Insight: 
+   - Sample the input data on both clock edges using combinational logic
+   - Store only the most recent sampled value in a single flip-flop
+   - Use the clock state to determine when to update the flip-flop
+
+3. Implementation Approach:
+   - Create a transparent latch during each clock half-cycle
+   - Capture the data value at both rising and falling edges
+   - Update the output register only when the data is stable
+
+4. Advantages:
+   - Reduced area (only one flip-flop instead of two)
+   - Lower power consumption (single storage element)
+   - Maintains correct dual-edge behavior
+   - Fully synthesizable on FPGAs

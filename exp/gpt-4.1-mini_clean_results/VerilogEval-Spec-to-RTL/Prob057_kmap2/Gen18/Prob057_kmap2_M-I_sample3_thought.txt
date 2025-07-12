@@ -1,0 +1,26 @@
+The previous solution is clear and modular but includes intermediate signals like nand_ab and or_ab, which add logic levels and gates. To optimize power and area, we can revisit the Karnaugh map minimization and implement a minimal sum-of-products directly, eliminating shared intermediate signals.
+
+Analyzing the K-map:
+
+              ab
+   cd   00  01  11  10
+   00 | 1 | 1 | 0 | 1 |
+   01 | 1 | 0 | 0 | 1 |
+   11 | 0 | 1 | 1 | 1 |
+   10 | 1 | 1 | 0 | 0 |
+
+We observe these minimal groups:
+- Group1 (4 cells): cd=00 with ab=00,01,10 (cells with output 1) and cd=01 with ab=00,10 (some overlap)
+- Group2 (4 cells): cd=10 with ab=00,01 and cd=00 with ab=10 (some overlap)
+- Group3 (4 cells): cd=11 with ab=01,11,10 (some overlap)
+
+From this, we derive the minimal sum-of-products:
+
+out = (~c & ~d & ~b)  // covers cd=00 & b=0 (covers 00, 01)
+    | (~c & d & ~a)   // covers cd=01 & a=0
+    | (c & ~d & ~a)   // covers cd=10 & a=0
+    | (c & d & b)     // covers cd=11 & b=1
+
+This matches the output cells exactly and uses only four product terms with simple literals, avoiding OR and NAND intermediates.
+
+Implementing this expression directly reduces logic gates, levels, and switching activity, improving power and area without extra wires.

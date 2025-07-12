@@ -1,0 +1,165 @@
+An alternative approach is to implement the function by directly indexing into a truth table stored as a 16-bit vector. Since x is 4 bits, it can represent 16 input combinations (from 0000 to 1111). We can encode the function f as a constant 16-bit value, with each bit corresponding to f for one combination of x.
+
+This removes the need for manual Boolean expression simplification and guarantees correctness as per the K-map.
+
+Indexing the 16-bit vector by the 4-bit input x yields the function output.
+
+To match the Karnaugh map, we must carefully map each minterm index (0 to 15) to the corresponding f value.
+
+We will define a 16-bit constant named LUT (lookup table) representing f for each input from 0 to 15. For example, bit 0 corresponds to x=0000, bit 1 to x=0001, ..., bit 15 to x=1111.
+
+Given the Karnaugh map:
+Columns: x[0]x[1] = 00, 01, 11, 10
+Rows:    x[2]x[3] = 00, 01, 11, 10
+
+We will enumerate all 16 inputs and set f=1 or 0 accordingly:
+
+Indexing order: x[3]x[2]x[1]x[0] or some order? To index bits, we must fix an order.
+
+Since the input is x[3:0], let's define x[3] as MSB and x[0] as LSB.
+
+Thus input number = {x[3], x[2], x[1], x[0]} in binary, where x[3] is MSB.
+
+Compute f for each input (x[3]x[2]x[1]x[0]):
+
+From Karnaugh map, rows are x[2]x[3], columns x[0]x[1], so the bits in order differ.
+
+The map indices:
+
+Row 0 (x[2]x[3]=00): bits where x[3]=0, x[2]=0
+  col=00 (x0=0,x1=0): f=1
+  col=01 (0,1): f=0
+  col=11 (1,1): f=0
+  col=10 (1,0): f=1
+
+Row 1 (x[2]x[3]=01): x3=1,x2=0
+  all 0
+
+Row 2 (x[2]x[3]=11): x3=1,x2=1
+  00:1
+  01:1
+  11:1
+  10:0
+
+Row 3 (x[2]x[3]=10): x3=0,x2=1
+  00:1
+  01:1
+  11:0
+  10:1
+
+We want to rewrite f as a 16-bit number with index = {x3, x2, x1, x0}.
+
+Let's create a table of all 16 input values and their f:
+
+| x3 | x2 | x1 | x0 | col=x0x1 | row=x2x3 | f from K-map |
+|----|----|----|----|----------|----------|--------------|
+| 0  | 0  | 0  | 0  | 00       | 00       | 1            | // input 0  -> bit 0 = 1
+| 0  | 0  | 0  | 1  | 10       | 00       | 1            | // input 1  (x3=0,x2=0,x1=0,x0=1) -> x=0001 = 1 => bit 1= ?
+| 0  | 0  | 1  | 0  | 01       | 00       | 0            | // input 2 = 2  bit2=0
+| 0  | 0  | 1  | 1  | 11       | 00       | 0            | input 3=3 0
+| 0  | 1  | 0  | 0  | 00       | 01       | 0            | input 4=4 0
+| 0  | 1  | 0  | 1  | 10       | 01       | 0            | input 5=5 0
+| 0  | 1  | 1  | 0  | 01       | 01       | 0            | input 6=6 0
+| 0  | 1  | 1  | 1  | 11       | 01       | 0            | input 7=7 0
+| 1  | 1  | 0  | 0  | 00       | 11       | 1            | input 12=1100=12 1
+| 1  | 1  | 0  | 1  | 10       | 11       | 0            | input 13=1101=13 0
+| 1  | 1  | 1  | 0  | 01       | 11       | 1            | input 14=1110=14 1
+| 1  | 1  | 1  | 1  | 11       | 11       | 1            | input 15=1111=15 1
+| 1  | 0  | 0  | 0  | 00       | 10       | 1            | input 8=1000=8 1
+| 1  | 0  | 0  | 1  | 10       | 10       | 1            | input 9=1001=9 1
+| 1  | 0  | 1  | 0  | 01       | 10       | 1            | input 10=1010=10 1
+| 1  | 0  | 1  | 1  | 11       | 10       | 0            | input 11=1011=11 0
+
+We can summarize the 16-bit vector as:
+
+bit pos (index) : f
+
+0:1
+
+1:1
+
+2:0
+
+3:0
+
+4:0
+
+5:0
+
+6:0
+
+7:0
+
+8:1
+
+9:1
+
+10:1
+
+11:0
+
+12:1
+
+13:0
+
+14:1
+
+15:1
+
+Binary from bit15..bit0:
+
+bit15=1
+
+14=1
+
+13=0
+
+12=1
+
+11=0
+
+10=1
+
+9=1
+
+8=1
+
+7=0
+
+6=0
+
+5=0
+
+4=0
+
+3=0
+
+2=0
+
+1=1
+
+0=1
+
+So bits from MSB to LSB:
+
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+
+1  1  0  1  0  1 1 1 0 0 0 0 0 0 1 1
+
+Let's write it as a hex:
+
+bits15-12: 1101 = D
+
+bits11-8:  0111 = 7
+
+bits7-4:   0000 = 0
+
+bits3-0:   0011 = 3
+
+So the 16-bit constant is 16'hD703.
+
+Implement this as:
+
+assign f = LUT[x];
+
+This approach avoids errors in Boolean minimization and is easy to maintain.

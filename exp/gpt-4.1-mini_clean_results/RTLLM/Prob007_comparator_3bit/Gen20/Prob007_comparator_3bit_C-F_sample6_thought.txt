@@ -1,0 +1,15 @@
+To create a superior 3-bit comparator module by fusing the best ideas from both examples, I will:
+
+1. Use explicit bitwise XNOR gates for each bit equality (eq_bit2, eq_bit1, eq_bit0). This provides clarity, fine granularity for equality, and better synthesis opportunities.
+
+2. Combine eq_bit2 and eq_bit1 into a shared intermediate signal eq_21 to reduce redundancy and minimize logic gates.
+
+3. Define A_equal as the AND of all three eq_bits, ensuring precise equality detection.
+
+4. Implement A_greater using a hierarchical, parallel logic structure as in Example 2 but with inline eq signals and the precomputed eq_21 to reduce logic depth and wiring. This retains clarity, performance, and minimal logic levels.
+
+5. Define A_less by simple negation of the OR of A_greater and A_equal to guarantee mutual exclusivity, simplify logic, and avoid redundant comparison logic.
+
+6. Keep the design purely combinational with clean assign statements and minimal wires, optimizing for synthesis tools and low latency.
+
+This fusion yields a minimal gate count, clear hierarchical comparison, low latency, mutually exclusive outputs, and a straightforward implementation suitable for synthesis with good PPA characteristics.

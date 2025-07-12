@@ -1,0 +1,27 @@
+Use a Mealy machine style with minimal state encoding to implement the serial 2's complementer, exploiting the fact that the output depends on the input and the state (carry-in of the addition by 1) in a Mealy fashion. 
+
+Specifically:
+
+- Define two states: WAIT and ADD_ONE.
+  - WAIT state corresponds to scanning the input bits until the first '1' (least significant bit).
+  - ADD_ONE state means we've added the first '1' and now invert subsequent bits.
+  
+- The output z is generated combinationally based on the current state and current input x without registering x separately.
+  - In WAIT state, output z = x (copy bits until first '1').
+  - In ADD_ONE state, output z = ~x (invert all bits after first '1').
+  
+- The next state transitions:
+  - From WAIT: if x == 1, move to ADD_ONE; else remain in WAIT.
+  - From ADD_ONE: remain in ADD_ONE.
+  
+- Use asynchronous reset to initialize state to WAIT.
+
+- All sequential logic in one always_ff block, triggered on posedge clk or posedge areset.
+
+This approach reduces the number of registers since no input registering is needed, minimizing latency and flip-flops. The Mealy output depends on current state and input, so output is assigned combinationally in an always_comb block reflecting Mealy behavior.
+
+This simpler FSM leverages the fundamental characteristic of two's complement serial inversion: copy bits until the first one is encountered, then invert the rest. It avoids maintaining an explicit inversion bit register and reduces clock-to-output latency.
+
+The output is stable and well-defined on the clock edge, since state updates on clock and output depends combinationally on current input and state.
+
+This design offers minimal registers (one state flip-flop), avoids extra input register, and produces the correct serial two's complement output.

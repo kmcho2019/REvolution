@@ -1,0 +1,35 @@
+The previous approach used both posedge and negedge clock triggers, which causes timing and synchronization issues. The waveform suggests that both outputs p and q update synchronously on the rising edge of the clock, with p depending on the current input 'a' and some internal state, and q depending on p from the previous cycle or on internal state.
+
+From the waveform, p is initially 0 after the first clock rising edge when a=0, then p toggles to 1 on rising clock edges only when a=1 at certain times, while q seems to track a delayed version of p, but not just a one-cycle delay. q becomes 1 after several cycles and remains stable despite a changing.
+
+A good interpretation is a two-bit state register {q,p} updated synchronously on rising edge clock:
+
+- p updates to a logical function of input 'a' and current q (e.g., p <= a & ~q or similar).
+- q updates to the old p (q <= p).
+  
+Analyzing the pattern:
+
+- At times when a=1 and clock rises, p goes high.
+- q updates to previous p.
+- On falling edge, outputs remain stable.
+  
+Hence, implementing a 2-bit shift register updated on the rising clock edge:
+
+- q <= p;
+- p <= a;
+
+This matches the waveforms where q always lags p by one clock cycle.
+
+Also, this avoids using negedge clock, simplifying timing and synthesis.
+
+The initial unknown states (x) are natural due to uninitialized reg outputs.
+
+Therefore, the improved design will update p and q on posedge clock, where p <= a and q <= previous p.
+
+This aligns with the waveform's data:
+
+- At first rising edge, p = a = 0, q is unknown.
+- At next rising edge, q = old p, p = a.
+- This produces the shifting pattern observed.
+
+This approach simplifies timing and fixes synchronization errors.

@@ -1,0 +1,18 @@
+Instead of creating a vectorized DFF module, I will implement the TopModule using 8 individual negative edge triggered D flip-flops with synchronous reset, each instantiated from a simple single-bit DFF module that has parameterizable reset value. This approach emphasizes explicit modularity and clarity by directly connecting each bit and its reset behavior. 
+
+Each single-bit DFF:
+- triggers on the negative edge of clk,
+- synchronously resets to a parameterized reset value (default 0),
+- otherwise captures the input d bit.
+
+TopModule:
+- Instantiates eight such single-bit DFFs in a generate loop,
+- passes the corresponding bit from the 8-bit d input,
+- applies reset with the corresponding bit from the 0x34 reset vector,
+- collects all q outputs into the 8-bit q output.
+
+This design:
+- Explicitly shows per-bit register behavior and reset logic,
+- Makes it easy to customize each bit's reset value individually if needed in future,
+- Simplifies debugging by isolating flip-flop behavior per bit,
+- Maintains the negative-edge clock triggering and synchronous active-high reset as required.

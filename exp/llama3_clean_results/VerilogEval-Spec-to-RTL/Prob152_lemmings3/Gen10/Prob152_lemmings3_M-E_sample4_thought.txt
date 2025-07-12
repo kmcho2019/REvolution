@@ -1,0 +1,13 @@
+To develop a novel architectural idea for the Lemming machine, we will introduce a modular, hierarchical design that incorporates a finite state machine (FSM) with separate modules for each primary state (walking, falling, and digging). This approach will allow for easier maintenance, scalability, and readability of the code.
+
+The core concept involves creating a top-level FSM that manages the transitions between the primary states, while each state is further managed by a sub-module. For example, the walking state will have its own module that handles the direction changes based on bump inputs and the ground condition. Similarly, the falling and digging states will be managed by their respective modules, each considering the specific conditions and transitions relevant to those states.
+
+This modular approach enables a clear separation of concerns, making it easier to modify or extend the behavior of any state without affecting the rest of the system. Additionally, it simplifies the debugging process, as each module can be tested independently.
+
+To further enhance the design, we will utilize SystemVerilog's interface feature to define a common interface for all state modules, ensuring consistency and facilitating the integration of these modules with the top-level FSM. This interface will include signals for the current state, next state, and any relevant control signals (e.g., walking direction, digging status).
+
+The use of enums for state encoding and a case statement for managing state transitions will maintain the code's readability and efficiency. Moreover, by encapsulating the logic for each state within its own module, we reduce the complexity of the top-level FSM, making the overall design more manageable and understandable.
+
+The introduction of a "controller" module will oversee the operation of the Lemming machine, ensuring that all modules work together seamlessly to implement the desired behavior. This controller will be responsible for instantiating the state modules, managing the transitions between states, and ensuring that the outputs are correctly updated based on the current state and input conditions.
+
+Overall, the proposed architectural idea focuses on modularity, scalability, and maintainability, providing a solid foundation for implementing the complex behavior of the Lemming machine in a clear, efficient, and manageable manner.

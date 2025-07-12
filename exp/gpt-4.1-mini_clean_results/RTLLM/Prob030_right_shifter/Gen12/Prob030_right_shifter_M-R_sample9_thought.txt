@@ -1,0 +1,5 @@
+Refactor the design to separate the shift operation and the register update. Use a combinational assign statement to compute the next shifted value by concatenating input `d` with the upper 7 bits of the current register `q`. Then update `q` synchronously inside the always block on the rising clock edge.
+
+This approach clarifies the separation between combinational logic (computing the next shifted value) and sequential logic (register update). It maintains a single nonblocking assignment for the register update to avoid race conditions and preserves the initialization of `q` via an initial block.
+
+Such a structure is common in designs to explicitly separate next-state calculation from state update, improving readability and ease of modification in more complex designs.

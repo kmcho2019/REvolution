@@ -1,0 +1,21 @@
+Implement the FSM with three explicit states: WALK_LEFT, WALK_RIGHT, and FALLING. Use a one-hot style encoding with 3 bits for clarity and easy output decoding.
+
+- WALK_LEFT: Lemming is walking left.
+- WALK_RIGHT: Lemming is walking right.
+- FALLING: Lemming is falling, remembers previous walking direction in a separate register.
+
+The direction during falling is stored in a separate 1-bit reg `last_dir` indicating whether it was walking left (0) or right (1) before falling.
+
+State transitions:
+- On reset, go to WALK_LEFT, and set `last_dir`=0.
+- When walking and ground disappears, transition to FALLING, keep `last_dir` as current direction.
+- When falling and ground reappears, transition back to walking state using `last_dir`.
+- When walking and bumped left or right, update walking direction accordingly.
+- Bumps during falling have no effect.
+
+Outputs are derived from current state and last_dir:
+- walk_left: high if walking left.
+- walk_right: high if walking right.
+- aaah: high if falling.
+
+This approach separates direction from falling state, simplifies logic and FSM states, and makes the design highly readable and maintainable.

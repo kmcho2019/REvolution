@@ -1,0 +1,9 @@
+The branch predictor module will have two main components: a global branch history register and a pattern history table (PHT). The global branch history register will keep track of the 7-bit history of recent branches, and the PHT will store the 2-bit saturating counters for each entry. 
+
+When a prediction is requested, the module will use the current PC and global branch history to generate an index for the PHT, and output the predicted branch direction and the current state of the global branch history register. 
+
+When a training request is made, the module will update the PHT entry corresponding to the given PC and global branch history, based on the actual branch outcome and whether it was a misprediction. If it was a misprediction, the module will also recover the global branch history register to the state immediately after the mispredicting branch completes execution.
+
+The module will also handle cases where a training and prediction request occur in the same cycle, giving precedence to the training request when modifying the global branch history register.
+
+All sequential logic will be triggered on the positive edge of the clock, and the module will be reset asynchronously when the areset signal is high.

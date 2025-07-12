@@ -1,0 +1,11 @@
+Implement the 100-bit reversal using a hierarchical tree of smaller bit-reversal stages. The idea is to split the input vector into segments, reverse each segment in parallel using small reversal modules, and then rearrange the segments themselves in reversed order. This modular approach breaks the problem into manageable pieces and may improve synthesis tool recognition of the structure, helping with timing and resource sharing.
+
+Specifically:
+- Divide the 100-bit input into 10 segments of 10 bits each.
+- Instantiate a reusable BitRev10 module that reverses 10-bit vectors.
+- Reverse each 10-bit segment individually.
+- Reverse the order of the reversed segments at the top level.
+- This pipeline-like hierarchical structure can help synthesis tools pipeline or share logic.
+- The design remains fully combinational but demonstrates architectural modularity and scalability.
+
+This new approach offers a balance between modular design and explicit wiring, potentially enhancing readability and easing future expansions.

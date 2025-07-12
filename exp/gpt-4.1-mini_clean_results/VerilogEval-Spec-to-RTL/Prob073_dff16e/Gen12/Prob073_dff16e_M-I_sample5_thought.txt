@@ -1,0 +1,8 @@
+To optimize the original design for better performance, power, and area (PPA), I will:
+
+1. Separate the synchronous reset logic from the byte-wise update logic by explicitly defining the next state in combinational logic. This simplifies the always block and lets synthesis better optimize the data path and muxes.
+2. Use a single clock enable signal (derived from byteena) to gate the register write, reducing unnecessary toggling on the flip-flops when no byte is enabled.
+3. Implement byte-wise write enables as separate signals controlling the input data muxing per byte, improving clarity and potentially allowing finer-grained clock gating in FPGA/ASIC tools.
+4. Retain synchronous active-low reset and positive edge clock triggering.
+
+This structured approach reduces unnecessary toggling by preventing data changes on flip-flops when no byte is enabled and cleanly separates next state logic, helping synthesis produce better timing and power results.

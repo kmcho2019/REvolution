@@ -1,0 +1,8 @@
+Instead of computing the XOR operations for the feedback taps at runtime, we can pre-compute all possible next states and use the current state as an index into a lookup table. This approach:
+1. Eliminates the combinational logic path for XOR computation
+2. Potentially improves timing by reducing the critical path to just a register-to-register transfer
+3. Uses a ROM-style implementation that might be more area-efficient in some technologies
+4. Still maintains the same LFSR sequence and reset behavior
+5. The lookup table can be implemented efficiently using a case statement or a packed array
+
+The tradeoff is slightly increased code size for the lookup table, but with potential benefits in timing and power.

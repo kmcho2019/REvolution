@@ -1,0 +1,18 @@
+module TopModule(
+    input  [2:0] a,
+    input  [2:0] b,
+    output [2:0] out_or_bitwise,
+    output        out_or_logical,
+    output [5:0] out_not
+);
+
+// Perform bitwise-OR
+assign out_or_bitwise = a | b;
+
+// Perform logical-OR
+assign out_or_logical = (a != 3'b000) || (b != 3'b000);
+
+// Compute inverse of b and a, and output them in the specified format
+assign out_not = {~b, ~a};
+
+endmodule

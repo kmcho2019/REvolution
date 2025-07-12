@@ -1,0 +1,8 @@
+To solve this problem, we'll design a finite state machine (FSM) with the following states:
+1. IDLE: Wait for the start bit (0) on the input line.
+2. RECEIVE: Receive the 8 data bits and store them in a register.
+3. STOP: Verify the stop bit (1) and output the received byte if correct.
+
+We'll use a counter to keep track of the number of bits received during the RECEIVE state.
+When the stop bit is verified, we'll output the received byte and assert the done signal.
+If the stop bit does not appear when expected, we'll remain in the IDLE state until we find a stop bit before attempting to receive the next byte.

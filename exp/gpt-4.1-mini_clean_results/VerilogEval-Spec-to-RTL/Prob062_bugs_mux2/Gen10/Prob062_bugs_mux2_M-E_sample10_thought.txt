@@ -1,0 +1,10 @@
+The problem arises from the original code using bitwise operations on vectors combined with a single-bit output, causing width mismatch and unintended behavior.
+
+To fix this properly, we must declare the output `out` as an 8-bit vector to match inputs `a` and `b`. Then, the mux can be implemented cleanly using the ternary operator on vectors: `assign out = sel ? b : a;`.
+
+This approach avoids the bitwise AND/OR operations on vectors and single-bit signals and is more intuitive and readable.
+
+Hence, the architectural idea is:
+- Change `out` to be 8 bits wide.
+- Use a simple vector mux with the ternary operator on the entire 8-bit vectors `a` and `b`.
+This satisfies the original intention of an 8-bit 2-to-1 mux with no width mismatches or unexpected narrowing.

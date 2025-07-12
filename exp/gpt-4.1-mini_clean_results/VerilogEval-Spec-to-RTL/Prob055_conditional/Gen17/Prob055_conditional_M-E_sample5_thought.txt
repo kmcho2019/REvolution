@@ -1,0 +1,12 @@
+I will implement TopModule using a fully combinational approach without any submodules. The idea is to perform all comparisons inside a single always_comb block by using a priority-based if-else structure that sequentially updates a temporary minimum value. This approach is straightforward, requires no additional module instantiation, and is easily scalable for more inputs.
+
+Steps:
+- Initialize a temporary register `temp_min` with the value of input `a`.
+- Compare `temp_min` with `b`, update if `b` is smaller.
+- Compare the updated `temp_min` with `c`, update if `c` is smaller.
+- Finally, compare with `d`, update if `d` is smaller.
+- Assign `temp_min` to the output `min`.
+
+This architecture minimizes the use of intermediate wires, reduces hierarchy level for potentially easier debugging, and preserves synthesis friendliness by using purely combinational always block.
+
+This linear comparison approach is clear and efficient for a small fixed number of inputs like four, though for larger inputs a binary-tree or parallel comparison approach might be preferred.

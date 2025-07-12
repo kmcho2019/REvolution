@@ -1,0 +1,11 @@
+To optimize the counter for better PPA (Power, Performance, Area), I'll implement the following improvements:
+1. Use a simple arithmetic increment (q <= q + 1) instead of bitwise toggling logic:
+   - This reduces the critical path by eliminating the ripple effect between bits
+   - The synthesis tool can optimize a simple adder better than our manual bitwise logic
+   - All bits update simultaneously, reducing glitching power
+2. Maintain the same synchronous reset functionality
+3. Keep the same counting behavior (0-15)
+This approach should:
+- Improve timing by reducing the critical path
+- Reduce area by using more efficient arithmetic operators
+- Lower power by minimizing unnecessary switching activity

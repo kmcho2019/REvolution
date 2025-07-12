@@ -1,0 +1,11 @@
+Refactoring approach:
+1. Instead of using a separate submodule for the D flip-flop, implement the flip-flops directly in the TopModule using always blocks
+2. Remove the generate block and use direct vectorized register declarations for cleaner code
+3. Maintain the same functionality (8-bit register with async reset) but with a more compact implementation
+4. This approach reduces hierarchy levels which might help with synthesis optimization
+5. The asynchronous reset behavior remains identical - all bits reset to 0 when areset is high
+
+Benefits:
+- Eliminates module instantiation overhead
+- Simpler code structure while maintaining same functionality
+- Potential for better area optimization as synthesis tools can better optimize a single module

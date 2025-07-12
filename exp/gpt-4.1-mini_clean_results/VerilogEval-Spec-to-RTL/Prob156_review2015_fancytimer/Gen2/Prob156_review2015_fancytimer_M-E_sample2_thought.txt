@@ -1,0 +1,21 @@
+Implement a Moore finite state machine with explicit states: IDLE (searching for pattern), LOAD_DELAY (loading delay bits), COUNTING (counting timer), and DONE (waiting for ack).
+
+Use a 4-bit shift register to detect the start sequence 1101 serially on every clock cycle while in IDLE. Shift in the input data bit and compare; once matched, transition to LOAD_DELAY.
+
+In LOAD_DELAY, shift in 4 bits MSB first into a separate delay register. After capturing 4 bits, latch the delay value.
+
+Start counting the timer: total cycles = (delay + 1) * 1000. Implement this using two counters:
+ - A 12-bit cycle counter counts from 0 to 999.
+ - A 4-bit down-counter counts the (delay + 1) ticks.
+
+Keep the `count` output equal to the current remaining delay count, which decrements once every 1000 cycles.
+
+After counting completes (down-counter reaches zero and cycle counter hits 999), assert done=1 and wait for ack=1.
+
+When ack=1, reset state to IDLE and resume pattern detection.
+
+All registers update on positive clock edge with synchronous active-high reset.
+
+This modular approach cleanly separates pattern detection from delay loading and counting, ensures MSB-first delay bit ordering by shifting in at the MSB side, and counts the timer with the exact requested timing. The output signals reflect the state properly, with count valid only in COUNTING state, otherwise zero.
+
+No ambiguous or 'x' values are assigned to outputs, ensuring stable logic in synthesis and simulation.

@@ -1,0 +1,13 @@
+Instead of using a traditional state machine, this solution employs a 3-bit shift register to track the last three input samples. The pulse detection becomes a simple pattern match on "010" in the shift register. This approach offers several advantages:
+
+1. Simplicity: Eliminates complex state transitions by directly comparing against the desired pattern
+2. Extensibility: Easily modifiable to detect different pulse patterns by changing the match condition
+3. Timing: Single-cycle detection with no multi-cycle state propagation delays
+4. Visibility: The shift register provides a window into recent input history for debugging
+
+The implementation:
+- Uses a 3-bit shift register (history) to store last three data_in values
+- Shifts in new data_in on each clock edge
+- Compares history against "010" pattern for pulse detection
+- Generates output when pattern is matched
+- Handles reset condition by clearing the shift register

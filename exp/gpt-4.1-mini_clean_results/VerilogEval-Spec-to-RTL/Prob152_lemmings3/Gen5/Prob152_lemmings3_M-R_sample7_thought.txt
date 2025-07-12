@@ -1,0 +1,7 @@
+Refactor the FSM by separating the state register logic and next-state logic into two distinct always blocks: one sequential block for registering state and direction with async reset, and one combinational block to compute next state/direction. Then derive outputs using continuous assign statements based on registered state and direction, emphasizing the Moore machine nature.
+
+This approach uses separate always blocks and continuous assignments (`assign`) for outputs rather than combinational always blocks. This can improve clarity and synthesize cleanly. 
+
+Also, explicitly handle bump direction changes only when walking on ground and not falling or digging, ensuring bump inputs are ignored in falling/digging states and during transition from ground=1 to ground=0 (falling). Prioritize falling > digging > bump direction change strictly in next-state logic.
+
+This structure clarifies FSM and output generation, meeting all specifications cleanly and robustly.

@@ -1,0 +1,5 @@
+Refactor the design by removing the generate-for loop for carry calculation and instead use a single continuous assignment expression to compute all carry signals in a combinational way using prefix computation. This approach uses a combinational for loop inside a function to calculate the carry chain, which can improve readability and compactness.
+
+Also, instead of exposing carry signals directly via outputs, internally compute the carry into and carry out of the MSB for overflow detection within the TopModule, removing the need for an extra carry_into_msb output from the adder module. This reduces interface complexity.
+
+This refactoring maintains the same full 8-bit carry lookahead logic and overflow detection approach but uses a different structural style leveraging a function for carry propagation and encapsulates overflow logic within TopModule.

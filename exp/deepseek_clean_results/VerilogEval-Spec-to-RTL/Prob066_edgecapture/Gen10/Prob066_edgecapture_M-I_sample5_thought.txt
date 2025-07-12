@@ -1,0 +1,7 @@
+The original solution has incorrect edge detection logic. Here's the correct approach:
+1. Need to store the previous input value to detect falling edges (1→0 transitions)
+2. Use a 32-bit register (prev_in) to store input from previous cycle
+3. For each bit, detect when prev_in was 1 and current in is 0
+4. Once a falling edge is detected, the corresponding output bit should stay 1 until reset
+5. Reset clears both the output and previous input registers
+6. All logic is synchronous to posedge clk

@@ -1,0 +1,61 @@
+The Karnaugh map is given for inputs a, b, c, d with rows indexed by cd and columns by ab.
+The 16 minterms can be directly mapped to the inputs (a,b,c,d).
+
+Map coordinates to input bits:  
+Row (cd): 00, 01, 11, 10  
+Column (ab): 00, 01, 11, 10
+
+Therefore, the minterm at cd=0 (c=0,d=0) and ab=0 (a=0,b=0) corresponds to inputs a=0, b=0, c=0, d=0.
+
+Mapping each cell to minterm indices:
+m0: a=0,b=0,c=0,d=0 (cd=00, ab=00)
+m1: a=0,b=1,c=0,d=0 (cd=00, ab=01)
+m3: a=1,b=1,c=0,d=0 (cd=00, ab=11)
+m2: a=1,b=0,c=0,d=0 (cd=00, ab=10)
+m4: a=0,b=0,c=0,d=1 (cd=01, ab=00)
+m5: a=0,b=1,c=0,d=1 (cd=01, ab=01)
+m7: a=1,b=1,c=0,d=1 (cd=01, ab=11)
+m6: a=1,b=0,c=0,d=1 (cd=01, ab=10)
+m12: a=0,b=0,c=1,d=1 (cd=11, ab=00)
+m13: a=0,b=1,c=1,d=1 (cd=11, ab=01)
+m15: a=1,b=1,c=1,d=1 (cd=11, ab=11)
+m14: a=1,b=0,c=1,d=1 (cd=11, ab=10)
+m8: a=0,b=0,c=1,d=0 (cd=10, ab=00)
+m9: a=0,b=1,c=1,d=0 (cd=10, ab=01)
+m11: a=1,b=1,c=1,d=0 (cd=10, ab=11)
+m10: a=1,b=0,c=1,d=0 (cd=10, ab=10)
+
+Now, fill the map with values from the problem:
+
+cd\ab 00  01  11  10
+00    1   1   0   1
+01    1   0   0   1
+11    0   1   1   1
+10    1   1   0   0
+
+So minterms with value 1 are:
+m0, m1, m2, m4, m6, m8, m9, m13, m14, m15, m10=0,m11=0,m3=0,m5=0,m7=0,m12=0
+
+From above:
+m0=1 (a=0,b=0,c=0,d=0)
+m1=1 (0,1,0,0)
+m2=1 (1,0,0,0)
+m3=0
+m4=1 (0,0,0,1)
+m5=0
+m6=1 (1,0,0,1)
+m7=0
+m8=1 (0,0,1,0)
+m9=1 (0,1,1,0)
+m10=0
+m11=0
+m12=0
+m13=1 (0,1,1,1)
+m14=1 (1,0,1,1)
+m15=1 (1,1,1,1)
+
+We need to implement the boolean function F = Σm(0,1,2,4,6,8,9,13,14,15).
+
+Implement as a sum of minterms or simplify if desired.
+
+Here is a direct implementation using the sum of minterms for clarity.

@@ -1,0 +1,22 @@
+Novel Architecture: Hierarchical State Grouping with Output Pipelining
+
+1. State Grouping:
+   - Group states into 3 categories: Pattern Detection (S, S1, S11, S110), Shifting (B0-B3), and Control (Count, Wait)
+   - Implement hierarchical enable signals for each group to simplify next-state logic
+
+2. Output Pipelining:
+   - Pre-compute outputs one cycle early when possible
+   - Use registered outputs for better timing closure
+   - Implement output enables based on state groups
+
+3. Optimizations:
+   - Shared terms for common transition conditions
+   - Early evaluation of done_counting and ack signals
+   - Parallel computation of next-state signals
+   - Minimal logic depth for critical paths
+
+Key Benefits:
+- Reduced combinatorial logic depth
+- Better timing characteristics
+- Clear separation of concerns between state groups
+- More scalable architecture for future extensions

@@ -1,0 +1,7 @@
+To refactor the given code, we will utilize the `assign` statement instead of the `always @(*)` block for combinational logic description. This approach is suitable for describing simple combinational circuits and can potentially lead to more efficient synthesis due to the straightforward nature of the `assign` statement. We will maintain the explicit bitwise XOR operations to calculate the parity bit, ensuring the design's functionality remains unchanged.
+
+The main idea behind this refactoring is to explore alternative Verilog syntax for describing the same combinational logic, potentially influencing how the synthesis tool optimizes the design for area, power, and timing. By using `assign`, we are explicitly telling the synthesis tool that this is a combinational assignment, which can help in avoiding any potential misconstrual of the logic as sequential.
+
+Furthermore, to make the code more scalable and potentially reduce the propagation delay for larger inputs, we could consider restructuring the XOR operations into a tree-like structure. However, given the input size is fixed at 8 bits, the current linear chain of XORs is likely sufficient and simple to implement.
+
+In terms of PPA metrics, the focus remains on minimizing area and power consumption, as the timing performance is not a significant concern for this combinatorial circuit. The use of `assign` and explicit XOR operations should provide a good balance between these metrics.

@@ -1,0 +1,12 @@
+Simplify the 4-bit pipeline multiplier by directly computing all partial products combinationally on inputs extended with zeros and storing the sum in two pipeline stages:
+
+- Stage 1: Register the extended inputs and the partial products generated from multiplier bits.
+- Stage 2: Register the sum of partial products to produce the final output.
+
+Avoid storing partial products in arrays by generating them combinationally inside the always block for stage 1 registers.
+
+Sum partial products in stage 2 by a simple addition of all registered partial products.
+
+This approach respects the requirement of two register levels, extends inputs by size zeros, uses generate block for partial products, and keeps design straightforward with minimal registers and combinational logic for summation.
+
+This reduces complexity by removing packed arrays and combinational loops outside sequential blocks.

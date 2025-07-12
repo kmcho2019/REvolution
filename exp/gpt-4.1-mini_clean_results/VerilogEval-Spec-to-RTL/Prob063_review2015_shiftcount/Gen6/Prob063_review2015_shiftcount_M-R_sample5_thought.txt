@@ -1,0 +1,14 @@
+I will refactor the design by separating the combinational next-state logic from the sequential register update. Instead of embedding all logic in a single clocked always block, I'll first compute the next value of the 4-bit register in a combinational always block based on the control signals. Then, on the positive edge of clk, I'll update the register.
+
+This clearly separates combinational logic from sequential logic, making the RTL easier to understand and verify.
+
+Specifically:
+- When shift_ena is asserted, shift `q` right by one bit towards LSB, inputting `data` at MSB.
+- When count_ena is asserted, decrement `q` by 1.
+- Otherwise, hold the current value.
+
+Because both signals being high simultaneously are don't care, the priority will be given to `shift_ena` for clarity.
+
+This approach keeps the same functionality but improves modularity and readability, making debugging easier if mismatches arise.
+
+No reset signal is used, consistent with the problem statement.

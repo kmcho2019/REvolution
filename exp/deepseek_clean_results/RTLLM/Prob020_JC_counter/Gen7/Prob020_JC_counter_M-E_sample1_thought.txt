@@ -1,0 +1,10 @@
+Novel Architectural Idea: 
+1. Instead of using a single 64-bit register, implement a hierarchical Johnson counter structure using smaller 8-bit Johnson counters (8 counters of 8 bits each)
+2. Each 8-bit counter operates independently but synchronizes its MSB with the LSB of the next higher counter
+3. Benefits:
+   - Better timing due to smaller critical paths (8-bit vs 64-bit)
+   - Lower power consumption as only active counters toggle
+   - Modular design that's easier to verify and scale
+   - Natural pipelining potential between segments
+4. Reset propagates through all counters
+5. The final output is the concatenation of all 8 counter outputs

@@ -1,0 +1,10 @@
+Instead of counting up to half the division factor and toggling the output at that point, the new approach uses a modulo counter running from 0 to NUM_DIV-1. The divided clock output toggles on the transition from the counter reaching NUM_DIV-1 back to zero, which represents the completion of one full division period. This approach simplifies timing alignment and ensures the output clock has a 50% duty cycle for any even division number.
+
+A 4-bit counter is used as before, but it counts from 0 up to NUM_DIV-1, then resets. The divided clock toggles exactly once per full count cycle, effectively dividing the input clock frequency by NUM_DIV. This method avoids off-by-one errors from half-period counting.
+
+To ensure clarity and safety:
+- Include a parameter check for even NUM_DIV.
+- Reset counter and clk_div synchronously on rst_n low.
+- Use a single always block triggered on posedge clk.
+
+This approach is simple and robust for even division factors.

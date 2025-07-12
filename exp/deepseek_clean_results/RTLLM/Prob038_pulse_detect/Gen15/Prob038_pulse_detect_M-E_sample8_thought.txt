@@ -1,0 +1,17 @@
+Novel state machine approach with explicit timing control:
+
+1. Implement a 3-state FSM (IDLE, RISE, FALL) to explicitly track the pulse progression
+2. Use a timer to enforce the 3-cycle requirement (0->1->0 must happen in exactly 3 cycles)
+3. Add input validation to ensure no intermediate transitions break the sequence
+4. Output is only asserted when we complete the full sequence in the correct timing
+5. This approach provides:
+   - Clear state progression visualization
+   - Strict timing enforcement
+   - Better noise immunity (rejects partial sequences)
+   - Explicit handling of all edge cases
+
+Key advantages:
+- Formal state machine makes design intent crystal clear
+- Timing verification prevents false detections
+- Easily modifiable for different pulse width requirements
+- Robust against input glitches

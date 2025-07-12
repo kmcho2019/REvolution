@@ -1,0 +1,23 @@
+To fix the issues in the code, we need to address the following:
+
+1. **Correctly Implement State Transitions:** We need to modify the condition for transitioning from the IDLE state to the SHIFT state to correctly detect the input sequence 1101. This involves checking the current data bit and the previous three bits stored in 'seq_reg'.
+
+2. **Correctly Update 'delay_reg':** In the SHIFT state, we should shift in the new data bit and update 'delay_reg' accordingly.
+
+3. **Correctly Update 'remaining_time' and 'count':** In the COUNT state, we should update 'remaining_time' every 1000 clock cycles and 'count' based on the current remaining time.
+
+4. **Correctly Reset the State Machine:** When the 'ack' signal is asserted, we should reset the state machine to the IDLE state and restart the sequence detection.
+
+Here's a revised thought process:
+
+- **IDLE State:** In the IDLE state, we check if the current data bit and the previous three bits stored in 'seq_reg' match the input sequence 1101. If they match, we transition to the SHIFT state. Otherwise, we remain in the IDLE state and update 'seq_reg' with the current data bit and the previous three bits.
+
+- **SHIFT State:** In the SHIFT state, we shift in the new data bit and update 'delay_reg' accordingly. We also increment a bit counter to keep track of the number of bits shifted in. Once we have shifted in all 4 bits, we transition to the COUNT state.
+
+- **COUNT State:** In the COUNT state, we count for (delay + 1) * 1000 clock cycles. We update 'remaining_time' every 1000 clock cycles and 'count' based on the current remaining time.
+
+- **DONE_STATE:** In the DONE_STATE, we assert the done signal and wait for the ack signal to be 1. Once ack is 1, we reset the state machine to the IDLE state and restart the sequence detection.
+
+- **Reset:** On reset, we initialize all registers to their default values, ensuring predictable behavior after reset.
+
+To correct the code, we will update the state machine implementation, the handling of the counter and remaining time, and the output handling.

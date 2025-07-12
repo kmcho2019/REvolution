@@ -1,0 +1,11 @@
+The original failure is caused by attempting to pass an unpacked array of registers (`stage1_partial_products`) directly as an input to a function, which is unsupported by many Verilog tools. 
+
+To fix this:
+
+- Avoid using unpacked arrays for the pipeline registers of partial products. Instead, use a packed 2D vector or individual registers.
+- Sum the partial products combinationally by explicitly summing each element individually in a separate combinational always block or continuous assignment, rather than using a function that takes an array input.
+- Maintain two pipeline stages: Stage 1 registers the partial products; Stage 2 sums them combinationally and registers the result.
+- Keep the inputs extended and partial products generated as combinational wires.
+- On reset (active low), clear all registers to zero.
+
+This approach respects the simulation and synthesis tool limitations and cleanly implements the 2-level pipeline multiplier as requested.

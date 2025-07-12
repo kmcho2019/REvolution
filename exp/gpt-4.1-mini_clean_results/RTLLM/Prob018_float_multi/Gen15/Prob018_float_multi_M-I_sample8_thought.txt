@@ -1,0 +1,24 @@
+To improve the existing 3-cycle IEEE-754 single-precision floating-point multiplier for better PPA metrics without sacrificing correctness:
+
+1. Pipeline the multiplication stage:  
+   The 24x24 multiplier is the critical and heaviest combinational block. Splitting it into two pipeline stages (partial multiply + combine) reduces the critical path and improves timing (better WNS and TNS).
+
+2. Use 25-bit mantissas with the implicit leading 1 explicitly handled, enabling easier normalization and rounding.
+
+3. Simplify rounding logic by packing guard, round, and sticky bits during the pipeline stages, thus reducing long combinational paths.
+
+4. Early detect zero/inf/nan to bypass multiplier and normalization when possible, reducing switching activity (power).
+
+5. Convert the monolithic 3-cycle FSM to a 4-stage pipeline with explicit stage registers:
+   - Stage 0: Extract fields and special cases  
+   - Stage 1: Multiply mantissas (pipeline first half)  
+   - Stage 2: Complete multiplication + normalization prep  
+   - Stage 3: Rounding, overflow/underflow, special cases, output
+
+6. Carefully register intermediate signals to break long combinational paths and balance pipeline stages.
+
+This approach will reduce critical path delay (thus better timing), reduce power by bypassing multiply for special cases and zero, and allow potentially higher clock frequencies. Area impact is minimal as registers are added but multiplier is not changed in size.
+
+The pipeline also enables throughput of one result per cycle after latency.
+
+I will implement the improved code accordingly.

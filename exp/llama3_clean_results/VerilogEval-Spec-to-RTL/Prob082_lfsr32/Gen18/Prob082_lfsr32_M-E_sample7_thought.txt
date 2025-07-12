@@ -1,0 +1,13 @@
+To implement a 32-bit Galois LFSR with taps at bit positions 32, 22, 2, and 1, we can utilize a different architectural approach. Instead of using a single combinational logic block to calculate the next state, we can break down the LFSR into smaller sections and use a more modular design. 
+
+We will divide the 32-bit LFSR into four sections: bits 31:22, bits 21:2, bits 1:1, and the LSB bit 0. Each section will have its own next-state logic, taking into account the tap positions. 
+
+For the section bits 31:22, we will simply shift the bits right, as there are no taps in this section. 
+
+For the section bits 21:2, we will shift the bits right and XOR the bit at position 21 with the LSB output bit (q[0]) to produce the next value for the bit at position 21.
+
+For the section bits 1:1, we will shift the bit right and XOR the bit at position 1 with the LSB output bit (q[0]) to produce the next value for the bit at position 1.
+
+For the LSB bit 0, we will use the XOR of the bits at positions 31, 22, 2, and 1, and the current LSB bit 0 to produce the next value for the LSB bit 0.
+
+By breaking down the LFSR into smaller sections, we can simplify the next-state logic and make the implementation more modular and easier to understand.

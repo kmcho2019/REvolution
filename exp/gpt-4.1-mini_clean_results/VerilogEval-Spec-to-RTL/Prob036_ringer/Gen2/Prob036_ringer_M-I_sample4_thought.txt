@@ -1,0 +1,8 @@
+The original design is already minimal and functionally correct, using simple combinational logic with minimal gates. However, to optimize further for power and area, we can reduce the number of logic gates by expressing the outputs more compactly. Since ringer and motor are mutually exclusive outputs dependent on ring and vibrate_mode signals, we can combine logic into a single assignment with a ternary operator, potentially allowing synthesis tools to optimize better. This approach might reduce gate count by avoiding separate negations and repeated inputs.
+
+Functionally:
+- If ring=0, both outputs 0.
+- If ring=1 and vibrate_mode=0, ringer=1, motor=0.
+- If ring=1 and vibrate_mode=1, ringer=0, motor=1.
+
+We will implement this logic using continuous assignments with ternary operators, keeping outputs exclusive and minimizing gate usage.

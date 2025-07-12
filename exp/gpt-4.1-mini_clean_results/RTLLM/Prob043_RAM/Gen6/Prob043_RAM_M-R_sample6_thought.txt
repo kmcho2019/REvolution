@@ -1,0 +1,15 @@
+Refactor the dual-port RAM by separating the write logic into a synchronous always block with asynchronous reset that clears the RAM, but implement the RAM initialization with a generate loop using an initial block to initialize the RAM to zeros at simulation start. This removes the synchronous reset clearing loop from the always block, improving reset timing.
+
+Use a separate always block for the write operation triggered on posedge clk only (without reset), and make the reset only affect a separate register to control initialization completion.
+
+For the read path, implement read_data as a registered output clocked by clk, enabled by read_en. This synchronous read introduces a single cycle read latency but simplifies timing and resource inference, which can benefit some FPGAs and ASICs.
+
+Thus:
+- RAM initialized once via initial block (simulation) and via reset logic gate.
+- Write on posedge clk with write_en.
+- Read on posedge clk with read_en enabling the read_data register to latch output from RAM.
+- When read_en is low, read_data resets to zero synchronously.
+
+This refactor trades off zero-latency read for timing stability and resets RAM only once at simulation or power-up, not at every reset.
+
+Address widths remain minimal using $clog2(DEPTH).

@@ -1,0 +1,14 @@
+To correct the solution, carefully handle the PHT memory as a synchronous RAM with one read port and one write port. Use a read address register to hold the predict_index on predict_valid and output the PHT entry from the registered address, ensuring stable prediction data within the cycle. This avoids reading the PHT memory combinationally while writing, resolving race conditions.
+
+On prediction (predict_valid), latch the predict_index and GHR into registers, and output the corresponding PHT counter and the GHR used for prediction. Update GHR at the next clock edge with the predicted taken bit from the registered PHT counter.
+
+On training (train_valid), write back updated saturating counter to the PHT at the train_index. If the training is a misprediction (train_mispredicted), recover GHR to the provided train_history on the next clock edge, which takes priority over GHR update by prediction.
+
+To handle simultaneous training and prediction:
+- Training updates the PHT write port only (one per cycle).
+- Prediction reads from the registered address, so prediction output sees PHT state before training update.
+- GHR update priority: misprediction recovery > predicted outcome update.
+
+Initialize PHT and GHR asynchronously on reset.
+
+This approach aligns exactly with the specification and removes race conditions by synchronizing reads and writes, and properly sequencing GHR updates and prediction outputs.

@@ -1,0 +1,7 @@
+Fuse the two examples by implementing two separate 8-bit registers (ins_p1 and ins_p2) as originally specified, each capturing instructions based on the fetch signal (01 for ins_p1, 10 for ins_p2). This preserves the modularity and clarity of having distinct registers for each source, which aids debugging and aligns with the problem statement.
+
+Register updates are controlled so that only the targeted register updates on the given fetch code, while the other retains its value, avoiding unnecessary toggling and saving power. Outputs are derived combinationally from the respective registers: ins and ad1 from ins_p1, ad2 from ins_p2.
+
+To improve timing and reduce output combinational path delay, outputs are registered on the clock, reducing critical path length and improving stability at the cost of one cycle latency, which is usually acceptable in CPU instruction pipelines.
+
+This design keeps clean separation of data sources, reduces toggling by selective updating, and improves timing by registering outputs—capturing best ideas of modularity, power efficiency, and timing performance.

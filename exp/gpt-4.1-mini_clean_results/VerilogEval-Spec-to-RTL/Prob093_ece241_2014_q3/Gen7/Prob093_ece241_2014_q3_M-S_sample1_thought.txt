@@ -1,0 +1,18 @@
+The problem requires implementing the inputs to a single 4-to-1 multiplexer controlled by `{a,b}` such that the overall circuit realizes the given K-map function. The 4-to-1 multiplexer is external; TopModule only generates `mux_in[3:0]` as functions of `c` and `d` inputs.
+
+Key points:
+- TopModule inputs: c, d (1 bit each)
+- TopModule outputs: mux_in[3:0] (each bit is a function of c,d)
+- No `a` or `b` inputs inside TopModule — they belong to the external 4-to-1 mux selector
+- Implement each `mux_in[i]` using only 2-to-1 multiplexers with selectors `c` or `d`
+- Minimize the number of multiplexers
+
+Approach:
+- Since `mux_in[i]` depends only on `c` and `d`, implement each as a small mux tree controlled by `c` and `d`
+- For each `mux_in[i]`, write out the truth table over c,d and implement it with at most two 2-to-1 muxes
+- Avoid redundant muxes and assign constant 0 or 1 directly when possible
+
+This will yield a minimal and clear implementation that matches the problem spec exactly and simplifies the previous solution by:
+- Removing inputs `a`, `b` from TopModule
+- Using direct assign for constants
+- Implementing only needed muxes with selectors `c` and `d`

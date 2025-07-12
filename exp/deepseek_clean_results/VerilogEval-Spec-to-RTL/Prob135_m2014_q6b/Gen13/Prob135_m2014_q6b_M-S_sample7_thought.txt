@@ -1,0 +1,11 @@
+To simplify the next-state logic for y[1], we can observe that y[1] is set to 1 in the next state in these cases:
+1. Current state is B (001) and w=1 (transition to D)
+2. Current state is C (010) and w=1 (transition to D)
+3. Current state is E (100) and w=1 (transition to D)
+4. Current state is F (101) (transitions to either C or D, both have y[1]=1)
+5. Current state is D (011) and w=0 (transition to F)
+
+All other transitions result in y[1]=0 in next state. We can simplify this by:
+1. Combining all cases where w=1 leads to y[1]=1 (B, C, E)
+2. Adding special cases for F (always y[1]=1) and D→F
+3. Output Y1 is simply y[1] as specified

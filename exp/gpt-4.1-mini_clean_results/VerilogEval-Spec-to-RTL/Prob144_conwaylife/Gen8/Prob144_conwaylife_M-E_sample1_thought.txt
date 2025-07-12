@@ -1,0 +1,14 @@
+Implement the 16x16 toroidal Game of Life using shift-register style ring buffers to store three rows at a time, thereby only keeping the current row and its two neighbors in registers. 
+
+At each clock cycle, shift the row data to process the next row. This pipelined approach reduces combinational logic per cycle and distributes neighbor summations over multiple cycles, improving timing.
+
+Key points:
+
+- Use three 16-bit registers (`prev_row`, `curr_row`, `next_row`) storing one row each.
+- At each clock, rotate these rows downward, loading the new "next_row" from either the input data (if loading) or from the current state `q`.
+- Maintain a 256-bit register `q` holding the entire grid state.
+- For neighbor counting, for each cell in `curr_row`, sum its neighbors from `prev_row`, `curr_row`, `next_row` with wrapping, utilizing bitwise rotate operations to get left/right neighbors efficiently.
+- Implement the Game of Life rules combinationally per cell in the current row, producing the updated row bits.
+- After processing all rows (16 clocks), the `q` is fully updated with the new generation.
+- When `load` is asserted, synchronously load input data `data` into `q`, resetting the processing.
+- This approach distributes logic, reduces fan-in, and naturally pipelines the neighbor summation over cycles.

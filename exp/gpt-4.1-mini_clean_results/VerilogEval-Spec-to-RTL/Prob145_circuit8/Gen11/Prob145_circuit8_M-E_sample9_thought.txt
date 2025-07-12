@@ -1,0 +1,18 @@
+Instead of modeling the design as a classic FSM with encoded states, use two flip-flops (p and q) directly updated on the rising edge of the clock based on combinational logic of input 'a' and the current outputs p and q. Analyze the waveform to deduce the next values of p and q on each clock edge:
+
+- At reset (initial time), outputs are undefined.
+- On first clock edge with a=0, p=0, q=x (q undefined).
+- Later when a=1 at clock edge, p becomes 1, q remains 0.
+- q becomes 1 only after some cycles when p=1 is stable.
+- When a=1 and p=0, p sets to 1.
+- When a=0 and p=1 and q=0, q sets to 1.
+- When a=0 and p=1 and q=1, both reset to 0.
+
+From these observations, the circuit behaves as a 2-bit shift-register-like sequence with conditional logic:  
+- p sets to 1 on a=1 input if not already set.  
+- q sets to 1 if p=1 and a=0.  
+- Both clear to 0 if p=1, q=1 and a=0.
+
+Implement this logic with two registers p and q updated synchronously on clock edges without explicit reset (outputs start undefined as shown). Outputs are driven directly from these registers.
+
+This approach is simple, matches the waveform pattern, and requires no complex state encoding or asynchronous resets.

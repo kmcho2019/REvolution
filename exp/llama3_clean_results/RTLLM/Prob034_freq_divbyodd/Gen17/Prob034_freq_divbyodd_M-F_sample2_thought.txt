@@ -1,0 +1,11 @@
+To address the issues in the frequency divider module, freq_divbyodd, we need to rethink the approach to tracking the clock edges and toggling the clock divider outputs. 
+
+A more robust implementation can be achieved by using a single counter that increments on every clock cycle, regardless of whether it's a rising or falling edge. This counter will track the total number of clock cycles, and its value will be used to determine when to toggle the clock divider outputs.
+
+The clock divider outputs, clk_div1 and clk_div2, will be toggled when the counter reaches half of the desired division ratio (NUM_DIV). Since NUM_DIV is an odd number, we need to ensure that the counter is incremented correctly to account for both rising and falling edges of the clock.
+
+To achieve this, we can use a single counter that increments on every clock edge, and then use the counter value to determine when to toggle the clock divider outputs. The final divided clock output, clk_div, can be derived by logically OR-ing clk_div1 and clk_div2 to account for both clock edges.
+
+The reset logic should also be improved to ensure that the module is properly reset when the reset signal is active low, and that it releases correctly when the reset signal is high.
+
+By using a single counter and improving the reset logic, we can create a more robust and accurate frequency divider that meets the requirements.

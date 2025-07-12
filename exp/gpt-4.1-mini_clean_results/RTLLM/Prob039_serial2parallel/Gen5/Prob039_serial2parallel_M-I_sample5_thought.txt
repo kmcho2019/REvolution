@@ -1,0 +1,19 @@
+The original design is mostly correct but can be improved for clarity, correctness, and robustness:
+
+1. Counting and shifting: To ensure the first received bit is placed at the MSB and the last at LSB, shift the register left by one and insert the new bit at LSB each cycle. This matches the requirement of accumulating bits from MSB to LSB sequentially.
+
+2. Counter correctness: Use a counter that counts from 0 to 7. When it reaches 7 (meaning 8 bits collected), assert dout_valid and output the data.
+
+3. dout_valid pulse: Keep dout_valid high for exactly one clock cycle right after receiving the 8th bit.
+
+4. Synchronize dout_valid clearing: Clear dout_valid only on next cycle, so it doesn't glitch or get masked by immediate clearing.
+
+5. Keep registers synchronous with the clock and reset properly.
+
+6. To improve power and prevent unnecessary toggling, shift and count only when din_valid is high.
+
+This provides a clean, simple, and robust serial-to-parallel converter meeting the requirements and avoids subtle off-by-one and pulse timing issues.
+
+Additionally, explicit resetting of dout_parallel only when valid data is output avoids output glitches.
+
+The code below implements these improvements.

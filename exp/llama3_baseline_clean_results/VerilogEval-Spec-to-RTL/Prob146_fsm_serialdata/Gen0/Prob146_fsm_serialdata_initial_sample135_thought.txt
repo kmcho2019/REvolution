@@ -1,0 +1,10 @@
+The finite state machine (FSM) can be implemented with four states: 
+Idle, Start, Data, and Stop. The Idle state waits for a start bit (0), 
+then transitions to the Start state. In the Start state, it waits for 
+one clock cycle, then transitions to the Data state to collect 8 data 
+bits. After collecting the data bits, it transitions to the Stop state 
+to check the stop bit. If the stop bit is correct (1), it asserts the 
+done signal and updates the out_byte output. If the stop bit is not 
+correct, it stays in the Stop state until it receives a stop bit. 
+The FSM also includes an active-high synchronous reset to return to 
+the Idle state when reset is asserted.

@@ -1,0 +1,17 @@
+Fuse the high-performance carry-lookahead adder (CLA)-based subtraction method from Example 1 with the modular clarity of the structural 1-bit subtractor from Example 2 by building a hierarchical 64-bit subtractor composed of 8-bit CLA sub-blocks. 
+
+This hierarchical design:
+- Partitions the 64-bit subtraction into eight 8-bit CLA blocks, each implementing fast carry-lookahead logic internally.
+- Connects these 8-bit blocks via carry signals with carry-lookahead generation between blocks to minimize carry propagation delay across the full 64 bits.
+- Uses the well-understood two's complement subtraction principle (A + ~B + 1) in each 8-bit block.
+- Incorporates overflow detection using sign bits from A, B, and result as in both examples.
+
+This approach achieves:
+- Better scalability and timing by reducing carry path lengths through hierarchical CLA blocks.
+- Improved modularity and readability compared to monolithic 64-bit CLA.
+- Lower power than a fully flat CLA due to localized carry logic within blocks and minimized global carry signal fanout.
+- Clear structural hierarchy aiding debugging and future optimizations.
+
+The top-level module wires together the 8 submodules, handles inter-block carry signals, and performs overflow detection. Each 8-bit CLA block is implemented with simple propagate/generate logic and internal carry propagation using fast carry lookahead for 8 bits.
+
+This fusion combines the speed and power advantage of CLA-based subtraction from Example 1 with the modularity and explicit structure from Example 2, producing a well-balanced, practical design.

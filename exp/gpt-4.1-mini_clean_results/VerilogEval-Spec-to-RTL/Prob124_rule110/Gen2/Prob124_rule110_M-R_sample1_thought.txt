@@ -1,0 +1,7 @@
+The original design serially updates the Rule 110 state one cell per clock cycle, but the problem requires that the entire 512-cell array updates simultaneously every clock cycle. To fix this while preserving the core approach, we will implement the next state computation fully combinationally for all cells using a generate block or a loop. This combinational logic will compute the next state vector based on the current `q`. Then, at each clock's rising edge, if `load` is high, we load the input data; otherwise, we update `q` with the precomputed next state in a single cycle.
+
+This approach keeps the sequential register update per clock edge, but the next state is ready combinationally every cycle, satisfying the requirement of simultaneous state advance. This also avoids complex state machines or per-cell counters and keeps the design clear and efficient.
+
+The boundary cells assume neighbors outside [0..511] are zero as specified. We use simple indexing and ternary conditions in a generate block to handle boundaries correctly.
+
+This refactoring respects the requirement of advancing the full 512-bit state every clock, while simplifying timing and control logic.

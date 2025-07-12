@@ -1,0 +1,16 @@
+This design implements a combinational 16-bit dividend divided by an 8-bit divisor using a "restoring division" approach with a single explicit iterative process unrolled in combinational logic. Instead of shifting the remainder left and appending dividend bits progressively from MSB to LSB, this design operates on the dividend from the highest bits and extends the remainder as we move down.
+
+Key new ideas:
+- Use two combinational always blocks as per requirements: the first captures input registers a_reg and b_reg, purely combinationally updated from inputs A and B.
+- The second always block performs the division combinationally using a for loop inside, processing all bits from MSB to LSB.
+- The division is done by extracting the top 8 bits from a_reg plus a 1-bit remainder (9-bit temp remainder), then comparing with b_reg:
+  - If remainder >= divisor, subtract divisor, set quotient bit 1.
+  - Else quotient bit 0, remainder unchanged.
+- After each iteration, shift remainder left by 1 and bring in next dividend bit.
+- By unrolling the entire 16 steps in one always block, the division result (quotient and remainder) is computed combinationally.
+- The quotient is a 16-bit register, remainder is kept as 8-bit at the end.
+- This approach respects the requirement to use two always blocks (one combinational input latching, one combinational division calculation).
+- The code is clean, easy to read, and directly expresses the division logic without generate blocks or complex wire arrays.
+- We keep all logic purely combinational, so no clocks or sequential logic are used, as requested.
+
+This is a classical combinational restoring divider implemented explicitly inside an always block, providing a distinctly different structural style compared to generate-based or parallel wire networks.

@@ -1,0 +1,15 @@
+The core fixed-point addition logic is correct and handles sign extension, addition, overflow detection, and saturation properly. The feedback points out that elaboration errors in simulation arise from missing or improperly propagated parameters `N` and `Q` during module instantiation in the testbench or top-level. 
+
+To fix this, the module should:
+1. Retain parameter definitions with default values to allow standalone usage.
+2. Ensure parameters `N` and `Q` are declared in the module header and can be overridden when instantiated.
+3. Avoid any hidden implicit parameters or external dependencies.
+
+This allows any testbench or top-level module to correctly specify or inherit the parameters during instantiation.
+
+Therefore, no core logic changes are needed except:
+- Make sure parameter declarations are explicit with default values.
+- The internal signals and constants should consistently use signed types where appropriate.
+- Keep output `c` as `reg` since assigned inside always block.
+
+This addresses the integration error by enabling parameter passing and binding without changing the module's fixed-point addition implementation.

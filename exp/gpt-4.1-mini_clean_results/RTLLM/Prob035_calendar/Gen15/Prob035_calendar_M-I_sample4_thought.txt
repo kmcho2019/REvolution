@@ -1,0 +1,9 @@
+To improve PPA (performance, power, and area), we can merge the three always blocks into a single always block triggered on posedge CLK or RST. This consolidation removes redundant logic, improves timing by reducing dependencies between separate counters, and potentially reduces area by sharing combinational logic. 
+
+We implement a single synchronous counter that increments seconds every clock cycle. When seconds roll over from 59 to 0, minutes are incremented; similarly, when minutes roll over from 59 to 0 and seconds are 0, hours are incremented. Hours wrap after 23.
+
+Using a single always block minimizes inter-dependent timing paths across multiple always blocks, reduces logic complexity, and provides a natural clock enable for minutes and hours updates only on seconds rollover, cutting switching activity and thus power.
+
+We keep Hours at 5 bits (0–23), Mins and Secs at 6 bits (0–59). Non-blocking assignments ensure correct sequential behavior. Clear comments maintain readability. 
+
+This approach improves timing by eliminating multi-block interlocks, reduces power by limiting toggling to rollover events, and may reduce area by simplifying logic synthesis.

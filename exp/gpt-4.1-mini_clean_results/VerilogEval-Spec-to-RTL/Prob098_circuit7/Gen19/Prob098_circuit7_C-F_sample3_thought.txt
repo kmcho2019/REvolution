@@ -1,0 +1,10 @@
+Fusion Strategy:
+- Both example solutions correctly implement q as the registered inversion of input 'a' on the positive clock edge.
+- The first example explicitly assigns the inverted 'a' to a wire and feeds it to a clean DFF module, separating combinational inversion from sequential logic.
+- The second example directly assigns a wire to ~a inline, feeding that to the DFF.
+- To fuse the best ideas: keep a dedicated, minimal DFF module with no internal logic (clean abstraction).
+- Explicitly declare a wire for the inverted input to maintain code clarity and enable easier debugging and potential optimization.
+- This explicitly separated inversion outside the DFF is a good practice to isolate sequential storage from combinational logic and aids synthesis optimization.
+- Use non-blocking assignments and positive-edge clocking in the DFF for standard synchronous semantics.
+- The top module remains minimal and clearly shows that q is the inversion of a sampled on clk rising edge.
+- This design is clear, minimal, and structurally clean, which helps both human understanding and synthesis tools to optimize for performance, power, and area.

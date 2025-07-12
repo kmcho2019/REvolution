@@ -1,0 +1,19 @@
+Improvement Strategy:
+1. Timing Optimization: 
+   - Use one-hot encoding for the state machine (3 states = 3 flip-flops) to reduce decoding logic and improve timing
+   - Register the input byte to break timing path from input to state transitions
+
+2. Power Optimization:
+   - Add register enables to only update out_bytes when capturing new bytes
+   - Make done signal combinational to save a flip-flop
+
+3. Area Optimization:
+   - Keep one-hot encoding minimal (only 3 states)
+   - Share byte storage logic where possible
+
+Key Changes:
+- One-hot state encoding for better timing
+- Input byte registration to improve clock-to-q timing
+- Conditional byte storage updates
+- Combinational done signal
+- Cleaner state machine structure

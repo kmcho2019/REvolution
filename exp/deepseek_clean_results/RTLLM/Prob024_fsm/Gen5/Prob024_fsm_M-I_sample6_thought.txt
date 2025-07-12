@@ -1,0 +1,16 @@
+Improvement Strategy:
+
+1. Output Registering: To improve timing, I'll register the MATCH output to break the combinatorial path from state transitions to output. This will help with timing closure at the cost of one additional clock cycle latency.
+
+2. State Encoding Optimization: While keeping binary encoding for area efficiency, I'll modify the state assignments to ensure no shared codes between distinct states, preventing potential glitches.
+
+3. Clock Gating: I'll add clock gating logic for state transitions that don't change (IDLE state when IN=0) to reduce dynamic power.
+
+4. State Machine Simplification: I'll merge the GOT1001 state back into the IDLE state since they share the same next-state behavior, reducing the number of states from 5 to 4 while maintaining functionality.
+
+Key Changes:
+- Registered output using a flip-flop
+- Unique state encodings
+- Clock gating for static states
+- Simplified state machine with 4 states
+- Maintained binary encoding for area efficiency

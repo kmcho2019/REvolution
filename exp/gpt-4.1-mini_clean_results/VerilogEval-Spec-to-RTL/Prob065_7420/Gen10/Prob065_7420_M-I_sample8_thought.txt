@@ -1,0 +1,9 @@
+To optimize the original 7420 implementation for better power and area, we can leverage gate-level logic sharing and reduce gate count when inputs have common patterns. Although the original design is clean and already minimal, one small improvement is to use a single generate block for the two NAND gates with an array of inputs and outputs to reduce code duplication and possibly help synthesis tools optimize better. However, this might not significantly impact PPA.
+
+A more effective optimization is to combine the NAND functionality directly using built-in Verilog operators without instantiating separate modules, removing hierarchy overhead, and relying on synthesis to map directly to efficient NAND gates in technology libraries. This can reduce area and slightly improve power by eliminating module overhead.
+
+Additionally, replacing the explicit `&` and `~` with the built-in `nand` reduction operator could be considered, but since there is no built-in reduction NAND, the current expression is optimal.
+
+Thus, the improvement focuses on removing the extra module layer, implementing both NAND gates inline in the TopModule to reduce hierarchy and allow synthesis to optimize better. This slightly simplifies the code and may reduce area and power.
+
+The functional correctness remains the same.

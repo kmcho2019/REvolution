@@ -1,0 +1,18 @@
+The original requirement is to implement a frequency divider by an odd number using two counters and two clock divider signals toggled on the positive and negative edges of the input clock. These two signals are then combined via OR to generate the final divided clock output.
+
+The provided single-counter solution simplifies the logic but deviates from the specified architecture. To align exactly with the problem description, I will implement the design using:
+
+- Two counters: `cnt1` counting on the positive clock edge, `cnt2` counting on the negative clock edge. Each counts from 0 to NUM_DIV-1.
+- Two separate toggle signals: `clk_div1` toggles at half the period on the positive edge (using `cnt1`), and `clk_div2` toggles similarly on the negative edge (using `cnt2`).
+- Both toggles occur when the respective counters reach the halfway point (NUM_DIV/2).
+- Counters reset to zero after reaching NUM_DIV - 1.
+- The final divided clock `clk_div` is the logical OR of `clk_div1` and `clk_div2`.
+- Active low reset asynchronously resets counters and toggles.
+
+This method realizes an odd division with approximate 50% duty cycle by splitting toggling over positive and negative clock edges.
+
+I will also add a compile-time check to ensure the divisor is odd.
+
+This approach directly follows the original problem's design, ensuring functional correctness and clarity of edge usage.
+
+This approach may use more flip-flops and logic than the simplified version but precisely implements the requirement for dual-edge counting and output generation.

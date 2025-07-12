@@ -1,0 +1,11 @@
+The solution can be further simplified by recognizing that:
+1. The heater and aircon outputs are mutually exclusive (can't be on simultaneously) due to mode control
+2. The fan logic can directly use the conditions that activate heater/aircon instead of their outputs
+3. This eliminates one level of logic by combining conditions
+
+Simplified logic:
+- heater = mode & too_cold (unchanged)
+- aircon = ~mode & too_hot (unchanged)
+- fan = (mode & too_cold) | (~mode & too_hot) | fan_on (direct condition check)
+
+This reduces the fan logic's dependency on intermediate signals while maintaining identical functionality.

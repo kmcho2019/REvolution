@@ -1,0 +1,11 @@
+To provide a novel architectural approach to the 4-bit LFSR, I will implement the LFSR as a purely combinational function generating the next state based on the current state, with a simple sequential always block updating the register on the clock's rising edge. This way, the feedback taps and shifting logic are clearly separated, enhancing modularity and clarity.
+
+Key differences and features:
+1. Use an explicit function to compute the next LFSR state from the current state, improving code readability and reusability.
+2. Keep an active-high synchronous reset that initializes the LFSR to a nonzero seed (4'b0001) to prevent lock-up.
+3. Calculate feedback as XOR of out[3] and out[1], a different tap configuration from the usual (3 and 2). This uses the polynomial x^4 + x + 1, which is maximal for 4-bit LFSRs.
+4. Register the state in a 4-bit reg named 'state', and assign output as continuous assignment from this state.
+5. No inversion on feedback to maintain standard LFSR behavior.
+6. Provide a minimal self-checking testbench that prints output values to verify the sequence visually.
+
+This approach highlights separating combinational next-state logic from the sequential register update and uses a different polynomial for variety.

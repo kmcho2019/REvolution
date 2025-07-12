@@ -1,0 +1,13 @@
+Simplify the 16-bit unsigned multiplier by:
+
+- Using a single always block for all sequential logic to reduce control complexity.
+- Maintaining the 5-bit counter i to count from 0 (load inputs) to 16 (final step).
+- Updating done flag directly based on i without separate conditions for clearing at 17.
+- Loading ain and bin at i=0 into registers (areg and breg).
+- At each cycle 1 to 16, if LSB of areg is 1, accumulate breg into yout_r.
+- Shift areg right and breg left every cycle 1 to 16 unconditionally.
+- Reset all registers synchronously on active-low reset.
+- When start is low, reset the counter and done flag; hold data registers stable.
+- Eliminate redundant holds and minimize branches, making logic clearer and easier to synthesize.
+
+This approach keeps the functionality intact but reduces control signals and code complexity.

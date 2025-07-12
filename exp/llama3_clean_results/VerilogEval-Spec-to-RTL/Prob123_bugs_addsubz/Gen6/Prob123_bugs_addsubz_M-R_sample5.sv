@@ -1,0 +1,15 @@
+module TopModule (
+    input do_sub,
+    input [7:0] a,
+    input [7:0] b,
+    output reg [7:0] out,
+    output reg result_is_zero
+);
+
+    // Continuous assignment for the output
+    assign out = do_sub ? (a - b) : (a + b);
+    
+    // Direct comparison for setting the zero flag
+    assign result_is_zero = (out == 8'd0) ? 1'b1 : 1'b0;
+
+endmodule

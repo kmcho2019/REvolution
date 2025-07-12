@@ -1,0 +1,15 @@
+To design a frequency divider that divides the input clock frequency by an odd number, we can use a single counter and a simple state machine to track the divided clock cycles. 
+
+Firstly, we should define the module `freq_divbyodd` with the input ports `clk` and `rst_n`, and the output port `clk_div`. 
+
+Next, we can use a parameter `NUM_DIV` to represent the odd divisor value, which defaults to 5.
+
+Then, we can implement a counter `cnt` to count up to `NUM_DIV - 1` on each rising edge of the input clock `clk`. 
+
+When the counter `cnt` reaches `NUM_DIV - 1`, we can toggle the `clk_div` signal.
+
+To ensure correct behavior, we should reset the counter `cnt` and the `clk_div` signal when the active low reset signal `rst_n` is low.
+
+This approach allows for a simple and efficient implementation of the frequency divider, and it can be easily modified to divide the input clock frequency by any odd number.
+
+Additionally, to account for both rising and falling edges of the clock, we can use a single divided clock signal `clk_div` and toggle it on every `NUM_DIV` cycles, instead of using separate clock dividers for rising and falling edges.

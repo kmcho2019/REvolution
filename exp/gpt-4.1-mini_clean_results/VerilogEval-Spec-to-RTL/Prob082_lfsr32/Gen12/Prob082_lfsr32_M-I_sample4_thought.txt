@@ -1,0 +1,5 @@
+To improve power and performance without sacrificing clarity, I will restructure the LFSR update logic to explicitly compute the feedback bit first. Then shift the register right and conditionally XOR only the tapped bits with the feedback, done via a mask and bitwise operations. This reduces XOR fanout by avoiding wide conditional expressions and isolates combinational logic to a smaller part. 
+
+Additionally, I will declare the TAP_MASK with a shifted 1-based indexing consistent with the problem statement, and handle taps as (bit positions - 1) due to zero-based indexing. This makes the design clearer and less error prone.
+
+This approach also facilitates better synthesis optimization, potentially improving timing and reducing switching activity by better localizing the XOR gates. The synchronous reset and clock edge triggering remain the same.

@@ -1,0 +1,11 @@
+The original solution uses purely combinational continuous assignments with multiple nested ternary operators to select the ALU operation result and status flags, which is efficient but can lead to complex mux logic.
+
+To refactor while keeping the combinational nature, I'll use an explicit combinational always block with a case statement on `aluc`. This enhances readability and structural clarity by grouping operation logic together, avoiding repeated checks of `aluc` in multiple ternaries. 
+
+All outputs including `r`, `zero`, `carry`, `negative`, `overflow`, and `flag` will be declared as reg and assigned inside the always @(*) block. This approach clearly separates the combinational logic and improves maintainability.
+
+Signed arithmetic and comparisons will be handled inside the case branches. For carry and overflow, explicit calculations are done for ADD/SUB variants only. Shift amounts are extracted once at the top.
+
+Finally, the default case sets all outputs to high-impedance or zero as appropriate, matching the original behavior but with explicit case coverage.
+
+This design style is preferred in many RTL codes for clarity while still being synthesizable and combinational.

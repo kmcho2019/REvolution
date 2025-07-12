@@ -1,0 +1,21 @@
+To implement a divide-by-3.5 fractional frequency divider using double-edge clocking with improved phase accuracy and duty cycle balance, I propose the following approach:
+
+- Use a 3-bit modulo-7 counter clocked on the rising edge of the input clock.
+
+- Generate two clock enables:
+  1. `clk_en_long`: high for 4 clock cycles (count 0 to 3).
+  2. `clk_en_short`: high for 3 clock cycles (count 0 to 2).
+
+- Generate two intermediate clock signals:
+  - `clk_long` toggles on the rising edge of `clk` when `clk_en_long` transitions.
+  - `clk_short` toggles on the falling edge of `clk` when `clk_en_short` transitions.
+
+- The key is toggling these intermediate clocks with different counts and edges:
+  - `clk_long` toggled on posedge clk with 4-cycle pulse.
+  - `clk_short` toggled on negedge clk with 3-cycle pulse, phase shifted by half a cycle.
+
+- Final divided clock output `clk_div` is the OR of `clk_long` and `clk_short`. This yields a combined clock with an effective period of 7 input clock cycles, alternating between high times of 4 and 3 cycles, effectively producing divide-by-3.5 frequency division.
+
+- Reset and synchronization are handled carefully to avoid glitches and maintain a 50% duty cycle approximation.
+
+This method effectively uses double-edge triggered toggling and uneven pulse widths to produce the fractional clock division with good phase stability and balanced output.

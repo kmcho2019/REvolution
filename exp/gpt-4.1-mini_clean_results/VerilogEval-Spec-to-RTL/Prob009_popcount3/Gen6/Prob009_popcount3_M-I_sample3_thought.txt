@@ -1,0 +1,21 @@
+The original implementation uses direct addition of the three input bits to compute the population count, which is already minimal and efficient. Since the input width is fixed at 3 bits, another way to possibly reduce area and power slightly is to implement the population count with explicit combinational logic instead of addition.
+
+Specifically, the count of ones (0 to 3) can be encoded as a 2-bit output, where:
+
+- out[0] = parity of inputs (odd number of ones)
+- out[1] = majority signal (true if two or more inputs are 1)
+
+Using explicit XOR and majority logic may reduce the total switching activity compared to an adder since the majority function can be implemented with just AND-OR gates and parity with XORs.
+
+This approach may yield slightly lower power due to simpler and smaller logic and potentially better delay if implemented in logic gates rather than a multi-bit adder.
+
+Therefore, I propose to implement the population count as:
+
+- out[0] = in[0] ^ in[1] ^ in[2];
+- out[1] = (in[0] & in[1]) | (in[1] & in[2]) | (in[2] & in[0]);
+
+This is a known minimal logic implementation for 3-bit population count.
+
+Overall, this may optimize power and area marginally while maintaining zero timing slack.
+
+Note: For 3-bit inputs, this logic is minimal and commonly used in optimized population count circuits.

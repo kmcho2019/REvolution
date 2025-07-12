@@ -1,0 +1,5 @@
+Refactor the FSM by using separate direction and mode registers, where mode encodes walking, falling, and digging states, and direction encodes left/right. The next state logic uses combinational logic split for clarity: one block for next_mode and one for next_dir, both prioritized according to the original spec (fall > dig > bump).
+
+Outputs are generated based on mode and direction. This separates concerns for mode and direction, making the logic easier to follow and reuse. The asynchronous reset initializes mode and direction separately. Non-blocking assignments are retained for sequential logic, and all combinational assignments use assign statements where possible.
+
+This structure also ensures minimal redundancy by focusing on priority and simpler bump logic combined upfront, making it straightforward and modular without changing behavior.

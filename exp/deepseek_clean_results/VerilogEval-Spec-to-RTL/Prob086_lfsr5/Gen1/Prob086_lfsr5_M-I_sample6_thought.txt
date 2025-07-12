@@ -1,0 +1,10 @@
+To correctly implement a 5-bit maximal-length Galois LFSR with taps at positions 5 and 3:
+1. The feedback polynomial for maximal length is x^5 + x^3 + 1
+2. In Galois configuration, this means:
+   - The MSB (q[4]) gets q[0] (standard shift)
+   - Bit q[2] (position 3) gets q[0] XOR q[3]
+   - All other bits simply shift right
+3. Reset should initialize to any non-zero state (we'll use 5'b00001)
+4. This will generate a sequence of 31 (2^5-1) unique states before repeating
+
+The key difference from the previous solution is proper handling of the tap at position 3 (bit q[2]), which needs to XOR with both the feedback (q[0]) and its next higher bit (q[3]).

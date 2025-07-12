@@ -1,0 +1,15 @@
+Refactor the design to separate the combinational logic for output 'q' from the next state logic. Instead of directly assigning 'q' as next state, first compute 'q' based on current 'state', 'a', and 'b', and then update 'state' with the value of 'q' on the positive clock edge. This keeps 'state' as registered memory, and 'q' purely combinational from current state and inputs.
+
+Use an always block to update 'state' on posedge clk, and use continuous assign for 'q' combinational output.
+
+This maintains the same logic function but clarifies the distinction between current state, next state, and output. It also better matches the timing behavior seen in the waveform where 'q' depends on current inputs and 'state' while 'state' updates at clock edges.
+
+The logic for 'q' remains:
+q = (~state & b) | (state & ((a & b) | (~a & ~b)))
+
+Implement this with:
+- assign q = ...
+- always @(posedge clk) state <= q;
+- output port 'state' declared as reg to hold state.
+
+This refactoring provides clear separation of combinational and sequential logic.

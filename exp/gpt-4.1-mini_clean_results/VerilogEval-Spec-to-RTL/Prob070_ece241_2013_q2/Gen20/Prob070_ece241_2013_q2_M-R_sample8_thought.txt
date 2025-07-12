@@ -1,0 +1,18 @@
+Refactor the module to implement the minimal sum-of-products (SOP) and product-of-sums (POS) expressions directly using combinational logic and continuous assignments, without using case enumeration. 
+
+From the problem, the output is 1 when inputs represent 2, 7, or 15 decimal; output is 0 for 0,1,4,5,6,9,10,13,14; inputs 3,8,11,12 never occur (treated as don't cares).
+
+First, encode the input bits as N = {a,b,c,d} with a as MSB.
+
+Derive the minimal SOP for out_sop:
+
+- Minterms for output=1 are 2(0010),7(0111),15(1111).
+- Minimal SOP expression from these minterms is: out_sop = (~a & b & ~c & d) + (~a & b & c & d) + (a & b & c & d)
+- Simplify: (~a & b & d) + (a & b & c & d) = b & d & (~a + c)
+
+Derive the minimal POS for out_pos (output is the same function but expressed in minimal product-of-sums form):
+
+- out_pos should have the same truth table as out_sop but implemented as a minimal POS form.
+- The minimal POS for the function is: out_pos = (a + b + c + ~d) & (a + ~b + c + d)
+
+Implement both expressions explicitly and drive outputs via assign statements. This approach guarantees minimal SOP and POS implementations as required, avoids case enumeration, and is easy to verify.

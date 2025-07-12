@@ -1,0 +1,16 @@
+To simplify the implementation while correctly matching the Karnaugh map:
+
+1. Key Observations:
+   - mux_in[1] is always 0 (can be hardwired)
+   - For other outputs, we can directly implement the truth table columns using minimal logic
+
+2. Simplified Approach:
+   - mux_in[0] (ab=00): Matches ~c OR d (0 when cd=00, 1 otherwise)
+   - mux_in[2] (ab=11): Matches c AND d (only 1 when both c and d are 1)
+   - mux_in[3] (ab=10): Matches ~d (1 when d=0, 0 when d=1 except cd=11 case)
+   - Need to handle special case for mux_in[3] when cd=11
+
+3. Implementation:
+   - Use simple assignments with minimal logic operations
+   - For mux_in[3], use a mux to select between ~d and 1 based on c AND d
+   - Total: 1 AND operation and 1 mux (2-to-1) beyond the required 4-to-1 mux

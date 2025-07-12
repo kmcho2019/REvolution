@@ -1,0 +1,13 @@
+To implement the described functionality, we can break down the problem into several key components:
+1. Pattern detection: We need a state machine to detect the pattern 1101 on the serial data input.
+2. Delay loading: After pattern detection, we load the next 4 bits into a delay register, most-significant-bit first.
+3. Counting: We implement a counter that counts down from the loaded delay value, decrementing every 1000 clock cycles.
+4. Done notification and reset: Once the count reaches 0, we assert the done signal and wait for the ack input to reset the system.
+
+Our state machine will have several states:
+- IDLE: Search for the 1101 pattern.
+- LOAD_DELAY: Load the delay value after pattern detection.
+- COUNTING: Start counting based on the loaded delay.
+- DONE: Assert done and wait for ack.
+
+We will use a finite state machine (FSM) to control these states and implement the required functionality.

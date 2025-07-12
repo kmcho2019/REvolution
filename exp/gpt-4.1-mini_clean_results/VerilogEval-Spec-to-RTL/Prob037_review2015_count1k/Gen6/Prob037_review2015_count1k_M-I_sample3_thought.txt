@@ -1,0 +1,11 @@
+To improve the original modulo-1000 counter for better PPA, I will implement the counter as three separate decimal digit counters (units, tens, hundreds) counting from 0 to 9, cascading carries between them. This BCD-like approach simplifies the comparator and increment logic, avoiding a 10-bit comparator and potentially reducing critical path delay and switching power due to localized counting. 
+
+Each digit is a 4-bit counter with a simple rollover at 9. When units reach 9 and wrap, tens increment; similarly, tens to hundreds. When hundreds wrap from 9 to 0, the entire counter resets to zero, creating a modulo-1000 cycle.
+
+For output, the 3 digits (each 4 bits) will be converted into a binary count via combinational logic: q = hundreds * 100 + tens * 10 + units, all within 10 bits since max count is 999. Multiplications by 10 and 100 will be done using shifts and adds (10 = 8 + 2, 100 = 64 + 32 + 4) to minimize logic.
+
+This structure reduces the complexity of a full 10-bit comparator and the large 10-bit incrementer into smaller, easier-to-optimize counters with ripple carry, potentially improving timing and reducing power by limiting bit toggling per digit.
+
+Also, reset remains synchronous active-high.
+
+This approach should yield better PPA metrics than the straightforward binary counter.

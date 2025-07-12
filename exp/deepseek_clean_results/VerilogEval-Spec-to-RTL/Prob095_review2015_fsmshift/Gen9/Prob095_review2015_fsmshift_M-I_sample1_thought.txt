@@ -1,0 +1,20 @@
+Improvement strategy:
+1. Correct the cycle counting by:
+   - Using a 2-bit counter (0-3) to track 4 cycles
+   - Starting shift_ena immediately on reset (cycle 0)
+   - Keeping shift_ena high until counter reaches 3 (cycles 0-3)
+2. Simplify control logic by:
+   - Using a single always block for both counter and shift_ena
+   - Removing redundant conditions
+3. Ensure proper initialization:
+   - Clear counter and set shift_ena on reset
+   - Maintain shift_ena low after 4 cycles
+4. Optimize for minimal hardware:
+   - Only 2-bit counter needed
+   - Simple comparison logic
+
+Key improvements:
+- Correct 4-cycle assertion (cycles 0-3)
+- Clear state transitions
+- Minimal hardware usage
+- Synchronous reset behavior

@@ -1,0 +1,8 @@
+To devise a novel architectural idea for the PS/2 mouse protocol message boundary detection, we'll introduce a buffer-based approach. Instead of relying solely on a finite state machine, we'll utilize a small buffer to store the incoming bytes. This buffer will help track the sequence of bytes and identify message boundaries more efficiently. The main components of this approach include:
+
+1. **Byte Buffer:** A small, 3-byte buffer to store the most recent bytes received from the PS/2 mouse protocol stream. This buffer will be used to examine the sequence of bytes and identify when a message boundary is detected.
+2. **Boundary Detection Logic:** Combinational logic that examines the contents of the buffer to determine if a message boundary has been detected. This logic will check for the condition where the first byte in the buffer has in[3]=1, indicating the start of a message.
+3. **Message Counter:** A counter that keeps track of how many bytes have been received since the last message boundary was detected. This counter will help in asserting the 'done' signal after three bytes have been received following a message boundary.
+4. **Reset and Control Logic:** Logic that manages the reset condition, ensuring the buffer, counter, and other internal signals are properly reset when the reset signal is asserted.
+
+The buffer-based approach offers advantages in terms of flexibility and scalability, as it can be easily adapted to handle different message lengths or protocols with minor modifications to the boundary detection logic and the message counter.

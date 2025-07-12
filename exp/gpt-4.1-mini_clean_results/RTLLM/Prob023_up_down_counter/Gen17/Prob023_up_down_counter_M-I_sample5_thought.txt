@@ -1,0 +1,11 @@
+To improve power efficiency without changing the basic functionality or timing significantly, I will introduce an enable signal that only updates the counter when counting is necessary. Since the original spec does not specify an enable, I will assume counting happens every clock cycle. However, adding a gating condition internally that checks if the counter needs to change will not save power, because it increments or decrements every cycle.
+
+Therefore, the main practical improvement to power and area while preserving the functionality is to implement the increment/decrement using a simple carry chain adder constructed using addition of 1 or subtraction of 1 instead of a full adder.
+
+In Verilog, this can be achieved by using the unary increment/decrement operators (++/--), which synthesis tools map efficiently to carry logic optimized for +1/-1 operations.
+
+Moreover, I'll use an asynchronous reset for better performance and area in some flows, but since the spec requires synchronous reset, I'll keep synchronous reset.
+
+Thus, the improvement is minor: replace the arithmetic `count + 16'd1` and `count - 16'd1` with unary increment/decrement operators for clearer intent and potential synthesis optimization.
+
+This keeps the logic minimal and may improve power and area slightly by hinting to the synthesis tool the operation is a simple increment/decrement.

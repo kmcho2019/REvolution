@@ -1,0 +1,14 @@
+I'll approach this problem by recognizing that the output pattern has strong dependencies on both 'c' and 'a' bits. We can decompose the logic into two parts:
+
+1. When c=0 (first two rows of K-map):
+   - Output is 1 only when (ab=10 or ab=11) and d=0 (cd=00)
+   - Otherwise output is 0 (treating don't-cares as 0)
+
+2. When c=1 (last two rows of K-map):
+   - Output is 0 only when ab=01
+   - Output is 1 for all other cases (treating don't-cares as 1)
+
+This leads to a more accurate implementation using:
+- For c=0: out = ~c & (a & ~b) & ~d
+- For c=1: out = c & ~(~a & b)
+The don't-cares are optimally utilized to simplify the logic.

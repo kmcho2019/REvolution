@@ -1,0 +1,6 @@
+The core idea is to simplify the existing state machine by removing unnecessary complexity while maintaining its functionality. The main improvements include:
+- Removing the need for an explicit 'byte_count' signal by using the combinational logic to detect the message boundaries directly.
+- Simplifying the state machine to only track the reception of valid bytes.
+- Asserting the 'done' signal immediately after the third byte of a message is received.
+
+We will utilize a two-bit counter to track the byte sequence, where '00' represents the IDLE state, '01' represents the BYTE1 state, '10' represents the BYTE2 state, and '11' is not a valid state but rather a condition for asserting 'done'. The counter will be incremented only when a valid byte is received.

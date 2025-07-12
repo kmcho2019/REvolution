@@ -1,0 +1,23 @@
+To improve correctness and precisely match timing requirements, the FSM should update outputs immediately on state entry rather than purely from the current state, avoiding one-cycle output delays that may cause mismatches with the testbench.
+
+Key improvements:
+
+- Use Moore FSM style where outputs depend only on the state, but outputs change in the same clock cycle as the state transitions for immediate output update.
+
+- Implement the shift register as before, but detect the pattern at the clock edge to transition cleanly to SHIFT state.
+
+- Use a 3-bit shift counter counting from 0 to 3 (4 cycles total) inside SHIFT state; transition to COUNTING state immediately after the 4th shift_ena cycle.
+
+- Assert `shift_ena` only during these 4 cycles precisely.
+
+- When entering COUNTING state, assert counting immediately until done_counting is asserted.
+
+- When entering DONE state, assert done until ack is asserted.
+
+- Use synchronous reset to initialize all registers and states.
+
+This ensures outputs align perfectly with state transitions and clock edges, preventing off-by-one errors and ensuring the FSM's outputs and transitions meet the exact timing expected by the testbench.
+
+All synchronous logic triggers on positive edge of clk, with no combinational output assignments to avoid glitches.
+
+This refined FSM approach ensures that outputs are stable and valid on the clock cycle of state change and the sequence detection and counting timing align precisely.

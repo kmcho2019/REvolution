@@ -1,0 +1,9 @@
+To implement the Lemmings finite state machine, we will create a Moore state machine that models the walking, falling, and digging behavior of the Lemmings. The state machine will have the following states: WALKING_LEFT, WALKING_RIGHT, FALLING, DIGGING, and SPLATTERED.
+
+The state machine will transition between these states based on the inputs bump_left, bump_right, ground, and dig. The output walk_left, walk_right, aaah, and digging will be determined by the current state.
+
+The WALKING_LEFT and WALKING_RIGHT states will transition to FALLING when ground=0, and to the opposite walking state when bumped. The FALLING state will transition to WALKING_LEFT or WALKING_RIGHT when ground=1, but only if the Lemming hasn't fallen for more than 20 clock cycles. If the Lemming has fallen for more than 20 clock cycles, it will transition to the SPLATTERED state. The DIGGING state will transition to FALLING when ground=0.
+
+The output aaah will be 1 when the state machine is in the FALLING state, and 0 otherwise. The output digging will be 1 when the state machine is in the DIGGING state, and 0 otherwise. The output walk_left and walk_right will be determined by the current state.
+
+We will use a counter to keep track of the number of clock cycles the Lemming has been falling. This counter will be reset to 0 when the Lemming hits the ground or starts walking.

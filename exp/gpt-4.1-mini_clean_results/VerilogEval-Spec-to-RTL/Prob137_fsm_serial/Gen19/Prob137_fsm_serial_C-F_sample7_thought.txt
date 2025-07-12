@@ -1,0 +1,13 @@
+I will create a superior FSM by combining the clarity and power-aware register updates of Example 1 with the explicit next_state combinational logic and stable done pulse generation of Example 2. 
+
+Key fusion points:
+- Use a binary-encoded 4-state FSM (IDLE, DATA/RECEIVE, STOP/CHECK_STOP, ERROR/WAIT_STOP) with explicit next_state combinational logic to improve timing clarity and synthesis friendliness.
+- Shift bits in LSB-first order by shifting the shift_reg left and inserting the input at LSB.
+- Update bit counter and shift register only in the DATA/RECEIVE state to reduce unnecessary toggling.
+- Reset bit_count and shift_reg only in IDLE and WAIT_STOP (ERROR) states to minimize switching.
+- Generate a synchronous one-cycle done pulse in STOP state when the stop bit is correct.
+- Maintain all outputs and state registers in one clocked block with synchronous reset.
+- Avoid redundant assignments in other states for power savings.
+- This approach balances clarity, power efficiency, and performance while keeping area small.
+
+This fusion improves code clarity and timing (through explicit next_state), reduces dynamic power (by conditional updates), and maintains robust framing error handling by waiting for a valid stop bit in ERROR state before returning to IDLE.

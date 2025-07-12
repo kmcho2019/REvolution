@@ -1,0 +1,10 @@
+Here's a novel approach using a parallel edge detection scheme with individual bit state machines:
+
+1. Instead of using a single register for previous input, we'll implement 32 independent state machines (one per bit)
+2. Each state machine tracks its own bit's state and transition history
+3. The state machines have three possible states:
+   - IDLE: No 1->0 transition detected yet
+   - DETECTED: Transition detected, waiting for reset
+   - RESET: Cleared state
+4. This provides more explicit state tracking per bit and makes the design more modular
+5. The output is simply the OR of all bits in their DETECTED state

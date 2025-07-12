@@ -1,0 +1,22 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Pipeline the accumulation path by splitting into two stages (shift and accumulate)
+   - Use one-hot encoding for state machine to reduce decoding delay
+   - Move shift operation to previous cycle to balance critical path
+
+2. Power Optimization:
+   - Only update shifted_bin when needed (conditional shifting)
+   - Gate clock to count register when not in CALC state
+   - Reduce register widths where possible
+
+3. Area Optimization:
+   - Use 16-bit shifted_bin with dynamic zero extension
+   - Optimize state machine encoding
+   - Share resources between shift and accumulate operations
+
+Key Changes:
+- Two-stage pipelined datapath
+- Conditional shift operations
+- Optimized register widths
+- One-hot state encoding
+- Clock gating for count register

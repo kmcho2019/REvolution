@@ -1,0 +1,18 @@
+To optimize the existing solution for better PPA (Performance, Power, Area), consider the following improvements:
+
+1. **Synchronous Reset for clk_b Domain:**  
+   Changing the asynchronous reset to synchronous in clk_b domain can improve timing closure and reduce metastability risks during reset de-assertion, benefiting performance and timing robustness.
+
+2. **Explicit Register Enables:**  
+   In the clk_a domain, instead of conditional updates inside the always block, use an explicit clock enable (CE) style with data_en as enable. This style is more synthesis-friendly, can improve power by avoiding unnecessary toggles, and may lead to smaller mux insertion.
+
+3. **Hold Data Register When data_en is Low:**  
+   Data register should keep its old value without toggling. Using CE logic explicitly achieves this while making it clear for synthesis tools.
+
+4. **Register Packing / Grouping:**  
+   Group the two enable synchronizer registers into a 2-bit shift register to optimize area slightly. This might help the synthesis tool pack registers better.
+
+5. **Minor Code Style and Comments:**  
+   Adding clear comments and maintaining consistent code style helps maintainability without impacting PPA significantly.
+
+The functionality remains the same, while making the resets synchronous on clk_b and using explicit enables can enhance timing and power behavior. Overall, the improvements are subtle but aligned with best RTL design practices for clock domain crossing modules.

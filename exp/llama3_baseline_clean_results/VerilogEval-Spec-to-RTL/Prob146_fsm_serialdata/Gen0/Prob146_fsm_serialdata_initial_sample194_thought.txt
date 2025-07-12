@@ -1,0 +1,9 @@
+To solve this problem, we need to implement a finite state machine (FSM) that recognizes the start bit, waits for the data bits, and verifies the stop bit in a serial communication protocol. The FSM should have four main states: IDLE, START, DATA, and STOP. 
+- In the IDLE state, the FSM waits for a start bit (0) to be detected. 
+- Once a start bit is detected, the FSM transitions to the START state.
+- In the START state, the FSM waits for one clock cycle and then transitions to the DATA state to start collecting the data bits.
+- In the DATA state, the FSM collects the data bits for 8 clock cycles and then transitions to the STOP state.
+- In the STOP state, the FSM checks if the stop bit (1) is correct and asserts the done signal.
+- If the stop bit is not 1, the FSM stays in the STOP state until a stop bit is detected.
+- After asserting the done signal, the FSM transitions back to the IDLE state.
+The out_byte signal should be updated with the collected data bits when the FSM transitions to the STOP state.

@@ -1,5 +1,0 @@
-1. The initial state assignment is incorrect in the state machine. The `WAIT_FOR_START` state should be triggered when `reset` is high, but the current condition sets it to `RECEIVING` state instead.
-2. In the `RECEIVING` state, the logic for collecting incoming bytes is flawed. The condition to check the first byte reception (`out_bytes_reg[23:16]`) is correct, but subsequent bytes are not being shifted and stored properly.
-3. The `done` signal is generated based on the current state, which is dependent on the next state assignment. This can lead to synchronization issues in asserting the `done` signal correctly.
-4. The assignment of `out_bytes` is done conditionally based on `done`, which is fine. However, the incorrect byte collection logic affects the correctness of the output.
-5. Due to these issues, the simulation is producing mismatches in the output signals (`out_bytes` and `done`), causing incorrect behavior in the FSM implementation.

@@ -1,0 +1,15 @@
+The original solution uses a combinational logic expression derived from the JK truth table, which is clean and minimal. To improve timing and potentially area, I propose replacing the combinational expression with a more explicit multiplexer-based structure that directly implements the JK functionality. This can sometimes help synthesis tools optimize muxes better than arbitrary logic gates.
+
+Specifically, at each positive clock edge:
+- If J=0 and K=0, retain Q (no change)
+- If J=0 and K=1, reset Q to 0
+- If J=1 and K=0, set Q to 1
+- If J=1 and K=1, toggle Q
+
+Expressing this via a case statement or if-else chain avoids logic expressions that synthesize into multiple gates, potentially improving delay.
+
+Also, I will initialize Q to 0 for better simulation predictability.
+
+This approach maintains correctness and may slightly improve timing by reducing gate count on the critical path.
+
+If the target technology has a JK flip-flop primitive, it could be used for best PPA, but since the problem does not specify it, the mux-based behavioral implementation is a good optimization.

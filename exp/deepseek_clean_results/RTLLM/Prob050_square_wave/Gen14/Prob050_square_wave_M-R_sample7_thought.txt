@@ -1,0 +1,13 @@
+Refactoring Strategy:
+1. Simplify clock domain: Use single clock domain (clk) for all operations
+2. Remove clock gating: Handle freq=0 case within the main counter logic
+3. Optimize counter logic: Combine count and wave_out updates in a single always block
+4. Use clearer reset condition: Explicitly handle freq=0 as a reset case
+5. Reduce redundant logic: Eliminate separate always blocks for wave_out
+
+Key Changes:
+1. Single always block for all sequential operations
+2. freq=0 case resets both counter and output
+3. Cleaner state transitions with priority encoding
+4. More efficient comparison logic
+5. Maintain same functionality with simpler structure

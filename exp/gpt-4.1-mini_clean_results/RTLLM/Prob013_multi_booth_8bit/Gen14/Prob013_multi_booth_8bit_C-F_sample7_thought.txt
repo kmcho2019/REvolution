@@ -1,0 +1,22 @@
+To fuse the best ideas from both examples, I will implement a signed 8-bit Radix-4 Booth multiplier using a clean FSM approach with separate control and datapath logic for clarity and maintainability, as in Example 2.
+
+From Example 1, I take the efficient radix-4 Booth encoding that reduces the number of iterations to 5 (processing 2 bits per cycle), sign extension to 9 bits for the multiplicand and multiplier, and an accumulator wide enough (18 bits) to hold the partial sums without overflow.
+
+From Example 2, I adopt the FSM structure (IDLE, RUN, DONE states) and separate combinational control logic from the sequential datapath update, improving readability and easing timing analysis.
+
+Key improvements:
+
+- Use 5 FSM states for control: IDLE (wait for reset), RUN (5 cycles for radix-4 Booth steps), DONE (assert ready).
+- Inputs `a` and `b` loaded on reset release, with sign extension to 9 bits (multiplicand) and 10 bits (multiplier plus extra bit).
+- Use a function to decode the 3-bit Booth recoding window and generate partial product multiples.
+- Maintain an 18-bit signed accumulator, updated every cycle with the shifted partial product.
+- Shift multiplier right arithmetically by 2 bits every cycle (to expose next recoding bits).
+- After 5 cycles, output the lower 16 bits of the accumulator and assert ready.
+- Hold output and internal registers stable in DONE state until next reset.
+- Clear ready on reset and load.
+- Use non-blocking assignments and synchronous reset for safe synthesis.
+- Avoid redundant assignments and ensure minimal toggling in DONE state.
+- The design runs multiplication in 5 cycles, significantly reducing latency and switching activity compared to bit-by-bit.
+- The design is fully synthesizable, easily testable, and clear for verification.
+
+This fusion combines the speed and efficiency of radix-4 encoding with the clarity and control of FSM-based design, yielding a high-quality, clean, and compact multiplier.

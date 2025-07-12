@@ -1,0 +1,7 @@
+To implement the finite-state machine (FSM) for the timer controller, we need to design a state machine with the following states:
+1. IDLE: Waiting for the 1101 pattern
+2. SHIFT: Shifting in 4 bits for duration after pattern detection
+3. COUNT: Waiting for counters to finish
+4. DONE: Timer expired, waiting for acknowledgment
+
+The FSM transitions between these states based on inputs and maintains the required outputs. The pattern detection is done serially, checking for '1', '1', '0', '1' in sequence. After pattern detection, we enable shifting for 4 cycles, then wait for counting to complete, and finally wait for acknowledgment.

@@ -1,0 +1,14 @@
+To implement the finite state machine that searches for message boundaries, we can define three states: IDLE, BYTE_1, and BYTE_2. The IDLE state is the initial state, where we discard bytes until we see one with in[3]=1. Once we see a byte with in[3]=1, we transition to the BYTE_1 state, where we assume this byte is the first byte of the message. Then, we transition to the BYTE_2 state, where we receive the second byte. Finally, after receiving the third byte, we transition back to the IDLE state, but first, we assert the done signal to indicate that a message has been received.
+
+We also need to design the datapath module to output the 24-bit message. We can use three registers to store the three bytes of the message. The out_bytes signal is valid only when the done signal is asserted.
+
+Here is a high-level overview of the design:
+
+- The finite state machine (FSM) controls the datapath.
+- In the IDLE state, the FSM checks if the current byte has in[3]=1. If so, it transitions to the BYTE_1 state.
+- In the BYTE_1 state, the FSM stores the current byte as the first byte of the message and transitions to the BYTE_2 state.
+- In the BYTE_2 state, the FSM stores the current byte as the second byte of the message and transitions to the BYTE_3 state.
+- In the BYTE_3 state, the FSM stores the current byte as the third byte of the message, asserts the done signal, and transitions back to the IDLE state.
+- The datapath outputs the 24-bit message (out_bytes) whenever the done signal is asserted.
+
+We will use three registers to store the three bytes of the message. The registers will be clocked on the positive edge of the clock signal (clk).

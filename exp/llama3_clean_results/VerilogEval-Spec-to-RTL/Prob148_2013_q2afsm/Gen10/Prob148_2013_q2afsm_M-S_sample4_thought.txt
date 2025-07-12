@@ -1,0 +1,12 @@
+To simplify the given solution, we focus on minimizing the state transition logic and output assignments while maintaining the same functionality. 
+
+We maintain the state encoding:
+- A: 3'b000
+- B: 3'b001
+- C: 3'b010
+
+We notice that the state transitions can be simplified by directly checking the `r` signals and their priority. If `r[0]` is high, the next state is `3'b001`. If `r[0]` is low and `r[1]` is high, the next state is `3'b010`. If both `r[0]` and `r[1]` are low and `r[2]` is high, we actually want to set `g[2]` to 1, which is currently not handled by any state. However, the original state diagram does not specify a state for `g[2]`, so we can simplify this by directly assigning `g[2]` based on `r[2]` when `r[0]` and `r[1]` are low.
+
+For output signals `g`, we use continuous assignments based on the current state and `r[2]` to directly set `g[0]`, `g[1]`, and `g[2]`.
+
+This approach simplifies the code, reduces the complexity of the combinational logic, and makes the state transitions more straightforward.

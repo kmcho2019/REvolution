@@ -1,0 +1,13 @@
+To create a novel architectural idea, we'll implement a pipelined approach for the HDLC decoder. The main concept is to break down the decoding process into stages, where each stage handles a specific part of the protocol detection. This will potentially improve performance by allowing for more concurrent processing and reducing the complexity of individual stages.
+
+The pipelined architecture will consist of three main stages:
+
+1. **Consecutive Ones Detector**: This stage will detect sequences of consecutive ones in the input stream. It will output the length of the longest sequence of ones seen so far.
+2. **Flag and Error Detector**: This stage will receive the output from the previous stage and determine if a flag (01111110) or an error condition (7 or more consecutive ones) has been detected.
+3. **Discard and Flag Generator**: Based on the outputs from the previous stage, this stage will generate the `disc`, `flag`, and `err` signals according to the HDLC protocol rules.
+
+Each stage will be designed to operate independently, allowing for pipelining and potentially improving the overall throughput of the decoder.
+
+Additionally, to further optimize the design, we will use a simple counter to keep track of the consecutive ones, which will simplify the logic and reduce the number of states needed.
+
+This approach aims to provide a more scalable and efficient solution, especially when dealing with high-speed input streams.

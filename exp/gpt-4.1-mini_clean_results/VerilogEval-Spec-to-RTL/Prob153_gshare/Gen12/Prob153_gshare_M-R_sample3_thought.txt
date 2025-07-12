@@ -1,0 +1,13 @@
+To improve timing clarity and correctly reflect the stable PHT and GHR states in the prediction outputs, I will separate combinational prediction from registered outputs.
+
+- The global history register (ghr) will be updated only on the clock edge after either a training update (with priority on misprediction recovery) or a prediction update (if no mispredicted training).
+
+- The PHT will be a synchronous RAM with separate read and write ports simulated by registering the read address and write address/data separately, avoiding read-write conflicts.
+
+- Prediction outputs (`predict_taken` and `predict_history`) will be registered outputs, capturing the prediction info based on stable ghr and PHT state from the previous cycle (before any update this clock).
+
+- The combinational prediction uses the current ghr and predict_pc to compute predict_index and the predicted bit; this bit and the ghr are then latched at the clock edge to output registers.
+
+- On training, the PHT entry is updated based on train_pc ^ train_history, saturating the counter towards train_taken. If mispredicted, the ghr is restored to train_history, else if no misprediction and no training misprediction in this cycle, ghr is updated with predicted bit.
+
+This approach cleanly respects the timing and priority rules, avoids read-after-write hazards by registering addresses and data, and stabilizes outputs consistent with the pipeline requirements.

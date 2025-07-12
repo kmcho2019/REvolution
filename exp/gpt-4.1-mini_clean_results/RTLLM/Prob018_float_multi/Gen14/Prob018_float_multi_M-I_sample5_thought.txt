@@ -1,0 +1,29 @@
+Improvement Strategy:
+
+The original design is functionally correct and well-structured with a 3-stage pipeline, but the main timing bottleneck and power/area hotspot is the 24x24-bit multiplier in stage 2, computed combinationally every clock cycle.
+
+To improve PPA (power, performance, area), I will:
+
+1. Split the pipeline into 4 stages (counter wraps at 4) to reduce combinational critical path:
+   - Stage 1: Input extraction (sign, exponent, mantissa, special cases)
+   - Stage 2: Mantissa multiplication start (use a registered multiplier input)
+   - Stage 3: Normalization and rounding calculations (guard, round, sticky bits)
+   - Stage 4: Final rounding and output formatting
+
+This pipeline balancing reduces the max combinational logic delay per clock cycle, improving timing (WNS).
+
+2. Insert registers before and after the multiplier to isolate the multiplier stage, enabling use of DSP or vendor multiplier resources efficiently.
+
+3. Reduce the width of intermediate registers when possible to save area.
+
+4. Use non-blocking assignments throughout for clarity and consistency.
+
+5. Add an internal signal to gate the multiplier operation logically on valid inputs (here assumed always valid for simplicity).
+
+6. Minor optimization in sticky bit calculation: perform OR reduction only on 16 bits, then OR with lower bits, to reduce wide fan-in (hierarchical reduction).
+
+These changes will improve the maximum clock frequency and slightly reduce dynamic power by pipelining and gating the multiplier.
+
+The interface remains the same; the latency increases to 4 cycles.
+
+Output remains fully IEEE-754 compliant, with same special cases and rounding.

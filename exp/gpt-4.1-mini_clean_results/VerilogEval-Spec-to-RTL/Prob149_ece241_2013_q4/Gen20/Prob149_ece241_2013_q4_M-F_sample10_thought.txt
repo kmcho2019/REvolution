@@ -1,0 +1,18 @@
+To fix the previous design, we explicitly track the previous sensor pattern (prev_s) to detect the exact water level transitions, not just the count of sensors asserted. We define the water level as one of four states corresponding to the sensor pattern:
+
+- 3'b111 (Above s[2])
+- 3'b011 (Between s[2] and s[1])
+- 3'b001 (Between s[1] and s[0])
+- 3'b000 (Below s[0])
+
+For any invalid or intermediate sensor pattern (like 3'b010, 3'b100, etc.), we treat them conservatively as below s[0] (lowest level) to maintain flow safety.
+
+We track the previous water level state (prev_level) and current water level state (curr_level) by decoding the sensor input into these states using a function.
+
+Then, we assert dfr (Supplemental flow valve) if the current water level is higher than the previous water level, meaning the water level has risen.
+
+Nominal flow outputs (fr0, fr1, fr2) are assigned combinationally based on the current water level state using the problem's specified mapping.
+
+On reset, we synchronously set prev_s to 3'b000 (lowest sensor pattern) and the flow outputs to their max flow values (fr0=1, fr1=1, fr2=1, dfr=1) consistent with the water level below s[0].
+
+This design ensures proper detection of upward water level transitions, robust handling of invalid sensor inputs, and correct flow valve outputs aligned with the specification.

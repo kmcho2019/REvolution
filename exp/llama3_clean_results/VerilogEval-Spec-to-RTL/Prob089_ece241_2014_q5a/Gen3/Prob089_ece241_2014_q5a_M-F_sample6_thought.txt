@@ -1,0 +1,9 @@
+To address the issues identified in the feedback, we need to revise the state machine to correctly accumulate the input bits and calculate the 2's complement. One approach is to maintain a register that stores the accumulated bits and another register for the result. The state machine should have two main states: an idle state where it waits for the first '1' to start the conversion and an active state where it accumulates the input bits and calculates the result.
+
+Upon entering the active state, the machine starts accumulating the input bits into a register. Once the machine has accumulated all the bits (which is determined by the assertion of the reset signal), it calculates the 2's complement of the accumulated bits. The 2's complement can be calculated by inverting the bits and adding '1' to the result.
+
+The calculation of the 2's complement should consider the accumulation of bits correctly, ensuring that the least significant bit is considered first. The output should be generated based on the calculated result and should be updated at the end of the conversion process, when the reset is asserted.
+
+To improve the code's readability and maintainability, we can use a more structured approach, clearly defining the states, the next state logic, and the output logic. This involves using an enum for the states and explicitly defining the logic for each state.
+
+The revised code should also handle the reset condition correctly, ensuring that the machine resets to the idle state and clears all relevant registers upon an asynchronous reset.

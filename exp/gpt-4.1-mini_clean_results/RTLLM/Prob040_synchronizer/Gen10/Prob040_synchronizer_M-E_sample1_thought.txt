@@ -1,0 +1,8 @@
+Implement a multi-bit synchronizer by directly registering the data_in in clk_a domain only when data_en is asserted, with asynchronous reset.  
+Use a 2-flip-flop synchronizer chain in clk_b domain to synchronize data_en from clk_a domain to clk_b domain with resets.  
+Additionally, create a latch-enable style synchronizer for data_in that only updates the output register (dataout) in clk_b domain when the synchronized enable signal is asserted, thereby preventing glitches or partial updates.  
+This is done by holding the dataout register steady unless the synchronized enable signal is high, using a MUX to select between previous dataout and the synchronized data_reg.  
+Reset behavior is asynchronously asserted for both domains, clearing registers appropriately.  
+This approach avoids separate enable registers in clk_a domain, simplifying logic; the enable signal is synchronized independently with dedicated flip-flops.  
+It also eliminates the need to synchronize the enable signal as a register alongside data_reg; instead, synchronization of enable and separate data_reg in clk_a domain cleanly isolates domain crossing concerns.  
+Overall, this improves clarity and minimal toggling by updating data_reg in clk_a domain only under enable, and using stable enable-synchronized data transfer in clk_b domain.

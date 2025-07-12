@@ -1,0 +1,13 @@
+To refactor the given Verilog code for a Multiplying Accumulator (MAC), we will maintain the core functionality while implementing a different structure. The key idea is to use a combination of combinational and sequential logic to achieve the same functionality. 
+
+One approach is to use a separate register to store the intermediate result of the multiplication and then add this result to the accumulator register in the sequential logic. This way, the multiplication operation is performed in the combinational logic, and the addition to the accumulator is handled in the sequential logic.
+
+However, instead of using a simple assign statement for the multiplication, we will utilize a always block with a sensitivity list to handle the multiplication operation. This will allow for more flexibility in the design and potentially improve the performance.
+
+Here's the refactored approach:
+
+1.  **Sequential Logic for Multiplication and Accumulation:** Use two separate `always` blocks, one for the multiplication operation and another for the accumulation operation. The multiplication block will calculate the product of `a` and `b` and store it in a wire. The accumulation block will then add this product to the accumulator register `c_reg`.
+2.  **Reset Handling:** Ensure that the reset signal `rst` is handled correctly, setting `c_reg` to zero when `rst` is high and performing the accumulation when `rst` is low.
+3.  **Output Assignment:** Assign the value of `c_reg` to the output `c` to provide the accumulated result.
+
+By following these steps, we can refactor the Verilog code for the Multiplying Accumulator while maintaining its core functionality.

@@ -1,0 +1,17 @@
+To improve PPA (power, performance, area), I'll switch the FSM from one-hot (3 flip-flops) to a binary encoded FSM using 2 bits for 4 states. Binary encoding reduces flip-flop count and switching activity, improving area and power, and potentially performance.
+
+The states will be encoded as:
+- A = 2'b00 (idle)
+- B = 2'b01 (grant device 0)
+- C = 2'b10 (grant device 1)
+- D = 2'b11 (grant device 2)
+
+The next-state logic will replicate the priority decision at idle state A and hold grant states while request is asserted.
+
+Outputs g will be assigned using combinational logic based on the current state: g[i]=1 only for the granted device's state.
+
+This binary encoding reduces flip-flops from 3 to 2, reduces output logic complexity, and minimizes switching nodes for better power and area. The next state and output logic remain simple.
+
+Reset remains synchronous active low, state updates on posedge clk.
+
+This change should reduce the total negative slack, power, and area compared to one-hot encoding.

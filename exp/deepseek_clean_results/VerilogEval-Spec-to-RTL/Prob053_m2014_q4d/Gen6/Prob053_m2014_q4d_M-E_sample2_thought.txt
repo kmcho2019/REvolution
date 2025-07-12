@@ -1,0 +1,10 @@
+Here's a novel approach using a different feedback mechanism:
+1. Instead of directly feeding 'out' back to the XOR, we'll use an intermediate register
+2. The XOR will operate between 'in' and this intermediate value
+3. The intermediate register updates on the opposite clock edge (negative edge)
+4. This creates a pseudo-dual-edge triggered behavior while using standard flip-flops
+5. Benefits:
+   - Naturally avoids initialization issues since the feedback path is registered
+   - Potentially better timing characteristics as the feedback path is pipelined
+   - Still maintains the same logical function over two clock cycles
+   - No need for explicit initialization

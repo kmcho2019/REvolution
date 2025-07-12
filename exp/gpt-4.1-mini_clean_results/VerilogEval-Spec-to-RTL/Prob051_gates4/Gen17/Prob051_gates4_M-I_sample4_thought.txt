@@ -1,0 +1,13 @@
+The original design uses explicit balanced 2-input gate trees instantiated via gate primitives with a string parameter and generate-if constructs, which might add complexity to synthesis and slightly increase power due to multiple gate instances per function.
+
+To optimize for better PPA:
+
+- Replace string-based parameter selection with separate dedicated modules for AND, OR, and XOR four-input trees, removing the generate-if and string comparisons for simpler, more predictable synthesis.
+
+- Reuse one set of intermediate signals for the three functions to reduce input loading and switching activity, improving power slightly.
+
+- Still implement balanced 2-input gate trees explicitly for timing balance and small area.
+
+- Instantiate these modules once in TopModule, sharing the first-level intermediate signals among all outputs.
+
+This approach slightly reduces overall gate count and wiring compared to three fully separate trees, potentially lowering power and area while maintaining performance and readability.

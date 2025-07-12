@@ -1,0 +1,38 @@
+The main problem lies in how the shift register (SR) is updated during the division steps and how the subtraction borrow/carry flag is interpreted.
+
+1. **Shift Register Size and Usage:**
+   - Use a 17-bit SR to hold the partial remainder (9 bits) in the upper bits and quotient bits in the lower bits.
+   - The division algorithm shifts SR left by 1 bit each iteration, then conditionally subtracts the divisor from the upper bits (partial remainder).
+   - After subtraction, if no borrow occurred, set the least significant bit of quotient to 1; otherwise, leave it 0.
+   - This means each iteration:
+     - Shift SR left by 1 (makes room for next quotient bit).
+     - Subtract divisor from the upper bits (partial remainder).
+     - If subtraction successful (no borrow), keep the subtraction result in upper bits and set quotient bit to 1.
+     - Else restore upper bits (no subtraction), quotient bit is 0.
+
+2. **Subtraction and Borrow Logic:**
+   - The subtraction is done as `{1'b0, SR[16:8]} + NEG_DIVISOR`.
+   - In two's complement addition, if carry-out = 0, it means borrow happened (subtraction failed).
+   - If carry-out = 1, subtraction successful.
+   - Therefore, use carry-out = 1 as subtraction success indicator.
+
+3. **Division Steps and SR Update:**
+   - Each cycle:
+     - Shift SR left by 1.
+     - Try to subtract divisor from upper bits (now shifted left).
+     - If subtraction succeeds (carry_out=1), update upper bits with subtraction result and set LSB to 1.
+     - Else keep the shifted upper bits and quotient bits with LSB = 0.
+
+4. **Counter and Result Extraction:**
+   - Perform 8 iterations, then extract quotient and remainder from SR.
+   - Quotient is in lower 8 bits (SR[7:0]).
+   - Remainder in upper 8 bits (SR[16:9]).
+   - Apply sign corrections if signed operation.
+
+5. **res_valid and res_ready Handshake:**
+   - res_valid is set when result is ready.
+   - It is cleared only when res_ready is asserted by the consumer.
+
+With these fixes, the module correctly implements radix-2 division for signed and unsigned 8-bit operands, outputs the 16-bit result with remainder in upper 8 bits and quotient in lower 8 bits, and correctly handshakes with the consumer.
+
+The code below implements this logic precisely.

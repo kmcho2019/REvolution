@@ -1,0 +1,10 @@
+Implement the radix-2 restoring division as a multi-cycle synchronous design using a simple counter and registers without explicit FSM states to reduce complexity.  
+On opn_valid, latch inputs and convert to unsigned magnitude if signed operation, also store operand signs.  
+Use a 17-bit shift register SR initialized with {0, dividend_mag, 1'b0} to hold remainder and quotient bits shifted in.  
+At each clock cycle when active, shift left SR by 1, subtract divisor magnitude from the upper 9 bits (remainder part).  
+If subtraction result is non-negative, keep it and set LSB of quotient (SR[0]) to 1; else restore remainder and set quotient bit to 0.  
+Repeat 8 cycles to complete division.  
+After completion, apply sign corrections to quotient and remainder.  
+Output result concatenates corrected remainder (upper 8 bits) and quotient (lower 8 bits).  
+Use minimal control signals: a start signal latched from opn_valid, a 4-bit counter for steps, and res_valid flag.  
+This approach avoids FSM overhead and block-local declarations, uses purely synchronous logic and combinational subtraction logic outside procedural blocks.

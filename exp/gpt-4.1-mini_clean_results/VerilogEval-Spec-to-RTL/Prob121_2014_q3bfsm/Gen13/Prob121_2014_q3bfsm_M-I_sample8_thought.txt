@@ -1,0 +1,7 @@
+To optimize for better PPA while maintaining clarity and correctness, I will convert the state encoding from binary to one-hot. This reduces combinational logic complexity in next state decoding and potentially improves timing (better WNS and TNS) and power due to simpler multiplexers and fewer logic gates toggling per cycle.
+
+Using one-hot encoding simplifies next state logic into straightforward enable signals for each state bit. The synchronous reset and output logic will adapt accordingly. This usually increases area moderately due to more flip-flops (5 instead of 3 bits), but area remains reasonable given only 5 states, and timing and power improvements typically outweigh area penalty for small FSMs.
+
+The output z is still combinational logic derived from current state bits (just two states produce high output), so the logic remains minimal and efficient.
+
+This approach balances power and performance gains with a small area increase, fitting well for FPGA or ASIC designs targeting better timing closure and low power.

@@ -1,0 +1,14 @@
+To address the simulation failures and ensure robust clock generation, we should avoid using delay control `#(PERIOD/2)` with a fractional or non-integer delay. Instead, implement a clock generator that toggles the clock signal driven by an input free-running clock (such as a system clock or a base clock) and use an integer counter to divide this clock down to the desired PERIOD.
+
+Since the problem statement does not specify an input clock, for testbench-style clock generation we can instantiate an internal free-running clock at 1-time unit period and then use a counter to toggle the output clock every half PERIOD counts. This avoids reliance on fractional delays and makes the toggle timing fully deterministic.
+
+Here is the approach:
+- Define an internal clock `base_clk` toggling every 1-time unit.
+- Use a counter counting from 0 up to `(PERIOD/2 - 1)`, incrementing on every `base_clk` rising edge.
+- On counter rollover, toggle the output clock `clk`.
+- Initialize `clk` to 0 at start.
+- The parameter `PERIOD` is required to be an even integer to ensure half PERIOD is integral.
+
+This approach is simulation stable and will produce a clock with a period of `PERIOD` time units by toggling `clk` every half PERIOD. It also circumvents the original problem of fractional delays and timing glitches.
+
+Additionally, retain the `timescale` directive for clarity and simulation accuracy.

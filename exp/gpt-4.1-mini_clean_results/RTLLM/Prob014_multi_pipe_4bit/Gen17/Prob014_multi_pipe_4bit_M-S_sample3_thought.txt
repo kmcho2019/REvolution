@@ -1,0 +1,11 @@
+To simplify the design while maintaining functionality:
+
+- Extend both `mul_a` and `mul_b` by adding `size` zero bits at the MSB side to form 8-bit values.
+- Generate partial products for each bit of the original `mul_b` (not extended), where if `mul_b[i]` is 1, partial product = extended `mul_a` shifted left by i; else 0.
+- Use two pipeline stages of registers:
+  1. Register partial products at the first clock edge.
+  2. Register the sum of all partial products at the second clock edge.
+- Output the final sum registered on the second pipeline stage.
+- Use correct widths (`2*size` bits) for all partial products and sums to avoid overflow.
+- Use synchronous reset (active low) to clear registers.
+- This reduces complexity by avoiding multiple levels of addition and just sums all partial products directly at the second stage.

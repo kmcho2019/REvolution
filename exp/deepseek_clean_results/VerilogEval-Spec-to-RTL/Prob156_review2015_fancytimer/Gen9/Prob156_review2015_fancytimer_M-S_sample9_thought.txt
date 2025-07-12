@@ -1,0 +1,14 @@
+The key simplifications are:
+
+1. Combine pattern detection and delay capture into a single shift register process
+2. Use a single counter for both the 1000-cycle periods and total countdown
+3. Simplify state machine to just 3 states: IDLE, COUNTING, DONE
+4. Remove separate bit counter by using shift register position
+5. Calculate remaining time directly from counter value
+
+The simplified design will:
+- Detect 1101 pattern by shifting into a 4-bit register
+- Capture next 4 bits as delay value after pattern match
+- Use a single 14-bit counter (enough for max 16*1000 cycles)
+- Track state with minimal transitions
+- Maintain all required functionality with less logic

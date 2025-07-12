@@ -1,0 +1,9 @@
+Use bitwise vector shifts and bitwise operations to compute the outputs in a more compact and parallel manner without individually addressing bits:
+
+1. For out_both, create a left-shifted version of the input vector (shifted by 1 bit to the left) and AND it with the original input. Since in[3] has no left neighbor, mask out out_both[3].
+
+2. For out_any, create a right-shifted version of the input vector (shifted by 1 bit to the right) and OR it with the original input. Since in[0] has no right neighbor, mask out out_any[0].
+
+3. For out_different, XOR the input vector with the same vector rotated left by 1 bit (circular shift), to handle wrap-around neighbors.
+
+This approach uses vector operations and bitwise masks to avoid explicit per-bit assignments, enabling a more compact and potentially efficient implementation.

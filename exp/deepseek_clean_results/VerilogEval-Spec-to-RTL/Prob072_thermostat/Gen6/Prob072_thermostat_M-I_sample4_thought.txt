@@ -1,0 +1,6 @@
+The current implementation is already highly optimized for PPA metrics, but we can make one minor improvement by leveraging the observation that 'fan_on' is an independent control signal. We can:
+1. Keep the direct mode-based control for heater/aircon
+2. Simplify the fan logic by recognizing that fan_on is a standalone override
+3. This maintains the same functionality while potentially reducing switching activity when fan_on is active (since it doesn't need to evaluate heater/aircon states)
+
+The improvement is marginal but maintains all timing constraints while slightly optimizing power consumption during fan-only operation.

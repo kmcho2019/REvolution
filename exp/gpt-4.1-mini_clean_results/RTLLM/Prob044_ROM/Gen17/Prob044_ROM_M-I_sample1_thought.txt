@@ -1,0 +1,9 @@
+To improve PPA, move to a synchronous ROM read with registered output. This can reduce timing uncertainty and improve maximum operating frequency by capturing ROM output on a clock edge. It also helps in pipelining and controlling timing paths in FPGA/ASIC flows.
+
+Add a clock input and register the output, keeping combinational read inside an always block for synthesis-friendly inference. Initialize only the specified locations in the initial block to minimize area and initialization overhead.
+
+Also, add a synchronous reset input to reset dout to zero if desired, enhancing design robustness.
+
+This approach slightly increases latency by one cycle but improves timing margins and power by reducing glitches on the output line.
+
+The output remains 16-bit, addr stays 8-bit, and the memory is still 256x16. The rom_style attribute stays to guide synthesis toward block RAM usage.

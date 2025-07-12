@@ -1,0 +1,4 @@
+Simplify the design by using binary counters for seconds and minutes (0-59) instead of separate BCD digits, incrementing them modulo 60. For hours, keep the binary 1-12 counter but implement the AM/PM toggle when the hour wraps from 11 to 12. Convert all binary counters to BCD at output, avoiding nested if-else increments inside the sequential block.  
+This reduces combinational complexity inside the clocked process and makes the increment logic straightforward, improving readability and timing.  
+Use a small combinational function to convert any 0-59 binary number to BCD for mm and ss outputs, and the existing hour binary to BCD converter for hh.  
+Maintain synchronous reset with priority, resetting to 12:00:00 AM. The enable pulse triggers the increments once per second.

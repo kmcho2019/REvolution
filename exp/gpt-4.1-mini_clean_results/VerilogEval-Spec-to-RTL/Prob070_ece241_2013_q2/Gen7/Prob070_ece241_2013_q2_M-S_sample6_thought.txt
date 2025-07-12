@@ -1,0 +1,23 @@
+Represent the 4-bit input vector as {a,b,c,d} with a as MSB and d as LSB.
+
+The function outputs 1 for inputs 2, 7, and 15, 0 for specified zeros, and others are don't-cares.
+
+From the truth table:
+
+- Inputs for logic 1: 2(0010), 7(0111), 15(1111)
+- Inputs for logic 0: 0,1,4,5,6,9,10,13,14
+- Don't-cares: 3,8,11,12
+
+Derive minimal SOP and POS expressions from these sets, exploiting don't-cares to minimize logic:
+
+Minimal SOP:
+- (b & c & d) covers 7(0111) and 15(1111)
+- (~a & ~b & c & ~d) covers 2(0010)
+
+Minimal POS:
+- (a + b + ~c + d) covers 0,1,4,5,6,9,10,13,14 zeros
+- (~a + b + c + d) covers zeros as well
+
+This is a straightforward, minimal representation that matches all specified outputs and treats the "never occurs" inputs as don't-cares.
+
+Thus, assign outputs with these minimal expressions for simplicity, clarity, and correctness.

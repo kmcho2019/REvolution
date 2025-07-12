@@ -1,7 +1,0 @@
-1. The initial state of the FSM is set to IDLE. When transitioning from IDLE to START_BIT, the condition to check the start bit (in == 1'b0) is incorrect according to the problem description. The start bit should be 0, not 1, so the condition should check for in == 1'b1 instead.
-
-2. Inside the DATA_BITS state, the condition to transition to STOP_BIT when data_counter == 7 is incorrect. Since the data bits are numbered 0 to 7, the condition should be data_counter == 8 to capture all 8 data bits before moving to the STOP_BIT state.
-
-3. In the STOP_BIT state, the condition to check the stop bit (in == 1'b1) seems correct; however, the data_reg variable should be assembled in reverse as the problem specifically states that the least significant bit is sent first. Therefore, the assignment should be out_byte <= data_reg in reverse order to get the correct byte.
-
-These issues in state transitions and data capturing logic are causing the simulation mismatches in out_byte and done signals.

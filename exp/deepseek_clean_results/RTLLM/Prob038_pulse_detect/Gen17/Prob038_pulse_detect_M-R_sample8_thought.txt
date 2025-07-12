@@ -1,0 +1,25 @@
+Refactored Approach: Explicit State Machine with Edge Detection
+
+1. Core Concept:
+   - Implement a proper state machine to track the 0->1->0 sequence
+   - Use three states: IDLE (waiting for first 0), SAW_0 (saw first 0), SAW_01 (saw 0->1)
+   - Transition between states based on data_in values
+   - Output is high only when we complete the full sequence (SAW_01 state and current input is 0)
+
+2. Improvements:
+   - Clear state transitions matching the exact pulse pattern
+   - Explicit handling of all possible input sequences
+   - Proper reset behavior
+   - Output precisely timed to the end of the pulse
+
+3. Implementation Details:
+   - Three-state encoding (binary for clarity)
+   - Next-state logic in combinational always block
+   - Output generation synchronous with clock
+   - Reset returns to IDLE state
+
+4. Verification Points:
+   - Correctly handles 010 sequence
+   - Ignores partial sequences (like 011)
+   - Properly resets
+   - Output is exactly one cycle

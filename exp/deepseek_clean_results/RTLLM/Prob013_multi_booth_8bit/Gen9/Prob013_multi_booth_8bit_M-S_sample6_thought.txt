@@ -1,0 +1,23 @@
+To simplify the Radix-4 Booth multiplier while maintaining functionality:
+
+1. Reduce State Machine Complexity:
+   - Eliminate separate state encoding and use simple counter-based control
+   - Remove next_state logic since we only need idle/busy states
+
+2. Simplify Counter Logic:
+   - Use 2-bit counter (since Radix-4 needs only 4 steps for 8-bit)
+   - Remove unnecessary prev_bit tracking by using multiplier[1:0] directly
+
+3. Streamline Data Path:
+   - Combine product accumulation and shifting in one operation
+   - Remove intermediate product register and output directly
+
+4. Optimize Ready Signal:
+   - Generate ready signal directly from counter value
+   - Remove early assertion of ready signal
+
+5. Cleaner Initialization:
+   - Initialize all registers in reset block
+   - Use simpler sign-extension syntax
+
+The simplified version maintains the same Radix-4 Booth algorithm but with less overhead.

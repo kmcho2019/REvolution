@@ -1,0 +1,31 @@
+To achieve a fractional clock division by 3.5 using double-edge clocking and avoid multi-clock domain issues, I will use a purely posedge-clocked synchronous design with an internal high-frequency clock enable scheme.
+
+Idea:
+
+- Use the input clock 'clk' as the only clock domain, avoiding multi-clock edges or negative-edge logic.
+
+- Create a modulo-7 counter (since 3.5 * 2 = 7 half cycles) that counts each input clock cycle (full cycles).
+
+- Generate two output clocks by toggling two flip-flops at different counts to create uneven half-cycles: one toggling every 4 input clocks (8 half-clocks) and another every 3 input clocks (6 half-clocks), but timed so that together they simulate the fractional division.
+
+- Since 3.5 means the output frequency is clk / 3.5, we generate an output signal that toggles every 7 half cycles.
+
+- Implement double-edge triggering by generating two signals offset in phase by half a clock cycle using a small delay element (a flip-flop triggered on clk to create a delayed version).
+
+- Combine these two phase-offset toggles with OR to generate a fractional clock with 3.5 division and improved duty cycle.
+
+Key points:
+
+- No negative edge or dual clock always blocks.
+
+- All logic synchronous on posedge clk.
+
+- Use a counter modulo 7 to keep track of half cycles.
+
+- Generate two clocks toggling at count thresholds to produce required pulses.
+
+- Use registered versions of clk for half-cycle phase shift.
+
+- The final clk_div is OR of these two toggles.
+
+This design avoids multi-clock domain issues, ensures glitch free operation, and meets fractional division requirement.

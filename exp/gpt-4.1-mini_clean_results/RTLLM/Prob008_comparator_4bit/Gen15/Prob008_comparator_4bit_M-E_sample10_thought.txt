@@ -1,0 +1,16 @@
+I will implement the 4-bit comparator using a cascade of 1-bit magnitude comparator blocks. Each 1-bit comparator compares corresponding bits of A and B, along with the comparison result from the more significant bit. This cascaded approach naturally implements the greater-than, equal, and less-than signals through combinational logic without subtraction or borrow signals.
+
+The idea:
+
+- Create a 1-bit comparator module that takes A[i], B[i], and incoming signals (A_greater_in, A_equal_in, A_less_in) representing the comparison state from more significant bits.
+- For the current bit, decide outputs as:
+  - If bits differ, that bit decides the result (higher bit dominates).
+  - If bits equal, pass down the incoming signals.
+- Instantiate four 1-bit comparators from the most significant bit down to least significant bit.
+- The outputs of the last comparator (LSB) will be the final comparator outputs.
+
+This design uses a ripple approach but structurally clean and strictly combinational. It avoids subtraction and borrow signals, instead leveraging bitwise priority logic cascaded from MSB to LSB.
+
+All outputs are mutually exclusive by design because at each bit level exactly one of A_greater, A_equal, or A_less is asserted.
+
+This modular and hierarchical approach is readable, easy to verify, and synthesizable into efficient combinational logic.

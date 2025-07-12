@@ -1,0 +1,14 @@
+Revised approach for robust 3.5x frequency division:
+1. Use a single 3-bit counter running at input clock frequency to track cycle position (0-6)
+2. Generate two phase-shifted clocks:
+   - clk_phase0: Toggles every 3 or 4 cycles (alternating)
+   - clk_phase180: Same as clk_phase0 but delayed by half input clock cycle
+3. Combine these clocks using OR operation to create final output
+4. Key improvements:
+   - Single counter eliminates synchronization issues
+   - Explicit half-cycle delay ensures proper phase relationship
+   - Simple toggle logic for each phase clock
+   - Clean reset behavior
+5. The output will have:
+   - Period = 3.5 input clock cycles
+   - 50% duty cycle (achieved through phase combination)

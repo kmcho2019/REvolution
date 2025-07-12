@@ -1,0 +1,10 @@
+Fuse the modular clarity and explicit next-state logic from Example 1 with the efficient synchronous increment and binary hour encoding from Example 2 to optimize timing, power, and area:
+
+- Use separate BCD digits for seconds and minutes with synchronous increments gated by ena to minimize switching and critical path delay.
+- Maintain the hour count internally as a binary 4-bit counter (range 1-12) that increments only on minute rollover; toggle pm only when hour increments from 11 to 12.
+- Separate combinational logic (with blocking assignments) for next-state BCD increments of seconds and minutes, triggered only on ena, reducing combinational complexity.
+- Use synchronous registers to update counters with reset prioritized.
+- Convert the binary hour count to BCD only at output with a simple combinational function.
+- Combine the enable and rollover logic from Example 2 to reduce logic depth while preserving modular clarity.
+- Avoid unnecessary toggling by updating registers only when enabled or reset.
+This fusion yields improved timing slack, reduced power through enable gating, minimal logic depth in critical paths, and an area-friendly, clear structure.

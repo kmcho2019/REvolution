@@ -1,0 +1,15 @@
+Corrected Dual-Counter Approach:
+1. Revert to the original specification using two separate counters for rising and falling edges
+2. Implement cnt1 for positive edge counting and cnt2 for negative edge counting
+3. Each counter counts up to NUM_DIV-1 before resetting
+4. Generate clk_div1 (positive edge triggered) and clk_div2 (negative edge triggered) separately
+5. Toggle each divided clock when counters reach (NUM_DIV-1)/2
+6. Combine clk_div1 and clk_div2 using OR operation to create final 50% duty cycle output
+7. Properly synchronize reset behavior for both edge domains
+
+Key Improvements:
+- Proper separation of edge domains prevents timing issues
+- Clear implementation of the specified dual-counter approach
+- Accurate duty cycle generation through midpoint toggling
+- Reset properly initializes both counters and clock signals
+- Maintains parameterized odd division capability

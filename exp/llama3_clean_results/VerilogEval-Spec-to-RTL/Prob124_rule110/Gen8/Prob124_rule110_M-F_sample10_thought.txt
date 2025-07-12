@@ -1,0 +1,9 @@
+To fix the existing code, we need to address the issue of the race condition that occurs when updating the `current_state` register. The problem arises because the next state of each cell is calculated based on the current state of the cell and its neighbors, but the updated value of `current_state` is not yet available when calculating the next state for subsequent cells. To resolve this issue, we can introduce a temporary register, `next_state`, to store the calculated next state of each cell. This way, we avoid updating the `current_state` register while it is still being used to calculate the next states.
+
+The strategy is to:
+1. Introduce a temporary register, `next_state`, to store the calculated next state of each cell.
+2. Calculate the next state of each cell based on the current state and the states of its neighbors, and store it in the `next_state` register.
+3. Update the `current_state` register with the values from the `next_state` register at the end of the clock cycle.
+4. Maintain the correct functionality of the Rule 110 cellular automaton.
+
+By using a temporary register to store the calculated next states, we ensure that the updates to the `current_state` register are done in a consistent and predictable manner, avoiding the race condition and ensuring that the simulation results match the expected behavior of the Rule 110 cellular automaton.

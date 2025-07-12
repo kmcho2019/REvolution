@@ -1,0 +1,24 @@
+Implement the fixed-point subtractor by explicitly separating sign and magnitude for each input operand to clearly handle different sign cases as specified. 
+
+The approach is:
+1. Extract sign bits and magnitude (absolute values) of inputs a and b.
+2. When signs are the same:
+   - Subtract magnitudes.
+   - The sign of the result is the same as the inputs.
+3. When signs differ:
+   - Add magnitudes.
+   - The result sign depends on which operand has the greater magnitude.
+4. Handle zero result by explicitly setting the sign bit to zero.
+5. Recombine sign and magnitude into two's complement form for output.
+   
+This magnitude/sign handling simulates a sign-magnitude subtractor style on two's complement inputs while preserving fixed-point fractional bits (Q) by treating inputs as raw fixed-point values.
+
+Use a combinational always block to compute the result, which makes the logic clear and synthesis friendly.
+
+This explicit sign/magnitude treatment meets the requirement for same sign subtraction vs different sign addition, with precise fixed-point arithmetic, while handling zero sign explicitly. The outputs remain in two's complement form.
+
+Parameters N and Q define the bit-width and fractional bits, respectively, and inputs/outputs are treated as signed values internally.
+
+The output `c` is registered internally and assigned at the end combinationally to align with the problem statement about internal `res` register.
+
+This approach provides explicit control and clarity over sign logic and magnitude operations, differing from pure two's complement direct subtraction, matching the problem’s detailed sign logic requirements.

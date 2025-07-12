@@ -1,0 +1,7 @@
+Refactor the 32-bit Galois LFSR to use a purely sequential process that calculates the next state in a clear loop iterating from bit 31 down to 0, applying the XOR feedback only on the tap positions (31, 21, 1, 0) based on the problem's 1-based taps (32, 22, 2, 1). The feedback bit is taken from q[0].
+
+For bit 0 (LSB), its next state is q[1] XOR feedback if bit 0 is a tap; for others, if they are taps, next_q[i] = q[i-1] XOR feedback, else next_q[i] = q[i-1].
+
+On synchronous reset, q resets to 32'h1.
+
+This structured loop-based approach reduces errors, ensures all bits are assigned, and correctly implements the Galois LFSR feedback and shifting to the right.

@@ -1,0 +1,21 @@
+To simplify the implementation while maintaining correctness, let's analyze the Karnaugh map more carefully:
+
+1. First, observe that when c=0 (first two rows of K-map):
+   - Output is 1 when either:
+     * d=0 and not (a & b) [covers first row except ab=11]
+     * d=1 and not (a & ~b) [covers second row except ab=01]
+
+2. When c=1 (last two rows of K-map):
+   - Output is 1 when either:
+     * d=1 and (a or b) [covers third row except ab=00]
+     * d=0 and (a or ~b) [covers fourth row except ab=10]
+
+3. This leads to a simpler expression:
+   out = (~c & ((~d & (~a | ~b)) | (d & (~a | b))) |
+         (c & ((d & (a | b)) | (~d & (a | ~b))))
+
+4. Notice this can be further simplified by factoring:
+   out = (~c & (~a | (~d & ~b) | (d & b))) |
+         (c & (a | (d & b) | (~d & ~b)))
+
+This implementation correctly covers all 1's in the K-map while being more concise.

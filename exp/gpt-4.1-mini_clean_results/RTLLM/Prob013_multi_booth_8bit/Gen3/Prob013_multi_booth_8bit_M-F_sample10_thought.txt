@@ -1,0 +1,25 @@
+The original design confused Radix-4 Booth encoding with a Radix-2 iterative Booth multiplier. The problem description mandates a 16-step iteration (one per bit of the multiplier), left-shifting the multiplicand each cycle, and checking multiplier bits for addition. Although it states "Radix-4" in the prompt, the detailed steps resemble a classic Radix-2 Booth multiplier with 16 iterations. To align with the problem exactly:
+
+- On reset: sign-extend inputs 'a' and 'b' to 16-bit registers named 'multiplicand' and 'multiplier' respectively.
+- Maintain a 16-bit register 'product' initialized to zero.
+- Maintain a 5-bit counter from 0 to 16.
+- At each clock cycle while counter < 16:
+  - Check multiplier[ctr], if 1 then product <= product + multiplicand.
+  - Left-shift multiplicand by 1.
+  - Increment counter.
+- When counter == 16, multiplication is complete. Set ready signal high and output product.
+
+This matches the problem's specified behavior and port interface exactly.
+
+Note:
+- This design implements a simple shift-and-add multiplier, not a classic Booth algorithm with encoding and sign bits.
+- Radix-4 Booth would require grouping bits in pairs and doing fewer iterations (8 cycles).
+- Since the problem's detailed instructions say "If multiplier[ctr]==1, then add multiplicand to product" and "multiplicand is shifted left by 1 each cycle", we follow that exactly.
+
+This corrected approach ensures a synthesizable, cycle-accurate multiplier per the problem statement and aligns precisely with inputs, outputs, and control signals.
+
+The ready signal is low during operation, and raised once multiplication is complete.
+
+The product is 16-bit, as specified.
+
+This code satisfies the problem statement fully.

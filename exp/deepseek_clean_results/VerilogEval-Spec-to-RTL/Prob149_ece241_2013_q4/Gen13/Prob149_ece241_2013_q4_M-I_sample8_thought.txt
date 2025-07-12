@@ -1,0 +1,16 @@
+The previous solution had several issues that need to be addressed:
+
+1. **Reset Behavior**: Need to properly implement synchronous reset that asserts all outputs (fr2, fr1, fr0, dfr) when active.
+
+2. **Sensor State Handling**: Need to properly interpret all possible sensor combinations, treating any higher sensor trigger as "above all" cases.
+
+3. **Water Level Detection**: Need to properly detect water level changes based on the highest triggered sensor, not individual sensor transitions.
+
+4. **Flow Control Logic**: Need to correctly implement the nominal flow rates and supplemental flow (dfr) based on both current level and previous level comparison.
+
+Key improvements:
+- Use a state machine to track water level (below, between s0-s1, between s1-s2, above)
+- Properly detect level changes by comparing current and previous states
+- Implement correct output logic based on both current state and direction of change
+- Handle all sensor combinations properly
+- Implement synchronous reset correctly

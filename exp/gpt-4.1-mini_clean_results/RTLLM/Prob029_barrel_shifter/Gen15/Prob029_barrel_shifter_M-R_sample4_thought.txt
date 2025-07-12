@@ -1,0 +1,5 @@
+Refactor the barrel shifter by replacing the three stages of multiplexers with a single continuous assignment that performs the rotation stepwise using conditional operator (`?:`) logic. Instead of instantiating multiple `mux2X1` modules explicitly, the shifts are implemented by conditional selection using bitwise operations and concatenations in continuous assignments.
+
+This approach eliminates the explicit mux2X1 module and uses purely combinational logic with `assign` statements and bit manipulations for each stage, still respecting the order of shifts by 4, 2, and 1 controlled by `ctrl[2:0]`. This reduces module overhead and simplifies the design while preserving the functionality and behavior of the original barrel shifter.
+
+The rotation is done by first applying the 4-bit rotation if `ctrl[2]` is set, then the 2-bit rotation if `ctrl[1]` is set, and finally the 1-bit rotation if `ctrl[0]` is set, chaining the operations using intermediate wires. The rotated bits are selected by concatenating slices of the vector in a wrap-around manner.

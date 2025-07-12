@@ -1,0 +1,15 @@
+The design requires a finite state machine (FSM) to detect message boundaries in a byte stream. The FSM has three states:
+1. IDLE: Waiting for the first byte with in[3]=1
+2. BYTE1: First byte received, waiting for second byte
+3. BYTE2: Second byte received, waiting for third byte
+
+When in state BYTE2 and a new byte arrives, we:
+- Output the 3-byte message (concatenation of stored bytes)
+- Assert 'done' for one cycle
+- Return to IDLE state to wait for next message start
+
+The datapath needs to:
+- Store the first two bytes when received
+- Concatenate all three bytes when the third arrives
+- Output the concatenated value when 'done' is asserted
+- Reset all state on synchronous reset

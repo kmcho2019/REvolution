@@ -1,0 +1,7 @@
+Refactor the state machine to use parameterized states with plain reg instead of SystemVerilog enums for compatibility with Verilog-2001 and earlier. Replace the `typedef enum logic` with `localparam` constants for state encoding. Use a single always block to update the state and registers synchronously on the positive clock edge with synchronous active-high reset.
+
+Perform pattern detection by shifting a 4-bit register in the SEARCH state, and once the pattern is found, move to LOAD_DELAY to shift in 4 delay bits MSB-first. Then transition to COUNT where two counters run: a 10-bit cycle counter for counting 1000 cycles per segment and a 4-bit segment counter for (delay+1) segments counting down.
+
+Output the `count` as the current remaining segment count, adjusted properly per the 1000-cycle inner count, output `counting` high during counting, and assert `done` in WAIT_ACK state until `ack` is received to restart the search.
+
+All registers and signals will be assigned synchronously inside always blocks. Outputs will be registered. This approach avoids SystemVerilog-specific features and keeps the original functionality intact.

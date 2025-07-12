@@ -1,0 +1,5 @@
+To implement the TopModule, we need to create a finite state machine (FSM) that can handle the different states of the timer: idle, shifting, counting, and done. We can use a combination of counters, shift registers, and conditional statements to implement the desired functionality. 
+
+The FSM will start in the idle state, where it looks for the input pattern 1101. Once the pattern is detected, it shifts in the next 4 bits to determine the duration of the timer delay. Then, it asserts the counting output and starts the counter. The counter will count for (delay + 1) * 1000 clock cycles. 
+
+After the counter finishes counting, the FSM asserts the done output and waits for the ack input to be 1 before resetting to the idle state. We can use a counter to keep track of the remaining time and output it on the count[3:0] pins.

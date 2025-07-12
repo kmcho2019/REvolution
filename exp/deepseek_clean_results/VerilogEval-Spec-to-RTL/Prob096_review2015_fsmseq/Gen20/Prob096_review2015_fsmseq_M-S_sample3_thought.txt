@@ -1,0 +1,7 @@
+Here's a simplified approach that maintains the same functionality while reducing complexity:
+1. Use a 3-bit shift register instead of 4-bit, since we only need to track the last 3 bits (plus current input)
+2. Combine the shift and compare operations in a single always block
+3. Remove the separate 'found' register and make the output purely combinational
+4. The detection logic checks if the last 3 bits were '110' and current input is '1'
+
+This reduces storage by 1 bit and eliminates one register (found), while keeping the same detection capability. The output will still remain high once the sequence is detected until reset.

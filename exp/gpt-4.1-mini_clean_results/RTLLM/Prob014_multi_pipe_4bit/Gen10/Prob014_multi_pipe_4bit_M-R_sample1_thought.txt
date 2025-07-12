@@ -1,0 +1,13 @@
+Refactor the design to explicitly pipeline partial product generation and summation in two stages, using separate registers for inputs, partial products, intermediate sums, and the final product. 
+
+1. Stage 1: Register the extended multiplicand and multiplier inputs.
+
+2. Stage 2: Generate and register all partial products (one per multiplier bit) based on Stage 1 registered inputs. This pipeline stage isolates partial product generation.
+
+3. Stage 3: Sum the registered partial products combinationally and register the result as the final output.
+
+This structure avoids combinational logic inside always blocks and delays partial product generation by one clock cycle. The final product output becomes valid after 3 clock cycles from input registration, consistent with a two-level pipeline plus output register stage.
+
+No complex splitting of sums is needed for 4 bits since summing 4 partial products directly is manageable. Using arrays for partial products and carefully pipelining registers improves clarity, timing, and correctness.
+
+All reset behavior is synchronous with asynchronous reset signal handled properly, zeroing registers and output on reset.

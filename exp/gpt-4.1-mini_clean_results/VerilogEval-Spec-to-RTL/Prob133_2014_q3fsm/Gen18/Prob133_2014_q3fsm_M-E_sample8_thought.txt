@@ -1,0 +1,7 @@
+Instead of counting the number of 1's in w over three cycles with an explicit sum, I will create a shift register that captures the last three values of w once the FSM enters state B. After three samples are collected, I will use combinational logic to count the number of 1's in the 3-bit shift register. If exactly two bits are set, then on the next cycle z will be set to 1; otherwise, z is 0.
+
+This approach uses a 3-bit shift register to store sampled inputs instead of a 2-bit counter and sum register. It may require fewer arithmetic operations, reducing combinational logic. The FSM will have three states: A (waiting for s=1), B (collecting three w samples), and C (asserting z based on collected data), then returning to B for next 3-cycle window. This makes the FSM explicit in its phases, minimizing logic complexity.
+
+Synchronous reset and clocked sequential logic remain. Output z is registered and asserted only in state C for one cycle. The FSM cycles through states B -> C -> B indefinitely once started.
+
+This state-based approach with shift register sampling simplifies counting and output logic while maintaining minimal states.

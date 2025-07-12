@@ -1,0 +1,14 @@
+To simplify the pulse detection while maintaining functionality, we can optimize in these ways:
+
+1. Remove the explicit shift register and instead track just the last two values using two flip-flops (prev_data and curr_data)
+2. Detect the pulse by checking for:
+   - Current data is 0 (falling edge)
+   - Previous data was 1 (rising edge had occurred)
+   - The data before that was 0 (initial state)
+
+3. Advantages:
+   - Uses only 2 flip-flops instead of 3-bit shift register
+   - Same detection capability (0->1->0 sequence)
+   - Simpler comparison logic
+   - Maintains same timing behavior (output on 3rd cycle)
+   - Reduced area and power from fewer storage elements

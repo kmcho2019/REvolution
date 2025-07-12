@@ -1,0 +1,12 @@
+To create a superior 12-hour BCD clock design, fuse the best ideas from both examples focusing on improving PPA (performance, power, and area):
+
+1. Use a single always block for all synchronous state updates with synchronous reset and enable gating to minimize register toggling and simplify timing.
+2. Keep seconds and minutes as two separate BCD digit counters (tens and units) with simple synchronous increment logic gated by 'ena'. This minimizes combinational complexity on critical paths and switching activity when disabled.
+3. Maintain the hour as an internal binary counter (1 to 12) to simplify hour increment logic and reduce area.
+4. Toggle 'pm' precisely on hour increment from 11 to 12, reducing unnecessary logic.
+5. Compute the next states of all counters synchronously inside the clocked process by first detecting rollovers to minimize combinational logic depth and avoid deeply nested if-elses in combinational always blocks.
+6. Convert hour binary to BCD output combinationally using a simple conditional expression (instead of a function call) for better synthesis and timing.
+7. Outputs (hh, mm, ss) are continuously driven combinationally from registers to avoid extra clock-to-output latency.
+8. This hybrid approach yields clear, clean, and efficient logic, reducing combinational delay and switching power while maintaining functional correctness and minimal area.
+
+Overall, this design simplifies control and state update logic with clear enable gating, reduces combinational path depth for faster timing, and maintains low power by minimizing toggling when disabled.

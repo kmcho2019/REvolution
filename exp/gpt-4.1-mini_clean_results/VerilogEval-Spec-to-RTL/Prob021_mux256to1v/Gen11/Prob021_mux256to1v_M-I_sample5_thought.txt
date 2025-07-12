@@ -1,0 +1,13 @@
+To improve the given hierarchical 256-to-1 4-bit multiplexer for better power, performance, and area (PPA), the best approach is to simplify the design by eliminating intermediate unpacking arrays and multiple mux stages. Instead, implement the multiplexer using a direct indexed part-select from the input vector based on the 8-bit select signal.
+
+This approach:
+- Removes unnecessary intermediate signals, reducing area and net capacitance.
+- Reduces switching activity by directly selecting only the needed bits.
+- Minimizes combinational delay by relying on a single combinational indexed part-select, improving performance.
+- Results in simpler and more compact RTL for easier synthesis and better optimization.
+
+The only logic required is:
+- Calculate the starting bit position as sel * 4.
+- Use a part-select with variable offset indexing: out = in[sel*4 +: 4].
+
+This is fully synthesizable in modern tools and meets the specification cleanly and efficiently.

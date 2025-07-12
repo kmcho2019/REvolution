@@ -1,0 +1,5 @@
+A novel architectural approach to implementing the finite state machine is to utilize a pair of Look-Up Tables (LUTs) to directly compute the next state and output values based on the current state and input `x`. This approach can simplify the design by eliminating the explicit instantiation of gates and flip-flops, leveraging the ability of LUTs to implement arbitrary Boolean functions.
+
+The first LUT, `state_lut`, takes as inputs the current state bits (`state[0]`, `state[1]`, `state[2]`) and the input `x`, and outputs the next state bits. The second LUT, `output_lut`, takes the current state bits as inputs and outputs the final output `z`.
+
+By using LUTs, this approach exploits the fact that modern FPGAs are optimized for LUT-based logic, potentially leading to better area and performance characteristics compared to traditional gate-level implementations. Additionally, this approach allows for easy modification and extension of the state machine by simply reprogramming the LUTs, without needing to redesign the entire architecture.

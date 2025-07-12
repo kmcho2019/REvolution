@@ -1,0 +1,15 @@
+Simplified Design Approach:
+1. Basic Structure: Maintain separate counters for seconds, minutes, and hours with BCD encoding
+2. Reset Priority: Keep synchronous reset with highest priority
+3. Enable Logic: Simplify cascaded enable signals by combining conditions
+4. Counter Logic:
+   - Use simple BCD increment with rollover
+   - Handle hour counter special cases (12->1 and 9->10) efficiently
+   - PM indicator toggles only when hours roll over from 11 to 12
+5. Output: Direct register assignments for clean outputs
+
+Key Simplifications:
+- Remove intermediate wire declarations for enable signals
+- Combine increment and rollover logic into single conditions
+- Simplify PM toggle logic by checking for hour==11 before increment
+- Maintain all functionality while reducing logic complexity

@@ -1,0 +1,12 @@
+To simplify the implementation while maintaining correctness, we can observe the following from the Karnaugh map:
+
+1. mux_in[0] (ab=00): Output is 0 when cd=00, else 1. This is simply (c OR d).
+2. mux_in[1] (ab=01): Always 0 - constant assignment.
+3. mux_in[2] (ab=11): Output is 1 only when cd=11 - exactly (c AND d).
+4. mux_in[3] (ab=10): Output is 0 only when cd=01 - which is (NOT c AND d). So we can implement this as NOT (NOT c AND d).
+
+This implementation:
+- Uses no 2-to-1 multiplexers (simpler than original)
+- Only requires basic logic operations
+- Correctly implements all K-map cases
+- Maintains minimal gate count

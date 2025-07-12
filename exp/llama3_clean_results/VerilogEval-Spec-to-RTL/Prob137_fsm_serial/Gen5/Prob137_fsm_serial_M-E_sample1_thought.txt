@@ -1,0 +1,15 @@
+To solve this problem, I propose a novel architecture that uses a combination of a counter, a shift register, and a finite state machine (FSM) to detect the start and stop bits and receive the data bits. The FSM will have three states: IDLE, RECEIVE, and WAIT_STOP. 
+
+In the IDLE state, the FSM will wait for a start bit (0) to be received. When a start bit is detected, the FSM will transition to the RECEIVE state. 
+
+In the RECEIVE state, the FSM will collect the incoming data bits and shift them into a shift register. The counter will keep track of the number of bits received. 
+
+When 8 data bits have been received, the FSM will transition to the WAIT_STOP state. In the WAIT_STOP state, the FSM will wait for a stop bit (1) to be received. If a stop bit is received, the FSM will set the 'done' signal high and transition back to the IDLE state. If a stop bit is not received, the FSM will remain in the WAIT_STOP state until a stop bit is detected.
+
+The shift register will be designed to shift in the new bits from the least significant bit (LSB) to the most significant bit (MSB), as the serial protocol sends the least significant bit first.
+
+The counter will be used to keep track of the number of bits received and to determine when to transition from the RECEIVE state to the WAIT_STOP state.
+
+The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues.
+
+This novel architecture will correctly handle the start and stop bits, as well as the data bits, and will provide a reliable and efficient solution for receiving bytes from a serial stream.

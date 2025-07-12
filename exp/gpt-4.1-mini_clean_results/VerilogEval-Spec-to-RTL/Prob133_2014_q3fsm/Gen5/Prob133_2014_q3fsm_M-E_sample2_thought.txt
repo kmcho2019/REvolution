@@ -1,0 +1,13 @@
+Instead of using only two states, we explicitly use states to represent each cycle within the 3-cycle counting in state B, thus four states in total: 
+- State A: Wait for s=1 to move to state B_0 (start of counting window).
+- States B_0, B_1, B_2: Represent each of the three clock cycles in which w is sampled and counted.
+  
+We maintain a 2-bit counter (w_count) to count the number of times w=1 in these 3 cycles.  
+After state B_2 (the third cycle), in the next clock cycle, output z is set to 1 if w_count equals 2, else 0. Then immediately transition back to B_0 to start a new 3-cycle window and clear the counter.
+
+This FSM explicitly encodes the cycle counting as states rather than a separate counter, which may simplify state logic and output timing. Output z is registered and asserted only for one cycle immediately after counting 3 cycles.
+
+Reset moves FSM to A, clears counters, and clears output.  
+The s input is only used in state A; after entering B_0, only w is used for counting.
+
+This approach trades off having more states (4) for simpler cycle tracking and clean output generation exactly one cycle after counting window.

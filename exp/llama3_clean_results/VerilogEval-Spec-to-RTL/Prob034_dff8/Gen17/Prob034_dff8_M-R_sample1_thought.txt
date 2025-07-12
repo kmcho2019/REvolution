@@ -1,0 +1,7 @@
+To refactor the existing code for the TopModule, we can utilize a different structure that maintains the core functionality of 8 D flip-flops triggered by the positive edge of the clock. One approach is to use a separate module for a single D flip-flop and then instantiate this module 8 times within the TopModule. This approach not only maintains the same functionality but also promotes modularity and reusability of the code.
+
+Another consideration is the use of a more explicit and synthesizable way to define the flip-flops. Instead of relying on the `always` block and non-blocking assignment, we can define each D flip-flop as a separate module with its own `always` block, ensuring that each flip-flop is triggered by the positive edge of the clock and captures its input correctly.
+
+By structuring the code in this modular fashion, we can potentially improve the synthesizability and readability of the design. The DFF module will encapsulate the behavior of a single D flip-flop, and the TopModule will simply instantiate these DFFs, making it easier to manage and understand the code, especially in larger and more complex designs.
+
+Moreover, this approach allows for easier optimization and modification of the individual D flip-flops if needed, without affecting the rest of the design. For example, if a reset signal needs to be added or if the clock edge needs to be changed, it can be done within the DFF module without altering the TopModule's structure.

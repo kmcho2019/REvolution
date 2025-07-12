@@ -1,0 +1,7 @@
+Refactor the code by implementing the neighbor counting and next state logic using combinational `assign` statements with generate loops, rather than nested `always @(*)` loops. Represent the 16x16 grid as a two-dimensional `reg [0:0]` array for clarity. This allows explicit use of generate-for loops to compute neighbors per cell in parallel.
+
+Use bitwise wrapping `(index + offset) & 4'hF` for toroidal addressing. The state register `q` remains a packed vector but is accessed as a 2D array internally for neighbor calculations.
+
+Perform next-state computations purely combinationally with `assign`, and update `q` synchronously on the clock edge, loading `data` when `load` is high.
+
+This approach separates combinational logic from sequential logic more clearly, facilitates synthesis optimization by unrolling generate loops, and improves code readability without changing functionality.

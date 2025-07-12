@@ -1,0 +1,20 @@
+To optimize the design for better performance, power, and area (PPA), we can introduce an enable signal that gates counting only when enabled, which can reduce switching activity and dynamic power. This can be implemented by adding an 'enable' input; if not desired, we can internally gate counting to reduce toggling when the counter reaches max or min.
+
+However, since the problem doesn't specify an enable, the best approach is to use a binary count with wrap-around, but optimize increment/decrement logic by explicitly implementing a single adder/subtractor rather than a conditional operator to reduce mux complexity, potentially reducing critical path delay.
+
+Also, since increment/decrement is by 1, using an arithmetic adder with subtraction controlled by the up_down signal (via a single +1/-1 operand and using the 'up_down' as a control for the adder carry-in or borrow) can help.
+
+Another improvement is to use a synchronous reset but asynchronously clear the count register on reset to reduce the reset latency, if allowed by timing requirements.
+
+Given the original problem only specifies synchronous reset, we'll keep that but implement the counter logic to minimize muxing by creating the increment and decrement values explicitly and then selecting between them with minimal logic.
+
+This approach reduces the multiplexing inside the adder, potentially improving timing and slightly reducing area. Additionally, using parameters for the width makes the code more scalable.
+
+Finally, non-blocking assignments and explicit widths will be maintained for clarity and proper synthesis.
+
+This improved design:
+- Uses separate increment and decrement signals for clearer arithmetic,
+- Avoids conditional operators inside the always block to reduce mux complexity,
+- Uses parameters to define width,
+- Maintains synchronous reset,
+- Should help reduce critical path delay and power via clearer datapath.

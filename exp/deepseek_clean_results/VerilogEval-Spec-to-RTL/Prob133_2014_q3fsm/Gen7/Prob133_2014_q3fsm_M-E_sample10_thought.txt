@@ -1,0 +1,15 @@
+Novel Architecture Idea:
+1. State Representation: Use 2 states (A/B) with minimal encoding
+2. Window Tracking: Instead of counting 1's, store the exact 3-bit pattern of w values
+3. Pattern Matching: Use direct bitmask comparison to detect exactly two 1's
+4. Evaluation Timing: Trigger output evaluation only at the window boundary
+5. Optimization:
+   - Eliminate adder for counting 1's
+   - Use pattern matching which can be more hardware-efficient
+   - Only update registers when needed (state B)
+   - Output is purely combinational based on stored pattern
+6. Key Benefits:
+   - No arithmetic operations needed
+   - Parallel pattern matching is faster than sequential counting
+   - Clear timing boundaries for evaluation
+   - Minimal state transitions

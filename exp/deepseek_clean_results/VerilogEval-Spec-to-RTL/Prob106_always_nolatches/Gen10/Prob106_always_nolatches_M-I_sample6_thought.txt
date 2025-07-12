@@ -1,0 +1,19 @@
+The current implementation is functionally correct but can be optimized further for PPA. Here's the improvement strategy:
+
+1. Timing Optimization:
+   - The current design has a two-level comparison (high byte + low byte). We can flatten this to a single 16-bit comparison for each arrow key since the synthesis tool will optimize the common prefix.
+
+2. Power Optimization:
+   - Use a single comparison for each arrow key instead of splitting into high/low byte comparisons to reduce switching activity.
+
+3. Area Optimization:
+   - The synthesis tool can better optimize constant comparisons when they're written as full-width comparisons.
+   - Remove the intermediate 'is_arrow_key' wire since it doesn't provide area benefit in this simple case.
+
+4. Maintainability:
+   - Keep the direct mapping approach for clarity while letting the synthesis tool handle optimizations.
+
+The improved design will:
+- Use full 16-bit comparisons for each arrow key
+- Eliminate the intermediate wire
+- Maintain the same functionality with potentially better PPA

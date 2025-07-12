@@ -1,0 +1,8 @@
+Refactor the clock to use a single always block with a clear hierarchical counting structure and intermediate carry signals for incrementing seconds, minutes, and hours.  
+- Instead of nested if-else increments on units and tens digits, implement explicit carry flags to cascade increments cleanly.  
+- Use registers for each BCD digit of hh, mm, ss separately to simplify logic and reduce nested conditionals.  
+- Implement synchronous reset and enable with higher priority on reset.  
+- Toggle PM flag when hour rolls from 11 to 12 by detecting that condition via combinational logic.  
+- Use straightforward combinational functions to increment BCD digits and check for max values.  
+- Provide outputs by concatenating registers without a separate always block.  
+This approach improves clarity and may reduce combinational path length by avoiding deep nested conditions, making the increment logic easier to pipeline or optimize further.

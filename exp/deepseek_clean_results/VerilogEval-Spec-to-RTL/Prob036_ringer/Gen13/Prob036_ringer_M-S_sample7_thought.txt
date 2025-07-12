@@ -1,0 +1,14 @@
+The original solution is already minimal with just two AND gates. However, we can simplify further by recognizing that:
+1. The outputs are mutually exclusive (only one can be active at a time)
+2. The ringer is simply the ring signal when not in vibrate mode
+3. The motor is the ring signal when in vibrate mode
+4. This can be implemented with a single multiplexer structure where:
+   - vibrate_mode selects between the two outputs
+   - ring enables/disables both outputs
+
+This reduces the logic to:
+- ringer = ring AND (NOT vibrate_mode)
+- motor = ring AND vibrate_mode
+Which is exactly equivalent to a 2:1 mux controlled by vibrate_mode between ringer and motor, with ring as the enable.
+
+The implementation remains just 2 gates (AND + NOT) but is conceptually simpler.

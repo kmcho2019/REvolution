@@ -1,0 +1,20 @@
+Improvement Strategy:
+1. Timing Optimization:
+   - Break the critical path by registering the bit_count comparison (bit_count == 3'b111)
+   - Simplify state transition conditions by moving some logic to sequential block
+
+2. Power Optimization:
+   - Add clock gating for the data_reg to reduce switching activity when not in RECEIVE state
+   - Optimize done_reg to only update when needed
+
+3. Area Optimization:
+   - Keep minimal 2-bit state encoding
+   - Maintain efficient bit counter implementation
+   - Remove redundant registers where possible
+
+Key Changes:
+- Add registered version of bit_count comparison
+- Move some state transition logic to sequential block
+- Add clock gating for data_reg
+- Optimize done_reg updates
+- Maintain same functionality while improving PPA

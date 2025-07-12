@@ -1,0 +1,14 @@
+To implement even parity for an 8-bit input, I will use a parallel prefix XOR structure inspired by the Kogge-Stone adder's prefix computation style. This approach efficiently computes the XOR of all bits in a logarithmic number of stages by propagating partial XOR results in a tree-like manner.
+
+Specifically:
+- Stage 0: The input bits themselves.
+- Each subsequent stage XORs pairs of partial results separated by increasing powers of two.
+- After log2(8)=3 stages, the last position will hold the XOR of all input bits.
+
+This method:
+- Avoids linear XOR chains or flat reduction operators.
+- Shows a hardware-friendly, scalable parallel prefix structure.
+- Is modular and clear, using generate loops for stage computations.
+- Can be extended to wider input widths easily.
+
+The final parity is the result at the last bit of the last stage. This prefix XOR tree is a novel architectural idea for parity calculation, emphasizing parallelism and structured computation rather than simple cascades or flat reductions.

@@ -1,0 +1,25 @@
+To properly implement a Mealy FSM for sequence detection:
+
+1. We'll use a traditional state machine approach with 6 states:
+   - IDLE: Initial state
+   - S1: Received '1'
+   - S10: Received '1' followed by '0'
+   - S100: Received '1','0','0'
+   - S1001: Received '1','0','0','1'
+   - MATCH_STATE: Final state when sequence is detected
+
+2. The output MATCH is a Mealy output that depends on both current state and current input:
+   - MATCH=1 only when in S1001 state and current input is '1'
+   - MATCH=0 in all other cases
+
+3. State transitions occur on each clock edge:
+   - From IDLE: move to S1 if input is '1'
+   - From S1: move to S10 if input is '0', else stay if input is '1'
+   - From S10: move to S100 if input is '0', else reset to IDLE
+   - From S100: move to S1001 if input is '1', else reset to IDLE
+   - From S1001: move to MATCH_STATE if input is '1', else reset to S10 if input is '0'
+   - From MATCH_STATE: reset to IDLE (or could handle overlapping patterns)
+
+4. Reset initializes the state to IDLE and output to 0
+
+This properly implements the Mealy behavior where output depends on both state and input, and handles continuous detection by properly managing state transitions.

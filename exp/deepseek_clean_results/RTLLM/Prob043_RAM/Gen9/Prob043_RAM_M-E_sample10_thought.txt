@@ -1,0 +1,19 @@
+Novel Architecture Idea: Pipelined Dual-Port RAM with Registered Outputs
+1. Use a two-stage pipeline for both read and write operations to improve timing closure
+2. Stage 1 (Register Inputs): Capture all input signals (address, data, enables) on clock edge
+3. Stage 2 (Memory Access): Perform actual memory operations using registered inputs
+4. Benefits:
+   - Better timing: Input registers isolate memory array from external timing paths
+   - Higher frequency: Pipelining allows more time for memory access
+   - Cleaner timing: All operations are fully synchronous
+   - Predictable behavior: 2-cycle latency but consistent timing
+5. Additional Features:
+   - Registered outputs for clean timing
+   - Bypass logic for write-through behavior (read during write to same address)
+   - Power-optimized reset (only clear used addresses)
+
+Key Differences:
+- Fully pipelined design (2 cycles for both read and write)
+- Input/output registers for timing isolation
+- Write-through capability
+- More sophisticated reset handling

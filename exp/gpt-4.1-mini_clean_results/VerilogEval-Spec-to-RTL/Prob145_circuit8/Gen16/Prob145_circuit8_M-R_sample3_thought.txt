@@ -1,0 +1,10 @@
+Refactor the design by explicitly modeling the two-bit state {q, p} as a 2-bit register updated at the positive clock edge. Instead of computing p and q in the same always block, separate the next-state logic combinationally and update the register synchronously. This clarifies the state transitions and separates combinational next-state logic from sequential register updates.
+
+The next-state logic will be defined by a function of current state and input 'a' to match the original intention:
+
+- Define a 2-bit state reg: state = {q, p}
+- Compute next_state combinationally from state and a
+- Update state <= next_state at posedge clock
+- Assign outputs p and q from bits of state
+
+This structure improves clarity and allows easier adjustment of next-state logic if needed, adhering to best synchronous FSM design practices.

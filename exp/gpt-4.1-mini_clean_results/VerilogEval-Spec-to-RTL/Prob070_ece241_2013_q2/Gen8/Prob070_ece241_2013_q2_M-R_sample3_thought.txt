@@ -1,0 +1,10 @@
+Refactor the implementation by explicitly constructing the 4-bit input vector and using a combinational always block with case statements to directly specify output values for each valid input pattern. This approach bypasses manual Boolean simplification errors and ensures correct outputs per the specified numbers. 
+
+Don't cares (3,8,11,12) will be handled by default (output '0'), preventing mismatches. This improves clarity and correctness, while preserving the same logic function.
+
+The code will map the 4-bit number formed by inputs {a,b,c,d} to out_sop and out_pos directly: 
+- For decimal 2,7,15, outputs are 1. 
+- For 0,1,4,5,6,9,10,13,14 outputs are 0.
+- For 3,8,11,12 outputs are 0 by default.
+
+Finally, out_sop and out_pos will be assigned the same output, as they represent the same function expressed differently in the original problem.

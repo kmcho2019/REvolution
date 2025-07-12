@@ -1,0 +1,12 @@
+To improve the existing 64-bit subtractor design for better PPA (performance, power, area), we optimize as follows:
+
+- Replace the two 32-bit CLA blocks chained via carry with a flat 64-bit carry lookahead adder (CLA). This eliminates the 32-bit carry chain boundary bottleneck, allowing carry to propagate within a single logic block for better timing.
+- Combine the bitwise inversion of B into one 64-bit operation instead of two 32-bit slices, slightly reducing wiring and logic.
+- Keep the two's complement subtraction by adding A + (~B + 1) as before.
+- Maintain the same overflow detection logic, checking if sign bits differ for A and B and the result sign differs from A's sign.
+- Implement a 64-bit CLA with efficient carry generation using hierarchical carry lookahead by splitting into 4-bit blocks for manageable carry logic. This is a classic, balanced approach providing fast carry with reasonable area.
+- This change reduces critical path delay (better WNS) by removing the inter-32-bit carry chaining and cuts some power by minimizing toggling in intermediate carry signals.
+- Area impact is mitigated by hierarchical grouping and shared logic.
+- Overall, the design remains fully combinational, clean, and easily synthesizable, improving timing and potentially lowering power while maintaining correctness.
+
+This approach leverages a single 64-bit hierarchical CLA replacing the chained 32-bit CLAs to improve timing and overall PPA.

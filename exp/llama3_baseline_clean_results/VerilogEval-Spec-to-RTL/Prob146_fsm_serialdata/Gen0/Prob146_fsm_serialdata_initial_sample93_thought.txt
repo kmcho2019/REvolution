@@ -1,0 +1,8 @@
+To implement the TopModule, we can use a finite state machine (FSM) with the following states:
+- IDLE: wait for the start bit (0) to initiate the reception of a byte
+- START: detected start bit, prepare to receive data bits
+- DATA: receive the 8 data bits, shifting them into a register
+- STOP: verify the stop bit (1) and output the received byte
+- INVALID_STOP: wait for a stop bit if the stop bit verification fails
+
+We'll use a counter to keep track of the current data bit being received and a shift register to store the received data bits. When the FSM reaches the STOP state and verifies the stop bit, it asserts the done signal and outputs the received byte. If the stop bit verification fails, it waits in the INVALID_STOP state until a stop bit is detected, then transitions back to the IDLE state to initiate the reception of a new byte.

@@ -1,0 +1,14 @@
+This design fuses the best ideas from both examples:
+
+- Use the minimal and factored sum-of-products expression from Example 2, which reduces product terms and literals, improving area and power.
+- Apply the gate decomposition and shared complemented signals technique from Example 1 to improve gate fan-in and enable synthesis-friendly smaller gates.
+- Simplify (~x0 | (x1 & x0)) to (~x0 | x1), as this reduces complexity while maintaining correctness.
+- Introduce intermediate wires for complemented inputs and partial terms to aid clarity and synthesis optimization.
+- Balance minimal logic complexity, gate fan-in constraints, and code readability to achieve a better power-performance-area (PPA) tradeoff.
+
+Final expression:
+f = (~x3 & ~x1)
+  | (~x3 & x2 & x1 & ~x0)
+  | (x3 & x2 & (~x0 | x1));
+
+This combines minimal terms with low literal counts, optimized logic decomposition, and shared complements for area and power efficiency.

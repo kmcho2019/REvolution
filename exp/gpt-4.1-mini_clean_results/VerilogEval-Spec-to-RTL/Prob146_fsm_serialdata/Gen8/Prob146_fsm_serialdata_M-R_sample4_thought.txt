@@ -1,0 +1,9 @@
+Refactor the FSM by separating the next-state logic and output logic more explicitly, using a Mealy FSM style with both synchronous and combinational always blocks.
+
+- Use an explicit state register updated on clk edge.
+- Use a combinational always block to determine next_state based on current state and inputs.
+- Update data_shift and bit_count only in the RECEIVE state inside a synchronous always block with clear enable signals.
+- Generate `done` and `out_byte` signals synchronously on the STOP state with valid stop bit.
+- Maintain synchronous reset but separate output and state logic clearly to improve readability and ease further modification.
+- Avoid assigning `done` in multiple places; drive it only for one cycle when stop bit detected.
+- This refactor maintains the same FSM logic and functionality but organizes the code differently with clearer separation between combinational and sequential parts.

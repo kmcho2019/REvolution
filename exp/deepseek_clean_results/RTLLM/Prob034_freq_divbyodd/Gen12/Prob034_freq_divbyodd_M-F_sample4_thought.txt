@@ -1,0 +1,14 @@
+Revised approach for odd frequency division with proper counter management:
+1. Maintain the dual-counter architecture but correct the counting logic
+2. Each counter (cnt1 for rising edge, cnt2 for falling edge) counts up to NUM_DIV-1
+3. Toggle the respective divided clocks (clk_div1, clk_div2) when counters reach (NUM_DIV-1)/2
+4. Use OR operation to combine the two divided clocks as specified in requirements
+5. Properly synchronize reset to initialize all counters and clock signals
+6. Ensure counters wrap around correctly after reaching maximum count
+
+Key improvements:
+- Correct counter behavior counts full period (NUM_DIV-1)
+- Proper toggling at midpoint for 50% duty cycle approximation
+- Using OR instead of XOR for clock combination
+- Clear separation of edge domains while maintaining correct timing
+- Reset properly initializes all state elements

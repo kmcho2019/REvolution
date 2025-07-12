@@ -1,0 +1,9 @@
+Implement the FSM using one-hot state encoding with five states for clear and glitch-free output control: IDLE (waiting for pattern), SHIFT1 to SHIFT4 (four shifting cycles), COUNT (waiting for counters), and DONE (asserting done and waiting for ack).
+
+Use a separate 4-bit shift register to detect the pattern only when in IDLE, updated synchronously at each clock cycle. When the pattern 1101 is detected, transition to SHIFT1 state to begin the four shift cycles. Each SHIFTn state corresponds to one shift cycle with shift_ena asserted, moving sequentially through SHIFT1 to SHIFT4. This approach eliminates a separate shift counter, using distinct states to count shift cycles explicitly.
+
+After SHIFT4, move to COUNT state, assert counting=1, and wait for done_counting to be asserted. Upon done_counting, transition to DONE state with done=1, waiting for ack to return to IDLE.
+
+Outputs shift_ena, counting, and done are combinationally assigned from the current one-hot state for immediate and glitch-free outputs. State transitions and pattern register updates occur synchronously on the clock's rising edge with synchronous reset.
+
+This explicit state representation ensures precise control of shift cycles and clean output timing, avoiding timing mismatches related to counters or next-state output assignment.

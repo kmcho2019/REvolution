@@ -1,0 +1,9 @@
+Implement the gshare predictor with two GHRs: one "architectural GHR" representing the committed branch history state and one "speculative GHR" used during prediction. Predictions use the speculative GHR to index the PHT and produce predictions; on predict_valid, update the speculative GHR with the predicted direction.
+
+Training updates the PHT at the index derived from train_pc XOR train_history. On misprediction training, restore both the speculative GHR and architectural GHR to train_history, recovering the correct history. Training takes precedence over prediction updates when both happen in the same cycle.
+
+The predictor outputs prediction based on speculative GHR and current PHT entry. The predict_history output is the speculative GHR used for the prediction before updating it.
+
+This dual GHR approach cleanly separates speculative state and architectural state, avoiding timing conflicts. The PHT update occurs synchronously on training, but prediction reads PHT combinationally to see prior state before update.
+
+Asynchronous reset clears PHT to weakly not taken (2'b01) and resets both GHRs to zero.

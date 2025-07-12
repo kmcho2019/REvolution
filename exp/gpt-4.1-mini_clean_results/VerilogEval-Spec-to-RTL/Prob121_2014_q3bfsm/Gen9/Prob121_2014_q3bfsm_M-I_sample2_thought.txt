@@ -1,0 +1,5 @@
+To optimize PPA, trade off a slight increase in area for potentially improved timing and power by using one-hot state encoding instead of binary encoding. One-hot encoding simplifies next-state logic to mostly simple muxes and can reduce logic depth, improving timing (potentially improving negative slack) and reducing switching activity per bit (potentially lowering power). Although one-hot uses more flip-flops (5 FFs for 5 states), the next state and output logic become simpler and more direct, often leading to better overall PPA in modern synthesis flows.
+
+Implement synchronous reset to state S0 (one-hot: 5'b00001). Implement next state logic with combinational logic using one-hot signals and input x. Output logic becomes a direct OR of the state signals that output z=1. Use non-blocking assignments for sequential logic and blocking for combinational logic.
+
+This should improve timing by shortening critical paths and reduce glitches by simplifying logic, potentially improving power and timing metrics while increasing area modestly.

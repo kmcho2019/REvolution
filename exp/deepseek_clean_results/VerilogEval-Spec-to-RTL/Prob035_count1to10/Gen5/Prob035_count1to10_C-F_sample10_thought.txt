@@ -1,0 +1,14 @@
+Fusion Strategy:
+1. **State Encoding**: Use binary encoding (4-bit) from Example 2 for area efficiency, but implement the optimized wrap-around detection from Example 2 (bit pattern matching) for better timing.
+
+2. **Power Optimization**: Keep the simple increment logic from Example 2, which naturally has lower switching activity than one-hot encoding. The binary counter only changes necessary bits during increments.
+
+3. **Timing Optimization**: Use the direct bit pattern matching (q[3] & ~q[2] & q[1] & ~q[0]) for detecting 10, which is more efficient than a full comparator. This matches Example 2's approach.
+
+4. **Reset Handling**: Maintain synchronous reset to 1 as specified, implemented cleanly as in both examples.
+
+The combined solution will:
+- Use minimal area (4-bit counter)
+- Have efficient timing (simple wrap-around detection)
+- Maintain low power (binary counting)
+- Keep clean, readable code

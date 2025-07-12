@@ -1,0 +1,19 @@
+Fuse the compact 2-bit FSM encoding from Example 1 (combining direction and mode into one state) with the clean, prioritized and simple combinational next-state logic approach of Example 2.
+
+Use a single 2-bit state register holding direction and mode (walk/fall), and a separate digging register as in Example 1 to keep digging orthogonal and well-controlled. This gives minimal state bits (2 bits) plus 1 bit digging for clarity and simplicity.
+
+Implement purely combinational next state logic with clear priority: 
+1) Fall when no ground (digging is cleared on fall start)
+2) When falling and ground returns, resume walking (no digging)
+3) When walking on ground, if dig=1 start digging, else if bumped change direction accordingly, else keep walking
+4) When digging, continue digging while ground, else fall
+
+Use blocking assignments in combinational next-state logic for clarity and easier synthesis.
+
+Keep asynchronous reset that resets to walk-left and no digging.
+
+Output signals are derived straightforwardly from state and digging flags, ensuring the walking outputs do not assert when digging or falling.
+
+This fusion keeps the minimal state from Example 1 for area/power, the clarity and prioritization from Example 2 for easy understanding and maintainability, and the separate digging flag for precise mode control. It also explicitly covers the case of simultaneous bump_left and bump_right switching directions and preserves all priority rules.
+
+This fusion will likely improve performance by reducing logic depth with combinational next-state clarity and power/area by minimizing state bits and toggling.

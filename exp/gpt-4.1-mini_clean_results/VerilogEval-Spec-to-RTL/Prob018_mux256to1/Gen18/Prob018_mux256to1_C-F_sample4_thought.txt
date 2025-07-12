@@ -1,0 +1,31 @@
+Fuse the simplicity and minimal mux fan-in of the 4-level 4-to-1 mux tree from Example 2 with the modular internal 4-to-1 mux tree decomposition inside each 16-to-1 mux from Example 1. This hybrid approach uses a balanced 3-level hierarchy:
+
+- Level 0: 16 Mux16to1 modules, each selecting one bit out of 16 input bits with sel[3:0].
+  - Each Mux16to1 is internally built as two layers of 4-to-1 muxes to reduce fan-in and logic depth.
+- Level 1: 4 Mux4to1 modules, each selecting one bit out of 4 inputs from level 0 using sel[5:4].
+- Level 2: 1 final Mux4to1 selecting among 4 inputs from level 1 using sel[7:6].
+
+This fusion reduces the total number of instantiated mux modules compared to Example 2 (which instantiates 85 Mux4to1 muxes) while keeping the low fan-in 4-to-1 muxes internally to 16-to-1 muxes, thus optimizing logic depth and power. The 3-level hierarchy also balances synthesis friendliness and critical path delay. 
+
+Key advantages:
+- Uses efficient 4-to-1 muxes internally inside 16-to-1 muxes (Example 1 strength).
+- Avoids very deep mux hierarchy of pure 4-to-1 mux trees (Example 2 weakness).
+- Reduces the total number of top-level mux instances from 85 (pure 4-to-1 hierarchy) to 21 modules (16 Mux16to1 + 4 Mux4to1 + 1 Mux4to1), leading to area and wiring savings.
+- Keeps minimal mux fan-in of 4 for internal muxes, easing synthesis and timing.
+- Simple direct indexing in Mux4to1 for clean code.
+
+This fusion yields a low-depth, balanced, modular, and efficient 256-to-1 mux optimized for performance, power, and area while maintaining clarity.
+
+Sel mapping:
+- sel[3:0]: select bit inside each 16-bit chunk (inside Mux16to1)
+- sel[5:4]: select among 4 Mux16to1 outputs (level 1)
+- sel[7:6]: select among 4 Mux4to1 outputs (level 2)
+
+Since 256 = 16 * 4 * 4, this perfectly partitions the inputs.
+
+Implementation:
+- Define Mux4to1 as direct assign.
+- Define Mux16to1 as a two-level 4-to-1 mux tree.
+- At TopModule instantiate 16 Mux16to1 for level 0, then 4 Mux4to1 at level 1, then 1 Mux4to1 at level 2.
+
+This solution balances the best of both examples.

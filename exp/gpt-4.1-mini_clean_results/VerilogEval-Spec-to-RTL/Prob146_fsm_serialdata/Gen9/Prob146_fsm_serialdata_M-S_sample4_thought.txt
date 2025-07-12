@@ -1,0 +1,12 @@
+I will simplify the FSM by reducing states from four to three: IDLE, RECEIVE, and WAIT_STOP. The STOP state is merged into RECEIVE with a bit_count reaching 8 (7 data bits plus stop bit). This reduces complexity and logic. 
+
+- IDLE waits for start bit (0).
+- RECEIVE shifts in bits including data bits and stop bit: bits 0 to 7 are data, bit 8 is stop bit.
+- When bit_count reaches 8, done is asserted if stop bit is 1, else FSM goes to WAIT_STOP.
+- WAIT_STOP waits for line to return to idle (logic 1), then returns to IDLE.
+
+This way, done is asserted only at the end of RECEIVE state cycle. Data is shifted LSB first with a single shift register update. The bit_count counts up to 8 (stop bit index).
+
+Synchronous reset clears all registers and sets state to IDLE.
+
+This design has fewer states and simpler next state logic, reducing overall complexity but preserving all functionality.

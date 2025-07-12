@@ -1,0 +1,12 @@
+// Module TopModule implements a 2-1 multiplexer.
+module TopModule(
+    input [99:0] a,  
+    input [99:0] b,  
+    input sel,       
+    output [99:0] out 
+);
+
+// Conditionally assign 'out' based on 'sel'.
+assign out = sel ? b : a;
+
+endmodule

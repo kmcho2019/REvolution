@@ -1,0 +1,8 @@
+I will fuse the strengths of both examples as follows:
+
+- Retain the modular DFF to encapsulate sequential logic and promote reuse and clarity.
+- Keep the combinational inversion of 'a' explicitly outside the DFF in a local wire, ensuring clear separation of combinational and sequential logic.
+- Use non-blocking assignment inside the DFF always block for good RTL style.
+- To optimize for power and area slightly, implement the inverter as an assign statement (simple wire inversion), avoiding any extra logic inside the DFF.
+- This combination yields a clean, minimal, maintainable design that matches the waveform exactly: on each rising edge of clk, q captures the negated input a.
+- Compared to the examples, it clearly separates logic domains, modularizes DFF functionality, and keeps the critical path minimal and well-defined.

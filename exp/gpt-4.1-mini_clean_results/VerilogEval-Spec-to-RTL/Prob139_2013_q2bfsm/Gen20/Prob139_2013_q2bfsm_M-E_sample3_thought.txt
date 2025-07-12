@@ -1,0 +1,9 @@
+Use a Mealy-type FSM to react immediately to inputs while maintaining a clear state sequence. On synchronous active-low reset asserted, remain in the initial state A with outputs f=0, g=0. On reset release (resetn=1), output f=1 for exactly one cycle, then move to a state where the last three x samples are continuously tracked using a 3-bit shift register updated every cycle. Instead of waiting for a "ready" flag, start pattern detection as soon as 3 samples are available (after first 2 cycles in that state).
+
+When the pattern 1-0-1 is detected in x samples, output g=1 for one cycle (a g-pulse state). Then enter a y-monitor state holding g=1 while counting up to two cycles to observe input y. If y=1 within these two cycles, transition to a permanent g=1 state; otherwise, transition to a permanent g=0 state. Both permanent states hold outputs until reset.
+
+Outputs are mostly Moore type (based on state) except for f, which is pulsed immediately on reset release. The design avoids unnecessary flags by tightly coupling the shift register and pattern check in one state. The y-monitoring timer starts counting on entry to that state and increments every clock cycle.
+
+All synchronous logic is updated on the rising edge of clk with synchronous active-low reset, ensuring deterministic state and output timing.
+
+This approach simplifies timing of pattern detection and output pulses, matching expected FSM behavior without subtle off-by-one or flag issues.

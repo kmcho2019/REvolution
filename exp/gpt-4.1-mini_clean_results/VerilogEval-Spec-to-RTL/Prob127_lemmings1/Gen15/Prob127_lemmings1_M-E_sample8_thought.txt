@@ -1,0 +1,11 @@
+I will implement the Lemmings FSM using a one-hot encoding approach, representing each walking direction as a separate flip-flop. This approach simplifies output logic since each output directly corresponds to a register bit. The FSM transitions will be encoded as follows:
+
+- Two flip-flops: walk_left_reg and walk_right_reg, where only one is high at a time.
+- On asynchronous positive edge reset, walk_left_reg is set high, walk_right_reg low.
+- On each clock edge:
+  - If bumped on the left (bump_left=1), the FSM moves to walk_right state.
+  - If bumped on the right (bump_right=1), the FSM moves to walk_left state.
+  - If both bumps occur simultaneously, the FSM toggles the current state.
+  - If no bump, FSM holds current state.
+
+By using separate registers, we simplify output assignments and explicitly handle mutually exclusive states, aiding readability and making the FSM structure clear. This style can be easily extended and helps avoid binary state encoding confusion.

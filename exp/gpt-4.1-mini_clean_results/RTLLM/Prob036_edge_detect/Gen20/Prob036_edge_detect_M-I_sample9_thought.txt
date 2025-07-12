@@ -1,0 +1,11 @@
+The original design is already minimal, clean, and efficient for edge detection with one flop and simple combinational logic. To optimize for better PPA (power, performance, area), we can consider the following:
+
+1. Change the asynchronous reset to a synchronous reset. This can improve timing closure and reduce complexity in the clock tree since asynchronous resets can cause glitches or longer routing.
+2. Use nonblocking assignment style and simplify reset logic to improve synthesis optimization.
+3. Since the 'rise' and 'down' outputs are combinational, keep them as wires for one-cycle pulse outputs.
+4. Keep the design minimal without additional logic or pipeline stages to prevent area increase.
+5. Add comments about synchronous reset usage and rationale.
+
+These changes maintain the one-cycle pulse outputs synchronized with clk, reduce potential issues with asynchronous reset, and slightly simplify timing and routing, likely leading to minor power savings and easier timing closure.
+
+The improved design thus trades the asynchronous reset for a synchronous reset, which often suits ASIC flows better and does not increase area or latency. Overall, this should keep or slightly improve PPA while preserving functional correctness.

@@ -1,0 +1,14 @@
+To solve this problem, we will design a Moore-type finite state machine (FSM) that recognizes the three specified sequences. The FSM will have several states to track the number of consecutive 1s seen so far. When a 0 is encountered, the FSM resets to its initial state, unless it's part of the flag sequence. We will also have states to detect the flag and error sequences. The FSM will assert the corresponding output signals (disc, flag, err) based on its current state and the input.
+
+The main states we will consider are:
+
+- S0: Initial state (0 or 1)
+- S1: 1 seen
+- S2: 2 consecutive 1s seen
+- S3: 3 consecutive 1s seen
+- S4: 4 consecutive 1s seen
+- S5: 5 consecutive 1s seen, expecting a 0 for discarding or continuing for flag or error
+- S6: 6 consecutive 1s seen, expecting a 0 for flag
+- S7: Error state (7 or more consecutive 1s)
+
+We'll also consider the outputs to be asserted for a complete cycle after the condition occurs, which means the FSM will have a delayed response to the input sequence.

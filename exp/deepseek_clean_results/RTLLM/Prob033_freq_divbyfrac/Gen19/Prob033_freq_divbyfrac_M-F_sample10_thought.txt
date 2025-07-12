@@ -1,0 +1,21 @@
+Revised fractional divider with robust 3.5x division:
+
+1. Core Fixes:
+   - Eliminate dual-edge counter to prevent race conditions
+   - Use single-edge counting with precise phase control
+   - Implement proper 7-cycle sequence (4+3) with clear state transitions
+
+2. New Approach:
+   - Standard synchronous design using only posedge
+   - Maintain 3-bit counter for 7 states (0-6)
+   - Generate two phase-shifted clocks:
+     * clk_div1: High for 4 cycles (states 0-3)
+     * clk_div2: High for 3 cycles (states 4-6), delayed by half cycle
+   - Combine phases with OR gate for final output
+
+3. Key Improvements:
+   - Single clock domain for reliable operation
+   - Precise state machine for accurate timing
+   - Half-cycle delay implemented via register
+   - Clean reset behavior for both phases
+   - Guaranteed 50% duty cycle in final output

@@ -1,0 +1,13 @@
+The original solution has two main issues:
+1. Timing of 'done' signal: It's asserted during BYTE3 state (when receiving 3rd byte) instead of the cycle after
+2. Unused DONE state: The state machine includes a DONE state but doesn't utilize it properly
+
+Improvement strategy:
+1. Fix the timing by asserting 'done' only in the DONE state
+2. Simplify the state machine by removing the DONE state and instead:
+   - Use BYTE3 state to indicate we've received 2 bytes
+   - Assert 'done' in the cycle after receiving the 3rd byte (when transitioning back to IDLE)
+3. Make output logic purely combinational for better timing
+4. Use localparam for state encoding instead of enum for better synthesis control
+
+This maintains correct functionality while potentially improving timing and area.

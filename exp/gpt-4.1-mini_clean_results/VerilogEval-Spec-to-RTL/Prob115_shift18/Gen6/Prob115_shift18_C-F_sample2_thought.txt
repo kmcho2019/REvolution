@@ -1,0 +1,13 @@
+Fuse the staged shifting approach of Example 1, which reduces combinational logic depth by breaking shifts into two stages (8-bit shift followed by 1-bit shift), with Example 2's selective shift computation that computes only the needed shift paths (left or right) and amount (1 or 8 bits), thus saving power and area.
+
+Key points of the fusion:
+- Decode direction (left or arithmetic right) and amount (1 or 8 bits) from amount[1:0].
+- Use combinational wires (not regs) for intermediate shifted values to minimize registers and reduce area.
+- Stage the shifting: perform the 8-bit shift first (if required), then the 1-bit shift (if required).
+- For left shifts: zero-fill; for arithmetic right shifts: sign-extend by replicating MSB.
+- Avoid computing unused shift paths to save power.
+- Implement minimal multiplexers to select between no-shift or 8-bit shift first, and then optionally shift by 1 bit.
+- In clocked always block, prioritize synchronous load, then conditional shifting on ena, else hold.
+- This approach balances performance by reducing shift mux tree depth, power by only computing needed shifts, and area by using wires instead of unnecessary regs or full barrel shifters.
+
+This solution improves timing by staging shifts, saves power by computing only needed shifts, and reduces area by leveraging minimal combinational logic and wire declarations, synthesizing into efficient hardware while meeting all specification requirements.

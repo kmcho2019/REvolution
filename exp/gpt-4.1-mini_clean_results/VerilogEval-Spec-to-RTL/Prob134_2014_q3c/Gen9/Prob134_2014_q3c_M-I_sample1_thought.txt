@@ -1,0 +1,13 @@
+To optimize the FSM for better power, performance, and area (PPA), I will replace the function-based next state logic with a direct combinational always block using a case statement. This reduces logic depth and potentially eases synthesis optimization. 
+
+Also, for output z, instead of multiple equality checks, I will encode it as a bitmask over the present state y, which reduces toggling and logic complexity by leveraging a single bit-vector lookup.
+
+The next state and output logic will be done in simple combinational blocks without functions to make the code and synthesis simpler and more efficient.
+
+Since the FSM is small (5 states), a compact encoding and straightforward case statements will likely reduce LUTs and logic transitions, lowering power and area with no impact on timing.
+
+I will keep Y0 as the LSB of the next state as before, since this is required.
+
+The final code is still fully combinational for next state and output logic, and uses no internal state registers as y is the present state input.
+
+This approach improves clarity for synthesis tools, reduces combinational logic depth, and simplifies output logic, improving PPA.

@@ -1,0 +1,11 @@
+To simplify the original design while maintaining the functionality, we will:
+
+1. Remove the FSM and use a straightforward synchronous process controlled by the reset and a counter.
+2. On reset, load sign-extended inputs into multiplicand and multiplier registers and clear product and ready signals.
+3. On each clock cycle, if the counter is less than 16, check the multiplier bit at the current counter; if it's 1, add multiplicand to product.
+4. Shift multiplicand left by one every cycle.
+5. Increment counter; when it reaches 16, set ready high and output the product.
+6. Use only synchronous reset on clock edge for simpler synthesis.
+7. Use signed registers for arithmetic and keep code clear and concise.
+
+This approach removes the FSM, keeping the logic linear and easier to understand and synthesize.

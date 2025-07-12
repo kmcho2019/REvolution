@@ -1,0 +1,12 @@
+My novel approach implements a pipelined fixed-point subtractor with overflow/underflow detection and saturation. The key innovations are:
+
+1. **Two-stage Pipeline**: Separates the subtraction operation and sign handling into distinct stages for better timing closure
+2. **Overflow Protection**: Detects and handles overflow/underflow conditions by saturating to max/min values
+3. **Early Sign Comparison**: Performs sign comparison in parallel with subtraction for faster critical path
+4. **Zero Flag Generation**: Produces a dedicated zero flag output for easier system integration
+5. **Parameterized Precision**: Maintains flexible Q.N format support with runtime checks
+
+The architecture:
+- Stage 1: Performs raw subtraction and sign comparison in parallel
+- Stage 2: Handles overflow/underflow, zero detection, and final result selection
+- Special Cases: Explicitly handles zero result and boundary conditions

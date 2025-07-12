@@ -1,0 +1,7 @@
+I will implement the 64-bit ripple carry adder with a deeper pipeline of 4 stages, each stage adding 16 bits of the operands along with the carry from the previous stage. This fine-grained pipelining improves clock frequency by breaking the large addition into smaller chunks and spreading carry propagation over multiple cycles.
+
+Each pipeline stage has registers to hold inputs, carry in, and the partial sums. The carry out from each stage is registered and passed as carry in to the next stage in the next clock cycle.
+
+The input enable signal (i_en) will be pipelined through 4 registers to create the output enable (o_en), indicating the final result's validity. The final 65-bit result is assembled by concatenating the 4 partial sums and the highest carry out bit.
+
+This architecture creates a 4-cycle latency and allows the adder to operate at a higher clock frequency by reducing combinational delay per cycle.

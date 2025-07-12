@@ -1,0 +1,11 @@
+To simplify the IEEE-754 32-bit floating-point multiplier while preserving correct functionality, I will:
+
+- Use a single always @(posedge clk or posedge rst) block controlled by a 3-step cycle counter.
+- Extract sign, exponent, and mantissa in cycle 0.
+- Compute mantissa product and exponent sum with bias adjustment in cycle 1.
+- Normalize, round to nearest even, and handle special cases (zero, inf, NaN, overflow, underflow) in cycle 2.
+- Keep mantissas and product widths minimal (24 bits with implicit leading one and 48-bit product).
+- Use simple combinational logic inside the sequential steps to avoid pipeline complexity.
+- Implement standard rounding with guard, round, and sticky bits.
+- Output result in IEEE-754 single-precision format.
+This approach keeps latency at 3 cycles, with simpler control and registers, ensuring easy verification and maintenance.

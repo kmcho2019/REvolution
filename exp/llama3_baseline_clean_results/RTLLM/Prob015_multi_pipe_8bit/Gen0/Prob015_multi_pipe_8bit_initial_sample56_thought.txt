@@ -1,0 +1,12 @@
+The module multi_pipe_8bit implements a pipelined unsigned 8-bit multiplier. It uses input enable signal mul_en_in to control the multiplication operation. The module consists of several stages: input control, input registers, partial product generation, partial sum calculation, and final product calculation. It utilizes registers to store intermediate results and wires to connect the different stages. The final product is stored in the register mul_out_reg and is assigned to the output port mul_out based on the output enable signal mul_en_out.
+
+To implement this module, we will use Verilog's synchronous reset, always block, and conditional statements to describe the behavior of each stage. We will also use the non-blocking assignment operator (<=) to assign values to registers and wires.
+
+The module will be described as follows:
+- On the positive edge of the clock signal, the module samples the input enable signal and stores it in a register.
+- The output enable signal is derived from the most significant bit of the stored input enable signal.
+- The module samples the input values and stores them in corresponding registers when the input enable signal is active.
+- The module generates partial products by performing bitwise operations between the multiplicand and the individual bits of the multiplier.
+- The partial products are summed up to calculate partial sums, which are stored in registers.
+- The final product is calculated by summing up all the partial sums and stored in a register.
+- The output product value is assigned based on the output enable signal and the value in the final product register.

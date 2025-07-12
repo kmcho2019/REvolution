@@ -1,0 +1,24 @@
+Here's a novel architectural approach for the 4-bit pipelined multiplier:
+
+1. Radix-4 Booth Encoding:
+   - First implement Booth encoding to reduce the number of partial products from 4 to 3
+   - This reduces the adder tree depth and improves timing
+
+2. Balanced 2-Stage Pipeline:
+   - Stage 1: Generate all Booth-encoded partial products and perform first level addition
+   - Stage 2: Complete the final addition and register the output
+   - This better balances the combinational logic between stages
+
+3. Optimized Partial Product Generation:
+   - Use multiplexers to select between 0, ±A, ±2A based on Booth encoding
+   - Sign extension handled properly for negative partial products
+
+4. Efficient Reset Handling:
+   - Clear all pipeline registers synchronously during reset
+   - Maintain data validity throughout the pipeline
+
+Key Advantages:
+- Reduced number of partial products (3 vs 4)
+- Balanced pipeline stages for better timing
+- Lower power due to fewer add operations
+- Smaller area from reduced adder tree

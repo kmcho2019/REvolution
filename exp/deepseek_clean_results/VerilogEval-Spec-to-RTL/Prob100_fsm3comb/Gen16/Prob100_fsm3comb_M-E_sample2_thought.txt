@@ -1,0 +1,10 @@
+Novel approach using a lookup table (LUT) style implementation:
+1. Instead of case statements, use a 4-entry LUT (one per state) where each entry is a 2-bit mux selecting between two next states
+2. Encode the entire state transition table into a single 8-bit vector (4 states × 2 possible inputs × 2 bits per state)
+3. Use concatenated state and input as an index into this LUT vector
+4. Output logic remains simple as it's purely state-dependent
+5. Benefits:
+   - More compact representation of the state machine
+   - Potentially better synthesis optimization as a single LUT
+   - Easier to modify if state transitions change (just update the vector)
+   - No priority logic like in case statements

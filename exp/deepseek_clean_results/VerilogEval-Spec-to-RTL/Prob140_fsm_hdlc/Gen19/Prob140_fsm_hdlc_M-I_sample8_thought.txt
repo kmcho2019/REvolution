@@ -1,0 +1,21 @@
+To improve the PPA metrics while maintaining correct functionality, I'll implement the following optimizations:
+
+1. Timing Improvement:
+   - Replace the 3-bit counter with one-hot encoded states to reduce combinatorial logic depth
+   - Use parallel state transitions to eliminate adder logic
+   - Register the comparison results to break the critical path
+
+2. Power Optimization:
+   - Maintain the existing input gating (only update on 'in'=1)
+   - Use explicit state encoding to minimize switching activity
+
+3. Area Optimization:
+   - Share comparison logic between outputs where possible
+   - Use minimal state encoding while maintaining timing benefits
+
+Key changes:
+- One-hot state encoding (8 states) for faster transitions
+- Registered next-state logic to improve timing
+- Shared comparison logic between outputs
+- Maintain synchronous reset behavior
+- Keep output generation simple and registered

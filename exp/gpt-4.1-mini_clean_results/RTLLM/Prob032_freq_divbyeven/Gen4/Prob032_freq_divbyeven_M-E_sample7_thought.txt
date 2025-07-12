@@ -1,0 +1,20 @@
+A different approach is to use a simple up-down edge counting scheme that toggles the output clock exactly every half period of the desired division factor.
+
+Since NUM_DIV is even, each full period of the output clock corresponds to NUM_DIV input clock cycles. The output toggles every NUM_DIV/2 input clocks.
+
+We can implement a counter that counts from 0 up to NUM_DIV/2 - 1, then resets and toggles clk_div.
+
+To simplify, use a wider counter (e.g., parameterized width) to count up to NUM_DIV/2 - 1.
+
+At each positive edge of clk:
+- If reset is asserted, reset counter and clk_div.
+- Else increment the counter.
+- When counter reaches NUM_DIV/2 - 1, reset the counter and toggle clk_div.
+
+This approach avoids complicated width calculation by using a counter with enough bits to cover half the division factor.
+
+Because the toggle occurs at the counter max value, clk_div is perfectly aligned with the input clk edges, toggling every NUM_DIV/2 cycles, generating an even-frequency division output.
+
+We also add a synthesis-time assertion to ensure NUM_DIV is even.
+
+This design is straightforward and provides a clear and reliable output clock divided by an even number.

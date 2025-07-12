@@ -1,0 +1,13 @@
+Refactor the fractional frequency divider by 3.5x using a phase accumulator with half-cycle granularity and generate two intermediate clocks that are phase shifted by half a clock cycle relative to each other. Each intermediate clock toggles at different counts, creating uneven high and low periods (4 cycles and 3 cycles), but offset by half a cycle. By OR-ing these two clocks, a final clock with a stable 3.5 division and a balanced duty cycle is produced.
+
+Key points in refactoring:
+
+1. Use a single clock domain driven by `posedge clk` with synchronous reset.
+2. Use a 3-bit counter (counts 0 to 6) representing half cycles of the output clock period.
+3. Generate `clk_divA` toggling at counts 0 and 4 (every 4 and 3 half-cycles), producing one uneven intermediate clock.
+4. Generate `clk_divB` toggling at counts 3 and 7 (wrapped to 0), shifted by half cycle from clk_divA.
+5. The final output `clk_div` is the logical OR of these two clocks, generating a fractional divided clock with approximately 50% duty cycle.
+6. Implement all signals as registered outputs and intermediate signals to avoid glitches.
+7. Avoid negative edge triggers; emulate double-edge effect with count-based toggling.
+
+This structure uses two toggling clocks offset by half clock cycle, combined by OR, achieving the fractional division with even duty cycle.

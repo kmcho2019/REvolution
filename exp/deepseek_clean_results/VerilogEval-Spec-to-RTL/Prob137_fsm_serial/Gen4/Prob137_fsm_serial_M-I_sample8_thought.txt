@@ -1,0 +1,23 @@
+Based on the feedback and PPA metrics, here's my optimization strategy:
+
+1. State Encoding:
+   - Replace one-hot with binary encoding (2 bits) to reduce area and power
+   - This reduces flip-flop count from 4 to 2 while maintaining functionality
+
+2. State Machine Optimization:
+   - Merge WAIT and STOP states into a single STOP_WAIT state
+   - This reduces state count from 4 to 3, further simplifying logic
+
+3. Timing Optimization:
+   - Remove pipelined done signal since it adds unnecessary latency
+   - Generate done combinatorially from current state and input
+
+4. Power Optimization:
+   - Simplify state transitions to reduce switching activity
+   - Keep clock gating for shift register (shift_enable)
+
+5. Area Optimization:
+   - Reduced state encoding saves flip-flops
+   - Simplified control logic reduces combinational area
+
+The improved design should maintain functionality while achieving better PPA metrics.

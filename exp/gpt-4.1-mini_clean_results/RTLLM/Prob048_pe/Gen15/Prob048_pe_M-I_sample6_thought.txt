@@ -1,0 +1,11 @@
+To improve PPA (Power, Performance, Area), the main bottleneck is the large combinational path through the 32x32 multiplier followed immediately by a 33-bit adder before the register update. This limits max clock frequency (negative WNS) and increases power and area.
+
+Improvement strategy:
+1. Pipeline the MAC operation by introducing a register stage for the multiplication product. This breaks the critical path into two shorter stages: multiply, then add+accumulate.
+2. Use synchronous reset as before.
+3. Perform saturation logic in the accumulation stage.
+4. Keep the accumulator register width at 32 bits and saturation to 32'hFFFFFFFF.
+5. This pipeline adds one cycle latency but allows higher clock frequency and lower dynamic power per cycle.
+6. Output `c` reflects accumulator with 1 cycle delay, acceptable for typical designs.
+
+This approach balances throughput and clock frequency, reduces critical path delay, and improves timing slack and power consumption at a modest area cost due to the added register.

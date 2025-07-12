@@ -1,3 +1,0 @@
-The main issue in the code lies in the state transitions and the handling of message boundaries. The state transition from `BYTE1` to `BYTE2` is correct, but the transition from `BYTE2` to `CHECK_DONE` is problematic. In the `BYTE2` state, the code only checks for `in[3]` to be 1 to transition to `CHECK_DONE`, which is incorrect. It should also check if the previous byte was part of the message (i.e., `in[3] == 1` in the `BYTE1` state) before assuming the current byte is the start of a new message. 
-
-This flaw leads to mismatches in the simulation log for the `done` output signal, as the FSM incorrectly detects message boundaries. Therefore, the FSM is not correctly identifying the end of messages, causing the 'done' signal to be asserted inaccurately.

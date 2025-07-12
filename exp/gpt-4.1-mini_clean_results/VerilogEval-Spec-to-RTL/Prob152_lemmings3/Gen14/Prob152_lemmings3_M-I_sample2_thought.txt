@@ -1,0 +1,17 @@
+To improve PPA from the given solution, merge mode and digging flags into a single 2-bit state register encoding all three states explicitly (walking, digging, falling). This reduces register and combinational logic complexity by removing the separate digging register and clarifies state transitions.
+
+Use a small enumerated FSM with these states:
+- WALK_LEFT (walking left)
+- WALK_RIGHT (walking right)
+- DIG_LEFT (digging left)
+- DIG_RIGHT (digging right)
+- FALL_LEFT (falling left)
+- FALL_RIGHT (falling right)
+
+This explicitly encodes direction and activity in one register, enabling simpler next state logic with fewer registers, which can improve area and power slightly and streamline combinational logic for performance.
+
+Maintain asynchronous reset and Moore outputs as required.
+
+Priority fall > dig > bump remains intact, but logic becomes a direct case-based transition without separate mode/dig bits.
+
+Overall, this compact, unified FSM encoding will reduce logic gates and flip-flops, which should yield better PPA while maintaining exact functionality.

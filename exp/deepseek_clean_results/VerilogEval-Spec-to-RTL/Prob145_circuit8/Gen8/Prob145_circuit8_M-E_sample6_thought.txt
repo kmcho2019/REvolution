@@ -1,0 +1,18 @@
+After carefully re-examining the waveform, here's a novel approach:
+
+1. Key Observations:
+   - p is set to 'a' only at rising clock edges when 'a' is high
+   - p maintains its value until the next rising edge
+   - q follows p's value from the previous clock cycle, but only updates when clock is low
+
+2. Novel Architecture:
+   - Use two registers: one for current p state, one for previous p state
+   - p updates synchronously on rising edges based on 'a'
+   - q updates asynchronously during clock low phases using the previous p value
+   - No need for additional 'a' tracking registers
+
+3. Advantages:
+   - Clear separation of synchronous and asynchronous behaviors
+   - Minimal state tracking (only previous p needed)
+   - Matches waveform timing precisely
+   - Simple and efficient implementation

@@ -1,0 +1,7 @@
+The original code incorrectly connects entire 8-bit vectors to single-bit DFF ports in the array instantiation, causing incorrect behavior. The fix is to instantiate each DFF separately or index connections in the array instantiation so that each DFF gets the corresponding bit of 'd' and drives the corresponding bit of 'q'.
+
+For better clarity and correctness, I'll explicitly instantiate eight DFFs, connecting each input and output bit individually. This approach avoids ambiguity and is clear for synthesis tools.
+
+Alternatively, I could also implement the flip-flops directly inside TopModule without instantiating a separate DFF module, using a register and always block with a for loop for concise code and possibly better PPA. Since the problem asks for 8 DFFs, explicit instantiation is acceptable, but direct RTL may optimize the design.
+
+Here, I choose the explicit instantiation with proper bit-wise connections to fix the initial code.

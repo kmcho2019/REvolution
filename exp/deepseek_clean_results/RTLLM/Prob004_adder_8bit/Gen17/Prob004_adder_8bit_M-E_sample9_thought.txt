@@ -1,0 +1,17 @@
+Novel Hybrid Carry-Select/Predict Architecture:
+1. Split the 8-bit adder into two 4-bit sections (lower and upper)
+2. For the lower 4 bits: Use ripple-carry for area efficiency
+3. For the upper 4 bits: Implement carry-select with prediction
+   - Compute both possible sums (assuming carry-in 0 and 1)
+   - Use the actual carry-out from lower section to select correct sum
+4. Carry prediction:
+   - Generate a 'carry likely' signal from lower bits to pre-select probable sum
+   - Correct if mispredicted (rare case)
+5. Benefits:
+   - Reduced critical path compared to pure ripple-carry
+   - Better area efficiency than full carry-select
+   - Power savings from prediction mechanism
+6. Implementation:
+   - Explicit ripple-carry for lower 4 bits
+   - Dual sum computation for upper bits
+   - MUX-based selection with prediction

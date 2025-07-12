@@ -1,0 +1,7 @@
+The main issue causing functional mismatches is the initialization of `prev_in` to all ones at reset, which causes falling edges to be detected immediately after reset—even when the input may not have actually transitioned from 1 to 0 since the circuit was just reset. This can cause spurious captures.
+
+To fix this, on reset, `prev_in` should be set to the current input value `in` instead of all ones. This way, the first comparison after reset will compare `in` against itself, preventing false edge detection on the cycle immediately following reset. Only actual falling edges occurring after reset will be captured.
+
+This approach aligns `prev_in` with the input after reset and ensures that the output `out` only captures genuine falling edges occurring during normal operation. The reset remains synchronous and active high.
+
+No other logic needs to change. This change improves correctness without impacting performance or area.

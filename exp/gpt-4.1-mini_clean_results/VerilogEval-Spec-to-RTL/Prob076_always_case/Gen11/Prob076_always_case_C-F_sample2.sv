@@ -1,0 +1,34 @@
+module TopModule(
+    input  [2:0] sel,
+    input  [3:0] data0,
+    input  [3:0] data1,
+    input  [3:0] data2,
+    input  [3:0] data3,
+    input  [3:0] data4,
+    input  [3:0] data5,
+    output reg [3:0] out
+);
+
+// Function to encapsulate 6-to-1 mux logic cleanly
+function [3:0] mux6to1;
+    input [2:0] sel_func;
+    input [3:0] d0, d1, d2, d3, d4, d5;
+    begin
+        case (sel_func)
+            3'd0: mux6to1 = d0;
+            3'd1: mux6to1 = d1;
+            3'd2: mux6to1 = d2;
+            3'd3: mux6to1 = d3;
+            3'd4: mux6to1 = d4;
+            3'd5: mux6to1 = d5;
+            default: mux6to1 = 4'b0000; // zero output if sel out of range
+        endcase
+    end
+endfunction
+
+// Combinational block using the mux function to drive the output
+always @(*) begin
+    out = mux6to1(sel, data0, data1, data2, data3, data4, data5);
+end
+
+endmodule

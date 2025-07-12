@@ -1,0 +1,27 @@
+module square_wave(
+    input clk,
+    input [7:0] freq,
+    output wave_out
+);
+
+reg [7:0] count;
+reg wave_out_reg;
+
+initial begin
+    count = 8'b0;
+    wave_out_reg = 1'b0;
+end
+
+always @(posedge clk) begin
+    if (count == (freq - 1)) begin
+        count <= 8'b0;
+        wave_out_reg <= ~wave_out_reg;
+    end
+    else begin
+        count <= count + 1'b1;
+    end
+end
+
+assign wave_out = wave_out_reg;
+
+endmodule

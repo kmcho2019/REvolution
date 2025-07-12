@@ -1,0 +1,13 @@
+To address the serial data reception protocol, I propose a novel architectural idea that involves a hybrid finite state machine (FSM) and data buffering approach. The FSM will be responsible for detecting the start and stop bits, while a separate data buffer will store the received data bits.
+
+The hybrid FSM will have three main states: IDLE, START_DATA, and VERIFY_STOP. The IDLE state will wait for the start bit, the START_DATA state will receive the data bits and store them in the buffer, and the VERIFY_STOP state will verify the stop bit.
+
+To handle cases where the stop bit is not received after 8 data bits, the FSM will include a timeout mechanism. If the stop bit is not received within a certain number of clock cycles after the 8th data bit, the FSM will reset and wait for a new start bit.
+
+The data buffer will be implemented as a shift register, which will store the received data bits. The buffer will be 8 bits wide, and the FSM will shift the data bits into the buffer as they are received.
+
+To optimize the design for Power, Performance, and Area (PPA), the code will use a single clock cycle to update the state and signals, and will minimize the number of logic gates and switching activity.
+
+The novel architectural idea involves using a pipeline stage to decouple the FSM from the data buffer, allowing for concurrent processing of multiple bytes. This will improve the overall throughput of the design and reduce the latency.
+
+Additionally, the design will include a mechanism to handle errors, such as incorrect start or stop bits, and will provide a status signal to indicate when a byte has been correctly received.
