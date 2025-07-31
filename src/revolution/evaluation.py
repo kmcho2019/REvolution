@@ -20,13 +20,13 @@ class SynthesisEvaluator:
         # The ref directory is inside the script root
         self.ref_dir_path = os.path.join(self.script_root_dir, "scripts", "ref")
         # The pdk directory is in the data directory (../../data/pdk)
-        self.pdk_path = os.path.abspath(os.path.join(self.script_root_dir, "..", "data", "pdk"))
+        self.pdk_path = os.path.abspath(os.path.join(self.script_root_dir, "data", "pdk"))
 
         # Print directories for debugging
-        # print(f"Script Main Directory: {script_main_dir}")
-        # print(f"Script Root Directory: {self.script_root_dir}")
-        # print(f"Reference Directory: {self.ref_dir_path}")
-        # print(f"PDK Directory: {self.pdk_path}")
+        print(f"Script Main Directory: {script_main_dir}")
+        print(f"Script Root Directory: {self.script_root_dir}")
+        print(f"Reference Directory: {self.ref_dir_path}")
+        print(f"PDK Directory: {self.pdk_path}")
 
     def evaluate(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, verilog_evaluator, test_sv_file, ref_sv_file):
         """
@@ -105,6 +105,8 @@ class SynthesisEvaluator:
         command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
 
         # log_path = os.path.join(output_directory, "yosys.log")
+
+        print(f"INFO: Running synthesis command: {command}")
 
         process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

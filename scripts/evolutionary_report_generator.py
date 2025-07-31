@@ -94,7 +94,7 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
 
         initial_solved_rate = (stats['initial_any_pass_synth_count'] / total) * 100
         final_solved_rate = (stats['final_any_pass_synth_count'] / total) * 100
-        avg_score_improv = np.mean(stats['score_improvements']) if stats['score_improvements'] else 'nan'
+        avg_score_improv = np.mean(stats['score_improvements']) if stats['score_improvements'] else np.nan
 
         avg_initial_func = np.mean(stats['initial_rates']['func']) * 100
         avg_final_func = np.mean(stats['final_rates']['func']) * 100
@@ -120,7 +120,7 @@ def generate_overall_report(model_path: pathlib.Path, all_stats: dict, run_args:
     if grand_total_problems > 0:
         overall_initial_solved_rate = (grand_total_initial_solved_count / grand_total_problems) * 100
         overall_final_solved_rate = (grand_total_final_solved_count / grand_total_problems) * 100
-        overall_avg_score_improv = np.mean(grand_total_score_improvements) if grand_total_score_improvements else 'nan'
+        overall_avg_score_improv = np.mean(grand_total_score_improvements) if grand_total_score_improvements else np.nan
 
         overall_avg_initial_func = np.mean(grand_total_initial_func_pass) * 100
         overall_avg_final_func = np.mean(grand_total_final_func_pass) * 100
@@ -350,7 +350,7 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
                 stats['ppa_improvements']['period'].append(period_improv_val)
                 problem_ppa_improvements.append(period_improv_val)
             
-            avg_problem_improv = np.mean(problem_ppa_improvements) if problem_ppa_improvements else 'N/A'
+            avg_problem_improv = np.mean(problem_ppa_improvements) if problem_ppa_improvements else np.nan
             stats['ppa_improvements']['avg'].append(avg_problem_improv)
             if isinstance(avg_problem_improv, float) and avg_problem_improv > 0:
                 stats['ppa_improved_count'] += 1

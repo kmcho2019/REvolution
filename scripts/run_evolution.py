@@ -2,13 +2,18 @@ import argparse
 import multiprocessing
 import os
 import time
-from datetime import datetime
+import datetime
 
-# Import the core logic from your new src package
+import sys
+# Ensure the src directory is in the Python path for imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
+# Import the core logic from new src package
 from revolution.algorithm import EoHEngine
 from revolution.evaluation import VerilogEvaluator, SynthesisEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
+
 
 
 # Wrapper function for multiprocessing
@@ -52,7 +57,7 @@ def run_problem_worker(args_tuple):
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
         llm_interface = LLMInterface(api_key=api_key, model_name=args.model_name, api_backend=args.api_backend)
-        verilog_evaluator = VerilogEvaluator()
+        verilog_evaluator = VerilogEvaluator(iverilog_executable_path="iverilog", vvp_executable_path="vvp")
         synthesis_evaluator = SynthesisEvaluator()
 
         eoh_engine = EoHEngine(
