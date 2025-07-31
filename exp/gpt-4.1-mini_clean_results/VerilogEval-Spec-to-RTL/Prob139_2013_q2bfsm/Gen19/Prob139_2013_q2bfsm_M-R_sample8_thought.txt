@@ -1,8 +1,0 @@
-Refactor the FSM by separating the sequential and combinational parts for clarity and correct timing:
-
-- Use a one always_ff block for state and registers update on posedge clk with synchronous active-low reset.
-- Use a separate combinational always_comb block to compute next_state and outputs based on current state and inputs.
-- Update the x shift register sequentially every clock in states where the pattern is monitored, so that combinational logic uses the stable updated shift register for pattern detection.
-- Implement a y_cycle counter incremented in the sequential block but controlled by next_state logic.
-- Outputs f and g are assigned in the combinational block, allowing cleaner and deterministic output behavior.
-- This approach avoids off-by-one issues in pattern detection, makes state transitions clearer, and enforces the synchronous reset semantics properly.

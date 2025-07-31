@@ -1,5 +1,0 @@
-I will refactor the frequency divider to use a combinational next-state logic along with sequential state registers for the counter and output clock signal. Instead of toggling inside the sequential block directly when reaching the toggle count, the next value of the divided clock will be computed based on the counter reaching half the division factor. This approach separates the combinational logic from the sequential register update, making the design clearer and more modular.
-
-The counter will increment each clock cycle and wrap around after reaching NUM_DIV-1. When the counter reaches NUM_DIV/2 - 1, the clk_div output toggles. All state updates happen on the positive clock edge and asynchronous reset. The module remains parameterized by NUM_DIV, which must be an even number and fit within 4 bits (max 16).
-
-This refactoring maintains the original functionality (dividing clock frequency by even numbers with 50% duty cycle) but uses explicit next-state combinational signals and synchronous reset logic, improving clarity and easier modification for future enhancements.

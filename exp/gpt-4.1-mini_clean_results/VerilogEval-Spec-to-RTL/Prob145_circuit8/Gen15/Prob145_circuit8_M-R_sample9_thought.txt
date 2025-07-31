@@ -1,7 +1,0 @@
-The original code uses two separate always blocks triggered on opposite clock edges, which can cause timing mismatches and complicate the behavior. To maintain the core idea—p capturing 'a' on the rising edge and q following p but delayed—we can refactor the design into a single always block triggered on the rising edge of the clock.
-
-Within this block, we implement a two-stage shift register: p captures the current 'a', and q captures the previous p. This keeps p and q synchronized and avoids the hazards of dual-edge sensitivity.
-
-To model the initial unknown states, we can add a reset input or initialize the registers to 0. Since reset is not specified, we initialize in an initial block, assuming simulation context.
-
-This approach maintains the essence of the original design: p tracks 'a' at clock rising edge, and q tracks p's previous value, but now fully synchronous and consistent in timing, reducing mismatches.

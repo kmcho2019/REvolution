@@ -1,9 +1,0 @@
-Fuse the two given styles by keeping an explicit combinational next_state logic block for clarity and safety with default cases, and a registered state with asynchronous reset as required. To improve power and simplify output logic, generate the Moore output directly from the registered state using a continuous assignment rather than a separate always block with reg output. This reduces combinational output logic toggling, leveraging the fact that the output depends only on the current state.
-
-Thus, the design uses:
-- One-bit state encoding for minimal area and clear semantics.
-- Asynchronous active-high reset in the state register for immediate reset.
-- Combinational next state logic in always @(*) block with default for safety.
-- Continuous assignment for output from the registered state for simpler, glitch-free output.
-  
-This fusion retains clarity, synthesis friendliness, and power optimization while fully meeting the FSM and reset requirements.

@@ -1,7 +1,0 @@
-Implement a toggling-based approach where a counter increments each clock cycle until it reaches freq-1, then resets and toggles wave_out. This means wave_out changes state every freq clock cycles, directly controlling the output period. To handle the freq=0 case (which is undefined for counting), we output wave_out low and hold count and wave_out at reset state.
-
-This approach uses only sequential logic with two registers (count and wave_out), no combinational comparisons except the equality check to freq-1, yielding a simple synchronous design. The toggling nature ensures a perfect 50% duty cycle. The higher freq value corresponds to slower toggling frequency, matching requirements.
-
-The design is fully synchronous, uses an active-high synchronous reset, and includes protection from freq=0 to avoid counter underflow and unnecessary toggling.
-
-This approach differs from Example 1 by explicitly toggling wave_out at count wraparound, simplifying the output logic and removing combinational generation dependent on freq and count comparison.

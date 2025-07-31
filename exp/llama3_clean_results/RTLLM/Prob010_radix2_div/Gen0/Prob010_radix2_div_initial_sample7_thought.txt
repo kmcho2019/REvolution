@@ -1,7 +1,0 @@
-To implement the radix-2 divider, we'll create a Verilog module named `radix2_div` with the specified input and output ports. The design will handle both signed and unsigned division operations based on the `sign` input. 
-
-The division process involves a series of subtractions and shifts, which will be controlled by a state machine or counters (`cnt` and `start_cnt`). The absolute value of the `dividend` will be used to initialize the shift register `SR`, and the negated absolute value of the `divisor` will be stored as `NEG_DIVISOR`. The result will be composed of the quotient and the remainder, where the quotient is in the lower 8 bits and the remainder is in the upper 8 bits of the 16-bit `result` output.
-
-The operation starts when `opn_valid` is high and `res_valid` is low, saving the inputs and initializing the necessary registers. The division process involves comparing the shift register `SR` with `NEG_DIVISOR`, deciding whether to subtract `NEG_DIVISOR` from `SR` based on the comparison, and updating `SR` by shifting left and inserting the carry-out from the subtraction. This process repeats until the counter `cnt` reaches 8, indicating the division is complete.
-
-For managing result validity (`res_valid`), the design will ensure that once a result is generated, it remains valid until it is acknowledged by the consumer (i.e., `res_valid` is cleared when `opn_valid` goes high again for a new operation or when `rst` is asserted).

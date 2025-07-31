@@ -1,7 +1,0 @@
-To fix the timing and simulation issues pointed out in the feedback, we can rewrite the clock generator using an event-driven always block triggered by a clocking event like "always @(posedge clk)" is not suitable because clk is generated here. Instead, the common and reliable approach in testbench clock generation is to use an initial block with an infinite loop and a delay. But since the feedback complains about using an always block with delay (#) causing timing mismatches, a better approach is to write the toggling within an initial block using a forever loop. 
-
-This method is synthesizable for simulation purposes, stable, and compatible with most testbenches. The initial block sets clk=0 and then toggles clk every HALF_PERIOD delay using a forever loop. This eliminates possible timing race conditions from using always blocks with delay control without sensitivity lists.
-
-Also, confirm the inclusion of a `timescale directive for simulation precision.
-
-This approach preserves the original behavior, clarifies the intent, and is the de facto standard for clock generation in simulation testbenches.

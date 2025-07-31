@@ -1,8 +1,0 @@
-Implement the edge detection using a two-stage pipeline: first, capture the input and its delayed version using two consecutive registers. Then, in a combinational block, compare the delayed input to the current input to detect 0-to-1 transitions. Finally, register the detected edges to output pedge delayed by one clock cycle. This structure explicitly separates the input sampling and edge detection stages, improving clarity and potentially enabling easier timing optimization by isolating the comparison logic.
-
-Specifically:
-- On each clock, shift input through two registers: in_d1 and in_d2.
-- A combinational signal detects edges by comparing in_d2 and in_d1.
-- Then, pedge is registered from this combinational edge signal, producing the output delayed by one cycle.
-
-This approach differs by introducing a pipeline stage and a combinational detection step rather than doing both in one always block, which could improve timing at the cost of a slightly increased latency.

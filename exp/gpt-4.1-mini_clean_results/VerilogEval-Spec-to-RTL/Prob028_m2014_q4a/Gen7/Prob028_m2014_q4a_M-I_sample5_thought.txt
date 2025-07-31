@@ -1,7 +1,0 @@
-To improve synthesis compatibility and avoid the synthesis tool mapping issues, I will switch from non-blocking (`<=`) to blocking assignments (`=`), which is the conventional style for level-sensitive latch inference in Verilog. I will also remove the explicit hold assignment (`q = q;`), as synthesis tools infer the latch when the output is not updated in the else branch.
-
-Using a simpler and cleaner always block that assigns `q = d;` only when `ena` is high and leaves `q` unchanged otherwise is the standard and widely supported latch style.
-
-Also, I will remove the initial block, since it does not affect synthesis and is optional; however, it can be added back for simulation purposes if desired.
-
-This approach will avoid the synthesis tool attempting to map to a specific technology cell not available, resulting in a better synthesis experience and clearer code that still infers a D latch.

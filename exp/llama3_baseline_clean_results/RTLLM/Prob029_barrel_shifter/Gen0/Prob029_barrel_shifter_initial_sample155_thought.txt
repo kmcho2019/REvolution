@@ -1,5 +1,0 @@
-To implement the barrel shifter, we first need to understand how the control signal `ctrl` affects the shifting. The control signal is a 3-bit signal where each bit represents a shift by a power of 2 (4, 2, or 1 position). We can break down the implementation into stages, each of which corresponds to a bit in the `ctrl` signal. We'll use a series of 2-to-1 multiplexers (`mux2X1`) to select between the original input and the shifted input at each stage. The shifting is done by selecting the appropriate input to the multiplexers based on the control bits.
-
-The first stage, controlled by `ctrl[2]`, shifts the input by 4 positions if `ctrl[2]` is high. The second stage, controlled by `ctrl[1]`, shifts the output of the first stage by 2 positions if `ctrl[1]` is high. The final stage, controlled by `ctrl[0]`, shifts the output of the second stage by 1 position if `ctrl[0]` is high.
-
-We'll define a `mux2X1` module to handle the selection between two inputs based on a select signal. This module will be instantiated multiple times to form the stages of the barrel shifter.

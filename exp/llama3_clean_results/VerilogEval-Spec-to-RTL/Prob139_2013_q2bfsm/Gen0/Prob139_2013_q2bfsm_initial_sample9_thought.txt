@@ -1,8 +1,0 @@
-To implement this finite state machine, we can use a series of states that track the sequence of inputs and the motor's status. The states are as follows:
-- State A: Initial state when reset is asserted. In this state, outputs f and g are 0.
-- State B: After reset is de-asserted, the FSM moves to this state where it sets output f to 1 for one clock cycle.
-- State C: After setting f to 1, the FSM moves to this state where it monitors the x input for the sequence 1, 0, 1.
-- State D: Once the sequence 1, 0, 1 is detected on x, the FSM moves to this state where it sets g to 1 and monitors the y input for at most two clock cycles.
-- State E: If y becomes 1 within two clock cycles of entering State D, the FSM moves to this state where it maintains g = 1 permanently.
-- State F: If y does not become 1 within two clock cycles of entering State D, the FSM moves to this state where it sets g = 0 permanently.
-We will use a parameterized enum to define these states and implement the state machine logic in a single always block that is sensitive to the positive edge of the clock.

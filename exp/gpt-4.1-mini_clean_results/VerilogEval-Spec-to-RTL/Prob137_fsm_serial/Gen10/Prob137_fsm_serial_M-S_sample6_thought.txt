@@ -1,5 +1,0 @@
-Simplify the FSM by using a one-hot style encoding with separate state signals to reduce complexity and improve readability, while maintaining synchronous reset and positive-edge clocking. Remove typedef and use straightforward parameters for states. Keep only the essential state transitions: IDLE (waiting for start bit), RECEIVE (counting and shifting in 8 bits), CHECK_STOP (verifying stop bit), and WAIT_STOP (waiting for valid stop bit if invalid detected).
-
-Simplify the shift register to shift in bits with LSB first by shifting right and inserting new bit at MSB, as before. Generate the done pulse as a single-cycle high signal when a correct stop bit is detected. Use a single always block for state transitions and output signals for reduced code size.
-
-Avoid separate combinational blocks to reduce code lines, combining logic with care to maintain clarity. Reset counters and data only when entering or in IDLE and WAIT_STOP states to avoid unnecessary toggling. This keeps the design functional but simpler and smaller.

@@ -1,7 +1,0 @@
-To improve the FSM, ensure the pattern detection shift register updates on every clock cycle except reset, including during the SHIFT state, to enable continuous pattern detection without missing overlapping patterns. This way, pattern detection is always active on incoming serial data.
-
-Also, outputs (shift_ena, counting, done) must be registered based on the current state, not on next_state, to avoid premature or late assertion, aligning output signals precisely with the FSM's present state.
-
-Keep the shift counter logic as is, counting 4 cycles in SHIFT before moving to COUNTING.
-
-This ensures proper pattern detection, correct timing of outputs, and accurate FSM transitions without glitching or misalignment.

@@ -1,9 +1,0 @@
-The original design implements z as the XNOR of inputs x and y, which is logically minimal and directly matches the desired waveform. From a gate-level perspective, this requires an XOR gate plus an inverter. However, XNOR gates are usually available as a single gate in standard cell libraries, often offering better power and area efficiency compared to an explicit XOR plus inverter implementation.
-
-Therefore, the improvement is to use the built-in Verilog XNOR operator (^) in a direct assignment: z = x ~^ y; This explicitly uses the XNOR operator instead of negating an XOR, which synthesis tools can map directly to an XNOR gate, potentially improving area and power.
-
-Additionally, since the module only needs one line of combinational logic, keeping it succinct and clear benefits optimization. This change does not affect functionality but could yield better PPA.
-
-Hence, the optimization is to use the XNOR operator (~^) instead of negating XOR (~(x ^ y)).
-
-No other structural or behavioral changes are necessary.

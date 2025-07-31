@@ -1,8 +1,0 @@
-The current design already directly implements two independent 4-input NAND gates using simple combinational logic, which matches the 7420 chip behavior perfectly. To optimize for area and power slightly, we can use the built-in Verilog nand primitive for four inputs rather than using AND followed by a NOT. This allows synthesis tools to potentially map the design to dedicated NAND4 gates with better efficiency.
-
-Using nand primitives clarifies intent to synthesis tools and might enable minor optimization in gate-level implementation, possibly reducing area and power a bit without changing logic depth or performance.
-
-Thus, the improvement strategy is:
-- Replace the assign statements with nand primitive instantiations for clarity and possible marginal improvements in PPA.
-
-The functionality remains identical, with outputs active low only when all inputs are high.

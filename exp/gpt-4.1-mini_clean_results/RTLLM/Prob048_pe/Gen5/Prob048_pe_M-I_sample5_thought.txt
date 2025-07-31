@@ -1,9 +1,0 @@
-To optimize for better performance and power, pipeline the multiply-accumulate operation by inserting a register stage between the multiplication and the addition to shorten the critical path. This allows the multiplier result to be registered before accumulation, breaking the long combinational path from inputs through multiplier and adder to the accumulator. 
-
-Also, add an enable signal for accumulation to gate the register update when both inputs are zero (or multiplication result is zero), which can help reduce unnecessary switching power in the accumulator when no change occurs. 
-
-Keep the 64-bit accumulator internally to maintain full precision. Output the lower 32 bits as before.
-
-Maintain a synchronous reset, and use non-blocking assignments to avoid simulation race conditions.
-
-This approach improves the max clock frequency by pipelining the multiply-accumulate datapath and reduces switching power by skipping accumulator updates when the product is zero, trading a small amount of area for pipeline registers.

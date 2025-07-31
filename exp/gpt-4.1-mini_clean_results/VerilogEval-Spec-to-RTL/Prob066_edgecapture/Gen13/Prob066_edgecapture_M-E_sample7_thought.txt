@@ -1,7 +1,0 @@
-Instead of explicitly storing the previous input vector, implement a dedicated 32-bit shift register that captures the input sampled at each clock cycle. On each clock, compare the current input with the delayed version stored in the shift register (which holds the input from the previous clock cycle). Detect falling edges by identifying bits that were 1 in the delayed input and 0 in the current input.
-
-Once a falling edge bit is detected, latch it in an output register that maintains the set bits until reset. This approach abstracts the "previous input" storage as a simple shift register delay element, which conceptually separates input sampling and falling edge detection.
-
-Synchronous reset clears both the shift register and the output register to zero. By isolating the delayed input as a separate register (shift register with a single stage), the design clarifies timing paths and eases verification.
-
-This design still uses only two 32-bit registers but conceptually frames one as a delay line (shift register) rather than "previous input". The logic and state update are straightforward and synchronous on clk rising edge.

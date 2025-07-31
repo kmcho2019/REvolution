@@ -1,9 +1,0 @@
-Implement the 16-bit unsigned multiplier using an explicit shift count register and separate multiplicand and multiplier registers. The multiplier register will shift right each cycle, while the product register accumulates partial sums in a 32-bit register.
-
-At each clock cycle during operation, if the LSB of the multiplier register is 1, add the multiplicand (shifted appropriately) to the product accumulator. Instead of shifting multiplicand, we shift the partial sum and multiplier appropriately by shifting the multiplier right each time.
-
-Use a shift count `i` from 0 to 16: at i=0, load inputs; for i in 1..16, perform add-and-shift steps; at i=16, done flag is asserted.
-
-Use synchronous reset and non-blocking assignments. The done flag asserts when multiplication completes and is cleared after start signal deassertion.
-
-This architecture keeps multiplicand and multiplier separate and only shifts the multiplier right, accumulating sums in product. It preserves clarity and aligns closely with classical shift-and-add multiplication with direct shift register style.

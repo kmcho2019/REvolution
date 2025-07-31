@@ -1,5 +1,0 @@
-Implement the byte reception FSM using a binary-encoded state machine combined with a 4-bit bit counter to track received bits, significantly reducing the number of states and flip-flops compared to one-hot encoding. Use three main states: IDLE (waiting for start bit), RECEIVE (shift in data bits while incrementing the bit counter), and STOP_CHECK (verify the stop bit). On framing error (stop bit not '1'), transition to an ERROR state that waits until line returns to idle (logic 1) before restarting.
-
-To accumulate bits, use a shift register shifting in the incoming bit LSB first. The done output is asserted one clock cycle immediately after a successful stop bit is detected.
-
-All sequential logic triggers on posedge clk with an active-high synchronous reset. This design reduces FSM complexity, area, and switching activity compared to one-hot FSM and separate states per data bit, while maintaining correct protocol detection and error recovery.

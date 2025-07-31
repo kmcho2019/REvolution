@@ -1,9 +1,0 @@
-The original solution had correct logic for next-state bits corresponding to B (y[1]) and D (y[3]) but the output port names (Y2 and Y4) did not match the problem statement's requested output ports (Y1 and Y3). To fix this, rename outputs to Y1 and Y3 while keeping the same logic expressions derived by inspection.
-
-For optimization, since outputs are purely combinational, the logic can be simplified and rewritten using minimal gate expressions. The logic is already minimal:
-- Y1 (next B) = y[0] & ~w
-- Y3 (next D) = w & (y[1] | y[2] | y[3] | y[4] | y[5])
-
-No further reduction is possible because the large OR for Y3 is necessary from all states except A, and Y1 is a simple AND.
-
-Hence, the main improvement is aligning the output port names to Y1 and Y3 to match the problem statement, ensuring seamless integration with the testbench and correctness.

@@ -1,9 +1,0 @@
-Fuse the clarity and explicit carry approach of Example 2 with the modular combinational next-state logic and minimized combinational depth of Example 1.  
-- Use binary internal hour counter (1..12) with a clean function-based BCD output conversion from Example 1 to reduce complexity on hour logic.  
-- Implement seconds and minutes counters as separate BCD digits with combinational next-state calculations driven by ena (Example 1 style) for cleaner incremental logic and to reduce the deep nested conditionals in the sequential always block from Example 2.  
-- Manage all sequential state updates synchronously with reset priority and single always block for consistent timing, toggling pm on hour roll from 11 to 12 (Example 1 approach).  
-- This fusion reduces combinational logic depth compared to Example 2 by splitting increment logic out of the sequential block, while maintaining the straightforward single block sequential update and pm toggle correctness from Example 1.  
-- Maintain outputs as registers updated synchronously (simplifies timing and glitch avoidance).  
-- The design gains better timing by reduced combinational depth on the sequential path, better power by gating increments on ena combinationally, and keeps area low with binary hour counter and simple BCD increments for minutes and seconds.
-
-The new design explicitly separates combinational next-state logic (for sec/min increments and hour binary increments) from the sequential register updates, ensuring only necessary computations happen combinationally when ena is asserted, and pm toggles only when hour rolls 11->12 synchronously. This combines the best of both examples for better timing and clarity.

@@ -1,9 +1,0 @@
-Refactor the radix-2 divider to use a straightforward shift-subtract approach with a single shift register holding remainder and quotient combined, as typically done in radix-2 dividers.  
-Use a clear FSM with states IDLE, RUNNING, and DONE.  
-On operation start (opn_valid), latch inputs, handle signed inputs by converting them to absolute values, and initialize the shift register and counters.  
-Each division cycle performs a subtraction and updates the shift register by shifting in the quotient bit (borrow flag inverted).  
-Use synchronous reset and minimal combinational logic inside the clocked process.  
-Once division completes (after 8 cycles), convert the quotient and remainder back to signed if needed and assert res_valid.  
-The 17-bit shift register SR combines a 9-bit remainder (including one extra bit for subtraction) and an 8-bit quotient.  
-This matches the classical radix-2 restoring divider algorithm closely, with clear state transitions and explicit sign management done once at the end.  
-Outputs are registered, and the design handles both signed and unsigned inputs seamlessly.

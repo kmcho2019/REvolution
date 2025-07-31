@@ -1,9 +1,0 @@
-The edge detection module will be implemented using a simple state machine that tracks the current state of the input signal "a" and its previous state. By comparing these two states on the positive edge of the clock signal "clk", we can detect rising and falling edges. The "rise" and "down" signals will be set accordingly. To synchronize these signals with the clock, we will update them at each clock cycle based on the detected edges.
-
-We will use two D-type flip-flops (FF) to store the current state and the previous state of the input signal "a". The first FF will store the current state, which is the current value of "a". The second FF will store the previous state, which is the value of "a" from the previous clock cycle. 
-
-We will then use a combinational logic circuit to compare the current state and the previous state. If the current state is 1 and the previous state is 0, we have detected a rising edge, so the "rise" signal will be set to 1. If the current state is 0 and the previous state is 1, we have detected a falling edge, so the "down" signal will be set to 1.
-
-To ensure that the "rise" and "down" signals are only set to 1 for one clock cycle after the corresponding edge is detected, we will reset them to 0 at the next clock cycle after they are set to 1. This will be done by including the "rise" and "down" signals in the sensitivity list of the combinational logic circuit and using the current state of these signals to determine their next state.
-
-The reset signal "rst_n" will be used to reset the state of the edge detection module to its initial state when it is asserted (i.e., when "rst_n" is 0).

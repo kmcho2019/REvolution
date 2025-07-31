@@ -1,5 +1,0 @@
-To address the issues identified in the feedback, we need to revise the design to properly handle the sequence detection and ensure that the 'start_shifting' signal is only set to 1 when the sequence '1101' is found in the input bit stream. The main problem is that once 'sequence_found' is set, it remains set even if the input sequence changes. 
-
-Instead of using a separate flag 'sequence_found', we can directly set 'start_shifting' to 1 when the shift register matches the target sequence '1101'. Additionally, to maintain 'start_shifting' at 1 until 'reset' is asserted, we should only reset 'start_shifting' when 'reset' is high, and not on every clock cycle.
-
-This approach simplifies the logic, reducing redundant operations and improving the overall efficiency of the design. It ensures that 'start_shifting' is correctly set based on the detection of the sequence '1101' and remains set until 'reset' is asserted, addressing the functional errors identified in the feedback.

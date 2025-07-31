@@ -1,9 +1,0 @@
-To accurately divide an input clock by an odd number NUM_DIV, we can exploit both positive and negative edges of the input clock to generate two intermediate clocks with half the required period offset by half a clock cycle.
-
-The method is:
-- Use two counters (cnt_pos and cnt_neg) incremented on the positive and negative edges of the input clock, respectively. Each counts from 0 to NUM_DIV - 1.
-- When cnt_pos reaches (NUM_DIV - 1)/2, toggle clk_div1. Similarly, toggle clk_div2 on the negative edge when cnt_neg reaches (NUM_DIV - 1)/2.
-- Both clk_div1 and clk_div2 toggle with half the period offset between them, allowing the combined output clk_div = clk_div1 OR clk_div2 to have a frequency exactly divided by NUM_DIV.
-- This approach provides a nearly 50% duty cycle output clock by interleaving toggles on both edges.
-- On reset, counters and outputs are initialized to zero.
-- The design includes a compile-time check to ensure NUM_DIV is odd.

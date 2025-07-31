@@ -1,7 +1,0 @@
-Refactor the FSM by separating the ground edge detection into a synchronous process to clearly identify ground falling and rising edges each clock cycle, then use these signals in combinational next-state logic. Keep walking_dir as a separate register storing the walking direction, updated only when transitioning into walking states, ensuring bumps are ignored on ground edges and while falling.
-
-Use an explicit synchronous block for state and walking_dir updates, and use combinational always block for next_state logic. Simplify conditions by prioritizing ground transitions: if ground just fell, go to FALLING ignoring bumps; if ground just rose, resume walking_dir ignoring bumps; if ground stable and walking, handle bumps; if falling and ground low, stay falling ignoring bumps.
-
-Output logic is combinational from state.
-
-This approach ensures timing alignment, clean separation of synchronous and combinational logic, and correct bump ignoring on ground transitions and while falling, solving previous direction mismatches.

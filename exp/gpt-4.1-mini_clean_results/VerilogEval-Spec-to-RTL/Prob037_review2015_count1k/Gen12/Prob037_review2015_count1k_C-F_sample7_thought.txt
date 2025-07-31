@@ -1,7 +1,0 @@
-Fuse the clear next-state combinational and sequential separation from Example 1 with the simple synchronous reset and straightforward increment logic from Example 2. Use a localparam for MAX_COUNT = 999 for clarity and maintainability. Instead of directly comparing q to MAX_COUNT, generate the next value by incrementing q and resetting to zero when q equals MAX_COUNT. Keep the synchronous active-high reset inside the sequential block for clean timing and synthesis.
-
-This combined design improves readability and maintainability by separating next-state logic while maintaining efficient synchronous reset and increment logic in the clocked process. It also makes terminal count detection explicit and simple, avoiding complex or long comparator paths by using a simple equality check inside the combinational block, which synthesis tools can optimize efficiently.
-
-Thus, the next-state combinational block sets next_q to zero when q == MAX_COUNT or reset asserted; otherwise increments q by 1. Then sequential logic updates q with next_q on posedge clk. This also keeps the design scalable and clean.
-
-This fusion leverages best clarity and structure (Example 1) with simple terminal count detection and synchronous reset (Example 2), balancing synthesis friendliness and code maintainability.

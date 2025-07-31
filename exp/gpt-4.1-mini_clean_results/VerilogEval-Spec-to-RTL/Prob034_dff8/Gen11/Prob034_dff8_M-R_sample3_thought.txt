@@ -1,5 +1,0 @@
-The original solution uses explicit DFF modules instantiated for each bit, driven by a posedge clock in an always block, capturing the input bits into q registers. To refactor with the same functionality but a different structure, I will implement the 8-bit register as a single vector register inside the TopModule with an always block on posedge clk. This avoids the need for a separate DFF module and generate loops.
-
-This approach still uses synchronous logic triggered by the positive edge of the clock, but it employs a single 8-bit register updated in parallel, providing the same behavior in a more compact and idiomatic Verilog style. This style is common and often preferred for succinct register arrays, while still being synthesizable to 8 flip-flops. It contrasts structurally with the original, which had 8 separate DFF submodule instances.
-
-No reset is added here, to keep behavior identical to the original (no reset), but the registers are declared as reg and updated on posedge clk by non-blocking assignment. This matches typical synchronous design patterns.

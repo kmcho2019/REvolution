@@ -1,9 +1,0 @@
-To implement the synchronous HDLC framing module, we will use a Moore-type finite state machine (FSM) that tracks the number of consecutive 1s and 0s in the input stream. The FSM will have multiple states to recognize the different sequences and produce the required outputs.
-
-1. We start with an initial state that behaves as though the previous input were 0.
-2. We then track the number of consecutive 1s. If we see exactly 5 consecutive 1s, we move to a state that will signal a discard (disc) if the next input is 0 (indicating the insertion of a zero after 5 consecutive 1s).
-3. If we see exactly 6 consecutive 1s followed by a 0, we flag the beginning/end of a frame (flag).
-4. If we see 7 or more consecutive 1s, we signal an error (err).
-5. We use a synchronous reset to reset the FSM to the initial state.
-
-We will use a 4-bit state variable to represent the different states of the FSM. The outputs disc, flag, and err will be asserted based on the current state and the next input.

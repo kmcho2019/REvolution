@@ -1,5 +1,0 @@
-Refactor the design by separating the counting and BCD conversion logic into distinct always blocks for better modularity and readability. Use combinational assign statements for pm signal generation based on a stored internal state toggle. Implement a synchronous process that updates binary counters on ena with reset priority, but move the hour PM toggle logic into a dedicated combinational block to simplify the counting logic.
-
-Perform BCD conversion through separate combinational always blocks for seconds, minutes, and hours, instead of functions, so that the output registers are updated synchronously on the clock. This registers the BCD output, improving timing by breaking long combinational paths and making the design more pipeline-friendly. The pm output is kept a registered output toggled at hour 11->12 transitions.
-
-Overall, the design retains binary internal counters with synchronous reset and enable, but the outputs are registered after simple combinational BCD conversion. The PM logic is simplified and decoupled from counting. This improves timing and clarity while maintaining the original functionality and output format.

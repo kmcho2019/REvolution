@@ -1,7 +1,0 @@
-The original hierarchical 4-to-1 mux tree implementation is clean and modular but introduces 4 levels of muxes, which may slightly increase area and power due to many intermediate signals and replicated mux instances. Since timing is not critical (all timing metrics are zero), we can optimize for power and area by replacing the hierarchical mux tree with a single combinational indexed selection from the input vector using Verilog's direct indexing with the selection signal.
-
-This flat approach uses Verilog's built-in vector indexing (in[sel]) and relies on synthesis tools to implement the optimal multiplexing logic internally. This can reduce logic duplication, intermediate signals, and wiring overhead, likely improving power and area while keeping timing excellent.
-
-To maintain code clarity, the module is kept simple and uses a continuous assignment with the selection signal as an index. This is supported in Verilog-2001 and later and is synthesizable.
-
-Overall, the tradeoff favors power and area reduction with minimal complexity while preserving correctness.

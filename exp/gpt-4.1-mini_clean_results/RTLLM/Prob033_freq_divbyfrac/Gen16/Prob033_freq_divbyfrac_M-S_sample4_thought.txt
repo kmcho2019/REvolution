@@ -1,7 +1,0 @@
-Simplify the fractional clock divider by 3.5 using a single synchronous process driven by the input clock's positive edge. Use a 3-bit counter counting from 0 to 6 (7 counts total) to generate a clock signal with an uneven duty cycle: high for 4 counts, low for 3 counts, producing a 3.5 division.
-
-To achieve half-cycle phase shifting without involving negedge triggers or multiple clock domains (which complicates design and may cause glitches), generate a delayed version of the clock by registering the generated clock signal inside the same clock domain. Then, combine the original divided clock and the delayed version with an OR gate to approximate the fractional division and smoother waveform.
-
-This avoids asynchronous domain crossings and uses only the posedge clock domain with synchronous reset. The delayed phase is created by a flip-flop, delaying the divided clock by one input clock cycle (half a divided clock period), approximating a half-cycle phase shift in the divided clock domain.
-
-Overall, this approach is simpler, stable, and glitch-free, producing an output clock with frequency = input clock / 3.5 and good duty cycle characteristics.

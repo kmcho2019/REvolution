@@ -1,7 +1,0 @@
-To optimize the existing sequence detector FSM for better performance and power without increasing area significantly, I will adopt one-hot state encoding. One-hot encoding typically reduces the combinational logic delay in state decoding at the expense of slightly more flip-flops, which is acceptable here given the minimal number of states (4). This can improve the maximum clock frequency (timing) and potentially reduce power due to simpler next-state logic.
-
-Also, I will implement the output `sequence_detected` as a combinational signal derived directly from the next state, allowing immediate assertion within the same clock cycle the sequence completes, minimizing output latency.
-
-The synchronous reset remains active-low as before. The FSM transitions will remain logically the same, but state encoding and output logic will be updated accordingly.
-
-Overall, these changes aim to improve timing (lower TNS/WNS), reduce latency on the output, and maintain low area and power characteristics.

@@ -1,9 +1,0 @@
-The original design uses a case statement for combinational logic that effectively implements q = b OR c when a=0 or a=1, except q=0 when a=0,b=0,c=0 and a=1,b=0,c=0, which is simply q = b | c. The input d is unused. 
-
-For better PPA, replace the case statement and reg output with a continuous assignment to an output wire. This allows synthesis tools to optimize for minimum gate count and power more effectively.
-
-Removing the redundant input d from internal logic improves clarity and possibly synthesis.
-
-The optimized design is a one-line continuous assignment: assign q = b | c; This is minimal and matches the waveform precisely.
-
-This reduces area and power by minimizing gates and switching nodes and improves synthesis efficiency without changing functionality.

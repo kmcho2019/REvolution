@@ -1,5 +1,0 @@
-The problem requires designing a finite state machine (FSM) to detect the start and end of PS/2 mouse messages in a continuous byte stream. The FSM should have states to discard bytes until a byte with in[3]=1 is found, and then count the next two bytes to signal the receipt of a message. We can implement this using a simple Mealy machine with four states: IDLE (discarding bytes), BYTE1 (first byte of the message), BYTE2 (second byte of the message), and BYTE3 (third byte of the message). 
-In the IDLE state, we check if in[3]=1, and if so, we transition to BYTE1. 
-In the BYTE1, BYTE2, and BYTE3 states, we simply increment the byte count and transition to the next state. 
-When we reach the BYTE3 state, we signal done in the next clock cycle and then transition back to the IDLE state.
-We also need to handle the reset condition, where we go back to the IDLE state when reset is high.

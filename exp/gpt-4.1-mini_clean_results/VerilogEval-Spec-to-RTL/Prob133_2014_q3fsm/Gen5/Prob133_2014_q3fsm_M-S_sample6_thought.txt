@@ -1,3 +1,0 @@
-Use a single state bit to distinguish between waiting for s=1 (state A) and sampling windows of three w inputs (state B). In state B, use a 2-bit counter for the cycle index (0 to 2) and a 2-bit accumulator to count how many w=1 values occurred in the current 3-cycle window. After three cycles, assert z for one cycle if exactly two of the three w's were 1, then reset the counter and accumulator for the next window.
-
-This approach reduces the FSM states from four to two, relying on counters to track sampling progress, simplifying state logic and making the design more compact while preserving functionality. Synchronous reset clears all registers. z is asserted only one cycle after the 3-cycle window evaluation.

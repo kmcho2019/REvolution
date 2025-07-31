@@ -1,4 +1,0 @@
-Simplify by computing the next state with direct bitwise operations on zero-padded vectors, avoiding the generate loop and explicit indexing. Form q_ext = {1'b0, q, 1'b0} and compute next_q as:
-  next_q = (~q_ext[511:0] & q_ext[512:1]) | (q_ext[512:1] ^ q_ext[511:0]);
-
-This vector operation uses the same boolean formula on all bits simultaneously, eliminating the need for a generate block. The code remains concise, easy to read, synthesis-friendly, and functionally identical.

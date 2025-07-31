@@ -1,7 +1,0 @@
-Implement the Lemmings FSM using a one-hot style state encoding stored in a 2-bit register, where each bit directly corresponds to one of the outputs (walk_left or walk_right). This eliminates the need for separate output logic since the outputs are just the bits of the state register.
-
-Use asynchronous reset to set the state register to the walk_left state (bit 0 = 1, bit 1 = 0). On each clock edge, update the state as follows: if either bump_left or bump_right is asserted, toggle the active bit to the opposite direction; otherwise keep the current state.
-
-Since the outputs are the state bits themselves, they are registered and glitch-free, fully synchronous with the clock, and the asynchronous reset properly initializes the state and outputs.
-
-This approach simplifies output generation by tightly coupling outputs with one-hot encoded state bits, ensures glitch-free registered outputs, and cleanly models the FSM without separate combinational next_state logic.

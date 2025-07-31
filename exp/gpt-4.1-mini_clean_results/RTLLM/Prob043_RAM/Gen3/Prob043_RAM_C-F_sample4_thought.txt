@@ -1,9 +1,0 @@
-Fuse the strengths of both examples:  
-- Use synchronous reset to clear read_data output to ensure clean start state and avoid glitches, as in Example 2.  
-- Use synchronous write operation on clk's rising edge with write_en gating, as both examples do.  
-- Use synchronous reset only for read_data register, not for the RAM array, since initial block initialization is non-synthesizable in ASIC but acceptable in simulation and small enough for power-up state; avoid resetting RAM to reduce switching and power overhead at reset.  
-- Implement read operation synchronously for stable, glitch-free output on read_data, controlled by read_en, as in Example 2. This trades a cycle latency for robustness.  
-- Declare RAM as reg [WIDTH-1:0] RAM [0:DEPTH-1] with parameters for width and depth, ensuring correct addressing and sizing.  
-- Use $clog2(DEPTH) for address width in ports for scalability and clarity.  
-- Clear read_data to zero on reset and when read_en is low to avoid spurious outputs, matching the requirement.  
-This design balances clean reset behavior, synchronous read stability, and straightforward synchronous write, meeting the problem specs with good synthesis friendliness and practical power/area considerations.

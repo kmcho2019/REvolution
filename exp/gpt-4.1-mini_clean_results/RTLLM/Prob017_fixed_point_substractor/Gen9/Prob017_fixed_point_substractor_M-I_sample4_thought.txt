@@ -1,8 +1,0 @@
-To improve synthesis compatibility while preserving functionality, the main changes are:
-- Replace continuous assignments inside wire declarations with separate wire declarations plus continuous assignments outside declarations. This is safer and more tool-friendly.
-- Use an always_comb (or always @*) block for the subtraction and zero-sign-bit-forcing logic, explicitly assigning the internal register `res` and then driving output `c` from `res`.
-- Declare `res` as a register, as specified in the problem, to hold the intermediate subtraction result.
-- This approach keeps the logic combinational and clear for synthesis tools.
-- The subtraction leverages two's complement arithmetic directly, handling the sign cases implicitly.
-- When the result is zero, explicitly clear the sign bit to zero.
-- Overall, the logic is simpler, easier to synthesize, and fully meets the functional requirements.

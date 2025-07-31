@@ -1,7 +1,0 @@
-The original approach is fundamentally correct: storing the previous input state and detecting falling edges by comparing `prev_in` and `in`. However, the initial reset of `prev_in` to zero can cause the first falling edge detection to be missed if some bits of `in` were already high, because it looks like a rising edge rather than a falling one from a zero `prev_in`.
-
-To fix this, initialize `prev_in` to the current input value on reset instead of zero. This ensures the first comparison after reset is accurate and no false falling edges are recorded. 
-
-The output `out` still resets to zero on reset to clear all captured events, and thereafter captures falling edges by OR-ing previously latched bits with newly detected falling edges. This simple fix corrects the initialization timing problem without increasing complexity or impacting synthesis.
-
-This strategy ensures no falling edge is missed immediately after reset and makes the module robust to initial conditions.

@@ -1,5 +1,0 @@
-To optimize the existing two-state Moore FSM for better power and area, I will leverage the fact that walk_left and walk_right are always complementary signals—only one is high at any time. Instead of assigning them independently from the state, I will drive one output directly from the state bit and generate the other by inverting that signal. This reduces output drivers and switching activity, improving power and area. Additionally, the next-state logic will combine the two bump inputs since bump_left or bump_right (or both) causes a state flip, simplifying conditions.
-
-The asynchronous reset remains the same to preserve correct initialization. The next state logic uses a cleaner expression: the FSM flips direction if bumped on the side it’s currently walking towards.
-
-This approach reduces combinational logic and output drivers, improving power and area metrics while maintaining clarity and correctness.

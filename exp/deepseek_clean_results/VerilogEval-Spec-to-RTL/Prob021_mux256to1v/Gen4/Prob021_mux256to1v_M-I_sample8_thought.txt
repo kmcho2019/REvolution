@@ -1,7 +1,0 @@
-The current solution uses a two-stage hierarchical approach, which is good for large multiplexers but introduces intermediate wires (the `group` array) that consume area and may cause unnecessary switching activity. We can optimize this by:
-
-1. **Flattening the selection logic** to a single-stage multiplexer using direct bit-slicing. This eliminates the intermediate `group` wires, reducing area and power.
-2. **Simplifying the indexing** by directly calculating the output position from `sel` and `in`. The formula `out = in[sel*4 +: 4]` achieves this in one step.
-3. **Maintaining readability** while minimizing logic overhead. The direct indexing approach is concise and avoids unnecessary hierarchical structures.
-
-This optimization trades off the hierarchical structure for a simpler, flatter design that should improve PPA metrics further.

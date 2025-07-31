@@ -1,9 +1,0 @@
-To fix the existing implementation, we need to ensure that once an output bit is set due to a detected transition from 1 to 0, it remains set until the module is reset. This involves modifying the logic to retain the state of the output bits. 
-
-One way to achieve this is by introducing a conditional statement that checks if the reset signal is high. If it is, then the output register is reset. If not, the output register bits are updated based on the detection of the transition from 1 to 0 in the input signal. However, to retain the previously set output bits, we should only update the bits of the output register (`out_reg`) when a transition is detected or when the reset signal is high.
-
-For each bit in the input vector, we check if there's a transition from 1 to 0. If there is, we set the corresponding bit in `out_reg` to 1. However, to ensure that `out_reg` bits remain set once they are set to 1 (until a reset occurs), we should not reset those bits unless the `reset` signal is high.
-
-The corrected approach involves using a non-blocking assignment (`<=`) within the always block to update `out_reg` based on the current state of the input and the previous state stored in `state`. The `state` register tracks the previous state of the input, allowing us to detect transitions.
-
-By optimizing the logic within the sequential block and minimizing unnecessary updates to `out_reg`, we can improve the design's efficiency in terms of power consumption and area usage.

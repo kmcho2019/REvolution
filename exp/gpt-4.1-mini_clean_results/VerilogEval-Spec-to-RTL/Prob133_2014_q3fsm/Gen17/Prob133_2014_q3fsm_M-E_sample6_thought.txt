@@ -1,7 +1,0 @@
-I will implement the FSM using a simple 2-bit state encoding with just two states: A and B. In state A, the machine waits for s=1 to start sampling. Once it enters state B, it continuously samples the input w for three clock cycles by using a 2-bit counter (0 to 2). During these three cycles, it counts how many times w=1. At the end of the three cycles, in the next clock cycle, it asserts output z=1 if exactly two of the three w inputs were 1; otherwise z=0. Then the counter resets for the next group of three samples, continuing the cycle.
-
-This approach uses fewer states by folding the sampling cycles into a counter inside a single state (B). The FSM state only toggles between A and B, reducing complexity and area. The count and sample index are maintained via registers. The output z is registered and asserted one cycle after the third w sample.
-
-Synchronous reset clears the state and all counters. The entire design is clocked on the rising edge and is fully synchronous. This approach minimizes state registers, leverages a simple counter to track sampling progress, and cleanly separates counting and output logic for clarity and simplicity.
-
-This also makes combinational logic minimal (only comparison of count==2 at the end of sampling), likely improving performance and reducing power relative to more state-heavy designs.

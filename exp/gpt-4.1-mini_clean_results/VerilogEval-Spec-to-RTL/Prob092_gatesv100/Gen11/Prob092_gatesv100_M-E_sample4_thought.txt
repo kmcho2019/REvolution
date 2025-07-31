@@ -1,5 +1,0 @@
-Instead of using explicit neighbor indexing and generate loops, use bitwise shift operations to align neighbors and compute outputs in a vectorized manner.  
-For out_both, shift 'in' left by 1 to align each bit with its left neighbor (MSB side), then AND with 'in'. Zero out the MSB where no left neighbor exists.  
-For out_any, shift 'in' right by 1 to align bits with their right neighbor (LSB side), then OR with 'in'. Zero out the LSB where no right neighbor exists.  
-For out_different, handle wrap-around by concatenating 'in[0]' to the MSB end of the left-shifted 'in', then XOR with 'in' to capture differences including the wrap-around neighbor.  
-This method is succinct, fully vectorized, easily synthesizable, and avoids generate loops altogether, providing a compact and elegant implementation.

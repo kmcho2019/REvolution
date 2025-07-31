@@ -1,9 +1,0 @@
-To optimize the original design for better PPA, I focus on simplifying the increment and terminal count detection logic to reduce combinational delay and area while preserving power efficiency. Instead of a bitwise terminal_count expression and a full adder for increment, I will use a direct comparator (out == 4'd11) for clarity, which synthesis tools efficiently optimize. For increment, a simple conditional assignment (next_out = (out == 11) ? 0 : out + 1) reduces the logic complexity.
-
-Also, I will eliminate the explicit next_out register by calculating the next state directly in the sequential block, improving area and timing by avoiding an extra intermediate register and combinational always block. This reduces logic levels and registers, potentially increasing max frequency and lowering area slightly.
-
-The synchronous reset remains active low and inside the clocked process to ensure safe reset behavior and better timing.
-
-The output count holds its value when valid_count is low, minimizing switching and thus power consumption.
-
-This refactor maintains clean, synthesizable code that should improve timing (reducing critical path through increment), power (holding count when inactive), and area (removing next_out and combinational always).

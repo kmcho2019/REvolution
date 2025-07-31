@@ -1,7 +1,0 @@
-Instead of direct combinational logic with grouped ORs, implement the next state logic by explicitly enumerating all possible state-input pairs and their corresponding next states. Use a generate loop or systematic assignment to combine the next state contributions from all active current states, then OR them together. This approach leverages a priority-less multi-hot decoding where multiple current states can be active simultaneously.
-
-For outputs, directly decode the output values from the current states with bitwise AND and OR, following the outputs specified for states S7, S8, and S9. The rest output zeros.
-
-This approach systematically builds next_state as a sum of one-hot partial next states from each active current state, avoiding hierarchical OR groupings and providing clear logic mapping from transition table to hardware. It is straightforward to verify and extend and is resilient to multi-hot current state inputs.
-
-This method yields easily readable code that explicitly follows the transition rules, potentially making the design more maintainable and verifiable while still synthesizing efficiently.

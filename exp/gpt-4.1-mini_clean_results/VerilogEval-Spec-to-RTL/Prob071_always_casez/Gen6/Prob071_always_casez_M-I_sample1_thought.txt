@@ -1,5 +1,0 @@
-Use a parallel approach by employing the built-in Verilog function $clog2 and the encoding of the one-hot input to quickly find the position of the least significant set bit. Specifically, we can use a bit-scan approach with a priority encoder based on 'in' and output zero if none are set. Since Verilog does not have built-in bit-scan instructions, a common trick is to use a priority encoder implemented using a for loop that assigns position in a parallel style, which improves synthesis optimization and can reduce power and delay by avoiding long if-else chains.
-
-Alternatively, using a casez statement that checks the input from bit 0 upward in parallel offers similar benefits and makes the design easier to read and synthesize efficiently.
-
-The improved design will implement a combinational always block with a for loop that detects the first set bit and assigns 'pos'. This reduces the critical path by avoiding a fixed priority chain and allows synthesis tools to optimize better.

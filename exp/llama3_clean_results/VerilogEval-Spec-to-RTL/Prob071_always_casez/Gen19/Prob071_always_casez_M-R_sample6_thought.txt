@@ -1,9 +1,0 @@
-To refactor the given Verilog code, which implements a priority encoder for an 8-bit input, we can utilize a different structure that still maintains the core functionality but potentially improves performance, reduces power consumption, and optimizes area usage. 
-
-Instead of using a long chain of conditional statements within a continuous assignment, we can employ a combination of bitwise operations and conditional checks in a more parallel and efficient manner. 
-
-One approach is to use a `always` block with a combination of `if-else` statements or `case` statements, which might offer better readability and performance compared to the original chain of conditional operators. However, considering the nature of the priority encoder, which needs to find the first set bit from the most significant bit to the least significant bit, we can use a loop to iterate through the bits of the input vector, which can make the code more concise and potentially more efficient.
-
-For each bit position, starting from the most significant bit, we check if the bit is set. If it is, we assign the current bit position (in decimal, starting from 7 for the most significant bit) to the output `pos` and break out of the loop. This way, we ensure that the first set bit from the most significant bit is detected and reported.
-
-This refactored approach aims to maintain simplicity while potentially reducing the combinatorial depth and improving the overall design's PPA metrics.

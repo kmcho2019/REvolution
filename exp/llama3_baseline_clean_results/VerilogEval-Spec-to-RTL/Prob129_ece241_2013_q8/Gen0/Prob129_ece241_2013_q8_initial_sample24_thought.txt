@@ -1,5 +1,0 @@
-To implement the Mealy-type finite state machine in the TopModule, we will define three states: S0 (initial state), S1 (after detecting '1'), and S2 (after detecting '0' following '1'). The state machine will transition from S0 to S1 when it detects a '1', from S1 to S2 when it detects a '0', and from S2 to S0 when it detects a '1' (asserting the output z) or from any state to S0 when it detects a '1' that is not part of the sequence '101'. The output z will be asserted whenever the sequence '101' is detected, which occurs when the state machine is in S2 and a '1' is detected.
-
-We will use a case statement to handle the state transitions and output logic. The asynchronous reset will be handled outside the case statement to ensure the state machine resets correctly whenever the reset signal is asserted low.
-
-The state machine will recognize overlapping sequences because it will assert the output z as soon as it detects the '101' sequence, without requiring the sequence to start from the beginning of a specific frame or window.

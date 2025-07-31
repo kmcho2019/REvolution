@@ -1,7 +1,0 @@
-Implement the triangle wave generator using a direction flag that toggles exactly when the wave hits the boundaries (0 and 31). Instead of using a state variable, use a single-bit direction signal where 1 means increment and 0 means decrement, simplifying logic. Update the wave register directly inside a synchronous always block with posedge clk and negedge rst_n.
-
-The wave increments or decrements by 1 each clock cycle depending on the direction. When wave hits the upper or lower boundary, the direction reverses immediately on the next clock cycle. This eliminates the need for separate saturation logic or holding the wave value constant at boundaries.
-
-This approach results in a minimal and clean design: only one register for wave and one bit for direction. Both are updated synchronously, with clear and concise conditional statements. The asynchronous reset initializes wave to 0 and direction to increment.
-
-This design minimizes combinational logic by embedding all behavior in a single sequential block and leverages the direction bit for clarity, which may slightly reduce area and improve timing compared to designs with separate next_wave combinational logic. It also makes the toggling of direction and wave updates tightly coupled, ensuring glitch-free transitions.

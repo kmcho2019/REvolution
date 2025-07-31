@@ -1,9 +1,0 @@
-The original design correctly implements the required functionality, but the initial block to initialize Q is not synthesizable and may cause mismatches between simulation and synthesis. Also, the use of a separate wire for the mux output is clear but can be integrated into the always block for slightly better synthesis friendliness.
-
-To improve PPA and synthesis compatibility:
-1. Remove the initial block (which is ignored by synthesis tools).
-2. Implement the mux logic directly in the always block using a non-blocking conditional assignment. This helps the synthesis tool clearly infer the mux and flip-flop.
-3. Keep Q declared as reg since it is assigned in a sequential always block.
-4. This approach keeps the path minimal (1 mux + 1 flip-flop), no extra logic, and results in better synthesis results with no unknown initialization issues.
-
-This optimized code is fully synthesizable, functionally identical to the original, and will have better alignment between simulation and synthesis results.

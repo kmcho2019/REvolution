@@ -1,7 +1,0 @@
-Refactor the FSM by separating state and direction registers and using a one-hot style state encoding with individual signals for each mode, which simplifies the output logic and conditions. Use combinational logic with continuous assignments for next state and direction next values. Also, replace the large case statement with if-else statements for clarity and potentially easier synthesis.
-
-Manage the fall_counter increment using a simple increment or reset logic outside the state case. Outputs remain Moore style but directly use one-hot state signals.
-
-This structure improves readability by clearly defining each state as a separate signal and using explicit state bits instead of encoding. Also, it reduces the complexity of the next state logic by using if-else priority and simple condition checks, emphasizing the hierarchical priority fall > dig > bump. The direction update logic on bump is implemented explicitly to match specification.
-
-The asynchronous reset and sequential update remain unchanged, but the state is held as four one-hot flip-flops rather than a 2-bit encoded reg. This approach trades area slightly for clarity and possibly improved timing through simpler enable logic.

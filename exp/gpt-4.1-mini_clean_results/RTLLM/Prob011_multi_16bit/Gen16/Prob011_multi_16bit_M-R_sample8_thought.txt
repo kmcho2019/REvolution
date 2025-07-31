@@ -1,9 +1,0 @@
-Refactor the 16-bit multiplier by using a three-state FSM (IDLE, LOAD, and CALC) for clearer phase distinction. Instead of shifting the entire 32-bit product register right every cycle, keep the multiplier bits in a separate register shifted right each cycle and accumulate the partial sum in a 32-bit accumulator register. Use a synchronous reset and non-blocking assignments.
-
-Load the multiplicand and multiplier into registers in the LOAD state, then perform 16 shift-and-accumulate cycles in CALC state. On each cycle, add the shifted multiplicand to the accumulator if the current multiplier LSB is 1, then shift the multiplier right. The done flag is asserted for one cycle when multiplication completes.
-
-This structure separates input loading and calculation explicitly, making the control FSM easier to understand and verify. It also avoids shifting a 32-bit product register on every cycle, instead shifting a 16-bit multiplier register and updating a 32-bit accumulator, which may improve timing and reduce logic complexity slightly.
-
-Use a 5-bit counter to count cycles, and drive done as a registered pulse on completion. The output product is always the accumulator value.
-
-This approach maintains the original shift-and-accumulate algorithm but reorganizes control and data flow for clarity and potentially simpler hardware.

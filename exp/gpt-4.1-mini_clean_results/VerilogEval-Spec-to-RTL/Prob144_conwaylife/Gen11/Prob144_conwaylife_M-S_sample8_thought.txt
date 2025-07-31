@@ -1,9 +1,0 @@
-Simplify the design by using a single always block to compute the next state and update q synchronously on each clock edge, avoiding multiple generate loops and numerous temporary wires.
-
-- Store the current grid in a 16x16 2D reg array internally to simplify neighbor indexing and improve readability.
-- On each clock edge, either load the input data into the internal array or compute the next state for all cells using nested for-loops.
-- Neighbor counting is done with direct modulo-16 wrapping by using the mask (bitwise AND with 0xF).
-- Output q is assigned from the internal 2D array by flattening it after update.
-- This approach trades some parallelism for simpler code and fewer temporary signals, which may reduce area and power at the cost of a single cycle sequential calculation of next states.
-
-This code is simpler, easier to understand and maintain, and still functionally equivalent.

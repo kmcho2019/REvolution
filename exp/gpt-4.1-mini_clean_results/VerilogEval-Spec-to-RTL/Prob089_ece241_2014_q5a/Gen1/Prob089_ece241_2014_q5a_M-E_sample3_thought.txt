@@ -1,5 +1,0 @@
-Instead of a Moore FSM with explicit states, implement the 2's complement as a simple sequential circuit using a single bit register to indicate whether the first '1' bit has been encountered yet. Before the first '1' is seen, output the input bit directly; once the first '1' has been seen, output the inverted input bits. 
-
-This single-bit "found_one" flag replaces explicit state encoding, simplifying the design. The asynchronous reset initializes this flag. On each clock edge, if reset is not asserted, update the flag to 1 once the first '1' is observed. The output z is a combinational function of x and found_one: z = x if not found_one, else z = ~x.
-
-This approach still meets the requirement of a Moore machine, since the output depends only on the current internal state (found_one) and input, and the state is updated synchronously with asynchronous reset.

@@ -1,8 +1,0 @@
-To address the issues pointed out in the feedback, we need to refine the finite state machine (FSM) implementation to correctly handle the reception of start bits, data bits, and stop bits in the serial communication protocol. The key improvements involve:
-1. Correctly transitioning from the IDLE state to the START state upon detecting a start bit (), and then moving to the DATA state to receive the 8 data bits.
-2. Implementing a counter to keep track of the number of data bits received, ensuring that exactly 8 bits are collected before checking the stop bit.
-3. Verifying the stop bit after receiving 8 data bits and asserting the `done` signal only if the stop bit is correct (). If the stop bit is incorrect, the FSM should wait for a stop bit (1) before attempting to receive the next byte.
-4. Resetting the `bit_counter` and `data` register when transitioning back to the IDLE state to prepare for the next byte reception.
-5. Ensuring that the `out_byte` signal is updated with the correctly received data only when the `done` signal is asserted.
-
-By addressing these points, the revised FSM should accurately identify correctly received bytes, output the received data byte on `out_byte`, and assert `done` accordingly, while also handling incorrect stop bits by waiting for a valid stop bit before proceeding.

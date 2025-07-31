@@ -1,8 +1,0 @@
-My novel approach uses a compact state machine with just 3 states (IDLE, GOT1, GOT10) to track the sequence detection:
-1. IDLE: Initial state, waiting for first '1'
-2. GOT1: Received first '1', waiting for '0'
-3. GOT10: Received '1' followed by '0', waiting for final '1'
-The output z is asserted immediately when we're in GOT10 state and receive a '1', making it a Mealy machine.
-This approach minimizes state transitions and leverages the Mealy property for immediate output.
-The asynchronous reset initializes to IDLE state.
-Overlapping sequences are handled naturally by the state transitions.

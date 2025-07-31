@@ -1,7 +1,0 @@
-To fix the issues, the key is to separate combinational carry logic from sequential register updates. Instead of registering carry signals, compute carries combinationally based on the current digit values and whether the increment is triggered from the lower digit. Then, compute the next digit values based on these carry signals in combinational logic before assigning the entire new 16-bit value of `q` synchronously on the clock edge. This avoids overlapping non-blocking assignments on parts of `q` and ensures proper ripple carry increments within the same clock cycle.
-
-The enable signals (`ena`) should reflect when a digit is being incremented on that clock edge. They can be generated from the combinational carry signals, indicating when the tens, hundreds, and thousands digits are enabled to increment.
-
-On reset, all digits and enable signals are cleared synchronously.
-
-This approach produces a clean, correct BCD counter with proper carry propagation and enable signaling.

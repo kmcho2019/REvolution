@@ -1,9 +1,0 @@
-To solve this problem, we need to design a finite state machine (FSM) that can identify the start of a message by checking if the 4th bit (in[3]) of the input byte is 1. Once the start of the message is detected, we need to collect the next two bytes to form a 24-bit message. We will use a 2-bit state register to keep track of the current state. The states will be: 
-- S0: Waiting for the start of the message (in[3]=1)
-- S1: Received the first byte, waiting for the second byte
-- S2: Received the second byte, waiting for the third byte
-- We will also use a 24-bit register to store the message bytes.
-
-When the FSM is in S2 and receives a new byte, it will signal done and output the 24-bit message. The done signal will be asserted for one clock cycle after the third byte of the message has been received.
-
-The reset signal will be used to initialize the FSM to the S0 state.

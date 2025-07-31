@@ -1,9 +1,0 @@
-The existing design correctly models q as the inverse of a sampled at each positive clock edge, matching the waveform perfectly. The design is already minimal and efficient: a single flip-flop whose D input is ~a.
-
-To optimize power and area further, we can avoid unnecessary toggling of q when the sampled value doesn't change. That is, only update q if its next value differs from the current one. This can be done by adding a simple conditional check before assigning q, reducing switching activity (and thus power) and potentially reducing switching glitches.
-
-This conditional assignment adds a small comparator (q vs ~a), but the trade-off is reduced toggling in q.
-
-The performance impact is negligible since the comparison is simple, and the combinational path remains short.
-
-Overall, this small change may reduce power consumption without adding significant complexity or delay.

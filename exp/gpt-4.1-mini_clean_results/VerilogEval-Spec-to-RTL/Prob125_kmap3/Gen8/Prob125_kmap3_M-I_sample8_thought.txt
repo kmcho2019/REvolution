@@ -1,9 +1,0 @@
-The original solution implements the function as out = (~c & a) | (c & ~b) | (c & a). We can factor the last two terms as c & (~b | a), reducing from three AND gates to two AND gates and one OR gate inside. This shares the common factor 'c', reducing gate count and thus area and power.
-
-Also, we keep the inverter for ~c and ~b, but since ~b is used only once, that is minimal. The logic now becomes:
-
-out = (~c & a) | (c & (~b | a))
-
-This simplification reduces the total number of product terms and gates, improving area and power while keeping the logic simple and performance optimal.
-
-We will implement this factorization directly, generating only the necessary intermediate signals.

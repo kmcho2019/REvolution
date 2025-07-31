@@ -1,7 +1,0 @@
-Refactor the design by separating the shift register logic from the clocked process to demonstrate an alternative approach: use a synchronous always block to register the input bit `d` into a temporary register, then use a continuous assignment to implement the right shift operation. This splits the input sampling from the shifting operation conceptually, illustrating different coding styles while preserving the same functional behavior.
-
-Specifically, create a temporary 1-bit register `d_reg` that captures `d` on the rising clock edge. Then use a continuous assignment to compute `q` as `{d_reg, q[7:1]}`. Because `q` must be a register to hold state, we keep it as reg and update it inside an always block triggered by `clk`. However, to illustrate structural clarity, we shift and insert the bit in a separate always block that is combinational, and finally assign the result into `q` on clock edge.
-
-Alternatively, since the problem demands that `q` updates synchronously on the clock edge, but we want to illustrate a different style, we can implement `q` as a shift register updated on clock edge with explicit bit assignments inside the always block rather than a concatenation. This shows an explicit bitwise shift and MSB assignment.
-
-This approach improves readability by explicitly showing the bit movements and may help in certain debugging or educational contexts, while maintaining deterministic initialization and synchronous behavior.

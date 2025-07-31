@@ -1,9 +1,0 @@
-To solve this problem, we will design a finite-state machine (FSM) with the following states: IDLE, SHIFT, COUNT, and DONE. The FSM will transition between these states based on the input signals. 
-
-- In the IDLE state, the FSM will check for the pattern 1101 on the data input pin. 
-- Once the pattern is detected, the FSM will transition to the SHIFT state and assert the shift_ena output for exactly 4 clock cycles to shift in the duration bits.
-- After shifting the duration bits, the FSM will transition to the COUNT state and assert the counting output to indicate it is waiting for the counters to finish.
-- When the counters finish counting (i.e., done_counting is high), the FSM will transition to the DONE state, assert the done output to notify the user, and wait until the ack input is high.
-- Once the ack input is high, the FSM will transition back to the IDLE state to look for the next occurrence of the start sequence (1101).
-
-The FSM will also have a synchronous reset input to reset it to the IDLE state.

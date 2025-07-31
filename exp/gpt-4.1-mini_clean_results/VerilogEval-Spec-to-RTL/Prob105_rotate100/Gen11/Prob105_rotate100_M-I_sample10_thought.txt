@@ -1,7 +1,0 @@
-To optimize the original design for better PPA, we can reduce unnecessary calculations and switching activity by enabling register updates only when rotation or load occurs. This can be done by introducing a clock enable signal that goes high only when load or ena indicates an action (left or right rotate). 
-
-Additionally, instead of computing both rotate_left and rotate_right every cycle, compute only the needed rotation based on ena by using a simple combinational case statement. This reduces logic and switching for unused rotation directions.
-
-The code will use a case statement to select next state (load, rotate_left, rotate_right, hold), which can help synthesis optimize multiplexers efficiently. The clock enable gating will minimize toggling in the flip-flops, reducing power.
-
-This approach keeps the design simple, synchronous, and fully functional, but improves power by reducing toggles and possibly area by reducing logic and mux complexity.

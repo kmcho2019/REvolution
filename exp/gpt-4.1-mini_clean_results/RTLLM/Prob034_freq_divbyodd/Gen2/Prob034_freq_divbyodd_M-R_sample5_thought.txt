@@ -1,9 +1,0 @@
-To improve the odd frequency divider design while keeping the same core idea (using two counters and toggling two separate clocks on positive and negative edges), I will refactor the logic as follows:
-
-1. **Counters count from zero up to NUM_DIV-1, then wrap around.**
-2. Instead of toggling clk_div1 and clk_div2 immediately when counters reach HALF_COUNT, I will make them toggle only at a single, well-defined count value (HALF_COUNT) on each respective clock edge.
-3. To avoid timing mismatches, the toggling will occur **before** the counter increments within the always blocks, ensuring the toggle aligns perfectly with the half cycle.
-4. Also, to avoid glitches and potential race conditions, I will implement the counters and toggling logic separately but carefully synchronized to the clock edges, and use synchronous reset.
-5. I will keep the output clk_div as the OR of clk_div1 and clk_div2 to approximate a 50% duty cycle output clock for odd division.
-
-This approach ensures exactly one toggle per half cycle per clock edge, consistent timing, and clean output without glitches. It also keeps the design purely synchronous and easy to verify.

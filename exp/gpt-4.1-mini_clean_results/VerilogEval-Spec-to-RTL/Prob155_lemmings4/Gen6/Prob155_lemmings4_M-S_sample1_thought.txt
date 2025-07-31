@@ -1,9 +1,0 @@
-Simplify the FSM by separating state and direction into two signals to reduce complexity in state encoding and next-state logic. Use a straightforward 3-bit state encoding (WALK, FALL, DIG, SPLAT) plus a single direction bit. Use an enumerated type for clarity. The fall counter saturates at 31 and increments only when falling, zero otherwise.
-
-Next state logic follows priority: fall > dig > bump. Bumps only affect direction while walking, ignored when falling or digging. When falling ends (ground reappears), decide between splat or resume walking same direction. Digging continues while ground remains, or transitions to falling when ground is lost.
-
-Outputs are Moore style based on state and direction: walk_left or walk_right for WALK; aaah for FALL; digging for DIG; all zeros for SPLAT.
-
-Asynchronous positive edge reset initializes to WALK left with zero fall counter.
-
-This separation simplifies logic and improves readability while preserving functionality.

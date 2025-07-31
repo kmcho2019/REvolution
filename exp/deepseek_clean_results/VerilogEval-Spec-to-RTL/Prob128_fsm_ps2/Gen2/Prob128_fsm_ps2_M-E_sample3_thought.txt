@@ -1,7 +1,0 @@
-Here's a novel approach using a counter-based design instead of a traditional state machine:
-1. Use a 2-bit counter to track the position within the current message (0-2)
-2. When counter=0, wait for a byte with in[3]=1 to start a new message
-3. For each subsequent byte (counter=1 or 2), increment the counter regardless of in[3]
-4. When counter reaches 3 (meaning we've received 3 bytes), assert 'done' and reset counter
-5. This approach is more compact than a state machine and handles the message framing more directly
-6. The 'done' signal is asserted combinatorially when counter transitions to 3, meeting the timing requirement

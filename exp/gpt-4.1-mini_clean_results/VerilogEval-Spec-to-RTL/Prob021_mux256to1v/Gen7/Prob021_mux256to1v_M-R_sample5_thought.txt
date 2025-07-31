@@ -1,8 +1,0 @@
-Refactor the 256-to-1 4-bit multiplexer by implementing it entirely with continuous assignments, eliminating submodule instantiations. Instead of hierarchical mux modules, use direct bit slicing and arithmetic on the input vector and selection bits to perform the multiplexing in a fully combinational and concise style.
-
-The idea is to:
-- Compute the 10-bit offset into the input vector by multiplying sel by 4.
-- Use a single continuous assignment with a part-select that extracts 4 bits at the computed offset.
-- This approach leverages Verilog's variable part-select (`[start +: width]`) and requires no instantiations, loops, or intermediate wires.
-
-This simplifies the design significantly, reduces code complexity, and enables synthesis tools to optimize the flat 256-to-1 multiplexer directly.

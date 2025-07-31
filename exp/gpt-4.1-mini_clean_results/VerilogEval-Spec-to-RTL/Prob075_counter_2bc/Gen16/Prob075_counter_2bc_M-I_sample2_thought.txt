@@ -1,5 +1,0 @@
-To improve PPA, particularly power and timing, reduce unnecessary combinational logic switching and flip-flop toggles. The original code updates next_state combinational logic regardless of train_valid, even when not training, causing unneeded switching. To save power, move the train_valid condition inside the case statement so next_state simply holds the current state without extra logic activity when train_valid=0. Also, replace the case statement with simpler arithmetic that is functionally equivalent: increment saturating at 3 when train_taken=1, decrement saturating at 0 when train_taken=0, all gated by train_valid. This approach reduces logic complexity and may improve timing and power.
-
-Further, keep the asynchronous positive edge reset and only update the state register on train_valid, reducing register toggles and dynamic power. This arithmetic-based next_state logic is more straightforward and typically synthesizes to fewer gates than a full case statement.
-
-Overall, the goal is to minimize switching and logic complexity without changing functionality or reset behavior.

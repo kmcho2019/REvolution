@@ -1,9 +1,0 @@
-To solve this problem, we need to design a finite state machine (FSM) that can recognize the message boundaries based on the given algorithm. The FSM should have states to discard bytes until it finds a byte with in[3] = 1, and then it should store the next three bytes as a message. We can use a counter to keep track of the number of bytes received after the first byte of the message.
-
-The states of the FSM can be:
-- IDLE: The initial state where the FSM discards bytes until it finds a byte with in[3] = 1.
-- BYTE1: The state where the FSM has received the first byte of the message and is waiting for the next two bytes.
-- BYTE2: The state where the FSM has received the second byte of the message and is waiting for the third byte.
-- DONE: The state where the FSM has received the third byte of the message and signals the receipt of a message.
-
-The datapath module should output the 24-bit message whenever a packet is received. This can be achieved by storing the three bytes of the message in a 24-bit register and outputting the register when the FSM is in the DONE state.

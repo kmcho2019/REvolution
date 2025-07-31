@@ -1,7 +1,0 @@
-Refactor the design to use a single always block with a register for the full 512-bit state instead of splitting into 64-bit blocks. The next state computation can be efficiently done using vector bitwise operations: next_state = (q << 1) ^ (q >> 1), with boundary conditions handled by zero-padding on both ends. This eliminates the need for complex boundary wiring between blocks and avoids per-block clock enables.
-
-Clock enable can be implemented globally by comparing next_state with current q, together with load, reducing complexity and avoiding multiple enables. This approach simplifies RTL and improves synthesis optimization by using wide vector operations instead of generate-for loops.
-
-This single-register, fully vectorized design will improve timing by reducing the combinational logic depth and interconnect, save power by minimizing comparison logic (only one 512-bit comparator), and reduce area by eliminating multiple module instantiations and intermediate signals.
-
-The functionality remains identical to Rule 90 with zero boundary conditions, advancing the automaton one step each clock cycle or loading initial data when load is asserted.

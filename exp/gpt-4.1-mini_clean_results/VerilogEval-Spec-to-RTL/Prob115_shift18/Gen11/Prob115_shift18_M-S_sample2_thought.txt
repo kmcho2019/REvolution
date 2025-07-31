@@ -1,8 +1,0 @@
-Since shifts are only by fixed amounts (1 or 8) and directions (left or arithmetic right), the shift operations can be implemented using simple concatenations and slices instead of general shift operators, which can reduce complexity. Specifically:
-
-- Left shifts by 1 or 8 bits can be done by concatenating the lower bits with zeros.
-- Arithmetic right shifts by 1 or 8 bits can be done by replicating the sign bit (MSB) and concatenating with the upper bits.
-
-Then, a single case statement can select the shift operation based on the 2-bit 'amount' input, simplifying muxing logic. Using a single always block combining load, enable, and shift actions sequentially makes the design cleaner and the synthesis tool can optimize multiplexers efficiently.
-
-This approach reduces the number of separate wires and the levels of multiplexing, making the code easier to read and potentially improving synthesis results.

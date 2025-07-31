@@ -1,9 +1,0 @@
-To refactor the implementation while preserving the core functionality of capturing the inverted input `a` on the rising clock edge, we can use a two-step approach with an internal wire and a synchronous D flip-flop.
-
-Specifically:
-- Create a wire `d` which is always the inverted value of `a`.
-- At each positive clock edge, register this `d` value into `q`.
-
-This separates the combinational inversion from the sequential capturing, making the logic clearer and more modular.
-
-Although internally we still rely on a flip-flop, this approach uses an explicit wire assignment for the combinational logic instead of doing inversion directly in the `always` block. This can improve code readability and maintainability without changing the functional behavior.

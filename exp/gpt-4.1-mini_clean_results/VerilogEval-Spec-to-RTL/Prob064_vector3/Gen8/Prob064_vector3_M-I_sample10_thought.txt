@@ -1,9 +1,0 @@
-To improve the PPA metrics, the design can be modified to use a single 32-bit output vector internally, concatenating inputs and constant bits as before, and then splitting it into four registers clocked by an implicit clock (if allowed) to break any potential combinational paths and improve timing. However, since no clock is specified, registers are not required.
-
-Given purely combinational logic and no clock, one optimization is to remove the intermediate 32-bit wire by directly assigning the concatenated slices to outputs, potentially reducing logic levels or synthesis tool overhead.
-
-Also, changing the concatenation order to match output bit order (LSB to MSB) can help synthesis tools optimize muxes or wiring.
-
-Therefore, I'll implement direct assignments to outputs with concatenations tailored per output, avoiding the intermediate 32-bit wire to reduce area and power slightly.
-
-This minor change can reduce fanout and logic depth by avoiding the extra combined wire signal.

@@ -1,9 +1,0 @@
-The original design is functionally correct and clean. To improve PPA, specifically aiming to reduce area and power, I propose simplifying the overflow detection logic by using a simple comparator-based approach instead of the boolean expression. Although comparators sometimes introduce more logic, here the condition sum > 9 can be easily detected by checking if the upper nibble of sum is nonzero or if the 4-bit sum is greater than 9.
-
-Moreover, we can remove the 5-bit and 6-bit intermediate signals by performing additions directly on 4-bit sums and managing carries carefully, which reduces bit-width and logic complexity.
-
-Also, instead of conditionally adding 6 using a full 5-bit adder, use a simple adder with carry-in from the overflow signal, adding 6 only when overflow is asserted, optimizing the constant addition.
-
-Finally, using an always_comb block with local variables instead of multiple continuous assignments can help the synthesis tool optimize logic better and reduce glitches, which might lower dynamic power.
-
-These changes improve the clarity, reduce signal width, and potentially lower the combinational delay and area, as well as dynamic power due to less toggling on intermediate signals.

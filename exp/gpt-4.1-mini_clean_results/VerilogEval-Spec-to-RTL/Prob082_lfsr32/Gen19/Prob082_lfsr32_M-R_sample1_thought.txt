@@ -1,7 +1,0 @@
-Refactor the 32-bit Galois LFSR by separating the combinational next-state logic from the sequential register update. Implement the next state as a combinational function using an always_comb block, and then register the next state on the clock's positive edge with synchronous reset.
-
-This improves code readability and makes the data path explicitly combinational, which can aid synthesis tools in optimizing timing and power. It also cleanly separates combinational and sequential logic, making the design modular and easier to maintain.
-
-The feedback bit is still q[0]. The new state bits are calculated by shifting right by one, with taps XORed with feedback as per the Galois LFSR definition. Finally, q is updated on the clock edge or reset synchronously.
-
-This approach avoids multiple overlapping blocking assignments inside a single always block and leverages a combinational intermediate variable for next state calculation.

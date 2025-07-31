@@ -1,5 +1,0 @@
-To improve the PPA of the 5-bit maximal-length Galois LFSR with taps at bits 5 and 3, I will compute the feedback bit (from q[0]) first and then shift all bits right by one position, applying the XOR with the feedback to tapped bits. This reduces sequential logic complexity by using fewer non-blocking assignments inside the always block and avoids bit-by-bit manual assignment. This method simplifies combinational dependencies and can reduce critical path delays.
-
-Specifically, the feedback bit will be q[0], and the taps at q[4] (bit 5) and q[2] (bit 3) receive XOR with the feedback. The bits without taps shift right unchanged. The synchronous reset remains, setting q to 1. This approach can help synthesis tools optimize for timing and area better by reducing the number of sequential register loads and making the shift + feedback a single assignment operation.
-
-This also potentially lowers switching power by minimizing intermediate toggling in registers and logic depth.

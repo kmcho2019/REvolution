@@ -1,9 +1,0 @@
-To simplify the existing frequency divider module, we can maintain the separate counter approach for each output clock but improve the logic for generating these clocks. The primary aim is to reduce complexity while ensuring the module still meets the functional requirements.
-
-For `CLK_50`, we simply toggle its value on every positive edge of the input clock `CLK_in` when the reset `RST` is inactive. This effectively divides the input clock frequency by 2.
-
-For `CLK_10`, we use a counter that increments on every positive edge of `CLK_in` and resets when it reaches a value that corresponds to a divide-by-10 operation. Since the counter starts from 0, it should toggle `CLK_10` and reset when it reaches 9, indicating 10 clock cycles have passed.
-
-Similarly, for `CLK_1`, we use a counter that increments on every positive edge of `CLK_in` and toggles `CLK_1` when it reaches a value corresponding to a divide-by-100 operation, resetting the counter afterward.
-
-By streamlining the logic and focusing on the essential operations for each clock generation, we can simplify the module while maintaining its functionality.

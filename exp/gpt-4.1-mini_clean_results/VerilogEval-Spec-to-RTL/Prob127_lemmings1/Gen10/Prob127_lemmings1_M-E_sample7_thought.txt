@@ -1,5 +1,0 @@
-Implement the Lemmings FSM as a one-hot encoded Moore state machine with two flip-flops, each representing one walking direction. Use an asynchronous positive edge reset to initialize the "walk_left" state flip-flop. The next state logic combines the bump inputs to determine which state flip-flop should be asserted, switching direction on any bump. Outputs directly reflect the state flip-flops, simplifying output logic.
-
-This approach differs by using one-hot encoding rather than a binary state encoding, which can sometimes improve timing by removing decoding logic and simplifying output logic into direct connections from state flip-flops. The asynchronous reset explicitly sets the "walk_left" flip-flop and clears the "walk_right" flip-flop, ensuring correct startup. Next state logic is fully combinational, explicitly enabling/disabling each state flip-flop based on bumps and current state.
-
-The one-hot encoding trades one extra flip-flop for a potentially cleaner state-output mapping and straightforward next state logic, demonstrating an alternate FSM encoding style.

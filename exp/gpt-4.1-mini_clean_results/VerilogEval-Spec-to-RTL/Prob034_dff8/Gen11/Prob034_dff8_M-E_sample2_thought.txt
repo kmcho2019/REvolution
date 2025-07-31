@@ -1,7 +1,0 @@
-Implement the 8-bit register using a shift register style D flip-flop chain triggered on the positive edge of the clock. The input vector 'd' is loaded serially into the shift register by shifting in one bit per clock cycle, starting from d[0] to d[7]. To achieve this in 8 clock cycles, a simple FSM can be added to load all bits into the shift register. However, since the interface doesn't provide a load enable or a start signal, a different approach is needed.
-
-Instead, we can use a combinational approach where all bits of 'd' are loaded into the shift register in parallel but the internal register is built from cascaded single-bit flip-flops connected as a shift register with parallel load, enabled on the clock edge.
-
-To implement parallel load behavior with shift register structure, add a load control signal internally tied to 1, so all flip-flops load their respective bits of 'd' at the same time, and cascade the internal flip-flop outputs to reconstruct the vector 'q'.
-
-This architecture differs from simply using a register vector or eight independent flip-flops by structurally modeling the shift register with parallel load capability, enabling an architectural exploration of shift registers with parallel load in synchronous design.

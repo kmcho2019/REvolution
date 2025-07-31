@@ -1,7 +1,0 @@
-To solve this problem, we can implement a finite state machine (FSM) with four states: IDLE, BYTE1, BYTE2, and BYTE3. The FSM will start in the IDLE state and transition to BYTE1 when it sees a byte with in[3]=1. Then, it will move to BYTE2 and BYTE3, collecting the subsequent two bytes. Once all three bytes are collected, the FSM will signal done and output the 24-bit message.
-
-We will also need a register to store the current byte being processed and a register to store the 24-bit message. We will use a counter to keep track of the current state.
-
-In the IDLE state, we will discard the input bytes until we see a byte with in[3]=1. In the BYTE1, BYTE2, and BYTE3 states, we will store the input byte in the corresponding position of the 24-bit message register.
-
-We will also need to handle the reset signal. When the reset signal is high, the FSM will reset to the IDLE state, and the message register will be reset to zero.

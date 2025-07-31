@@ -1,7 +1,0 @@
-To optimize the design for better power and timing without changing functionality, I will reduce the switching activity by using a clock enable signal that disables updating the LFSR when the feedback bit (q[0]) is zero, since when q[0] = 0, the next state is just q shifted right by 1, which is a simple shift with no XOR. This avoids unnecessary toggling in the XOR logic when feedback is inactive.
-
-I will implement this by conditionally updating only when q[0] is high or on reset, otherwise the LFSR shifts right without XOR. This selective update reduces switching on the XOR logic, potentially improving power and timing.
-
-Additionally, I will explicitly write the next state logic with minimal combinational expressions to help synthesis optimize XOR fan-in.
-
-The reset remains synchronous and active high. This approach balances a slight increase in logic complexity with reduced dynamic power and improved timing, especially in the critical path of the XOR feedback.

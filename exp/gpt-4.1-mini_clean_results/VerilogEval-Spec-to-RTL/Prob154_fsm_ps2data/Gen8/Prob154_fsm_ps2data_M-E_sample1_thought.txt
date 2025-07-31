@@ -1,8 +1,0 @@
-Instead of using a simple counter, implement a small FSM with explicit states: IDLE, BYTE2, BYTE3, and DONE.  
-In IDLE, discard bytes until a byte with in[3]=1 arrives, marking the first message byte.  
-Then transition to BYTE2 and store the second byte, then BYTE3 and store the third byte.  
-When the third byte is received, transition to DONE state where done is asserted and out_bytes output is updated.  
-On the next clock cycle after DONE, return to IDLE.  
-This approach clearly separates the states, allows a clean done signal that is asserted only one cycle in DONE state, and keeps synchronous reset.  
-The stored bytes can be held in registers updated in each state as needed.  
-This FSM approach improves clarity and can simplify timing analysis by isolating done to a single state.

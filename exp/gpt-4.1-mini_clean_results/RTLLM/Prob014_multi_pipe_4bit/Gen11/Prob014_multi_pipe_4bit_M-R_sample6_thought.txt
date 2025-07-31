@@ -1,8 +1,0 @@
-Refactor the design to separate combinational partial product generation from synchronous summation stages, improving clarity and potentially reducing redundant computations:
-
-- Use combinational logic (assign statements) to generate all partial products based on the registered multiplier and multiplicand in stage 1.
-- Stage 1: Register the extended multiplicand and multiplier, generate partial products for bits 0 and 1 combinationally, and register their sum.
-- Stage 2: Generate partial products for bits 2 and 3 combinationally from registered inputs of stage 1, sum them, add to the registered stage 1 sum, and register the final product.
-- This eliminates redundant calculations inside always blocks and cleanly isolates combinational and sequential logic.
-- Using `assign` improves readability and potential synthesis optimization.
-- Keep synchronous reset and registers for pipelining as required.

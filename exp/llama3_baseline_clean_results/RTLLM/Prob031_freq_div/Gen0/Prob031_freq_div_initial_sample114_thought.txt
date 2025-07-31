@@ -1,7 +1,0 @@
-To implement the frequency divider module 'freq_div', we'll use three counters to divide the input clock frequency. 
-We'll utilize a single always block with a sensitivity list that includes the input clock 'CLK_in' and the reset signal 'RST'. 
-Inside this block, we'll first check for the reset condition and then proceed to generate the three output clock signals 'CLK_50', 'CLK_10', and 'CLK_1' based on their respective counter values and division requirements.
-For 'CLK_50', we simply toggle its value on every positive edge of 'CLK_in' if 'RST' is inactive.
-For 'CLK_10', we use a counter 'cnt_10' that increments on every 'CLK_in' edge and toggles 'CLK_10' when 'cnt_10' reaches 4, effectively dividing the frequency by 10 (since 100/10 = 10, but we're counting edges, so 100/10 = 10 and we use 5 because 100/10 = 10 and the counter counts to 5, then divides the frequency in half which is 5).
-For 'CLK_1', we use a counter 'cnt_100' that increments on every 'CLK_in' edge and toggles 'CLK_1' when 'cnt_100' reaches 49, effectively dividing the frequency by 100 (since 100/100 = 100 and the counter counts to 50 then divides the frequency in half which is 50).
-This approach allows us to generate the required output clock frequencies from the input 100MHz signal.

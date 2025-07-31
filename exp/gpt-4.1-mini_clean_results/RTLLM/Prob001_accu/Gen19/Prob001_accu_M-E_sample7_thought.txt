@@ -1,7 +1,0 @@
-Use a shift register approach to store each incoming valid data_in, accumulating as data arrives. Specifically, use a 4-entry FIFO (shift register) of 8-bit registers to hold the four inputs. On each valid_in, shift in data_in into the register array. When the 4th valid data is loaded (tracked by a 2-bit counter), sum all four stored values in a combinational manner and output their sum on data_out, while asserting valid_out for one cycle. Then reset the counter and shift register to prepare for the next set.
-
-This approach separates data storage and summation, enabling immediate parallel addition of the four stored bytes when ready, thus potentially reducing the critical path delay by avoiding cumulative sequential addition. The counter controls the data collection, valid_out pulse generation, and reset after completion.
-
-The accumulator is implicit in the shift register content. Addition is performed combinationally from the four registers only when needed, minimizing switching and allowing clean one-cycle valid_out pulse.
-
-Overall, this architectural style uses a serial input buffer (shift register), a small state counter, and a combinational 4-input adder to achieve the accumulation and output in a clear, parallel manner different from incremental accumulation.

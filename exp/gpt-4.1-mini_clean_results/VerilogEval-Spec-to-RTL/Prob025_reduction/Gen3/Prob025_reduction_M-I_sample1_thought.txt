@@ -1,5 +1,0 @@
-The existing solution uses a straightforward XOR reduction which is already minimal and efficient for this parity computation. However, given the area and power metrics, an improvement can be to pipeline the parity computation if this design is part of a larger synchronous design or to register the output parity to reduce glitches and switching power. Since the interface has no clock, adding a register would change the functionality. So we will keep it combinational but split the XOR tree into a balanced form to slightly optimize the logic depth and potentially improve delay.
-
-Specifically, instead of the single reduction operator (^in), we break it into two 4-bit XOR reductions and then XOR their results to produce the final parity bit. This can give better control over the synthesis and may slightly reduce depth and improve power by enabling balanced XOR trees.
-
-This approach does not add registers and keeps combinational behavior but potentially yields better PPA by giving synthesis tools a better structural hint for XOR tree optimization.

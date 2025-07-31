@@ -1,7 +1,0 @@
-The original solution is functionally correct and minimal. To optimize for PPA without increasing complexity, I will incorporate an explicit clock enable (ce) input that activates the flip-flop only when the input data changes. This reduces unnecessary toggling and switching activity, lowering dynamic power. 
-
-Since the interface only includes clk, d, and q, I will implement the clock enable internally by detecting if the input d differs from the current output q. The DFF will update q only on clk rising edge and if d != q, effectively gating the flip-flop's load.
-
-This approach improves power efficiency with minimal area overhead and no performance impact, maintaining synthesis friendliness. The design remains modular and clear with a DFF module instantiated inside TopModule.
-
-I will also add a synthesis directive comment to explicitly hint at register inference, which can aid some synthesis tools. Overall, the flip-flop updates only when needed, thus lowering switching power while keeping minimal area and optimal timing.

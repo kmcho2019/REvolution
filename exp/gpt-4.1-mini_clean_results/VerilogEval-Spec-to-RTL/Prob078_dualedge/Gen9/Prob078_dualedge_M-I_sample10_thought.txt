@@ -1,7 +1,0 @@
-To optimize the dual-edge triggered flip-flop for better power and area without changing the fundamental dual-flop and mux approach, we can reduce glitching on the output mux. Instead of directly using the clock signal as the select line for the mux, we register the clock in a small synchronizer flip-flop (or use the positive edge flip-flop output itself) to reduce glitching and improve timing. This avoids fast toggling at the output mux and potential hazards, which can reduce dynamic power and improve timing.
-
-Additionally, to reduce the number of modules and potential overhead, we can combine the positive and negative edge flip-flops into a single module with separate always blocks, and use a wire output instead of two separate instantiations. This reduces area slightly.
-
-Finally, we use a registered version of the clock signal delayed by one edge to select between the two outputs, so that the output mux switching is more stable and timed, reducing glitches and power.
-
-These improvements do not change the functional behavior but improve PPA metrics by stabilizing output mux transitions and simplifying hierarchy.

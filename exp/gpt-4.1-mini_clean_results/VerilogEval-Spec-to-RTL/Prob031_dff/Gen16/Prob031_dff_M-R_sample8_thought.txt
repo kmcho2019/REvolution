@@ -1,5 +1,0 @@
-To refactor the original design while maintaining the core functionality of a positive-edge triggered D flip-flop, I will merge the DFF behavior directly into the TopModule. Instead of instantiating a separate module, I will declare `q` as a reg output and implement the flip-flop inside a single always block triggered on the positive edge of the clock. This approach removes modular hierarchy but keeps the code clear and simple.
-
-Since using `assign` cannot model sequential logic directly, I will not use `assign` to implement the flip-flop output. However, I will change the output port `q` to `reg` type in the top module and use a nonblocking assignment inside the always block. This will showcase a different structural style while preserving synthesis compatibility.
-
-This single-module approach reduces hierarchy but is still standard practice for simple registers, and it ensures that the output `q` behaves as a registered signal. This also simplifies the interface by avoiding an extra module instantiation.

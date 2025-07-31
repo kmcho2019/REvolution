@@ -1,7 +1,0 @@
-Implement the byte reception FSM as a one-hot encoded state machine with explicit states for each bit reception step (start bit, bits 0 through 7, stop bit).  
-Use a shift register that shifts in bits at MSB side to store the incoming LSB-first data bits correctly by shifting right and inserting the new bit at MSB.  
-This approach simplifies timing for each bit reception and clearly maps FSM states to bit positions, improving debug and potentially synthesis quality.  
-The done signal is a combinational pulse generated when the FSM enters the STOP_OK state (indicating a valid stop bit has been received).  
-In case of framing error (stop bit incorrect), move to an ERROR_WAIT state that waits for the line to return to idle (logic 1) before restarting the FSM.  
-Use synchronous reset that sets FSM to IDLE state and clears registers.  
-This architecture differs from binary-encoded FSM by using one-hot encoding, state names directly representing received bits, and MSB insertion in shift register for clarity and a novel perspective.

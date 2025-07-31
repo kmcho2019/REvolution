@@ -1,7 +1,0 @@
-To optimize the original design for power and area without sacrificing performance, the correction addition by 6 is replaced with a simple mux selecting between the raw sum and the corrected sum. Instead of always performing the addition of 6 (which causes switching and area overhead), we compute the corrected sum only once and use a multiplexer to select the final sum and carry out based on the overflow condition. This reduces unnecessary switching and gate usage.
-
-Additionally, the overflow detection logic remains the same as it is already minimal and standard for BCD. Using a conditional mux-based output avoids unnecessary adder instantiations for correction and is a common low-power design technique.
-
-The critical path is not worsened because the correction addition and mux are simple and parallel operations.
-
-Overall, this approach improves power by avoiding unnecessary switching and reduces area by not implementing two full adders but rather a single adder and a small mux. Performance remains high.

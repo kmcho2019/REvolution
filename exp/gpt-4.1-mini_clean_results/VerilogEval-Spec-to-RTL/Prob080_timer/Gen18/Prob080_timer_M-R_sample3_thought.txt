@@ -1,5 +1,0 @@
-Refactor the design by implementing the counter register update directly in an always block but calculating the decrement conditionally inside it instead of using a combinational next_count wire. We will keep all logic inside the sequential block, using an if-else structure to prioritize load over decrementing and hold at zero otherwise. This approach avoids separate combinational logic for next count and clarifies control flow inside one always block, still using a single register (D flip-flop) for the counter.
-
-The terminal count output remains a simple combinational check of counter==0.
-
-This style keeps the single always @(posedge clk) for sequential logic and simplifies the logic path by avoiding a separate combinational assignment, trading a small loss in combinational clarity for a more straightforward sequential description.

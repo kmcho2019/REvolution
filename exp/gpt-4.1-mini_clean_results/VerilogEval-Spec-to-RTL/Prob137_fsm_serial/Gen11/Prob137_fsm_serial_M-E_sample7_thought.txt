@@ -1,9 +1,0 @@
-Use a one-hot encoded FSM with four states (IDLE, START, DATA, STOP) to simplify next-state logic and improve timing. Introduce an explicit START state to verify the start bit is held low for one clock cycle before shifting data, enhancing robustness to noise.
-
-Use a shift-left register loading input bits at LSB to naturally align with the LSB-first protocol. Count data bits using a 3-bit counter. On STOP state, check the stop bit; if valid (1), assert done for one cycle and return to IDLE; if invalid (0), stay in STOP until a valid stop bit is received.
-
-A "sticky" STOP state holds until stop bit is detected, avoiding a separate ERROR state. This simplification reduces state transitions and logic complexity.
-
-Synchronous active-high reset clears all registers.
-
-This approach leverages one-hot FSM for simpler combinational logic, an explicit start-bit verification state, and a single STOP state with wait mechanism for stop bit, resulting in a clean, timing-friendly design.

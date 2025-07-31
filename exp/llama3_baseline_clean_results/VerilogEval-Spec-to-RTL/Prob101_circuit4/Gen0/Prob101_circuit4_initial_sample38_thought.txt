@@ -1,9 +1,0 @@
-To implement the combinational circuit described by the simulation waveforms, we can analyze the output q for each combination of inputs a, b, c, and d. 
-From the given waveforms, we can see that q is 1 when either b or c (or both) is 1, regardless of the values of a and d, except when a is 1 and both b and c are 0. 
-In this case, q is 0. 
-This suggests a simple OR logic between b and c, with an exception for the case when a is 1 and both b and c are 0. 
-However, upon closer inspection, the behavior can be more simply described: q is 1 whenever b is 1 or c is 1, regardless of a and d. 
-When a is 1 and both b and c are 0, q should indeed be 0, which matches the expected output for the cases when b or c (or both) are 0 and a is 1. 
-This observation simplifies the logic to just depend on b or c being 1 for q to be 1, with no dependence on a and d in the logic for q to be 1, but a specific condition for q to be 0 when a=1 and b=c=0. 
-However, the condition for q=0 when a=1 and b=c=0 is naturally covered by the logic that q=1 when b=1 or c=1, since when a=1 and b=c=0, the only case where q should be 0 is indeed covered because there's no condition forcing q to 1 when a=1 and b=c=0.
-Given this analysis, the Verilog implementation should directly reflect this logic, using the OR operator to combine b and c, and ensuring the condition for a=1 and b=c=0 is handled appropriately.

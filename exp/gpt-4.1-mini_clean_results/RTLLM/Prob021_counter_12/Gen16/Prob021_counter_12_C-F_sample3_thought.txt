@@ -1,5 +1,0 @@
-Fuse the strengths of both designs by using a simple synchronous always block with a non-blocking assignment that resets the counter when rst_n is low, increments only when valid_count is high, and holds the count otherwise. For detecting the max count (11), use a straightforward equality comparison (`out == 4'd11`) to allow synthesis tools to optimize the comparator efficiently, rather than manual bitwise logic. 
-
-Additionally, explicitly code the hold condition to prevent unnecessary toggling and save power when valid_count is low. This explicit hold aids synthesis in inferring clock gating or register enable optimizations internally, reducing dynamic power. The reset remains synchronous active low, maintaining simplicity and reliability.
-
-This approach achieves a clean, concise, and synthesizable design with good PPA metrics by combining clarity, minimal combinational logic, and reduced switching activity.

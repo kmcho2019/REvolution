@@ -1,7 +1,0 @@
-Refactor the design by explicitly modeling a simple FSM with two states: IDLE and ENABLE. On synchronous reset, the FSM enters ENABLE state with a 4-cycle counter active. After counting down these 4 cycles, the FSM transitions to IDLE and shift_ena deasserts.
-
-In this refactor, we use enumerated states and an FSM register to track the current state. The counter counts down from 4 while in ENABLE. The shift_ena output is driven combinationally from the FSM state. This separates the FSM state and output logic clearly.
-
-This approach improves readability and structure by making the FSM states explicit, and avoids partial counter usage when not enabled. The synchronous reset still triggers the ENABLE state and counter, ensuring shift_ena asserted exactly 4 cycles on reset.
-
-No change is made to functionality—only structure is modified with explicit FSM states and combinational output assignment.

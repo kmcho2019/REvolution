@@ -1,7 +1,0 @@
-To implement the finite state machine (FSM) for receiving bytes according to the given serial protocol, we can design the following states: 
-1. IDLE: Waiting for a start bit (0) to begin receiving a byte. The output 'done' should be low in this state.
-2. RECEIVE_DATA: Receiving the 8 data bits. We will use a counter to keep track of the number of bits received.
-3. CHECK_STOP: Checking if the stop bit is 1 after receiving 8 data bits. If it's not 1, we should wait for a stop bit before returning to the IDLE state.
-4. WAIT_FOR_STOP: If the stop bit is not 1 after receiving 8 data bits, this state will keep checking each incoming bit until it sees a stop bit, then it will return to the IDLE state.
-
-The FSM will transition between these states based on the current state and the value of the input 'in'. When a byte is correctly received, the 'done' signal will be asserted high for one clock cycle.

@@ -1,9 +1,0 @@
-Refactor the radix-2 divider by separating combinational logic from sequential logic to avoid declaring variables inside procedural blocks.  
-Use a standard Moore FSM with explicit states IDLE, RUN, and FINISH.  
-Declare all intermediate signals and registers at module scope and use combinational always blocks or continuous assignments for next-state logic and intermediate calculations.  
-Compute the next partial remainder and quotient bit using combinational logic outside the sequential always block, and register these results synchronously.  
-Handle input capturing and sign/absolute computations synchronously on opn_valid in IDLE state.  
-Use a counter to track 8 division steps; after the last step, perform final remainder correction and sign correction for quotient and remainder before outputting result and asserting res_valid.  
-Avoid any procedural variable declarations inside always blocks; keep all register declarations in module scope.  
-This structure improves readability, maintainability, and ensures synthesis compatibility.  
-The core algorithm and interface remain the same, implementing radix-2 non-restoring division for signed/unsigned 8-bit division.

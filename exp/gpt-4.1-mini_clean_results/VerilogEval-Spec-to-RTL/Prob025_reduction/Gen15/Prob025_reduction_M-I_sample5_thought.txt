@@ -1,5 +1,0 @@
-The original design already uses the built-in reduction XOR operator which is optimal for area, power, and timing in synthesis. However, instantiating a separate module for the XOR tree adds slight module overhead. To further optimize power and area, I will simplify the TopModule by removing the parameterized module and directly assign the parity output using the reduction XOR operator. This eliminates module instantiation overhead, reduces hierarchy complexity, and slightly reduces switching and routing resources, while preserving clarity and efficiency for an 8-bit parity calculation.
-
-This direct assignment approach keeps the design purely combinational, very minimal, and synthesis-friendly for the specific fixed-width 8-bit input. It also makes the code more concise and easier to read for this use case.
-
-If future scaling or modular reuse is needed, parameterization could be reconsidered, but for this exact specification, the direct assign is optimal for PPA.

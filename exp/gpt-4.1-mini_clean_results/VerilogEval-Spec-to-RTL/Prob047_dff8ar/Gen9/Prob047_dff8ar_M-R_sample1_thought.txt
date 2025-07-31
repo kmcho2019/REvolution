@@ -1,5 +1,0 @@
-Refactor by replacing the single-bit DFF module and the generate loop with a single always block inside TopModule that implements an 8-bit register with asynchronous reset directly. This removes the extra module instantiation and uses a vectorized always block with sensitivity to posedge clk and posedge areset.
-
-Using an always block with non-blocking assignments for the entire 8-bit register at once preserves the asynchronous reset behavior while simplifying the code structure and making the design more compact. This approach keeps functionality identical but leverages Verilog's support for vector operations rather than per-bit module instantiation.
-
-The asynchronous reset remains active-high and sets the entire output to zero immediately when asserted, and on each positive clock edge the input d is latched into q.

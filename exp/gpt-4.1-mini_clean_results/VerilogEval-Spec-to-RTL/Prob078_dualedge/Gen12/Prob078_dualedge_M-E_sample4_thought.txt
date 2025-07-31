@@ -1,7 +1,0 @@
-To implement a dual-edge triggered flip-flop on an FPGA without illegal sensitivity lists, we can use a single positive-edge-triggered flip-flop clocked at double the input clock frequency. 
-
-The idea is to generate an internal clock signal (`clk_int`) that toggles on every edge (both rising and falling) of the input clock. This `clk_int` runs at twice the frequency of `clk`. Then we use one flip-flop triggered on the positive edge of `clk_int` to capture `d`.
-
-Generating `clk_int` from `clk` can be done with a simple toggle flip-flop clocked on either the positive or negative edge of `clk`. Because `clk_int` toggles at every edge of `clk`, its rising edges coincide with both edges of `clk`. 
-
-This approach converts dual-edge triggering into single-edge triggering on a faster clock and is fully synthesizable without illegal constructs. It also avoids the overhead of two flip-flops and a mux/latch, simplifying timing and resource usage.

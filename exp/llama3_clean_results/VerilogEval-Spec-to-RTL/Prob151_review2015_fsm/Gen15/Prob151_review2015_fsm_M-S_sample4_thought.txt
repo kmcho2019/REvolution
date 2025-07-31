@@ -1,8 +1,0 @@
-To simplify the existing code, we can reduce the complexity of the finite-state machine (FSM) by minimizing the number of states and signals. The core idea remains the same: detecting the pattern '1101', shifting in 4 more bits, waiting for the counters to finish, and notifying the user. 
-
-We can use a two-stage approach:
-
-1.  **Pattern Detection**: Detect the '1101' pattern in the input data stream and then assert the `shift_ena` signal for exactly 4 clock cycles to shift in the duration bits.
-2.  **Timer Control**: After shifting in the duration bits, assert the `counting` signal to indicate that the timer is waiting for the counters to finish. Once `done_counting` is high, assert the `done` signal to notify the user and wait for the `ack` signal to go high before resetting the FSM.
-
-By simplifying the state machine and reducing the number of signals, the code becomes more readable and maintainable. The use of a two-stage approach allows for efficient management of both the pattern detection and timer control, making the design more streamlined.

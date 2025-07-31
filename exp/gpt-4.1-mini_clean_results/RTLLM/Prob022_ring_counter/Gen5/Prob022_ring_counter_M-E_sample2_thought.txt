@@ -1,5 +1,0 @@
-Instead of rotating the entire 8-bit vector using concatenation of slices, implement the ring counter using a rotating one-hot shift register driven by an 8-bit register and a simple arithmetic shift. On each clock edge, perform a left shift by 1 and when the MSB shifts out, wrap it back to the LSB position by checking the shifted out bit. This approach uses a state register and combinational logic that tracks overflow to implement cyclic behavior without concatenations.
-
-On reset, initialize the output register to have only LSB set. On each clock edge, shift left by one bit. If the bit shifted out was 1, set LSB to 1 (wrap-around). This design avoids concatenation of vector slices and is fully synthesizable with straightforward logic.
-
-This rotating shift with wrap-around simulates the behavior of a ring counter efficiently and simply.

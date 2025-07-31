@@ -1,8 +1,0 @@
-To solve this problem, we'll implement a finite state machine (FSM) with several states to handle the reception of a byte according to the described protocol. The states will be:
-1. **IDLE**: Waiting for a start bit (0) to begin receiving a byte. The FSM will remain in this state until a start bit is detected on the 'in' line.
-2. **RECEIVING**: After detecting the start bit, the FSM will enter this state where it will shift in 8 bits from the 'in' line. These bits will form the received byte, with the least significant bit first.
-3. **STOP_BIT_CHECK**: After receiving 8 data bits, the FSM will enter this state to check for the stop bit (1). If the stop bit is correct, the FSM will proceed to assert 'done' and output the received byte on 'out_byte'. If the stop bit is not 1, the FSM will wait for a stop bit before returning to the IDLE state.
-
-The FSM will also have a synchronous reset ('reset') that will reset it to the IDLE state when active high.
-
-The 'done' signal will be asserted every time a stop bit is correctly received, indicating that 'out_byte' is valid. 'out_byte' will be don't-care when 'done' is not asserted.

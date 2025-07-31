@@ -1,9 +1,0 @@
-To solve this problem, we need to design a finite state machine (FSM) that can identify the message boundaries in the input byte stream. The FSM should have three main states: 
-1. IDLE - In this state, the FSM will discard bytes until it sees one with in[3]=1. 
-2. BYTE1 - After the first byte with in[3]=1 is received, the FSM will move to this state and store the received byte. 
-3. BYTE2 - After the second byte is received in the BYTE1 state, the FSM will move to this state, store the second byte, and wait for the third byte. 
-4. BYTE3 - After the third byte is received in the BYTE2 state, the FSM will move to this state, store the third byte, and assert the done signal in the next clock cycle.
-
-The datapath will consist of three registers to store the three bytes of the message and a multiplexer to select the output bytes based on the state of the FSM.
-
-We will also need to handle the reset signal. When the reset signal is high, the FSM should be reset to the IDLE state and the registers should be cleared.

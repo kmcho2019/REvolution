@@ -1,9 +1,0 @@
-Refactor the FSM by splitting the mode and direction into two separate registers: a 2-bit mode register and a 1-bit direction register. This approach separates concerns and allows using combinational logic with `assign` statements for next state computations, simplifying the next-state logic expressions and removing the `case` statement.
-
-The asynchronous reset still initializes the FSM to walking left.
-
-The mode next-state is computed in a combinational always block or directly with combinational logic, prioritizing fall > dig > walking conditions. The direction next-state is updated only when walking and bumped.
-
-Outputs decode from mode and direction registers directly in a Moore style.
-
-This restructuring improves code readability by distinctly handling mode and direction and explicitly defining next states separately, enhancing maintainability and clarifying each part's role while keeping the same behavior.

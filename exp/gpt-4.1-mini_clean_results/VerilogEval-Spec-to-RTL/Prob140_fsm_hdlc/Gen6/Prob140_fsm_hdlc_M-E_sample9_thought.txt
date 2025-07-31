@@ -1,9 +1,0 @@
-Implement the HDLC framing detection using a simple 3-bit counter state machine to track the number of consecutive 1s received, from 0 to 6. Use explicit states for counts 0 through 6 consecutive ones. When a zero is received, reset count to 0, except on special disc/flag/error states. The outputs disc, flag, and err correspond to detecting the patterns right after processing the current bit:
-
-- When transitioning from 5 consecutive ones and input 0 → disc=1 on next cycle
-- When transitioning from 6 consecutive ones and input 0 → flag=1 on next cycle
-- When transitioning from 6 consecutive ones and input 1 → err=1 on next cycle (7+ ones)
-
-Outputs are implemented as registered outputs (one clock cycle after detection) per Moore FSM. Synchronous reset initializes the state counter to zero consecutive ones.
-
-This design reduces the state count and complexity by counting the consecutive ones rather than enumerating all transitions as separate states, simplifying the next state and output logic, while preserving all required features.

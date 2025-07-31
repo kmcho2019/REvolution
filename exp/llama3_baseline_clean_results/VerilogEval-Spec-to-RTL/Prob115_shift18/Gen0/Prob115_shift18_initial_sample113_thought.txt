@@ -1,9 +1,0 @@
-To implement the 64-bit arithmetic shift register, we will use the following approach:
-1. First, we will create a register to hold the current state of the shifter. This will be a 64-bit reg named `q_reg`.
-2. On every clock edge, we will check if the `load` signal is high. If it is, we will load the `data` into the `q_reg`.
-3. If `load` is not high, we will check if `ena` is high. If it is, we will perform the shift operation based on the value of `amount`.
-4. For shifting left by 1 bit, we will use the `{q_reg[62:0], 1'b0}` expression to shift the bits to the left and fill the least significant bit with a 0.
-5. For shifting left by 8 bits, we will use the `{q_reg[56:0], 8'b0}` expression to shift the bits to the left and fill the least significant 8 bits with 0s.
-6. For shifting right by 1 bit, we will use the `{q_reg[63], q_reg[63:1]}` expression to shift the bits to the right and fill the most significant bit with the sign bit.
-7. For shifting right by 8 bits, we will use the `{8{q_reg[63]}, q_reg[63:8]}` expression to shift the bits to the right and fill the most significant 8 bits with the sign bit.
-8. Finally, we will assign the new value of `q_reg` to the output `q`.

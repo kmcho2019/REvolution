@@ -1,9 +1,0 @@
-To fix the frequency divider module, we need to re-examine the logic for generating the intermediate divided clock signals (`clk_div_4` and `clk_div_3`) and the phase-shifting logic. 
-
-Firstly, we should correctly implement the 3.5x division logic. Since we're dividing the clock frequency by 3.5, we can achieve this by having a 7-cycle counter. Within these 7 cycles, we'll have two different pulse widths: one with 4 cycles and the other with 3 cycles. This will give us an average division ratio of 3.5.
-
-Secondly, we'll need to correctly implement the phase-shifting logic to ensure that the divided clock output is smooth and has the correct duty cycle. This involves delaying one of the intermediate clock signals by half a cycle and advancing the other by half a cycle.
-
-Lastly, we'll simplify the logic for generating the final divided clock output (`clk_div`). Instead of using complex combinational logic, we can use a simpler approach that directly ORs the phase-shifted signals.
-
-To achieve the half-cycle delay and advancement, we can utilize the fact that in a digital system, a half-cycle delay can be represented by a register that captures the signal at the rising edge and another register that captures the signal at the falling edge. This can help us create the required phase-shifted signals.

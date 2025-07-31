@@ -1,9 +1,0 @@
-Fix the bit shifting to correctly capture the LSB first: shift the register left and insert the incoming bit into the least significant bit position (`shift_reg <= {in, shift_reg[7:1]};` is reversed, so use `shift_reg <= {in, shift_reg[7:1]};` but this inserts MSB first). Instead, to get LSB first, shift left and insert at LSB, e.g., `shift_reg <= {in, shift_reg[7:1]};` actually inserts at MSB, so instead shift right and insert at LSB: `shift_reg <= {shift_reg[6:0], in};`. This captures LSB first correctly.
-
-Assert `done` for exactly one clock cycle immediately after receiving a valid stop bit, and hold `out_byte` stable during that time. `done` should be deasserted in the next cycle.
-
-Confirm that the FSM waits in the STOP state until a valid stop bit (in == 1) is received; then output byte and `done` for one cycle, then go back to IDLE.
-
-Reset logic remains the same.
-
-With these fixes, the output data byte will be correct, and `done` will correctly indicate when the byte is ready.

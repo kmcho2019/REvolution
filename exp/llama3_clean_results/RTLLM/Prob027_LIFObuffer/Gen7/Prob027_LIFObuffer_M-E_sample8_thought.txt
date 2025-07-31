@@ -1,9 +1,0 @@
-To design a novel LIFO buffer architecture, we can leverage a combination of sequential logic and combinational logic to optimize the buffer's performance, area, and power consumption. 
-
-The new idea involves using a ring buffer implementation with a movable pointer to track the current position in the buffer. This approach allows for efficient and straightforward push and pop operations without the need for shifting data within the buffer, thus reducing the overall complexity and potentially improving performance.
-
-The buffer will consist of a 4-entry deep, 4-bit wide memory array. Two pointers, `write_ptr` and `read_ptr`, will be used to track the positions for write and read operations, respectively. A counter, `count`, will keep track of the number of entries currently in the buffer, allowing for easy determination of the buffer's full and empty states.
-
-The `write_ptr` will be incremented modulo 4 after each successful write operation, and the `read_ptr` will be incremented modulo 4 after each successful read operation. The `count` variable will be used to update the `EMPTY` and `FULL` flags directly, eliminating the need for complex conditional checks based on the pointers.
-
-This architecture minimizes the logic required for managing the buffer, potentially reducing area and power consumption, while also simplifying the control logic for better performance.

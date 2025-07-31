@@ -1,9 +1,0 @@
-Implement the FSM with a three-bit one-hot style encoding explicitly separating direction (left/right) and mode (walking/falling/digging) into three distinct bits. This means using three flip-flops: walk_left, walk_right, and falling. Digging is indicated by a separate digging register active only when walking on ground and dig=1.
-
-This approach encodes direction implicitly by which walking bit is set (walk_left or walk_right), with falling bit indicating the fall state. Digging is a separate register asserted only when walking on ground and dig=1.
-
-State transitions update the walking direction bits when bumped, but only if not falling or digging. Falling has highest priority and when ground=0 the Lemming falls preserving direction in walking bits until ground returns. Digging starts only from walking states on ground with dig=1, and remains until ground=0 (fall begins).
-
-This one-hot style state encoding simplifies logic by reducing bitwise decoding, making output assignments direct from registers, and prioritizing actions through sequential if-else checks. Asynchronous reset sets walk_left=1 and falling=0 and digging=0, as required. The outputs walk_left and walk_right directly correspond to walking states; falling sets aaah, and digging flag asserted separately.
-
-This design keeps the FSM clear, separates direction and mode explicitly, and uses registers instead of a packed state vector, which may improve timing clarity and synthesis interpretation.

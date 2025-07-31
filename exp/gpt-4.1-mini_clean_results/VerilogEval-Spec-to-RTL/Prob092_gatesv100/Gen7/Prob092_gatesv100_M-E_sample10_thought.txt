@@ -1,8 +1,0 @@
-Use vector shifting and bitwise operations entirely without generate loops for a concise and fully parallel implementation. This approach treats the input vector as a whole and leverages vector shifts to align neighbors, simplifying boundary condition handling by zero-padding shifts as needed.
-
-Specifically:
-- For out_both, shift the input vector left by 1 bit with zero padding at LSB and AND it with the original input vector; set the MSB (bit 99) explicitly to zero since it has no left neighbor.
-- For out_any, shift the input vector right by 1 bit with zero padding at MSB and OR it with the original input vector; set the LSB (bit 0) explicitly to zero since it has no right neighbor.
-- For out_different, create a circular left shift of the input by 1 bit and XOR it with the input vector to detect differences, naturally implementing the wrap-around difference with no explicit boundary handling.
-
-This design is compact, fully synthesizable, and leverages vector operations that synthesis tools optimize efficiently.

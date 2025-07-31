@@ -1,5 +1,0 @@
-Refactor the design by implementing the entire 512-bit Rule 90 automaton in a single module without breaking it into blocks, simplifying boundary handling with explicit zero padding. Instead of using a sequential always block to register the next state, compute the next state combinationally with continuous assignments and use a single always block only to register q on each clock edge.
-
-This approach leverages the vector nature of Verilog and avoids generate loops, improving code compactness and clarity. The boundaries at the ends are zero-padded explicitly by concatenating zeros to shifted vectors for left and right neighbors. The load input synchronously loads the data; otherwise, the next state is registered.
-
-Overall, this structure keeps the same behavior and timing but simplifies code structure by removing the module hierarchy and generate blocks, potentially improving synthesis friendliness and readability.

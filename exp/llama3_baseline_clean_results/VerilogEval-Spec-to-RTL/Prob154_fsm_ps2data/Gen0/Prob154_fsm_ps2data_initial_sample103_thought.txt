@@ -1,5 +1,0 @@
-The design of the TopModule can be achieved using a finite state machine (FSM) with three states: IDLE, BYTE1, and BYTE2. In the IDLE state, we discard input bytes until we see one with in[3]=1. Once we see such a byte, we transition to the BYTE1 state and store this byte in the most significant byte position of out_bytes. In the BYTE1 state, we wait for the next byte and store it in the middle byte position of out_bytes, then transition to the BYTE2 state. In the BYTE2 state, we wait for the next byte, store it in the least significant byte position of out_bytes, and assert the done signal.
-
-We will use a counter to keep track of the current state and the bytes received. The reset signal will be used to reset the FSM to the IDLE state and clear the counter and out_bytes.
-
-The datapath will consist of a 24-bit register to store the out_bytes and a 2-bit counter to keep track of the current state.

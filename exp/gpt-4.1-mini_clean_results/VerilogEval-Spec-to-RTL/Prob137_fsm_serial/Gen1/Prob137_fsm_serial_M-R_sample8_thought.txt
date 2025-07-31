@@ -1,7 +1,0 @@
-Refactor the FSM to a classic Moore machine style with one always block for state transitions and output logic, and one always block for registered state and counters. Avoid driving 'done' from combinational logic; instead, generate 'done' solely in synchronous logic as a pulse asserted for one cycle when a correct stop bit is detected.
-
-Use an enumerated state variable and a separate counter for the received data bits. Shift bits into data_reg by placing the incoming bit into the least significant position and shifting left, to maintain LSB first order.
-
-On reset, go to IDLE. In IDLE, wait for start bit (0). On detecting start bit, transition to RECEIVE state and start bit counter. In RECEIVE, increment bit counter and shift in bits each cycle. When 8 bits received, transition to STOP_WAIT. In STOP_WAIT, wait for stop bit (1). If stop bit correct, assert done for one cycle and go back to IDLE. If stop bit incorrect, remain in STOP_WAIT until a stop bit (1) is detected.
-
-This approach cleanly separates combinational and sequential logic, ensuring 'done' is generated only synchronously and for one cycle, avoiding conflicting drivers.

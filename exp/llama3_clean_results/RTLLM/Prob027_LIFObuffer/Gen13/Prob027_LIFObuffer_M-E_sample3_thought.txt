@@ -1,9 +1,0 @@
-To create a novel solution for the LIFObuffer module, we will introduce a new architectural idea that utilizes a dual-pointer approach with a circular buffer. This design will not only improve the efficiency of the push and pop operations but also simplify the logic for managing the EMPTY and FULL flags.
-
-The circular buffer will be implemented as a register array, and two pointers, `write_ptr` and `read_ptr`, will be used to track the current positions for writing and reading data, respectively. The `write_ptr` will be incremented when data is pushed onto the buffer, and the `read_ptr` will be incremented when data is popped from the buffer. The buffer will be considered full when the `write_ptr` is one position ahead of the `read_ptr` (circularly), and it will be considered empty when the `write_ptr` and `read_ptr` are equal.
-
-This design allows for efficient use of the buffer space and simplifies the conditional logic for managing the buffer's state. The EMPTY and FULL flags can be easily determined based on the relationship between the `write_ptr` and `read_ptr`. Additionally, this approach eliminates the need for explicit stack pointer management, making the design more scalable and easier to implement.
-
-The enable signal (EN) will control the data transfer, and the read/write signal (RW) will determine whether a push or pop operation is performed. The reset signal (Rst) will be used to initialize the buffer and the pointers.
-
-This novel architectural idea offers a more efficient and scalable solution for the LIFObuffer module, making it suitable for a wide range of applications that require temporary data storage and retrieval.

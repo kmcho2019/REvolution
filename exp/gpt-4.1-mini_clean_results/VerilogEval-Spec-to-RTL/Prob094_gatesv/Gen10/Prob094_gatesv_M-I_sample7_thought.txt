@@ -1,7 +1,0 @@
-Optimize the solution by using vectorized and concatenation operations instead of multiple individual bit assignments, enabling synthesis tools to infer rotate and shift operations that can share logic. 
-
-- For out_both, the condition "in[i] & in[i+1]" for i=0..2 can be implemented by ANDing the lower three bits of 'in' with the upper three bits shifted left by one bit. This lets us write out_both[2:0] = in[2:0] & in[3:1], and assign out_both[3]=0. 
-- For out_any, "in[i] | in[i-1]" for i=1..3 can be similarly done by ORing the upper three bits with the lower three bits shifted right by one. So, out_any[3:1] = in[3:1] | in[2:0], and out_any[0]=0.
-- For out_different, since it's a wrap-around XOR with the left neighbor, express it as XOR of 'in' and a rotated version of 'in' shifted left by one bit with wrap-around. That is, rotate 'in' left by 1 bit and XOR with 'in'.
-
-This approach reduces the number of individual bit assignments, encourages efficient logic synthesis, enables better resource sharing, and improves readability without changing logic or functionality.

@@ -1,5 +1,0 @@
-Implement a square wave generator using a decrementing counter that reloads from the frequency value when it reaches zero, toggling the output each time the counter hits zero. This approach treats freq as a period value instead of a toggle threshold. By counting down from freq to zero, the output toggles precisely at every freq clock cycles. When freq is zero, the output stays constant and the counter stops decrementing to avoid unwanted toggling.
-
-This method avoids subtraction by using simple decrement logic and a reload, simplifying the control flow. It also reduces dependency on subtraction operations, often beneficial for synthesis efficiency. Using a synchronous active-high reset ensures known initial conditions. Non-blocking assignments throughout maintain clean sequential logic.
-
-The internal count register reloads with freq when it reaches zero, and wave_out toggles accordingly. This produces a stable, precise square wave whose period is twice freq (because output toggles every freq cycles). Holding count and wave_out steady when freq=0 avoids any toggling or glitching.

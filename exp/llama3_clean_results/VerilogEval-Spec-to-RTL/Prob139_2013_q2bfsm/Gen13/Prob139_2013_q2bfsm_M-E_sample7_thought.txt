@@ -1,7 +1,0 @@
-A novel approach to solve this problem is to use a hybrid of Moore and Mealy machine-based design, where the states are primarily used to track the sequence of 'x' and the reset condition, while the outputs 'f' and 'g' are functions of both the current state and the inputs 'x' and 'y'. This approach involves using a 4-bit state machine with a specific sequence detection mechanism and a separate counter for handling the 'y' input timeout.
-
-The new idea involves defining four main states: 'IDLE', 'INIT', 'X_SEQUENCE', and 'Y_WAIT'. The 'IDLE' state represents the reset state where the FSM stays until the reset is de-asserted. The 'INIT' state is used to set 'f' high for one clock cycle after the reset is de-asserted. The 'X_SEQUENCE' state is responsible for detecting the 'x' sequence (1, 0, 1), and the 'Y_WAIT' state handles the 'y' input and its timeout.
-
-In the 'X_SEQUENCE' state, a separate sequence detector is used to track the 'x' sequence. Once the sequence is detected, the FSM transitions to the 'Y_WAIT' state and sets 'g' high. In the 'Y_WAIT' state, a counter is used to wait for 'y' to become high within two clock cycles. If 'y' becomes high, the FSM maintains 'g' high permanently. If 'y' does not become high within two clock cycles, the FSM sets 'g' low permanently.
-
-This approach simplifies the state machine logic and reduces the number of states required, making it easier to implement and verify.

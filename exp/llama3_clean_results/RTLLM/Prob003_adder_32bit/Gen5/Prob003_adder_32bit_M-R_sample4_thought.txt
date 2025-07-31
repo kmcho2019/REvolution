@@ -1,9 +1,0 @@
-To refactor the provided code, we can focus on improving its structure and readability while maintaining its functionality. One approach is to reduce the number of modules by directly implementing the 16-bit and 32-bit carry-lookahead adders without breaking them down into smaller 4-bit blocks. This can simplify the hierarchy of the design. Additionally, we can utilize Verilog's built-in operators and functions to make the code more concise. 
-
-For instance, instead of manually calculating each bit of the sum and carry in the 4-bit and 16-bit adders, we can use a more straightforward approach to generate these signals. This involves using the full adder equation directly for each bit position. However, since we aim to implement a carry-lookahead adder, we will focus on generating the carry signals efficiently.
-
-The key concept in a carry-lookahead adder is to calculate the carry generate (G) and carry propagate (P) signals for each bit position. The carry generate signal (G) is set if the current bit position will generate a carry regardless of the input carry, and the carry propagate signal (P) is set if the current bit position will propagate a carry from the previous bit.
-
-Given these signals, the carry-in for each bit position can be calculated using the formula: Cin[i] = G[i-1] + P[i-1] * Cin[i-1], where Cin[i] is the carry-in for the i-th bit, G[i-1] is the generate signal for the (i-1)-th bit, P[i-1] is the propagate signal for the (i-1)-th bit, and Cin[i-1] is the carry-in for the (i-1)-th bit.
-
-We will apply this principle to directly implement the 32-bit carry-lookahead adder, simplifying the overall structure of the code.

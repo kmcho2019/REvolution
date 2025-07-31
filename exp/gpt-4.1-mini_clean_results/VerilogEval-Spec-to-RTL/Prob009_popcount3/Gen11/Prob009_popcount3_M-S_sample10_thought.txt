@@ -1,9 +1,0 @@
-Use a reduction operator to directly count the number of set bits in the 3-bit input vector. The Verilog reduction operator `^` does XOR, but `+` addition can be replaced by the reduction OR plus a couple of checks to directly produce the popcount value. However, the simplest and most concise way is to use the built-in Verilog reduction plus operator `+` on a vector of bits, but since that is not a reduction operator, we can sum the bits using a reduction operator `in[0] + in[1] + in[2]`. To simplify further, use the standard reduction plus operator `+` that sums bits of a vector as `in[2:0]` and cast to the output size. But since Verilog doesn't have a built-in reduction sum operator, the best simplified code remains the addition of the bits. So to reduce complexity, we can use the built-in `$countones` system function, which directly returns the number of bits set to '1' in a vector. It's part of SystemVerilog, but if allowed, this reduces the code to a single line. This makes the code both minimal and easy to read.
-
-If SystemVerilog `$countones` is acceptable:
-
-`assign out = $countones(in);`
-
-Otherwise, the original addition is already minimal.
-
-Assuming SystemVerilog usage is allowed here.

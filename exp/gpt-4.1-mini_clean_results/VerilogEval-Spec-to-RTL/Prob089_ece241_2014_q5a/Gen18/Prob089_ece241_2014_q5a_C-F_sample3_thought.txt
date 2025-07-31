@@ -1,5 +1,0 @@
-Fuse the clear, explicit state encoding and Moore FSM structure from Example 1 with the separated input sampling and concise state update logic from Example 2. Use two always blocks with asynchronous reset: one for sampling input 'x' into 'x_reg', and one for the FSM state, encoded as BEFORE_CARRY and AFTER_CARRY states. Transition from BEFORE_CARRY to AFTER_CARRY upon sampling the first '1' bit (x_reg == 1), and remain in AFTER_CARRY afterward.
-
-Generate the output 'z' as a Moore output, combinationally dependent only on the registered state and input, with clear state-based output logic: output equals x_reg in BEFORE_CARRY and inverted x_reg in AFTER_CARRY. Using parameters for state encoding enhances readability and extensibility.
-
-This fusion keeps the modularity and clarity of the FSM from Example 1, ensures input stability and timing isolation from Example 2, and provides a minimal, easy-to-understand design that is optimal for PPA: low area with only two 1-bit registers, minimal combinational logic, and asynchronous reset handling. It also facilitates better synthesis and timing analysis while maintaining functional correctness and Moore FSM semantics.

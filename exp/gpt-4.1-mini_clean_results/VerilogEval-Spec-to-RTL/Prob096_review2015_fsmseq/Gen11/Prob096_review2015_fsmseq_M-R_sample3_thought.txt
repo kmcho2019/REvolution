@@ -1,3 +1,0 @@
-Refactor the FSM by encoding states as binary (3-bit) instead of one-hot to reduce register count and area. Implement the next-state logic and output as purely combinational `assign` statements, while keeping the sequential state update in an `always` block. This removes the function usage and presents all combinational logic upfront with clear next-state and output assignments, improving synthesis readability and potentially reducing combinational delay.
-
-The sticky final state is still maintained by staying in the detected state until reset. Synchronous reset remains in the clocked always block. This approach reduces flip-flop usage from 5 to 3, simplifies combinational logic by using direct assign statements, and keeps the FSM structure clear and easy to modify.

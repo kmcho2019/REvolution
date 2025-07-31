@@ -1,5 +1,0 @@
-The initial design is already minimal and clear, implementing a 4-bit decade counter with synchronous reset. To optimize for better power and area, we can use a one-hot encoded counter instead of binary. One-hot encoding results in simpler combinational logic (only one bit set at a time), which can reduce switching activity in some synthesis tools and potentially improve power consumption, especially for small count ranges like 10 states. The counter will be implemented as a 10-bit one-hot register with a rotating '1' to indicate the count, and the 4-bit binary output will be derived by a priority encoder. This approach reduces the complexity of increment logic and can improve power and timing by removing the binary increment and comparator logic.
-
-The synchronous reset will reset the counter to state 0 (encoded as the first bit '1').
-
-This trades off a slight area increase in register bits (10 bits vs 4 bits) but can reduce combinational logic complexity and switching power due to only one bit toggling per clock, which can improve overall PPA for small counters.

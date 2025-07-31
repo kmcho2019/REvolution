@@ -1,7 +1,0 @@
-Refactor the ALU to use an always_comb block to assign the 32-bit result and flags, replacing multiple intermediate wire assignments with a single combinational procedural block. This consolidates logic into one place, improving readability and maintainability. 
-
-All outputs (result, zero, carry, negative, overflow, flag) are assigned inside the always_comb block based on the aluc input, while keeping signed and unsigned arithmetic, logical, shift, SLT/SLTU, and LUI operations intact.
-
-Carry and overflow flags are explicitly set only for relevant operations, and the flag output is driven to '0' when not set to avoid high-impedance. The zero and negative flags derive from the result directly. 
-
-This approach balances clarity and synthesis friendliness by grouping related combinational logic, avoiding excessive multiplexing outside procedural logic, while preserving full combinational operation. The final outputs remain wires assigned from registers for stable combinational outputs.

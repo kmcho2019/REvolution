@@ -1,9 +1,0 @@
-The FSM can be simplified by using a byte counter instead of explicit states since the message length is fixed at 3 bytes.
-
-- Use a 2-bit counter to track the position within a message (0 means searching for first byte).
-- When counter is 0, check if in[3] = 1, then set counter to 1 to indicate the first byte received.
-- Increment the counter each cycle if counter > 0, and when the counter reaches 3, assert done and reset the counter to 0 to search again.
-- done is asserted for one cycle immediately after the third byte is received.
-- Use synchronous reset to initialize the counter and done signal.
-
-This approach reduces the FSM to a simple counter-based implementation and removes explicit state encoding.

@@ -1,9 +1,0 @@
-To fix the existing code, we need to focus on two main aspects: correctly identifying the start of a new message and ensuring the 'done' signal is asserted at the right time. 
-
-The start of a new message is identified by a byte with in[3] = 1. However, the current implementation relies on the rising edge of in[3], which might not be the best approach since we don't care about the previous state of in[3]; we only care that the current byte has in[3] = 1.
-
-Once a new message start is detected, we should start counting the bytes received. The counter should be reset when a new message start is detected or when the reset signal is asserted.
-
-The 'done' signal should be asserted in the clock cycle immediately after the third byte of a message is received. This means we should check if the byte count has reached 3 at the beginning of the clock cycle, and if so, assert 'done' and reset the byte count.
-
-By addressing these issues, we can ensure that our finite state machine correctly detects message boundaries in the PS/2 mouse protocol byte stream and signals the receipt of a complete message.

@@ -1,9 +1,0 @@
-Implement a toggle-based frequency divider using a counter that counts up to freq-1, then resets and toggles the output. This approach directly matches the specification: the count increments each clock cycle, when it reaches freq-1, resets to zero and toggles wave_out.
-
-If freq=0, we can treat it as a special case to hold wave_out low (no toggling). This approach is simple, uses a single counter and one register for wave_out, and the toggling is synchronous to clk.
-
-This design provides a precise output frequency division based on freq, where higher freq values produce slower toggling (lower output frequency). It uses minimal combinational logic and only updates wave_out on clock edges, reducing glitches and improving timing compared to combinational comparison methods.
-
-We do not use combinational logic for wave_out; wave_out is a registered output that toggles only on count rollover, ensuring a clean square wave with a 50% duty cycle.
-
-This straightforward synchronous design is easy to understand, implement, and synthesize efficiently.

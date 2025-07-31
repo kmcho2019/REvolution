@@ -1,5 +1,0 @@
-Refactor the design by separating the sequential storage of the previous input and the latch logic for the output more explicitly. Instead of a combined always block updating both `prev_in` and `out`, implement the falling edge detection as a registered signal (`fall_edge_reg`) that captures falling edges synchronously. Then, update `out` based on `fall_edge_reg` in another sequential block. This modular approach clarifies the flow: first detect edges, then latch them.
-
-Also, use a synchronous reset to clear both `prev_in` and `out` as before, but make the code more explicit by using two always blocks—one for `prev_in` update and one for `out` latch. This structure improves readability and separates concerns without changing functionality.
-
-This approach keeps the same logic and timing but changes the code organization and style for clarity and maintainability.

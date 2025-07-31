@@ -1,5 +1,0 @@
-The main issue with the initial solution is the lack of explicit reset logic for the flip-flops, which leads to undefined states after synthesis. To fix this, we add a synchronous reset input to initialize all flip-flops to zero at the start, fulfilling the requirement that they are reset before operation. Since the original problem doesn't mention a reset input, we will add it internally as an active-low synchronous reset that is asserted on the first clock cycle using an internal signal, ensuring deterministic startup without requiring external reset.
-
-This approach ensures that the flip-flops start at zero and operate correctly after. The combinational logic remains unchanged. This solution is fully synthesizable and simulates correctly, eliminating mismatches and making the design robust.
-
-For improved PPA, the design is already minimal with simple combinational logic feeding D flip-flops. No further area or power optimizations are critical here, but proper reset is essential for reliable operation.

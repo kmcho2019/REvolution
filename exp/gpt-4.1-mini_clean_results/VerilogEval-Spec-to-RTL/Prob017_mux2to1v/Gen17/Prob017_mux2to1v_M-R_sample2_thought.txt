@@ -1,9 +1,0 @@
-The original design uses a generate loop and a parameterized submodule to instantiate ten 10-bit multiplexers, each implemented with a ternary operator. This introduces an extra hierarchy level with the submodule.
-
-To refactor while keeping the same functionality, we can remove the parameterized submodule entirely and implement the 2-to-1 multiplexer for all 100 bits with a single continuous assignment in the top module. Instead of chunking explicitly with generate, we rely on the synthesis tool to infer an optimized wide multiplexer. This flattens hierarchy and may reduce some minor area and timing overhead due to module boundary traversal.
-
-To preserve some structural clarity but keep code simple, the top-level module can directly assign `out = sel ? b : a;`. This approach is widely used and synthesizes to efficient multiplexers.
-
-This refactor keeps the design combinational and concise, eliminates extra module instantiations, and relies on the synthesis tool to optimize the wide mux. It is functionally identical to the original.
-
-This approach matches common Verilog style for vector multiplexers and should be preferred unless hierarchical chunking is explicitly desired.

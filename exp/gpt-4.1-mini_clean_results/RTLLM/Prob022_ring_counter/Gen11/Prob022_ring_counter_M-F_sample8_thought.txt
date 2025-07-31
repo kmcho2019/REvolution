@@ -1,5 +1,0 @@
-To address the simulator's inability to handle combinational assignments to the entire output vector, we will simplify the design by maintaining the ring counter state directly in the output register `out`. 
-
-Instead of using a separate position counter and decoding it combinationally, we will implement the one-hot ring counter as a shift register that holds the output directly. On reset, `out` is initialized to `8'b00000001`. On each rising clock edge, the single high bit in `out` is shifted left by one position. To implement the wrap-around from MSB back to LSB, if the shifted value exceeds the MSB, we reset it back to the LSB. This approach avoids any combinational blocks assigning to the output and uses a single sequential always block for both reset and state update.
-
-This design is fully synthesizable, simple, and will be compatible with the limited simulator. It meets the original specification of having only one bit set high at a time cycling through the 8-bit output.

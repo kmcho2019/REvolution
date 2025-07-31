@@ -1,5 +1,0 @@
-The original code correctly models a D latch behavior with an incomplete if-else assignment inside an always block triggered by `d` and `ena`. However, the synthesis tool attempts to infer a latch cell `DLH_X1` which is not present in the target technology library, causing synthesis failure.
-
-To improve synthesis compatibility, we can still keep the latch inference style but explicitly complete the assignment of `q` in the else clause to itself (`q = q;`) so the tool sees the latch behavior clearly and may infer it differently or allow using a generic latch primitive if available.
-
-If synthesis tools still have issues, an alternative approach is to describe the latch functionality via a continuous assignment using a ternary operator, which some synthesis tools handle better:

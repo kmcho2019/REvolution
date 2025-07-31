@@ -1,7 +1,0 @@
-To implement the finite state machine that searches for message boundaries, we will use a simple state machine with four states: IDLE, BYTE1, BYTE2, and DONE. The IDLE state is the initial state where we wait for the first byte of the message. Once we see a byte with in[3]=1, we move to the BYTE1 state and store the byte. We then move to the BYTE2 state and store the next byte. Finally, we move to the DONE state after storing the third byte, assert the done signal, and output the 24-bit message. We will also use a counter to keep track of the current byte position.
-
-We will use a 24-bit register to store the message and three 8-bit registers to store the individual bytes. We will also use a counter to keep track of the current byte position.
-
-The FSM will transition between states based on the current state and the input signal in[3]. The output signal done will be asserted when we are in the DONE state. The output signal out_bytes will be valid when the done signal is asserted.
-
-We will also handle the reset signal by resetting the state machine to the IDLE state and clearing the registers when the reset signal is high.

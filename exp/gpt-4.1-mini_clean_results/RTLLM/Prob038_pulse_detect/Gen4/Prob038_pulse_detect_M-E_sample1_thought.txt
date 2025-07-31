@@ -1,7 +1,0 @@
-Instead of using a multi-state FSM, I will implement the pulse detection using edge detection and a small shift register. The idea is to sample data_in each clock and keep a 3-bit history of the last three samples. A pulse is defined as the pattern 0 -> 1 -> 0 over three consecutive cycles. 
-
-By shifting data_in through a 3-bit register, we can detect the pattern "010" in this history. When this pattern appears, data_out is asserted high for one cycle at the end of the third cycle, then goes low until another pulse is detected.
-
-This approach uses minimal state logic, no FSM, and relies on simple shift register and combinational pattern matching. It is easy to understand, potentially very fast and resource-light.
-
-Reset clears the shift register and output. The pulse detection is synchronous to clk, and the output data_out is a one-cycle pulse indicating the detected pulse pattern.

@@ -1,9 +1,0 @@
-Instead of deriving next-state logic purely by direct combinational inspection, we can implement the FSM next-state signals by a concise priority-based encoding that evaluates which next state is active based on the current state and inputs using case-like conditionals combined into parallel logic. This approach explicitly constructs each next-state signal as a combination of current states and inputs, grouping them by their defining conditions.
-
-Furthermore, we produce the outputs (done, counting, shift_ena) directly from the current states as per the Moore machine description.
-
-This style clearly separates next-state condition evaluation and output logic, making the equations straightforward to verify and ensuring clean combinational logic suitable for synthesis.
-
-All next states (B3_next, S_next, S1_next, Count_next, Wait_next) are directly assigned by logic expressions derived from the FSM transitions and one-hot encoding, with no intermediate signals.
-
-This alternate approach aims for clarity and ease of verification rather than maximum logic factoring, providing a fresh perspective on the same FSM logic.

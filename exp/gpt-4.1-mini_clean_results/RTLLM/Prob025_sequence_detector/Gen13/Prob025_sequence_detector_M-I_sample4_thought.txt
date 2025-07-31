@@ -1,9 +1,0 @@
-To improve the original design, I will address the reset polarity discrepancy to match the problem statement, where reset is active high (asserted high to reset the FSM). This aligns module behavior with the problem specification and typical conventions, avoiding confusion in testbenches.
-
-Additionally, I will simplify the FSM encoding by removing the SystemVerilog typedef enum, replacing it with simple parameter localparams and `reg [1:0]` state variables to improve compatibility with plain Verilog simulators/tools and eliminate implicit cast issues.
-
-The FSM will remain Mealy with four states representing the number of matched bits in the sequence "1001." The output will be asserted synchronously for one clock cycle exactly when the full sequence is detected.
-
-The code comments will clarify reset behavior and encoding for maintainability.
-
-This approach maintains the original FSM logic correctness and allows easy integration with testbenches expecting active-high reset and classic Verilog style. It also keeps the sequence detection fast, area-efficient, and ready for overlap detection.

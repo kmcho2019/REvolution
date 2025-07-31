@@ -1,9 +1,0 @@
-The original design uses an always block triggered on the positive clock edge to implement the 8 D flip-flops. To refactor while preserving the behavior of positive-edge triggered DFFs, we can instantiate 8 separate D flip-flops explicitly as individual modules or use a generate loop to instantiate a simple edge-triggered DFF module for each bit.
-
-Here, I will create a separate DFF module with an input clock and D, and output Q, triggered on the rising edge. Then in TopModule, use a generate loop to instantiate 8 such DFFs for each bit of the input vector.
-
-This explicit instantiation clarifies that each bit is a separate D flip-flop and avoids a single always block. It still results in the same functional behavior. This approach can be useful when expanding to more complex modules or when DFFs are reused elsewhere.
-
-No reset is added, so the initial power-up state is undefined, consistent with the original design. The output ports remain one bit wide and are aggregated into the vector output `q`.
-
-This structure shows modular design and is fully synthesizable.

@@ -1,8 +1,0 @@
-To refactor the original Johnson counter implementation while keeping the same core functionality, I will separate the next-state combinational logic from the sequential update by using an explicit combinational always block to compute the next state, and then an always block triggered by the clock and reset to update the output register. This approach enhances clarity by isolating next state calculation, making the code easier to extend or modify later (such as for insertion of enable signals or debug hooks).
-
-Specifically:
-- Define a reg `next_Q` to hold the computed next state.
-- Use an always @* block to compute `next_Q` from current `Q`.
-- Use an always @(posedge clk or negedge rst_n) block to update `Q` on reset or clock edge.
-
-This structure is common in finite state machines and sequential designs, and although functionally equivalent to the original, it explicitly separates combinational and sequential logic, improving readability and debugging potential.

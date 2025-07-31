@@ -1,9 +1,0 @@
-The original design is functionally correct and clean, but we can further optimize area and power by eliminating the explicit nand4 module instantiations and directly implementing the 4-input NAND gates using continuous assignments inside TopModule. This removes the module hierarchy overhead and may lead to simpler logic during synthesis.
-
-Additionally, combining the NAND expressions directly in TopModule reduces the number of nets and instances, potentially lowering area and power slightly.
-
-This approach trades off modularity for minimal structural complexity, which is acceptable here since the nand4 module is simple and only used twice.
-
-No timing degradation is expected, as the logic depth remains the same (one NAND stage).
-
-Hence, the improved design directly assigns p1y and p2y outputs from the NAND of the four inputs each, with no additional module instantiation or wires.

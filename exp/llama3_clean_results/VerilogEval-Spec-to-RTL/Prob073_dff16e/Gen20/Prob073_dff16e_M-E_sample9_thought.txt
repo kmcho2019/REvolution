@@ -1,9 +1,0 @@
-The new architectural idea involves implementing the 16-bit register with byte-enable control using a single, unified register structure that leverages the Verilog array data type. This approach deviates from the traditional modular approach of instantiating separate modules for each byte. Instead, it uses a single module that contains the entire 16-bit register and directly manipulates its bits based on the byte-enable signals.
-
-The unified register structure, `q`, is a 16-bit reg array. The input data, `d`, is a 16-bit input vector, and `byteena` is a 2-bit input vector controlling the byte enables. The reset signal, `resetn`, is a synchronous, active-low reset.
-
-The always block in the TopModule is triggered on the positive edge of the clock, `clk`. Inside the always block, a conditional statement checks if the reset is active low. If the reset is active, the entire 16-bit register `q` is reset to zero.
-
-If the reset is not active, the code then checks the byte enable signals. For each byte enable signal that is high, the corresponding byte in the register `q` is updated with the input data `d`. This is achieved using a bitwise OR operation with a mask that selects the appropriate byte.
-
-This novel approach streamlines the design by eliminating the need for separate module instantiations, potentially reducing area consumption and improving performance by minimizing the complexity of the combinational logic.

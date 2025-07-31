@@ -1,7 +1,0 @@
-Implement the 4-bit shift register and down counter by integrating a single 4-bit register updated on each clock edge. When shift_ena is high, shift the register left and insert the input data into the MSB; when count_ena is high, decrement the value stored in the register (mod 16). To differentiate, use a simple 2-to-1 mux controlled by shift_ena as the priority signal; if shift_ena is 0 and count_ena is 1, decrement; else hold the value. Initialize the register synchronously to 0 on reset by adding an explicit reset input and assuming asynchronous reset is not required (if not provided, reset at the first clock cycle). Since the user does not specify reset, initialize q_reg with zero using an initial block or synchronous logic with a reset flag.
-
-This approach keeps the design minimal and straightforward with minimal combinational logic and avoids extra enable gating logic, trading off a bit more switching activity for simplicity. It leverages simple combinational logic and a straightforward priority mux for next-state logic. The decrement operation is implemented with subtraction, which is synthesizable and straightforward for a 4-bit value.
-
-All updates happen on the positive clock edge, no extra enable gating signals are used. The output q is directly driven from the register value.
-
-This design prioritizes clarity and simplicity with minimal additional state or control logic.

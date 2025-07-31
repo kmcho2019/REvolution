@@ -1,7 +1,0 @@
-To address the issues identified in the feedback, we need to ensure that the 'done' signal is asserted in the cycle immediately after the third byte is received. This can be achieved by using a separate signal to indicate when the third byte has been received and then asserting 'done' in the next cycle. Additionally, we should optimize the code for PPA by minimizing the number of state transitions and using efficient encoding for the state variable.
-
-One approach to fix the code is to modify the FSM's transition logic to only proceed to the next state when a valid byte is received. We can add a new signal, 'valid_byte', to indicate when a valid byte is received. The 'done' signal can then be asserted when the state transitions from 2'b11 (BYTE3) to 2'b00 (IDLE).
-
-To optimize the code for PPA, we can use a more efficient encoding scheme for the states, such as one-hot encoding, and minimize the number of combinational logic gates required to determine the next state. We can also consider using a more compact state encoding scheme, such as binary encoding, to reduce the number of flip-flops required to store the state.
-
-Another optimization is to use a single always_comb block to determine the next state and the 'done' signal, rather than using separate always_comb and assign statements. This can help reduce the critical path delay and improve performance.

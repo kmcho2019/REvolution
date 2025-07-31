@@ -1,7 +1,0 @@
-The original implementation is already minimal and synthesizable, using a single non-blocking assignment with concatenation to perform the right shift and insertion of the new bit at the MSB. From a performance and area standpoint, it's already optimal for an 8-bit shift register.
-
-To optimize for power, especially in designs where the input 'd' and the register content might remain stable over many clock cycles, adding an enable signal to only shift when needed can reduce unnecessary toggling. Since the problem statement does not include an enable input, we can internally generate a simple enable condition: shift only if the incoming bit 'd' is different from the current MSB q[7]. This condition prevents unnecessary shifts when the MSB is stable and the new bit is the same, reducing power by minimizing toggling.
-
-This minor modification does not affect the functional behavior and slightly improves power efficiency without sacrificing performance or increasing area significantly.
-
-Also, keep the initial zeroing of the register for deterministic startup.

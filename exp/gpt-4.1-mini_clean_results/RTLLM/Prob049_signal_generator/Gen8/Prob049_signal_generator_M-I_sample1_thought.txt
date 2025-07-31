@@ -1,7 +1,0 @@
-To optimize for better power and area while maintaining timing, I will avoid redundant self-assignments to the 'wave' register at boundary conditions, which can reduce unnecessary toggling and dynamic power. Instead of assigning 'wave <= wave' explicitly, I will simply not update 'wave' when at boundaries and switching states, which infers a latch-like behavior in sequential logic but is safe here as the register holds its value by default. This reduces write activity on the register. 
-
-Additionally, I will replace the case statement with an if-else structure for a simpler control flow since the state is a single bit, which can slightly reduce logic area. Also, I'll move the boundary condition checks to the beginning of the always block to quickly decide state transitions and then update wave accordingly, minimizing unnecessary logic.
-
-The asynchronous reset is preserved per specification.
-
-This approach improves power by reducing toggling on the 'wave' register and can marginally reduce area by simplifying control logic without impacting timing.

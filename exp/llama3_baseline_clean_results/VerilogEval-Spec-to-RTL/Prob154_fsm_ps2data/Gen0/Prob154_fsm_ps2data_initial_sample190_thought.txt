@@ -1,5 +1,0 @@
-To implement the TopModule, we can use a finite state machine (FSM) with three states: IDLE, FIRST_BYTE, and SECOND_BYTE. The FSM will stay in the IDLE state until it receives a byte with in[3]=1, at which point it will transition to the FIRST_BYTE state. In the FIRST_BYTE state, it will store the received byte and transition to the SECOND_BYTE state. In the SECOND_BYTE state, it will store the next two bytes and then transition back to the IDLE state, asserting the done signal. The out_bytes output will be driven by a combinational logic that concatenates the three bytes received during the SECOND_BYTE state.
-
-We will use two registers, byte1 and byte2, to store the first two bytes of the message, and a counter, state, to keep track of the current state. We will also use a signal, done, to indicate when a message has been received.
-
-The FSM will be implemented using a case statement, and the combinational logic will be implemented using a concatenation operator.

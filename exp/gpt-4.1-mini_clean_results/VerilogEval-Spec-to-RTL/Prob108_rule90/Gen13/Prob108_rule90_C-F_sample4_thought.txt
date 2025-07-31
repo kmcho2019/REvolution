@@ -1,9 +1,0 @@
-Fuse the strengths of both examples by maintaining the modular 64-bit blocks with explicit and clear boundary wiring to ensure clarity and synthesis friendliness, while also simplifying the clock enable path by always updating the state each clock cycle (no clock enable gating or comparisons) to improve timing and reduce area.
-
-Keep the combinational next_state XOR logic per bit inside each 64-bit block using generate loops for concise yet clear code. Explicitly assign boundary signals between blocks and zero at the edges for correctness.
-
-This fusion yields a clean, modular, and easily maintainable design with improved timing and simpler clocking. It avoids extra combinational logic on clock enable paths and prevents glitches from asynchronous load signals by assuming load is synchronous.
-
-Optionally, this design can be extended with pipelining or clock gating if necessary, but for now it prioritizes clarity, correctness, and good PPA tradeoffs.
-
-The final design loads data synchronously on load assertion and advances the Rule 90 automaton state on every clock cycle using XOR of immediate neighbors, with boundaries zeroed.

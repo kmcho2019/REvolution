@@ -1,8 +1,0 @@
-The FSM will have the following states:
-- IDLE: waiting for pattern 1101; on each clock, shift in the new data bit to a 4-bit shift register and check if it matches 1101.
-- SHIFT: after detecting 1101, assert shift_ena for exactly 4 clock cycles to shift in the duration bits.
-- COUNTING: assert counting, wait for done_counting to go high.
-- DONE: assert done, wait for ack to go high.
-On reset, return to IDLE.
-
-We implement a 4-bit shift register to detect the pattern 1101. Then, after pattern detection, count 4 clock cycles with shift_ena asserted, then go to COUNTING, then DONE states as per specification.

@@ -1,9 +1,0 @@
-Use a two-stage pipelined approach with two registers to capture input states from the two previous clock cycles. By comparing the delayed inputs, detect rising edges as those bits that were 0 two cycles ago and 1 in the previous cycle, effectively detecting a 0-to-1 transition one cycle earlier than the original approach. Then register the detection result into the output `pedge` in the current cycle, which means the output indicates the rising edge one clock cycle after the 0-to-1 transition (the same timing requirement).
-
-This approach trades off latency internally but preserves output timing and uses additional registers to enable more explicit pipeline stages. The extra pipeline stage can improve timing closure for very high-frequency designs since logic is split into smaller steps.
-
-Specifically:
-- Use registers `in_d1` and `in_d2` for 1st and 2nd cycle delayed inputs
-- Compute rising edges by checking where `in_d2` is 0 and `in_d1` is 1
-- Register result to `pedge`
-- This way, rising edges are detected comparing inputs delayed by two and one cycles, and output occurs exactly one cycle after input changes from 0 to 1

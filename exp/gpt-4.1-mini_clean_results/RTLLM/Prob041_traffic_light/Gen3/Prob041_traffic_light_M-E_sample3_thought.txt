@@ -1,9 +1,0 @@
-Implement the traffic light controller as a Moore FSM with four states: idle, red, yellow, and green. Use a single down-counter for timing durations in each state. On reset, start from idle and immediately move to red.
-
-For each state, assign fixed durations: red = 10, yellow = 5, green = 60 (clock cycles). The down-counter counts down from the state's duration to zero. When it reaches zero, transition to the next state accordingly.
-
-To handle pedestrian requests, monitor the pass_request input during the green state. When pass_request is asserted and the counter is currently above 10, force the counter to 10, effectively shortening the green time to 10 cycles left. If the counter is already less or equal to 10, do nothing.
-
-Store the current state's outputs in registers updated at the clock edge for glitch-free outputs. The pedestrian button can be asynchronously sampled but synchronized internally for metastability protection.
-
-This approach uses a down-counter, making it intuitive to track the remaining time and apply the pedestrian button shortening. State transitions are clean and durations are handled explicitly. Outputs are simple and assigned per state, meeting the problem requirements precisely.

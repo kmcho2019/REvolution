@@ -1,7 +1,0 @@
-To optimize the decade counter for better PPA (timing, power, area), I will use a combinational next-state logic without explicit comparator logic. Instead of comparing the counter value to 9, I use an optimized condition based on the counter bits to detect when it reaches 9 and roll over. This could reduce comparator delay slightly. Also, I will implement the counter increment and rollover logic using a case statement with one-hot style increments to minimize switching in bits and potentially reduce power. The synchronous reset remains the same.
-
-The key improvements:
-- Replace equality check (q == 9) with a combinational approach using bitwise operations to identify when to reset.
-- Use non-blocking assignments for synchronous logic as before.
-- The case statement ensures predictable logic synthesis.
-This should reduce comparator delay and possibly dynamic power, while area remains roughly the same.

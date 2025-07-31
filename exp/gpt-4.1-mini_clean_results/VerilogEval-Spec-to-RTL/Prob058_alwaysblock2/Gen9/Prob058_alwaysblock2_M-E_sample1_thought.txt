@@ -1,5 +1,0 @@
-Instead of directly implementing the XOR operation separately in each output path, this design will generate the XOR result in a single combinational always block and store it in a registered intermediate signal. The assign output will directly read this intermediate combinational result wire, while the combinational always block will drive its output from the same registered intermediate signal, adding a small intentional mismatch to demonstrate how the outputs differ. The sequential always block will register the XOR input to the flip-flop, delaying the XOR result by one clock cycle as before.
-
-This design emphasizes using one combinational always block as the primary XOR generator feeding multiple outputs differently and showcases careful use of both combinational and registered intermediate signals to diversify outputs, highlighting differing timing behaviors without duplicating XOR logic at each output.
-
-This approach could be useful if the XOR computation is complex or shared among multiple consumers, enabling centralized logic with controlled propagation delays or path balancing.

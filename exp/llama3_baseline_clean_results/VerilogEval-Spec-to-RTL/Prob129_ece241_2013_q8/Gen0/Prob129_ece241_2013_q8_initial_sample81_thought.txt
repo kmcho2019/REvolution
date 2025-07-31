@@ -1,8 +1,0 @@
-To implement a Mealy-type finite state machine (FSM) that recognizes the sequence "101" on the input signal `x` with the given constraints, we need to define three states that track the progress of the sequence detection. The states can be:
-1. `IDLE`: Initial state where no sequence has been detected yet.
-2. `SEQ_1`: State after the first '1' of the sequence "101" has been seen.
-3. `SEQ_10`: State after the sequence "10" has been seen.
- 
-The output `z` should be asserted to logic-1 only when the sequence "101" is detected, which means when we are in `SEQ_10` state and the input `x` is '1'. We need to handle the negative edge triggered asynchronous reset (`aresetn`) and ensure the FSM resets to the `IDLE` state when the reset is asserted.
-
-The FSM should be able to recognize overlapping sequences, meaning if the input sequence is "10101", it should detect "101" twice.

@@ -1,9 +1,0 @@
-To improve PPA, focus on reducing switching activity and critical path delay:
-
-- Move done signal assertion to a one-cycle pulse generated from a 'message_done' register, avoiding continuous toggling each cycle.
-- Register out_bytes only when done is asserted, holding its value stable otherwise, which reduces power.
-- Simplify FSM logic by introducing a small 2-bit state encoding for clarity and slightly better synthesis optimization.
-- Use a one-hot style counter update to reduce logic complexity.
-- Break combinational dependency on in and multiple byte registers at output by registering out_bytes only when needed.
-- Keep synchronous reset for simplicity.
-These changes maintain functional correctness while optimizing timing and power by reducing toggling on outputs and simplifying FSM logic.

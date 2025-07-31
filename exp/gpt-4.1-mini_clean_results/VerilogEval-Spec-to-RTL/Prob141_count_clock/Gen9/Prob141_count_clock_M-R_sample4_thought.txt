@@ -1,5 +1,0 @@
-Refactor the design to separate counting and BCD conversion more cleanly by using intermediate binary-to-BCD conversion registers updated synchronously on the clock, reducing combinational complexity on the output path. Replace the functions for BCD conversion with dedicated combinational logic blocks using arithmetic instead of function calls for clarity and better synthesis optimization.
-
-Keep a single always block for the counters and PM toggle, but create separate always blocks or continuous assignments for BCD digits to minimize combinational path complexity. Output ports hh, mm, ss are registered on the clock edge, updated synchronously from the binary counters converted via simple combinational logic without functions.
-
-This approach improves timing by registering outputs, reduces combinational load, and enhances readability by using clear intermediate signals for BCD tens and units digits.

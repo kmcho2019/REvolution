@@ -1,7 +1,0 @@
-The problem requires designing a finite state machine (FSM) that can identify bytes in a serial communication protocol with a start bit, 8 data bits, and a stop bit. The FSM should be able to receive the stream of bits, identify the start bit, wait for the data bits, verify the stop bit, and output the correctly received data byte. 
-
-The FSM will have several states: IDLE (waiting for a start bit), START (processing the start bit), RECEIVE (receiving the 8 data bits), and STOP (verifying the stop bit). 
-
-Upon detecting a start bit (0) while in the IDLE state, the FSM will transition to the START state. Then, it will move to the RECEIVE state where it will collect the 8 data bits. After receiving all the data bits, it will transition to the STOP state to verify the stop bit. If the stop bit is correct (1), it will assert the done signal and output the received data byte. If the stop bit is not correct, it will wait until it finds a stop bit before attempting to receive the next byte.
-
-We will use a counter to keep track of the number of data bits received, and a shift register to store the received data bits. The FSM will be implemented using a case statement with the current state as the selection variable.

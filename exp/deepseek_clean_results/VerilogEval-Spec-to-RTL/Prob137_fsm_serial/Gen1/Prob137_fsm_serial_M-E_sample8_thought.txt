@@ -1,7 +1,0 @@
-Instead of using a traditional FSM with separate states for each phase, we can implement a counter-based approach with parallel load:
-1. Use a 10-bit shift register to capture the entire frame (start + 8 data + stop bits)
-2. Implement a modulo-10 counter to track bit positions
-3. When counter reaches 9 (complete frame), check if start=0 and stop=1
-4. If valid, output done and the data bits in parallel
-5. If invalid, wait until line returns to idle (1) before allowing new reception
-6. This approach reduces state transitions and allows parallel validation of all bits

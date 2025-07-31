@@ -1,5 +1,0 @@
-Instead of maintaining an explicit position index and decoding it to a one-hot output, implement the ring counter by directly rotating the output register itself. The output `out` is a one-hot 8-bit register initialized to 8'b0000_0001 upon reset. On every rising edge of `clk`, rotate the bits left by one position, effectively moving the '1' bit to the next position and wrapping around automatically. This approach eliminates the need for a separate position register and complex combinational decoding logic, resulting in a simpler and more efficient design.
-
-The rotation can be implemented by concatenating the left-shifted vector with the MSB shifted into LSB, i.e., `out <= {out[6:0], out[7]}`.
-
-This design is fully synchronous with asynchronous reset, suitable for synthesis and simulation, and avoids complex assignments to outputs.

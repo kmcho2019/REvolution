@@ -1,7 +1,0 @@
-The primary issue in the original code lies in the timing of the updates to `prev_in` and `out`. Since both are updated at the same clock edge, `prev_in` never actually holds the value of `in` from the previous clock cycle when the comparison `prev_in & ~in` is made. To fix this, we need to ensure that `prev_in` is updated with the current value of `in` but only after the comparison has been made. This means we should update `prev_in` after calculating the new value of `out`. 
-
-Another aspect to consider is the logic for updating `out`. The current logic attempts to capture the transition from 1 to 0 and set the corresponding bit in `out` to 1. However, this logic is flawed because it uses the updated `prev_in` value, which is actually the current `in` value, not the previous one. 
-
-To correctly implement the desired behavior, we should compare the current `in` with the previous `in` (which is `prev_in` before it's updated) to detect the falling edge. If a falling edge is detected, we set the corresponding bit in `out` to 1. This way, once a bit in `out` is set to 1 due to a falling edge in `in`, it remains 1 until `reset` is asserted.
-
-The corrected logic involves first calculating the new value of `out` based on the current `in` and the previous `in` (held in `prev_in`), and then updating `prev_in` with the current `in` for the next clock cycle. This ensures that `prev_in` always holds the value of `in` from the previous clock cycle when needed for the comparison.

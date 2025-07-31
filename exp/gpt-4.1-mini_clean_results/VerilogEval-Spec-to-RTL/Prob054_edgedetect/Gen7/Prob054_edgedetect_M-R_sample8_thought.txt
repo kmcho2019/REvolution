@@ -1,8 +1,0 @@
-Refactor the original sequential edge detection by splitting the design into two stages: 
-1) Store the previous input value using a register (prev_in).
-2) Detect positive edges combinationally by comparing current input with prev_in.
-3) Register the detected edges into pedge on the next clock to produce a one-cycle pulse after each 0->1 transition.
-
-This refactoring uses a synchronous register for prev_in and a combinational wire for edge detection, which is then registered in pedge. 
-This separates the edge detection logic from the output register stage, increasing code clarity by showing explicitly which signals are combinational vs registered. 
-It retains the same behavior: pedge pulses one cycle after each 0->1 bit transition on input.

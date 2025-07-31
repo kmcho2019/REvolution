@@ -1,7 +1,0 @@
-Simplify the FSM by merging direction into the state encoding, eliminating the separate direction register. Use four main states representing walking left, walking right, digging left, and digging right, plus falling and splattered states that remember direction internally by transitioning to the corresponding walking or digging state after falling. This reduces state and variable count and eliminates explicit direction toggling logic.
-
-Handle bump conditions by switching between left and right walk/dig states. Maintain the same priority order: fall > dig > bump. Use a single 5-bit fall timer saturating at 31.
-
-Outputs are Moore-type, derived from state encoding, with walking left/right, digging, and aaah indicating falling. Splattered state disables all outputs. Asynchronous reset brings the FSM to walking left.
-
-This encoding and approach simplify logic by using one 3-bit state, no separate direction reg, and clear transitions, minimizing combinational logic and registers while preserving all behavior and priorities.

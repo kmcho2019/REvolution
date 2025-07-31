@@ -1,7 +1,0 @@
-Refactor the 16-bit CLA block to explicitly compute all carries via generate-propagate (g/p) and carry vectors without iterative generate blocks for carry signals, using a parallel prefix-like carry computation using assign statements and intermediate wires. This avoids a generate loop for carry chain in favor of a more explicit and parallel expression, improving clarity and potentially enabling better synthesis optimization.
-
-At the top 32-bit level, keep the same modular hierarchy with two 16-bit CLA blocks. However, compute the carry-in to the upper block more conventionally as C16 (carry-out from lower block) rather than just G_low, which is more accurate for carry propagation when Cin=0 and matches common CLA block interconnection. This makes the interface between blocks straightforward and correct for general inputs.
-
-Map input and output ports similarly, preserving [32:1] indexing on the interface but converting internally to 0-based indexing for ease of synthesis and clarity.
-
-This refactor maintains the hierarchical CLA approach and clarity but changes the style from generate loops to explicit assign wires for carry computation, and adjusts the inter-block carry propagation to use carry-out, improving correctness and simplicity.

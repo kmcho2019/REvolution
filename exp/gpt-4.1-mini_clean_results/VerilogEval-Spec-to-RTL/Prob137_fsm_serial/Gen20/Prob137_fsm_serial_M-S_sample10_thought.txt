@@ -1,5 +1,0 @@
-Simplify the FSM by using a binary-encoded state machine with only a few states: IDLE (waiting for start bit), RECEIVE (receiving 8 data bits tracked by a 3-bit counter), CHECK_STOP (verifying stop bit), and ERROR_WAIT (waiting for line to return to idle after framing error). Use a 3-bit counter to count received data bits instead of having separate states for each bit. Shift the incoming bits into a register LSB-first in RECEIVE state. The done signal pulses high for one cycle when a valid stop bit is detected.
-
-This reduces the number of states and flip-flops needed, decreases next state combinational logic complexity, and makes bit reception logic more compact and scalable. Synchronous reset clears state, counter, and done. All sequential logic is clocked on positive edge.
-
-This approach maintains correct protocol detection and error recovery, while being simpler and more resource-efficient than the one-hot encoding and large state machine.

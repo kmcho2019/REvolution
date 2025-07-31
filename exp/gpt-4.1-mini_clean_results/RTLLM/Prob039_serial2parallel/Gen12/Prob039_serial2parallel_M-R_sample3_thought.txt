@@ -1,9 +1,0 @@
-To refactor the design with a different structure while preserving the core functionality:
-
-1. Use a state machine with two states: IDLE (waiting for din_valid) and SHIFT (shifting in bits).
-2. Use an 8-bit shift register that shifts right, inserting new bits at the MSB, so the first received bit ends up at the MSB position in dout_parallel.
-3. Use a 4-bit counter to count how many bits have been received.
-4. When the counter reaches 8, assert dout_valid for one clock cycle and output the parallel data.
-5. Use continuous assignments (`assign`) for dout_parallel and dout_valid, driven by internal registers.
-6. Make the design synchronous with synchronous reset.
-7. This state machine approach separates input data capture and output logic clearly, which enhances readability and ease of verification.

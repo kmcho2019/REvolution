@@ -1,9 +1,0 @@
-Use continuous assignments with bitwise and shift operations to directly compute the outputs without loops or always blocks. 
-
-For out_both: Shift the input left by one (padding LSB with 0) and bitwise AND with the original input. Since the leftmost bit has no neighbor to the left, its output bit is zero by construction.
-
-For out_any: Shift the input right by one (padding MSB with 0) and bitwise OR with the original input. Since the rightmost bit has no neighbor to the right, its output bit is zero.
-
-For out_different: Create a rotated version of the input vector shifted left by one bit with wrap-around (concatenate in[2:0] with in[3]) and XOR with the input vector. This models the neighbor-to-the-left with wrap-around for all bits.
-
-This approach is fully combinational, minimal, and synthesizes into a few LUTs with no loops or registers. It also explicitly encodes the relationships using vector operations.

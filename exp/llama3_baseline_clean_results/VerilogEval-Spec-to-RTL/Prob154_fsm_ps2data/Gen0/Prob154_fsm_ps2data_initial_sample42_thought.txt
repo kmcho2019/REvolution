@@ -1,5 +1,0 @@
-To implement the TopModule, we can use a finite state machine (FSM) with four states: IDLE, BYTE1, BYTE2, and DONE. The FSM will transition from IDLE to BYTE1 when it encounters a byte with in[3]=1. Then, it will transition from BYTE1 to BYTE2 after receiving the second byte, and from BYTE2 to DONE after receiving the third byte. In the DONE state, the FSM will assert the done signal and output the 24-bit message. The FSM will reset to IDLE when the reset signal is asserted.
-
-We will use registers to store the current state, the input byte, and the output message. We will also use a counter to keep track of the number of bytes received.
-
-In the IDLE state, the FSM will discard bytes until it encounters a byte with in[3]=1. In the BYTE1 and BYTE2 states, the FSM will store the received bytes in the output message. In the DONE state, the FSM will assert the done signal and output the 24-bit message.

@@ -1,9 +1,0 @@
-Use a shift-register approach to store incoming data when valid_in is high, shifting in new 8-bit values into a 32-bit register composed of four concatenated 8-bit segments. Maintain a counter that increments on each valid input to track how many inputs have been accumulated.
-
-When the counter reaches 4, perform parallel addition by summing the four 8-bit segments stored in the 32-bit shift register simultaneously, producing a 10-bit result. Then output this sum, pulse valid_out for one cycle, and reset the counter and shift register for the next accumulation cycle.
-
-This method delays addition until after four data inputs are received, reducing combinational logic switching during input cycles and allowing addition to happen in one clock cycle only at output time. This can reduce power by avoiding accumulation adds each cycle.
-
-Reset is synchronous. valid_out is asserted for one cycle immediately after summing four inputs.
-
-This approach simplifies addition to a single parallel sum, trades off a slightly larger register (32 bits) for simplified addition timing and potentially lower dynamic power.

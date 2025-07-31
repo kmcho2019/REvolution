@@ -1,7 +1,0 @@
-Refactor the 16-bit CLA to explicitly compute per-bit generate and propagate signals, and then compute the carry signals through a hierarchical prefix logic combining pairs of generate and propagate signals iteratively. Instead of a single function computing carries linearly, this approach uses parallel prefix style logic stages to compute carries more structurally without loops inside a function, improving clarity on the carry generation logic.
-
-At the top 32-bit module, keep two 16-bit CLA instances but use normal 0-based indexing for inputs and outputs internally, and simply slice the input vectors directly without manual concatenation. The top-level ports remain [32:1], but internal signals use [31:0] indexing, sliced easily by subtracting 1.
-
-Output sum is assigned directly from the CLA instances, remapped back to [32:1] indexing by simple bit rearrangement using for-generate loops, improving code clarity and reducing manual concatenation.
-
-This refactoring preserves the carry lookahead concept but makes the prefix carry computation more explicit and hierarchical, improving readability and making it easier to adapt or optimize later. The indexing cleanup reduces verbosity and potential errors in bit reordering.

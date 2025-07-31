@@ -1,7 +1,0 @@
-module TopModule(
-    input x,
-    input y,
-    output z
-);
-    assign z = y & ~x;  // Direct implementation of simplified logic
-endmodule

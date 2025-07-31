@@ -1,9 +1,0 @@
-Refactor the module by explicitly defining the next-state signals for all ten states as wires, then use those signals to produce the requested next-state outputs. This contrasts the prior code where only a few next-state signals were defined as wires and others as assign outputs directly.
-
-We also derive the shift_ena output from the current state signals directly instead of next state, as per the problem statement. This makes it clear that shift_ena depends on the current B0-B3 states.
-
-By enumerating all next states explicitly, the code becomes more uniform and readable, which can aid verification and modifications.
-
-Also, use localparams for state bit indices for clarity, and define inputs as wires and outputs as wires, following typical Verilog conventions.
-
-This new approach keeps the same logic equations but organizes combinational logic systematically by assigning next state signals independently before assigning outputs that depend on them, improving code clarity and maintainability without changing behavior.

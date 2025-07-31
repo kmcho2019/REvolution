@@ -1,9 +1,0 @@
-Implement the perpetual calendar counters in a single always block triggered by posedge CLK or RST. Use synchronous reset. Use internal carry flags to cascade increments from seconds to minutes to hours within the same clock cycle, thus removing the need for multiple always blocks and reducing combinational dependencies between them.
-
-The idea is:
-- Increment seconds each clock cycle; when it wraps from 59 to 0, set a "carry_min" flag.
-- If carry_min is set, increment minutes; if minutes wrap from 59 to 0, set a "carry_hour" flag.
-- If carry_hour is set, increment hours; wrap from 23 to 0.
-- This approach reduces complexity by doing all updates in one sequential block, avoiding conditionals spread across multiple blocks.
-- Outputs are still registered.
-- Use 6 bits for seconds and minutes, 5 bits for hours as before.

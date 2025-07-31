@@ -1,8 +1,0 @@
-Refactor the module to use a small finite state machine (FSM) with two states: IDLE (waiting for the first byte) and WAIT_SECOND (waiting for the second byte). 
-
-- In the IDLE state, on receiving a valid input, store the first byte and transition to WAIT_SECOND.
-- In the WAIT_SECOND state, on receiving a valid input, capture the second byte, concatenate it with the first byte, and assert valid_out and data_out signals on the next clock cycle.
-- Use an output register to hold the concatenated data and valid_out, which will be updated one cycle after the second byte arrives, fulfilling the timing requirement.
-- If no valid_in arrives in WAIT_SECOND state, remain waiting and do not assert outputs.
-- Reset asynchronously clears all internal registers and returns to IDLE.
-- This stateful approach cleanly manages the sequencing and timing delay, avoiding combinational assignments inside sequential logic.

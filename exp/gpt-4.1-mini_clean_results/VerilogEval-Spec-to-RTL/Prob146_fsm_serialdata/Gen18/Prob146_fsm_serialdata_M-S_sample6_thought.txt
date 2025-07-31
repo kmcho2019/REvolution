@@ -1,3 +1,0 @@
-Simplify the FSM by combining next-state and output logic into a single always block and removing the separate next_state logic block. Use a straightforward three-state FSM (IDLE, RECEIVE, CHECK_STOP) with a recovery approach incorporated by staying in CHECK_STOP until a valid stop bit is observed. This avoids an explicit RECOVER state. Shift in bits LSB-first by shifting right and inserting the new bit in MSB, keeping the shift register update concise.
-
-Maintain synchronous reset and assert done for one cycle when a byte is correctly received. Reduce register updates outside RECEIVE by only updating shift_reg and bit counter in RECEIVE. This lowers complexity and keeps functionality intact.

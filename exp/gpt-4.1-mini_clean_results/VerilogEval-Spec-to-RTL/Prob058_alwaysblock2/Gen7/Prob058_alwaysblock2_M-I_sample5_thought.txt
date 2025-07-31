@@ -1,5 +1,0 @@
-The original design shares the XOR operation result using an intermediate wire to feed both the assign and combinational always block outputs, and registers this result for the sequential output. While this is clean and functionally correct, we can improve power slightly by removing the intermediate wire and performing the XOR inline in each case. This avoids the need for routing the intermediate net and any slight load it may cause, potentially reducing toggling and capacitance. It also slightly reduces the logic net count.
-
-Since the XOR is simple and appears only twice in the combinational paths (assign and always_comb), the repeated XOR instantiations are negligible overhead for power and area. The sequential output still registers the inline XOR directly.
-
-This simplification retains clarity, maintains all timing and functional requirements, and reduces the netlist complexity slightly, which may yield marginal PPA improvements with zero impact on latency or functionality.

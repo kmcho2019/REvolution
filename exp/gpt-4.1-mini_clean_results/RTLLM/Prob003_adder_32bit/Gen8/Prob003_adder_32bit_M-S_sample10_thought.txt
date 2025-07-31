@@ -1,9 +1,0 @@
-Simplify the 32-bit carry-lookahead adder by using two 16-bit CLA blocks as before, but avoid computing and propagating the block propagate and generate signals explicitly between blocks. Instead, directly use the lower block's carry-out as the carry-in to the upper block, creating a clean and straightforward hierarchical CLA structure.
-
-Within each 16-bit CLA block, implement propagate and generate signals per bit, compute the carry signals by a simple generate loop, and output sum and carry-out.
-
-At the 32-bit top level, instantiate two 16-bit CLA blocks, with the lower block carry-in fixed to 0, and the upper block carry-in connected directly to the lower block's carry-out.
-
-Keep port indexing as [32:1] per specification, but internally map to zero-based vectors for clarity and standard practice.
-
-This simplification reduces complexity by removing the extra block propagate and generate signals and their logic, resulting in simpler code with the same functional correctness.

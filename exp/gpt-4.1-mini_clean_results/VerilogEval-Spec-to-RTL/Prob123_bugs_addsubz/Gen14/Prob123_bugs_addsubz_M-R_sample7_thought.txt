@@ -1,7 +1,0 @@
-Refactor the module by using a single always_comb (always @(*) in Verilog 2001) block that uses the ternary operator for selecting addition or subtraction, directly computes the output, and sets the zero flag based on the output. 
-
-This version still uses the `reg` type for outputs since they are assigned inside a procedural block, but simplifies the logic by removing the case statement and instead uses a ternary expression to compute `out`.
-
-Also, fix the bug in the original code where `result_is_zero` was only set if the output was zero but left unassigned otherwise (resulting in latches). Here, assign `result_is_zero` in all cases to avoid inferred latches.
-
-This approach preserves the procedural style but corrects the bug and improves clarity.

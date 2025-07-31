@@ -1,5 +1,0 @@
-The original approach attempts to toggle two clock dividers at both half and full counts on opposite edges, causing double toggling per cycle and output glitches. To fix this, each of the two counters and clk_div signals should toggle exactly once per full division cycle: cnt1 increments on rising edge and toggles clk_div1 when reaching NUM_DIV counts, and cnt2 increments on falling edge and toggles clk_div2 similarly. Each counter counts from 0 up to NUM_DIV-1, then resets to 0 and toggles its clk_div. This ensures one toggle per full period per divider, preventing double toggles.
-
-By carefully OR-ing clk_div1 and clk_div2, we effectively combine positive and negative edge toggling to produce the odd divided clock with a nearly 50% duty cycle and correct frequency.
-
-Also, add parameter checks and use $clog2 for counter width. This corrected logic will yield a glitch-free, correct odd frequency divider output.

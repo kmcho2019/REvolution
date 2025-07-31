@@ -1,9 +1,0 @@
-To simplify the fractional divider for 3.5x division using double-edge clocking, I will use a single counter counting from 0 to 6 (7 steps total) synchronized to the rising edge of clk. 
-
-I will generate two clock signals toggling at fixed counter values:
-- The "pos_edge_clk" toggles on the rising edge of clk when the count is 0 or 4, dividing the period into 4 and 3 clock cycles segments.
-- The "neg_edge_clk" toggles on the falling edge of clk when the count is 1 or 5, which effectively phase-shifts the clock by half a clk period relative to pos_edge_clk.
-
-By choosing toggling points offset by one count step and on opposite clock edges, the two clocks create a half-cycle phase difference, and their OR results in a fractional clock with period 7 clk cycles (3.5x division). 
-
-This avoids sampling the counter asynchronously and eliminates the need for a delayed counter register. The logic is fully synchronous, easy to verify, and produces a balanced fractional clock.

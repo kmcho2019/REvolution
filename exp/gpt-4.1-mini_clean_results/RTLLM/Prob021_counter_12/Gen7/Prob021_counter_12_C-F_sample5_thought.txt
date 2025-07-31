@@ -1,7 +1,0 @@
-To combine the strengths of both examples and improve the design:  
-- Avoid manual clock gating to prevent glitching and timing issues, instead use a synchronous enable (valid_count) inside a always block triggered by the rising edge of clk and asynchronous active-low reset. This is synthesis-friendly and timing predictable.  
-- Keep the asynchronous active-low reset for immediate reset response, as originally requested.  
-- Use the clean, simple counting logic from Example 2 for readability and minimal combinational logic: increment counter when valid_count is high; if count reaches 11, wrap to zero.  
-- Retain the output register value when valid_count is low to minimize unnecessary toggling, thus improving power consumption.  
-- Use non-blocking assignments consistently to avoid race conditions and ensure proper simulation and synthesis behavior.  
-This fusion ensures a robust, efficient, and easily synthesized design with good timing and power characteristics.

@@ -1,7 +1,0 @@
-Use a small finite state machine (FSM) to track the water level states explicitly, encoding the four discrete water level zones. On every clock cycle, update the FSM state based on the current sensor input decoded into a level. Keep a registered "previous state" alongside the "current state" to detect if the water level has increased (current state higher than previous). This comparison is done after updating both states synchronously, ensuring stable comparison signals.
-
-Outputs are combinationally derived from the FSM state and the level increase flag. The supplemental flow valve (dfr) is enabled only when the water level increased (current state > previous state) and the current state is not the highest level (above s[2]).
-
-On reset, initialize the FSM to BELOW_S0 state (lowest level) and assume level was low for a long time, so enable all valves including dfr.
-
-This approach cleanly separates the state tracking, comparison logic, and output combinational logic, preventing glitches and mismatches. The FSM is the authoritative representation of water level, providing clarity and robustness.

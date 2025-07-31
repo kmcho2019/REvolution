@@ -1,6 +1,0 @@
-To solve this problem, we can implement a finite-state machine (FSM) with several states to control the timer. The states can be defined as follows:
-- IDLE: Initial state where the FSM waits for the pattern 1101.
-- SHIFT: State where the FSM shifts in 4 more bits to determine the duration to delay.
-- COUNTING: State where the FSM waits for the counters to finish counting.
-- DONE: State where the FSM notifies the user and waits for acknowledgment.
-We will use a 4-bit shift register to store the incoming serial data and check for the pattern 1101. Once the pattern is detected, we transition to the SHIFT state. In the SHIFT state, we assert the shift_ena output for exactly 4 clock cycles. After that, we transition to the COUNTING state and assert the counting output. We wait until the done_counting input is high, then transition to the DONE state and assert the done output. We wait until the ack input is high before resetting to the IDLE state.

@@ -1,8 +1,0 @@
-Refactor the design by replacing the combinational always block with continuous assignments using intermediate wires for rotated values, and a registered output updated in an always block at the clock edge. This approach separates combinational rotation logic from the clocked register update and uses a mux encoded as a ternary conditional operator in the assign statement to select the next value of q. It improves clarity by explicitly showing the data flow and selection without a procedural block for combinational logic, which is synthesizable and efficient.
-
-Key points of the refactoring:
-- Compute rotated_left and rotated_right wires outside the always block.
-- Use a single wire next_q, assigned via a nested conditional operator based on load and ena.
-- Update the q register on posedge clk with next_q.
-- This method reduces the combinational always block and leverages concurrent assignments for rotation operations.
-- Functionally equivalent but stylistically different and may improve synthesis clarity.

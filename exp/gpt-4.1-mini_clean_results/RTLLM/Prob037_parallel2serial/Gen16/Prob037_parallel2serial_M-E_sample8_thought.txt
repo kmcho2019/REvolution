@@ -1,7 +1,0 @@
-Instead of rotating the data register each cycle, use a fixed data register that loads the 4-bit parallel input once every 4 cycles, and output bits sequentially by indexing into that register. Maintain a 2-bit counter (cnt) that serves as a bit pointer from 0 to 3, indicating which bit to output next.
-
-On cnt == 3 (the last bit to output), load new parallel data from input d and reset cnt to 0. The valid_out signal is asserted when the first bit (MSB) of the new data is output, i.e., when cnt == 0.
-
-This approach eliminates toggling inside the data register caused by rotating bits, reducing power consumption. The output bit is selected by indexing data[3 - cnt], which outputs MSB first to LSB sequentially. The counter increments every clock cycle when enabled.
-
-This architecture simplifies data movement and reduces dynamic transitions inside the register while keeping a simple control structure, improving power and area with minimal impact on performance.

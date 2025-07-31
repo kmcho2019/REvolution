@@ -1,7 +1,0 @@
-To implement the odd-frequency divider as specified, we retain the concept of using two separate counters and two internal divided clocks toggled on the positive and negative edges of the input clock. However, instead of using two separate always blocks, we use a combined edge-sensitive approach: one always block for the positive edge controlling cnt1 and clk_div1, and another for the negative edge controlling cnt2 and clk_div2. This preserves the dual-counter structure but cleanly separates their operation on opposite clock edges.
-
-Finally, the output clk_div is assigned by logically OR-ing clk_div1 and clk_div2 using a continuous assignment statement. This makes the output combinationally reflect the states of the two internal clocks without additional flip-flops.
-
-This refactoring improves clarity by separating positive and negative edge logic explicitly and uses continuous assignment for the output, enhancing code readability and easier synthesis mapping. The counters count up to NUM_DIV - 1, and toggling occurs at half_count to produce the correct odd division with near 50% duty cycle.
-
-Also, parameter checks ensure NUM_DIV is odd and greater or equal to 3.

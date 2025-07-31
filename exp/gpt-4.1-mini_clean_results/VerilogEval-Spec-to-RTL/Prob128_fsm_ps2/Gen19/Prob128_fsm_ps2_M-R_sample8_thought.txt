@@ -1,5 +1,0 @@
-Refactor the FSM by explicitly defining three states representing each byte position in the PS/2 message: WAIT (waiting for start byte with in[3]=1), BYTE2, and BYTE3. Transition between states sequentially upon each byte received. Output done is asserted when transitioning from BYTE3 back to WAIT, indicating a complete 3-byte message received.
-
-This state encoding uses a simple 2-bit register for state, removing the need for a separate counter and enable gating logic. The done signal is generated combinationally based on the current state and the next state transition. This approach clarifies the FSM's operation and separates state transition logic from output generation, improving code readability while preserving the same functionality.
-
-Synchronous reset returns the FSM to the WAIT state. All sequential logic is triggered on the clock's positive edge. This state machine structure is a classical Moore FSM with outputs dependent on states and transitions, facilitating easier debugging and maintenance without altering functionality or timing significantly.

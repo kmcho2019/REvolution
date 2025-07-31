@@ -1,9 +1,0 @@
-To improve the existing MAC_PE design for better PPA, focus on area and timing optimizations while preserving functionality:
-
-1. Use a 64-bit accumulator to store the full precision of the multiplication result and avoid overflow issues and saturation logic, which adds complexity and timing overhead.
-2. The 32x32 multiplication produces a 64-bit product, so accumulating in a 64-bit register is necessary to hold the full result without losing data.
-3. Provide the output `c` as the lower 32 bits of the accumulator to meet the 32-bit output width requirement.
-4. Remove the saturation logic and overflow detection to simplify the datapath, reducing area and improving timing.
-5. Use synchronous reset for simplicity and clean timing.
-6. Keep the multiplier combinational, but the addition only registers the sum, ensuring one register stage in the critical path.
-7. This approach enhances accuracy by preserving the full multiplication result, simplifies control logic, and potentially improves timing and area by eliminating saturation overflow circuitry.

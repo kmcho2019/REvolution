@@ -1,8 +1,0 @@
-Implement the FSM using an explicit three-state encoding representing the position within the 3-byte PS/2 message: WAIT_START, BYTE2, BYTE3. 
-- In WAIT_START, the module discards bytes until it sees a byte with in[3]=1.
-- Upon detecting the start byte, it transitions to BYTE2.
-- After receiving BYTE2, it transitions to BYTE3.
-- After receiving BYTE3, it asserts a one-cycle done pulse and returns to WAIT_START.
-The done signal is generated combinationally based on the next state to ensure it pulses immediately after the third byte is received. 
-This explicit state approach improves clarity and avoids counters, potentially simplifying timing. 
-Use synchronous reset to initialize state and done.

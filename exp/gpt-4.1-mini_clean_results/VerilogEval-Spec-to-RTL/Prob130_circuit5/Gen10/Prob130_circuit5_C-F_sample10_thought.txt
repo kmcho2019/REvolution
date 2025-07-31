@@ -1,9 +1,0 @@
-The fusion strategy is to combine the compactness and hardware-friendly style of the concatenated vector with explicit bounds checking and the clarity and modularity of a function from the second example. We'll implement a combinational function that uses the packed concatenated vector to select the 4-bit slice indexed by c, but will explicitly clamp c to a valid range inside the function for safer indexing and better readability. This design:
-
-- Uses a single packed vector like Example 1 for efficient resource use and minimal multiplexer logic.
-- Encapsulates the selection logic inside a function for modularity, readability, and easy maintenance.
-- Avoids multiplication in favor of a shift for the bit offset calculation to minimize logic complexity.
-- Explicitly clamps index c to 4, matching the default output of 4'hF as in both examples.
-- Uses a localparam for the constant vector to improve synthesis tools' ability to optimize constants.
-
-This approach merges the synthesis efficiency of direct bit slicing from a concatenated vector with the clean structure and explicit bounds checking of a function, providing both clear code and high-quality hardware mapping.

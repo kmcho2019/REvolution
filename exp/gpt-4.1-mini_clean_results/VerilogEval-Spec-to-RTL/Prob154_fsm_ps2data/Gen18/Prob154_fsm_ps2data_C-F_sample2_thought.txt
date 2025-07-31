@@ -1,5 +1,0 @@
-Fuse the two examples by retaining the clean, minimal 2-bit binary FSM from Example 1 for area and simplicity, while adopting explicit byte-wise load enables from Example 2 to minimize unnecessary toggling in the datapath registers. Drive the done signal as a pulse only on the cycle the third byte loads to reduce power, defaulting it to zero otherwise.
-
-Keep the FSM next state logic fully combinational and straightforward. Use synchronous active-high reset for all registers. This fusion optimizes timing (less state bits and simple FSM logic), power (reduced toggling on done and out_bytes via byte enables), and area (binary FSM instead of one-hot) while maintaining clarity and correctness.
-
-The result is a lean FSM with three states that enables each byte register only when needed, updating done only on the third byte, exactly matching the specification and waveform sample.

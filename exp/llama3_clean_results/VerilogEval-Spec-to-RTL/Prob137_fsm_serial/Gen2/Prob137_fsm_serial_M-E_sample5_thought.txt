@@ -1,7 +1,0 @@
-To tackle this problem from a different perspective, we can implement a finite state machine that utilizes a shift register to receive and process the serial data. This approach allows for a more straightforward handling of the data bits and eliminates the need for explicit indexing or counters.
-
-The main idea is to use a shift register that is 10 bits wide (1 start bit, 8 data bits, and 1 stop bit). As the serial data is received, it is shifted into the register. When the register is full (i.e., 10 bits have been received), the FSM checks if the start bit is correct (0) and if the stop bit is correct (1). If both conditions are met, the FSM asserts the done signal and resets the register to start receiving the next byte.
-
-This approach simplifies the logic for handling the data bits and ensures that the start and stop bits are correctly identified and verified.
-
-Additionally, to handle the case where a stop bit is missing, we introduce a separate state that waits for a stop bit (1) to be detected before resetting the FSM to the IDLE state. This ensures that the FSM is always synchronized with the incoming data stream.

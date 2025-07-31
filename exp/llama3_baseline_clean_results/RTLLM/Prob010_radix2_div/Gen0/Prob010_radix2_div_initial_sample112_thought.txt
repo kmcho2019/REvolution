@@ -1,7 +1,0 @@
-The radix2_div module is designed to perform a simplified radix-2 division operation on 8-bit signed or unsigned integers. The division process starts when opn_valid is high and res_valid is low, and the module saves the inputs dividend and divisor. The module then initializes the shift register SR with the absolute value of the dividend shifted left by one bit and sets NEG_DIVISOR to the negated absolute value of the divisor. The counter cnt is set to 1 and start_cnt is set to 1 to begin the division process.
-
-During the division process, the module checks if the counter cnt has reached 8 (most significant bit of cnt is set), indicating the division is complete. If the division is complete, cnt and start_cnt are cleared, and the shift register SR is updated with the final remainder and quotient.
-
-If the division is not complete, the counter cnt is incremented, and the shift register SR is updated based on the subtraction result. The subtraction of NEG_DIVISOR is computed, and a multiplexer is used to select the appropriate result based on the carry-out. SR is then updated by shifting left and inserting the carry-out.
-
-The res_valid signal is managed based on the reset signal, the counter, and whether the result has been consumed.

@@ -1,7 +1,0 @@
-Improve the 16-bit CLA block by implementing a hierarchical carry-lookahead logic that computes group propagate and generate signals for 4-bit sub-blocks, then combines them to generate carries in O(log n) stages. This approach breaks the linear carry chain into smaller parallel computations, reducing critical path delay and logic depth. 
-
-The top-level 32-bit adder uses two instances of this optimized 16-bit CLA block. To reduce overhead, keep the input/output indexing consistent by internally mapping 1-based ports to 0-based vectors only once, and back again for outputs, but keep this mapping minimal and clean.
-
-This hierarchical CLA implementation balances complexity and performance well, reducing carry propagation delay and switching activity compared to a pure ripple carry chain, thus improving timing and power while maintaining correct functionality.
-
-The 16-bit CLA will compute propagate and generate signals per bit, group propagate/generate signals per 4-bit block, then compute carries for these blocks in parallel, finally combining to get per-bit carries, leading to a balanced and efficient carry lookahead adder.

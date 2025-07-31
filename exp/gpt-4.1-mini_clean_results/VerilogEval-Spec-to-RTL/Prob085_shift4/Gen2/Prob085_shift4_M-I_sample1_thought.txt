@@ -1,9 +1,0 @@
-To improve the original design's PPA, focus on power reduction and timing optimization. The original code uses an if-else structure prioritizing load over ena, which is good for power since it avoids conflicting toggles. However, the right shift operation uses q[3:1] in concatenation, which may synthesize into multiplexers on all bits.
-
-An improvement is to explicitly define the next state logic in a combinational block and register it on the clock edge, allowing better synthesis optimization and potentially reducing glitching. Also, registering the load and ena signals can improve timing by aligning control signals with the clock domain, reducing combinational path delay.
-
-Since the design is simple, adding clock gating could help reduce power by enabling the register clock only when load or ena is asserted, but clock gating introduces complexity and potential timing issues, so we keep it simple.
-
-Therefore, implement an explicit next state logic block, register load and ena signals, and use non-blocking assignments carefully for clear sequential logic.
-
-This approach may slightly increase area due to additional registers for load and ena, but the timing and power improvements may be beneficial, especially for higher frequency designs.

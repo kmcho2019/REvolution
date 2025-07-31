@@ -1,7 +1,0 @@
-To improve the PPA metrics, I will remove the explicit DFF module and implement the D flip-flop directly inside TopModule to reduce module overhead and hierarchy. Using a single always block with nonblocking assignment ensures proper sequential behavior. Additionally, I will add an asynchronous reset input (if permissible) to allow deterministic initialization, which can aid timing closure and reduce glitches, but since not requested, I will keep the design minimal.
-
-Since clock gating and other low power techniques are beyond scope and might alter behavior, I will focus on minimal, clear code to reduce area slightly and aid synthesis tools in register inference.
-
-Hence, the improved design is a flat, minimal TopModule with a simple always block implementing the D flip-flop with nonblocking assignment on posedge clk, mapping output 'q' as a reg. This reduces hierarchy, potentially improving area and power slightly without changing functional behavior or violating the interface.
-
-This approach should yield slightly better or equivalent PPA metrics while preserving correctness and clarity.

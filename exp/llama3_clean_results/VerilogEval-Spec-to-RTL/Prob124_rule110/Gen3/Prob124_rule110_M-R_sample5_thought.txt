@@ -1,5 +1,0 @@
-To refactor the code, we will maintain the same logic but simplify the implementation by utilizing combinational logic to calculate the next state of each cell and then use a sequential logic block to update the current state based on the next state. We will eliminate the use of a `for` loop within the `always` block and instead use a single statement to update the entire state register. This simplification should improve the code's readability and maintainability while ensuring the correct operation of the Rule 110 cellular automaton.
-
-The primary change will be moving the calculation of `next_state` to a combinational logic block using `assign` statements, and then use a simplified `always` block to handle the sequential logic of updating the current state (`q_reg`) based on either the new data when `load` is high or the calculated next state when `load` is low.
-
-This refactoring aims to address potential issues with the original code's structure, such as race conditions or incorrect updates due to the asynchronous nature of the `for` loop's unrolling, and improve the overall clarity and performance of the implementation.

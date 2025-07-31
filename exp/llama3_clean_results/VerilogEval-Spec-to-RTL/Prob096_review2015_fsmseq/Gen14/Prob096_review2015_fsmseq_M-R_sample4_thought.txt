@@ -1,5 +1,0 @@
-The provided code uses a simple shift register to store the last four bits of the input data and compares it with the target sequence '1101' to set the `start_shifting` signal. However, as pointed out in the feedback, the current implementation does not maintain the `start_shifting` signal once it is set to 1, unless the sequence continues to be detected. 
-
-To fix this, we can modify the code to use a separate register to store the state of `start_shifting` and only reset it when the `reset` signal is asserted. We can also restructure the code to use `assign` statements for combinational logic and `always` blocks for sequential logic.
-
-The new structure will involve a shift register that stores the last four bits of the input data, a comparator that checks if the shift register contents match the target sequence, and a separate register that stores the state of `start_shifting`. The comparator output will be used to set the `start_shifting` register, which will be reset only when the `reset` signal is asserted.

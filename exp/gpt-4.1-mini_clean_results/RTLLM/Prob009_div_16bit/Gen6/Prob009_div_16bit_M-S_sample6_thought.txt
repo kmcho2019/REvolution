@@ -1,9 +1,0 @@
-To simplify the design while maintaining functionality, we can:
-
-- Retain the two combinational always blocks as required: one to register inputs and one to perform division.
-- Use the registered inputs directly without unnecessary extra bits or complexity.
-- Implement the division as a straightforward shift-subtract loop without explicitly forming a 9-bit remainder; instead, handle remainder as 8 bits since divisor is 8 bits.
-- Use minimal internal signals: a single 8-bit remainder and a 16-bit quotient.
-- In each iteration, shift remainder left by 1 and bring down the next dividend bit; compare with divisor and subtract if possible.
-- Assign outputs directly from internal registers.
-- This approach reduces intermediate widths, keeps code clear, and aligns with the user's original high-level description.

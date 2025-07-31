@@ -1,7 +1,0 @@
-Refactor the FSM using a Mealy-style approach where the `done` output is combinational and depends on the current state and inputs, instead of being registered. Use one sequential always block only for the state and counters update, and separate combinational always block for next state and done logic, improving clarity and potentially reducing register usage for `done`. 
-
-Also, implement the shift register shifting with the input bit loaded into LSB instead of MSB (shift left), since the protocol sends LSB first; this change aligns with intuitive shift-left logic (shift_reg <= {in, shift_reg[7:1]} is right shift with MSB input, here we'll do shift_reg <= {in, shift_reg[7:1]}), so keep the same shifting approach but reorganize the code for clarity.
-
-Use synchronous reset only in sequential blocks. Output `done` is generated combinationally and registered outside to produce a clean one-cycle pulse after the STOP state with a valid stop bit.
-
-This separation of combinational and sequential logic and the Mealy-style done output can ease timing and clarify the signal generation, without changing functionality.

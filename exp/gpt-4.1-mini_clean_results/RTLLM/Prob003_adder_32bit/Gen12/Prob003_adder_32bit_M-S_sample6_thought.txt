@@ -1,8 +1,0 @@
-To simplify the 32-bit carry-lookahead adder design while maintaining functionality, we can keep the hierarchical structure with two 16-bit CLA blocks, but reduce complexity by:
-
-- Removing the explicit calculation of block propagate (P) and block generate (G) outputs from the 16-bit CLA, and instead just use the carry-out of the lower 16-bit block as carry-in for the upper 16-bit block.
-- Implement the 16-bit CLA with straightforward bitwise generate, propagate, and carry computations without an explicit prefix generate chain for block generate.
-- This simplifies the interface between the two CLA blocks by using just a carry-out signal, not block propagate/generate signals, resulting in simpler top-level logic.
-- Use zero-based indexing internally and only map inputs and outputs once for clarity.
-- Use generate loops for carry computation for clarity but avoid extra signals.
-- This approach trades a small increase in carry delay across the 16-bit boundary for simpler, more compact code and easier understanding, suitable for many practical uses.

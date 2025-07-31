@@ -1,9 +1,0 @@
-Refactor the RAM design to use asynchronous reset for the RAM initialization and synchronous write, with a registered read output to better match typical FPGA block RAM behavior:
-
-- Use an asynchronous reset for clearing the entire RAM array. This involves a reset signal that, when low, initializes all RAM locations to zero.
-- Use a synchronous write operation on the clock's positive edge gated by write_en.
-- Implement the read operation as a synchronous read with data registered on the clock's positive edge gated by read_en.
-- This approach uses a single always block for reset and write, and another always block for read data register update.
-- This matches typical dual-port synchronous RAM style where both ports are synchronous, simplifying timing closure.
-- Registering the read data reduces glitching on output and better aligns with FPGA block RAM behavior.
-- This structure keeps the parameterization, address widths, and signal naming consistent with the original spec.

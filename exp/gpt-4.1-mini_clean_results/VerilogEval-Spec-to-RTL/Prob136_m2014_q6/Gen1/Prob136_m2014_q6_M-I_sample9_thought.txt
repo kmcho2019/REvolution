@@ -1,7 +1,0 @@
-To optimize the FSM for better power and area, I will replace the enum type with explicit localparam state encodings to reduce resource overhead and improve synthesis friendliness. I will encode the output `z` directly as a function of state bits instead of a case statement. Since states E and F have values 4 and 5, their MSB bit (bit 2) is 1, so `z = state[2]` covers that.
-
-Also, I will combine the next state and output logic into a single combinational always block to slightly reduce duplicated logic and logic levels.
-
-Finally, I will add a register enable signal that only updates the state register when the next state differs from the current state, reducing unnecessary toggling and saving power.
-
-These changes will maintain functionality while improving PPA.

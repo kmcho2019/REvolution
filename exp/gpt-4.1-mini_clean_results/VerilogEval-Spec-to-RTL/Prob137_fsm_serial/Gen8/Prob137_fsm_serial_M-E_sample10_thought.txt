@@ -1,7 +1,0 @@
-Implement the serial byte receiver FSM using a more explicit bit sampling approach with a shift register shifting in the LSB first each clock cycle during reception. Use one-hot encoding for states to simplify next state logic and improve timing at a modest area cost. 
-
-In this approach, the FSM has four one-hot states: IDLE (waiting for start bit = 0), START (confirming start bit), RECEIVE (shifting in 8 bits), and STOP (checking stop bit). This explicit START state validates the start bit stable at zero before moving to RECEIVE, improving robustness. 
-
-The data register shifts in the incoming bits by concatenating the new bit on the MSB side and shifting right, capturing bits LSB first. The done output pulses high for one clock cycle when a correct stop bit is received. On error (stop bit not 1), the FSM stays in STOP until a valid stop bit is detected, then returns to IDLE. 
-
-Use synchronous reset and positive clock edge triggered logic. This design has simpler next state logic due to one-hot encoding and clear bit counter control, facilitating easier timing closure and straightforward verification.

@@ -1,7 +1,0 @@
-Refactor the FSM to explicitly declare two one-hot encoded state bits as registers (state_A and state_B), making the one-hot encoding more explicit in state registers. The asynchronous reset sets state_A=1 and state_B=0. The next state logic is computed combinationally from the current state and input, then assigned to the registers on the clock edge using non-blocking assignments.
-
-The output z is computed as a Mealy output directly from current states and input.
-
-This refactoring makes the one-hot encoding explicit by having two registers representing states rather than deriving one from the complement of the other. It aligns with typical one-hot FSM style, potentially making the design clearer and easier to extend to larger FSMs, albeit with slightly more flip-flops (two instead of one). The asynchronous reset logic is preserved.
-
-This also demonstrates a typical FSM design pattern with separate next state logic and registered state updates, improving readability and traceability for synthesis or formal verification tools.

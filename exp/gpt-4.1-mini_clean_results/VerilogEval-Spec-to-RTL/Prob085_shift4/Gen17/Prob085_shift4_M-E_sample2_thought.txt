@@ -1,5 +1,0 @@
-Implement the 4-bit right-shift register as four individual D flip-flops instantiated separately to explicitly show the data flow between flip-flops. The asynchronous reset will be handled at each flip-flop individually. To prioritize load over enable, a mux is used per flip-flop input, choosing between loading data, shifting the bit from the left neighbor, or holding the current bit. The shift-in bit (MSB) is always zero when shifting is enabled. This modular approach clarifies signal dependencies and offers clear timing paths, which can help with static timing analysis and potentially improve testability.
-
-Additionally, the reset is asynchronous and active-high with a posedge trigger. The load and enable signals are synchronous. The priority order is load > enable > hold.
-
-This approach avoids combining all logic in one always block by distributing the logic per flip-flop, making the design more structural and explicit.

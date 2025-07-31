@@ -1,7 +1,0 @@
-To improve PPA, the main opportunity is reducing the delay of the multiplexer output path. Instead of using a variable indexed vector Q[addr], explicitly implementing the multiplexer as a combinational always block with a case statement can allow synthesis tools to better optimize the mux logic and possibly reduce delay by parallel case analysis. This might improve timing (WNS) and potentially power by simplifying mux logic.
-
-Additionally, the shifting direction can be reversed so that S is loaded into Q[7] (MSB), and shifting moves Q downwards, matching the problem statement's "MSB is shifted in first" more explicitly. This can sometimes help in synthesis with a more intuitive data flow.
-
-Since enable gating is synchronous, no clock gating is added here as it is typically handled at a higher level.
-
-Overall, the improvement focuses on replacing the vector index mux with a combinational case multiplexer to reduce critical path delay and potentially improve power slightly, while preserving functional correctness and area efficiency.

@@ -1,9 +1,0 @@
-To improve PPA, especially timing and area, I will remove the explicit zero padding and handle boundary conditions directly inside a combinational always block. This reduces the need for creating a wide padded wire and potential large routing overhead. Using an always_comb block to compute the next state enables synthesis tools to optimize better and avoid redundant wiring.
-
-Additionally, computing the next state in a single always block with a for loop is often more efficient than instantiating 512 separate assign statements inside a generate block.
-
-For power, since the entire register updates every cycle, the improvement focus is more on area and timing. Removing the padded vector and restructuring combinational logic should reduce area and improve timing slightly.
-
-The logic remains exactly as before: next = (~left & center) | (center ^ right), with boundary cells having neighbors assumed zero.
-
-This approach results in clearer combinational logic, potentially better optimization by synthesis tools, and reduced wiring congestion.

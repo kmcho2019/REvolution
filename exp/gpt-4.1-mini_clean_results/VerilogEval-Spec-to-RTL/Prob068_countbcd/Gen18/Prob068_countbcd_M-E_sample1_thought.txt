@@ -1,9 +1,0 @@
-I will implement the 4-digit BCD counter using four separate 4-bit registers for each digit, which allows more modular and clear increment logic per digit and simplifies enable generation. Instead of nested if-else carry propagation in the clocked block, I will generate carry and enable signals combinationally before the clock edge.
-
-The ones digit increments every clock cycle. The tens digit increments when the ones digit rolls over (i.e., goes from 9 to 0). Similarly, the hundreds digit increments when tens roll over, and thousands when hundreds roll over.
-
-Enables for upper digits (ena[2:0]) will be registered outputs driven by the rollover events of their lower digits on the previous clock cycle (i.e., synchronous enables). This approach minimizes combinational logic depth inside the clocked always block and creates a balanced pipeline of carries and enables for better timing.
-
-Reset synchronously clears all digits to zero and disables all enables.
-
-This architecture separates combinational carry detection and enable generation from sequential increment, improving timing and modularity while maintaining clarity. It also allows easier scaling or modification of individual digit behavior.

@@ -1,8 +1,0 @@
-Since shift_ena must be asserted for exactly 4 cycles after each synchronous reset and then remain low forever, we can simplify by using a 2-bit counter to track those 4 cycles.
-
-- On synchronous reset, set the counter to 0.
-- After reset is deasserted, increment the counter each clock cycle until it reaches 4.
-- shift_ena is asserted when the counter is less than 4 (i.e., for the first 4 cycles after reset).
-- Once the counter reaches 4, shift_ena stays low indefinitely.
-
-This approach uses an up-counter instead of a down-counter and avoids explicit countdown logic, simplifying the implementation while preserving precise timing and synchronous reset behavior.

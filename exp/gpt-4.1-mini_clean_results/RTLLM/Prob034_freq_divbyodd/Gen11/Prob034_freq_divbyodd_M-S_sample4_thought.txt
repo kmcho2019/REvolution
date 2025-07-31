@@ -1,7 +1,0 @@
-To simplify the odd frequency divider, use a single counter that counts from 0 to NUM_DIV-1. Toggle the output clock once every time the counter reaches the midpoint (half count). Because NUM_DIV is odd, the half count is floor(NUM_DIV/2). This ensures toggling occurs once per division cycle, resulting in a frequency divided by NUM_DIV.
-
-Use a single clock domain (posedge clk) to avoid complexity of dual counters and edge-sensitive toggling. On reset, initialize the counter and output clk_div to 0.
-
-This approach drastically reduces complexity while achieving the correct division by an odd number. The output clock has approximately 50% duty cycle for odd NUM_DIV values, which is the best possible.
-
-Add a parameter check to ensure NUM_DIV is odd.

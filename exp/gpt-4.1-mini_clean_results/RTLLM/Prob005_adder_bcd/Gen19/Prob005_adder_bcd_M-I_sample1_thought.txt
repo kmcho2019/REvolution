@@ -1,9 +1,0 @@
-To optimize the original design for better performance and area, reduce the complexity of the comparator (raw_sum > 9) by implementing it as simple combinational logic rather than a numeric comparison operator. Since raw_sum is 5 bits (sum of two 4-bit BCD digits plus carry), the condition raw_sum > 9 can be expressed as: raw_sum[4] == 1 or (raw_sum[3] and (raw_sum[2] or raw_sum[1])). This simple logic detects whether raw_sum exceeds 9 without using '>'. This reduces logic levels and improves timing.
-
-Additionally, we keep the correction addition straightforward by adding 6 when needed. The corrected sum addition is a 5-bit addition, but since the correction is fixed, it can be quickly synthesized and optimized.
-
-This approach maintains correctness and clean structure but lowers critical path delays and gate usage compared to the original operator-based comparator. It also reduces potential power due to simplified logic gates.
-
-The carry-out is still driven by the correction_needed signal as before.
-
-This yields a minimal performance and area gain with negligible increase in code complexity.

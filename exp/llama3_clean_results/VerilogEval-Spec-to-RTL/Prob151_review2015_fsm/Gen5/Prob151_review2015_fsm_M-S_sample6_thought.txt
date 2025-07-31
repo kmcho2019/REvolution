@@ -1,9 +1,0 @@
-To simplify the given solution, we can reduce the number of states and signals, making the code more efficient and easier to understand. 
-
-We can start by eliminating the `PATTERN_DETECT` state, as it only serves to transition to the `SHIFT` state. This can be done directly from the `IDLE` state once the pattern `1101` is detected.
-
-Next, we can simplify the `SHIFT` state by using a counter to count the number of clock cycles for which `shift_ena` needs to be asserted. This counter can be incremented in the `SHIFT` state until it reaches `4`, at which point the state transitions to `COUNTING`.
-
-In the `COUNTING` state, we can assert `counting` and wait for `done_counting` to be high. Once `done_counting` is high, we can assert `done` and wait for `ack` to be high before transitioning back to the `IDLE` state.
-
-By reducing the number of states and signals, we can make the code more efficient and easier to understand, while maintaining the required functionality.

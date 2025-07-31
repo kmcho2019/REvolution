@@ -1,9 +1,0 @@
-Instead of toggling the output clock every half of NUM_DIV cycles with a single counter, this design uses a two-stage counter approach for clarity and flexibility. It implements a counter that counts from 0 up to NUM_DIV - 1, then resets to 0. The output clock toggles only when the counter reaches half of NUM_DIV, creating a 50% duty cycle output clock.
-
-This approach benefits from a straightforward, single counter from 0 to NUM_DIV-1, and the clk_div is driven high for the first half of the count and low for the second half. This avoids explicitly toggling and creates a stable clock output with minimal glitches.
-
-The counter width is determined dynamically by $clog2(NUM_DIV), and NUM_DIV must be even and at least 2.
-
-On reset, counter and clk_div are reset to 0. On each clock edge, counter increments, wrapping to zero at NUM_DIV-1. clk_div is assigned based on whether the counter is less than half of NUM_DIV.
-
-This approach results in clean and glitch-free divided clock output with 50% duty cycle.

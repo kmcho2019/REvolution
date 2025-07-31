@@ -1,9 +1,0 @@
-Instead of chunking the 100-bit inputs into fixed-size blocks, implement a hierarchical tree-based multiplexer structure. The inputs are first grouped into pairs of bits and muxed down by half the width at each stage until only one 100-bit output remains. 
-
-Concretely, first create 50 2-bit muxes that select between corresponding 2-bit slices of 'a' and 'b' based on 'sel'. Then, iteratively combine pairs of mux outputs with 2:1 muxes (still using 'sel') in a binary tree fashion, reducing the number of output groups by half each iteration, until a single 100-bit output is formed.
-
-However, since the output width stays constant (100 bits), this tree approach is unconventional; here, we reinterpret the tree mux to mean that at each stage, adjacent 2-bit slices are muxed elementwise (selecting between a or b), and propagate the selected outputs up through the tree.
-
-This approach emphasizes structural reuse of small 2-bit mux units and hierarchical assembly without indexing large slices directly. It distributes logic over multiple stages, possibly improving timing by reducing fan-in at each mux, though it increases logic depth.
-
-This novel hierarchical approach contrasts with flat vector mux or chunked mux blocks and demonstrates a scalable method that could be adapted for extremely large bit-width muxing via tree structures.

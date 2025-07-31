@@ -1,9 +1,0 @@
-Refactor the 64-bit subtractor with overflow detection by implementing the 64-bit subtraction using a single-level generate/propagate structure and computing carry signals in a parallel prefix style within one module, without splitting into multiple 16-bit blocks. This approach keeps the carry lookahead logic but flattens the hierarchy, calculating carries for all 64 bits in a single generate block. The overflow detection remains the same, comparing sign bits.
-
-The advantages of this refactoring:
-- Simplifies hierarchy by eliminating the four 16-bit CLA submodules.
-- Uses a fully parallel generate and propagate calculation with a single carry chain computed with a generate loop.
-- Keeps the combinational style using continuous assignments and generate blocks.
-- Retains overflow detection logic clearly.
-
-This structure may be easier to customize or integrate with other parallel prefix adder types later, while being fully combinational and efficient.

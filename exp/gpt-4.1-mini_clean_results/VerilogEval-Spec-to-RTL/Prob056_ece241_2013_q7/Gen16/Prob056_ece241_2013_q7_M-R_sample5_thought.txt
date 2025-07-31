@@ -1,5 +1,0 @@
-I will refactor the JK flip-flop implementation by separating the next state logic from the state register update. The next state is computed combinationally in a separate always_comb block (or always @*), and the flip-flop simply updates Q to that next state on the positive clock edge.
-
-This structural decomposition improves clarity by explicitly distinguishing the combinational next state logic from the sequential update. The combinational block uses an if-else chain instead of a case statement, still reflecting the JK truth table. The sequential block always updates Q to next_Q, which will be equal to the old Q if J=K=0, so no explicit gating on (j|k) is needed.
-
-This refactoring preserves behavior but clarifies the data flow and may improve synthesis and readability by making the clocked process purely sequential without embedded combinational logic.

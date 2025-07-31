@@ -1,7 +1,0 @@
-To implement a novel architectural idea for a single D flip-flop in TopModule, I will merge the functionality directly into a single module without instantiating a separate DFF. Instead of using a typical always @(posedge clk) block, I will leverage a procedural continuous assignment style by using an always block combined with a clock-enable signal internally derived from the clock edge detection. This will simulate the flip-flop behavior but structurally it is different.
-
-Specifically, I will create an internal signal that toggles at each clock positive edge, and use that as a clock-enable signal. The D input will only update the internal register on this enable. This is a contrived but valid approach that implements the same behavior with a different style. This alternative method demonstrates a different mindset from typical flip-flop coding but is functionally equivalent.
-
-The TopModule will contain this logic internally, with no submodules or separate DFF module, minimizing hierarchy but maximizing structural novelty while meeting the exact specified interface. The q output will be registered internally and updated only on the rising edge of clk indirectly via the clock-enable signal.
-
-This design is synthesizable and produces a single positive-edge triggered D flip-flop without straightforward posedge clk always block, showing a novel architectural approach.

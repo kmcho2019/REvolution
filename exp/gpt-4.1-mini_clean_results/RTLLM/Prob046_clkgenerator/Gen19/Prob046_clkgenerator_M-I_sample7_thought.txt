@@ -1,5 +1,0 @@
-To fix the issues caused by the real-valued delay in the clock toggling, the half-period delay should be an integer value. Since Verilog delays require integral constants for timing control, we'll enforce that the PERIOD parameter is an integer and derive half_period as an integer. For odd PERIOD values, we'll use integer division so the generated clock frequency may not be exact but will be consistent and synthesizable-friendly.
-
-Additionally, we'll keep the initial block with a forever loop for simulation-only clock generation, guarded by synthesis directives to exclude it from synthesis. This prevents synthesis tools from trying to interpret delay-based toggling.
-
-This modification ensures proper simulation behavior and maintains synthesis safety without using unsupported real delays.

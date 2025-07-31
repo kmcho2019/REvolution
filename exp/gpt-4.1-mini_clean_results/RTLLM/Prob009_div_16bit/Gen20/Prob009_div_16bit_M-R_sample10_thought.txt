@@ -1,9 +1,0 @@
-Refactoring the original design into a purely combinational module without internal always blocks except for input latching, and using continuous assignments for the division logic.
-
-- Retain the first always block for input latching of A and B into a_reg and b_reg as per requirements.
-- Replace the second always block with a generate block and combinational logic using intermediate wires and a for-generate loop.
-- Implement the iterative division using an array of wires representing remainder stages.
-- At each stage, shift remainder left by 1, append the dividend bit, compare with divisor, subtract if possible, and record quotient bit.
-- Concatenate the quotient bits from MSB to LSB in a wire vector, then assign final outputs in a separate always block or assign statement.
-- This approach clarifies the combinational dependency explicitly via wires and generates a combinational "pipeline" of logic.
-- Such refactoring enhances readability by reducing procedural complexity, potentially improves synthesis mapping by explicit dataflow, and aligns well with combinational logic style.

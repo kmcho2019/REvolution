@@ -1,9 +1,0 @@
-To improve the existing design's PPA, remove the redundant conditional check before updating the register q on the clock edge, simplifying the sequential logic. This likely reduces area and improves timing slightly due to simpler control logic. Since q is a register, assigning the same value again does not cause extra toggling, so the check is unnecessary. 
-
-Also, replace the combinational if-else with a case statement for next_state to improve readability and potentially help synthesis tools optimize the logic.
-
-No reset is specified or needed.
-
-The counting sequence when a=0 cycles through 4→5→6→0→1→2→3→4, which is a modulo-7 counting starting at 4. Implement this explicitly using a case statement for clarity.
-
-This should yield a slightly more optimized and clean design while preserving functionality.

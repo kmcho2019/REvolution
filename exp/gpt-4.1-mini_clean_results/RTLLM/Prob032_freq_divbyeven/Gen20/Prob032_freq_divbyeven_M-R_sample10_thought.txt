@@ -1,7 +1,0 @@
-I will refactor the frequency divider by implementing a two-state finite state machine (FSM) that explicitly tracks the two halves of the output clock period. The counter will count from zero to half the division count minus one, and after counting, the FSM will toggle the output clock and move to the next state.
-
-This FSM-based approach makes the design intention more explicit: the two states represent the two output clock levels (0 and 1), each lasting half the period defined by NUM_DIV. The counter runs in each state, and when it reaches the limit, the output toggles by transitioning states.
-
-Additionally, I will keep the compile-time check for an even NUM_DIV but will avoid a parameterized width counter by defining a fixed-width counter (4-bit) since the problem states the counter is 4-bit. If NUM_DIV > 32, the counter width might be insufficient, but that matches the original spec.
-
-This structure improves clarity and modularity by separating counting logic and output clock toggling via FSM states, rather than toggling on counter resets directly in a single always block.

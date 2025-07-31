@@ -1,9 +1,0 @@
-The solution involves designing a finite state machine (FSM) that operates in two primary states: a "search" state where it looks for the byte with in[3]=1 to determine the start of a message, and a "receive" state where it counts the bytes received after finding a byte with in[3]=1. 
-
-1. Initially, the FSM is in the "search" state. It remains in this state until it encounters a byte with in[3]=1, which it assumes to be the first byte of a message.
-2. Once the first byte of a message is detected, the FSM transitions into the "receive" state. It then starts counting the bytes received.
-3. The FSM stays in the "receive" state until it has received three bytes, at which point it signals "done" to indicate the complete receipt of a message.
-4. After signaling "done", the FSM returns to the "search" state, ready to look for the next byte with in[3]=1 to start the process again.
-5. An active high reset should return the FSM to its initial state, ready to start searching for a new message.
-
-This approach ensures that the FSM correctly identifies the boundaries of messages within a continuous byte stream based on the PS/2 mouse protocol.

@@ -1,7 +1,0 @@
-I will implement a 64-bit ripple carry adder with pipeline registers by dividing the addition into four pipeline stages, each handling 16 bits of the operands. Each stage will add its 16-bit slice plus a carry-in from the previous stage and register the partial sum and carry-out. This pipeline structure reduces the carry propagation delay by breaking the adder into stages.
-
-At each clock cycle, when i_en is high, the inputs and carry-in are latched into registers per stage. Carry-out from one stage becomes the carry-in for the next stage at the next clock cycle. The final sum is constructed by concatenating the registered partial sums from all stages along with the final carry-out.
-
-To manage the pipeline latency and synchronize the output enable (o_en) signal, I will implement an enable pipeline register of depth equal to the number of stages plus one, shifting i_en through the pipeline registers. After the pipeline delay, o_en will be asserted indicating that the output result is valid.
-
-This design uses separate pipeline registers for each stage's operand slices, sums, and carry signals, avoiding variable part selects inside always blocks by slicing inputs combinationally before the registers. This design is fully synchronous, easy to synthesize, and fits the requirements.

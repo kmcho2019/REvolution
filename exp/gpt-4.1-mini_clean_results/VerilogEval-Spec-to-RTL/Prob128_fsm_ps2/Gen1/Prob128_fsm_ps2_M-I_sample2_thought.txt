@@ -1,7 +1,0 @@
-Refine the FSM to properly generate a one-cycle 'done' pulse immediately after receiving the third byte. Use a simple 2-bit counter to track byte count within a message: wait for a byte with in[3]=1 to start the message (byte 1), then count the next two bytes. When the third byte is received, assert 'done' for one cycle and reset to idle state to look for the next message start byte.
-
-Use a single synchronous always block for state and output updates to avoid conflicting assignments. Implement a small counter instead of an enum FSM to reduce complexity and optimize for PPA. Keep 'done' asserted only for one cycle after the third byte.
-
-The reset is synchronous active high and clears the state and output.
-
-This approach is simpler, more efficient, and meets the timing requirement exactly.

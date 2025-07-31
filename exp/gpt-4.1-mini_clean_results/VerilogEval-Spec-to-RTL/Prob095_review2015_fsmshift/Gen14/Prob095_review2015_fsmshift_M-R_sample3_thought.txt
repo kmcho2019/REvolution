@@ -1,3 +1,0 @@
-Refactor by replacing the FSM states with a single down counter that initializes to 4 on synchronous reset and counts down each clock cycle. The shift_ena output is asserted when the counter is nonzero. Use only registers and simple combinational logic without explicit FSM states, simplifying the design. This keeps the functionality identical but uses a more compact structure. The synchronous reset sets the counter directly in the sequential block, and the counter counts down to zero and stays there until the next reset, ensuring shift_ena is asserted exactly 4 cycles after reset.
-
-This approach reduces the logic to a single register with clear timing and simplifies output assignment by using a simple combinational check on the counter.

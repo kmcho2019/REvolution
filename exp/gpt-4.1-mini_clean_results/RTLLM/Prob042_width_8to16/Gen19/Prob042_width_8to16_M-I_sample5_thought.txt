@@ -1,9 +1,0 @@
-To meet the specification strictly, valid_out and data_out must be generated one clock cycle after the second valid_in is received and the concatenation is done. To achieve this, introduce a pipeline register to store the concatenated 16-bit data and delay valid_out assertion by one clock cycle after concatenation.
-
-Maintain the flag and data_lock to store the first 8-bit input. When the second valid_in arrives, combine it with data_lock and store into a register `data_next`. Then, in the following clock cycle, move `data_next` to `data_out` and assert `valid_out`.
-
-This approach cleanly separates the input collection stage from the output stage, ensuring that the timing requirement "valid_out and data_out signals are generated in the next clock cycle after the two data inputs" is fulfilled.
-
-Additionally, clear all state and outputs on reset and make sure valid_out is 0 by default.
-
-This approach is synthesizable, aligns with the timing requirements, and handles sporadic valid_in signals correctly.

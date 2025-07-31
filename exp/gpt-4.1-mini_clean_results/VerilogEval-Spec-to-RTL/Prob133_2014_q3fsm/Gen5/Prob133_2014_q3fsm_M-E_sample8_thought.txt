@@ -1,7 +1,0 @@
-Implement a FSM with two main states: A (waiting for s=1) and B (sampling w). In state B, use a 3-bit shift register to capture the last three w samples (one per clock). After loading three samples, count the number of 1s by summing the bits of the shift register. If exactly two bits are 1, assert z=1 in the next cycle; otherwise, z=0.
-
-Use an additional 2-bit counter to track how many samples (0 to 3) have been collected since entering B.
-
-By using a shift register for w samples, the design avoids multiple explicit states for each sample. The FSM stays in state B once s=1 until reset.
-
-Output z is registered and asserted for one cycle after the 3-sample window evaluation, making this a Moore machine. This approach reduces the number of explicit FSM states to 2, leveraging counters and registers to handle sample accumulation and evaluation.

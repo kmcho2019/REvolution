@@ -1,5 +1,0 @@
-To simplify the solution, we can remove the unnecessary 'byte_count' variable and the additional 'always' block that resets the 'done' signal. We can also use a more straightforward approach to update the 'out_bytes_reg' by shifting the bytes as they are received. This will eliminate the need for the 'byte1' and 'byte2' registers, reducing the overall complexity of the design. 
-
-We will maintain a simple state machine with two states: 'idle' (0) and 'message_received' (1). In the 'idle' state, we wait for a byte with 'in[3] = 1'. Once we receive such a byte, we shift it into the 'out_bytes_reg' and move to the 'message_received' state. We then continue to shift the incoming bytes into the 'out_bytes_reg' for two more cycles. After receiving the third byte, we assert the 'done' signal and return to the 'idle' state.
-
-This simplified approach will reduce the number of registers and 'always' blocks, making the code more efficient and easier to understand.

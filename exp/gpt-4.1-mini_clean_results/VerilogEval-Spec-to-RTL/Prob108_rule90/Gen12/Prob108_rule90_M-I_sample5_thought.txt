@@ -1,9 +1,0 @@
-To improve power and area, I will reduce switching activity and fanout by implementing clock gating on each 64-bit block. Each block will only update its state when load=1 or when its internal next state differs from its current state. This selective update reduces unnecessary toggling and dynamic power. 
-
-To implement this, I add a registered enable signal inside each block that triggers the state update only when needed. This also reduces toggling of the large 512-bit register when the state is stable.
-
-I keep the modular 8x64-bit block structure and explicit boundary passing for clarity and timing. This enhancement should reduce power (fewer toggles) with minimal area overhead for enable logic.
-
-No change is made to logic correctness or timing assumptions; only gating the state update register clock enables.
-
-This yields a better PPA by reducing power while maintaining timing and area close to the original.

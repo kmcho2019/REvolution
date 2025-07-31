@@ -1,5 +1,0 @@
-Refactor the design by explicitly separating the next state logic calculation into a combinational signal `next_state` and use a flip-flop to update `state` on the positive clock edge. The output `q` remains a combinational function of current `state`, `a`, and `b` as before. This separation clarifies the structure: `next_state` drives the flip-flop, and `q` is output logic, both derived from the same combinational expression.
-
-Use a synchronous reset initialized to zero state to match the waveform initial conditions better. Use `assign` for combinational outputs and a procedural `always` block only for state update.
-
-This approach keeps the original logic unchanged but improves readability, clarity, and explicitness of the sequential and combinational parts.

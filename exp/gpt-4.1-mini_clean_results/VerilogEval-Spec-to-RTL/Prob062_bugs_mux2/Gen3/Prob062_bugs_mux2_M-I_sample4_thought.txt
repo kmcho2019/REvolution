@@ -1,7 +1,0 @@
-The original bug is that the 1-bit output `out` is assigned a bitwise OR of two 8-bit vectors, which is illegal and logically incorrect for a 1-bit output. The intended functionality is likely to select one bit from the vectors `a` and `b` based on `sel`, not the entire 8-bit vector. Since the output is a single bit, the mux should select one bit from `a` or `b`. 
-
-Assuming the mux outputs only the least significant bit (bit 0) of either `a` or `b` depending on `sel`, the fix is to select `a[0]` when `sel` is 0 and `b[0]` when `sel` is 1.
-
-This keeps the output width consistent (1-bit) and logically correct. The selection can be done using the conditional operator or bitwise logic on the bits.
-
-This solution respects the original port widths and testbench expectations.

@@ -1,5 +1,0 @@
-Optimize the FSM by extracting the pattern detection from the FSM states and implementing it with a small 4-bit shift register and comparator logic outside the FSM. This removes four pattern detection states and reduces FSM complexity from 7 states to 4 states (IDLE, SHIFT, COUNT, DONE). The FSM then triggers shifting only when pattern detected. This reduces combinational logic and switching inside FSM, improving power and area.  
-
-Also, change state encoding to one-hot for simpler next-state logic with fewer muxes, possibly improving timing. Replace the shift_count counter with a 2-bit gray-coded counter to reduce switching during SHIFT state. 
-
-Outputs remain Moore-type for timing clarity. Pattern detection is fully synchronous and resets with reset. This approach reduces FSM state count, logic complexity, and dynamic power by isolating pattern detection in a small shift register and comparator, while making the FSM simpler and faster.

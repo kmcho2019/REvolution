@@ -1,9 +1,0 @@
-To implement the specified finite state machine (FSM), we first identify the necessary states and transitions. The FSM starts in state A and moves to state B when `s` becomes 1. Once in state B, it needs to monitor `w` over three clock cycles to determine if `z` should be set to 1 (if `w` is 1 exactly twice) or 0 (otherwise). Since the FSM's behavior in state B depends on the count of `w` over three cycles and not on the sequence of `w` values, we can achieve this with a minimal number of states by using a counter to track the number of `w` pulses and a state machine to manage the different phases of the operation.
-
-The states can be defined as follows:
-- State A: Initial state where `s` is monitored.
-- State B: Monitoring `w` over three cycles to decide on `z`.
-
-Given the requirement to use as few states as possible and the nature of the task, which primarily involves counting the occurrences of `w` over a fixed window after the transition from state A to B, we can utilize a combination of state variables and counters to achieve the desired behavior without needing to explicitly define multiple states beyond the initial state A and the operational state B.
-
-We will use a counter to keep track of the number of clock cycles since entering state B and another variable to count the number of `w` pulses within those three cycles. Based on these counts, we determine the value of `z` in the fourth cycle after entering state B and then reset for the next set of three cycles.

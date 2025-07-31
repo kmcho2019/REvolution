@@ -1,7 +1,0 @@
-The original design is already optimal and minimal using built-in reduction operators, which map efficiently to hardware. Any further optimization attempts at the RTL level are unlikely to improve PPA since the logic is a single-level reduction per output.
-
-However, a slight stylistic improvement is to use a single always_comb block to compute all outputs simultaneously, which may help certain synthesis tools optimize resource sharing or infer balanced paths better. This approach explicitly shows combinational logic and avoids multiple continuous assignments, possibly yielding minor area or power benefits in some flows.
-
-This small change does not alter logic or increase complexity but could lead to improved synthesis results in some toolchains without harming readability or timing.
-
-Hence, the improvement strategy is to replace continuous assignments with a single always_comb block for clearer combinational logic specification.

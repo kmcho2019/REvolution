@@ -1,6 +1,0 @@
-To implement the module TopModule, we will analyze the given Karnaugh map to derive the function f. The Karnaugh map can be minimized by grouping the 1s in the table. We will then write the Verilog code to implement the minimized function. 
-Looking at the table, we notice that we can group some of the 1s. For the inputs x[3]x[0], when x[3] is 1, f is 1 for all combinations of x[1], x[2], and x[0] where x[1] or x[2] is 1. Additionally, when x[3] is 0 and x[0] is 1, f is 1 for the combination x[1]x[2] = 11. 
-So, we can express the function as f = (x[3] & (x[1] | x[2])) | (x[0] & x[1] & x[2]) | (x[3] & x[0] & x[1] & ~x[2]).
-However, looking closer at the table, we notice that the last term (x[3] & x[0] & x[1] & ~x[2]) is actually covered by the first term (x[3] & (x[1] | x[2])), because when x[3] is 1 and x[0] is 1, x[2] can be either 0 or 1 for f to be 1, which means x[1] must be 1. 
-Thus, the simplified function is f = (x[3] & (x[1] | x[2])) | (x[0] & x[1] & x[2]).
-We can then write the Verilog code to implement this function.

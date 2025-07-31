@@ -1,5 +1,0 @@
-Implement the barrel shifter as a chain of three stages, each conditionally rotating the input by a fixed amount (4, 2, and 1 bit positions) depending on the corresponding control bit. Each stage is composed of eight 2-to-1 multiplexers (`mux2X1`), one per output bit, choosing between the bit shifted by the stage amount (with wrap-around) or the bit passed from the previous stage unchanged.
-
-This modular approach strictly follows the problem statement: using `mux2X1` components at every stage to realize the barrel shifting as a sequence of conditional rotates by 4, then 2, then 1 position(s). The `mux2X1` is implemented as a simple parameterized 1-bit 2-to-1 mux, and the barrel shifter instantiates three stages of eight such muxes, cascading outputs as inputs to the next stage.
-
-This architecture is novel compared to a direct shift or a single-stage mux chain, as it explicitly performs the shifts step-wise and relies on a systematic construction of rotated inputs for each stage’s mux inputs.

@@ -1,5 +1,0 @@
-The existing design is already optimal in terms of clarity, simplicity, and synthesis mapping since it uses a single vectorized conditional assignment implementing a 2:1 mux on a 100-bit vector. Given the provided metrics, it has zero timing slack and minimal power and area, so there is little to improve at the RTL level for PPA.
-
-However, to reduce power by lowering switching activity on the output bus, we can add output register enable-like behavior by clock gating the output latch or pipeline stage (if synchronous). Since the problem does not specify a clock, adding a clock is not in scope.
-
-Another slight optimization can be to rewrite the assignment using a bitwise operation rather than a ternary operator, which some synthesis tools might map more efficiently in LUT-based FPGAs or ASIC standard cells:

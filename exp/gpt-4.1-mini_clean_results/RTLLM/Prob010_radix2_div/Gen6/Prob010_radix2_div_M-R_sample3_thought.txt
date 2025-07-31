@@ -1,9 +1,0 @@
-Refactor the radix-2 divider to use a simpler control scheme with explicit start and busy signals. Remove the 3-state FSM and replace it with an "active" signal that tracks the division progress. Use a synchronous process to save inputs and perform stepwise division on each clock cycle while active. Use combinational logic for absolute value calculation. Implement the shift register and subtraction logic similarly but structured more modularly for clarity.
-
-The result valid flag is asserted only when division finishes, and the result holds the combined signed-corrected remainder and quotient.
-
-This approach avoids multiple states by simply tracking if division is in progress or idle. It makes control flow more straightforward and emphasizes data path clarity.
-
-Inputs are latched only on new operation valid; division proceeds stepwise until 8 cycles done; then res_valid is asserted until new operation starts or reset.
-
-This structure is fully synchronous, clean, and suitable for synthesis and integration.

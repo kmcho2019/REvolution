@@ -1,9 +1,0 @@
-The implementation of the synchronizer module involves multiple registers and control signals to ensure proper synchronization of the input data signal (data_in) with the enable signal (data_en) across two different clock domains (clk_a and clk_b). The key idea is to use two enable control registers (en_clap_one and en_clap_two) that are updated based on the enable signal (data_en) delayed by two clock cycles of clk_b. This ensures that when data_en is high, the data can be synchronized and output on the clk_b clock domain.
-
-The module includes four main components:
-1. Data Register (data_reg): Stores the input data signal (data_in) on the positive edge of clk_a or when arstn is low.
-2. Enable Data Register (en_data_reg): Stores the input enable signal (data_en) on the positive edge of clk_a or when arstn is low.
-3. Enable Control Registers (en_clap_one and en_clap_two): Updated on the positive edge of clk_b or when brstn is low. These registers delay the enable signal by two clock cycles of clk_b.
-4. Output Assignment: Assigns the output data value (dataout) based on the control signal (en_clap_two) on the positive edge of clk_b or when brstn is low.
-
-To ensure proper synchronization, the change interval between two adjacent data changes is at least 10 clk_b clock cycles, and data_en remains high for at least 3 clk_b clock cycles when data_in is constant.

@@ -1,7 +1,0 @@
-To improve PPA while preserving correctness, I will:
-
-- Replace multiple equality checks with a single combinational case statement for mapping `code` to `out` and `valid`. This reduces the number of explicit comparators from 10 to 1, simplifying the logic and potentially lowering area and power.
-- Use a simple `case` block inside a combinational always block to decode the scancode, which synthesis tools efficiently map to optimized logic.
-- Default outputs to zero, matching the requirement when no scancode matches.
-- Keep the outputs registered combinationally (using always @*) for clarity and synthesis friendliness.
-- This approach typically yields better area and power because it avoids replicated equality comparators and large OR trees, reducing switching and gate count.

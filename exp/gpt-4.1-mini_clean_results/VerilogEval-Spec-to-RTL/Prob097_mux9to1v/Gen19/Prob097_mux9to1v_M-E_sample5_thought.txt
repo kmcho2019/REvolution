@@ -1,7 +1,0 @@
-I will implement the 9-to-1 multiplexer by building a hierarchy of smaller multiplexers, specifically using 3-to-1 multiplexers that select between three inputs at a time. This multi-level mux approach uses three stages: the first stage selects among the inputs in groups of three (a,b,c), (d,e,f), and (g,h,i), producing three intermediate outputs. The second stage selects among these three intermediate results. The third stage finalizes the output, selecting either from the second stage result or a constant 16'hFFFF for the unused select codes (9 to 15). 
-
-This architecture distributes the mux logic hierarchically, which can facilitate a balanced mux tree and potentially reduce propagation delay. It also clearly separates the default case handling by using an explicit final mux that checks for invalid select ranges.
-
-Each 3-to-1 mux will be implemented as a combinational block using a small case statement with a 2-bit select input. The top-level selector (4 bits) will be split into two parts: the upper 2 bits choose the second stage input, and the lower 2 bits choose the input inside each 3-input group. For sel values beyond 8, the final output is forced to 16'hFFFF.
-
-This approach emphasizes modular design and a clear hierarchy, beneficial for readability and potentially improved synthesis results for delay and area due to balanced muxes.

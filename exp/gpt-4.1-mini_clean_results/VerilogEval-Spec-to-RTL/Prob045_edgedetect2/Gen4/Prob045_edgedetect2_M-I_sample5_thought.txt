@@ -1,5 +1,0 @@
-The original design uses an 8-element array of 2-bit shift registers, which is larger and more complex than necessary. We only need to remember the previous input value (8 bits) to detect edges by XORing current input and previous input. To assert the output anyedge one cycle after the input edge, we register the XOR result before driving the output.
-
-Thus, the improved design stores only the previous input in a single 8-bit register, compares it with current input, and stores the XOR result in another register to produce anyedge with a one-cycle delay. This reduces area and power by halving register bits and simplifying logic. It also keeps timing short because only one register stage and one XOR are needed.
-
-This approach retains all functionality and satisfies the timing of asserting anyedge one cycle after input edge transitions.

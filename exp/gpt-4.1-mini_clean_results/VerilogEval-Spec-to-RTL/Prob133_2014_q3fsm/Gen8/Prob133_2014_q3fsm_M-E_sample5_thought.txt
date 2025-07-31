@@ -1,7 +1,0 @@
-A novel approach is to implement the FSM using a shift register of length 3 to capture the last three 'w' inputs once in state B, instead of using counters or accumulators. In state A, the FSM waits for s=1 to transition to state B. In state B, on each clock cycle, it shifts the incoming 'w' bit into a 3-bit shift register. Once the shift register is fully filled (tracked by a 2-bit cycle counter), the FSM counts the number of ones in the shift register to determine if exactly two of the three bits are '1'.
-
-The output 'z' is registered and updated one cycle after the third bit is shifted in, as per specification. The FSM remains in state B indefinitely once entered.
-
-This approach uses a minimal number of states (A and B), avoids addition of accumulators explicitly by using bitwise operations and a small cycle counter, and provides clear timing of when to output 'z'. It is easy to verify and understand, and uses simple shifting and counting logic without packing counters.
-
-Synchronous reset resets all state and counters. The output z is updated on the clock edge, matching the timing requirements.

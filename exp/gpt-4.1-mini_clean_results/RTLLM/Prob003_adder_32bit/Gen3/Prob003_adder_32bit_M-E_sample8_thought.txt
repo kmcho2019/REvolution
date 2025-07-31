@@ -1,8 +1,0 @@
-Implement a 32-bit carry-lookahead adder by hierarchical decomposition into four 8-bit CLA blocks. Each 8-bit CLA block produces its sum and generate/propagate signals for the block. Then, use a separate carry-lookahead generator at the block level to quickly compute the carry-in signals of each 8-bit block. This reduces carry delay by performing carry computation hierarchically rather than linearly.
-
-This architecture involves:
-- An 8-bit CLA module that outputs sum, block generate (G_block), and block propagate (P_block) signals.
-- A carry-lookahead generator for 4 blocks that computes the carry-ins for blocks 1 to 3 based on the block G and P signals and the input carry.
-- A top-level 32-bit adder module instantiating four 8-bit CLA modules and the 4-block carry lookahead logic.
-
-This hierarchical approach balances complexity and performance, decreasing the critical path compared to a single large CLA or multiple chained 16-bit CLAs.

@@ -1,9 +1,0 @@
-The architectural idea is to simplify the existing FSM and counter-based design by reducing the number of states and counters. This design uses a single counter to keep track of the delay and another to count the clock cycles. The FSM is simplified to manage the state transitions and control the counters.
-
-The design starts in the IDLE state, where it waits for the input sequence 1101. Once the sequence is detected, it transitions to the SHIFT_DELAY state, where it shifts in the next 4 bits to determine the delay.
-
-After the delay is determined, it transitions to the COUNTING state, where it starts counting the clock cycles. The counting process is managed using a single counter (counter) that increments every clock cycle. When this counter reaches the desired delay value multiplied by 1000, it decrements the delay and updates the count output.
-
-Once the counting is complete, the FSM transitions to the DONE state, where it asserts the done signal and waits for the ack signal to be asserted. Once the ack signal is asserted, the FSM transitions back to the IDLE state, resetting the counting process.
-
-By reducing the number of states and counters, the design becomes simpler and easier to understand, while maintaining the same functionality as the original solution.

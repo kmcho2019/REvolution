@@ -1,7 +1,0 @@
-The finite state machine (FSM) for the timer can be designed with five states: IDLE, PATTERN_DETECT, SHIFT_BITS, COUNTING, and DONE. 
-1. In the IDLE state, the FSM checks for the start pattern (1101) in the input data.
-2. After detecting the pattern, it enters the PATTERN_DETECT state where it asserts shift_ena for 4 clock cycles to shift in the duration bits.
-3. Once the duration bits are shifted in, it enters the COUNTING state, asserting the counting output, and waits for the done_counting input to be high.
-4. After the counting is done, it enters the DONE state, asserting the done output, and waits for the ack input to be high.
-5. Finally, after receiving the ack, it resets to the IDLE state.
-We will use a 2-bit variable to keep track of the state and use if-else statements to implement the state transitions.

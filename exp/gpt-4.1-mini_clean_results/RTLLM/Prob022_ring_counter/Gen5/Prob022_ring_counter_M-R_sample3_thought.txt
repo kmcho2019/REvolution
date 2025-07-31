@@ -1,9 +1,0 @@
-The original issue stems from using concatenation of vector slices in the assign statement which some tools do not support well. To avoid this, we can implement the rotation logic inside the always block by explicitly shifting the bits and wrapping the MSB to the LSB, without relying on slice concatenation.
-
-Specifically, within the always block:
-- On reset, initialize the output to 8'b0000_0001.
-- Otherwise, perform a circular left shift by checking the MSB bit. If the MSB is 1, shift left and set the LSB to 1; else, just shift left by one.
-
-This eliminates the use of concatenation in the assign statement and keeps all logic inside a single always block, improving compatibility across synthesis/simulation tools.
-
-This approach maintains the same behavior: a single high bit rotating through the 8-bit output vector on each clock cycle.

@@ -1,9 +1,0 @@
-Implement a hierarchical, pipeline-friendly tree of population counts by grouping the input bits into fixed-size 5-bit slices and computing their 3-bit partial popcounts using a compact LUT-based popcount5 module. Then, sum the resulting 51 partial counts via a balanced multi-level adder tree, where each stage sums pairs of counts with carefully calculated bit widths to avoid overflow. 
-
-Since 255 bits / 5 = 51 chunks, handle the last chunk carefully if smaller, padding it with zeros to maintain uniform module usage.
-
-This approach offers uniform chunk sizes for straightforward instantiation, a small popcount5 LUT module with low logic, and a fixed, multi-level summation tree that explicitly adds pairs of counts in stages (instead of a recursive module), allowing pipelining or clock gating in later expansions.
-
-The final output is 8 bits (max 255 ones).
-
-This design is novel compared to the recursive summation approach by using fixed 5-bit chunks for local counts and explicit balanced addition stages coded out step by step, emphasizing modular clarity and ease of pipelining or optimization later.

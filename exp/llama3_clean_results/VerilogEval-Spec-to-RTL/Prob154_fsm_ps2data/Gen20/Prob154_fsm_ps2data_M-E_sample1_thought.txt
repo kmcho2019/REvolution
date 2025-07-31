@@ -1,7 +1,0 @@
-The existing solution uses a finite state machine (FSM) to search for message boundaries in the input byte stream. However, this approach can be optimized by using a counter-based approach instead of a state machine. The idea is to use a counter to keep track of the number of bytes received since the last message boundary was detected. When a byte with in[3]=1 is received, the counter is reset to 0, and the byte is stored as the first byte of the message. Subsequent bytes are stored as the second and third bytes of the message, and the counter is incremented for each byte received. When the counter reaches 2, it means that all three bytes of the message have been received, and the done signal is asserted.
-
-This approach eliminates the need for a state machine and reduces the complexity of the design. It also allows for easier modification of the message length in the future, if needed.
-
-To further optimize the design, a single 24-bit register can be used to store the message bytes, and the bytes can be shifted into the register as they are received. This approach reduces the number of registers required and simplifies the logic.
-
-In terms of PPA metrics, this approach is expected to improve the area and power consumption of the design, while maintaining or improving the performance. The use of a counter and a single 24-bit register reduces the number of logic gates required, which should lead to area and power savings. The performance should remain similar or improve due to the simplified logic.

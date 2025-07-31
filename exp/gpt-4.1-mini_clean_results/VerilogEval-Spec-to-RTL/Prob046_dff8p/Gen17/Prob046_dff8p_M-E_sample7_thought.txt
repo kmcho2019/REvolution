@@ -1,7 +1,0 @@
-Instead of using a single 8-bit register, I will implement the TopModule using eight individual D flip-flops, each with an independent synchronous reset and negative-edge clock trigger. Each flip-flop will reset to the corresponding bit of 0x34 (binary 00110100) on the active-high synchronous reset.
-
-The design will be fully synchronous, triggered on the negative edge of clk, meeting the requirements. This structural approach emphasizes clarity and modularity by instantiating a DFF module per bit. The per-bit DFF module is simple, with synchronous reset loading a constant 'reset_value' per flip-flop.
-
-This approach allows easy scalability and isolated flip-flop behavior, which might help timing and debugging, and is a classical style sometimes preferred for bit-wise control or separate flip-flop enable signals. It avoids any comparator or clock enable logic, so minimal combinational logic is introduced.
-
-The output q is assembled from the eight flip-flops. This design strictly follows the interface and fulfills the reset-to-0x34 specification.

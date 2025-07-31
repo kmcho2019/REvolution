@@ -1,7 +1,0 @@
-To solve this problem, we need to implement a finite state machine (FSM) that will search for message boundaries in the input byte stream. The FSM should have at least four states: idle, byte1, byte2, and byte3. In the idle state, we discard bytes until we see one with in[3]=1, at which point we transition to byte1. We then assume this is the first byte of a message and store it in out_bytes[23:16]. We transition to byte2 and store the next byte in out_bytes[15:8]. We then transition to byte3 and store the next byte in out_bytes[7:0]. After receiving the third byte, we assert the done signal and stay in this state until the next clock cycle. If reset is asserted at any time, we return to the idle state.
-
-The FSM can be implemented using a combination of sequential and combinational logic. The sequential logic will be used to store the current state and the bytes of the message, while the combinational logic will be used to determine the next state and the output values.
-
-We will use a 2-bit state variable to represent the four states. The state variable will be updated on every clock cycle based on the current state and the input values.
-
-The out_bytes output will be valid only when the done signal is asserted. At other times, the value of out_bytes is a don't-care.

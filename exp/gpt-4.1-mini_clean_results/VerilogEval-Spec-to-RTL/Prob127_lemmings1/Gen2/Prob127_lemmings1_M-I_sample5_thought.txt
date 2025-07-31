@@ -1,5 +1,0 @@
-The previous solution correctly models the Lemming FSM with asynchronous reset and toggling state on bump inputs. However, the bump inputs are asynchronous and can cause glitches or multiple toggles within one clock cycle if pulses are shorter than a clock period. To ensure reliable and glitch-free FSM operation, I will synchronize the bump inputs to the clock domain using two-stage flip-flops to avoid metastability and input glitches. This synchronization will ensure that bump signals are stable and aligned to the clock before the next_state logic evaluates them.
-
-After synchronization, the FSM toggles state on detecting any bump (synchronized), preserving the Moore FSM design. Outputs remain directly derived from the state. This approach improves reliability and correctness without adding complexity or latency beyond synchronization delay, thus solving the observed mismatches in simulation.
-
-This design balances simplicity, correctness, and hardware efficiency.

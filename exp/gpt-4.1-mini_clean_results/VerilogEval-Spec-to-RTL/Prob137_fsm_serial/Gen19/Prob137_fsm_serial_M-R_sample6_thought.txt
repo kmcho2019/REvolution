@@ -1,9 +1,0 @@
-Refactor the FSM by integrating the next state and output logic directly into the sequential always block, removing the separate combinational next-state block. Use one-hot style state encoding via individual state flags for clearer state decoding and potentially easier optimization by synthesis tools.
-
-Replace the shift register update with a left shift of the shift register concatenated with the incoming bit, properly aligning with LSB-first input (shift left, load new bit into LSB).
-
-Generate the done pulse as a register that is set inside the sequential block when a valid stop bit is detected, and cleared otherwise, ensuring a clean one-cycle pulse.
-
-Use synchronous reset as before to initialize all registers.
-
-This restructuring reduces code complexity by avoiding a separate combinational block and leverages one-hot style state registers for clarity, while maintaining identical functionality.

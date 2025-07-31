@@ -1,9 +1,0 @@
-Refactor the original pipelined ripple carry adder by separating combinational addition logic from the pipeline registers more explicitly. Instead of keeping carry and sums mostly in sequential always blocks, use intermediate wires to compute sums and carries combinationally for each pipeline stage, then register only the pipeline inputs and outputs. 
-
-We keep arrays of registers for inputs (`adda_pipe`, `addb_pipe`), pipeline enable, and carry registers, but compute stage sums and carry-outs using combinational wires derived directly from these registered inputs and previous stage carry register. This clarifies the separation of combinational logic and registers, potentially easing synthesis and debugging.
-
-The output is assembled from registered sums and the final carry. The pipeline enable is registered and propagated through pipeline registers, to produce the output `o_en`.
-
-This structure emphasizes clean pipeline stages with registered inputs, explicit combinational adders per stage, and registered outputs, maintaining the same functional behavior and pipeline latency.
-
-Parameters remain the same to keep the design flexible.

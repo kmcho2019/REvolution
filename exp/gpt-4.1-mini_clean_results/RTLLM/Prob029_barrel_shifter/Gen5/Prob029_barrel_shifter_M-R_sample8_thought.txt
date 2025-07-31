@@ -1,9 +1,0 @@
-To avoid redeclaring the mux2X1 module and reduce complexity, I will refactor the barrel shifter to use purely combinational logic with continuous assignment statements.
-
-Each stage will perform a conditional rotate-right shift by 4, 2, or 1 bits, controlled by the corresponding bits in `ctrl`.
-
-Instead of instantiating mux2X1 modules explicitly, I will use conditional operator `?:` inside a generate-for loop for each bit, selecting between the original bit and the rotated bit at each stage.
-
-The data will flow through three intermediate wires (stage1, stage2), and the final output `out` is assigned similarly.
-
-This approach retains the same logic and functionality but avoids the mux2X1 module entirely, thus eliminating naming conflicts and making the code simpler and more straightforward.

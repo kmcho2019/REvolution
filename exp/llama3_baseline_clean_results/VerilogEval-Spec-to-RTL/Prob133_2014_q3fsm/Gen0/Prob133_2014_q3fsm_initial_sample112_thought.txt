@@ -1,9 +1,0 @@
-To implement the finite state machine (FSM) as described, we can use a Moore machine or a Mealy machine. Given the requirements, a Mealy machine seems more appropriate since the output z depends on the current state and the input w. However, the output z also depends on the history of w over the past three clock cycles after transitioning from state A to B. We can achieve this with a minimal number of states by using a counter to track the number of clock cycles since entering state B and a separate counter or logic to track the number of times w is 1 during these cycles.
-
-The states we'll use are:
-- State A: The initial state where the FSM waits for s = 1 to move to state B.
-- State B: Here, the FSM starts examining w for the next three clock cycles.
-
-Given the need to track w over three cycles and the minimal state requirement, we will use two counters: one for the cycle count (0 to 2, since we examine w for three cycles) and another to count how many times w is 1 during these cycles. The FSM will output z = 1 in the cycle following the three examination cycles if w was 1 exactly twice.
-
-The logic for setting z will be based on the counts of w and the cycle number. After the three cycles, the FSM will continue to examine w in subsequent three-cycle blocks without needing to return to state A unless reset is applied.

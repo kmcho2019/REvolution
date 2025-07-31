@@ -1,8 +1,0 @@
-To fix the syntax error caused by declaring a wire inside an always block, compute the train index (`train_idx`) outside the always block as a wire. This wire can then be used inside the always block without declaring a new wire or reg there. All other logic remains the same.
-
-This means:
-- Declare `wire [6:0] train_idx = train_pc ^ train_history;` outside the always block.
-- Inside the always block, use `train_idx` directly.
-- Also, carefully handle simultaneous prediction and training updates ensuring training takes precedence in updating the speculative history (`ghr_predict`).
-
-This resolves the illegal procedural wire declaration and complies with Verilog syntax.

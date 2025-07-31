@@ -1,9 +1,0 @@
-To optimize PPA (Timing, Power, Area), I will slightly simplify the terminal count detection condition by re-expressing the detection of 10 (decimal 1010) without unnecessary redundant logic. Also, since the count is from 1 to 10, I can implement the increment and reset using a simple addition with an if condition checking if q equals 10, and reset synchronously to 1.
-
-Instead of complex bitwise ANDs, I will directly compare q to 4'd10 as many synthesis tools efficiently handle equality checks for small widths, resulting in potentially better logic optimization and simpler code.
-
-To reduce switching power, I will avoid incrementing q when it already is 10, resetting immediately to 1 without an extra clock cycle with the value 11. This approach reduces the maximum count value and unnecessary toggling.
-
-Overall, this will slightly reduce combinational logic depth and toggle activity, yielding improvements in timing, area, and power.
-
-The counter remains synchronous, reset synchronous active-high resetting to 1.

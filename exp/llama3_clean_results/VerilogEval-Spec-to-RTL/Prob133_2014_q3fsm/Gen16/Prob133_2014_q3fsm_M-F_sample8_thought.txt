@@ -1,7 +1,0 @@
-To fix the code based on the feedback, we need to adjust the logic for setting the output 'z' in state B. The current implementation checks for the condition in every clock cycle, which is incorrect. Instead, we should set 'z' to '1' in the following clock cycle after exactly two of the last three 'w' values are '1'. To achieve this, we can introduce additional states to track the progression of the FSM in state B. 
-
-We will have four states: STATE_A, STATE_B1, STATE_B2, and STATE_B3. The FSM will start in STATE_A and remain there as long as 's' is '0'. When 's' becomes '1', the FSM will transition to STATE_B1. In STATE_B1, STATE_B2, and STATE_B3, we will use the shift register to track the last three values of 'w'. After three clock cycles, we will check if exactly two of the last three 'w' values are '1', and if so, we will set the output 'z' to '1' in the next clock cycle.
-
-We will also introduce a new signal 'z_next' to store the next value of 'z'. This will allow us to set 'z' to '1' in the following clock cycle after the condition is met. 
-
-By introducing these additional states and the 'z_next' signal, we can ensure that the FSM correctly implements the required logic and sets 'z' to '1' in the correct clock cycle.

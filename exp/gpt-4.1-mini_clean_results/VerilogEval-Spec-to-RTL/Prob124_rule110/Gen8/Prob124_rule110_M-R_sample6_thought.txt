@@ -1,7 +1,0 @@
-Refactor the module by separating the state register update and the next-state combinational logic even more explicitly: use a dedicated register to hold the state and update it on the clock edge. Instead of generating a per-bit combinational loop inside a generate block, compute the next state vector with a for-loop inside a combinational always block, which allows more straightforward debugging and a clearer flow of logic.
-
-Retain boundary zero-padding by explicitly handling indices outside the range within the for-loop. Use a single always_comb block for next_state calculation and a sequential always_ff block for state updating. This approach clarifies combinational vs sequential parts and aligns with SystemVerilog style but remains synthesizable in Verilog-2001 style.
-
-The synchronous load logic is also integrated cleanly in the sequential block, prioritizing loading input data over state transition.
-
-This restructuring does not change the logic or timing behavior but improves code readability, debuggability, and potentially eases tool optimizations by making the combinational next-state computation explicit in a single block.

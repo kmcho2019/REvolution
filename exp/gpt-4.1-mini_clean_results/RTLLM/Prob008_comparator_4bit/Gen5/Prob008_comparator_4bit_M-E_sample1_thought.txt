@@ -1,8 +1,0 @@
-Implement the 4-bit comparator by creating four individual 1-bit comparator blocks that output "greater", "equal", and "less" signals for each bit. Each bit comparator compares A[i] and B[i], and these bit-level comparison results are combined hierarchically from the most significant bit (MSB) down to the least significant bit (LSB). The outputs are decided by cascading logic: if MSB bits differ, the comparison result of MSB determines the final output; otherwise, the next significant bit is evaluated, and so on until the least significant bit. If all bits are equal, then the final result is equality. This modular, hierarchical method resembles priority encoding and early decision making and avoids explicit borrow/carry chains or arithmetic subtraction. The final outputs are mutually exclusive by construction.
-
-This approach increases clarity, supports easy scalability to larger bit-widths, and implements purely combinational logic using simple logic gates (AND, OR, XOR, NOT). It also enables early resolution of comparison at the highest differing bit without ripple borrow propagation delay.
-
-Key points:
-- Each bit comparator outputs three signals: gt_bit, eq_bit, lt_bit.
-- Combine these signals starting from MSB to LSB to obtain final A_greater, A_equal, A_less.
-- Outputs are mutually exclusive.

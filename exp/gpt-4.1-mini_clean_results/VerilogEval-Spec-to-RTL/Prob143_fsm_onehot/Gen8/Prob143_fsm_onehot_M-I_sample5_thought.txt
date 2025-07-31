@@ -1,9 +1,0 @@
-The current solution uses a loop with OR accumulation inside a combinational always block, which is clear but can lead to higher logic depth and potentially larger area due to multiple conditional ORs in synthesis. To optimize for better PPA, we can remove the loop and explicitly instantiate the next_state logic in parallel assignments. This reduces logic levels because synthesis tools can optimize parallel OR logic better than accumulated ORs inside loops.
-
-Moreover, since each state's next state depends only on `in`, we can directly assign next_state bits by OR-ing contributions from each active state using combinational logic expressions. This also eases logic sharing and enables more aggressive synthesis optimization.
-
-For outputs, the existing simple bitmask approach is already minimal and should be retained.
-
-In summary, the main improvement is to replace the loop with direct parallel combinational ORs for next_state bits, improving timing and possibly reducing area and power due to simpler logic structure and fewer levels of logic.
-
-This refactor preserves correct functionality, supports multiple active states in `state`, and produces fully combinational outputs without flip-flops.

@@ -1,9 +1,0 @@
-To implement the barrel shifter, we need to create a hierarchical design where each stage shifts the input by a specific number of positions based on the control signal. The design will consist of multiple stages, each containing a series of 2-to-1 multiplexers (`mux2X1`) that select between the shifted input and the original input. The output of each stage will be passed to the next stage for further shifting if required.
-
-The first stage will be controlled by `ctrl[2]`, which determines if the input should be shifted by 4 positions. If `ctrl[2]` is high, the input will be shifted; otherwise, the original input will be passed to the next stage.
-
-The second stage will be controlled by `ctrl[1]`, which determines if the intermediate result should be shifted by 2 positions. If `ctrl[1]` is high, the result from the previous stage will be shifted; otherwise, it will be passed to the next stage as is.
-
-The third stage will be controlled by `ctrl[0]`, which determines if the intermediate result should be shifted by 1 position. If `ctrl[0]` is high, the result from the previous stage will be shifted; otherwise, it will be the final output.
-
-We will use the `mux2X1` submodule to select between the shifted input and the original input at each stage. This submodule will take two input values and a select signal, and it will output the value selected by the select signal.

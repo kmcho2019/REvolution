@@ -1,9 +1,0 @@
-The existing implementation uses counters to divide the input clock frequency. However, we can explore an alternative approach using a single counter and deriving the lower frequency clocks from it. This can be achieved by using a single counter that increments on every positive edge of the input clock and then using the counter value to determine when to toggle each of the output clocks. 
-
-For the 50MHz clock, we can simply toggle it on every other positive edge of the input clock. For the 10MHz clock, we need to toggle it every 10 cycles of the input clock. This can be achieved by checking the counter value and toggling the clock when it reaches 9 (since we're counting from 0). For the 1MHz clock, we need to toggle it every 100 cycles of the input clock, so we can check the counter value and toggle the clock when it reaches 99.
-
-We can use a single 7-bit counter to keep track of the cycles, as 2^7 (128) is greater than the largest division ratio (100). This approach can potentially reduce the area and power consumption of the design.
-
-To improve power efficiency, we can also use clock gating to reduce the power consumption of the counter when the output clocks are not being used. 
-
-Additionally, we can use a synchronous reset to improve the design's timing and reduce the power consumption.

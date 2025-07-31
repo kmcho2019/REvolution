@@ -1,5 +1,0 @@
-Refactor the FSM from a simple 2-bit counter-based design to an explicit three-state FSM encoded in a `reg [1:0] state` variable. Use three states: IDLE (waiting for start byte), BYTE2 (second byte), and BYTE3 (third byte). The FSM transitions are driven by `in[3]` detection and progress through the states sequentially. 
-
-Use combinational logic to determine `done` based on the current state and input, asserting it one cycle immediately after receiving the third byte. Synchronize state transitions on clock and reset with non-blocking assignments. This explicit state machine clarifies control flow and separates combinational and sequential logic. 
-
-This also avoids using an enable gating signal; instead, state machine transitions inherently gate progress. The done signal is driven combinationally from the current state to reduce register toggling. The overall function remains the same, but this structure improves readability, FSM clarity, and timing predictability.

@@ -1,9 +1,0 @@
-Fuse Example 1's clean FSM structure and explicit control signals with Example 2's simpler synchronous reset and straightforward sequential logic. Enhance clarity by maintaining a three-state FSM (IDLE, LOAD, CALC) that separates input loading, calculation, and idle wait states, while controlling register updates with enable signals.
-
-Retain sign-extended 16-bit multiplier and multiplicand registers for correct signed arithmetic. Perform addition and left-shift of multiplicand during CALC only if the multiplier bit at the current counter is 1, mimicking the radix-2 Booth style approach specified.
-
-Use a synchronous reset (posedge clk) only, improving synthesis friendliness and timing. Generate ready signal only after completing all 16 cycles. Keep counter 5-bit counting from 0 to 15.
-
-To reduce switching and improve power efficiency, update registers only when needed using load/add/shift enables. Use nonblocking assignments in sequential block and blocking in combinational for good style.
-
-This fusion yields a clear, fully synchronous, FSM-driven multiplier with proper sign extension, controlled register updates, and clean output handshake, balancing clarity, maintainability, and efficient operation matching the problem description.

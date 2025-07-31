@@ -1,8 +1,0 @@
-The given design is already minimal and functionally correct, using simple combinational logic. To optimize further for power and area, we can consolidate the logic into a single assignment driving a two-bit vector, then split into outputs. This approach allows synthesis tools to potentially share logic and reduce gate count by reusing intermediate signals internally. Also, it ensures mutual exclusivity and reduces redundant inversions by encoding the outputs as a single 2-bit signal derived from the inputs. This can marginally improve power due to fewer gates toggling separately and reduce area slightly.
-
-The logic encoded in a 2-bit wire is:
-- 00 if ring=0 (no outputs)
-- 01 if ring=1 and vibrate_mode=0 (ringer=1, motor=0)
-- 10 if ring=1 and vibrate_mode=1 (ringer=0, motor=1)
-
-We assign these values using simple boolean logic and then output corresponding bits.

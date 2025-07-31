@@ -1,9 +1,0 @@
-Use a simple two-stage buffer with a toggle flip-flop to track if the stored data is the first or second byte. On each valid input:
-
-- If no stored data (toggle = 0), store input in a register `data_lock` and set toggle to 1 to indicate waiting for the second byte.
-- If stored data present (toggle = 1), concatenate the stored `data_lock` (higher 8 bits) and the new input (lower 8 bits), then output `data_out` and assert `valid_out` on the *next* clock cycle.
-- To achieve the one-cycle delay between the second input and output assertion, register `valid_out` and `data_out` on a separate pipeline stage.
-- After outputting the combined data, clear the toggle and prepare to store the next first byte.
-- Reset clears all registers and flags.
-
-This approach cleanly separates input data capture and output generation, implements the required output delay, and ensures the first arriving byte occupies the high bits while the second byte is the low bits.

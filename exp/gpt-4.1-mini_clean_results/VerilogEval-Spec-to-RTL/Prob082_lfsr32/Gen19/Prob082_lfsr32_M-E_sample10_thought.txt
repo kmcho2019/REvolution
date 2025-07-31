@@ -1,5 +1,0 @@
-I will implement the 32-bit Galois LFSR by explicitly computing each bit of the next state in a combinational manner before the clock edge, rather than relying on a single conditional XOR with a tap mask. The key idea is to compute the feedback bit as the XOR of the bits q[0], q[30], q[20], and q[1], corresponding to taps at positions 32, 22, 2, and 1 (all one-based, adjusted for zero indexing). Then, for each bit in the next state vector, I will assign its next value based on the Galois LFSR definition: if the bit is a tap, the next value is the XOR of the previous bit and feedback; if not a tap, it's just the previous bit shifted in.
-
-By separating next-state combinational logic from the flip-flop update, this structure improves clarity, potentially helps synthesis tools optimize logic better, and matches the Galois LFSR feedback definition bit-by-bit.
-
-The synchronous reset will set the register q to 1 on clk posedge, as required.

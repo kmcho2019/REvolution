@@ -1,5 +1,0 @@
-The failure arises because the tool does not support assignments to the full 8-bit vector at once. To circumvent this, instead of assigning the entire vector in one operation, assign each bit of the output register individually using a procedural for-loop inside the sequential always block. This ensures only scalar assignments (to individual bits) are done, which should be supported even in limited toolchains.
-
-The logic remains the same: on reset, set `out[0] = 1` and all others zero; otherwise, detect if the MSB is set, then shift the pattern by moving each bit to the next higher position and wrap the MSB to LSB. Assign each bit in a loop explicitly to satisfy the tool constraint.
-
-This approach avoids full vector assignments but preserves the one-hot rotating behavior.

@@ -1,7 +1,0 @@
-To optimize the priority encoder for better power, performance, and area (PPA), we can implement a parallel approach by using bitwise operations to identify the first set bit instead of a long chain of conditional operators. Specifically, we compute a mask that isolates the least significant set bit (LSB) using `in & (~in + 1)`. Then, we convert this one-hot LSB mask to its binary position using a priority encoder implemented with a small combinational logic or a simple lookup via a small case statement.
-
-This reduces the logic depth since the isolating of LSB is a simple bitwise operation, and the encoding logic only needs to handle one-hot inputs, allowing parallel processing and less muxing. This should improve timing by reducing the critical path and decrease power by limiting switching activities along a long priority chain. Area should be comparable or slightly improved due to simpler encoding.
-
-If no bits are set, the mask is zero, so the output position is zero as required.
-
-This approach balances clarity and PPA better than the long ternary chain.

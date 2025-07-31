@@ -1,9 +1,0 @@
-Fix the loading of delay bits to be MSB-first: shift delay_reg left and input data at LSB so the first bit received becomes the MSB.  
-Use a separate signal to detect the rising edge entering the COUNT state so counters initialize precisely once.  
-Initialize tick_counter with delay+1 at COUNT state entry and count down tick_counter on every 1000-cycle interval.  
-Display count as tick_counter - 1 during counting (because tick_counter includes current interval) and hold steady for 1000 cycles before decrementing tick_counter.  
-Do not reset delay_reg or delay_bits_received inside PATTERN_SEARCH every cycle; only reset on reset signal or at state transitions.  
-Ensure pattern detection happens continuously in PATTERN_SEARCH using a 4-bit shift register shifting in data every clock cycle.  
-Delay loading state collects 4 bits MSB-first from data.  
-Structure the FSM and counters so all outputs and state variables update cleanly at clock edges with synchronous reset.  
-This ensures correct pattern detection, proper delay loading, exact counting of (delay+1)*1000 cycles, and clean signaling of counting and done states.

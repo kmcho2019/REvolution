@@ -1,9 +1,0 @@
-To address the issues and improve the design, I will parameterize the module with `DATA_WIDTH` (64 by default) and `STG_WIDTH` (pipeline stage width, e.g., 8 bits) to make it flexible and compatible with testbenches expecting these parameters. The number of pipeline stages (`STAGES`) will be derived automatically from these parameters.
-
-I will carefully handle the slicing of inputs and assembling of the result output to avoid mistakes such as repeating the same segment twice. The pipeline registers for input operands, enable, sum, and carry will be arrays indexed by stage.
-
-I will ensure carry propagation works properly from one stage to the next clock cycle. Each stage adds its portion of bits plus the carry-in from the previous stage registered last cycle, producing a sum segment and a registered carry-out for the next stage.
-
-Output enable (o_en) will be a delayed version of the input enable (i_en) by the number of pipeline stages, indicating when the output result is valid.
-
-This parameterized and clean design will improve reusability, maintainability, and match testbench expectations, while maintaining proper pipelined ripple carry addition behavior.

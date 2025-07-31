@@ -1,7 +1,0 @@
-The original design explicitly computes all 25 pairwise XNOR comparisons, including symmetrical duplicates like (a,b) and (b,a). Since equality is symmetric (X ~^ Y = Y ~^ X), we can reduce redundant computations by calculating only the upper triangle plus diagonal of the 5x5 matrix of input pairs, which totals 15 unique pairs, and then mirror these results for the lower triangle.
-
-This approach reduces the number of XNOR gates instantiated from 25 down to 15, saving area and power without increasing critical path delay (still just a single XNOR gate per output bit). Outputs are assigned accordingly by mapping the 25 output bits from the computed 15 unique values and their symmetric counterparts.
-
-The implementation uses a generate loop to clearly build the upper triangle plus diagonal and stores them in a temporary 2D wire array, then assigns each output bit by selecting from either the stored or symmetric value. This keeps code clean, synthesis friendly, and PPA optimized.
-
-This method improves power and area while maintaining the correctness and performance of the original design.

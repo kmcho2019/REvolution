@@ -1,9 +1,0 @@
-The new architectural idea for the LIFObuffer module involves utilizing a ring buffer instead of a traditional stack memory array. This approach allows for more efficient use of memory and simplifies the logic for managing the buffer. The ring buffer will be implemented using a single array, and two pointers, `head` and `tail`, will be used to track the current position for writing and reading data, respectively. 
-
-The `head` pointer will point to the next available location for writing data, and the `tail` pointer will point to the location of the data to be read. When the buffer is full, the `head` pointer will wrap around to the beginning of the array, overwriting the oldest data. This approach ensures that the buffer operates in a Last-In-First-Out (LIFO) manner.
-
-To optimize the design, the `head` and `tail` pointers will be updated only when the enable signal is high, and the buffer is not empty or full. This reduces unnecessary switching activity and helps minimize power consumption. The `EMPTY` and `FULL` flags will be updated based on the difference between the `head` and `tail` pointers.
-
-The sequential logic will be simplified by using a single `always` block to update the `head` and `tail` pointers, as well as the data in the ring buffer. The combinational logic will be used to determine the next values of the `head` and `tail` pointers based on the current state of the buffer.
-
-This novel architectural idea provides a more efficient and scalable solution for the LIFObuffer module, with improved performance, power consumption, and area usage.

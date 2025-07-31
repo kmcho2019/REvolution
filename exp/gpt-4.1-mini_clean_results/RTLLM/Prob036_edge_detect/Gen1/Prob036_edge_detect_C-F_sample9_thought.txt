@@ -1,9 +1,0 @@
-The best approach combines these aspects:
-1. Use a single always block triggered on posedge clk and negedge rst_n for simplicity and minimal register use.
-2. Store the previous value of 'a' in a registered signal (a_dly) updated at each clock edge.
-3. Compare the current 'a' with the delayed 'a_dly' to detect edges.
-4. Generate single-cycle pulses for 'rise' and 'down' synchronized to clk that assert for exactly one cycle when edges occur.
-5. Use non-blocking assignments consistently for all registers to follow synthesis best practices and avoid potential race conditions.
-6. Initialize all registers on async reset (active low).
-7. Keep the output signals clear (0) whenever no edges are detected, ensuring they remain zero until a new edge occurs.
-This fusion keeps simplicity and minimal registers from Example 1, while enforcing coding style improvements and synchronous behavior emphasized in Example 2.

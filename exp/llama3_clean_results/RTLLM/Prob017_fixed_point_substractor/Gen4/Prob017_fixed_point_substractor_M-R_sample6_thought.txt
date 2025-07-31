@@ -1,7 +1,0 @@
-The goal is to refactor the existing fixed-point subtractor module to address the identified syntax error and improve its structure for better synthesis and simulation. The main issue is that the output port `c` is declared as a wire, but it's being assigned a value within an `always` block, which is not allowed in Verilog. 
-
-To refactor this, we will declare `c` as a reg (register) instead of a wire, allowing it to be assigned a value. However, since we are dealing with a combinational logic (no clock or sequential behavior), we can also consider using continuous assignment with the `assign` keyword, which is more suitable for this type of logic. 
-
-Additionally, we can simplify the logic by removing the unnecessary check for the result being zero and directly assigning the result of the subtraction to `c`. Verilog's built-in signed arithmetic operations will handle the sign bit correctly for the result, including the case when the result is zero.
-
-The refactored code will maintain the same functionality but with improved syntax and a more appropriate structure for a combinational logic module.

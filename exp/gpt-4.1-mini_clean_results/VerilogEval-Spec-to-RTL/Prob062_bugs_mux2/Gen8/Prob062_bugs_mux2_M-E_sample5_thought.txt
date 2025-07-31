@@ -1,5 +1,0 @@
-To fix the bug while preserving the 8-bit output, a more structural approach can be used: instantiate eight 1-bit 2-to-1 multiplexers, one for each bit position of the 8-bit vectors. Each 1-bit mux selects the corresponding bit from `a` or `b` based on `sel`. This approach explicitly builds the 8-bit mux from smaller building blocks and clearly matches input and output widths.
-
-This structural style is easy to read and verify, and can be easily extended to different bit widths. Using a generate-for loop and a small 1-bit mux module makes the code modular and reusable. The output `out` becomes 8 bits wide, correctly matching the inputs.
-
-This design avoids bitwise operations mixing multi-bit vectors with scalars, instead explicitly selecting bits in a clean and synthesizable manner.

@@ -1,9 +1,0 @@
-Implement a straightforward dual-GHR gshare predictor with:
-
-- A single 7-bit global history register `ghr` updated only on the clock edge.
-- A 128-entry 2-bit saturating counter table indexed by XOR of PC and `ghr`.
-- On prediction (predict_valid), output the prediction based on current `ghr`, and output current `ghr` as predict_history (before update). On the next clock edge, update `ghr` by shifting in the predicted bit.
-- On training (train_valid), update the PHT entry indexed by train_pc XOR train_history with the actual outcome.
-- If the branch was mispredicted, restore `ghr` to the given train_history to recover from speculative history.
-- If training and prediction happen in the same cycle, prioritize training update and recovery of `ghr`.
-- This simple design handles recovery, updates, and prediction in a clean way and meets all specs without complex dual speculative/committed GHRs.

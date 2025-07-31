@@ -1,8 +1,0 @@
-This implementation uses a single 17-bit counter (enough to count up to 86400 seconds in a day) and decodes the time values from this counter. The key advantages are:
-1. Single counter reduces register count and simplifies control logic
-2. Decoding logic is purely combinational
-3. Eliminates cascaded enable signals that cause timing issues
-4. Reset is simpler as only one counter needs to be cleared
-5. Modular arithmetic used for decoding makes the design more mathematically elegant
-
-The counter increments every clock cycle. Seconds are derived from counter % 60, minutes from (counter / 60) % 60, and hours from (counter / 3600) % 24. The counter automatically rolls over after 86400 counts (24 hours).

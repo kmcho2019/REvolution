@@ -1,7 +1,0 @@
-Implement the Lemming FSM as a single enumerated state machine that encodes both mode and direction into one compact state variable. We use four main modes: WALK_LEFT, WALK_RIGHT, DIG_LEFT, DIG_RIGHT, FALL_LEFT, FALL_RIGHT, and SPLAT. Direction is implicit in the state naming, eliminating a separate direction register. This reduces register count and simplifies next-state logic by combining mode and direction transitions. The FSM transitions on clock edge with asynchronous reset.
-
-We keep a separate fall timer counter to track falling duration, which resets on landing or reset. When falling >20 cycles and landing, we transition to SPLAT state that disables all outputs. The priority order is handled inside the state transitions. Input signals bump_left, bump_right, ground, and dig are sampled synchronously. Being bumped only affects direction while walking, not during dig or fall.
-
-Outputs are directly decoded from the current state, yielding a Moore machine. This architecture reduces register count and combines direction and mode into the state encoding, simplifying control logic and potentially reducing area and power. The fall timer counter remains a separate saturating 5-bit register. The reset state is WALK_LEFT.
-
-This approach leverages a more encoded FSM style, offering a different architectural viewpoint than separate mode and direction registers.

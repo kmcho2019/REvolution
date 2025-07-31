@@ -1,9 +1,0 @@
-Instead of a direct case-based lookup, implement the mapping using a small combinational ROM instantiated as a memory array inside the module. This approach treats the fixed 8-entry lookup as a synchronous ROM, but since the module is combinational, the read will be done asynchronously using the input as an address to read from the initialized ROM array.
-
-Advantages:
-- The LUT is stored in a ROM array initialized at elaboration.
-- The design can be easily scaled or altered by changing the contents of the ROM array.
-- Readability and maintainability are preserved, and it highlights a different style (memory-based lookup) compared to a large case statement.
-- Synthesizers typically infer small ROM or distributed ROM from initialized reg arrays.
-
-This implementation fully respects the combinational interface, outputs the corresponding q value for input a, and outputs zero if input is invalid (beyond 3-bit range, though 'a' is 3-bit, so all valid). It also allows for cleaner updates if the table changes.

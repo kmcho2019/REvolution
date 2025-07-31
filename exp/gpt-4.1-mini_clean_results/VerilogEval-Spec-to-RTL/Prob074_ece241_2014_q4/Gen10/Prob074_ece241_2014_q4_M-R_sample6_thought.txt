@@ -1,8 +1,0 @@
-Refactor the design by explicitly defining the combinational logic for the D inputs of each flip-flop using continuous assignments, separating combinational and sequential logic clearly. The flip-flop outputs will be stored in registers updated at the clock's positive edge, and initialized to zero. This approach clarifies dataflow by having dedicated wires for next states (D inputs) and registers for current states, with explicit assignments for the gate outputs feeding the D inputs.
-
-This makes the design modular and clean: 
-- compute next states (D inputs) with assign statements,
-- update flip-flops synchronously,
-- output z as the NOR of flip-flop outputs.
-
-Initialization uses register initialization to zero as the problem permits (initial zero state). This structurally separates combinational and sequential parts better than embedding combinational logic directly inside the always block.

@@ -1,7 +1,0 @@
-To optimize for better power, performance, and area (PPA), I will implement the following improvements:
-1. Use one-hot encoding for states since there are only four states. One-hot often improves timing due to simpler next-state logic with fewer transitions and less glitching, especially in small FSMs.
-2. Simplify output logic by directly assigning output combinationally from state bits without a case statement, as only state D has output=1. In one-hot encoding, this is a simple check if state D bit is set.
-3. Keep asynchronous reset as specified, but the one-hot encoding reduces complexity of reset logic and potentially reduces reset glitching.
-4. Use non-blocking assignments for sequential logic and blocking for combinational logic, maintaining clean RTL style.
-5. The next state logic will use simpler combinational logic directly derived from the state bits and input, reducing logic depth.
-These changes should reduce combinational logic complexity, minimize glitches, and improve timing while maintaining minimal area and power consumption.

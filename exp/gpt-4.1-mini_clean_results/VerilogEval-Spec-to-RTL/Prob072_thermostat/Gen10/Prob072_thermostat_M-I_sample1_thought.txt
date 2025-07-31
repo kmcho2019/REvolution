@@ -1,9 +1,0 @@
-The original design is already minimal and optimal at the RTL level, consisting of simple combinational logic with no unnecessary signals or complexity. Since the power consumption is already very low and the area is minimal for the given functionality, there is little room for further optimization without changing the functional behavior or adding complexity.
-
-One subtle improvement could be to slightly reduce logic switching by merging common conditions for heater and aircon, but since heater and aircon outputs must be distinct signals with different enabling conditions, any logic sharing would complicate the design and could increase delay or area.
-
-Therefore, the best approach is to keep the original minimal structure, while adding an explicit `wire` for the combined heating/cooling activity signal to slightly clarify the fan logic, which may assist in synthesis optimization by reusing a common signal rather than re-evaluating heater and aircon separately in the fan assignment.
-
-This small change may improve power by reducing fan signal toggling and improve area by sharing logic. Overall, the improvement is marginal but it aligns with good design practice of reusing signals where possible for clarity and potential optimization.
-
-Hence, the improved code introduces a `wire active` signal for heater or aircon activity, which is then used in the fan output. Otherwise, logic remains combinational and simple.

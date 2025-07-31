@@ -1,9 +1,0 @@
-To improve PPA (performance, power, area), we can optimize the TopModule by combining the multiplexer and flip-flop logic into a single always block, eliminating the intermediate wire. This can help reduce logic depth (improving timing) and slightly simplify the netlist.
-
-For power optimization, we can add a clock enable (CE) signal derived from L and the mux input difference so that the flip-flop only toggles when its input actually changes, reducing unnecessary clock toggling and dynamic power.
-
-However, since this is a small design and the original problem does not specify clock gating or reset, we will only add a clock enable that activates when L is high or when q_in differs from r_in (indicating the D input would change), thus preventing unnecessary flip-flop updates when the input is stable and L is low.
-
-This method reduces switching activity on Q and can save power, while simplifying the structure.
-
-We keep the interface unchanged as per specification.

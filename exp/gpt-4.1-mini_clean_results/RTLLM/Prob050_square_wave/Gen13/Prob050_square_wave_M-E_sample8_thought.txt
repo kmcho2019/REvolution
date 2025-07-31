@@ -1,9 +1,0 @@
-Use a comparator-based edge detection approach where the count increments continuously from zero to its maximum (255), wrapping around. On each clock cycle, compare count to freq/2 (half of the freq input) to determine the output wave level. The wave_out is high when count is less than freq/2 and low otherwise, creating a variable duty cycle square wave with 50% duty when freq is even.
-
-This method eliminates toggling logic and explicit flip-flops for wave_out, instead generating wave_out combinationally from count and freq. The freq input controls the period by changing the width of the high portion of the wave.
-
-To handle freq=0 (no toggling), wave_out will be constantly low (or could be defined as constant). The design uses a free-running 8-bit counter with automatic wrapping, producing a periodic waveform with period proportional to freq.
-
-This approach reduces state registers, replaces toggling with combinational logic, and may improve timing by removing conditional toggling and simplifying logic paths. It also naturally creates a 50% duty cycle when freq is even, approximating the desired square wave.
-
-The design is synchronous on clk with synchronous reset, uses only count as a register, and generates wave_out combinationally from count and freq.

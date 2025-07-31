@@ -1,9 +1,0 @@
-To improve the solution, we need to address the functional errors first. The main issue is with the way the 'start_shifting' signal is handled. Once the sequence 1101 is detected and 'start_shifting' is set to 1, it should remain high until reset. This means we need to ensure that 'start_shifting' is not reset to 0 unless a reset occurs. 
-
-After fixing the functional issue, we can look into optimizing the design for better PPA (Power, Performance, Area). This could involve simplifying the state machine logic, reducing the number of state transitions, and potentially using a more efficient state encoding.
-
-One approach to simplify the logic is to use a separate flag to track whether the sequence has been found, and use this flag to set 'start_shifting' to 1. This way, we avoid the conditional reset of 'start_shifting' that was causing the functional issue.
-
-Additionally, we can look into optimizing the state machine's encoding to reduce area and power consumption. Since we are using an enum for state definition, which is good for readability, we should ensure that the synthesizer is using an efficient encoding scheme.
-
-Finally, we can review the conditional statements and state transitions to see if there are any opportunities to reduce switching activity and improve timing.

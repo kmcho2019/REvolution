@@ -1,9 +1,0 @@
-To improve PPA (performance, power, and area) of the decade counter, the approach is to further simplify the logic by leveraging modular arithmetic using a 4-bit saturating counter with a reset at 9, but avoiding the explicit comparator by directly implementing the increment-and-wrap functionality using arithmetic and conditional logic that synthesizers can optimize well.
-
-One simple way is to use a small case statement or conditional expression within the sequential block to reset at 10, which may allow better carry chain inference and minimal toggling.
-
-Additionally, to reduce switching and power, we can avoid counting when reset is asserted, and keep the count stable otherwise. Since this counter always counts at each cycle (except reset), power reduction via gating is limited here.
-
-The code will maintain a single always block with synchronous reset, use a ternary operator for increment/wrap, and use a localparam to define the limit to enhance readability and ease changes.
-
-This concise approach leverages efficient incrementing logic to enable synthesis tools to optimize carry chains, reducing delay and area while keeping power minimal due to minimal logic switching.

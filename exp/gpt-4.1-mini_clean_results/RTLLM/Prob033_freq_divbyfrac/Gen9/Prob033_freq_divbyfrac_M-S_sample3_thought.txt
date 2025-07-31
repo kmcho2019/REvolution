@@ -1,7 +1,0 @@
-To implement a fractional divide-by-3.5 clock using double-edge clocking with simplified logic, we use a modulo-7 counter to define a 7-cycle period. We generate two clocks derived from the counter: one toggling every 3 or 4 cycles on the positive clock edge (clk_div_p), and another toggling on the negative edge of clk (clk_div_n), delayed by half clock cycle relative to clk_div_p, effectively creating two phase-shifted clocks with uneven periods (4 and 3 cycles).
-
-By OR-ing clk_div_p and clk_div_n, the final clk_div output achieves the desired fractional division with better duty cycle and smoother transitions without complex phase-shifting circuits.
-
-This approach is synchronous and simple, relies on generating clk_div_n from the negedge of clk, which provides the half-clock phase shift naturally, and combines it with clk_div_p to produce the final output. Both are driven by the modulo-7 counter to get 3.5 division ratio.
-
-This meets the specification of fractional division using double-edge clocking with uneven count periods and phase-shifted intermediate clocks.

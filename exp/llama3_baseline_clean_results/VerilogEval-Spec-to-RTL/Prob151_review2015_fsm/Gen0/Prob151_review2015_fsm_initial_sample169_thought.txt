@@ -1,9 +1,0 @@
-To implement the finite-state machine that controls the timer, we will design a Moore machine with five states: IDLE, PATTERN_MATCH, SHIFT_DATA, COUNTING, and DONE. 
-
-1. The IDLE state is the initial state where the machine looks for the pattern 1101. 
-2. When the pattern is detected, the machine transitions to the PATTERN_MATCH state, where it asserts shift_ena for exactly 4 clock cycles to shift in the duration bits.
-3. After shifting in the duration bits, the machine transitions to the COUNTING state, where it asserts the counting output and waits for the counters to finish counting (done_counting = 1).
-4. Once the counters have finished counting, the machine transitions to the DONE state, where it asserts the done output to notify the user that the timer has timed out.
-5. The machine remains in the DONE state until it receives an acknowledgement from the user (ack = 1), at which point it transitions back to the IDLE state.
-
-We will use a counter to keep track of the number of clock cycles in the PATTERN_MATCH state. The machine will be reset to the IDLE state when the reset input is high.

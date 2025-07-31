@@ -1,5 +1,0 @@
-Refactor the Moore FSM by combining the state and input sampling registers into one always block with asynchronous reset, removing the separate input register to reduce register count. Use a two-bit state encoding (WAIT and INVERT) encoded as a localparam, but encode the next state and output logic in a single always_comb block. Generate output as a registered signal updated on clock and async reset, ensuring Moore output depends only on the state. The output z and state are registered in the same clock domain. This approach simplifies the design by reducing registers, avoiding a separate input register, and expressing next state and output logic together while preserving asynchronous reset and positive edge triggering.
-
-The output z will now be a registered output updated each clock cycle (Moore machine), improving timing by eliminating combinational output logic outside the state register block. This structure offers a concise and elegant solution with no combinational loops, minimal registers (only state and output), and clear timing.
-
-Use nonblocking assignments, asynchronous reset in the sequential always block, and explicit next state logic for clarity.

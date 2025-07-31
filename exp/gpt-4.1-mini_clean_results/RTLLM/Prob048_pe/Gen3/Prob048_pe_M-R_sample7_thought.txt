@@ -1,5 +1,0 @@
-Refactor the design by separating the accumulator register update from the multiplication and addition logic using an intermediate register for the product and sum. Use a two-stage pipeline style where the product is registered first, then accumulated in the next clock cycle. This breaks the critical path of multiplication + addition into two shorter combinational paths, potentially improving timing. 
-
-Instead of performing multiplication and accumulation in the same always block, use two sequential always blocks: one to register the product, and another to update the accumulator. Keep reset synchronous and active high. The output register c holds the accumulated sum, updated on clk. This structure keeps functionality identical but alters the data path and control flow to facilitate optimization by synthesis tools or easier pipelining if extended later.
-
-This approach also clarifies the datapath stages and allows easier insertion of further pipelining or operand gating without changing the interface or result behavior.

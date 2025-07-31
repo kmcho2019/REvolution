@@ -1,7 +1,0 @@
-Implement the FSM using a binary-encoded state machine with a compact 3-bit state register and a separate 2-bit shift counter register to count the four shift cycles.  
-The FSM consists of four main states: SEARCH (detecting the 1101 pattern via a small pattern detector shift register), SHIFT (shifting exactly four bits using the 2-bit counter), COUNT (waiting for done_counting), and DONE (waiting for ack).  
-Pattern detection is done by a 4-bit shift register fed by data every cycle; when the pattern 1101 is detected, FSM moves from SEARCH to SHIFT.  
-The 2-bit shift counter counts from 0 to 3 during SHIFT state to enable shift_ena output exactly 4 times, eliminating the need for expanding the state space into multiple substates.  
-This approach reduces the number of state bits (3 bits) and avoids redundant states for the shifting process, trading a small counter register for lower overall state complexity and potentially improving timing and area.  
-The synchronous reset initializes both the FSM and the shift counter. Outputs are registered to prevent glitches, driven by the current state and the shift counter status.  
-This architectural separation clearly differentiates pattern detection (combinational) from FSM control (sequential), improving modularity and clarity.

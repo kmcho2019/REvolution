@@ -1,9 +1,0 @@
-The idea is to refactor the existing finite-state machine (FSM) implementation to improve its structure and functionality. The original code uses an `always` block to update the shift register and the `start_shifting` signal. However, this approach can be improved by using a more modular and efficient structure.
-
-The refactored code will use a separate `always` block to update the shift register, and a continuous assignment (`assign`) statement to set the `start_shifting` signal based on the shift register's contents and the current state. This approach simplifies the logic and reduces the number of states.
-
-The state machine will still use a 4-bit shift register to track the input sequence, but the comparison logic will be separate from the shift register update logic. The `start_shifting` signal will be set to 1 when the shift register matches the target sequence '1101', and will remain high until a reset occurs.
-
-The reset logic will be simplified by removing the unnecessary condition and using a single `if` statement to reset the shift register and the `start_shifting` signal.
-
-To improve the design, we can also consider using a more efficient state machine encoding, such as one-hot encoding or binary encoding, to reduce the area and power consumption. However, for simplicity, we will stick with the current encoding.

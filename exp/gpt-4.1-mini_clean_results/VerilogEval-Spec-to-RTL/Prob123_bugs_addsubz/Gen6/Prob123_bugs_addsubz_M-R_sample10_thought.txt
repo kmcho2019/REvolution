@@ -1,9 +1,0 @@
-Refactor the design to remove the combinational always block and use continuous assignments for both the output and the zero flag. This can simplify the logic by making the module purely combinational with no procedural blocks. 
-
-- Keep the conditional bitwise inversion of B and carry chain ripple carry adder structure as before.
-- Use continuous assignments (`assign`) to compute the `out` and `result_is_zero` outputs directly from internal signals.
-- This structure leads to clearer dataflow-style Verilog, easier to read and simulate, and potentially better optimized by synthesis.
-- Since `result_is_zero` is derived from `out`, defining it as a wire instead of reg is natural here.
-- To maintain the same external interface with `result_is_zero` as reg, declare internal wires and assign them to outputs in continuous assignments or output declarations.
-
-This refactor simplifies the combinational logic and removes the always block, which is more idiomatic for purely combinational arithmetic logic.

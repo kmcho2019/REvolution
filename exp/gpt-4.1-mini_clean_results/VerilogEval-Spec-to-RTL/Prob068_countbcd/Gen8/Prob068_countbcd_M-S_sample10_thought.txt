@@ -1,7 +1,0 @@
-To simplify the 4-digit BCD counter while maintaining functionality, I will use a single 16-bit register representing all four BCD digits concatenated. On each clock, increment the entire 16-bit BCD number by one using a simple ripple carry approach digit-by-digit, with conditional rollover from 9 to 0 in each digit. 
-
-This avoids generating separate enables for digit increments and reduces the number of registers and combinational logic blocks. The enable signals (for digits tens, hundreds, thousands) can still be generated simply by checking the respective lower digit rolling over from 9 to 0 (carry condition), which is easily done by comparing digits to 9 before the increment.
-
-This approach reduces complexity by combining digit registers into one and performing the increment in a simple loop-like sequential manner within the always block, resulting in clear and concise code. The enable signals are calculated combinationally from the current digit values before increment, matching the specification.
-
-The synchronous reset is preserved. This design keeps timing and power reasonable by limiting the combinational logic to per-digit increments in series.

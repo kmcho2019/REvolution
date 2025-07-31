@@ -1,9 +1,0 @@
-To implement a counter that counts from 4'b0000 to 4'd11 with a gated clock and reset functionality, we can utilize a Finite State Machine (FSM) approach. This involves defining a state variable that keeps track of the current count and transitions between states based on the input signals. The FSM can have 12 states, each representing a count value from 0 to 11. 
-
-The novel idea here is to use a one-hot encoding for the state representation, where each state is represented by a unique bit set to 1 while all others are 0. This approach simplifies the state transition logic and makes the design more scalable for larger counters.
-
-The counter will have three main states: IDLE (all bits 0, representing the counter being in an inactive state or at count 0), COUNTING (the current count value), and RESET (when the counter needs to reset to 0). The state transitions are controlled by the valid_count signal and the reset signal (rst_n).
-
-When valid_count is 1 and the counter is not at its maximum count (4'd11), the FSM moves to the next state, effectively incrementing the count. If the counter reaches 4'd11 and valid_count is still 1, it wraps around to the initial state (4'b0000). If rst_n is 0, the FSM immediately transitions to the IDLE state, resetting the count to 0.
-
-This design leverages the benefits of one-hot encoding for simplicity and readability, making it easier to understand and maintain the counter's logic.

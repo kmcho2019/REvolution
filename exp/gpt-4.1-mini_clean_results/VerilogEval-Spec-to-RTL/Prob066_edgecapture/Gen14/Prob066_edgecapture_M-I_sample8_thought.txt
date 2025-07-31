@@ -1,9 +1,0 @@
-To fix the functional correctness and simulation mismatches, the main improvement is to ensure that the output register "out" is assigned unconditionally on every clock cycle inside the always block. This avoids inferred latches and ensures simulation-synthesis consistency. The logic is simple: on reset, clear "out" and "prev_in"; otherwise, update "prev_in" to the current "in" and set "out" to the bitwise OR of its previous value and the detected falling edge bits.
-
-This guarantees that once a bit in "out" is set due to a falling edge, it remains set until reset, fulfilling the "capture" requirement.
-
-Also, initializing "prev_in" to zero on reset is safe because the first falling edge detection depends on "prev_in" being 1 and "in" being 0; starting with zeros means no false positives on the first cycle.
-
-This approach balances clarity, simulation correctness, and functionality without adding complexity or reducing power efficiency.
-
-In short, the core change is replacing the conditional update of "out" with an unconditional one to avoid simulation mismatches.

@@ -1,7 +1,0 @@
-To improve the original design for better performance, power, and timing, I will implement synchronous read data output using a clocked always block instead of a purely combinational read path. This approach registers the read data, reducing glitches and combinational delay on read_data. Also, I will maintain the synchronous reset for both RAM initialization and read_data register. Using synchronous reset simplifies timing and is typical for FPGA-friendly RAM designs.
-
-The write operation remains synchronous and unmodified, as it is already optimal. Resetting RAM on reset with a for-loop is retained as required, although in real FPGA designs a separate initialization might be used.
-
-This registered read output approach improves timing closure by breaking long combinational paths, reduces glitching on the output, and allows better power gating strategies. The tradeoff is one cycle latency on read data, which is typical and usually acceptable.
-
-Furthermore, I will explicitly parameterize address width using $clog2(DEPTH) and ensure the array dimensions and indexing are consistent with the DEPTH and WIDTH parameters.

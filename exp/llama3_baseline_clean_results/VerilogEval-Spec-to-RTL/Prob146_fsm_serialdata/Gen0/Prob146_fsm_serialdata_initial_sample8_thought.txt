@@ -1,7 +1,0 @@
-To implement the TopModule, we will design a finite state machine (FSM) with four states: IDLE, START, DATA, and STOP. The FSM starts in the IDLE state, waiting for a start bit (0) to transition to the START state. In the START state, it waits for one clock cycle before transitioning to the DATA state, where it collects 8 data bits. After collecting all data bits, it transitions to the STOP state to verify the stop bit (1). If the stop bit is correct, it asserts the done signal and outputs the received byte. If the stop bit is incorrect, it waits in the STOP state until a stop bit (1) is received. The FSM also includes an active-high synchronous reset to return to the IDLE state when reset is asserted.
-
-The FSM will use a counter to keep track of the number of data bits received and a register to store the received byte. The counter will be incremented each clock cycle in the DATA state, and the received byte will be shifted left and appended with the current input bit.
-
-When the FSM transitions from the DATA state to the STOP state, it will check the stop bit. If the stop bit is correct, it will assert the done signal and output the received byte. If the stop bit is incorrect, it will remain in the STOP state until a stop bit (1) is received.
-
-The FSM will also include a mechanism to handle the case where the stop bit does not appear when expected. In this case, the FSM will wait until it finds a stop bit before attempting to receive the next byte.

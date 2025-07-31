@@ -1,9 +1,0 @@
-To optimize the original popcount17 module for better timing and area, replace the sequential summation (for loop) with a balanced binary adder tree summation. This explicitly expresses parallel additions and guides synthesis tools to generate faster and more area-efficient hardware by avoiding a long chain of adders. The hierarchical summation tree of partial counts in TopModule is already balanced and efficient, so we keep it. This change should improve timing (reduce critical path), potentially reduce area, and possibly lower power by reducing switching activity duration.
-
-The output widths remain the same: popcount17 outputs 6 bits; final output is 8 bits for counting up to 255 ones. No pipelining is added to keep the design combinational as in the original.
-
-The improved popcount17 module sums the 17 input bits by first grouping them in pairs and summing stepwise in a tree structure:
-- First sum pairs of bits (8 sums + 1 leftover bit)
-- Then sum pairs of these sums and propagate, until final 6-bit count is obtained.
-
-This explicit tree reduces the longest addition chain from 17 stages (in a naive serial add) to ~5 stages, improving performance.

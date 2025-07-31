@@ -1,8 +1,0 @@
-To implement the data width conversion circuit, we can utilize a finite state machine (FSM) that controls the flow of data through the circuit. The FSM will have two main states: an idle state where it waits for the first valid data, and a locked state where it waits for the second valid data. We will use two registers, data_lock and data_out, to store the first valid data and the concatenated 16-bit output, respectively. The valid_out signal will be generated when the data_out register is updated with the concatenated output.
-
-We will use the following steps to implement the circuit:
-1. Initialize the FSM to the idle state and reset the data_out register to 0.
-2. In the idle state, when valid_in is high, store the data_in in the data_lock register and move to the locked state.
-3. In the locked state, when valid_in is high, concatenate the data_lock and data_in registers to form the 16-bit output and update the data_out register.
-4. Generate the valid_out signal when the data_out register is updated.
-5. If the reset signal is asserted, clear the data_out register and reset the FSM to the idle state.

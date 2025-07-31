@@ -1,9 +1,0 @@
-Refactor the FSM to integrate the pattern detection shift register only in the IDLE state, stopping it from shifting in other states. This avoids false pattern detections outside IDLE.  
-Use a one-hot state encoding for clarity and easier output decoding.  
-Implement synchronous state transitions and outputs directly tied to states with minimal combinational logic.  
-Use an explicit 2-bit shift counter that counts exactly 4 cycles in SHIFT state, starting from zero, and move to COUNT after that.  
-Reset the pattern shift register upon leaving IDLE to avoid leftover bits causing spurious detections.  
-Use separate always_ff blocks for state+pattern_shift and for outputs to improve timing clarity.  
-This approach isolates pattern detection only to IDLE, ensures precise control of shift_ena cycles, and clean transitions for counting and done states.  
-Outputs are Moore-type and directly derived from state bits.  
-This clear modular separation and precise control avoids timing mismatches seen before.

@@ -1,9 +1,0 @@
-The novel architectural idea for the 12-hour clock design involves utilizing a finite state machine (FSM) to manage the clock's state transitions. The FSM will have specific states for hours, minutes, and seconds, and it will handle the wrapping logic, AM/PM toggling, and reset functionality. 
-
-The hours, minutes, and seconds will be represented as separate counters, each with its own FSM state. The FSM will be triggered by the `ena` signal, which indicates when to increment the clock. When the `ena` signal is high, the FSM will transition to the next state, incrementing the seconds counter. When the seconds counter reaches 59, the FSM will transition to the next minute state, resetting the seconds counter. Similarly, when the minutes counter reaches 59, the FSM will transition to the next hour state, resetting the minutes counter. 
-
-To handle the AM/PM logic, the FSM will have a separate state for the AM/PM indicator. When the hours counter reaches 12, the FSM will toggle the AM/PM state and reset the hours counter to 1. 
-
-The reset functionality will be handled by a separate state in the FSM, which will be triggered by the `reset` signal. When the `reset` signal is high, the FSM will transition to the reset state, resetting all counters and the AM/PM indicator to their initial values.
-
-This architectural idea provides a clear and structured approach to designing the 12-hour clock, making it easier to understand and maintain the code.

@@ -1,9 +1,0 @@
-To optimize the frequency divider for better Power, Performance, and Area (PPA), I will share a single 7-bit counter that counts from 0 to 99 (for 100 cycles), instead of having separate counters for 10MHz and 1MHz outputs. This reduces the total flip-flop count and logic area. 
-
-The single counter also serves the 10MHz output by toggling CLK_10 every 5 counts (half period for 10MHz), and toggles CLK_1 every 50 counts (half period for 1MHz). This removes the need for a separate 3-bit counter and simplifies control logic.
-
-The 50MHz clock generation remains as a simple toggle flip-flop (divide by 2) since it is a fundamental divide-by-2 and minimal logic.
-
-This design reduces area by sharing counters and reduces switching activity slightly by removing redundant counters, which can also help power. The critical path remains short since the counter and toggles are synchronous. I maintain asynchronous reset for consistency but it can be made synchronous if needed.
-
-Overall, the code is cleaner and more area-efficient while preserving the required frequency division and reset behavior.

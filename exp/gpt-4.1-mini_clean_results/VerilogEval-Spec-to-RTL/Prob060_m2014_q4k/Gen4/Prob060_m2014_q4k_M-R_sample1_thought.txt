@@ -1,5 +1,0 @@
-The original design uses an always block with a 4-bit register that shifts bits on each clock edge with synchronous active-low reset. To refactor, I will replace the vector shift register with individual D flip-flops explicitly instantiated or described as separate registers. This approach makes the shift stages more explicit, which can aid clarity in some designs or facilitate insertion of pipelining or testing hooks. The synchronous reset is still active-low and triggered on the positive clock edge. The output is taken from the last flip-flop.
-
-This refactoring preserves the logic but changes the structure from a vector shift with concatenation to explicitly chained flip-flops with separate registers. This approach may help in environments where explicit flop stages are preferred or for pedagogical clarity.
-
-The behavior remains the same: on reset, all flip-flops clear to 0; otherwise, each flip-flop takes the value of its predecessor with the input feeding the first flip-flop.

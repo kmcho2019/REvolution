@@ -1,7 +1,0 @@
-Instead of shifting in at the MSB and then reversing the bits for output selection, this design shifts the data in from the LSB side (Q[7]) towards MSB (Q[0]). This way, Q[0] aligns naturally with shift_reg[7], and Q[7] with shift_reg[0]. The inputs A, B, C will select the bit index directly but inverted (because Q[0] is shift_reg[7] and so on). We implement this by shifting left (towards MSB) on each clock with enable. The bit shifted in is S into shift_reg[0]. 
-
-For readout, since Q[0] corresponds to shift_reg[7], we invert the ABC select index before indexing into shift_reg. Thus, Z = shift_reg[7 - {A,B,C}].
-
-This avoids having to create a separate reversed wire vector, reduces combinational logic by using simple arithmetic (subtraction by constant 7), and aligns the shift direction with simpler RTL behavior. The subtraction is done in the output mux index calculation only, which is straightforward for synthesis tools.
-
-This approach gives a different architecture that shifts left, uses direct indexing with inverted select, and minimizes extra combinational wiring.

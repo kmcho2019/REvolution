@@ -1,9 +1,0 @@
-To implement the Lemmings' behavior as a Moore state machine, we need to define the states and their transitions. We can have four states: WalkingLeft, WalkingRight, Falling, and Reset. The state transitions will be based on the input signals bump_left, bump_right, and ground. We will also use the areset signal for asynchronous reset. The output signals walk_left, walk_right, and aaah will be determined by the current state.
-
-Here is the state machine design:
-- The initial state will be Reset, and it will transition to WalkingLeft when areset is deasserted.
-- The WalkingLeft state will output walk_left = 1 and walk_right = 0. It will transition to WalkingRight when bump_left = 1, and to Falling when ground = 0.
-- The WalkingRight state will output walk_left = 0 and walk_right = 1. It will transition to WalkingLeft when bump_right = 1, and to Falling when ground = 0.
-- The Falling state will output walk_left = 0, walk_right = 0, and aaah = 1. It will transition back to WalkingLeft or WalkingRight when ground = 1, depending on the previous walking direction.
-
-To keep track of the previous walking direction while falling, we will use an additional internal signal, prev_walk_dir.

@@ -1,5 +1,0 @@
-Use a one-hot encoded stack pointer (SP) with 5 bits, where each bit represents whether that position in the stack is the current top index. SP[4] = 1 means empty stack, SP[0] = 1 means full stack (4 entries). This removes pointer arithmetic and replaces it with simple one-hot shift operations, improving timing by eliminating add/subtract and simplifies full/empty detection by checking which bit is set.
-
-On push (RW=0), if not full, shift SP right (towards lower index), and write dataIn into the new top location. On pop (RW=1), if not empty, read dataOut from current top, then shift SP left (towards higher index). EN gates operations, Rst initializes SP to empty (SP=5'b10000) and clears dataOut and memory. Use a small array of 4 entries for stack_mem as before.
-
-This architecture simplifies control logic, makes flags derivation trivial (EMPTY = SP == 5'b10000, FULL = SP == 5'b00001), and eliminates pointer arithmetic, likely improving timing at the expense of a slightly wider SP register. dataOut is updated only on pop. Memory clearing on reset is synchronous. Use a single clocked always block.

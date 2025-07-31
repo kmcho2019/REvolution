@@ -1,9 +1,0 @@
-Refactor the design to use a separate combinational function to calculate the next cell state given the current grid and cell coordinates. Use a generate loop to create combinational assignments for each cell's next state in a 256-bit wire vector, avoiding a big nested always block for neighbor counting.
-
-Replace the wrap_index function with simple bit masking (`& 4'hF`) since indices are modulo 16, which synthesis tools optimize efficiently.
-
-The next_q vector is computed purely combinationally from current q. The sequential block only updates q with either loaded data or next_q.
-
-This approach modularizes neighbor counting, uses bit-wise wrap-around masking instead of conditional checks, and replaces the big combinational always block with a generate-for and function-based combinational logic, which may help synthesis tools produce more balanced logic and possibly improve timing and area.
-
-Also, indexing is done via shift-left (row << 4) + col instead of multiplication for area and timing benefits.

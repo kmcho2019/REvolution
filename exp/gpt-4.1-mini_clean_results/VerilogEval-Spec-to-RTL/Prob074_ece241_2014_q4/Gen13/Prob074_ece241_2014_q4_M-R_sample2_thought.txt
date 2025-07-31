@@ -1,9 +1,0 @@
-To improve synthesizability and adhere to common hardware design practices, I will refactor the module by:
-
-- Declaring the output `z` as a wire driven by a continuous assignment, instead of a reg driven by an always block. This more clearly indicates purely combinational logic to synthesis tools.
-- Introducing intermediate wires for the complemented flip-flop outputs and for the D inputs to each flip-flop to clarify combinational logic.
-- Implementing the three flip-flops using a single always block triggered on the positive clock edge, with nonblocking assignments.
-- Initializing flip-flop registers explicitly in an initial block for simulation only (synthesis tools typically ignore initial blocks, so this does not affect hardware).
-- Avoiding inline negations inside expressions feeding flip-flop inputs by using explicit wires, which makes the logic clearer and helps synthesis tools infer the correct hardware.
-  
-This refactoring maintains the original functionality but presents the design in a more standard and synthesis-friendly style.

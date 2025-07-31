@@ -1,9 +1,0 @@
-The primary issue causing the failure is the bit-indexing expressions used to select rotated bits in each stage. Using `(i + shift) & 3'b111` mixes integer `i` and a 3-bit vector mask `3'b111` (binary 111) directly, which may cause indexing or synthesis problems due to width mismatches or tool interpretation. Instead, using an integer constant mask `7` or `3'd7` ensures proper arithmetic and indexing.
-
-Since indexing requires an integer, changing `(i + shift) & 3'b111` to `(i + shift) & 7` provides a correct modulo 8 operation.
-
-This correction preserves the intended rotate functionality (rotation by 4, 2, or 1 bit depending on ctrl bits) while resolving functional indexing issues. No other parts of the design need change.
-
-Additionally, comments and formatting are kept clean for clarity, and the mux module is renamed to avoid conflicts.
-
-Thus, the fix is to replace all `(i + shift) & 3'b111` with `(i + shift) & 7`.

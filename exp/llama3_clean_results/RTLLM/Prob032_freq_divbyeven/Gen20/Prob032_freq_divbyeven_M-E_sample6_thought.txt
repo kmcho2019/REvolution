@@ -1,9 +1,0 @@
-To create a novel solution for the frequency divider that divides the input clock frequency by even numbers, we can introduce a state machine-based approach. This approach not only ensures the correct division of the clock frequency but also provides a flexible and scalable design. 
-
-The state machine will have two main states: an idle state and a counting state. In the idle state, the module waits for the reset signal to be asserted (i.e., `rst_n` to be low), at which point it resets the counter and the divided clock output. 
-
-In the counting state, the module increments a counter (`cnt`) on each positive edge of the input clock (`clk`) until it reaches a threshold that is half of the specified even division factor (`NUM_DIV`). Once the counter reaches this threshold, the state machine transitions to a toggle state where it inverts the divided clock output (`clk_div`) and resets the counter. This process effectively divides the input clock frequency by the even number specified by `NUM_DIV`.
-
-To implement this state machine, we can use an enumeration to define the states and a case statement within the sequential logic to handle state transitions and actions. The use of a state machine provides a clear, structured approach to managing the different operational modes of the frequency divider, making the design more intuitive and easier to maintain.
-
-Furthermore, we can include a parameterizable `CNT_WIDTH` to automatically determine the required width of the counter based on the division factor `NUM_DIV`, ensuring the design is flexible and can be easily adapted for different division factors without manual calculation of the counter width.

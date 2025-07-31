@@ -1,9 +1,0 @@
-To optimize the original solution for better PPA, we will reduce switching activity and simplify combinational logic:
-
-- Remove the extra load_shift signal by deriving it directly from the state and input conditions in the sequential block to avoid redundant signal toggling.
-- Pack the FSM encoding into 2 bits as before but simplify next-state logic using fewer branches and removing redundant assignments.
-- Use a single always block for both state and output updates to reduce flip-flop duplication and improve synthesis optimization.
-- Generate the done signal combinationally from the state transition in the sequential block to avoid holding it longer than needed.
-- Add an enable signal that gates updates to out_bytes and done only during message reception cycles to reduce switching outside of message reception.
-- Remove unnecessary default assignments in combinational logic to allow synthesis to optimize logic better.
-- This approach maintains correctness and timing but reduces toggling and logic complexity, potentially improving power and timing slightly without adding extra complexity.

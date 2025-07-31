@@ -1,8 +1,0 @@
-Implement the MAC PE using a wider internal accumulator register (64-bit) to hold the full product sum without overflow, delaying truncation until output.  
-In each clock cycle, multiply the 32-bit inputs to produce a 64-bit product, then add it to the 64-bit accumulator register.  
-On reset, clear the accumulator to zero.  
-The output port `c` presents the lower 32 bits of the accumulator, effectively truncating the result.  
-This approach avoids saturation and overflow logic by providing a sufficiently wide accumulator, simplifying the design while preserving all intermediate data.  
-This architecture is ideal when full precision accumulation is needed internally, but only the lower 32 bits are output at a time.  
-It also makes the critical path simpler since there's no saturation check, reducing combinational logic.  
-Use synchronous reset, non-blocking assignments, and register the accumulator for timing clarity.

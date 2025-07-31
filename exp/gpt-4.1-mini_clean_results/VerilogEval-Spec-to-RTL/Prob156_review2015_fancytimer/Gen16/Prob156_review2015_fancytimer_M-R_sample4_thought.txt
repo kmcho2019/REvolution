@@ -1,7 +1,0 @@
-Refactor the design by explicitly separating shift registers for pattern and delay bits with clear MSB-first input handling, and use a Moore FSM style with one synchronous always block for state and register updates and purely combinational logic for next state and outputs.  
-Instead of complex counting conditions, implement a hierarchical counter: a 10-bit cycle counter counting 0..999, and a 5-bit tick counter counting down from delay+1 to 0.  
-Use a start signal to latch the delay value once loaded and begin counting; hold pattern and delay registers frozen while counting or waiting.  
-Outputs `count`, `counting`, and `done` are fully combinational from the current state and counters for clarity.  
-Use nonblocking assignments for all sequential registers.  
-Reset synchronously into SEARCH state and clear all counters and registers.  
-This clear and modular approach improves timing clarity and correctness while maintaining the original logic intent.

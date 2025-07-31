@@ -1,7 +1,0 @@
-The original design is modular but instantiates multiple smaller muxes, which adds unnecessary routing and area overhead for a straightforward vector mux. Since the operation is a simple 2-to-1 selection on wide vectors, a single-level 100-bit-wide ternary operator is more efficient. This reduces instantiation overhead and enables synthesis tools to optimize mux implementation globally, improving area and power.
-
-Hence, I will flatten the mux hierarchy and implement the 2-to-1 mux with one continuous assignment using the built-in Verilog ternary operator on the entire 100-bit vector. This approach minimizes area (no extra module instantiations), potentially reduces power by eliminating intermediate logic stages, and keeps the design fully combinational and clean.
-
-This aligns with typical RTL design practices where wide vector muxes are coded directly, letting synthesis handle optimization at the vector level.
-
-No change in functionality; just a cleaner, more optimal coding style.

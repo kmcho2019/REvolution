@@ -1,5 +1,0 @@
-Refactor the FSM to separate the state transition and output logic into distinct always blocks for clarity and better synthesis friendliness. Use a one-hot encoding approach for the states to ease state decoding and reduce combinational logic complexity. The cycle count and w accumulation will be held in separate registers for readability and to allow the synthesis tool to better optimize each counter separately. Output z will be registered and asserted one cycle after counting three w inputs, exactly two of which are '1'.
-
-Use synchronous reset with non-blocking assignments in sequential logic only. Minimize combinational complexity by moving arithmetic to sequential always blocks where possible. The s input affects only the state transition from A to B, and w is sampled only in state B. This approach clarifies the role of inputs and makes the FSM easier to understand and maintain.
-
-This restructuring maintains the same functionality but improves modularity and separation of concerns, possibly improving synthesis results and making the code more readable and maintainable.

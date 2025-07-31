@@ -1,7 +1,0 @@
-To address the issues found in the original code, we introduce a novel architectural idea based on a two-stage pipeline approach. The first stage involves detecting the transition from 1 to 0 for each bit of the input signal. This detection is performed by comparing the current input bit with the previous input bit stored in a register. To correctly capture the previous state, we update the `prev_in` register at the end of each clock cycle.
-
-The second stage involves updating the output bits based on the detected transitions. We use a separate register `out` to store the output bits. When a transition is detected for a particular bit, the corresponding output bit is set to 1. This bit remains set until a reset is applied.
-
-To minimize switching activity and optimize for PPA metrics, we use bitwise operations for updating the output bits and ensure that once an output bit is set, it remains set until the reset condition is met. This approach not only correctly captures the transitions but also minimizes unnecessary switching activity.
-
-Our novel idea involves the use of two registers (`prev_in` and `out`) and a pipelined approach to handle the detection and update logic efficiently.

@@ -1,9 +1,0 @@
-Simplify the implementation by avoiding the wrap_index function and explicit multiplications for indexing. Since the grid is 16x16 (a power of two), we can use bit masking to implement the toroidal wrap-around (mod 16) efficiently: (index + 16) & 4'hF.
-
-Additionally, replace the nested for loops inside an always_comb with generate loops to unroll the logic at compile time and use simple bitwise indexing for neighbors.
-
-This reduces the complexity of indexing and avoids arithmetic operations like multiplication and conditionals in wrap_index, easing synthesis.
-
-Keep the combinational neighbor counting and next state computation in a single always_comb block with clear logic, and perform synchronous load/state update at posedge clk.
-
-This approach retains the original functionality with less complex indexing and simpler arithmetic, improving timing and area.

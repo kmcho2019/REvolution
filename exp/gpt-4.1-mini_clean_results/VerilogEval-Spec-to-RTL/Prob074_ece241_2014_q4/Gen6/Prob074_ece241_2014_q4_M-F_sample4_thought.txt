@@ -1,9 +1,0 @@
-To fix the issues, replace the asynchronous reset and initial block with a synchronous reset implemented implicitly by initializing the flip-flops to zero at declaration (using Verilog-2001 syntax). This ensures the flip-flops start at zero as required without relying on initial blocks or asynchronous resets which may cause simulation mismatches with the testbench.
-
-Keep the D-input logic as combinational continuous assignments. Update flip-flops only on the positive clock edge, removing reset logic from the always block to align with the problem statement (which only requires initial zero state).
-
-This approach respects the problem requirement that flip-flops start at zero before the machine begins, simplifies the logic, and ensures better simulator compatibility and correctness.
-
-The output `z` is computed as the NOR of the three flip-flop outputs as before.
-
-This revised design should pass the simulation correctness test.

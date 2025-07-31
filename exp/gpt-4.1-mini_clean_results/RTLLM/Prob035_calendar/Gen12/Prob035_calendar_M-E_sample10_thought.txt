@@ -1,7 +1,0 @@
-Implement the perpetual calendar using a single always block that updates all three counters synchronously on each clock edge. Use cascading counters where seconds increment every clock cycle; when seconds reach 59 and roll over to 0, minutes increment; similarly, when minutes roll over from 59 to 0 due to seconds wrap, hours increment and wrap at 23.
-
-To avoid logic duplication and improve clarity, combine the increment logic into a single block, using local variables for next state calculation before assigning registers. This reduces cross-dependencies between always blocks and may aid synthesis tools in optimization.
-
-Use synchronous reset (active high) for uniform timing behavior and easier timing closure. Keep Hours, Mins, and Secs as 6-bit registers for uniformity despite hours only needing 5 bits, simplifying bus widths and output port consistency.
-
-This monolithic approach ensures counters update simultaneously in a controlled manner, reduces combinational path complexity across always blocks, and provides clean and straightforward code structure.

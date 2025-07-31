@@ -1,7 +1,0 @@
-Fuse the concise single-assignment approach from Example 1 with the explicit tap mask constant and straightforward synchronous reset from Example 2. Use the bitwise replication trick `{32{q[0]}} & TAP_MASK` to avoid branching and keep combinational logic uniform for easier synthesis and potentially better timing/power balance. This removes the if-else conditional and produces a more hardware-friendly structure. Keep the synchronous active-high reset and positive clock edge triggering.
-
-Specifically:
-- Define TAP_MASK for taps at bit positions 32, 22, 2, and 1 using zero-based indexing.
-- On reset, synchronously set q to 1.
-- Otherwise, compute next q as `(q >> 1) ^ ({32{q[0]}} & TAP_MASK)` without branching.
-- This design merges clarity, efficient combinational logic, and minimal switching overhead of constant mask XOR.

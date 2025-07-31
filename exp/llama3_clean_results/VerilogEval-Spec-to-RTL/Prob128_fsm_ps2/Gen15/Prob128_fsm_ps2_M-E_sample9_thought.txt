@@ -1,8 +1,0 @@
-The novel architectural idea is to implement a modular and pipelined approach to detecting message boundaries in the PS/2 mouse protocol byte stream. Instead of using a traditional finite state machine, we can break down the detection process into smaller, modular stages, each of which performs a specific function. The first stage will be responsible for checking if a byte has the in[3] bit set, indicating a potential message start. The second stage will verify if the subsequent bytes are part of a valid message by counting the number of bytes received since the last message start was detected. This pipelined approach allows for a more efficient and scalable design.
-
-The key components of this design will include:
-1. **Byte Checker Module**: Responsible for identifying bytes with in[3] set, indicating a potential message start.
-2. **Message Counter Module**: Keeps track of the number of bytes received since the last message start was detected and signals when a complete message (3 bytes) has been received.
-3. **Pipelined Register Stage**: To ensure that the design can operate at high speeds, each stage of the pipeline will be separated by a register, allowing the design to process one byte per clock cycle efficiently.
-
-This modular and pipelined design should offer improved performance, area efficiency, and power consumption compared to traditional FSM-based approaches.

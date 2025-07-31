@@ -1,9 +1,0 @@
-Implement a radix-2 divider using an iterative shift-subtract approach controlled by a simple FSM with three states: IDLE, DIVIDE, and DONE.  
-On opn_valid and when idle, latch inputs and determine the absolute values and signs for signed division.  
-Initialize the remainder register (9 bits) with zero and the quotient register (8 bits) with zero.  
-In each clock cycle during DIVIDE, shift left the (remainder, quotient) combined register by one bit, bring down the next dividend bit, then subtract the divisor from the remainder.  
-If subtraction result is non-negative, update remainder and set quotient bit to 1; else restore remainder and set quotient bit to 0.  
-After 8 iterations, adjust quotient and remainder signs if signed operation is selected, then output the concatenated (remainder[7:0], quotient[7:0]) as result.  
-Use synchronous reset and manage res_valid signal to indicate valid output.  
-The design avoids complex wide shift registers by explicitly shifting remainder and quotient registers separately, improving clarity.  
-All combinational operations (subtractions and sign corrections) are handled clearly and separately from sequential logic.

@@ -1,7 +1,0 @@
-To optimize the existing solution for better power and timing performance without changing the functional behavior, I will separate the three clock dividers into individual always blocks. This will reduce the combinational logic in each block, potentially improving timing. Additionally, I will only increment counters when necessary and minimize toggling logic scope to reduce switching activity.
-
-For power optimization, I will add enable signals for counters, so they count only when needed, reducing unnecessary toggling. The 50MHz clock is a simple divide-by-2 toggle on every cycle, so it remains straightforward. For 10MHz and 1MHz clocks, counters will only increment until their threshold and toggle clocks, then reset. This selective counting reduces toggle activity in counters.
-
-Using separate always blocks also helps in modular synthesis and better timing closure, since the critical path for each divider is isolated.
-
-Overall, this approach maintains the original frequency division ratios and reset behavior but targets improved PPA metrics by reducing combinational logic and switching activity in counters.

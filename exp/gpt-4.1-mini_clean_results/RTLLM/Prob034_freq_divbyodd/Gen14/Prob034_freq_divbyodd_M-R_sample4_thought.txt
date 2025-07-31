@@ -1,9 +1,0 @@
-To improve the design and address issues in waveform alignment and glitches, I will keep the dual-counter, dual-edge approach for dividing by an odd number but will change the final output clock generation logic.
-
-Instead of OR'ing clk_div1 and clk_div2, I will generate a single toggling output clk_div directly, synchronized with the posedge of clk, based on the combined counts of the two counters. The two counters cnt1 and cnt2 will still count on posedge and negedge respectively, but the toggling of clk_div will occur only on posedge clk, and only when either counter reaches the half_div point.
-
-This reduces asynchronous toggling glitches and ensures clk_div is a clean output toggling only on posedge clk, resulting in a stable waveform and correct frequency division.
-
-I will implement counters cnt1 and cnt2 each counting from 0 to NUM_DIV-1 on posedge and negedge of clk respectively. When either counter reaches half_div, a toggle request flag is raised. On the next posedge clk, if the toggle request is active, clk_div toggles, and the flag is cleared. The reset initializes counters and clk_div.
-
-This way, clk_div toggles exactly once per NUM_DIV input clock cycles, combining the two counters' half-div points, improving waveform quality, and maintaining the correct divide ratio with better timing control.

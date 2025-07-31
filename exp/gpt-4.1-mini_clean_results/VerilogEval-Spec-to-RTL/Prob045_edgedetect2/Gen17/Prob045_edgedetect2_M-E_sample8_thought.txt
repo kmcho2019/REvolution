@@ -1,9 +1,0 @@
-Instead of storing the previous input and XORing with the current input vector, this design uses a pipeline of two registers to delay the input by two clock cycles and compares the input values one cycle apart. Specifically, it captures the input at two consecutive clock cycles in two registers (stage1 and stage2). The XOR of these two stages gives the anyedge output, which is inherently delayed by one cycle after the edge occurred, as required.
-
-This approach reduces the number of registers used to store historical inputs from one vector to two pipeline stages, enabling straightforward edge detection by comparing adjacent pipeline stages. The output anyedge is combinationally generated from these pipeline registers, ensuring that anyedge is updated synchronously with clk and reflects transitions from one cycle earlier. This design trades a small amount of register usage and introduces a pipeline style but still guarantees one-cycle latency output after an edge on each bit.
-
-Advantages:
-- Straightforward pipeline that naturally aligns with clk.
-- The anyedge output is synchronous since pipeline registers are clocked, and anyedge is combinational XOR of registers updated on clock edge.
-- No need to keep track of previous inputs explicitly, just rely on pipelined inputs.
-- The design can easily be extended to more cycles of delay if needed.

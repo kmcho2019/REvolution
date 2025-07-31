@@ -1,9 +1,0 @@
-To implement a fractional frequency divider that divides by 3.5 using double-edge clocking, we create a 7-cycle counter (MUL2_DIV_CLK=7) to handle half-integer division. The divided clock periods alternate between 4 and 3 input clock cycles, producing an uneven duty cycle in one phase.
-
-We generate two divided clock phases:
-- One starting normally at counter=0.
-- Another starting delayed by half an input clock cycle, achieved by triggering on the negative edge of clk and a complementary count.
-
-These two phases are OR-ed to produce a final clock output with a uniform duty cycle and frequency 1/3.5 of input clk.
-
-The implementation uses synchronous counters, two registers toggling at different times (posedge and negedge), and reset logic. Careful management of counts and toggles ensures stable output.

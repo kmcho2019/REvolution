@@ -1,7 +1,0 @@
-To address the issues in the existing solution and provide a completely new and different approach, we can design a finite state machine that utilizes a bit-by-bit processing strategy. The idea involves using a single state register to control the flow of the state machine, with each state handling a specific function in the serial communication protocol.
-
-Our novel architectural idea involves introducing a shift register to accumulate the incoming data bits, allowing for a more straightforward and efficient way to handle the serial data stream. The shift register will shift in the incoming bits from the least significant bit to the most significant bit, making it easier to manage the data bits in the correct order.
-
-We will define the following states: `IDLE`, `START`, `DATA`, and `STOP`. The `IDLE` state waits for the start bit, the `START` state waits for one clock cycle, the `DATA` state receives the 8 data bits, and the `STOP` state checks the stop bit. If the stop bit is correct, the `done` signal is asserted, and the received data byte is output.
-
-To handle the case where the stop bit is not present, we will introduce a separate state, `WAIT_STOP`, which will wait for the stop bit before transitioning back to the `IDLE` state. This approach ensures that the finite state machine correctly handles the serial communication protocol and asserts the `done` signal only when a byte is correctly received.

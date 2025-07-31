@@ -1,7 +1,0 @@
-To implement the data width conversion circuit, we can use a finite state machine (FSM) to track the validity of the input data and concatenate the first and second arriving 8-bit data inputs to form a 16-bit output data. The FSM will have two states: idle and lock. In the idle state, the circuit waits for the first valid 8-bit data input. Once the first valid data is received, it is stored in a register and the FSM transitions to the lock state. In the lock state, the circuit waits for the second valid 8-bit data input. After the second valid data is received, the FSM concatenates the stored first data with the second data to form a 16-bit output data and asserts the valid_out signal. The output data is generated in the next clock cycle after the two data inputs.
-
-We will use a flag signal to indicate whether the first valid data has been received. When the flag is active, it means the first valid data is stored, and we are waiting for the second valid data. We will also use a data_lock register to store the first valid 8-bit data input.
-
-The data_out register is updated on the positive edge of the clock signal or the negative edge of the reset signal. On reset, the data_out register is cleared to 0.
-
-To implement this logic, we will use Verilog's always block to describe the combinational logic and the sequential logic.

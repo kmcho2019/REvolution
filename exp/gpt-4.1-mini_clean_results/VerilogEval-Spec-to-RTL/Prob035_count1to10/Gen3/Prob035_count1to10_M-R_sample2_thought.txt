@@ -1,7 +1,0 @@
-Refactor the synchronous decade counter to separate the next-state combinational logic from the sequential state update. Use a combinational always block or continuous assignment for the next count value, and then update the state register `q` on the positive clock edge with synchronous reset. This approach clearly separates state register from combinational next-state logic, improving readability and making it easy to extend later if needed.
-
-The logic:
-- Compute `next_q` combinationally: if `q` equals 10, next_q is 1, else q + 1.
-- On clock edge, if reset is asserted synchronously, set q to 1; else assign q to `next_q`.
-
-This is a typical two-process (or two-block) design pattern separating combinational and sequential logic.

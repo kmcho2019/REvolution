@@ -1,8 +1,0 @@
-Refactor the 16-bit division to use purely combinational assign statements without any always blocks, by explicitly computing each quotient bit and remainder stage using a loop unrolled with a generate block.
-
-- Inputs are first assigned to internal wires `a_reg` and `b_reg`.
-- Implement the division as a series of 16 combinational steps, each shifting the remainder, adding the next bit from the dividend, comparing with divisor, and conditionally subtracting.
-- Quotient bits are directly assigned using a vector rather than an array for improved synthesis friendliness.
-- The remainder pipeline is represented as a 17-element wire vector array, each 9 bits wide.
-- The final outputs `result` (quotient) and `odd` (remainder zero-extended) are continuous assignments without any procedural blocks.
-- This eliminates always blocks entirely, clarifies data dependencies, and matches the requested two combinational stage concept (input "register" wires and division logic).

@@ -1,7 +1,0 @@
-Implement the FSM as a fully Moore-style machine with all outputs driven purely combinationally from the current state. Model the pattern detector for the sequence "1,0,1" using a small substate machine embedded into the FSM states for clarity and correctness. Use explicit states to represent each step of the sequence detection and progress through them only when the input x matches the expected bit, restarting otherwise.
-
-Once the sequence is detected, move to a state where g=1 is asserted and a two-cycle timer counts clock cycles to monitor y input. Implement this timer as a simple counter reset when entering this state and counting up to 2. If y=1 is observed within these two cycles, transition to a permanent "success" state with g=1 maintained indefinitely. If not, transition to a permanent "failure" state with g=0 maintained indefinitely.
-
-Drive outputs f and g purely combinationally from the FSM state for clean timing. Implement the synchronous active-low reset correctly so that on reset the FSM returns to initial state A, holding outputs low. After reset is released, on the very next clock cycle, f is asserted for exactly one cycle to signal start-up, then transition into sequence detection.
-
-This design clearly separates sequence detection, output control, and timing monitoring for y, ensuring precise output timing and exact behavior as per the problem statement. All state transitions happen on positive clock edges, and outputs react instantly to state changes for robust and testable behavior.

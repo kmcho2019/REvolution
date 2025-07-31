@@ -1,9 +1,0 @@
-To optimize the dual-edge triggered flip-flop implementation, I will reduce glitches and improve timing by registering the output `q` on the rising edge of the clock. Instead of directly multiplexing the two flip-flop outputs combinationally on clock level, the registered output `q` will update at every clock edge (since one of the two FF outputs updates at every edge), thus producing stable output and avoiding combinational glitches.
-
-Concretely:
-- Use the two edge-triggered flip-flops as before to sample input `d` on both edges.
-- Use a positive-edge clocked register to latch the multiplexed output of these two FFs based on the current clock level.
-- This ensures output `q` changes only synchronously on the rising edge, reducing glitching and improving timing.
-- This adds an extra register stage, slightly increasing latency by half a clock cycle, but enhances overall signal integrity and timing closure.
-- Clock domain remains simple, using only the rising edge clock for the final output register, making it friendly for FPGA implementation.
-This strategy improves power and timing by eliminating combinational mux glitches at the output while maintaining dual-edge functional behavior.

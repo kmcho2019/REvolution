@@ -1,7 +1,0 @@
-The original design is already minimal and uses the Verilog equality operator, which synthesis tools implement efficiently using minimal logic. To optimize power and potentially area slightly, I can express the equality using bitwise XOR and NOR gates explicitly, which might allow the synthesis tool to infer minimal XOR and NOR gates. This can reduce switching activity slightly by avoiding the conditional operator and might improve clarity for certain synthesis tools.
-
-Specifically, equality for two 2-bit vectors A and B can be expressed as z = ~(A[1]^B[1] | A[0]^B[0]), i.e., z = !(bitwise XOR of bits ORed together).
-
-This approach is purely combinational and could lead to the same or slightly better performance, power, and area due to simpler boolean expressions.
-
-I will implement this using assign with bitwise operations.

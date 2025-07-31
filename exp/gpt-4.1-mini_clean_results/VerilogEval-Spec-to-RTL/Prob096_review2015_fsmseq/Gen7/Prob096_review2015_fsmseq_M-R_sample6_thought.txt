@@ -1,9 +1,0 @@
-I will refactor the FSM by implementing the next state and output logic using separate combinational assignments rather than a case statement, leveraging continuous assignments (`assign`) for next_state signals. The state register will remain synchronous with a clocked always block.
-
-Additionally, I will implement the start_shifting output as a set-reset latch by explicitly setting it on the detected sequence and asynchronously clearing on reset, but since reset is synchronous, clear will be synchronous as well.
-
-The refactor uses one-hot style state encoding for clarity, even though it uses 4 bits instead of 2, which can simplify the next state and output logic. This might trade a bit of area for simpler combinational logic.
-
-Using individual state bits allows clearer direct next-state logic expressions instead of case statements.
-
-This approach restructures the FSM to potentially aid synthesis tools in optimizing timing by exposing signals more explicitly.

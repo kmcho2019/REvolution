@@ -1,9 +1,0 @@
-To solve this problem, we can design a finite state machine (FSM) that goes through different states to detect the input pattern '1101', shift in the delay bits, count for the specified duration, and then notify the user and wait for acknowledgement. The FSM will have four main states: IDLE, PATTERN_DETECTION, DELAY_SHIFT, COUNTING, and DONE. 
-
-In the IDLE state, the FSM will wait for the input pattern '1101' to be detected. Once the pattern is detected, it will transition to the DELAY_SHIFT state where it will shift in the next 4 bits to determine the delay duration. After the delay bits are shifted in, the FSM will transition to the COUNTING state where it will count for the specified duration. 
-
-In the COUNTING state, the FSM will decrement the remaining counter every 1000 clock cycles until it reaches zero. Once the remaining counter reaches zero, the FSM will transition to the DONE state where it will assert the done signal and wait for the acknowledgement signal to be asserted. After the acknowledgement signal is asserted, the FSM will transition back to the IDLE state.
-
-To implement the timer functionality, we can use a counter that increments every clock cycle. When the counter reaches 1000, we will decrement the remaining counter and reset the timer counter. 
-
-We will also use a separate register to store the current remaining time, which will be updated every 1000 clock cycles.

@@ -1,5 +1,0 @@
-To correctly implement the serial-to-parallel converter with MSB-first ordering, the shift register should insert each incoming serial bit at the most significant bit (bit 7) of dout_parallel, shifting existing bits right by one. This ensures the first received bit is stored at dout_parallel[7] and subsequent bits fill down to dout_parallel[0]. The counter counts from 0 to 7 as bits arrive. When the 8th bit is received (cnt == 7), dout_valid is asserted high for one clock cycle indicating the parallel data is valid.
-
-This change fixes the bit ordering issue from the previous implementation by shifting right and inserting at MSB instead of shifting left and inserting at LSB. The synchronous reset and counting logic remain the same, preserving the design's robustness and synthesis friendliness.
-
-The output data pattern then matches the requirement exactly: first serial input at MSB, last serial input at LSB.

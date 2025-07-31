@@ -1,5 +1,0 @@
-To optimize for power and area, enable the flip-flop only when a state change occurs, effectively gating clock toggling. This reduces unnecessary state updates and switching activity inside the register. Since the current design updates Q on every clock edge, even when the next_Q equals the current Q, introducing an enable signal that activates only when Q needs to change avoids redundant toggling.
-
-Implement this by adding a clock enable (ce) signal derived from comparing next_Q and Q. When ce is low, the flip-flop retains its value without toggling, which can save dynamic power. The logic remains simple, and synthesis tools typically infer a clock enable from this pattern.
-
-This preserves the original functionality and clarity while providing tangible power savings with minimal area overhead and potentially better timing due to reduced internal switching.

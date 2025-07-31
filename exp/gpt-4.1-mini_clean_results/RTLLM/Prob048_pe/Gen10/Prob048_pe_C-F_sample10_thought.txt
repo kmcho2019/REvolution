@@ -1,7 +1,0 @@
-Fuse the two approaches by using a 64-bit accumulator register to avoid overflow and maintain full precision, with a synchronous reset for timing closure and synthesis friendliness. Compute the 64-bit product combinationally using a wire for clean separation of combinational and sequential logic. Use non-blocking assignments in the always block triggered on the positive clock edge for correct sequential behavior. Output the lower 32 bits of the accumulator as "c" per the spec.
-
-Additionally, explicitly register the product to reduce combinational path length (optional but beneficial), improving timing by pipelining the multiplication step inside the clock domain before accumulation. This reduces the critical path delay by separating the multiplication and accumulation into two clock cycles.
-
-This pipelined approach (two-stage: product register + accumulator) improves performance by balancing the multiplier and adder delay, facilitating higher clock frequencies. The design remains clean, fully synchronous with synchronous reset, and easy to modify for power or area optimization later by gating or controlling accumulation.
-
-Overall, the fusion combines correctness (64-bit accumulation), timing friendliness (pipelined multiply and accumulate), and clean RTL style for synthesis and simulation.

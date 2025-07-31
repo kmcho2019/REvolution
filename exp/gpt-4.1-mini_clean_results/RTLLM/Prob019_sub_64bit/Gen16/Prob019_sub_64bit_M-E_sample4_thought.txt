@@ -1,8 +1,0 @@
-Implement a single 64-bit carry-lookahead subtractor by directly computing the difference as A + (~B) + 1, using a hierarchical 64-bit carry-lookahead adder structure optimized for fast carry calculation:
-
-- Use a 64-bit adder with a two-level carry-lookahead: divide into four 16-bit blocks.
-- Each 16-bit block computes its own generate and propagate signals, and a small lookahead circuit combines these to produce block-level carries.
-- This approach reduces the carry chain delay compared to ripple carry but is more area and power efficient than a full flat 64-bit CLA.
-- The subtraction is implemented as addition with the two's complement of B (i.e. ~B + 1).
-- Overflow detection follows the classic signed overflow rule for subtraction: overflow occurs when the sign bits of A and B differ and the sign of the result differs from the sign of A.
-- The design is fully combinational and easy to synthesize.

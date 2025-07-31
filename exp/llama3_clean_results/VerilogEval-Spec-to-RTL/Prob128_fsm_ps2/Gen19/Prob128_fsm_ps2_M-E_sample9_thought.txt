@@ -1,7 +1,0 @@
-To develop a novel architectural solution for the PS/2 mouse protocol message boundary detection, we can utilize a different approach that focuses on tracking the receipt of bytes and utilizing a counter to determine when a complete message has been received. The new architecture will employ a single counter to keep track of the number of bytes received since the last message start byte (with in[3]=1) was detected. 
-
-This approach simplifies the state machine by reducing the number of states needed, as we no longer need explicit states for each byte position within the message. Instead, we use the counter to determine when a message is complete. 
-
-When a byte with in[3]=1 is detected, the counter is reset to 1 (since we've just received the first byte of a potential message). Then, for each subsequent byte received, the counter is incremented. Once the counter reaches 3, it signifies that a complete message (three bytes) has been received, and the 'done' signal is asserted for one clock cycle.
-
-This approach not only simplifies the logic but also makes the design more scalable if the message length were to change in the future.

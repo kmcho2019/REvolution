@@ -1,5 +1,0 @@
-Implement the Rule 110 cellular automaton with an explicit use of a 514-bit shift register internally that stores the current state with zero padding at both ends (boundaries assumed zero). On each clock cycle (if not loading), update the internal 514-bit state vector by sliding through cells 1 to 512 and computing their next states based on their immediate neighbors. This way, boundary conditions are naturally handled by the zero-padded bits at indices 0 and 513.
-
-This architecture uses an always block to update all cells' states synchronously. The next state is calculated in a combinational for loop over the cells. This avoids complex generate blocks with multiple wires and provides a clear separation of boundaries in an extended register. The output q simply maps to the internal 512 bits from index 1 to 512, corresponding to the actual cellular automaton cells.
-
-This method leverages boundary padding and synchronous logic for clarity, enabling potential easier timing closure and clear boundary handling without inline ternary indexing. The internal state register includes boundaries for explicit and neat indexing.

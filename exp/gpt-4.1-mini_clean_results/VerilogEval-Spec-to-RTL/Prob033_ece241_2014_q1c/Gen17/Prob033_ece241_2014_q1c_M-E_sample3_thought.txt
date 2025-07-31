@@ -1,7 +1,0 @@
-I will implement the 8-bit signed adder by dividing the 8-bit inputs into two 4-bit blocks and chaining two 4-bit carry lookahead adders (CLAs). This hierarchical approach balances complexity and speed: each 4-bit CLA quickly computes partial sums and carries, then the carry-out of the lower 4 bits feeds the higher 4 bits.
-
-To detect signed overflow, I use the standard approach of XORing the carry into and carry out of the most significant bit (bit 7). Here, the carry into bit 7 is the carry-out from the 6th bit (bit 6) addition inside the higher 4-bit CLA. Since the higher 4-bit CLA handles bits [7:4], the carry into the MSB is the carry into bit 7 from the CLA.
-
-This method differs from a flat 8-bit CLA by using two smaller CLAs hierarchically, potentially simplifying hardware and enabling modular reuse, while still improving delay over a ripple carry adder. It trades off a small carry chain between the two blocks for simpler blocks internally.
-
-This hierarchical design is easy to understand, modular, and scalable for larger widths.

@@ -1,7 +1,0 @@
-To design the TopModule, we will implement a Moore state machine that performs 2's complement conversion on the input series. The 2's complement of a binary number is obtained by flipping all the bits and then adding 1. We can achieve this in two stages: 
-1. Invert all the bits: This can be done by XORing each input bit with 1.
-2. Add 1 to the inverted bits: We can use a carry propagation mechanism to achieve this. When the first bit (LSB) of the input number arrives, we set a carry flag. As each subsequent bit arrives, we XOR it with the carry flag. If the result is 1, we set the carry flag for the next bit. If the result is 0, we reset the carry flag.
-
-We will use two states: IDLE (initial state) and RUNNING. In the IDLE state, the machine waits for the reset to be released. Once the reset is released, the machine transitions to the RUNNING state and starts converting the input number. When the reset is asserted again, the machine returns to the IDLE state.
-
-We will also need a register to store the carry flag and another register to store the current output (z). The z register will be updated at each clock cycle based on the input (x) and the carry flag.

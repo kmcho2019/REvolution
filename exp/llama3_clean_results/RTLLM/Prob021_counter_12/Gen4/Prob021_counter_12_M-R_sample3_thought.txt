@@ -1,7 +1,0 @@
-To refactor the existing Verilog code for the counter_12 module, we can utilize a different approach by incorporating a state machine to manage the counter's behavior. The core idea remains the same: the counter counts from 4'b0000 to 4'd11, controlled by the input signal valid_count, and resets to 0 when the reset signal (rst_n) is active. However, we will implement this functionality using a state machine with two states: IDLE and COUNTING. 
-
-In the IDLE state, the counter remains unchanged. When the valid_count signal is active, the state machine transitions to the COUNTING state, where the counter increments on each clock cycle. If the counter reaches its maximum value (4'd11), it wraps around to 0. The reset signal (rst_n) can reset the counter to 0 at any time. 
-
-We will use a single always block to update the state and the counter value, and an assign statement to generate the output based on the current state and counter value. This approach provides a clear separation of logic and makes the code more readable and maintainable.
-
-Additionally, we will use parameterized values for the maximum count value and the counter width to make the code more flexible and reusable.

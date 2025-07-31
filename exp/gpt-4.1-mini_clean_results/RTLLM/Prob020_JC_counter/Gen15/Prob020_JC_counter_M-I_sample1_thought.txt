@@ -1,9 +1,0 @@
-To improve PPA, especially timing and power, I will implement an explicit serial-in shift register approach rather than a wide concatenation shift. This approach reduces combinational logic in the next-state assignment and encourages synthesis tools to infer shift-register primitives or optimized implementations. Instead of shifting Q as {~Q[0], Q[63:1]}, I will shift Q by assigning Q[i] to Q[i-1], and only Q[63] depends on ~Q[0]. This breaks down the 64-bit shift into simple flip-flop updates, potentially improving timing by avoiding a large combinational mux.
-
-Additionally, I will add a clock enable input internally to gate clock enable on Q if needed, or leave that for future enhancements since the counter toggles every cycle.
-
-This approach also improves code readability by explicitly showing the shift register behavior, helping synthesis tools recognize shift-register cells and reducing power through simpler transitions.
-
-Functionality remains identical, with asynchronous active-low reset. The code uses a for-loop in the sequential block for clarity and maintainability, which synthesis tools handle efficiently for registers.
-
-Overall, this small refactor maintains the behavior but optimizes for performance and power by making the dataflow more explicit and easier for synthesis tools to optimize.

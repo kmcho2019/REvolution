@@ -1,8 +1,0 @@
-To fuse the best ideas from both examples: I will keep a separate registered state to preserve clarity and scalability (from Example 2) while encoding the state as the output signal itself (from Example 1) to reduce registers and combinational logic. This merges the simplicity of Example 1's state=out encoding with Example 2's clean separation of combinational and sequential logic to avoid combinational loops or glitches.
-
-Specifically:
-- Use 'out' as the state register (a single reg), updated on posedge clk or areset.
-- Use a combinational always block to compute the next state based on current 'out', inputs j and k.
-- Assign 'out' only in the sequential always block to avoid glitches, making output registered.
-- This results in a single-flip-flop Moore FSM with asynchronous reset, simple logic, and glitch-free output.
-- The design is minimal area like Example 1, and clear, robust FSM style like Example 2.

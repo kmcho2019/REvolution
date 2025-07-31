@@ -1,9 +1,0 @@
-Implement the multi-bit synchronizer by capturing data_in and data_en in clk_a domain independently, then crossing data_en to clk_b domain through a 2-stage synchronizer chain (as per requirements).
-
-On clk_b domain, create a simple finite state machine that detects the rising edge of the delayed enable signal (en_clap_two), and when active, latch the stable data_reg from clk_a domain into a double-registered staging area synchronized to clk_b.
-
-Use a MUX to select between holding previous dataout or loading new data from the staging register based on the synchronized enable signal.
-
-This architecture isolates data capture and synchronization clearly, buffers the data crossing domain boundary with double registering, and guarantees stable data output only when enable signal is valid and delayed accordingly.
-
-The design meets the requirement of output dataout synchronized to clk_b, delayed enable signal en_clap_two controlling data update, and reset signals handled properly for both clock domains.

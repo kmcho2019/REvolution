@@ -1,9 +1,0 @@
-The original code correctly implements the required functionality with an 8-bit D flip-flop register with asynchronous active-high reset. To optimize for power, we can gate the load of the register such that if the input data 'd' is equal to the current output 'q', no toggling occurs, which reduces switching power. This is done by adding a conditional load that only updates 'q' if d != q.
-
-For area, this introduces some extra comparison logic, but for 8 bits it's minimal and might be justified by power savings.
-
-For performance, the additional compare logic is simple and on the clock domain, so it should not degrade the critical path significantly.
-
-No other architectural changes are needed since the asynchronous reset is required.
-
-Hence, the improvement strategy is to load 'q' only if new input data differs from current output, reducing unnecessary toggling and saving dynamic power without impacting reset behavior.

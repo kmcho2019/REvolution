@@ -1,7 +1,0 @@
-Refactor the asynchronous FIFO design by modularizing the pointer synchronization into separate synchronizer modules for clarity and reusability, and replace some always blocks with combinational logic using continuous assignments where possible.  
-Implement Gray code conversion as functions but invoke them only where required to minimize combinational logic.  
-Use synchronous reset and register updates for pointers, and avoid two-stage synchronizers inside the main FIFO module by extracting them as separate submodules.  
-Instantiate the dual-port RAM only once, keep its code separate (or assume provided externally), but for completeness here, include a minimal dual-port RAM without conflicting with prior definitions by naming it uniquely (e.g., dual_port_RAM_simple).  
-Use assign statements to decode full and empty flags combinationally based on Gray pointers and synchronized pointer values.  
-Register the read data from RAM directly without extra buffering.  
-This refactoring yields cleaner separation of concerns, improved readability, and easy modification of the synchronizer block if needed, while maintaining the same asynchronous FIFO behavior and features as before.

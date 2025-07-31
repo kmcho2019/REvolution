@@ -1,9 +1,0 @@
-Use a shift register to store the last 4 valid inputs and a parallel adder to sum them. On each valid_in cycle, shift in the new data_in to a 4-element register array. When the shift register is full (after receiving 4 inputs), assert valid_out for one cycle and output the sum of all 4 stored data values.
-
-This architecture differs by keeping all four inputs stored explicitly and summing all four together, rather than accumulating partial sums. The advantage is conceptual simplicity, easy extension to variable window sizes, and predictable timing since the addition is always the same (four 8-bit inputs added in parallel).
-
-Implement the 4-input addition combinationally using cascaded adders to produce a 10-bit sum. The valid_out signal is asserted only on the clock cycle when the 4th valid input arrives, then cleared.
-
-The counter tracks how many valid inputs have been shifted in, resetting after 4 inputs. Use synchronous reset and non-blocking assignments for clarity and reliability.
-
-This approach makes addition latency fixed and isolated from accumulation logic and offers a neat pipelined behavior where data_in shifts on each valid_in, and output is produced every 4 inputs.

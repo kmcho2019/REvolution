@@ -1,9 +1,0 @@
-Refactor the design to use a single 8-bit shift register that shifts in the serial data bit-by-bit on each valid input. The first received bit goes into the MSB position, so on each clock when din_valid is high, shift the register left by one and input din_serial into the LSB.
-
-Use a 3-bit counter to count how many bits have been received (0 to 7). When the counter reaches 7, it means 8 bits have been collected, so latch the shift register to the output and assert dout_valid for one cycle.
-
-This approach uses a classic shift-left operation for serial-to-parallel conversion, which is simpler and less error-prone. Reset clears the shift register and counter.
-
-The output and valid signal are registered synchronously to ensure proper timing.
-
-The main difference is the use of shift register to assemble bits in the correct order (MSB first), and registering output only after the full byte is received, making the design clean and ensuring output is stable for one clock cycle.

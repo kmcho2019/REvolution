@@ -1,7 +1,0 @@
-Refactor the FSM by encoding the count of consecutive ones directly in a 3-bit register (count_ones) representing counts 0 to 6, plus separate single-bit flags for the special output conditions (disc, flag, err). The FSM state is thus split into a simple numeric count and output flags, simplifying state transitions and outputs.
-
-Use a single sequential always block for synchronous reset and state updates, and compute outputs purely combinationally from count_ones and last input. Transitions are defined by incrementing count_ones on input=1, resetting on 0, and detecting special sequences for disc, flag, and err by examining count_ones and input.
-
-This approach eliminates explicit enumeration of all states in a big case statement, improving readability and potentially reducing logic depth. The outputs are assigned combinationally as flags derived from current count and input, keeping them Moore-type signals asserted for one cycle after the event.
-
-This decomposition provides a clearer, arithmetic-centric FSM reflecting the count of consecutive ones and using logic conditions for outputs, differing structurally from the original while preserving functionality and synchronous reset behavior.

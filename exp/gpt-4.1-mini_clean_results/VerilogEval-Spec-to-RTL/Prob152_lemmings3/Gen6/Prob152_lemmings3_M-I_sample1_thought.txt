@@ -1,9 +1,0 @@
-The main issue in the original solution is that direction changes on bumps are applied unconditionally in the WALK state whenever bumped is asserted, regardless of whether the ground just disappeared or reappeared on the same cycle. The problem explicitly states that bumps simultaneous with ground disappearance or reappearance should not affect direction.
-
-To fix this, add conditions to disallow direction switching if ground just fell or just rose on the current clock edge. This requires refining the bump handling condition to only switch direction when walking on ground without a ground edge event this cycle.
-
-Additionally, it is important to update `prev_ground` at the end of the clock cycle (after other logic) to ensure correct edge detection.
-
-No other major changes are needed as the FSM is clean and Moore outputs are correctly derived from registered state and direction. This fix will eliminate the spurious direction flips and fix the mismatch issues for `walk_left` and `walk_right`.
-
-This approach retains the FSM's simplicity, respects all priority rules (fall > dig > bump), and ensures correct timing semantics of direction changes.

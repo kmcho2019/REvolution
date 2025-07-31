@@ -1,7 +1,0 @@
-Implement the fixed-point adder by explicitly separating sign and magnitude operations. First, extract the sign and magnitude of inputs `a` and `b`. For inputs with the same sign, add their magnitudes and set the result's sign to that sign. For inputs with different signs, subtract the smaller magnitude from the larger one and assign the result the sign of the operand with the larger magnitude.
-
-Since the inputs are in two's complement fixed-point format, convert to magnitude (absolute value) by conditional negation (if sign is 1, magnitude = ~value + 1). After addition or subtraction on magnitudes, restore the sign by converting back to two's complement if negative. This approach allows precise control over sign and magnitude arithmetic, avoiding overflow by limiting result to N bits.
-
-The fixed-point precision Q is implicitly handled by fixed positioning of fractional bits; no extra scaling is required. The output `c` is assigned the two's complement encoded sum with correct sign, and the internal register `res` holds the result combinationally.
-
-This design highlights the fundamental sign/magnitude arithmetic behind two's complement fixed-point addition without relying solely on native signed addition, offering clarity and flexibility for further customizations.

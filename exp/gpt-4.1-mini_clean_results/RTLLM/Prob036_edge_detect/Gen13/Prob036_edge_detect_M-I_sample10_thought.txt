@@ -1,8 +1,0 @@
-To improve the original design and better meet the requirement that 'rise' and 'down' signals are set to 1 on the clock cycle after the edge detection and remain asserted until the next corresponding edge, we should register the outputs. The outputs 'rise' and 'down' should be set synchronously in the clock domain and hold their values until updated. This eliminates glitches and aligns with the spec that outputs remain set until the next edge.
-
-The improved design uses two stages of registers:
-1. Register 'a_reg' holds the previous sampled 'a'.
-2. Combinational logic compares 'a' and 'a_reg' to detect edges.
-3. Registered outputs 'rise_reg' and 'down_reg' hold the indicators, updating on clock edges.
-
-This approach adds only a small register overhead but enhances signal robustness, glitch immunity, and clarity of behavior with no negative impact on timing or power. It also fulfills the requirement that the outputs remain 1 after an edge until the next one of the same kind occurs.

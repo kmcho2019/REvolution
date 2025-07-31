@@ -1,9 +1,0 @@
-To solve this problem, we need to implement a finite state machine (FSM) that will search for message boundaries in the input byte stream. The FSM should have states to handle the following situations:
-1. Reset: When the reset signal is high, the FSM should reset to its initial state.
-2. Search: When the reset signal is low, the FSM should search for a byte with in[3]=1.
-3. Receive byte 1, 2, and 3: After finding the first byte of a message, the FSM should receive the next two bytes and store them.
-4. Signal done: After receiving all 3 bytes, the FSM should signal done in the cycle immediately after the third byte was successfully received.
-
-We will use a datapath module to output the 24-bit (3 byte) message whenever a packet is received. The datapath will be controlled by the FSM.
-
-The FSM will use a counter to keep track of the number of bytes received.

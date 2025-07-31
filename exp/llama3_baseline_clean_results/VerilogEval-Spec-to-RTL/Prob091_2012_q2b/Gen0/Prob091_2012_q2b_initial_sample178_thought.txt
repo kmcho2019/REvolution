@@ -1,9 +1,0 @@
-To implement the state output logic for the given finite-state machine, we first need to determine the next state for each current state based on the input w. Given the one-hot encoding, we can then derive the output logic for Y1 and Y3 by inspecting the transitions and the corresponding next states. Since Y1 corresponds to y[1] and Y3 corresponds to y[3], we need to find which states have these bits set and under what conditions they are set in the next state.
-
-For Y1 (y[1]), this bit is set for state B (000010). For Y3 (y[3]), this bit is set for state D (001000). We will derive the logic for Y1 and Y3 based on the current state (represented by y[5:0]) and the input w.
-
-For Y1 to be set in the next state, we need to look at transitions leading to state B. According to the FSM, state B can be reached from state A when w is 0. Thus, Y1 should be set when the current state is A and w is 0.
-
-For Y3 to be set in the next state, we look at transitions leading to state D. State D can be reached from states B, C, E, or F, depending on w. Specifically, D is reached from B when w is 0, from C when w is 0, from E when w is 0, and from F when w is 0, and also from D when w is 0. Given the one-hot encoding, we can express these conditions using the bits of y[5:0] and the value of w.
-
-Given these conditions, we can write the Verilog code to implement the logic for Y1 and Y3.

@@ -1,9 +1,0 @@
-The current implementation is already quite efficient, but we can make minor optimizations to potentially improve PPA metrics:
-
-1. **Direct Expression:** Remove intermediate wires and implement the logic directly in the assign statement to reduce switching activity and potential power consumption.
-
-2. **Gate Optimization:** The expression (~x3 & x2) | (x3 & x1) is already minimal (2 ANDs + 1 OR), but we can try to express it differently to see if synthesis tools can find a more optimal implementation.
-
-3. **Alternative Formulation:** Try using an XOR-based expression which might sometimes yield better PPA in certain technologies: f = x2 & (x3 ^ x1) | (x3 & x1)
-
-However, since the current implementation already matches reference PPA metrics exactly, the improvements might be marginal. The most straightforward optimization is to remove the intermediate wires while keeping the same logical expression.

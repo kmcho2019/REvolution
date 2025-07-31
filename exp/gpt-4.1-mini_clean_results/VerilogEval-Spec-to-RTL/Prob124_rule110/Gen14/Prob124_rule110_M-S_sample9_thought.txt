@@ -1,6 +1,0 @@
-We will simplify the implementation by keeping the same core approach: zero-padding the 512-bit state with one zero bit on each side to handle boundaries and then computing each next state bit directly in a straightforward generate loop. To reduce complexity, we will inline the rule110 logic as a continuous assign expression rather than using a separate function. This avoids the overhead of a function call and simplifies synthesis.
-
-The next state calculation for each cell is:
-    next = (~left & center) | (center ^ right);
-
-We keep the always block for synchronous load and update of the state register `q`. This solution is minimal and clear, easy to understand and synthesize, and meets all functional requirements.

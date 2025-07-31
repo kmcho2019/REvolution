@@ -1,9 +1,0 @@
-Fuse the clarity and indexing correctness of Example 1 with the concise vector packing from Example 2, but optimize further by computing only the unique pairs (i >= j) to avoid redundant logic, since equality is symmetric.
-
-We'll pack inputs as {a, b, c, d, e} with indices 0 to 4 for readability. Then, generate all pairs (i, j) for i from 0 to 4, j from 0 to 4, assign output bits with indexing out[24 - (i*5 + j)] to follow the problem's MSB-to-LSB mapping, but compute each pair once. Since out bits correspond exactly to pairs in order, no inversion of input vector is needed.
-
-To avoid redundant computations, we can assign out bits as XNOR of inputs[i] and inputs[j], but share computations by noting that (i,j) and (j,i) are the same, so logically that is fine for 25 outputs since all pairs, including symmetric and diagonal ones, are required.
-
-Implement this efficiently using generate loops without extra vector reordering, leveraging XNOR operator (^~) for equality, and keeping the indexing consistent with the problem specification.
-
-This approach keeps code clean, concise, fully parameterized by loops, reduces mental overhead of indexing mismatch, and slightly improves readability and maintainability over explicit concatenation and reversed indexing.

@@ -1,5 +1,0 @@
-The original design uses a structural approach with basic gates to build a 2:1 MUX, implementing f = (~x3 & x2) | (x3 & x1). While this is functionally correct and modular, it introduces extra gate delays, area, and power due to multiple intermediate signals and instantiations.
-
-To optimize for better PPA (performance, power, and area), we can replace the structural MUX with a simple continuous assignment using a conditional operator (ternary operator) directly implementing f = (x3 ? x1 : x2). This reduces logic depth to one level, removes unnecessary intermediate nets and gate instances, and yields minimal area and power usage.
-
-This optimized solution is simpler, faster (one combinational level), consumes less power, occupies less area, and is fully synthesizable and functionally equivalent to the original truth table.

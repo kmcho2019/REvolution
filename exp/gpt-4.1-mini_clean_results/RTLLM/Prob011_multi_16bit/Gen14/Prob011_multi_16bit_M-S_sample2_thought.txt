@@ -1,9 +1,0 @@
-Simplify the design by removing the FSM and minimizing control logic:
-
-- Use the shift count register (i) as the main controller of operation.
-- Increment i when start is active and i<17, else reset i to 0.
-- Use i==16 as done signal.
-- Store multiplicand (areg) and multiplier (breg) only when i==0 and start is active.
-- For i in 1 to 16, check if the (i-1)th bit of multiplicand (areg) is set; if so, accumulate multiplier shifted left by (i-1).
-- Perform all operations synchronously on clock edge with asynchronous active-low reset.
-- This removes FSM and extra state signals, keeping logic straightforward while following original requirements.

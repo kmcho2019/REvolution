@@ -1,7 +1,0 @@
-To fix the timing mismatches, separate the prediction combinational logic from the registered outputs. Combinationally compute prediction_taken and prediction_history based on the current GHR and PHT indexed by (predict_pc XOR GHR), ensuring outputs correspond to the state before any sequential update. Register the outputs on the clock edge only if predict_valid is asserted, holding stable values otherwise.
-
-For GHR updates, on clock edge, prioritize recovery from train_history if train_mispredicted, else update GHR by shifting in the predicted bit from the previously computed combinational prediction (not from PHT read inside the clocked block). This ensures the GHR update uses the prediction actually output at prediction time.
-
-The PHT updates only on train_valid at clock edge using saturating counters.
-
-This cleanly separates combinational prediction and registered outputs, maintains stable outputs, and honors the priority of training recovery over prediction updates to GHR, matching the specified timing and behavior.

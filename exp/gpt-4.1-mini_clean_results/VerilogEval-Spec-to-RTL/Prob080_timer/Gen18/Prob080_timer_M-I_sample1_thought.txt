@@ -1,7 +1,0 @@
-To optimize the original design for better power and timing without changing functionality, I will introduce an enable signal that only allows the counter to decrement when it is nonzero and load is low. This prevents unnecessary counter updates (and switching) when the counter is already zero, reducing dynamic power and toggling inside the register.
-
-This approach also simplifies combinational logic by clearly gating the counter update and can improve timing by potentially reducing switching activity on the register inputs.
-
-No extra registers or flip-flops are added, so the single D flip-flop principle is preserved since only one register (the counter) is used. The terminal count output remains a simple comparator of the counter with zero.
-
-This should help improve power by minimizing toggling, and may marginally improve timing by reducing switching on the data input to the register.

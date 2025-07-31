@@ -1,7 +1,0 @@
-To implement the TopModule, we will use a combination of combinational logic to determine the nominal flow rate based on the sensor inputs and a state machine to determine when to open the supplemental flow valve. We will use an active-high synchronous reset to reset the state machine to a default state.
-
-The state machine will have two states: increasing and not_increasing. When the sensor change indicates that the previous level was lower than the current level, the state machine will transition to the increasing state and assert the supplemental flow valve. Otherwise, it will stay in the not_increasing state and deassert the supplemental flow valve.
-
-The nominal flow rate will be determined by the sensor inputs. If all sensors are asserted, the flow rate will be zero. If only s[0] and s[1] are asserted, fr0 will be asserted. If only s[0] is asserted, fr0 and fr1 will be asserted. If no sensors are asserted, fr0, fr1, and fr2 will be asserted.
-
-When the reset signal is asserted, the state machine will transition to the not_increasing state, and all flow valves will be asserted.

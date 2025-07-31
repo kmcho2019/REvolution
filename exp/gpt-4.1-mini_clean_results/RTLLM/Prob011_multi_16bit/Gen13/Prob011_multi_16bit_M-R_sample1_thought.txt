@@ -1,7 +1,0 @@
-Refactor the design to use a simple FSM with explicit states IDLE, LOAD, CALC, and DONE for clearer control flow and better readability. Use a separate counter to count the 16 multiply cycles. Registers will update only when enabled by the FSM state signals, reducing redundant operations. Use nonblocking assignments consistently for registers. 
-
-The multiplicand is kept in areg and shifted right each cycle; the multiplier is extended to 32 bits (breg) and shifted left each cycle. On each CALC cycle, accumulate the shifted multiplier to the product if the LSB of areg is 1.
-
-The done signal is asserted in the DONE state and cleared when returning to IDLE. The start input triggers transition from IDLE to LOAD.
-
-This FSM approach separates control and data path clearly, allows easier clock gating or power optimizations in future, and makes done flag timing explicit and easier to manage.

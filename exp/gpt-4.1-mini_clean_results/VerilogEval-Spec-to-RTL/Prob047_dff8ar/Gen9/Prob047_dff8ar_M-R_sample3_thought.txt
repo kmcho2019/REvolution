@@ -1,5 +1,0 @@
-Refactor the design by implementing the asynchronous reset DFFs using a single always block for the entire 8-bit vector rather than using a generate loop with individual single-bit DFF modules. This flattens the hierarchy and may reduce overhead.
-
-The asynchronous reset and positive edge clock triggering is handled in a vectorized always block that resets the entire output register to zero when `areset` is asserted, otherwise captures `d` on the rising edge of `clk`. This maintains the same functionality but improves succinctness, reduces module instantiation, and can improve area by avoiding the generate loop.
-
-TopModule thus contains a single always block describing the 8-bit register with asynchronous reset behavior directly, eliminating the separate DFF_AR and DFF_Vector_AR modules while preserving the original semantics.

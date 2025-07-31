@@ -1,7 +1,0 @@
-To simplify the implementation of the 8-bit ring counter, we can use a more straightforward approach to generate the cyclic state sequence. Instead of using a case statement to explicitly set each bit of the output `out` based on the position `pos`, we can leverage the properties of binary numbers to directly calculate the output. 
-
-The key insight is that the binary representation of the numbers 1 through 8 (in binary: 0000_0001, 0000_0010, 0000_0100, 0000_1000, 0001_0000, 0010_0000, 0100_0000, 1000_0000) directly corresponds to the desired output sequence of the ring counter. Thus, we can simply use the `pos` value (which ranges from 0 to 7) as an index into this sequence or, more directly, as a means to generate the sequence itself.
-
-By shifting a single bit (represented by the binary value 1) through the 8-bit output `out` based on the `pos` value, we can achieve the cyclic behavior. This can be done using a left shift operation (`<<`) in combination with the `pos` value, ensuring the single bit moves through each position of the output `out` as `pos` increments from 0 to 7 and wraps around.
-
-This approach not only simplifies the code by eliminating the need for a case statement but also makes the logic more intuitive and easier to understand. It directly utilizes the inherent properties of binary numbers and the left shift operation to generate the desired cyclic sequence, making the implementation more efficient and easier to maintain.

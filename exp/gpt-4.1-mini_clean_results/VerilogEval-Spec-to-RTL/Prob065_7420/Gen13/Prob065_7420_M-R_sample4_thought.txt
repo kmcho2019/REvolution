@@ -1,9 +1,0 @@
-The original design modularizes the 4-input NAND gate into a separate nand4 module and instantiates two of them in TopModule. To refactor while keeping the same core function, I will inline the two 4-input NAND functions directly inside TopModule using continuous assignment statements without any sub-module instantiation. This approach reduces hierarchy and slightly simplifies the netlist by avoiding the nand4 module, which might be beneficial in some synthesis flows.
-
-This refactoring:
-- Maintains pure combinational logic with continuous assignments.
-- Uses direct Boolean expressions for each NAND output in TopModule.
-- Improves simplicity by removing the separate nand4 module while keeping logic clear and readable.
-- Remains synthesizable and maps directly to 7420 chip logic.
-
-This design retains the logic and interface of the 7420 but trades modularity for a flatter structure.

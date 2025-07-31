@@ -1,5 +1,0 @@
-To avoid synthesis issues with latches inferred inside always blocks using nonblocking assignments and to provide a clearer latch inference, we can model the D latch behavior using a continuous assignment with a ternary operator. This approach directly describes the latch function as combinational logic with feedback, which synthesis tools typically recognize as a latch.
-
-Specifically, we assign `q` as `d` when `ena` is high; otherwise, it retains its previous state `q`. To retain the previous value explicitly, `q` must be declared as a `reg` and connected to the output through continuous assignment. Alternatively, we can use an intermediate reg to hold the latch state and assign `q` to it. 
-
-This style avoids the complexity of always blocks with conditional nonblocking assignments and explicitly describes the latch function combinationally, enhancing synthesis tool compatibility and reducing dependency on primitive latch cells like `DLH_X1`.

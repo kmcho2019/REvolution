@@ -1,9 +1,0 @@
-The original solution uses a finite state machine (FSM) with four states (IDLE, START, DATA, STOP) to identify when bytes have been correctly received from a stream of bits. To refactor this code, we can simplify the FSM by reducing the number of states and using a counter to keep track of the bit position.
-
-One approach is to merge the START and DATA states into a single state, which we'll call "RECEIVE". In this state, we'll use a counter to keep track of the bit position and store the received data bits in the `byte` register.
-
-We'll also use a separate counter to keep track of the number of bits received, which will help us transition from the RECEIVE state to the STOP state.
-
-To further simplify the code, we can use `assign` statements to handle the output logic, such as assigning the `done` signal and the `out_byte` output.
-
-Here's the refactored code:

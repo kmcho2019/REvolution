@@ -1,7 +1,0 @@
-To improve the design, we will eliminate the bit reversal step by shifting the incoming serial bits directly into the output register from MSB to LSB. This means the first received bit is placed at dout_parallel[7], the next at [6], and so on, naturally aligning with the requirement without using a bit reversal function. This simplifies logic and reduces combinational overhead.
-
-We keep a 3-bit counter (0 to 7) to track the number of bits received. On each valid input, the shift register shifts right by one bit, inserting the new bit at MSB.
-
-When 8 bits have been received (counter reaches 7), dout_parallel is updated and dout_valid is asserted for exactly one clock cycle. dout_valid is otherwise zero.
-
-All registers are synchronously reset by rst_n (active low). This approach reduces logic complexity, avoids a combinational bit reversal function, and provides clear timing for dout_valid pulses.

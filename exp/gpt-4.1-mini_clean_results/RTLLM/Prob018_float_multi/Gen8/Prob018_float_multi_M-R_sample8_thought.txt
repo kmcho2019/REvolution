@@ -1,9 +1,0 @@
-Refactor the original 4-cycle sequential float multiplier to a 3-stage pipelined design using separate always blocks for each pipeline stage and combinational assign statements for field extraction and special-case detection. 
-
-- Stage 1 (Cycle 0): Extract input fields, detect special cases, prepare mantissas with implicit leading 1, calculate preliminary exponent sum and sign.
-- Stage 2 (Cycle 1): Multiply mantissas, normalize product, extract rounding bits, and adjust exponent accordingly.
-- Stage 3 (Cycle 2): Apply rounding, finalize exponent, handle special cases, and output the IEEE 754 result.
-
-Use pipeline registers between stages to hold intermediate signals. The multiplier operates continuously each cycle, producing a result three cycles after inputs arrive, improving throughput and separating combinational logic clearly. Combinational logic (like field extraction and special case detection) uses `assign`, simplifying code readability and enabling better synthesis optimization. This approach should better balance combinational paths and simplify timing closure.
-
-The pipeline stages are controlled via enabling the registers on clock edges, with an external reset to initialize pipeline stages to zero. Special cases are processed at the final stage for accuracy and compliance. This reorganization improves modularity and timing by isolating critical operations and reduces the critical path in any single clock cycle.

@@ -1,8 +1,0 @@
-To solve this problem, we will design a finite state machine (FSM) with the following states:
-- IDLE: This is the initial state where the FSM waits for the start bit (0).
-- START_BIT: In this state, the FSM checks if the current bit is indeed the start bit (0). If it is, the FSM proceeds to the DATA_BITS state.
-- DATA_BITS: The FSM collects 8 data bits in this state. It checks each bit and stores it in the out_byte register, starting from the least significant bit.
-- STOP_BIT: After collecting all 8 data bits, the FSM waits for the stop bit (1) in this state. If the stop bit is correct, it asserts the done signal and proceeds back to the IDLE state.
-- WAIT_FOR_STOP: If the FSM does not see a stop bit after the data bits, it enters this state and waits for a stop bit (1) before proceeding back to the IDLE state.
-
-The FSM will have a counter to keep track of the current data bit being collected. The done signal will be asserted when a correct stop bit is received.

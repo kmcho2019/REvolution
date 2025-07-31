@@ -1,9 +1,0 @@
-Implement a popcount by splitting the 255-bit input into 32 chunks of 8 bits each (except the last chunk which is 255-31*8=7 bits), count the number of ones in each chunk using small 8-bit popcount units (with a LUT-based approach or bitwise operations), then sum the 32 counts using a balanced adder tree. This chunked approach reduces the complexity of single wide adders by leveraging parallel smaller popcounts and then combining partial sums efficiently in a tree structure.
-
-Specifically:
-- For each 8-bit chunk, count the set bits using a simple adder tree (or a specialized 8-bit popcount module).
-- For the final 7-bit chunk, do the same with a modified 7-bit popcount unit.
-- Collect all partial counts (each up to 8, so needing 4 bits).
-- Use a balanced adder tree of adders to sum these 32 partial counts into a final 8-bit output.
-  
-This approach avoids recursion and powers-of-two restrictions, using uniform small popcount modules and a carefully structured summation tree for efficiency and clarity.

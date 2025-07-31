@@ -1,7 +1,0 @@
-Encode the direction bit into the mode state, making mode a 3-bit variable with explicit combined states (walk_left, walk_right, fall_left, fall_right, dig_left, dig_right). This eliminates the separate direction register and associated next_dir logic, simplifying next state logic.
-
-Use a single always block for next state combinational logic with a case statement over current mode. Prioritize transitions as before: falling > digging > bump-based direction switch.
-
-Reset asynchronously to walk_left state. Outputs directly decoded from mode bits.
-
-This reduces the number of registers and simplifies state and output logic while preserving behavior and priority.

@@ -1,6 +1,0 @@
-To improve the PPA metrics while keeping the design clean and synchronous, I will: 
-- Declare the feedback signal and next_q as wires outside the always block, using continuous assignments for combinational logic to help synthesis tools optimize better.
-- Replace the conditional if-else with a ternary operator to avoid extra registers inferred inside the always block.
-- Compute feedback explicitly as q[0], and next_q as (q >> 1) XORed with TAP_MASK only when feedback is high, otherwise just shifted.
-- Keep synchronous reset and all sequential logic in one always block for clarity.
-- This should reduce inferred registers, possibly improving timing and area, with minimal power impact.

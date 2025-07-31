@@ -1,7 +1,0 @@
-To solve this problem, we need to design a Verilog module named `parallel2serial` that performs parallel-to-serial conversion. The module should have input ports for the clock signal `clk`, reset signal `rst_n`, and 4-bit parallel data input `d`. It should also have output ports for the valid signal `valid_out` and the serial output `dout`.
-
-The module will use a counter `cnt` to keep track of the number of bits that have been converted. When `cnt` reaches 3, the module will update the data register `data` with the new parallel input `d`, reset `cnt` to 0, and set the valid signal `valid` to 1. On each clock cycle, the module will increment `cnt` by 1, set `valid` to 0, and shift the data register `data` one bit to the right.
-
-To implement this, we will use a synchronous reset, where the reset signal `rst_n` is active low. When `rst_n` is 0, the module will reset all registers to their initial values.
-
-We will use a 4-bit register `data` to store the parallel input, and a 2-bit register `cnt` to store the count of bits that have been converted. The valid signal `valid` will be a 1-bit register.

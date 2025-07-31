@@ -1,9 +1,0 @@
-The original solution uses a single register to store instructions from either source, multiplexing outputs based on fetch, which reduces area but creates combinational dependencies on fetch for outputs. To improve PPA, I will separate the two 8-bit registers (ins_p1 and ins_p2) as originally specified, so each source has its own register. This removes the need for output multiplexing based on fetch, allowing outputs to be driven directly from registered values. This reduces combinational delay on outputs, potentially improving timing (better WNS and TNS). 
-
-To reduce power, I will add clock gating by enabling registers only when their respective fetch condition is true, minimizing toggling in the registers when no fetch occurs. 
-
-This approach slightly increases area (one more register) but improves timing and reduces output combinational complexity and power. The outputs are now driven continuously from registers without conditional multiplexing. 
-
-The reset remains active low and clears both registers to zero. 
-
-This design aligns exactly with the problem requirements, improving timing and power by avoiding combinational multiplexing on outputs and reducing unnecessary register toggling.

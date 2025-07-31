@@ -1,7 +1,0 @@
-To implement a Mealy-type finite state machine (FSM) in Verilog that recognizes the sequence "101" on the input signal 'x', we need to define three states. Let's denote these states as S0 (initial state), S1 (state after seeing '1'), and S2 (state after seeing '10'). The output signal 'z' should be asserted when the FSM is in the state that recognizes the complete sequence "101". 
-
-We start in S0. When 'x' is '1', we move to S1. If in S1 and 'x' is '0', we move to S2. If in S2 and 'x' is '1', we have recognized the sequence "101" and 'z' should be '1'. However, because this is a Mealy machine and 'z' should be asserted as soon as the sequence is recognized, we can directly assert 'z' when the conditions for recognizing "101" are met, without needing an additional state.
-
-Given that we are restricted to three states and the machine should recognize overlapping sequences, we should reset to an appropriate state upon recognizing the sequence or when the input doesn't match the expected sequence. The asynchronous reset 'aresetn' should reset the FSM to the initial state S0 when it is low.
-
-To recognize overlapping sequences, once 'z' is asserted (indicating the sequence "101" has been seen), we need to consider how the FSM should behave next. Since we want to recognize overlapping sequences, if after asserting 'z', the next input is '1', the FSM should move back to S1, allowing it to potentially recognize another "101" sequence starting from the last '1' of the previously recognized sequence.

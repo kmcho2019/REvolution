@@ -1,9 +1,0 @@
-I will refactor the FSM by using a Moore machine style where outputs depend only on the current state. The FSM states will be encoded as localparams for clarity and simplicity. 
-
-Instead of separating the next state logic and state register in separate always blocks, I will combine them into a single sequential block with synchronous reset to simplify state transitions and data handling. The data_shift register will use a left shift with serial input assigned to LSB to make the LSB-first behavior explicit and easy to read.
-
-The done signal will be a pulse asserted when the FSM enters the STOP state with a valid stop bit, generated as a registered output driven directly by the state and input conditions inside the same sequential block, ensuring proper synchronization.
-
-I will remove redundant default assignments and use a bit counter that counts from 0 to 7 during reception to keep track of data bits. On invalid stop bits, the FSM will move into a WAIT_STOP state until it detects the line idle (logic 1), after which it goes back to IDLE.
-
-This approach reduces combinational logic (no separate next state always block), keeps logic synchronous with the clock, and uses clear coding style for shift register and FSM states while maintaining the same functionality.

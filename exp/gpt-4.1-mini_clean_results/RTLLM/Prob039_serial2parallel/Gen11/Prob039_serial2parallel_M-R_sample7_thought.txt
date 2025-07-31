@@ -1,9 +1,0 @@
-Refactor the design by using a state machine with two states: IDLE and SHIFT.  
-- When din_valid is high, in SHIFT state we shift the incoming bit into a shift register from MSB to LSB (shift right with new bit in MSB).  
-- Use a 3-bit counter from 0 to 7 to track number of bits received.  
-- When 8 bits are received (counter = 7), latch the shift register into dout_parallel and assert dout_valid for one cycle, then reset counter and remain in IDLE waiting for next data.  
-- Reset clears all registers synchronously.  
-- This approach separates data accumulation and output signaling clearly, improving timing clarity and simulation behavior.  
-- Also, dout_valid pulse is generated synchronously for one clock cycle only when all 8 bits are collected.  
-
-This structuring avoids race conditions and redundant assignments by properly staging data updates and outputs.

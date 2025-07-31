@@ -1,9 +1,0 @@
-To implement the Lemmings' behavior using a finite state machine, we need to define the possible states and the transitions between them. The states can be: walking left, walking right, falling, digging, and splattered. The transitions are triggered by the input signals: bump_left, bump_right, ground, dig, and areset.
-
-When the Lemming is walking, it can switch direction if it hits an obstacle. If the ground disappears, it will fall. When falling, it will continue falling until the ground reappears, at which point it will resume walking in the same direction as before. Being bumped while falling does not affect the walking direction.
-
-If the Lemming is told to dig while walking, it will start digging and continue until it reaches the other side (ground=0), at which point it will fall. If the Lemming falls for too long (more than 20 clock cycles) and then hits the ground, it will splatter and cease walking, falling, or digging.
-
-We can implement this behavior using a Moore state machine, which has a set of states and outputs that are determined solely by the current state. The state machine will be reset to walk left when the areset signal is asserted.
-
-To implement the state machine, we will use a parameterized state machine that can handle the different states and transitions. We will use a counter to keep track of the number of clock cycles the Lemming has been falling.

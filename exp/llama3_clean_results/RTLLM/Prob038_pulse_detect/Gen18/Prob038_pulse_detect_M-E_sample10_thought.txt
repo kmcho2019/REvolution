@@ -1,7 +1,0 @@
-To implement a novel pulse detection module, we can utilize a Finite State Machine (FSM) approach with a unique state transition mechanism. The idea is to use a 2-bit state register to track the current state of the pulse detection process. The states can be defined as follows: IDLE (00), RISING (01), PULSE (10), and FALLING (11). 
-
-The transition between these states will be based on the value of the input signal `data_in`. When `data_in` is 0, the state machine will be in the IDLE state. When `data_in` transitions from 0 to 1, the state machine will move to the RISING state. If `data_in` remains 1 in the next cycle, the state machine will transition to the PULSE state. Finally, when `data_in` transitions from 1 to 0, the state machine will move to the FALLING state and then back to the IDLE state in the next cycle.
-
-The output signal `data_out` will be set to 1 only when the state machine is in the FALLING state, indicating the end of a pulse. This approach ensures that the output signal is asserted only at the end of a pulse, as required.
-
-To optimize the design for power, performance, and area (PPA), we will use a single always block to update the state register and generate the output signal. This minimizes the number of clock cycles required to detect a pulse and reduces the area usage.

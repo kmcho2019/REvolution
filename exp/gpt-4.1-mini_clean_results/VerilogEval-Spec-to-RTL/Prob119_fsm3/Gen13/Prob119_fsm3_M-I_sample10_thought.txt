@@ -1,7 +1,0 @@
-To optimize the existing FSM for better power and area, I'll change the state encoding from binary to one-hot encoding. One-hot encoding can reduce combinational logic complexity, potentially improving timing and lowering switching power in some FPGAs or ASIC technologies. Since there are only four states, using one-hot encoding requires four flip-flops instead of two, increasing area slightly but possibly improving timing and power by reducing glitches in the next state logic.
-
-Additionally, I'll simplify the output logic by directly assigning the output combinationally from the state bits, avoiding a case statement. Since only state D produces output=1, and in one-hot encoding D is represented by a single bit, this will yield simpler logic.
-
-I'll keep the asynchronous active-high reset as specified but will avoid unnecessary intermediate signals for clarity. The next state logic will be a straightforward combinational block based on current state and input.
-
-Overall, this should reduce glitches and improve timing margins, with a slight increase in area due to extra flip-flops, a typical trade-off for one-hot FSMs.

@@ -1,7 +1,0 @@
-Refactor the 64-bit subtractor by implementing subtraction as addition of A and the two's complement of B using purely combinational `assign` statements without any generate loops for carries. Instead of a flat per-bit carry chain, explicitly implement a hierarchical carry-lookahead adder structure with 4-bit blocks aggregated into 16 blocks, and then combine block generates and propagates to compute carries more efficiently. This improves clarity and sets the foundation for better timing by reducing carry chain length.
-
-The overflow detection remains the same, based on sign bits of inputs and output.
-
-This approach explicitly defines propagate and generate signals at bit and block level, computes carries block-wise, then computes final sum bits. It avoids `always` blocks and generate loops, favoring purely combinational and structural coding style.
-
-The top `sub_64bit` module connects inputs and outputs, instantiates the `cla_64bit_hier` module performing A + (~B + 1), and implements overflow detection as per the original logic.

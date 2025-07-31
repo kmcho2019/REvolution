@@ -1,5 +1,0 @@
-To fix the off-by-one and timing issues, increment the counter only after shifting in the bit and check for the counter value *after* incrementing. When the counter reaches 7 (meaning 8 bits collected because counting from 0 to 7), output the shift register including the newly shifted bit and assert dout_valid for one clock cycle. Also, ensure that dout_valid is deasserted immediately in the next clock cycle to avoid multi-cycle assertion.
-
-Additionally, the shift direction must match the specification: the first received bit should occupy the MSB (bit 7) after 8 shifts. To achieve this, shift the register left on each din_valid (shift_reg = {shift_reg[6:0], din_serial}), placing the new bit at LSB, so after 8 bits, the first input ends at MSB.
-
-Use synchronous reset to initialize all registers. This approach aligns bits MSB-first and ensures proper counting and valid pulse timing.

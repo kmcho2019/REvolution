@@ -1,8 +1,0 @@
-To implement the TopModule, we can design a finite state machine (FSM) with three states: IDLE, BYTE1, and BYTE2. In the IDLE state, we discard bytes until we see one with in[3]=1, which marks the start of a message. We then transition to the BYTE1 state, where we store the first byte and wait for the next byte. In the BYTE2 state, we store the second byte and wait for the third byte. Once we have received all three bytes, we transition back to the IDLE state and assert the done signal. We also use registers to store the input bytes and output them as a 24-bit message whenever the done signal is asserted.
-
-The FSM can be implemented using a 2-bit state register, with the following state encoding:
-- IDLE: 2'b00
-- BYTE1: 2'b01
-- BYTE2: 2'b10
-
-We also need to use a 24-bit register to store the output message and a 2-bit counter to keep track of the current byte index.

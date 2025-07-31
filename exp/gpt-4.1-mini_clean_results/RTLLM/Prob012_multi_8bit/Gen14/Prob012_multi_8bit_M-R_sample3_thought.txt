@@ -1,9 +1,0 @@
-Refactor the design to explicitly compute the product by directly summing shifted versions of A masked by each bit of B in a single combinational expression using a for-generate loop and an accumulator wire. Instead of using an adder tree, accumulate partial products within a procedural generate block by summing them into a single wire using a reduce operator or iterative addition in a procedural assignment (using a for-loop inside a generate block is not synthesizable, so use a combinational always block or continuous assignment with a reduction). This approach maintains the same shift-and-add principle, but restructures the logic as a sum of partial products computed sequentially in a combinational block rather than multiple adders connected in a tree. This reduces code complexity and improves readability without changing synthesis or performance.
-
-In particular:
-- Use a combinational always block to iterate over bits of B.
-- For each set bit in B, add (A shifted left by bit index) to an accumulator.
-- Assign the accumulator to product at the end.
-- No adder tree wires are used; one accumulator variable holds the summation.
-
-This refactoring keeps the same shift-and-add algorithm and combinational implementation but uses a more straightforward code structure that is easy to understand and verify.

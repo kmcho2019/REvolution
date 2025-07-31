@@ -1,7 +1,0 @@
-I will implement the dual-edge triggered flip-flop by using a master-slave approach. Specifically, I will sample the input data on the positive edge of the clock into a master register, and then transfer this sampled data from master to slave on the negative edge of the clock. The slave register output will be the module output, updated on both edges of the clock effectively, without using any illegal sensitivity lists.
-
-This approach uses two single-edge triggered flip-flops connected in a two-stage pipeline controlled by complementary edges of the clock. Because each flip-flop is triggered on only one edge, this is synthesis-friendly for FPGAs. The data is latched first on posedge clk, then on negedge clk, achieving dual-edge functionality.
-
-The output is the slave flip-flop output, which changes at both clock edges as the sampled data moves through the master-slave chain. This avoids any combinational mux or latches on output, minimizing glitches and making timing more robust.
-
-This method is a classic and clean dual-edge emulation, synthesizable and easy to understand.

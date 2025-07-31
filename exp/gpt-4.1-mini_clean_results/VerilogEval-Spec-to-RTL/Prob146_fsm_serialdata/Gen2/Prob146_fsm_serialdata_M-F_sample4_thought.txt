@@ -1,9 +1,0 @@
-Fix the bit shifting direction to correctly receive LSB first by shifting the data register left and placing the new bit into the LSB (`data_shift <= {data_shift[6:0], in};`).  
-Ensure `done` is asserted only for one cycle, right after a valid stop bit is detected, and `out_byte` reflects the correctly shifted data.  
-On synchronous reset and when waiting for stop bit (`WAIT_STOP`), clear `bit_count` and `data_shift` to avoid stale data.  
-Maintain clean FSM transitions and registers updates for correct operation:  
-- IDLE: Wait for start bit (in == 0).  
-- RECEIVING: Shift in 8 bits (LSB first), increment bit_count.  
-- After receiving 8 bits, check stop bit: if 1, assert done and output data, return to IDLE; if 0, enter WAIT_STOP.  
-- WAIT_STOP: Wait until in == 1 (stop bit found), then return to IDLE.  
-This ensures the module properly decodes bytes, outputs valid data and done pulse, and recovers correctly from framing errors.

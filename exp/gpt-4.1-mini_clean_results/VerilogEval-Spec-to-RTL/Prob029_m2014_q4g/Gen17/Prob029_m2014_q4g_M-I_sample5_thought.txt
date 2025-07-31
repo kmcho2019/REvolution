@@ -1,5 +1,0 @@
-The original design uses separate XNOR2 and XOR2 modules instantiated with an intermediate wire, which adds some net and module overhead. Since the logic is simple combinational with just two gates, we can optimize for better power and area by directly implementing the combined logic in one continuous assignment inside TopModule without separate gate modules or intermediate wires.
-
-Verilog offers built-in XNOR (~^) and XOR (^) operators, which map efficiently to hardware. By writing a single assign statement using these operators, we eliminate extra module overhead and reduce net switching. This results in smaller area, less power, and simpler netlist without changing functionality or timing.
-
-Therefore, the improved version is a minimal, single-module design that computes out = (in1 ~^ in2) ^ in3; directly. This is the simplest, most synthesis-friendly implementation of the required logic.

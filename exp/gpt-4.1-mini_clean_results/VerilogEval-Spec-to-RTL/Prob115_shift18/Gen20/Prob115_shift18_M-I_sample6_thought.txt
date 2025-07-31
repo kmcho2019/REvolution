@@ -1,9 +1,0 @@
-To improve PPA, we will focus on reducing multiplexing complexity and balancing the combinational logic depth for faster clock operation and slightly smaller area. The original design uses two levels of multiplexers: first to select amount within each direction, then to select direction. 
-
-We can flatten this muxing by directly using a single case statement indexed by the 2-bit amount input, which encodes direction and shift amount simultaneously, reducing mux tree depth and potentially improving timing.
-
-We also keep the explicit concatenation style for shifts, which is efficient for synthesis and power. 
-
-Additionally, we add a registered enable signal to gate shifting logic so the shift calculation only changes when shifting is enabled, reducing switching and dynamic power.
-
-Overall, the functionality remains the same, but mux complexity is simplified, critical path reduced, and power slightly improved by gating the shift logic with enable.

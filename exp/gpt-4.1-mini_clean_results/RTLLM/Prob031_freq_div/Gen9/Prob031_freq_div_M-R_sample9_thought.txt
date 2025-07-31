@@ -1,5 +1,0 @@
-Refactor the frequency divider by using separate counters for CLK_10 and CLK_1 instead of a combined counter with modulo logic. This removes the modulo operation and simplifies the toggle condition, enhancing timing and synthesis results. Use synchronous reset for all registers. 
-
-CLK_50 generation remains the same (toggle on every clock cycle). For CLK_10, use a 3-bit counter counting from 0 to 4 (5 cycles), toggling CLK_10 when counter reaches 4. For CLK_1, use a 6-bit counter counting from 0 to 49 (50 cycles), toggling CLK_1 when counter reaches 49.
-
-This approach is straightforward, easy to synthesize, reduces complex combinational logic, and is more power-friendly by toggling outputs only at specific count events.

@@ -1,7 +1,0 @@
-Instead of performing the sign-extension in a single concatenation, I will implement the sign extension by explicitly generating each bit of the 32-bit output. 
-
-The lower 8 bits (bits 7 down to 0) are assigned directly from the input. For the upper 24 bits (bits 31 down to 8), each bit is assigned to the sign bit (bit 7 of input). 
-
-This approach uses a generate block with a for-loop to replicate the sign bit for the higher bits, which makes the sign extension logic very explicit and can be beneficial for tools or educational clarity. It also demonstrates how replication can be manually done using a generate-for construct, rather than a direct replication operator.
-
-The output is declared as wire, with continuous assignments for all bits, avoiding any reg or always block. This can help synthesis tools clearly see the combinational nature and may improve optimization or debugging.

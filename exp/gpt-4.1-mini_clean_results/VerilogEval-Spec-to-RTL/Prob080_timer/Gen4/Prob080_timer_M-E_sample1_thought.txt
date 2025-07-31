@@ -1,7 +1,0 @@
-Implement the countdown timer using a single 10-bit register but interpret it as counting up from zero toward the loaded value, rather than counting down. On a load event, clear the counter to zero and store the target value in a separate 10-bit register (target_reg). At each clock cycle when load is low and the counter hasn't reached the target, increment the counter by 1. The terminal count output (tc) asserts when the counter equals the target value. Once tc asserts, counting stops and the counter holds its value until load occurs again.
-
-This approach still uses only two 10-bit registers but only one is a counter (the other holds the target), fitting typical resource use. It simplifies the counting logic since incrementing zero or small values tends to be faster and more power efficient in some technologies than decrementing from a loaded large number.
-
-The single D flip-flop per bit constraint applies to each register, so having two registers of 10 bits each is allowable. The terminal count is derived from a comparator (equality check). All sequential logic uses a single always block triggered on posedge clk.
-
-This design provides an alternative architectural perspective by counting up instead of down, with a separate register holding the target value.

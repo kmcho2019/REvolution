@@ -1,7 +1,0 @@
-The novel architectural idea for implementing the 16-bit wide, 9-to-1 multiplexer involves utilizing a tree-like structure of multiplexers. Instead of directly selecting one of the nine 16-bit inputs using a single 4-bit select signal, we can decompose the selection process into multiple levels. 
-
-At the first level, we use two 2-to-1 multiplexers (each 16 bits wide) to select between the first four inputs (a, b, c, d) and the next four inputs (e, f, g, h), based on the most significant bit of the select signal. The outputs of these multiplexers are then fed into another 2-to-1 multiplexer, which selects between the result of the first level and the last input (i), based on the second most significant bit of the select signal. 
-
-This hierarchical approach reduces the number of inputs to be considered at each level, potentially simplifying the combinatorial logic and improving synthesis results. To handle the unused cases (sel=9 to 15), we can explicitly set all output bits to '1' when the select signal is outside the valid range, by using a simple comparison.
-
-This novel approach aims to achieve a balance between conciseness, efficiency, and synthesizability, thereby optimizing the Power, Performance, and Area (PPA) metrics.

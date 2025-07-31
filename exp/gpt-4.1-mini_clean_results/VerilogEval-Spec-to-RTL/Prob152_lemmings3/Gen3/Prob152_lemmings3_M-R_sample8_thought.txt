@@ -1,9 +1,0 @@
-Refactor the FSM to a simpler and clearer structure by separating direction storage and state transitions explicitly. Keep state encoding for WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING as separate states (four states total), which encode both activity and direction together, eliminating the need for separate direction registers and stored_dir variables. This makes direction and state one entity, removing complexity of separately tracking direction across states. As a Moore FSM, outputs come directly from the state.
-
-Transitions prioritize fall > dig > bump, and bumps cause direction reversal only when walking. Falling and digging states ignore bumps. On falling, transition to FALLING state with the direction encoded in the state itself. On landing, return to the appropriate walking state with the same direction. On digging, start digging only if on ground and walking, store direction in the DIGGING state. When ground disappears during digging, transition to falling while preserving direction.
-
-Asynchronous reset sets initial state to WALK_LEFT.
-
-This approach simplifies direction tracking, state transitions, and output decoding. Using an enumerated state encoding with direction included reduces errors in direction restoration after fall or dig. The combinational next state logic can be straightforward case statement with clear priority. Outputs decode the current state, which fully defines direction and activity.
-
-This will produce a clean, verifiable FSM with clear state and outputs for walk_left, walk_right, aaah, and digging.

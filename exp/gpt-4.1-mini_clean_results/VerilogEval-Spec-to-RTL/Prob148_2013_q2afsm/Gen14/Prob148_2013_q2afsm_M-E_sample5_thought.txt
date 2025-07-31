@@ -1,9 +1,0 @@
-Use a 2-bit binary-encoded state FSM with four explicit states: A (idle), B (grant device 0), C (grant device 1), and D (grant device 2). The states are encoded as 2'b00 (A), 2'b01 (B), 2'b10 (C), and 2'b11 (D). 
-
-The FSM transitions on the rising edge of clk, with synchronous active-low reset to state A. Next-state logic is combinational, prioritizing requests in idle (A) by checking r[0], then r[1], then r[2]. 
-
-The output g is generated combinationally from the state: g=3'b001 for B, g=3'b010 for C, g=3'b100 for D, and zero for A. 
-
-This binary encoding reduces flip-flop count (2 flip-flops instead of 3) and simplifies state register implementation, potentially improving area and power. The output logic is a small decoder from the state to grant outputs.
-
-The FSM behavior matches the given specification: remain in grant state while its request remains asserted, else return to idle.

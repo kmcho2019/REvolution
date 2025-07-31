@@ -1,7 +1,0 @@
-Implement the accumulation using two counters and a partial sum register to create a pipelined-like structure that separates input counting and accumulation. On each valid_in, increment a 2-bit counter and add data_in to a 10-bit sum register. When the counter reaches 3 (the 4th input), output the accumulated sum plus the current data_in, assert valid_out for one cycle, and reset sum and counter for the next batch.
-
-This architecture differs by immediately accumulating all inputs, including the 4th one, into the sum register every valid cycle. Then, on the 4th input, output the sum directly. It uses a single always block with synchronous reset and non-blocking assignments, but the sum register accumulates all inputs rather than separating the 4th input addition in the output phase.
-
-valid_out is driven combinationally as (count == 2'd3 && valid_in) to reduce logic delay by avoiding an extra register for valid_out.
-
-This approach reduces combinational paths on output cycles, maintains a clean synchronous design, and achieves a neat logic flow. The accumulation is straightforward, and the output timing is intuitive. The design emphasizes simplicity and clarity while maintaining correct functionality and a clean single-cycle valid output pulse.

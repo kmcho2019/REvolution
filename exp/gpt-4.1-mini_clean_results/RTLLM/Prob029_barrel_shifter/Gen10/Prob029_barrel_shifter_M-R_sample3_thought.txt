@@ -1,5 +1,0 @@
-Refactor the barrel shifter to explicitly use the three-stage shifting approach with intermediate wires and a mux2X1 module, as per the original requirement. Each stage shifts by 4, then 2, then 1 bit, and each bit of `ctrl` selects whether to shift by that amount or pass the input unchanged.
-
-Instead of a single combined rotate expression, we build three 8-bit intermediate signals: `stage4`, `stage2`, and `stage1`. Each stage uses mux2X1 instances that choose between the input shifted by the stage amount (rotated) and the input unchanged based on the corresponding ctrl bit.
-
-This preserves the staged multiplexing structure and uses structural Verilog with multiple muxes, satisfying the problem's constraint and making the code modular and clear.

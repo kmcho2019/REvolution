@@ -1,5 +1,0 @@
-Refactor the FSM to use a one-hot encoding style for states to potentially simplify next-state logic and reduce combinational complexity. The states will be represented as individual bits in a register, which makes state decoding for outputs and transitions simpler via direct bit tests. Use a separate 4-bit shift counter instead of a 2-bit counter for clarity and straightforward counting of 4 shift cycles.
-
-Implement all sequential logic in a single always block with synchronous reset. Use continuous assignments for outputs from the one-hot state register bits.
-
-This will improve readability and potentially timing by simplifying state decoding and making next state logic a little more explicit. The behavior and functional sequence remain exactly the same: detect pattern 1101 via progressing states, enable shifting 4 bits, wait counting done, then assert done and wait for ack before resetting.

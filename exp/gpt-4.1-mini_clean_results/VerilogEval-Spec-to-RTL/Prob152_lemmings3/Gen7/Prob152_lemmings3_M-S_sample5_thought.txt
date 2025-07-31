@@ -1,9 +1,0 @@
-Simplify the FSM by merging the walking direction into the main state encoding, representing four states: walking left, walking right, falling left, and falling right. Add two digging states as well: digging left and digging right. This reduces complexity by removing separate direction registers and edge detection of ground.
-
-Use only the current ground input to control transitions, relying on the fact that bumps only affect walking states on stable ground (ground=1). Since bumps have no effect when ground=0 (falling/digging), no need for previous ground tracking.
-
-Direction switching is done directly by transitioning between walking states on bumps. Fall has highest priority, dig second, bumps last.
-
-Outputs are simple and directly derived from the current state encoding.
-
-This approach reduces logic and registers, eliminating prev_ground register and separate direction register, yet preserves all behavior and priority.

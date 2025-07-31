@@ -1,7 +1,0 @@
-Analyzing the waveform, q is set to 1 after the first rising clock edge with a=0 and remains 1 on subsequent edges while a=0, then when a=1 at the rising edge q becomes 0 and stays 0. This behavior indicates that q is a stored latch of the previous value of ~a. More precisely, q follows the value of (~a) delayed by one clock cycle. The original solution implements exactly this.
-
-For PPA optimization, since the design is minimal (a single register and an inverter), we can try to reduce power by clock gating to prevent unnecessary toggling of q when input a does not change, or by updating q only if its next value differs from the current q, to reduce toggle power.
-
-Here, I propose to add an enable signal that compares the new value ~a with q; q is only updated if it differs, reducing unnecessary toggling and dynamic power while incurring minimal area overhead.
-
-This optimization does not affect performance significantly and maintains functional correctness.

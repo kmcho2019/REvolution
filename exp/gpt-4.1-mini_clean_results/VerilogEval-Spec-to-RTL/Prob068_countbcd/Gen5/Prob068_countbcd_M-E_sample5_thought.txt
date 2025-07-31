@@ -1,9 +1,0 @@
-Implement the 4-digit BCD counter as a single 16-bit register `q`, which holds all digits packed (thousands, hundreds, tens, ones). On each clock cycle, increment the ones digit. If the ones digit overflows (goes from 9 to 0), set an enable for the tens digit and increment it accordingly. Repeat the same logic for the tens, hundreds, and thousands digits, cascading carries as needed.
-
-To avoid complex nested logic, handle carry propagation sequentially in a procedural block: first increment ones, check carry out; if carry out, increment tens and set ena[0]; if carry from tens increment, increment hundreds and set ena[1]; if carry from hundreds increment, increment thousands and set ena[2]. All increments and carry detections happen inside one clocked always block with nonblocking assignments.
-
-This approach eliminates multiple separate digit registers and keeps logic compact. The enable signals indicate when each upper digit increments and are set synchronously during the clock edge.
-
-On synchronous reset, clear q and ena to zero.
-
-This method ensures correct carry propagation and synchronous enable signal generation without separate combinational carry signals or complex combinational logic, making code more straightforward and efficient.

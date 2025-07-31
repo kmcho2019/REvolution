@@ -1,9 +1,0 @@
-To improve the PPA of the multiplying accumulator, I will introduce a simple one-stage pipeline. Specifically, I will separate the multiplication and accumulation into two clock cycles to reduce the critical path delay. 
-
-In the first stage (on clk rising edge), I will register the product of `a` and `b` into an intermediate register `prod_reg`. In the second stage, I will add the registered product `prod_reg` to the accumulator `c`. This breaks the long multiplication + addition chain into two shorter stages, improving the maximum clock frequency (performance).
-
-This pipeline increases latency by one cycle but retains the same throughput (one MAC operation per cycle). The reset logic is also synchronous to the clock only (reset is synchronous for better timing), which helps the critical path and synthesis.
-
-The accumulator `c` remains 32-bit wide, so product overflow is truncated, keeping area low. Using registered product also potentially reduces switching activity on the adder inputs, slightly lowering power.
-
-Overall, pipelining improves timing (critical path reduction), which may allow a higher clock frequency (better performance) with minimal area and power overhead.

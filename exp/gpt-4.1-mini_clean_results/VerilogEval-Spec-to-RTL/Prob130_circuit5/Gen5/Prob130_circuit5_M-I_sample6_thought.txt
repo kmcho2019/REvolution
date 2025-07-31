@@ -1,9 +1,0 @@
-The original design uses a 16-bit concatenation and a variable shift operation to select among four 4-bit inputs based on c[1:0]. While functionally correct, the variable shift leads to more complex logic, potentially larger area, higher power, and longer critical paths.
-
-To optimize for performance, power, and area, I will replace the shift operation with a straightforward 4-to-1 multiplexer using a case statement on c[1:0]. This implementation has fixed wiring and no variable shifting, thus reducing logic depth and switching activity.
-
-The logic remains combinational and exactly matches the original behavior:
-- For c < 4, q is selected from b, e, a, or d according to c[1:0] = 0,1,2,3 respectively.
-- For c ≥ 4, q = 4'hF.
-
-This will minimize area by avoiding the barrel shifter, reduce power by limiting switching to only the selected input bits, and improve timing by using simple muxes instead of shifts.

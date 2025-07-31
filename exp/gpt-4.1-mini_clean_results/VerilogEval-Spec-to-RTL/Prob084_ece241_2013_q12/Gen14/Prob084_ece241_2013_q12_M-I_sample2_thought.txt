@@ -1,7 +1,0 @@
-To optimize the original design for better PPA, we eliminate the subtraction operation (3'd7 - select) used to invert the select index, which introduces additional combinational delay and power consumption. Instead, we reorder the shift register bits so that Q[0] corresponds to shift_reg[0] (LSB) and shift in S at Q[0], shifting the register left. This way, the select index {A,B,C} directly maps to the register bits, simplifying the multiplexer selection logic to a direct index without inversion or subtraction.
-
-By shifting left and placing the shifted-in bit at the LSB (Q[0]), we align indexing so that Z = shift_reg[{A,B,C}]. This removes the arithmetic operation and makes the selection logic purely combinational multiplexing, improving timing and reducing power.
-
-Additionally, we keep the synchronous enable-controlled shift register with non-blocking assignments and keep the design compact with minimal logic.
-
-This approach yields simpler combinational logic for the read port, improving timing and power without increasing area.

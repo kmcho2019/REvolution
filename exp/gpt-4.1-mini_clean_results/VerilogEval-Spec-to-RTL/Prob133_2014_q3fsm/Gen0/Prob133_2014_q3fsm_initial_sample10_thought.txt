@@ -1,8 +1,0 @@
-The FSM starts in state A, waiting for s=1 to move to state B. In state B, the FSM observes the next three clock cycles' w inputs and counts how many times w=1. To minimize the number of states, we use state B as a loop for collecting w values, counting the number of w=1 occurrences and the number of samples taken (up to three). After the third w input, if the count of w=1 is exactly 2, then output z=1 in the next cycle; else z=0. Then restart counting the next three w inputs. The output z is registered and valid one clock cycle after completing the 3-sample window. Reset synchronously resets to state A and clears counters and z. We'll implement this using a state machine with states A and B, and counters to track the number of cycles and the number of w=1s. The output z is updated in the cycle after the third sample.
-
-Summary:
-- State A: wait for s=1; z=0.
-- State B: count three samples of w and number of w=1.
-- After three samples, output z=1 if count_w1==2 else 0.
-- Repeat counting every 3 cycles.
-- Reset is synchronous active high.

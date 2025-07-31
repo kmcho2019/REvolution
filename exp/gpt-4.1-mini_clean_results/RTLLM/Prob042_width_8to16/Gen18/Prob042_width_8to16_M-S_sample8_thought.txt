@@ -1,9 +1,0 @@
-Use a straightforward approach with minimal state tracking:  
-- Use a single flag to indicate whether the first byte has been stored.  
-- On valid input:  
-  - If flag is 0, store data_in in data_lock and set flag.  
-  - If flag is 1, concatenate stored data_lock (high 8 bits) and current data_in (low 8 bits), output them in the next cycle with valid_out asserted, then clear the flag.  
-- valid_out and data_out registers update only at clock edge synchronously; valid_out is asserted exactly one clock cycle after the second byte is received.  
-- Reset clears all registers.  
-
-This simple flag approach removes FSM overhead and combinational complexity, ensuring clear timing and simple synthesizable code.

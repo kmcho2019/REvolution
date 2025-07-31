@@ -1,6 +1,0 @@
-Use a single flip-flop clocked by the original clock and an asynchronous latch that samples data during the other half-cycle of the clock, effectively capturing data on both edges. Specifically, use:
-- A positive-edge triggered flip-flop clocked by clk to sample d on posedge.
-- A transparent latch enabled by clk_bar (inverted clk) to sample d on clk falling edge half-cycle.
-- Combine the output of the flip-flop and latch through a 2-to-1 mux controlled by clk to create a dual-edge sampled output q.
-
-This approach uses one flip-flop, one latch, and a mux, reducing the number of flip-flops while still providing dual-edge triggered behavior. The latch transparency during clk=0 phase captures data on the falling edge, and the flip-flop captures on the rising edge. The output mux selects the corresponding sampled data according to clk level.

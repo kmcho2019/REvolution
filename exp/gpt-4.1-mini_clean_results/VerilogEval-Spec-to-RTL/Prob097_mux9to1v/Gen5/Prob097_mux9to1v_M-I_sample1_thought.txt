@@ -1,7 +1,0 @@
-The original solution is clean and synthesizes efficiently, but to further optimize for Power, Performance, and Area (PPA), we can implement the 9-to-1 multiplexer as a two-level mux hierarchy. Instead of directly indexing into an array, we first select among three groups of three inputs using the upper bits of sel, and then select the final output from the intermediate results using the lower bits. 
-
-This hierarchical muxing reduces mux fan-in and can improve timing by balancing mux trees, potentially reducing area and power by lowering gate complexity and switching activity.
-
-Additionally, the output for invalid sel values (9-15) can be detected early and output forced to all ones, potentially gating the rest of the mux logic.
-
-This approach should yield a slight improvement over the single-level array indexing method without sacrificing code readability.

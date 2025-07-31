@@ -1,7 +1,0 @@
-The original design is already minimal in logic and area. To slightly improve performance and reduce toggling, we can implement the FSM using a simple 2-bit state register rather than a counter, explicitly enumerating the states WAIT, BYTE1, BYTE2, BYTE3. This allows clear state transitions and avoids any potential glitches from arithmetic increment logic.
-
-We also register the input's in[3] signal to break any direct combinational dependency from input to state. The done signal remains a one-cycle pulse immediately after receiving the third byte.
-
-This approach can marginally improve timing by making state transitions explicit and isolating combinational conditions. It also keeps power low since state transitions are minimal, and done toggles only when a message completes.
-
-Synchronous reset is maintained for consistency and design simplicity.

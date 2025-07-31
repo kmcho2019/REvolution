@@ -1,9 +1,0 @@
-To improve PPA from the recursive implementation, I will flatten and balance the adder tree explicitly rather than relying on recursive instantiations, which create a deep hierarchy and duplicated logic.
-
-The strategy:
-- Split the 255-bit input into 32 groups of 8 bits (total 256 bits, last bit padded with zero).
-- For each 8-bit group, compute a small popcount using a combinational LUT-based approach or an 8-bit adder tree to get a 4-bit count.
-- Sum the 32 partial counts (4-bit each) using a balanced adder tree of 8-bit or wider adders to produce the final 8-bit output.
-- This approach reduces the recursion overhead, balances the adder tree explicitly, and improves synthesis optimization.
-- It also enhances timing by avoiding very deep recursive module instantiations.
-- The padding of one extra bit to reach 256 is minor and does not affect correctness.

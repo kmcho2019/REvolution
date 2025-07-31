@@ -1,8 +1,0 @@
-Refactor the TopModule by flattening the three-level mux hierarchy into a single-level 256-to-1 multiplexer using a direct slice of the input vector indexed by the 8-bit select.  
-- Instead of instantiating multiple mux submodules, use a single continuous assignment with a calculated bit offset based on `sel`.  
-- This eliminates intermediate arrays and generate loops, simplifying the code and potentially improving synthesis results.  
-- The logic maps exactly as before: output selects 4 bits starting from `sel * 4` within `in`.  
-- This approach reduces the logic levels from three mux stages to one large mux, likely changing the tradeoff between timing and area, but keeps the functionality identical.  
-- This is succinct, highly readable, and easy for synthesis tools to optimize with wide multiplexers or encoded LUTs.
-
-Overall, this refactoring provides a simpler and more direct implementation of the same functionality.

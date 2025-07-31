@@ -1,8 +1,0 @@
-Refactor the FSM to separate state update logic and output registers distinctly to ensure outputs are asserted in the clock cycle following the detection of the patterns, as required. 
-Use a registered output encoding by defining output signals as registers updated synchronously on the clock edge based on the *previous* state's next_state transition and input. 
-Specifically:
-- Compute next_state combinationally from current state and input.
-- On clock edge, latch next_state to state.
-- Also on clock edge, update outputs (disc, flag, err) based on the *current* state and input, which correspond to the previous cycle's detection.
-This approach explicitly synchronizes output signals to be asserted one cycle after detection.
-Use a simple enumerated state encoding and clean, separate always blocks for state and outputs.

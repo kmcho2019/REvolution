@@ -1,9 +1,0 @@
-To optimize for power and area while maintaining the same combinational depth and performance, I will inline the min2 functionality within the TopModule without instantiating separate modules. This removes the overhead of module instantiations and simplifies the logic, potentially enabling the synthesis tool to better optimize comparator logic.
-
-Also, by using continuous assignments and merging min computations into a single always_comb block (using a combinational process), the logic can be optimized with minimal gates and fewer wires. This may slightly reduce area and power by eliminating module boundaries and intermediate arrays.
-
-The approach keeps the two-stage balanced comparison logic but implements min operations with direct ternary operators inside the TopModule.
-
-No sequential logic is added to maintain zero latency, and the balanced comparison tree is kept for minimal combinational delay.
-
-This tradeoff targets synthesis tools' ability to merge logic efficiently, hopefully reducing area and power while retaining performance.

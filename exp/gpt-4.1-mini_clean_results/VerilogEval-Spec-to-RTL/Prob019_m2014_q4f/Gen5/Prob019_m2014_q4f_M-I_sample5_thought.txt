@@ -1,9 +1,0 @@
-Optimize the design by merging the inverter and AND gate into a single NAND gate. A NAND gate with inputs (in1, in2) is (in1 & in2)'. To get in1 & ~in2, we can use a NAND gate with input in1 and inverted in2 or directly use NAND with in1 and in2, then invert output. Alternatively, since we want out = in1 & ~in2, it can be implemented as out = ~(~in1 + in2) = NAND of ~in1 and in2.
-
-However, to avoid extra inversion, implement the output as a NAND gate with in1 and in2, then invert the output. This simplifies to out = in1 & ~in2. This uses only a NAND gate and inverter, minimizing gate count and switching nodes.
-
-This reduces the number of gates and power consumption compared to explicit inverter + AND, improving both area and power, while keeping performance unchanged.
-
-Final implementation: assign out = ~(~in1 | in2) = in1 & ~in2, which can be directly instantiated as nand(out, in1, in2_inverted) with an inverter for in2 or by rearranging.
-
-To minimize gates, instantiate nand gate and inverter as primitives.

@@ -1,7 +1,0 @@
-Novel Architecture:
-1. Shift Register Implementation: Instead of storing bytes separately, use a 24-bit shift register that shifts in bytes from the left. This reduces register usage and simplifies byte concatenation.
-2. Counter-Based State Machine: Replace explicit states with a 2-bit counter to track byte positions, eliminating complex state transitions.
-3. Early Termination: Reset the counter immediately if we detect a new start byte (in[3]=1) during collection, allowing faster restart of message detection.
-4. Power Optimization: Only shift/load when actively collecting bytes (counter > 0), reducing unnecessary switching.
-5. Output Control: Use combinational logic for 'done' to ensure it's asserted immediately after the third byte.
-6. Reset Handling: Clear all registers synchronously while maintaining don't-care outputs when not done.

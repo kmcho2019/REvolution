@@ -1,9 +1,0 @@
-To optimize the FSM for better PPA while maintaining correctness and clarity, I will reduce the state encoding to the minimum number of bits necessary by using a 3-bit binary encoding as done before, but restructure the next state logic using a more compact and potentially faster approach. Instead of a large case statement, I will implement the next state logic using a more parallel and prioritized approach with if-else or a lookup table style, which can help synthesis tools optimize combinational logic better.
-
-Also, since the final state is sticky, I will add a clock gating enable signal internally that disables state updates when in the final state and not reset, reducing unnecessary toggling and thus power consumption. The state register will only update if we are not in the final state or if reset is asserted.
-
-This clock gating is internal to the sequential block (enabling the register update), avoiding complex external clock gating logic, which can introduce timing and verification complexity.
-
-The output is still combinationally driven from the state. This approach should slightly improve timing by reducing the critical path through the next-state logic and power by gating state transitions after detection.
-
-Area remains small due to minimal encoding and simple combinational logic. The design remains clear and synthesizable.

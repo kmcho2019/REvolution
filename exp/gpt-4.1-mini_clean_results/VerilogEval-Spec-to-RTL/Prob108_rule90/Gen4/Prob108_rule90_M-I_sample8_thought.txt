@@ -1,9 +1,0 @@
-The original implementation is correct and clean, but can be optimized for power by minimizing unnecessary toggles. Since the entire 512-bit register updates on every clock cycle, adding clock gating can reduce switching activity when the automaton's state does not change (e.g., immediately after load) or when the load is active (only loading the data, not advancing the automaton). 
-
-To implement a simple clock gating, we add an enable signal that is active only when we need to update q with next_state (i.e., when load is low). When load is asserted, q is loaded from data and clock gating is bypassed (enable=1) so q updates immediately. This reduces toggling in the sequential elements when the automaton is not advancing.
-
-This low-overhead improvement reduces dynamic power while preserving performance and area. The combinational logic remains unchanged to keep critical path short. The module uses a gated clock internally via an enable signal feeding the register update.
-
-No structural or major timing changes are introduced, so no impact on frequency but reduced power consumption.
-
-The boundary handling remains the same with generate-for loop computing next_state[i] = q[i-1] ^ q[i+1] with zero outside boundaries.

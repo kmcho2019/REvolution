@@ -1,8 +1,0 @@
-Use a generate loop to explicitly compute each bit of the outputs one by one, leveraging a parameterized neighbor index calculation to clearly express the boundary and wrap-around conditions. This approach explicitly instantiates logic for each bit, making it highly readable and easy to modify for larger vectors. It also separates the different neighbor relations clearly in code, which can help synthesis tools optimize local logic with well-defined boundaries.
-
-Specifically:
-- For out_both, since the left neighbor is higher index and out_both[3] is undefined, assign zero explicitly.
-- For out_any, since the right neighbor is lower index and out_any[0] is undefined, assign zero explicitly.
-- For out_different, implement wrap-around with modulo indexing inside the generate loop.
-
-This method may increase code size slightly but improves structural clarity and modularity.

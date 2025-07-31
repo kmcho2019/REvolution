@@ -1,9 +1,0 @@
-The original design is functionally correct and clean, but we can optimize the implementation for better PPA as follows: 
-
-- Performance: Replace the manual bit slicing for shift operation with a Verilog shift operator, which is typically better optimized by synthesis tools. Using `q >> 1` explicitly clarifies intent and may enable better optimizations.
-
-- Power: Minimize switching activity by registering the enable and load signals and gating the register update only when needed. Although the original design computes next_q combinationally at all times, we can avoid unnecessary updates by updating q only if load or ena is asserted. When neither is asserted, q holds its value without re-assignments, potentially reducing switching in downstream logic.
-
-- Area: Use the shift operator to simplify the combinational logic, possibly reducing combinational gates.
-
-These optimizations maintain functional correctness and asynchronous reset behavior while potentially improving timing and reducing dynamic power by avoiding redundant register updates. The logic is still clearly separated between next-state combinational logic and sequential update, with comments for clarity.

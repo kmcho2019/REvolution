@@ -1,5 +1,0 @@
-To optimize for better power, performance, and area (PPA), refactor the design by using a single 8-bit vector register `Q` instead of eight separate flip-flops. This reduces the register control overhead and simplifies the shift operation. On each clock edge with enable high, shift `Q` right by one and insert `S` at `Q[7]` (MSB), maintaining the specification that `S` is shifted into the MSB first.
-
-For output selection, use direct vector indexing with the concatenated 3-bit select input `{A,B,C}` as an integer index into `Q`. This enables the synthesizer to generate an optimized multiplexer (LUT or ROM-based) rather than a mux tree. Using vector indexing generally results in smaller area and improved timing.
-
-Keep synchronous shifting and combinational output logic. This design keeps functional correctness but should yield improved area and timing metrics.

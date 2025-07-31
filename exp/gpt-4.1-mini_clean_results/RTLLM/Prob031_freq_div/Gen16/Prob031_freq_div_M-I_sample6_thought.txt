@@ -1,7 +1,0 @@
-To improve the design for better timing and potentially power, I will separate the three clock dividers into independent always blocks. This avoids a long critical path where all counters update sequentially in the same block. Also, this modularizes the design, easing synthesis and potentially improving the maximum clock frequency (TNS and WNS).
-
-Additionally, I will replace the toggling logic for the CLK_50 output to use a simple flip-flop divider by 2, which is already minimal but will be isolated in its own block for clarity.
-
-Counters will remain minimal width. Since 10 and 100 are not powers of two, using counters with explicit comparison for toggling remains optimal. The independent blocks also allow better power gating opportunities for each frequency domain in future expansions.
-
-Overall, the code remains functionally identical, but splitting logic enables better PPA (power, performance, area) by reducing logic depth on each clock domain and simplifying timing paths.

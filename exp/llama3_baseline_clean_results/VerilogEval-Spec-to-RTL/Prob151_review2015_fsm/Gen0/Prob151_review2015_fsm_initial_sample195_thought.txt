@@ -1,8 +1,0 @@
-To implement the finite-state machine (FSM) that controls the timer, we will use a Moore machine approach where the outputs depend only on the current state. The FSM will have the following states:
-- IDLE: The initial state where the FSM searches for the start pattern (1101).
-- SHIFT: After detecting the start pattern, the FSM asserts shift_ena for exactly 4 clock cycles to shift in the duration bits.
-- COUNT: The FSM then asserts counting and waits for the counters to finish.
-- DONE: The FSM asserts done to notify the user and waits for acknowledgement (ack).
-- RESET: The FSM has an active high synchronous reset, setting the state back to IDLE.
-
-We will use a counter to keep track of the number of clock cycles spent in the SHIFT state. The FSM will transition between these states based on the input signals (data, done_counting, ack, and reset).

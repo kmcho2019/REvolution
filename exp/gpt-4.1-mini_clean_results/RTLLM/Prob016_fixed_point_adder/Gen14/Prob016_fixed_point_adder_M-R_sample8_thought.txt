@@ -1,9 +1,0 @@
-Refactor the fixed-point adder by implementing it as a purely combinational logic using continuous assignments (`assign`) rather than an `always` block and internal registers. Inputs and outputs remain signed to naturally represent two's complement fixed-point numbers.
-
-This eliminates the internal register `res` and directly drives the output `c` from the addition of signed inputs `a` and `b`. This style is more concise, easier to read, and results in the same functional behavior: the two's complement signed addition inherently performs correct fixed-point addition for parameters `N` and `Q`.
-
-The explicit parameter `Q` remains as a place-holder to specify fractional precision but is not required in the actual addition, because the operands already use the same fixed-point format.
-
-This method inherently handles overflow by truncating the result to `N` bits, consistent with two's complement arithmetic. Also, no explicit sign or absolute value logic is needed due to signed arithmetic semantics.
-
-The module uses parameterized bit widths with signed vectors, and the output `c` is declared as `wire` driven directly by `assign`, making the design purely combinational without sequential registers.

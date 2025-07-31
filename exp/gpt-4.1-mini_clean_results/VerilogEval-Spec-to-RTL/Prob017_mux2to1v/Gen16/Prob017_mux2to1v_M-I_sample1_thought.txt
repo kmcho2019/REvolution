@@ -1,7 +1,0 @@
-To optimize the 2-to-1 mux for better power and area without adding latency or complexity, the key is to reduce redundant logic and improve synthesis friendliness. Instead of using the replication operator with complement (~sel), which may cause unnecessary inversion and replication logic, implementing the mux using a generate-for loop with conditional assignments can guide synthesis tools toward efficient implementation. 
-
-Also, splitting the vector into smaller chunks or bit-by-bit muxes inside a generate loop helps synthesis tools map logic to smaller cells and may reduce glitches.
-
-This approach keeps the output purely combinational and does not add registers, preserving timing. Additionally, this can improve area and power slightly by avoiding wide replication and complement operations.
-
-Hence, the improved code replaces the bitwise masking with a generate block that instantiates 100 independent 2-to-1 muxes using the ternary operator at the bit level, providing better optimization opportunities for synthesis tools.

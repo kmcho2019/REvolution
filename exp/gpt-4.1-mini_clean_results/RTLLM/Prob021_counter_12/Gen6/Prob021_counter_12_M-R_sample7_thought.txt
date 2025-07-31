@@ -1,5 +1,0 @@
-Refactor the counter design to use a synchronous always block triggered only on the positive edge of the clock and an asynchronous active-low reset. Instead of gating the clock, keep the clock clean and use a counting enable (`valid_count`) inside the always block. This approach avoids gating the clock signal directly, improving timing and avoiding potential clock skew/glitch issues.
-
-The logic checks if reset is active, resetting the counter. Otherwise, if `valid_count` is asserted, the counter increments until it reaches 11, then wraps to 0. If `valid_count` is low, the counter holds its current value.
-
-This approach improves timing and power characteristics without sacrificing functional correctness.

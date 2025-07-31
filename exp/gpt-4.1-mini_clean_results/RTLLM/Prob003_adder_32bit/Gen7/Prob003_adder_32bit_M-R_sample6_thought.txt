@@ -1,5 +1,0 @@
-Refactor the 16-bit CLA to use generate blocks to systematically compute the carry signals instead of explicitly assigning each carry. Implement the carry lookahead by iterative computation leveraging generate loops and indexing. The generate and propagate signals remain the same, but carry bits are computed using a for-generate loop to reduce verbosity and improve scalability. The sum and carry-out calculations stay combinational with assign statements. 
-
-In the top module, retain the two-stage 16-bit CLA instantiation, but perform input and output index remapping using continuous assignments rather than explicit wire declarations, improving code conciseness. Use zero-based indexing internally throughout. This makes the code more modular and easily extendable, while preserving the original functionality.
-
-Overall, the design stays purely combinational, hierarchical, and optimized for clarity, avoiding repetitive assignments by using generate constructs.

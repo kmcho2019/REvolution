@@ -1,9 +1,0 @@
-To improve PPA (performance, power, area), I will optimize the ALU by sharing the adder and subtractor logic because addition and subtraction are closely related and can reuse partial results with minimal overhead. Instead of duplicating the adders for ADD/ADDU and SUB/SUBU, I will implement a single adder/subtractor module with a subtract control signal, which reduces area and power by lowering redundant logic and switching activity.
-
-Furthermore, I will avoid computing all operations in parallel blindly. Instead, I decode the opcode to determine if addition or subtraction is needed, and only compute one combined add/sub operation accordingly. This helps reduce switching and power.
-
-Also, the flag output will be driven by a tri-state output only in SLT/SLTU cases and 0 otherwise, to better match the original requirement of 'z' when not SLT/SLTU. Although 'z' wires can sometimes complicate synthesis, I include it here per specification, noting that synthesis tools often map 'z' to 0 or tri-state appropriately.
-
-Finally, the shift operations use a consistent approach, and signedness is explicitly handled. I keep the code combinational with minimal reg usage, and add clear comments for readability.
-
-These changes reduce area by sharing arithmetic units, reduce power by limiting parallel logic to needed operations, and maintain clear, easy-to-synthesize combinational design.

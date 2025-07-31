@@ -1,5 +1,0 @@
-To optimize the design for area and power, instead of using a 9-entry array indexed by a 4-bit selector, I will implement the 9-to-1 mux using a generate loop to instantiate 16 separate 9-to-1 1-bit muxes, each using a smaller 9-to-1 multiplexer implemented with a case statement. This approach allows more explicit synthesis of multiplexers, potentially enabling better area sharing and reduced switching activity since each bit's selection logic is isolated. 
-
-For the invalid select values (9 to 15), the case statement will output 1'b1. This method can lead to more optimal logic gates due to explicit case structures and simpler select signals per bit, possibly improving timing and reducing power slightly. It also allows easier debugging and is friendly for synthesis tools.
-
-This is a tradeoff between the previous array indexing (which may infer large multiplexers) and explicit bitwise case muxing, potentially improving PPA by better exploiting bit-level muxing and simplifying logic trees.

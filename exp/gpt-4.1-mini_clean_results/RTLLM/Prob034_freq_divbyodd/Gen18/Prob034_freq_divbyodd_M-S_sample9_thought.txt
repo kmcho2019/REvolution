@@ -1,9 +1,0 @@
-To simplify the frequency divider by an odd number while maintaining functionality:
-
-- Use a single counter driven on the positive edge of clk.
-- The counter counts from 0 to NUM_DIV-1 and resets.
-- Generate clk_div by toggling it when the counter reaches HALF_DIV (floor(NUM_DIV/2)), ensuring a 50% duty cycle is impossible but a consistent odd divide output.
-- This approach reduces the design from two counters and two clock dividers to one counter and one divider, removing negedge logic and simplifying the output generation.
-- Use synchronous active-low reset.
-- Keep the compile-time check for odd NUM_DIV.
-- This simplification slightly reduces output duty cycle accuracy but greatly reduces complexity and improves timing and area.

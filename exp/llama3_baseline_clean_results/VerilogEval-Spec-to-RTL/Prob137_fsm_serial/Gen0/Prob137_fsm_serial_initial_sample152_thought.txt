@@ -1,7 +1,0 @@
-To implement the finite state machine (FSM) that identifies correctly received bytes in a serial communication protocol, we can follow these steps:
-1. Initialize the FSM to an idle state, where it waits for a start bit (0).
-2. Upon receiving a start bit, transition to a state where we start counting the data bits.
-3. In this state, shift in each incoming bit, but only after checking if it's time to move on to the next state based on the bit count (8 data bits).
-4. After receiving the 8 data bits, check for the stop bit (1) on the next clock cycle. If it's correct, signal that a byte has been received by setting the 'done' output high and return to the idle state.
-5. If the stop bit is incorrect, enter a state where we wait for a stop bit before attempting to receive the next byte.
-6. To handle the synchronous reset, ensure that all states and counters are reset to their initial conditions upon a high reset signal.

@@ -1,5 +1,0 @@
-Implement a radix-2 division algorithm using a classic restoring divider approach with a simple FSM controlling the iterative process. Upon opn_valid, input values are latched and absolute values computed based on the sign input. A 9-bit remainder register and an 8-bit quotient register are initialized. At each clock cycle, the remainder is shifted left, the divisor is subtracted, and depending on the sign of the subtraction, the quotient bit is set or the remainder restored.
-
-The iteration count is exactly 8 cycles. After finishing, the quotient and remainder are corrected for sign if needed. The final result concatenates the remainder (upper 8 bits) and the quotient (lower 8 bits) and asserts res_valid. The design avoids complex multi-bit subtractors by using simple arithmetic and sign checks. 
-
-Control signals and registers are managed synchronously on clk and reset, with a clear idle state waiting for new operation requests, calculation state running the iterative division, and done state presenting the result until next opn_valid is seen. This approach is straightforward, well structured, and suitable for synthesis and simulation.

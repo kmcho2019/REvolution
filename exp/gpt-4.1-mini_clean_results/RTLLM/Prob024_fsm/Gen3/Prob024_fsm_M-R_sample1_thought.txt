@@ -1,7 +1,0 @@
-Refactor the FSM to use a one-hot encoding style with state bits representing each matched step of the sequence "10011". This simplifies next-state logic by assigning individual bits for each state and reduces the need for a case statement. We'll use continuous assign statements for next-state logic and output MATCH combinationally as a Mealy output, updated synchronously with state registers on the clock edge.
-
-This approach improves clarity by directly mapping each state bit, enabling simpler next-state expressions and minimizing branching logic. The MATCH output will be registered synchronously in the sequential block to avoid glitches.
-
-The reset will asynchronously clear all state bits and MATCH. The FSM supports overlapping sequence detection by encoding transitions explicitly in combinational assignments. Using one-hot encoding makes state decoding straightforward and can be beneficial for FPGA synthesis, often resulting in faster state transitions.
-
-Overall, this style separates combinational next-state logic with assign statements from the sequential register updates, removing the case statement and making the FSM's behavior more declarative.

@@ -1,8 +1,0 @@
-Instead of building a balanced XOR tree with pairwise XORs or relying solely on the reduction XOR operator, this design uses a parallel prefix XOR approach inspired by carry-lookahead logic. We partition the input into 4 groups of 2 bits and compute partial XORs in parallel, then combine them hierarchically with precomputed intermediate XOR results. This structure enables efficient parallelism with explicit intermediate signals but reduces the number of half-XOR instances by grouping inputs two at a time initially and then combining with a smaller number of XOR gates. It is a neat compromise between readability, moderate modularity, and an explicit clear data flow that synthesizers can optimize well.
-
-Key points:
-- Group inputs into 4 groups of 2 bits, compute 2-bit XORs in parallel.
-- Then XOR pairs of these results, and finally XOR the last two results for parity.
-- Use simple assign statements instead of instantiating separate modules to reduce overhead.
-- The explicit multi-level structure shows the data flow clearly, improving maintainability.
-- This approach also keeps the logic depth low, similar to a balanced tree, while avoiding recursion or heavy module overhead.

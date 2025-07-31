@@ -1,9 +1,0 @@
-To improve the existing solution, we need to address the functional error and optimize the design for better Power, Performance, and Area (PPA) metrics. 
-
-The main issue with the current implementation is that it does not correctly handle the reset condition and the count mechanism. When the reset signal is asserted, the counter should be set to 3, and then decrement for each clock cycle until it reaches 0, at which point `shift_ena` should be de-asserted.
-
-We will use a state variable to track the enable status and employ a counter to keep track of the clock cycles. The state machine will have two states: idle and shift. When the reset signal is asserted, the state will transition to shift, and the counter will be initialized to 4. The counter will then decrement for each clock cycle until it reaches 0, at which point the state will transition to idle, keeping `shift_ena` at 0 until the next reset.
-
-To optimize for better PPA, we will minimize the number of combinational logic gates and ensure that the count logic is properly synchronized with the clock and reset signals. We will also use a simple and efficient state machine encoding to reduce area consumption.
-
-Additionally, we can optimize the design by removing unnecessary transitions and reducing the switching activity on the count signal. This can be achieved by only updating the count signal when necessary and using a simple and efficient counter implementation.

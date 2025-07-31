@@ -1,5 +1,0 @@
-To improve performance, power, and area while preserving functionality, implement the sequential circuit as a modulo-7 counter with a conditional reset to 4 when `a`=1. Instead of case statements, use arithmetic: increment `q` modulo 7 when `a`=0, otherwise load `q` with 4. Since `q` cycles through 0-6 plus special reset, a modulo-7 counter is efficient. This arithmetic approach reduces combinational logic depth, improving timing and area. 
-
-Also, add a synchronous reset at initialization to 4 for simulation and synthesis consistency, removing the initial block (which some synthesis tools might not support well). Use a parameter for the reset value to improve readability. This approach reduces switching in the combinational path by having simpler next-state logic, potentially lowering power.
-
-Overall, the implementation uses a single always @(posedge clk) block with minimal logic, maximizing PPA improvements.

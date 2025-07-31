@@ -1,8 +1,0 @@
-The existing design is already near optimal for an 8-bit even parity calculation using a reduction XOR operator. To achieve marginal PPA improvements:
-
-- Remove the parameterized XorTree module and inline the reduction XOR directly in TopModule. This reduces a module instantiation layer, slightly reducing area and possibly improving timing by allowing synthesis to optimize fully without black-box boundaries.
-- Retain the use of the reduction XOR operator to maintain minimal combinational logic.
-- Keep the design purely combinational and simple for the best power and area.
-- This optimization trades off a tiny bit of modularity for slightly better area and potentially improved synthesis optimization.
-
-Overall, the change is minimal but aligns with the metrics aiming for small PPA gains by eliminating an unnecessary wrapper module while preserving the efficient reduction logic.

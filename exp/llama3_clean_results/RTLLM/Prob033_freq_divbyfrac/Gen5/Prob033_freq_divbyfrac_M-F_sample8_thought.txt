@@ -1,9 +1,0 @@
-To fix the issues identified in the previous code, we need to revise the logic for generating the intermediate divided clocks (`clk_div_int1` and `clk_div_int2`) and the final fractional divided clock output (`clk_div`). 
-
-The key insight is to generate the intermediate clocks based on the counter value in a way that directly supports the phase-shifting required for the double-edge clocking technique. For a 3.5x division, we need one clock period that spans 4 source clock cycles and another that spans 3 cycles, alternating between these two periods to achieve the fractional division.
-
-We will modify the counter logic to correctly identify the periods when `clk_div_int1` should be high (for 4 cycles) and when `clk_div_int2` should be high (for 3 cycles). Then, we will apply the double-edge clocking technique by appropriately delaying and advancing these intermediate clocks to generate their phase-shifted versions. 
-
-Finally, we will logically OR these phase-shifted clocks to produce the final fractional divided clock output (`clk_div`), ensuring it maintains a uniform period despite the fractional division.
-
-By focusing on accurately implementing the described phase-shifting and duty cycle adjustment logic, we aim to correct the functional errors and achieve the desired 3.5x fractional frequency division.

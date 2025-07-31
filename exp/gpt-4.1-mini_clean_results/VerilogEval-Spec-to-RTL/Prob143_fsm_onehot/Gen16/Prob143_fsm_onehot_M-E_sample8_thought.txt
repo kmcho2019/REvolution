@@ -1,9 +1,0 @@
-Instead of enumerating each next state separately with OR conditions for every originating state and input, I will compute next_state as a bit vector formed by summing contributions from each active current state. Each active current state produces a 10-bit "next state vector" depending on the input, and these are ORed together to form the overall next_state.
-
-This modularizes the transition function by state, using a function (or combinational block) that returns the next state vector for a single active state. Then, by iterating over all states that are currently active, we OR their respective next states to get the overall next_state output.
-
-This approach is more scalable for larger state machines and separates the next state logic per state. It also makes it easier to maintain or extend the FSM. Additionally, I will implement outputs as combinational logic derived from the current state input using bit masks as before.
-
-Since synthesizable Verilog does not support loops easily inside continuous assignments, I will use a generate block with an array of intermediate signals, each representing the next_state contribution of a particular state if active. Then I will OR all these intermediate vectors to produce the final next_state.
-
-This architectural idea offers a structured and modular approach, suitable for automatic FSM code generation and clarity.

@@ -1,9 +1,0 @@
-To address the problem of synchronous HDLC framing, we can implement a novel architectural idea based on a combination of counters and comparators. The new design will utilize two counters: one to track the number of consecutive ones and another to track the total number of bits since the last flag. This approach will simplify the state machine and reduce the number of states, resulting in a more efficient and scalable design.
-
-The first counter, `ones_counter`, will increment whenever a '1' is detected in the input stream. When `ones_counter` reaches 5, it will trigger a check for the next bit to determine if it's a flag or a discard signal. If the next bit is '0', it's a discard signal, and the `disc` output will be set to '1'. If the next bit is '1', it's a potential flag, and the `flag` output will be set to '1' after checking the next bit.
-
-The second counter, `total_counter`, will keep track of the total number of bits since the last flag. This counter will reset whenever a flag is detected.
-
-The comparator will compare the `ones_counter` with predefined thresholds (5 and 6) to determine the output signals. If `ones_counter` exceeds 6, the `err` output will be set to '1', indicating an error condition.
-
-By using counters and comparators, we can eliminate the need for a complex state machine, reducing the design's area and power consumption while improving its performance.

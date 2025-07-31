@@ -1,8 +1,0 @@
-Refactor the module to separate the next-state combinational logic into a dedicated wire signal, and assign the output register `q` on the positive clock edge accordingly. Instead of defining a combined `rotate_left` and `rotate_right` wire and a combined clock enable, use an explicit next-state signal selected by load and rotation conditions. This approach simplifies the control logic by explicitly specifying the priority and next data.
-
-The advantages of this structure include:
-- Clear separation of combinational next-state logic and sequential register updates.
-- Priority logic for load over rotation encoded in a single mux tree.
-- Retain the synchronous behavior with no register update if no load or rotate operation is requested by using a latch for `q` by assigning `q_next = q` in that case.
-- Since the next-state logic only calculates when needed, power is potentially saved because the logic is clear and straightforward for synthesis tools to optimize.
-- This structure is a classic next-state logic pattern, improving readability and maintainability without changing functionality.

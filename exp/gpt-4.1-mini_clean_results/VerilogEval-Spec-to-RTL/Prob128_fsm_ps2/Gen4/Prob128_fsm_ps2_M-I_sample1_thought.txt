@@ -1,7 +1,0 @@
-To optimize for PPA (Timing, Power, and Area), I will use one-hot encoding for the FSM states instead of binary encoding. One-hot FSMs often result in faster and simpler next-state logic in FPGA and many ASIC technologies due to reduced decoding complexity, possibly improving timing and reducing logic power. 
-
-Additionally, I will minimize the done logic by generating it combinationally from the state signals instead of registering it, reducing unnecessary toggling of the done register. Since done is only a one-cycle pulse, generating it combinationally as done = (state == BYTE3) reduces register toggling and thus power.
-
-The synchronous reset remains the same to meet design requirements.
-
-This approach potentially improves timing by simplifying the FSM encoding and power by avoiding an extra done register toggle, with negligible area impact or possibly reduced area due to simpler combinational logic.

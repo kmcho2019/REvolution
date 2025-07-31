@@ -1,9 +1,0 @@
-To recognize the HDLC framing sequences, we can implement a novel architecture using a hybrid approach that combines the benefits of finite state machines (FSMs) and counters. The idea is to use a single FSM to detect the sequence of 1s and a counter to keep track of the number of consecutive 1s. This approach simplifies the state machine logic and reduces the number of states required.
-
-The FSM will have four states: IDLE, ONE, FIVE_ONES, and SEVEN_ONES. The IDLE state represents the initial state, ONE state represents the detection of a single 1, FIVE_ONES state represents the detection of five consecutive 1s, and SEVEN_ONES state represents the detection of seven consecutive 1s.
-
-When the FSM is in the IDLE state and a 1 is detected, it transitions to the ONE state. When the FSM is in the ONE state and another 1 is detected, it increments a counter. If the counter reaches 5, the FSM transitions to the FIVE_ONES state. If the counter reaches 7, the FSM transitions to the SEVEN_ONES state.
-
-The counter is reset when the FSM transitions back to the IDLE state. The output signals disc, flag, and err are generated based on the current state of the FSM. When the FSM is in the FIVE_ONES state and a 0 is detected, the disc signal is asserted. When the FSM is in the SEVEN_ONES state, the err signal is asserted. When the FSM is in the FIVE_ONES state and another 1 is detected, the flag signal is asserted.
-
-This hybrid approach simplifies the state machine logic, reduces the number of states, and improves the overall performance of the design.

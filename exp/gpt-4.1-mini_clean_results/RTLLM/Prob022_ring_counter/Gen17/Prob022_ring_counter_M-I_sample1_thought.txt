@@ -1,8 +1,0 @@
-The original solution stores the position index and generates the one-hot output via a combinational shift, which is clean and efficient. However, some simulators or synthesis tools may have issues with assigning shifted vectors inside an always @(*) block to a reg output. To improve tool compatibility and maintain synthesizability, we can assign the output directly in the sequential always block by using a one-hot register that shifts on every clock cycle. This also ensures a single always block controls the output register, reducing potential glitches and tool problems.
-
-Implementation:
-- Use a single 8-bit reg `out` initialized to 8'b00000001 on reset.
-- On each clock rising edge, shift `out` left by 1.
-- To wrap around, when `out` reaches 8'b10000000 (MSB set), shift left and OR with 1 to set LSB.
-This creates a ring effect with a single '1' bit cycling through the output without using a separate position register or combinational logic.
-This approach is classic, synthesizable, and tool-friendly.

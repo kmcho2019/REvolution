@@ -1,8 +1,0 @@
-Both solutions implement the even parity of inputs a, b, c, and d, producing q as the inverse of their XOR. The first solution uses XOR followed by a negation, while the second uses a chain of XNOR operators. Both are logically equivalent and minimal in logic depth and gate count.
-
-The fusion strategy is to explicitly express the output as the XNOR (even parity) of all inputs using the reduction XNOR operator (^~), which is synthesizable and directly expresses the parity with inversion in a clear and concise way. This combines the readability of the first solution’s inversion with the power and area efficiency of the second solution’s XNOR chain, but condensed using a Verilog reduction operator.
-
-This approach enhances code clarity, reduces gate count by avoiding separate NOT gate insertion, and leverages synthesis optimizations for reduction operators, yielding optimal PPA without compromising simplicity or maintainability.
-
-Thus, I assign q using the reduction XNOR operator as:
-assign q = ^~{a, b, c, d};

@@ -1,7 +1,0 @@
-The original design uses a modular approach by defining a separate `EdgeDetect` module that is then instantiated eight times in `TopModule` to handle each bit of the input vector. While this is clear and maintainable, we can refactor the code to use a single `always` block in `TopModule` to achieve the same functionality. This refactoring reduces the overhead of multiple module instantiations and can potentially improve synthesis results.
-
-Instead of using a separate module for edge detection, we can directly implement the edge detection logic within `TopModule`. We will use two registers: one to store the current input vector and another to store the previous input vector. We then use a non-blocking assignment to update the previous vector and calculate the output `pedge` based on the current and previous input vectors.
-
-To simplify the logic and reduce the number of operations, we can use bitwise operations to compare the current and previous input vectors and generate the output `pedge`. This approach not only simplifies the code but also potentially reduces the area and power consumption of the design.
-
-This refactoring maintains the same functionality as the original design but with a different structure that can be more efficient in terms of area and power.

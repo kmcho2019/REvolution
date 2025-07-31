@@ -1,7 +1,0 @@
-To optimize for better PPA, I will encode the FSM with explicit states for clarity and possibly better synthesis results, using one-hot state encoding which often benefits FPGA synthesis. This can reduce combinational logic depth and improve timing (WNS), potentially improving clock period and power due to simpler next-state logic. 
-
-The FSM states will be IDLE (waiting for start byte), BYTE2 (waiting for second byte), and BYTE3 (waiting for third byte). On receiving the third byte, done is asserted for one cycle, and FSM returns to IDLE. The done output is registered and asserted only one cycle. This explicit state FSM may facilitate better synthesis optimizations.
-
-Also, resetting done synchronously and using a state register to control done ensures clean, predictable control signals and might reduce glitching, thus benefiting power.
-
-This approach keeps the logic simple but structures the state machine for improved synthesis outcomes.

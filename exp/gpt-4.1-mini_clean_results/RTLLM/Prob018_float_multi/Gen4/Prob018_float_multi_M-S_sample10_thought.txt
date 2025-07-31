@@ -1,8 +1,0 @@
-Simplify the IEEE-754 single-precision floating-point multiplier by reducing the pipeline stages from 4 to 3 cycles, consolidating rounding and normalization steps, and minimizing registers while preserving all special cases and correct rounding. 
-
-Key ideas:
-- Cycle 0: Extract sign, exponent, mantissa, handle implicit leading 1, and detect special cases.
-- Cycle 1: Multiply mantissas, add exponents, compute sign.
-- Cycle 2: Normalize product (if needed), perform rounding in one step, handle overflow/underflow and special cases, and output result.
-
-This reduces complexity by combining normalization and rounding steps and avoids extra pipeline registers like sign_r and separate product_r, while keeping the core logic and IEEE-754 compliance intact.

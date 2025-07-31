@@ -1,9 +1,0 @@
-To improve PPA, simplify the FSM by encoding the state as a 2-bit counter representing the byte index within a message (0 to 2). Wait in state 0 for in[3] = 1 to detect start byte, then increment state on each byte received to count bytes 2 and 3. Assert 'done' for one cycle right after the third byte (when state transitions from 2 back to 0).
-
-This approach eliminates the explicit enum and case statement, replacing them with simple arithmetic and conditionals, reducing combinational logic depth and potential glitches.
-
-Additionally, mask only the needed bit in input to reduce toggling influence, and use minimal registers.
-
-Register 'done' synchronously to meet requirements, asserted only once per message end cycle.
-
-Overall, this reduces area and power by simplifying logic and switching, while maintaining functional correctness and timing.

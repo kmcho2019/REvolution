@@ -1,7 +1,0 @@
-Refactor the FSM to separate the next state and next direction logic into combinational `assign` statements instead of using a single always block with blocking assignments. Use separate combinational logic expressions for next_state, next_dir, and next_fall_count derived directly from current state and inputs. This enhances clarity by making next state logic more declarative and reduces the implicit sequential behavior in the combinational always block.
-
-Retain the asynchronous reset and synchronous update structure but structure the combinational logic with explicit intermediate wires and conditional operators for compactness. Use one-hot style boolean conditions in the combinational assigns for readability. The fall count increment and saturation logic will also be moved into a combinational assign statement.
-
-Outputs remain Moore-style, derived directly from state and direction.
-
-This style makes state transitions easier to trace and modify and can better leverage synthesis tool optimizations by reducing sensitivity list complexity in combinational always blocks.

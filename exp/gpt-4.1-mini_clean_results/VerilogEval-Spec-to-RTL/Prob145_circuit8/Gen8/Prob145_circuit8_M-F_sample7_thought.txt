@@ -1,7 +1,0 @@
-Fix the design by separating the logic for rising and falling clock edges into two distinct always blocks, each triggered only on one clock edge. This is the standard, synthesis-friendly approach to implement sequential behavior.
-
-- On the rising edge of clock, sample input `a` into `p`.
-- On the falling edge of clock, sample `p` into `q`.
-- Initialize `p` and `q` to 0 to match the waveform startup values.
-
-This avoids manual edge detection, race conditions, and potential simulation/synthesis mismatches by relying on dedicated posedge and negedge sensitivity for each always block. This approach matches the waveform exactly and is synthesizable.

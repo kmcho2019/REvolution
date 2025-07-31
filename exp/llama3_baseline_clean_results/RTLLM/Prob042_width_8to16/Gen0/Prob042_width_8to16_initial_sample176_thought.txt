@@ -1,7 +1,0 @@
-The design idea involves creating a module named 'width_8to16' that takes in an 8-bit data input and converts it into a 16-bit data output. The module has a clock signal 'clk', an active-low reset signal 'rst_n', a valid input signal 'valid_in', and an 8-bit data input 'data_in'. It generates a valid output signal 'valid_out' and a 16-bit data output 'data_out'. 
-
-To achieve this, we need to implement a finite state machine or a simple flag-based mechanism that waits for two consecutive valid 8-bit data inputs. When the first valid data arrives, it is stored temporarily. Upon arrival of the second valid data, both the stored data and the new data are concatenated to form a 16-bit output, and the valid_out signal is asserted. 
-
-We will use a flag 'data_valid' to track whether we have received the first valid data. If 'data_valid' is 0, the incoming valid data is stored in 'data_lock'. If 'data_valid' is 1, it means we have the first data and are waiting for the second data to arrive. When the second valid data arrives, 'data_out' is updated by concatenating 'data_lock' (first 8 bits) with 'data_in' (next 8 bits), and 'valid_out' is set to 1. 
-
-The module is reset when 'rst_n' goes low, at which point 'data_out', 'valid_out', and the internal 'data_lock' and 'data_valid' signals are reset to their initial states.

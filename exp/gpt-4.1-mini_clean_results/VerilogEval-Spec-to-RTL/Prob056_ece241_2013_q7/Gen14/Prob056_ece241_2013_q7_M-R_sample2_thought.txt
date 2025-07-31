@@ -1,5 +1,0 @@
-To refactor while preserving the JK flip-flop behavior, I will separate the combinational logic determining the next state into a separate wire (nextQ). This combinational logic will be described using an assign statement that implements the JK truth table explicitly. Then, the flip-flop simply registers the nextQ on the positive edge of clk.
-
-This structure cleanly separates combinational next-state logic and synchronous state update, improving readability and making it clear how the inputs map to the next state. It also avoids the conditional `if (j|k)` by explicitly encoding the hold condition when J=K=0 in the combinational logic.
-
-This design remains power and area efficient, with no unnecessary flip-flop toggling since nextQ equals Q in the hold case, and it is synthesizable and clear.

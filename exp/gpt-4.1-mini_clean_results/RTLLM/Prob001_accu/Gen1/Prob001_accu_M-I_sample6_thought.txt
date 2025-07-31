@@ -1,9 +1,0 @@
-To optimize the design for better power and timing without sacrificing functionality, I will:
-
-1. Add an enable signal for accumulator and counter updates, so registers only toggle when valid_in is high, reducing switching activity and power.
-2. Avoid performing the addition twice in the same cycle by updating the accumulator first, then outputting the sum from the accumulator in the next cycle.
-3. Use a small state machine or flag to output the accumulated sum one cycle after the 4th valid input, separating accumulation and output stages. This spreads addition operations and reduces combinational delay in a single cycle, improving timing.
-4. Keep the data_out and valid_out update synchronized and assert valid_out for exactly one cycle.
-5. Retain a synchronous reset and simple logic for low area.
-
-This approach reduces critical path length by splitting accumulation and output, and lowers power by clock gating register updates with valid_in.

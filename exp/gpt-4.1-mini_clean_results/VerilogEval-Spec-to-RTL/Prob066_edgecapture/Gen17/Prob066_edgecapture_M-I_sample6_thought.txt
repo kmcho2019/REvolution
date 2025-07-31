@@ -1,9 +1,0 @@
-The main issue likely arises from the initialization and timing of `prev_in`. Resetting `prev_in` to zero can create false falling edge detections right after reset if `in` also starts low or changes abruptly. To avoid spurious detections, initialize `prev_in` to all ones on reset so that the first clock after reset doesn't produce falling edges unless actual transitions occur from 1 to 0.
-
-Also, updating `prev_in` before using it to detect falling edges avoids stale data issues. However, since everything happens on the same clock edge, the order in a single always block does not matter for simulation and synthesis.
-
-The key fix is to set `prev_in` to all ones on reset, which ensures no spurious outputs immediately after reset because the transition from `prev_in=1` to `in=0` only triggers when the input really transitions after reset.
-
-This change keeps the original single always block design, maintaining minimal hardware and clarity, but improves correctness and compatibility with common testbench assumptions.
-
-Optionally, the code can be made slightly more area-efficient by using non-blocking assignments carefully and limiting registers to only necessary widths.

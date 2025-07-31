@@ -1,7 +1,0 @@
-Implement a Moore FSM with four states: IDLE, START, DATA, STOP_CHECK. The IDLE state waits for the line to go low (start bit). Upon detecting a start bit, it moves to START to confirm the start bit sample, then proceeds to DATA where it samples and shifts in data bits (LSB first) using a shift register and a bit counter. After all 8 bits, it goes to STOP_CHECK to sample the stop bit.
-
-The done output is registered and asserted high for one cycle in the STOP_CHECK state if the stop bit is correct. If the stop bit is wrong (framing error), the FSM remains in STOP_CHECK until a valid stop bit is detected (line goes high), then returns to IDLE to await a new frame. This avoids a separate WAIT_STOP state by rechecking the stop bit in STOP_CHECK.
-
-To reduce toggling, the shift register updates only during DATA state. The bit counter increments each clock cycle in DATA state. The reset synchronously initializes all registers.
-
-This design's advantage is a clear Moore FSM with done output directly tied to the STOP_CHECK state, simpler control logic by rechecking the stop bit in the same state, and reduced states while still handling framing errors robustly.

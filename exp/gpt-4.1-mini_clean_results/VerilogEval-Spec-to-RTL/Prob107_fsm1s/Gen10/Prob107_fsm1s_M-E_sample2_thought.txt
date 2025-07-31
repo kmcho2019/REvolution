@@ -1,7 +1,0 @@
-An alternative approach is to encode the states using two flip-flops (one-hot encoding), simplifying next-state logic to direct assignments. This encoding assigns each state a unique flip-flop being set, potentially reducing glitching and enabling faster state decoding since only one bit represents the state being active.
-
-The FSM will have two state flip-flops, `state_B` and `state_A`, representing states B and A respectively. On reset, `state_B` is set and `state_A` cleared synchronously. The next-state logic directly determines which flip-flop should be set based on the input and current state signals.
-
-The output is derived from the one-hot state registers: output is '1' if in state B (`state_B` asserted), otherwise '0'. This approach, while using two bits, can improve speed due to simpler combinational next state logic and clear state decoding without comparisons.
-
-This architectural change offers a novel way to implement the FSM that may improve timing by reducing logic depth, with a modest area cost of one additional flip-flop.

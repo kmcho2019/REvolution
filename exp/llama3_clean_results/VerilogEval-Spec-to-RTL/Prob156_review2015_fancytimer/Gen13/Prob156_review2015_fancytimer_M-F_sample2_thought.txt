@@ -1,9 +1,0 @@
-To address the issues identified in the feedback, we need to revise the state machine's logic, particularly in the SHIFT and COUNT states. 
-
-In the SHIFT state, instead of checking for a specific pattern (`pattern_reg == 4'b1000`), we should keep track of how many bits have been shifted in. This can be achieved by introducing a new variable, `shift_count`, which is incremented each time a bit is shifted into `delay_reg`. Once `shift_count` reaches 4, we can transition to the COUNT state.
-
-In the COUNT state, the counter and remaining time updates need to be corrected. The remaining time should be equal to the current delay value being counted down. To achieve this, we can introduce a new variable, `current_delay`, which is initialized with the value of `delay_reg` when we transition to the COUNT state. We then decrement `current_delay` every 1000 cycles, and update `remaining_time` accordingly.
-
-Additionally, we need to ensure that the state machine transitions correctly between states, particularly after the count is done and the DONE state is reached. This involves resetting the state machine's variables and transitioning to the RESET state when the `ack` signal is high.
-
-Lastly, we should verify that the counter updates and remaining time calculations are accurate and meet the problem description's requirements.

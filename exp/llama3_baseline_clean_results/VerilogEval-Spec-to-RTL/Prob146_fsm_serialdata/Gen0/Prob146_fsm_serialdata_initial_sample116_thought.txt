@@ -1,8 +1,0 @@
-The design of the TopModule will involve a finite state machine (FSM) with several states to track the reception of bytes in the serial communication protocol. The main states will include:
-1. Idle state: This is the default state when no transmission is happening, and the input 'in' is at logic 1.
-2. Start state: When a start bit (0) is detected, the FSM transitions to this state.
-3. Data state: After the start bit, the FSM will shift through eight data bits, accumulating them in 'out_byte'. The least significant bit is received first.
-4. Stop state: After receiving all eight data bits, the FSM waits for a stop bit (1). If the stop bit is correct, the FSM asserts 'done' and outputs the received byte in 'out_byte'.
-5. Error state: If the stop bit is not received when expected, the FSM will wait for the input 'in' to go high again (indicating a stop bit or idle state) before returning to the idle state to await the next start bit.
-
-To implement this, we'll use a state machine with these states and transition between them based on the input 'in' and the current state. We'll also use a counter to keep track of the current bit position within the byte being received.

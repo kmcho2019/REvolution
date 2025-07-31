@@ -1,7 +1,0 @@
-Refactor by implementing the FSM with an explicit enumerated state encoding that includes both walking direction and falling as combined states, rather than separate registers. Use a one-hot-style state encoding for clarity: four states represent walking left, walking right, falling left, and falling right. On each clock edge (with asynchronous reset), transition states based on bump inputs and ground signal.
-
-This approach keeps the Moore FSM concept but encodes all state info into a single state register. The state transitions explicitly encode behavior: when falling, remain falling until ground returns; while walking, bump signals cause direction changes; ground loss causes transition to falling in the current direction.
-
-Outputs depend only on the current state, consistent with Moore FSM style. This refactoring consolidates state handling and separates logic more clearly into state transitions and output decoding, avoiding separate direction and falling regs.
-
-Asynchronous reset initializes to walking left. This alternate design clarifies FSM states and transitions, demonstrating a classic FSM style with enumerated states.

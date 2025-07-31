@@ -1,9 +1,0 @@
-To optimize the FSM for better PPA, I will simplify the next state logic by combining bump conditions into one case rather than multiple nested if-else. I'll represent the bump condition as a single 2-bit vector and use it to decide direction change more compactly. Also, I'll remove redundant conditions by exploiting that bump_left or bump_right causes direction toggle regardless of simultaneous bumps. This reduces logic depth and the number of condition checks, potentially improving timing and area.
-
-Since bump conditions while falling and during transitions around ground changes don't affect direction, I'll ensure next state logic minimizes unnecessary logic when falling or transitioning. Outputs remain directly decoded from state bits.
-
-The asynchronous reset and 2-bit state encoding (falling + direction) stay to maintain behavior.
-
-This approach reduces combinational logic complexity and should reduce area and delay slightly, with minimal power change since toggling is controlled by state changes.
-
-Overall, this refactoring flattens the decision logic and simplifies the bump logic in a compact manner.

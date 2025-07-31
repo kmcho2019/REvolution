@@ -1,5 +1,0 @@
-A novel approach to implementing the multi-bit MUX-based synchronizer involves using a handshaking protocol between the two clock domains. The basic idea is to use a request-acknowledge protocol where the clock domain `clk_a` sends a request signal to the clock domain `clk_b` when `data_en` is high, and `clk_b` acknowledges the request when it is ready to receive the data. This approach ensures that the data is transmitted only when both clock domains are ready, reducing the risk of metastability.
-
-The new architecture includes two new signals: `req` and `ack`. The `req` signal is generated in the `clk_a` domain and indicates that `data_in` is ready to be transmitted. The `ack` signal is generated in the `clk_b` domain and acknowledges the receipt of `req`. The data transmission occurs when both `req` and `ack` are high.
-
-This approach allows for a more robust and flexible synchronization mechanism, as it can handle varying clock frequencies and phases between the two domains. Additionally, it reduces the number of registers required, as the `req` and `ack` signals can be used to control the data transmission directly.

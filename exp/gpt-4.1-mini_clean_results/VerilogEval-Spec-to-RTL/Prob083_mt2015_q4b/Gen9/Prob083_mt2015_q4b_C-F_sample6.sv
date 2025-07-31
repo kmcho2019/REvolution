@@ -1,9 +1,0 @@
-module TopModule (
-    input wire x,
-    input wire y,
-    output wire z
-);
-
-assign z = ~(x ^ y); // z is 1 when x and y are equal (XNOR)
-
-endmodule

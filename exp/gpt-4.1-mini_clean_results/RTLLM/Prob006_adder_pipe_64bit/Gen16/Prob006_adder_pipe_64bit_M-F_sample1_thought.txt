@@ -1,5 +1,0 @@
-To fix the elaboration errors caused by missing parameters, the module should be made parameterizable by declaring parameters DATA_WIDTH and STG_WIDTH, matching the naming and expected interface by the testbench. This will allow the testbench to configure the adder width and stage width appropriately and avoid parameter mismatch errors. The internal localparams will be removed and replaced by parameters. Also, array sizes and indices must be adjusted to use these parameters consistently.
-
-The adder pipeline will split the inputs into NUM_STG = DATA_WIDTH/STG_WIDTH stages, each adding STG_WIDTH bits and carry-in, generating sum and carry-out. Pipeline registers for inputs, carries, and enable signals are updated on clock and reset. The output enable (o_en) and result are generated from the last pipeline stage with final carry concatenated in MSB.
-
-This parameterization ensures the module is flexible and compatible with the testbench that expects parameters DATA_WIDTH and STG_WIDTH.

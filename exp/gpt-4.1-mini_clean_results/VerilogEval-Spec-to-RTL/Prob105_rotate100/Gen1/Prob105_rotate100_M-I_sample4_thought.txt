@@ -1,5 +1,0 @@
-To optimize for power and performance, reduce unnecessary register toggling when no rotation or load occurs by gating the clock enable signal. Implement a clock enable (ce) signal that is high only when load=1 or ena=01 or ena=10, so the register updates only in those cases. This avoids redundant writes and switching when holding the value. This simple clock gating reduces dynamic power without changing the logic.
-
-The rotation logic itself is already minimal and the one-bit rotate ensures manageable routing and delay. The gating improves power and may slightly improve timing by reducing toggle rates on registers.
-
-Maintain the synchronous semantics with the gated update inside the always block using the enable signal.

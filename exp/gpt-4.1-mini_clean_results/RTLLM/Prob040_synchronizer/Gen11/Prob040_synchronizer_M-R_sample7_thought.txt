@@ -1,7 +1,0 @@
-Refactor the two clock domain synchronizer by separating data and enable synchronizations clearly:  
-1. In clk_a domain, latch data_reg only when data_en is high. Also register data_en as en_data_reg.  
-2. In clk_b domain, create a 2-stage synchronizer chain for en_data_reg, resulting in en_clap_two.  
-3. Use en_clap_two as a gating signal to clock-enable a data_sync register that captures the stable data_reg value transferred from clk_a domain via a signal crossing (assumed safe due to low toggle rate and stable period).  
-4. Drive dataout register with data_sync on clk_b domain.  
-5. Use a separate always_ff style for dataout to hold its previous value unless updated.  
-This structure improves clarity by cleanly separating signal roles, removing multiple condition checks inside one always block, and making data_sync update conditional on en_clap_two using a clock enable style approach. This also reduces potential glitches and clarifies timing relationship.

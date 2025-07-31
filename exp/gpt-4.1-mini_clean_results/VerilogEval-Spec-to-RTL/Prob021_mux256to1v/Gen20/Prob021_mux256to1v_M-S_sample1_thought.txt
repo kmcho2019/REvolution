@@ -1,5 +1,0 @@
-The 256-to-1 4-bit wide multiplexer can be implemented very simply and efficiently by leveraging Verilog's indexed part-select feature. Instead of unpacking the input into an array and implementing hierarchical mux stages, we directly index the 1024-bit input vector using the 8-bit selection input.
-
-Since each 4-bit element corresponds to a group of 4 bits in 'in', indexed by sel*4, the output can be assigned directly as out = in[sel*4 +: 4]. This approach eliminates intermediate wires, always blocks, and generate constructs, resulting in minimal logic, reduced combinational delay, and lower power and area consumption.
-
-This solution is functionally equivalent, very concise, and synthesis-friendly.

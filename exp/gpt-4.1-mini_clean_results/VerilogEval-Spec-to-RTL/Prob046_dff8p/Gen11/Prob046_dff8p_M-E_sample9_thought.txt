@@ -1,5 +1,0 @@
-Instead of using a single vector register with a comparator for clock enable, implement eight individual negative-edge-triggered D flip-flops with synchronous reset each initialized to the corresponding bit of 0x34. This bitwise approach allows explicit control per flip-flop and avoids the vector comparator logic, reducing combinational delay on the critical path.
-
-Each flip-flop uses an always block sensitive to negedge clk, checks the synchronous reset, and loads either the reset bit or d bit. This modular approach simplifies the logic and can be better for timing in some tools, while maintaining correct synchronous reset behavior and initialization to 0x34.
-
-TopModule instantiates these eight flip-flops as a generate loop, creating a scalable and clean design without extra clock enable logic. The synchronous reset sets each bit to its corresponding bit in 0x34 on the clock's falling edge.

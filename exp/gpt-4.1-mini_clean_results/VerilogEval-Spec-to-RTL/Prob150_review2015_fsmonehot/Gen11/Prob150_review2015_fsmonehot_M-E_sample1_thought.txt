@@ -1,9 +1,0 @@
-To create a novel architectural approach, I will represent the FSM next state decoding by enumerating the current states explicitly and defining next states using a combinational `casez` statement that matches the one-hot encoding position of the current active state bit. This method is unusual compared to pure combinational Boolean logic expressions, and it improves readability and maintainability by using explicit matching of one-hot states.
-
-I will:
-- Decode the one-hot current state into a 4-bit position index using a priority encoder style.
-- Use this decoded position in a combinational `case` to assign the next state's one-hot bit outputs (B3_next, S_next, etc.).
-- For states with transitions dependent on inputs, I’ll apply conditionals inside the `case`.
-- Derive outputs done, counting, shift_ena purely from the current state bits.
-- This approach keeps the combinational next state and output logic clean, explicit, and easy to extend or debug.
-- Although using case statements for one-hot encoded states is slightly unconventional, it does not compromise synthesizeability and provides clear control over next-state outputs.

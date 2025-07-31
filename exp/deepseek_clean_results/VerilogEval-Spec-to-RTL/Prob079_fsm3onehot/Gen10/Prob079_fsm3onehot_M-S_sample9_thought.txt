@@ -1,8 +1,0 @@
-The key insight is that with one-hot encoding, each state bit can be determined independently by looking at just the relevant current state bits and input. We can simplify the logic further by:
-1. next_state[0] only needs to check state[0] or state[2] when in=0
-2. next_state[1] is simply in AND (state[0] OR state[1] OR state[3]) - since these are the states that transition to B when in=1
-3. next_state[2] is ~in AND (state[1] OR state[3]) - same as original
-4. next_state[3] is in AND state[2] - same as original
-5. Output remains state[3]
-
-This reduces the number of operations while maintaining correctness.

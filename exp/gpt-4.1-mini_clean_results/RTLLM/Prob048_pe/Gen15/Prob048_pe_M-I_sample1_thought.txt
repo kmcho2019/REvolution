@@ -1,7 +1,0 @@
-To optimize the existing MAC_PE design for better PPA, I will implement the following improvements:
-1. Use a 64-bit accumulator register to fully hold the 64-bit multiplication result without overflow loss, preventing saturation and allowing exact accumulation. This avoids saturation logic and potential overflow issues with only 32-bit accumulator.
-2. Output only the lower 32 bits of the accumulator as required to maintain the interface. This lets the user handle overflow or higher bits if needed.
-3. Use synchronous reset on the clock edge only, avoiding asynchronous reset, which can improve timing and reduce complexity.
-4. Since the accumulator is 64 bits, the addition and register width are 64 bits, which is more natural for the product width, possibly simplifying synthesis and improving timing by eliminating overflow check logic.
-5. Keep the multiplier and adder combinational and register the result on clock edge.
-These changes improve precision, remove saturation overhead, and simplify the logic, potentially improving both timing and power by removing extra saturation logic and overflow detection.

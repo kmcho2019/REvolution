@@ -1,9 +1,0 @@
-To improve the performance and power metrics of the multiplying accumulator, we can pipeline the multiply-accumulate operation by inserting registers between the multiplier output and the adder input. This breaks the long combinational path through the multiplier and the 64-bit adder, enabling a higher clock frequency (improved timing).
-
-Specifically, we add a pipeline register to hold the product at the output of the multiplier, then add that registered product to the accumulator on the next clock cycle. This increases latency by one cycle, which is acceptable in many MAC applications.
-
-Additionally, synchronous reset remains in place. Since the accumulator is updated every cycle, clock gating opportunities could be implemented externally as needed, but are not included here to keep the design clean and generic.
-
-The output remains the lower 32 bits of the accumulator.
-
-This approach balances improved timing (lower WNS, higher Fmax) at the cost of one cycle latency and a small amount of area for additional registers, while slightly reducing peak switching activity in combinational logic. It also keeps the multiplier and adder in separated stages, which is good for synthesis and floorplanning.

@@ -1,9 +1,0 @@
-To optimize the existing FSM design for better power and performance without adding complexity, I will:
-
-- Introduce an enable signal for the shift register and bit_count updates so they only toggle in the RECEIVE state, reducing unnecessary switching in other states.
-- Refine the shift direction to shift right with the new bit entering MSB (since LSB is sent first, this is consistent), which can sometimes be better for synthesis tools and timing.
-- Maintain the binary-encoded FSM for compact area and clear state transitions.
-- Keep the done pulse generated synchronously and only asserted when a valid stop bit is detected.
-- Use non-blocking assignments carefully for clean synthesis.
-- Keep all resets synchronous and only assert them where necessary.
-- These small changes reduce toggling activity and can improve power and timing marginally without increasing area or design complexity.

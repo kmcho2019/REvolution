@@ -1,9 +1,0 @@
-To improve performance and power efficiency, I will reduce the carry propagation critical path by restructuring the BCD increment logic to propagate carries in a sequential manner using registers inside the clocked block, rather than nested combinational conditions. This approach introduces small intermediate registers that break the long combinational path and ensure increments for each digit only occur when necessary (gated by enable signals).
-
-I will keep the single 16-bit register for the 4-digit BCD counter but perform increment steps for each digit sequentially within the always block. The ena signals will continue to be combinational, indicating when the next digit should increment.
-
-This reduces the complexity of the combinational logic within one clock cycle, improving timing (wns), and also lowers dynamic power by avoiding unnecessary increments of upper digits when the carry is not generated.
-
-Area overhead is minimal as we only introduce a few temporary variables inside the sequential block.
-
-Overall, this solution balances simpler carry propagation with gating to optimize PPA.

@@ -1,9 +1,0 @@
-To implement the TopModule with the given interface, we will use a combination of combinational and sequential logic. The module will have a 7-bit global branch history register, a 128-entry table of two-bit saturating counters (Pattern History Table, PHT), and some control logic to handle prediction and training requests. The module will also have some additional logic to handle the asynchronous reset.
-
-The prediction logic will take the current pc and the global branch history register, hash them into a 7-bit index using XOR, and then use this index to access the PHT. The prediction will be based on the value of the saturating counter at the accessed index.
-
-The training logic will update the PHT entry based on the actual branch outcome and the misprediction status. If the branch was mispredicted, the training logic will also recover the global branch history register to its state immediately after the mispredicting branch completes execution.
-
-The control logic will handle the prediction and training requests, and ensure that training takes precedence over prediction when both occur in the same cycle.
-
-The sequential logic will be triggered on the positive edge of the clock, and the asynchronous reset will reset all the sequential elements to their initial state.

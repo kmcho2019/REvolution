@@ -1,9 +1,0 @@
-Refactor the design to use compact vector operations instead of per-bit generate loops for next state computation. Since Rule 90's next state equals the XOR of the left-shifted and right-shifted current state with zero padding at boundaries, we can implement next_state as:
-
-  next_state = (q << 1) ^ (q >> 1);
-
-where the vacant bits from the shifts implicitly become zeros. This removes all per-bit wiring and generate loops, significantly reducing area and improving timing.
-
-Implement the state register update with a clock enable that updates q either when load is asserted or always on each clock cycle (per original spec). To reduce toggling, keep it simple here but the enable signal could be refined to only update when necessary.
-
-Use an always block for sequential logic and an assign statement for next_state combinational logic. This structural approach is cleaner, easier to maintain, and more efficient for synthesis tools.

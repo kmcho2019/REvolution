@@ -1,7 +1,0 @@
-To design the serial2parallel module, we need to follow a step-by-step approach. First, we need to declare the module and its ports. Then, we can use a counter to keep track of the number of serial input data bits received. We also need to shift the received serial data into a register to form the parallel output. Once eight bits have been received, we can set the dout_valid signal to 1. We should also handle the reset condition to ensure that the module starts from a known state.
-
-We will use a 4-bit counter (cnt) to keep track of the number of serial input data bits received. When the counter reaches 8 (which is 1000 in binary, but since we're using a 4-bit counter, it will wrap around), we'll know that we've received 8 bits. However, since our counter is 4 bits, we actually check for the condition where cnt equals 8 by comparing it to 4'h8, but since our counter only goes up to 4'hF (15 in decimal), we will use the value 8 as 4'h8. 
-
-The serial data will be shifted into a register (dout_parallel) to form the parallel output. We'll use the din_valid signal to control the shifting and counting process. When din_valid is 1, we shift the new bit into dout_parallel and increment the counter.
-
-When the counter reaches 8, we set dout_valid to 1, indicating that the parallel output data is valid. After that, we need to reset the counter and clear dout_valid on the next clock edge to prepare for the next sequence of serial input data.

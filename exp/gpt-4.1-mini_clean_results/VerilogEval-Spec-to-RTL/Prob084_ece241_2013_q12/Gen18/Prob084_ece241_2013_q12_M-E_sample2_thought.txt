@@ -1,7 +1,0 @@
-Instead of shifting data into the MSB and then reversing bits for output selection, I'll implement the shift register so that data is shifted into the LSB side (shift_reg[0]) and shifted left on enable. In this way, Q[0] corresponds to shift_reg[0], Q[1] to shift_reg[1], and so on naturally, matching the ABC inputs as a direct index.
-
-This eliminates the need for reversing bits or complex indexing. The input bit S is shifted into the LSB each clock cycle when enabled, pushing existing bits toward the MSB (shift_reg[7]). The multiplexers select the output bit Z directly from shift_reg indexed by ABC, which acts as a 3-bit address.
-
-This approach reduces combinational logic by avoiding bit reversal and uses a shift-left register which is straightforward and efficient. The output selection is a simple direct-mapped multiplexer. The sequential logic triggers on the positive clock edge, and shifting happens only when enable is high, minimizing dynamic power consumption.
-
-The simplicity of shift-left with input at LSB also simplifies timing and routing compared to the original MSB-in approach.

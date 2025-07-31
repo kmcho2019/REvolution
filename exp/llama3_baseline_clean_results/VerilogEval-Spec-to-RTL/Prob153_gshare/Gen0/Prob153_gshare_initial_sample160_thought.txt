@@ -1,7 +1,0 @@
-To implement the gshare branch predictor, we will first create a 7-bit global branch history register. When a prediction is requested, the pc and global history are hashed using xor into a 7-bit index to access a 128-entry table of two-bit saturating counters. The predictor will output the predicted branch direction and state of the branch history register used to make the prediction. When training is requested, the predictor will update the pattern history table (PHT) based on the actual branch outcome and whether the branch was a misprediction. If the branch was mispredicted, the predictor will also recover the branch history register to the state immediately after the mispredicting branch completes execution.
-
-We will use two always blocks: one for sequential logic (e.g., updating the branch history register and the PHT) and one for combinational logic (e.g., making predictions). We will use non-blocking assignments (<=) for sequential logic and blocking assignments (=) for combinational logic.
-
-To handle the case where training and prediction of the same PHT entry happen at the same time, we will use a temporary variable to store the PHT entry state before training. This way, the prediction will see the PHT state before training.
-
-To ensure that training takes precedence over prediction when both occur in the same cycle, we will update the branch history register based on the training signals first, and then update it based on the prediction signals.

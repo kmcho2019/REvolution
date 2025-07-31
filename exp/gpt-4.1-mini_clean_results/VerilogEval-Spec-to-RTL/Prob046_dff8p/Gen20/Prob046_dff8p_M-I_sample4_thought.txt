@@ -1,7 +1,0 @@
-To improve PPA, reduce combinational logic in the clock enable by replacing the 8-bit XOR comparison with a simple equality check using the Verilog equality operator (==). This is more synthesizable and can generate simpler hardware, often implemented as XNOR gates followed by an AND reduction internally. Also, keep the synchronous reset and negative edge triggering as required.
-
-Eliminate redundant clk_en logic checking reset separately, as reset condition is explicitly checked in the always block; clk_en only needs to track when d != q. This simplifies clk_en and reduces logic complexity.
-
-This retains the power savings by clock enabling updates only when data changes but minimizes critical path logic to improve timing. Negative edge triggering and synchronous reset behavior remains unchanged.
-
-Additionally, keep the reset value parameterized for clarity and possible easy modifications. This optimizes power (less toggling), performance (simpler combinational logic for enable), and area (smaller logic), improving overall PPA balance.

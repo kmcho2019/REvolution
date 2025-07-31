@@ -1,5 +1,0 @@
-Implement a three-state FSM (IDLE, BYTE1, BYTE2) encoded with a 2-bit state register to track message progression. The FSM transitions from IDLE to BYTE1 when a byte with in[3]=1 is detected, then advances through BYTE2 and BYTE3 states with each incoming byte. After the third byte (BYTE3 state), assert 'done' for one cycle and return to IDLE. This approach explicitly models message byte positions as states rather than counting, improving code clarity and easing debugging.
-
-Use synchronous reset and register all outputs and state transitions on the clock's rising edge. Deassert 'done' by default at every clock cycle to ensure it pulses exactly one cycle. This method avoids any counters and relies on well-defined states, enhancing readability and potentially simplifying the logic synthesis.
-
-The input 'in' is sampled each cycle; FSM proceeds only when a new byte is assumed present (continuously on every clock). The FSM filters start byte detection strictly on 'in[3]' during IDLE state, thus ignoring bytes until the start of a message is found.

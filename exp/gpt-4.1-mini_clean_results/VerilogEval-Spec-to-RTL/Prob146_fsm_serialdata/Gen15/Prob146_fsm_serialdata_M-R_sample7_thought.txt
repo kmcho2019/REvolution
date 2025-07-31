@@ -1,9 +1,0 @@
-Refactor the FSM to use a Mealy machine style where the output `done` is combinationally derived from the current state and inputs instead of being registered. Implement the next state logic and outputs in a single combinational always block using non-blocking assignments for sequential registers, and minimize state register updates with synchronous reset.
-
-Change the data shift register to shift left with the new bit entering the least significant bit (bit 0) to align more naturally with LSB-first transmission and simplify reasoning about bit order.
-
-Use explicit state parameters instead of typedef enum for broader tool compatibility and clarity.
-
-Keep bit counter update synchronous with enable gating only during RECEIVE state. Reset counters only on reset to reduce toggling.
-
-Overall, this structure consolidates next state and output logic for clearer timing paths, uses a Mealy output for immediate done signal assertion, and shifts data in a more intuitive direction.

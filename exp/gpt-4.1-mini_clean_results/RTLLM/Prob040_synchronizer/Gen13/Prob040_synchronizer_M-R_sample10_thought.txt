@@ -1,7 +1,0 @@
-Refactor the design by using a two-step handshake style for the enable synchronization with separate stages for synchronization and enable latching:
-- Instead of registering en_data_reg directly on clk_a, create a pulse latch for data_en that captures its rising edge only.
-- Synchronize this pulse signal to clk_b domain using two flip-flops.
-- Use this synchronized pulse as an enable signal to latch data_reg (sampled on clk_a) into a clk_b domain register.
-- Use a transparent MUX-style always block to select between holding previous dataout or updating with latched data.
-- Use continuous assign for data_en pulse and the mux to cleanly separate logic.
-This approach emphasizes event-driven synchronization of data_en and controlled latching of data across clock domains, making the design conceptually simpler while preserving the original functional behavior.

@@ -1,9 +1,0 @@
-To simplify the FSM while maintaining functionality, we can use a straightforward counting approach for consecutive ones within a 3-bit state variable since we only need to count up to 7. The states represent the count of consecutive ones (0 to 6) plus one error state (7 or more ones).
-
-When a zero is input after 5 consecutive ones, we assert `disc` for one cycle; after 6 consecutive ones and a zero, assert `flag` for one cycle. If 7 or more ones occur, assert `err` continuously until reset or zero input.
-
-This simplification avoids extra output-only states by asserting outputs based on the current state combined with input on the next clock cycle, using registered signals for outputs to meet Moore machine output timing.
-
-The FSM resets to zero ones count (state 0). Outputs `disc`, `flag`, and `err` are one clock cycle delayed to assert after the detecting condition, matching the requirement that outputs are asserted for one full cycle beginning on the clock cycle after the condition occurs.
-
-This approach reduces the number of states and logic, uses just a 3-bit state register, and outputs are synchronous with no extra output states, making the FSM easier to implement and understand.

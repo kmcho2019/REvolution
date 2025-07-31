@@ -1,7 +1,0 @@
-The original design uses two separate always blocks triggered on opposite clock edges to update p and q. Although logically correct, dual-edge triggered always blocks are less synthesizable and can cause simulation mismatches depending on the tool.
-
-To refactor, we can implement the same behavior using a single always block triggered on the rising edge of clock combined with a register to hold the previous clock state to detect clock falling edges. On the rising edge of clock, p updates to input a as before. On detecting a falling edge (previous clock = 1, current clock = 0), we update q with the current p.
-
-This approach simulates dual-edge behavior in a single-edge triggered style, improving synthesis compatibility and ensuring stable timing. We keep outputs registered, and initial values undefined until clock events occur, matching waveform initial x values.
-
-This structure avoids separate always blocks for posedge and negedge, eliminating potential race conditions and making the design more robust while preserving the original functional intent.

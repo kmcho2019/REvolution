@@ -1,7 +1,0 @@
-Use vector slicing and shifts to compute each output more compactly:
-
-- For out_both, align the input shifted left by 1 bit (with 0 at LSB) to represent the left neighbor and AND it with the input. Set out_both[3] = 0 since in[3] has no left neighbor.
-- For out_any, align the input shifted right by 1 bit (with 0 at MSB) to represent the right neighbor and OR it with the input. Set out_any[0] = 0 since in[0] has no right neighbor.
-- For out_different, create a rotated version of the input vector by rotating left by 1 bit to represent neighbors to the left, and XOR it with the input vector for wrap-around difference.
-
-This approach avoids manual indexing and concatenations and leverages vector operations and bit manipulations for a cleaner, scalable design.

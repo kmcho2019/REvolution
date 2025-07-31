@@ -1,5 +1,0 @@
-Instead of implementing the shift register as a single vector and then using inverted indexing, I will explicitly instantiate 8 individual D flip-flops, each representing Q[0] to Q[7]. The shifting will be performed by connecting each flip-flop's input to the previous flip-flop's output, with Q[0]'s input driven by S. This way, Q[0] is the first flip-flop shifting in the MSB (S). 
-
-For the multiplexer selecting Z based on inputs A, B, and C, I will build a 3-level 2:1 multiplexer tree to explicitly choose the corresponding Q[i], which also makes the hierarchy and data flow very clear, showing exactly how random access is accomplished. This structural approach provides clear control and facilitates easier debugging, synthesis mapping, and conceptual understanding. 
-
-This approach uses explicit flip-flops and explicit muxes instead of vector indexing or arithmetic on the select signals, making the logic straightforward and fully synthesizable while adhering strictly to the problem's naming convention for Q[i].

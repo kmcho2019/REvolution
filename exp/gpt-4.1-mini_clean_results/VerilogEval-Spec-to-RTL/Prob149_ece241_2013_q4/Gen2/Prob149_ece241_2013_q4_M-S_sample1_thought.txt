@@ -1,7 +1,0 @@
-We can simplify by directly encoding the current water level from the sensor input s into a 2-bit level code. On each clock, we detect if the sensor state changed; if so, we store the previous water level before updating the current level. The supplemental valve dfr is asserted if the water level has increased compared to that stored previous level.
-
-Outputs fr0, fr1, fr2 are assigned directly from the current water level per the problem's table.
-
-On reset, we set current and previous levels to the lowest (below s0), and assert all valves (including dfr), as if water level was low for a long time.
-
-This approach uses just two 2-bit registers (prev_level and curr_level) and one register for previous sensors to detect changes, which is simpler and clearer.

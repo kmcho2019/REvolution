@@ -1,9 +1,0 @@
-Novel approach using a single register with speculative updates and rollback tracking:
-1. Use a single 32-bit history register that always contains the correct committed state
-2. Track speculative updates separately in a temporary variable
-3. On prediction (predict_valid), compute the speculative next state but don't commit it yet
-4. On misprediction (train_mispredicted), directly load the correct history from train_history + train_taken
-5. Only commit speculative updates when we know they're correct (next cycle without misprediction)
-6. This eliminates the need for shadow registers while maintaining correct rollback behavior
-7. Reset clears the history register
-8. Output always shows the committed history state

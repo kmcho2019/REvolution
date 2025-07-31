@@ -1,9 +1,0 @@
-To improve the PPA of the original BCD adder module, I will optimize the correction addition step by replacing the manual bitwise ripple-carry adder for adding 6 with a simple combinational logic implementation that directly computes the corrected sum bits without carry chaining. This can be done since the addition is always of a fixed number (6), enabling us to rewrite the sum bits as Boolean expressions with the correction_needed signal.
-
-By implementing the correction addition as combinational logic (using XOR/AND/OR expressions) rather than a ripple carry adder, we reduce the critical path length, improving the maximum clock frequency (performance). This also reduces switching activity and area by eliminating intermediate carry signals and registers, leading to lower power and smaller area.
-
-The correction_needed detection logic remains the same since it is already efficient.
-
-Finally, the carry-out (Cout) is calculated by OR-ing the original 5th bit carry and any carry generated during correction, computed from the correction logic. Because the correction logic is simplified, the carry generation can be determined directly without a ripple carry.
-
-This approach balances minimal combinational delay, reduced logic complexity, and minimized switching, improving PPA over the original version while maintaining full functional correctness for BCD addition.

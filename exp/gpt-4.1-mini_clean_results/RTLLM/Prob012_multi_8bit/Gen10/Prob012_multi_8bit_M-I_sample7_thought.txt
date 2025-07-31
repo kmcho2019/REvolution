@@ -1,9 +1,0 @@
-To improve power and area without sacrificing the combinational nature of the multiplier, I will change the summation from a balanced adder tree of 8 full 16-bit adders into an iterative approach that accumulates partial products sequentially. This approach:
-
-- Avoids instantiating multiple large adders in parallel, reducing switching and area.
-- Performs a single 16-bit addition for each bit of B, gated by the bit itself, thus skipping unnecessary additions.
-- Uses a combinational always block with a for-loop to sum partial products, yielding one addition per iteration in a sequential manner inside the combinational block.
-
-This method retains a purely combinational design (no clocks), but reduces the number of simultaneous adders operating and thus lowers power and area by minimizing switching activities. The output remains 16-bit wide, and the product is correctly computed as A multiplied by B using shift-and-add.
-
-This tradeoff reduces parallel hardware and switching, improving power and area metrics at a modest cost of slightly increased combinational delay, which is acceptable for typical 8-bit multiplier use cases.

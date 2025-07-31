@@ -1,9 +1,0 @@
-The key issue is that prev_in is initialized to zero on reset, causing missed detections for falling edges immediately after reset if input bits start at 1. To fix this, we need to initialize prev_in to the input value on reset, so the first comparison after reset is valid and no false transitions are detected.
-
-Since reset is synchronous, on the clock edge where reset is high, set prev_in <= in instead of zero. This ensures prev_in tracks the current input after reset, avoiding incorrect edge detection on the next cycle.
-
-The rest of the logic remains unchanged: detect falling edges as prev_in & ~in and latch those in the capture register.
-
-This minimal fix aligns the design with the intended functionality, preserves minimal registers, and avoids glitches or false detections caused by improper initialization.
-
-Output remains assigned as capture.

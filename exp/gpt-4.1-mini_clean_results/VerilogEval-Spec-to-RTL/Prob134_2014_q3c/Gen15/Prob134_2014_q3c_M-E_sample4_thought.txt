@@ -1,7 +1,0 @@
-Implement the FSM next state and output logic by encoding the state transitions in a small combinational ROM (lookup table). The present state y and input x form a 4-bit address to this ROM, which outputs the 3-bit next state and 1-bit output z simultaneously. This approach makes the logic data-driven and easily extensible.
-
-The 4-bit address combines {y[2:0], x}, enabling direct indexing of next state and output from a 16-entry ROM. For undefined states (i.e., not in the provided table), default next state and output values are zero to simplify logic and avoid glitches.
-
-The outputs Y0 and z are directly taken from the ROM output bits, where the ROM output is 4 bits: [z, Y[2], Y[1], Y[0]] for convenient packing.
-
-This modular approach keeps FSM logic neatly encapsulated in a single combinational block, enabling efficient synthesis as a small ROM or distributed LUTs, and easy maintainability if the FSM changes.

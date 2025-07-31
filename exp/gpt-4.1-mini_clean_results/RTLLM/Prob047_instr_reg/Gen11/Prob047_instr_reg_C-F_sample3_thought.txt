@@ -1,5 +1,0 @@
-Fuse the clean single always block structure with asynchronous active-low reset from Example 1 and the separated register update clarity from Example 2 by using one always block triggered on posedge clk and negedge rst. Inside, handle reset first, then update ins_p1 and ins_p2 independently with explicit if statements controlling each register update based on fetch values. This avoids redundant always blocks and reset logic, improves readability, and maintains proper reset behavior.
-
-Additionally, outputs remain purely combinational assignments for zero logic delay. Using one always block simplifies synthesis and may reduce area and power by sharing reset logic and clock domain boundary.
-
-This fusion keeps non-blocking assignments for correct sequential behavior, reduces clock gating complexity but inherently minimizes unnecessary register toggling by updating only on fetch conditions, combining the best of both examples with clean, maintainable style and optimal PPA tradeoffs.

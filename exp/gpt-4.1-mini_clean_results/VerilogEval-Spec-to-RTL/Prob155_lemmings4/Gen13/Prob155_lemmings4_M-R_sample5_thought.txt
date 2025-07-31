@@ -1,7 +1,0 @@
-Refactor the FSM to separate the state and direction registers updates clearly and reduce next-state combinational logic by splitting logic into smaller always_comb blocks. Instead of using a combined case statement for state transitions and direction, split next_state, next_direction, and next_fall_timer computations into separate always_comb blocks to improve readability and potentially synthesis friendliness.
-
-Use individual wires for bump conditions to directly compute the next direction combinationally only in WALK state. Use a registered fall timer updated separately with a saturated increment only in FALL state.
-
-Maintain a single asynchronous reset with separate always_ff blocks for state, direction, and fall timer registers. Derive outputs purely from registered signals.
-
-This approach makes the dataflow clearer, potentially easing optimization and debugging, while keeping the exact FSM behavior and output Moore encoding intact.

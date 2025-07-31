@@ -1,9 +1,0 @@
-The original design implements an adder-subtractor with a zero flag. It utilizes a parameterized module for the Brent-Kung adder and another for the ALU. However, it can be refactored to simplify the logic and improve readability. One approach is to eliminate the need for the `brent_kung_adder` module since it simply performs a standard addition, which can be directly implemented using the `+` operator in Verilog.
-
-Another potential improvement is to directly compute the result of the subtraction by using the two's complement representation of `b` when `do_sub` is high. This can be achieved by using a conditional operator (`?:`) to select between `b` and its two's complement (`~b + 1`) based on the value of `do_sub`.
-
-The zero flag can be computed directly from the result of the addition/subtraction operation. Instead of using a separate `assign` statement for the `result_is_zero` signal, it can be computed within the same conditional statement that calculates the `out` value.
-
-To further simplify the design, the `alu` module can be eliminated, and its functionality can be directly implemented within the `TopModule`. This reduces the number of modules and improves the overall structure of the design.
-
-The refactored code aims to maintain the same functionality while improving the design's clarity, simplicity, and potentially its PPA metrics by reducing the number of modules and using more direct implementations of the required operations.

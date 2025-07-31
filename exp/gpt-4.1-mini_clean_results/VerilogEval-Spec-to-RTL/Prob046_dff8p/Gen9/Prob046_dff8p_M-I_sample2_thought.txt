@@ -1,9 +1,0 @@
-To optimize power and area further while maintaining the same functionality, I will implement the 8 D flip-flops individually as separate always blocks triggered on the negative edge of clk. This allows synthesis tools better granularity to optimize each bit, potentially enabling clock gating or bit-wise enable optimizations internally.
-
-Additionally, to reduce toggling during reset, I will implement a load-enable signal that activates only when reset is asserted or the data changes. This can reduce unnecessary toggling and power consumption when input is stable.
-
-Also, I will replace the 8-bit register with 8 single-bit flip-flops with synchronous reset loading 0x34. This may marginally increase area but allow finer control and power optimization during synthesis.
-
-Finally, I will keep the synchronous reset and negedge clk trigger as per requirements.
-
-This trade-off favors power optimization by avoiding toggling all bits unconditionally each negedge clk, and allows the synthesis tool to optimize flip-flops individually.

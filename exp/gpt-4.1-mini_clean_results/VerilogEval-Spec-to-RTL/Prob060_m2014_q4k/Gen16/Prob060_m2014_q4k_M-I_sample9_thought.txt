@@ -1,7 +1,0 @@
-To optimize for better power, area, and potentially performance, the shift register can be implemented as a single 4-bit vector register updated inside a single always block. This removes multiple module instantiations and generate loops, simplifying logic and easing synthesis optimizations like register packing and reduced routing. 
-
-Synchronous active-low reset will be retained inside the always block. The shift operation shifts the vector left by one bit each clock cycle, feeding the input into the LSB. Output is taken from the MSB bit of the register vector.
-
-This approach significantly reduces area by using one register vector instead of four separate flip-flops, improves power by reducing toggling and wiring overhead, and potentially improves timing by reducing logic depth and routing complexity.
-
-Thus, the revised TopModule will be a simple single always block with a 4-bit register, a synchronous active-low reset, and output connected to the last bit of the shift register.

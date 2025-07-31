@@ -1,9 +1,0 @@
-The original design uses a combinational always block with a case statement, which is functionally correct and efficient. To improve power, performance, and area slightly, we can replace the always block with a continuous assignment using a combinational function or a multiplexer expression. This can allow synthesis tools to infer optimized multiplexer trees or use dedicated mux cells.
-
-Specifically:
-- Use a function inside a continuous assignment to implement the 9-to-1 mux with default output.
-- This removes the need for a reg output and an always block, reducing potential inferred flip-flops or latches.
-- The code becomes cleaner and may enable the synthesis tool to perform better mux tree optimization.
-- For inputs 9-15 (sel>8), output all ones (16'hFFFF).
-
-This approach should maintain the same functionality while potentially reducing area and power slightly and improving timing by enabling better mux inference.

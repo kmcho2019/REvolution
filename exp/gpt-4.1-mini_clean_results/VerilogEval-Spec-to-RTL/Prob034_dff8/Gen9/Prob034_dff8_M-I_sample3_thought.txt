@@ -1,5 +1,0 @@
-To optimize for power and potentially reduce unnecessary toggling, I will add a clock enable signal internally that only updates the output register `q` if the input `d` changes from its current stored value. This conditional update reduces switching activity when the input is stable, lowering dynamic power consumption. The timing and functionality remain the same, capturing `d` on the rising edge of `clk` but only when the input changes.
-
-The change does not add complexity in terms of clock domains or asynchronous logic, maintaining good timing and area efficiency while enhancing power characteristics.
-
-This approach assumes that the toolchain can infer clock enable from the conditional inside the clocked always block, which most modern synthesis tools support.

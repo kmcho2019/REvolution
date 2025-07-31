@@ -1,9 +1,0 @@
-The design idea is to implement a finite state machine (FSM) with several states to control the motor. The FSM has an initial state (A) where it stays as long as the reset signal is asserted. After the reset signal is de-asserted, it moves to a state where it sets the output f to 1 for one clock cycle. Then, it enters a state where it monitors the x input, waiting for the sequence 1, 0, 1. Once this sequence is detected, it sets the output g to 1 and enters a state where it monitors the y input, waiting for it to become 1 within two clock cycles. If y becomes 1 within two clock cycles, it stays in this state with g = 1. If y does not become 1 within two clock cycles, it enters a state where g is set to 0.
-
-The FSM can be implemented using a Moore machine, where the outputs are a function of the current state only. The states can be encoded using a binary counter. The FSM will have several states: 
-- State A (initial state, reset)
-- State B (set f to 1 for one clock cycle)
-- State C (monitor x for sequence 1, 0, 1)
-- State D (set g to 1, monitor y)
-- State E (g = 1 permanently)
-- State F (g = 0 permanently)

@@ -1,9 +1,0 @@
-To implement the 32-bit Galois Linear Feedback Shift Register (LFSR), we first need to understand the basic operation of an LFSR and how the taps are used. In this specific implementation, the taps are at bit positions 32, 22, 2, and 1. This means that the bits at these positions will influence the new value of the least significant bit (LSB) during each clock cycle. 
-
-The logic for updating each bit in the LFSR involves shifting all bits to the right and then applying the feedback to the new LSB based on the taps. Specifically, the feedback will be the XOR of the original LSB (q[0]) and the bits at the tap positions (q[31], q[21], q[1], q[0]). 
-
-However, given the positions provided (32, 22, 2, 1), we must note that the position 32 is out of range for a 32-bit register since counting starts at 0, making the highest bit position 31. Therefore, we will assume the taps are at positions 31, 22, 2, and 1, which seems to be the intended configuration based on typical LFSR designs.
-
-During reset, all bits should be set to 0 except for the LSB, which should be set to 1, thus initializing q to 32'h1. The reset should be synchronous, meaning it only affects the state at the next rising clock edge when reset is high.
-
-We will implement this using a combination of bitwise operations and conditional statements in Verilog to accurately model the behavior described.

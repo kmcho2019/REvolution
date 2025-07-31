@@ -1,9 +1,0 @@
-To optimize the original design for better PPA (Timing, Power, Area), we can merge the digging state into the mode encoding rather than using a separate digging register. This reduces the number of registers from three to two, cutting flip-flop usage and simplifying control logic. We'll encode mode as a 2-bit state with explicit states: walking-left, walking-right, digging-left, digging-right, falling (single falling state, direction tracked implicitly by walking states). This reduces combinational logic by directly using state encoding to determine output and direction, eliminating extra direction register and digging flag.
-
-The priority remains fall > dig > bump. When falling, direction is remembered in the last walking or digging state (left or right encoded). After falling ends, mode returns to the corresponding walking state. Digging occurs only on ground, can start if dig=1 and walking; digging ends on ground=0 transitioning to fall. Bumps only affect walking states and cause direction reversal. Bumping during falling or digging has no effect.
-
-This encoding reduces flip-flops (2 bits for mode only), simplifies next-state logic with a single register, and outputs are purely based on state encoding, improving area and potentially timing due to simpler logic. Power is reduced by fewer toggling registers. 
-
-The asynchronous reset directly sets mode to walking-left. The design remains Moore.
-
-This optimization trades explicit direction and digging bits for a richer mode state encoding, improving integration of behavior and hardware efficiency.

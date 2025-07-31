@@ -1,9 +1,0 @@
-To implement the TopModule, we need to consider two main scenarios: updating the branch history when a prediction is made and rolling back the state when a misprediction occurs. 
-
-When a prediction is made (predict_valid = 1), we shift in the predict_taken value from the LSB side to update the branch history. 
-
-When a misprediction occurs (train_mispredicted = 1), we load the branch history register with the history after the completion of the mispected branch, which is the history before the mispected branch (train_history) concatenated with the actual result of the branch (train_taken). 
-
-We also need to handle the case where both a prediction and a misprediction occur at the same time, in which case the misprediction takes precedence. 
-
-We will use a 32-bit register to store the branch history and update it accordingly based on the input signals. We will also use an asynchronous reset (areset) to reset the history counter to zero.

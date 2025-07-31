@@ -1,9 +1,0 @@
-The original design is already clean and minimal for positive edge detection on each bit of the vector. One small optimization opportunity is to avoid storing pedge as a register and instead make it a combinational output based on the stored previous input and current input. This way, we save one clock cycle of latency and remove one register, reducing area and power. 
-
-Because the requirement states that pedge should be "set the cycle after a 0 to 1 transition occurs," this means pedge is registered output reflecting the previous cycle's edge. To meet this while reducing registers, we can register only prev_in and generate pedge combinationally from (prev_in, in).
-
-Removing the pedge register reduces area and toggling power. Also, since prev_in is registered and pedge output is combinational, timing may improve due to one less flip-flop stage.
-
-Hence, the improved solution registers only prev_in; pedge is computed as (~prev_in) & in combinationally.
-
-This meets the functional specification and improves PPA: lower area, less power, and potentially improved timing.

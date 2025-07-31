@@ -1,9 +1,0 @@
-Instead of using direct concatenation to perform rotations, split the 100-bit register into two smaller segments: for example, a 50-bit upper half and a 50-bit lower half. Perform the left or right rotation by shifting these two halves accordingly and swapping the boundary bit between them to realize the rotation. This approach leverages segment manipulation and minimizes indexing complexity.
-
-On clock edge:
-- If load is high, load data into the full 100-bit register.
-- Else if ena is 2'b01 (rotate right), shift both halves right by 1 bit, taking care to bring the LSB of the whole register as MSB and connecting bits between halves accordingly.
-- Else if ena is 2'b10 (rotate left), shift both halves left by 1 bit similarly, wrapping the MSB bit around.
-- Else retain q.
-
-This architectural approach emphasizes modular manipulation of sub-registers and careful boundary bit management instead of direct concatenation.

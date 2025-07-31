@@ -1,7 +1,0 @@
-To simplify the design while preserving the intended behavior, use a single always block triggered on the positive clock edge. Both p and q are registers updated synchronously. Since q needs to capture the previous value of p, simply assign q <= p in the same clock edge but use non-blocking assignments so that q receives p's old value before update.
-
-Update p based on input a and the current states of p and q from the previous clock cycle: p <= a | (p & q).
-
-Initialize p and q to 0 at start to avoid unknown states.
-
-This approach avoids local variables and race conditions, ensuring a clean, synchronous sequential circuit reflecting the given waveform.

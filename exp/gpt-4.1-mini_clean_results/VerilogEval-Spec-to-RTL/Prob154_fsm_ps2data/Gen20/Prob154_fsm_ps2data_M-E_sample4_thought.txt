@@ -1,5 +1,0 @@
-Implement the FSM and data storage with a shift register approach: when the FSM detects the start byte (in[3]=1), it sets a counter to 2 and shifts in this first byte to the highest byte of a 24-bit register. For subsequent two bytes, it shifts the existing bytes left by 8 bits and inserts the new byte in the least significant 8 bits, decrementing the counter each time. When the counter reaches zero (meaning three bytes collected), assert done for one cycle and hold the message in out_bytes. The FSM can be encoded as a simple idle or collecting state based on the counter.
-
-This approach treats message assembly as shifting bytes through a register, simplifying logic and enabling a compact implementation. The done pulse is tied to the counter reaching zero right after shifting in the third byte, providing a clean one-cycle pulse. This also implicitly discards bytes until sync is found without an explicit WAIT_SYNC state by using the counter as the main FSM driver. Reset synchronously clears everything.
-
-This design emphasizes a data-driven FSM state based on a simple counter rather than multiple named states, streamlining control and datapath.

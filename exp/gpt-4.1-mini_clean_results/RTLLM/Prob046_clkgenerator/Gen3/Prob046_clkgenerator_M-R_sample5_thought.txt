@@ -1,7 +1,0 @@
-To avoid initial and forever delays which can be problematic for synthesis and testbench compatibility, we can use an always block triggered by a dummy free-running counter that increments every time unit. This counter will count up to half the PERIOD and then toggle the clock. This approach models a clock generator using purely synthesizable constructs: a register counter incremented on a "dummy" clock (simulated here using a always block with a delay), and the clock toggling when the counter reaches half PERIOD. 
-
-Though this method is still simulation-driven, it avoids the forever delay syntax and uses a more procedural approach. Alternatively, we can use an always block with a posedge of an internal tick signal, but since no external clock is given, this solution uses a nonblocking toggle driven by a counter with delays. 
-
-This preserves the initial clk=0, toggles clk every half PERIOD, but uses an always block and a counter instead of initial + forever, improving synthesis friendliness and clarity.
-
-(Note: In a real environment, a clock is usually generated from an input clock, but since none is given, we model the clock by toggling it every #(PERIOD/2) inside an always block. This technique is a structured alternative to initial+forever.)

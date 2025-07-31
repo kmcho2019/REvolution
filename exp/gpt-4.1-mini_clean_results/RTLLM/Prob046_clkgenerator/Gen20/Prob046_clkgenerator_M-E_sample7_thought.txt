@@ -1,5 +1,0 @@
-Instead of using delays inside an always block, use an internal counter driven by an input clock or a known time base (e.g., a simulation time tick or a fast clock) to toggle the output clock when the counter reaches half the PERIOD. Since no input clock is specified, implement a self-driven clock using an initial block that advances time explicitly and toggles the clock. This avoids continuous delays in always blocks and better models periodic toggling in simulation.
-
-Alternatively, since the task does not specify an input clock, create a self-contained clock generator using a for loop within an initial block that toggles the clock at every half-period by waiting with delays. This generates a well-defined periodic clock without relying on non-synthesizable always blocks with delays and ensures more deterministic behavior during simulation.
-
-This approach models the clock generation as a sequence of events rather than a forever loop, which may be easier to simulate consistently and avoids potential pitfalls of infinite always blocks with delays.

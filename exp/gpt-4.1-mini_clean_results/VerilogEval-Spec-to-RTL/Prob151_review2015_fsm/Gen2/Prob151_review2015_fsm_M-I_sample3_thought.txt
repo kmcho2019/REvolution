@@ -1,9 +1,0 @@
-To correct the FSM, ensure the shift register for pattern detection shifts in data continuously on every clock cycle (except reset), regardless of the state, so overlapping patterns can be detected without missing any occurrences.
-
-Also, assign output signals (`shift_ena`, `counting`, `done`) based on the current state (not the next state), ensuring outputs are asserted only while in their respective states, avoiding off-by-one cycle issues.
-
-The shift counter should count cycles in SHIFT state from 0 to 3, providing exactly 4 cycles of `shift_ena`. After that, transition to COUNTING, assert `counting` until `done_counting` input is high, then assert `done` until acknowledged by `ack` input.
-
-Keep the synchronous reset logic and proper state transitions as before.
-
-This approach ensures continuous pattern detection, correct output timing aligned to states, and meets the problem requirements accurately.

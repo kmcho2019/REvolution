@@ -1,9 +1,0 @@
-Implement a three-state FSM: WAIT_START (idle, waiting for start bit=0), RECEIVE_BYTE (receive exactly 8 data bits LSB first), and VALIDATE_STOP (check the stop bit=1). Use a shift register that shifts in the input bit at LSB position so that the first bit received ends up in bit 0, matching LSB-first protocol naturally.
-
-On reset, FSM starts in WAIT_START. In WAIT_START, when a start bit (0) is detected, transition to RECEIVE_BYTE and reset bit counter. In RECEIVE_BYTE, on each clock, shift in 'in' at LSB (data_reg <= {data_reg[6:0], in}) and count bits. After 8 bits, transition to VALIDATE_STOP. 
-
-In VALIDATE_STOP, check if 'in' is 1. If yes, assert done for one cycle and go back to WAIT_START. If stop bit incorrect (in=0), stay in VALIDATE_STOP, waiting for 'in' to become 1, then return to WAIT_START, effectively synchronizing the error recovery on the stop bit.
-
-This approach is simpler with three states and uses the shift register in a left-shift fashion to align bits LSB-first. The done pulse asserts only on correct frame reception. All transitions and outputs are synchronous with the clock and reset.
-
-This design also avoids the error state by staying in VALIDATE_STOP until stop bit correct, simplifying the FSM and clearly indicating the protocol phases.

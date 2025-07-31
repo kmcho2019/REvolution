@@ -1,9 +1,0 @@
-Refactor the design by splitting the state machine and counters into separate always blocks for clearer and more reliable timing. Use a simple synchronous state machine with registered states and clearly separate the state transitions from counter updates.
-
-Implement the pattern detection as a simple shift register continuously shifting in data regardless of state, but only act on the detected pattern in the SEARCH state. Once detected, transition to LOAD_DELAY to shift in delay bits MSB-first over 4 clock cycles, tracked by a separate counter.
-
-When entering COUNT, initialize the counters explicitly, with the cycle counter counting down from 999 and the segment counter counting down from (delay + 1). Use the segment counter to represent the current remaining time output directly.
-
-Split the counting process into a dedicated always block that counts the cycles and segments and generates the counting signal and count output. When counting finishes, go to WAIT_ACK, assert done, and wait for ack to return to SEARCH.
-
-This approach improves correctness by having clear initialization on state transitions, avoids mixing state transitions and counter logic in one block, and uses explicit counting and output logic. The pattern register updates continuously to simplify timing, and outputs are registered synchronously for stable timing.

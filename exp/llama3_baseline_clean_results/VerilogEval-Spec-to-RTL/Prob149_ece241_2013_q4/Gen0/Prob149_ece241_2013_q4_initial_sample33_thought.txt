@@ -1,7 +1,0 @@
-To implement the TopModule, we can use a finite state machine that changes its state based on the current sensor inputs and the previous state. We need to track the previous state of the sensors to determine whether the water level is increasing or decreasing. Based on the sensor inputs and the previous state, we can determine the current state of the flow rate control. The state machine can be implemented using a case statement that checks the current sensor inputs and the previous state, and then updates the output signals accordingly.
-
-We can use a variable 'prev_s' to track the previous state of the sensors. We update 'prev_s' at every clock cycle with the current value of 's'. This allows us to compare the current sensor inputs with the previous sensor inputs to determine the direction of the water level change.
-
-The output signals 'fr2', 'fr1', 'fr0', and 'dfr' can be updated based on the current state of the sensors and the previous state. If the water level is above the highest sensor, all output signals are deasserted. If the water level is below the lowest sensor, all output signals are asserted. For the intermediate states, we assert the output signals according to the table.
-
-In case of a reset, we reset the state machine to a state equivalent to if the water level had been low for a long time, i.e., all sensors are deasserted, and all output signals are asserted.

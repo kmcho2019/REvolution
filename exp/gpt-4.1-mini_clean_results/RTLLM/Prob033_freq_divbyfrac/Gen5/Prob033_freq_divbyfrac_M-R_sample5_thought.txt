@@ -1,7 +1,0 @@
-Refactor the 3.5x fractional frequency divider by explicitly generating two internal clock signals running at the doubled input clock rate, each representing one phase: one aligned with the rising edge of clk (clk_a), the other delayed by half a clock period (clk_b). We achieve this by incrementing a counter on the positive edge of clk and toggling clk_a and clk_b at different counts to produce uneven cycle lengths (4 and 3 counts).
-
-The counter counts from 0 to 6 (7 counts total), representing half cycles. clk_a toggles to create a waveform with 4 high half cycles and 3 low half cycles, while clk_b toggles with inverted timing, delayed by half a clock period relative to clk_a.
-
-Finally, clk_div is obtained by OR-ing clk_a and clk_b, combining the two phase-shifted clocks to yield a uniform 3.5x divided clock with improved duty cycle.
-
-This design uses synchronous logic with a single posedge clk always block and a reset, avoids mixed-edge always blocks, and clearly separates the generation of intermediate clocks and their combination, improving readability and synthesis compatibility.

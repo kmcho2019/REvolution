@@ -1,8 +1,0 @@
-To implement the TopModule with a gshare branch predictor, we need to follow these steps:
-- Create a 7-bit global branch history register to keep track of branch history.
-- Implement a 128-entry table of two-bit saturating counters, which will be indexed by a 7-bit value hashed from the 7-bit pc and 7-bit global history.
-- When a prediction is requested, use the hashed index to access the corresponding counter in the table and determine the predicted branch direction.
-- When a prediction is made, update the global branch history register at the next positive clock edge.
-- When training is requested, update the corresponding counter in the table based on the actual branch outcome and whether the branch was a misprediction.
-- If a branch is mispredicted, recover the global branch history register to the state immediately after the mispredicting branch completes execution.
-- Handle the case where training and prediction occur in the same cycle, giving precedence to training.

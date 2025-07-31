@@ -1,9 +1,0 @@
-Instead of computing all 512 cells' next states combinationally every cycle, we can pipeline the computation across multiple cycles to reduce the combinational logic and improve timing and area. We will implement a 64-stage pipeline, each stage computing the next states for 8 cells only.
-
-At each clock cycle, the pipeline shifts in either new load data or the latest state. Each pipeline stage holds an 8-cell state slice, and computes the next state for those 8 cells using the Rule 110 logic based on the previous stage's outputs and appropriate neighbor cells. The neighbors crossing stage boundaries are carefully handled by storing overlapping boundary bits between stages.
-
-On a load signal, the entire 512-bit input is loaded and broken into 8-cell chunks filling the pipeline registers immediately.
-
-This pipeline approach reduces the wide 512-bit combinational fanout into manageable 8-bit computations per cycle, trading off latency (it takes 64 cycles for a full system state to propagate through) for improved performance, area, and power. The output `q` is always the concatenation of all pipeline stage outputs, presenting the current state of the automaton.
-
-This architecture is novel compared to a fully combinational update in a single cycle and provides a design alternative with clear scaling and resource benefits.

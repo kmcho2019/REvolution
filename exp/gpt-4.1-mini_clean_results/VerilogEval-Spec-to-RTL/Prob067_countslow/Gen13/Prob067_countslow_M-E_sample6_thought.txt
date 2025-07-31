@@ -1,7 +1,0 @@
-Implement the decade counter using a one-hot encoded ring counter of length 10 for the counting states, which naturally cycles through 10 states with a single '1' bit moving through a 10-bit register. Use a 10-bit shift register to represent the state, where each bit corresponds to a count value from 0 to 9. The output q is obtained by encoding the active one-hot bit into the binary count value. 
-
-On reset, initialize the ring with the bit at position 0 set to 1. On each clock edge when slowena is high, rotate the one-hot bit to the next position to cycle through counts 0 to 9. This approach avoids explicit compare and increment logic, potentially reducing critical path delay and simplifying combinational logic for counting.
-
-The synchronous reset clears the register to the initial state. When slowena is low, the ring stays in the current state. The q output is generated combinationally from the one-hot ring state using a priority encoder.
-
-This architecture offers a different structural style than a binary counter, trades off a wider register for simpler next-state logic, and can have benefits in specific technology mapping scenarios.

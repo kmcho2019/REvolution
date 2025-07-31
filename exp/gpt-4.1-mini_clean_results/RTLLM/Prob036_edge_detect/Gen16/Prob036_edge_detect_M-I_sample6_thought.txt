@@ -1,9 +1,0 @@
-The existing design is already minimal and efficient, using a single register to synchronize input 'a' and combinational logic to detect edges, producing one-cycle pulses for rise and down signals.
-
-To optimize further for power and area without sacrificing performance:
-1. Implement clock enable gating on the 'a_reg' to update only when 'a' changes, reducing unnecessary toggling of the register and associated logic, thus saving dynamic power.
-2. This adds a simple comparator and an enable condition to the always block.
-3. Keep the output logic combinational for minimal latency.
-4. Maintain a clean reset path and correct non-blocking assignments.
-
-This approach reduces register switching activity, improving power efficiency with minimal area overhead (an additional comparator), and does not affect the timing critically.

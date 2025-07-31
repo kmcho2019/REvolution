@@ -1,7 +1,0 @@
-To fix the FSM, implement continuous pattern detection by shifting in data every clock cycle regardless of the state (except during SHIFT when data is consumed for duration). Detect the 4-bit pattern 1101 in a sliding 4-bit shift register continuously. When detected, transition to SHIFT state and assert shift_ena for exactly 4 cycles using a counter that counts from 4 down to 0 for clarity. Then move to COUNTING, assert counting until done_counting is high. Then assert done and wait for ack before returning to IDLE.
-
-Ensure synchronous reset properly initializes all registers and outputs. All outputs should be registered and only asserted in their respective states. Update the shift register continuously outside the SHIFT state (when not shifting in duration bits) to avoid missing overlapping patterns. During SHIFT, shift_ena is asserted and no pattern detection is done (i.e., shift_reg does not update with data in SHIFT). This prevents false detections during shifting duration bits.
-
-Use a 3-bit counter for shift_ena asserted for 4 cycles (count from 0 to 3). Only transition after 4 cycles completed. This removes off-by-one errors. Keep outputs zeroed by default to avoid glitches.
-
-This approach ensures accurate pattern detection, precise shift_ena timing, and proper handshaking with counting and done states.

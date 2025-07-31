@@ -1,9 +1,0 @@
-To create a novel architectural idea for the gshare branch predictor, we can explore the concept of a hybrid predictor that combines the strengths of both gshare and other prediction techniques. One potential approach is to implement a tiered predictor, where the gshare predictor is used as a primary predictor, and a secondary predictor, such as a bimodal predictor, is used to correct the primary predictor's mistakes.
-
-The primary gshare predictor will use the XOR of the program counter (pc) and the global branch history (gh) to index into a table of saturating counters. The secondary bimodal predictor will use a separate table of counters, indexed by the program counter alone. When a prediction is requested, both predictors will generate a prediction, and the final prediction will be determined by a meta-predictor that chooses between the two predictions based on their past performance.
-
-The meta-predictor will maintain a set of counters that track the accuracy of each predictor, and will use these counters to determine which predictor to trust for each prediction. This approach allows the predictor to adapt to changing branch behavior and to correct mistakes made by the primary predictor.
-
-The training logic will also be modified to take into account the secondary predictor and the meta-predictor. When a misprediction occurs, the primary predictor's table will be updated, and the secondary predictor's table will also be updated if the secondary predictor disagreed with the primary predictor. The meta-predictor's counters will be updated based on the accuracy of each predictor.
-
-This novel architectural idea combines the strengths of multiple prediction techniques to create a more accurate and adaptive branch predictor.

@@ -1,9 +1,0 @@
-The original implementation utilizes an always block to handle both the reset condition and the Johnson counter logic. To refactor this code, we can separate the reset logic from the counter logic for clarity and potentially improve area efficiency. 
-
-We will use a separate always block for handling the reset condition and another for the counter logic. The reset condition will be handled by an always block sensitive to the negative edge of the reset signal, while the counter logic will be handled by another always block sensitive to the positive edge of the clock signal. 
-
-However, Verilog's event-driven nature and the need to balance reset and clock sensitivity may lead us to reconsider and opt for a single always block that is sensitive to both the clock edge and the reset edge, which is the original approach. 
-
-An alternative approach could involve using a different structure, such as a combination of continuous assignment and always block for more complex designs, but for this specific case, maintaining the use of always blocks for both reset and clock sensitivity seems most appropriate.
-
-Another consideration could be using a state machine, but given the simplicity of the Johnson counter's next state logic, introducing a state machine might add unnecessary complexity. Therefore, the refactored code will aim to maintain the original's functionality while considering minor adjustments for readability or performance.

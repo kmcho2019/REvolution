@@ -1,5 +1,0 @@
-The original implementation matches the desired behavior exactly and is already minimal in logic and timing. However, the mismatch in simulation arises because the 'out' register is uninitialized, leading to unknown initial values and causing the first output sample to mismatch. Since the problem does not specify a reset, adding an explicit asynchronous reset is not allowed. 
-
-To fix the initial unknown problem while respecting the specification (no reset), we can add an initial block to initialize 'out' to zero. This ensures defined startup behavior in simulation without affecting synthesis (FPGA/ASIC tools typically ignore initial blocks or treat them as initialization). This is a common technique to avoid simulation mismatches due to unknown initial states. 
-
-No changes to the logic are needed, so PPA remains optimal.

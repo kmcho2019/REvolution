@@ -1,9 +1,0 @@
-To fix the code, we need to address the issues pointed out in the analysis. The main problem lies in the way the 'z' output is assigned within the case statement, which can lead to overwriting of the value due to the combinational nature of the always @(*) block. Additionally, the 'Y0' output should reflect the current state of the FSM, which is 'currentState[0]', not 'nextState[0]'. 
-
-To fix these issues, we will separate the logic for calculating 'nextState' and 'z' into two different always blocks. The 'nextState' calculation will remain in the always @(*) block to ensure it is always up-to-date. However, we will move the assignment of 'z' to a separate always @(posedge clk) block, where it will be synchronized with the clock edge and will not be overwritten. 
-
-We will also update the assignment of 'Y0' to directly reflect 'currentState[0]' instead of 'nextState[0]'. 
-
-Furthermore, to ensure the FSM starts in a defined state, we will add a reset signal and reset the 'currentState' to a known value (e.g., 3'b000) when the reset is asserted. 
-
-We will use non-blocking assignments in the sequential logic block to avoid any potential race conditions.

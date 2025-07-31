@@ -1,7 +1,0 @@
-Implement a 4-stage pipeline unsigned 8-bit multiplier that progressively calculates the product by accumulating shifted partial sums in stages. The pipeline stages are:  
-Stage 1: Register inputs and mul_en_in;  
-Stage 2: Generate and register partial products for multiplier bits [1:0];  
-Stage 3: Generate and register partial products for multiplier bits [3:2] and add to previous sum;  
-Stage 4: Generate and register partial products for multiplier bits [7:4] (processed two bits per cycle, combining their partial products with appropriate shifts) and add to cumulative sum from previous stage.  
-This staged accumulation reduces the combinational adder width at each cycle, balances the pipeline latency, and allows mul_en signal to be pipelined through 4 registers corresponding to stages. Output enable mul_en_out is taken from the most significant bit of the enable pipeline register. mul_out register holds the final product at the last stage.  
-This design trades pipeline latency for improved clock frequency by splitting the additions into smaller steps and carefully pipelining enables and partial products.

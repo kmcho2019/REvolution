@@ -1,9 +1,0 @@
-The original design is correct and clean but can be improved for better PPA by simplifying the sequential logic. The conditional update in the state register adds comparison logic and could negatively impact timing and power. Removing this condition and updating the state register every clock cycle (with synchronous reset) simplifies the flip-flop input path, potentially improving timing and reducing logic overhead.
-
-Furthermore, the FSM encoding and output logic are already efficient, so no changes are needed there.
-
-Therefore, the main improvement is to remove the conditional state update and always update the state register at every clock cycle (or reset). This simplification reduces logic, may improve power by eliminating the comparator, and eases synthesis.
-
-The rest of the structure remains the same: separate combinational next-state logic and sequential state flip-flops, use symbolic localparams for states, and a continuous assignment for the output.
-
-This results in a simpler, more power- and timing-efficient FSM without changing functionality.

@@ -1,7 +1,0 @@
-To create a frequency divider that divides the input clock frequency by odd numbers, we need to revisit the original description and implement a counter-based design that accurately reflects the problem statement. Our new module, `freq_divbyodd`, will utilize two counters, `cnt1` and `cnt2`, to track the rising and falling edges of the clock. Each counter will count up to `NUM_DIV - 1`, where `NUM_DIV` is the specified odd divisor value. 
-
-We will use two separate clock dividers, `clk_div1` and `clk_div2`, for positive and negative edges of the clock, respectively. These dividers will be toggled when the counters reach half of `NUM_DIV`. The final divided clock output, `clk_div`, will be derived by logically OR-ing `clk_div1` and `clk_div2` to account for both clock edges.
-
-To handle the active low reset signal, `rst_n`, we will initialize the counters and the clock divider outputs when `rst_n` is asserted. This ensures that the frequency divider starts from a known state after reset.
-
-The key to this design is the use of separate counters and clock dividers for rising and falling edges, along with the correct logic for toggling the divided clock output. By using this approach, we can accurately divide the input clock frequency by the specified odd number and meet the problem requirements.

@@ -1,9 +1,0 @@
-Implement the square_wave generator using a down-counter approach rather than an up-counter, which can simplify the toggle condition to when the counter reaches zero. Initialize the counter with the freq value, and decrement it every clock cycle. When the counter hits zero, reload it with freq and toggle wave_out.
-
-This approach avoids the need for subtracting 1 from freq in the comparison, potentially reducing comparator logic. Additionally, it naturally prevents counting when freq=0 because we can treat freq=0 as a special case to hold the output constant without toggling.
-
-Use an asynchronous active-low reset for design diversity and to illustrate an alternative reset style.
-
-Also, add a parameter to choose whether the output initial value is 0 or 1, improving usability.  
-
-Finally, implement the count and wave_out update logic inside a single always block using non-blocking assignments and protect toggling when freq=0 by not counting or toggling in that case.

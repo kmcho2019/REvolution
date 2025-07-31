@@ -1,5 +1,0 @@
-Implement the 4-digit BCD counter as a single 16-bit BCD value stored in a register, and perform the increment by treating the entire number as a combined BCD counter using a digit-wise increment and carry propagation loop inside a combinational block. This approach centralizes increment and carry logic in a single procedural block that generates the next-state for the 4 BCD digits simultaneously.
-
-In the sequential always block triggered by the clock, update the register with the computed next-state. The enable signals for digits 1 to 3 will be derived from the carry propagation flags calculated during increment. This method reduces nested conditionals and separates combinational increment logic from sequential register update, which can improve clarity and synthesis quality.
-
-The reset synchronously clears the entire 16-bit register to zero. This design avoids explicit nested ifs inside the clocked block by precomputing next-state combinationally, potentially enhancing timing by reducing critical path length inside the sequential block.

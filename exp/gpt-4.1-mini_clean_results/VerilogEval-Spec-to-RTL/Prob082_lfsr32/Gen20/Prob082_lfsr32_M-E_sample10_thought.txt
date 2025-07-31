@@ -1,7 +1,0 @@
-Instead of a conventional procedural shift-and-xor on the entire 32-bit register, I will implement the 32-bit Galois LFSR as a purely combinational next-state function followed by a register update on the clock edge. 
-
-I will create a wire vector `next_q` which is derived from the current state `q` by explicitly computing each bit's next value according to the Galois LFSR characteristic with taps at bits 32, 22, 2, and 1. The LFSR shifts right by one bit each cycle; each tapped bit is XORed with the feedback bit `q[0]`. Other bits just get the value from the next higher bit.
-
-The synchronous reset will set `q` to 1 on the rising clock edge. This explicit combinational assignment improves clarity about the exact relationship of each bit to the previous state. It may also help synthesis tools optimize XOR trees in parallel. This approach also avoids any conditional logic inside the clocked process, improving potential timing.
-
-This architecture is more structural and direct, making the Galois feedback pattern very clear for verification and optimization.

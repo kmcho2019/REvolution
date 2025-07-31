@@ -1,9 +1,0 @@
-To optimize for better PPA, I'll refine the FSM by encoding the state explicitly as a small state machine instead of using a 2-bit counter. Using a simple three-state FSM (IDLE, BYTE1, BYTE2) will clarify the design and potentially improve synthesis results by reducing logic complexity and transitions. 
-
-Also, I'll update the done signal in the state transition combinationally to avoid unnecessary toggling and to keep it registered for only one cycle immediately after the third byte is received.
-
-This approach also provides clearer state encoding, which might improve timing and power by reducing glitching on counter signals, and potentially reduce area by having only simple state registers.
-
-Synchronous reset remains. The done output is asserted for one cycle immediately after receiving the third byte and returns low otherwise.
-
-Overall, this state-encoded FSM improves clarity and may reduce power and area by minimizing signal toggling and simplifying combinational logic.

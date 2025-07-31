@@ -1,9 +1,0 @@
-Refactor the rotator by separating the combinational next-state logic from the sequential state update to improve clarity and synthesis optimization potential. Use a combinational always_comb block (or always @(*) in older Verilog) to compute next_q based on load and ena signals, then update q synchronously on the clock edge.
-
-This approach cleanly decouples combinational and sequential logic:
-- next_q is purely combinational logic for rotation or load,
-- q is updated synchronously each clock cycle,
-- omitting redundant q <= q assignment reduces toggling and power,
-- maintaining the rotation logic through vector slicing and concatenation for clarity and efficiency.
-
-This structure enables easier insertion of pipelining or further combinational optimization and enhances readability by explicit next-state calculation.

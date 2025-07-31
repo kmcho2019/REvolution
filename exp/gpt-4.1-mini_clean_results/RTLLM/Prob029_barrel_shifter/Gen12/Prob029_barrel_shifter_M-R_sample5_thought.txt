@@ -1,7 +1,0 @@
-Refactor the barrel shifter to explicitly implement the three-stage shifting using separate layers of 2-to-1 multiplexers (`mux2X1`). Each stage corresponds to a shift by 4, 2, or 1 bit controlled by `ctrl[2]`, `ctrl[1]`, and `ctrl[0]` respectively.
-
-First, define a `mux2X1` module that selects between two bits based on the `sel` signal. Then, in the barrel shifter, at each stage create a shifted version of the input (rotated left by 4, 2, or 1 positions) and use an array of muxes to select either the shifted or original bit depending on the control bit. The output of one stage feeds as input to the next.
-
-This approach explicitly models the multiplexer-based barrel shifter as described, matching the problem requirements, and produces a modular and understandable structural design.
-
-This also avoids arithmetic shifts and maintains the structural clarity by using combinational logic with continuous assignments.

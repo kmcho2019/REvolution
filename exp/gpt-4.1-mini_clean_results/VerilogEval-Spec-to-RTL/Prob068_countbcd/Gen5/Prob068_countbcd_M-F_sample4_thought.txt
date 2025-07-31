@@ -1,7 +1,0 @@
-The main issue is that the output `q` is assigned from the old digit registers inside the clocked block, which causes it to lag one cycle behind the internal count update. To fix this, assign `q` from the *next* digit values (next_thousands, next_hundreds, next_tens, next_ones) so the output reflects the updated count immediately on the clock edge.
-
-Similarly, the enable vector `ena` should also reflect the carry signals used to increment the upper digits, and thus must be registered synchronously and assigned directly from the combinational carry signals to indicate when each upper digit increments.
-
-This fix ensures the outputs correspond exactly to the updated counter values at each clock cycle, satisfying synchronous semantics and matching simulation expectations.
-
-The rest of the combinational and sequential logic remains correct, with carries cascading properly and synchronous reset clearing all digits and ena.

@@ -1,7 +1,0 @@
-I will refactor the FSM to use binary encoding instead of one-hot to reduce flip-flop count and slightly lower power and area. The done signal will be generated using a separate registered pulse that asserts exactly one cycle after the third byte, implemented by detecting the state transition from BYTE3 back to WAIT_FOR_START.
-
-This approach keeps synchronous reset and positive edge clocking but restructures the FSM as a two-bit binary state machine with defined named states. The next_state logic and done signal generation will be separated for clarity.
-
-The done pulse will be created by registering a 'done_pulse' signal triggered on the BYTE3-to-WAIT_FOR_START transition, ensuring a one-cycle pulse cleanly and explicitly. This explicit pulse generation avoids done toggling on other cycles.
-
-Overall, this implementation maintains functional correctness and timing but uses fewer flip-flops and clearer done pulse generation.

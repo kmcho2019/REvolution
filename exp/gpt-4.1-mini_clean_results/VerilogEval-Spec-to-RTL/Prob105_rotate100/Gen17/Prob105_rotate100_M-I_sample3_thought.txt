@@ -1,9 +1,0 @@
-To optimize the existing design for better power and timing without changing functionality, apply clock gating to the 100-bit register to avoid unnecessary toggling when no load or rotation occurs (ena == 2'b00 or 2'b11 and load == 0).
-
-Implement a simple clock enable (clk_en) signal that is asserted only when load is high or ena requests a rotation (2'b01 or 2'b10). This reduces switching activity in the flip-flops during idle cycles.
-
-Since the rotation is only by one bit, the existing concatenation approach is efficient and concise. Adding clock enable doesn't add latency and improves power by gating register updates.
-
-This approach provides a practical PPA improvement by lowering dynamic power and reducing toggle activity on the 100-bit register without increasing complexity or area noticeably.
-
-Note: Some synthesis tools recognize synchronous enable and convert it to clock gating internally, but explicitly coding the enable improves clarity and encourages better tool optimization.

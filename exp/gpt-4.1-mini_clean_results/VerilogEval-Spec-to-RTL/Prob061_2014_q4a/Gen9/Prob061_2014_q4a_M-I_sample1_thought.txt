@@ -1,5 +1,0 @@
-To further optimize for power, performance, and area (PPA), I will implement a clock enable (CE) signal derived from L or E that controls when the flip-flop updates. This avoids toggling the flip-flop on every clock edge unnecessarily, which can reduce dynamic power by allowing synthesis tools to infer clock gating or gated clock cells.
-
-Additionally, the mux selection can be rewritten to a single conditional expression for better synthesis friendliness. Holding Q explicitly with `Q <= Q;` is unnecessary in an enabled flip-flop; using a clock enable properly replaces that pattern and prevents redundant toggling.
-
-Overall, the design will be functionally identical, but more synthesis-friendly to help optimize power by minimizing state changes, while preserving performance and area. This leverages common FPGA/ASIC design practice of adding clock enable signals to flip-flops.

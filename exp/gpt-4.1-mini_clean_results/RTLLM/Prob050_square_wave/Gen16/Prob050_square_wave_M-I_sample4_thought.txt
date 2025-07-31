@@ -1,7 +1,0 @@
-To optimize the original design for better timing, power, and area, I will:
-- Remove the synchronous reset input since it was not requested, reducing area and complexity.
-- Replace the 9-bit adder overflow logic with a simple comparator (count == freq - 1) for toggle detection, reducing combinational delay and area.
-- Avoid resetting the count register when freq <= 1 and instead hold count and wave_out steady to reduce unnecessary switching.
-- Keep the clock enable signal to gate counting and toggling only when freq > 1, preventing unnecessary toggling at very low or zero frequency values, thus saving power.
-- Ensure non-blocking assignments for proper synchronous logic.
-This approach simplifies logic, reduces switching and combinational delays, and should yield better PPA metrics.

@@ -1,3 +1,0 @@
-The bug in the existing module is in the logic for setting the `result_is_zero` flag. The current implementation uses the bitwise NOT operator `~` on the `out` value, which will set `result_is_zero` to 1 if any of the bits in `out` are 0. Instead, we should set `result_is_zero` to 1 only if all the bits in `out` are 0. This can be achieved by comparing the `out` value with 0.
-
-Another approach would be to check if the result of the addition or subtraction operation is 0, and set the flag accordingly. However, we can also use the fact that in Verilog, a comparison with 0 can be used to check if a value is zero.

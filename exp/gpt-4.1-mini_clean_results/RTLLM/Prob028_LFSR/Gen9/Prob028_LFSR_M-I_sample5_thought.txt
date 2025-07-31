@@ -1,9 +1,0 @@
-The original design and testbench are functionally correct and clear, but we can optimize the LFSR for slightly better performance and area (PPA) by using an asynchronous active-high reset instead of synchronous. This allows the reset to immediately initialize the register, potentially reducing clock-to-Q delay on reset cycles and improving overall timing.
-
-Also, remove the inversion of the feedback signal since the original example uses non-inverted XOR feedback, which is known for maximal length sequence with taps at bits 4 and 3 (indices 3 and 2 in zero-based).
-
-We'll keep the feedback logic combinational outside the always block to keep the register update simple.
-
-Finally, clean up the testbench slightly by adding a reset release at a known time (instead of toggling on the first posedge), ensure `rst` and `clk` are correctly declared and connected, and add waveform dumping for visibility.
-
-This maintains clarity and correctness, ensures non-zero seed on reset to avoid lock-up, and uses asynchronous reset for potential timing improvement.

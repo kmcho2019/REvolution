@@ -1,9 +1,0 @@
-Refactor the design by separating the state machine logic and datapath to improve clarity and modularity. Use a separate synchronous reset and state register updated inside an always block. The main registers for multiplicand, multiplier, product, and counter are updated in a dedicated datapath always block. Use combinational logic to determine the addition enable signal (whether to add multiplicand to product based on current multiplier bit). The ready signal is registered and asserted once the counter reaches 16. The state machine now has three states: IDLE (waiting for start), LOAD (load inputs on reset), and RUN (perform multiplication cycles), then back to IDLE with ready asserted.
-
-This refactor:
-- Improves readability by separating control and datapath.
-- Uses non-blocking assignments consistently.
-- Uses an explicit start signal that triggers on reset release.
-- Uses signed arithmetic and avoids complex operations inside combinational blocks.
-- Keeps the same iteration count (16 cycles), shifts multiplicand left every cycle, and accumulates product accordingly.
-- Assigns output product register only when multiplication is done.

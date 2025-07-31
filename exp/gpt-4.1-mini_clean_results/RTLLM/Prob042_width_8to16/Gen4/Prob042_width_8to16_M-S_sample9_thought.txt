@@ -1,8 +1,0 @@
-Implement a simple two-state flag-based approach without SystemVerilog enums or complex state machines. Use one register `data_lock` to store the first 8-bit input and a single-bit `flag` to indicate if the first input is stored. On each valid input:
-
-- If `flag` is 0, store current input in `data_lock` and set `flag` to 1 (waiting for second input).
-- If `flag` is 1, concatenate `data_lock` and current input to form 16-bit output, assert `valid_out` for one cycle, then clear `flag` to 0.
-
-`valid_out` and `data_out` update on the clock edge following the second input as required. On reset, clear all registers.
-
-This approach is straightforward, synthesizable, and meets the requirements without extra complexity.

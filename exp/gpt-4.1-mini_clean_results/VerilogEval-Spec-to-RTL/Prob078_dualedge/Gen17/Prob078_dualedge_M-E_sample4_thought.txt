@@ -1,9 +1,0 @@
-Implement a dual-edge triggered flip-flop by sampling the data input asynchronously on both edges into two separate registers clocked on opposite edges. Then generate the output by toggling a level-sensitive D latch triggered by the clock itself but clocked on the output of an XOR between the two samples. This generates a pulse on every clock edge indicating a data capture event, which triggers the latch to update q accordingly.
-
-Specifically:
-- Use two registers, one positive-edge triggered and one negative-edge triggered, capturing input d.
-- XOR their outputs to detect any change between the two samples at every edge.
-- Use this XOR as an enable signal for a transparent latch clocked by clk to update q when samples differ.
-- This creates a pulse per clock edge that updates q only on data changes, reducing switching and glitches.
-- The output q reflects d sampled on both edges and is updated synchronously with clk level, ensuring glitch-free behavior.
-- This approach uses only registers and a transparent latch with a gating signal, no illegal sensitivity list or combinational mux.

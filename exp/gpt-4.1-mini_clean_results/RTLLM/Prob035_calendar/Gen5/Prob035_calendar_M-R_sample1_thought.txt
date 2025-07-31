@@ -1,5 +1,0 @@
-Refactor the perpetual calendar by splitting the counter logic into three sequential always blocks, each handling one time unit: seconds, minutes, and hours. Each block independently updates its corresponding counter on clock edge, based on rollover signals from the previous unit. This modularizes the design, making the increment logic clearer and potentially improving timing by decoupling the carry propagation paths. Specifically:
-- The seconds counter increments every clock cycle or resets on RST.
-- The minutes counter increments only when seconds rollover from 59 to 0.
-- The hours counter increments only when both minutes and seconds rollover.
-All counters reset asynchronously on RST. This structural decomposition separates responsibilities while preserving synchronous operation and clean nonblocking assignments.

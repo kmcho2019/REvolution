@@ -1,5 +1,0 @@
-To implement the TopModule, we need to design a finite state machine that searches for message boundaries in a byte stream. The algorithm requires us to discard bytes until we see one with in[3]=1, which we assume is byte 1 of a message. We then wait for two more bytes to receive the entire 3-byte message and signal the receipt of a message by asserting the done signal. 
-
-The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. In the IDLE state, we discard bytes until we see one with in[3]=1. When we see such a byte, we transition to the BYTE1 state and store the byte. In the BYTE1 and BYTE2 states, we wait for the next byte and store it. After receiving the third byte, we transition to the BYTE3 state and assert the done signal.
-
-We also need to implement the datapath to output the 24-bit message whenever a packet is received. The out_bytes signal should be valid whenever the done signal is asserted.

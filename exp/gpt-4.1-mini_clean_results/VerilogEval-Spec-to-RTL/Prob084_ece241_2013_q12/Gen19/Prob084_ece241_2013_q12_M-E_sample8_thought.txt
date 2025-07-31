@@ -1,7 +1,0 @@
-Instead of implementing a linear shift register shifting from MSB to LSB, we can implement the 8-bit shift register as a circular shift register shifting the data left on each enable clock, shifting in the new bit S at LSB (shift_reg[0]). This means Q[0] corresponds directly to shift_reg[0], Q[1] to shift_reg[1], ..., Q[7] to shift_reg[7]. This direct mapping means the input ABC can be used directly as an index to select the output Z from the shift register without any bit reversal or subtraction.
-
-This approach has a simple data flow: at each clock, if enable is high, the bits shift towards the higher index (left shift), and the new input bit S is inserted at the LSB. The outputs Q[0..7] are directly the shift_reg bits from 0 to 7 respectively.
-
-The multiplexing for Z is a straightforward 8-to-1 MUX indexed by {A,B,C}, selecting shift_reg[{A,B,C}]. No extra reversal wire or subtraction needed. The circuit is cleaner, smaller in combinational logic, and the indexing is intuitive.
-
-This differs architecturally from the original by changing the shift direction and mapping of bits to outputs, removing extra combinational logic and potentially improving timing and area.

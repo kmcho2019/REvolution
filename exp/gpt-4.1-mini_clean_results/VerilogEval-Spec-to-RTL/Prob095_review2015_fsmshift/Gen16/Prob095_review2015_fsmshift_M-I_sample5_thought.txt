@@ -1,5 +1,0 @@
-The previous design had an off-by-one issue because shift_ena was asserted only when counter != 0, but the counter counts from 3 down to 0, which is 4 cycles total. To fix this, assert shift_ena while counter is greater or equal to 0 (i.e., counter is not below zero), but since counter is unsigned, we cannot represent negative values. Instead, initialize counter to 4 and count down to 1, asserting shift_ena while counter is not zero. That way, shift_ena is high for counts 4,3,2,1 → exactly 4 cycles.
-
-Also, for better power and area optimization, use a 3-bit counter only counting from 4 to 1, and stop counting at zero. Since synchronous reset is active high, the logic remains simple and glitch-free. The counter stops at zero to avoid unnecessary toggling after the 4 cycles.
-
-This simple approach matches the functional requirement and optimizes the logic for area and power by eliminating toggling after the enable period.

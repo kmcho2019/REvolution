@@ -1,7 +1,0 @@
-Refactor the design by encapsulating the BCD digit increment and carry generation in a combinational always block that computes all next digit values and carries simultaneously, then registers them on the clock edge.
-
-This avoids multiple parallel assignments and the ternary operator cascades, improving readability and modularity. The enable signals are generated similarly, indicating increments on upper digits. We keep the synchronous reset and use non-blocking assignments for registers.
-
-This structure uses an always @* block for next state logic rather than multiple assign statements, which clarifies the data flow and groups all combinational logic together. The sequential block then updates all digits based on that.
-
-We retain the clock-enable style of updating only changed digits to keep power benefits, but in a consistent manner inside the sequential block for clarity.

@@ -1,9 +1,0 @@
-Refactor the design to use a single always block for synchronous logic, combining counting and toggling operations, thereby simplifying control flow and potentially reducing clock-to-Q delay and register fanout.
-
-Implement the toggling of wave_out inside the same always block immediately after detecting the terminal count, ensuring atomic updates and avoiding any intermediate combinational signals like terminal_count.
-
-Remove the explicit freq==0 handling by using a conditional increment and toggle only when freq is non-zero, which keeps wave_out stable naturally without redundant assignments.
-
-Use non-blocking assignments and synchronous reset to maintain correct timing and initialization.
-
-This approach streamlines the code, potentially improving synthesis and timing results while maintaining clear functional intent.

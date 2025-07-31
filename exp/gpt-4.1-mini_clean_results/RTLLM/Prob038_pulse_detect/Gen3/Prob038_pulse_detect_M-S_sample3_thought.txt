@@ -1,5 +1,0 @@
-To simplify the design, reduce the FSM to just two states: IDLE (waiting for initial 0) and PULSE_IN_PROGRESS (after detecting 0 then 1), implicitly handling the first 0 in input. We can track the previous data_in to detect edges and assert data_out combinationally at the end of pulse (when data_in goes from 1 to 0 after seeing 0->1). This avoids explicit multi-state tracking and makes the design concise while maintaining the same detection functionality.
-
-We will use a simple register to hold previous data_in value, then detect the pattern (prev=1 and data_in=0) after we've seen the rising edge (0->1) and before that a 0.
-
-This approach eliminates the need for a state machine and multiple state encodings, using only a flip-flop to remember previous input and a flag to track pulse start, making the code and logic simpler.

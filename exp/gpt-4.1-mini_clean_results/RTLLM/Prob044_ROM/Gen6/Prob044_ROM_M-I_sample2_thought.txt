@@ -1,7 +1,0 @@
-To optimize the ROM for better power and area without impacting performance:
-
-- Use a `localparam`-based case statement instead of an initialized memory array. This eliminates the memory array overhead and encourages the synthesis tool to infer a ROM as combinational logic or distributed ROM, which is often more area- and power-efficient for small memory sizes.
-- Hardcode only the initialized values for addresses 0 to 3 and output zero for all others, reducing unnecessary initialization and memory usage.
-- This approach produces a smaller netlist, better power profile, and straightforward combinational logic.
-- Keep the output as a `reg` and use combinational always block to ensure clear synthesizable logic.
-- Remove synthesis attributes as the method is more generic and friendly to various FPGA/ASIC tools without forcing a particular RAM style.

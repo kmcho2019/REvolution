@@ -1,9 +1,0 @@
-Refactor the FSM implementation by splitting state and direction into separate registers for clearer logic partitioning. Use enumerated state encoding and encode direction as a separate 1-bit register. 
-
-Implement the FSM as a classic Moore machine with synchronous reset for state and asynchronous reset for registers. Use combinational always block for next-state logic with clear priority (fall > dig > bump). 
-
-Use continuous assignments for outputs derived from current state and direction registers, which simplifies output logic and may help synthesis tools optimize. 
-
-Implement the fall_count counter with a gated enable signal and synchronous reset. The asynchronous reset remains for the state and fall_count registers to preserve original reset semantics.
-
-This approach separates concerns, clarifies the FSM structure, and uses assign statements for outputs which may improve readability and synthesis results differently from the original combined state+dir encoding and all-`always` block outputs.

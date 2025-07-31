@@ -1,3 +1,0 @@
-Refactor the design by splitting the counter register and the decrement logic. Instead of decrementing the counter inside the always block, prepare the next counter value combinationally with a separate wire. Then, on each clock edge, update the counter register with this next value. This preserves the same behavior but clearly separates combinational and sequential logic. The output tc is still asserted when counter is zero.
-
-This structure clarifies the data flow and can help synthesis tools optimize better. We still use only a single always @(posedge clk) block for the sequential register update, meeting the problem's requirement for a single D flip-flop-based process.

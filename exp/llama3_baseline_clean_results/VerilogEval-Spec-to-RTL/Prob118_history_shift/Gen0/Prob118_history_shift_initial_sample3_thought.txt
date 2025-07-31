@@ -1,9 +1,0 @@
-To implement the TopModule, we need to create a 32-bit global history shift register. 
-When a branch prediction is made, we shift in the predict_taken value from the LSB side.
-When a branch misprediction occurs, we load the branch history register with the history 
-after the completion of the mispredicted branch. We also need to handle the case where 
-both a prediction and a misprediction occur at the same time, in which case the 
-misprediction takes precedence. We can achieve this by checking for the misprediction 
-condition first and then the prediction condition. If neither condition is met, we do 
-nothing. The history register is reset to zero on the positive edge of the asynchronous 
-reset signal areset.

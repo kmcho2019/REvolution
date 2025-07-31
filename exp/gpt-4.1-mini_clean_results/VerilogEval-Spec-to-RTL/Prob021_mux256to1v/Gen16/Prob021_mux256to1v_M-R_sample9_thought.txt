@@ -1,7 +1,0 @@
-Refactor the hierarchical mux design to use purely continuous assignments (`assign`) with arithmetic indexing for multiplexing instead of `always @(*)` with case statements. This approach leverages direct arithmetic-based part-select on the packed input vector, simplifying the mux logic while preserving the hierarchical structure:
-
-- Stage 1: 16 instances of a 16-to-1 4-bit mux, using indexed slices and `assign` with a simple arithmetic expression `in[base + sel[3:0]*4 +: 4]`.
-- Stage 2: 4 instances of a 4-to-1 4-bit mux, using bitwise selection via indexed assignment of packed inputs.
-- Stage 3: A final 4-to-1 4-bit mux with similar arithmetic-based indexing.
-
-This refactoring improves readability and can help synthesis tools optimize logic better by removing case statements and always blocks. It also reduces verbosity and leverages arithmetic slicing inherent to Verilog, which typically leads to more optimized and cleaner RTL.

@@ -1,7 +1,0 @@
-To simplify the FSM while maintaining functionality:
-1. We can eliminate the ERROR state by handling the stop bit verification directly in the STOP state - if stop bit is invalid, we'll stay in STOP until we see a 1.
-2. Remove the separate done_reg and use combinatorial logic for 'done' output.
-3. Simplify state encoding to just 2 states (IDLE and RECEIVING), handling the stop bit check as part of the RECEIVING state's final cycle.
-4. Use a 3-bit counter to track received bits (0-7) and automatically transition to checking stop bit on the 8th cycle.
-
-This reduces the state machine complexity while maintaining all required functionality.

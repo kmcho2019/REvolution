@@ -1,7 +1,0 @@
-The original code implements a D flip-flop with an asynchronous reset using an `always` block. To refactor this code, we can use a different structure, such as using a reset flop and then a standard D flip-flop for the clocked logic. However, to maintain simplicity and minimize hardware utilization, we'll consider an approach that uses a combination of `always` block for the sequential logic and a reset condition check at the beginning of the block. 
-
-The idea is to prioritize the asynchronous reset condition by checking it first and then proceeding with the clocked logic if the reset is not active. This refactoring maintains the core functionality of the original design but potentially makes the code easier to understand by explicitly handling the reset condition before the clock edge detection.
-
-However, instead of directly using `always` blocks for both the reset and the clocked logic, we can utilize the fact that the asynchronous reset can override the clocked behavior. Thus, we'll implement the design using a single `always` block that checks for the asynchronous reset condition and then updates the output based on the clock edge.
-
-Given the simplicity of the required functionality, we aim to maintain the essence of the original design while simplifying the logic within the `always` block to make it more readable and efficient. The focus will be on ensuring that the asynchronous reset has priority over the clocked behavior and that the design remains area and power-efficient.

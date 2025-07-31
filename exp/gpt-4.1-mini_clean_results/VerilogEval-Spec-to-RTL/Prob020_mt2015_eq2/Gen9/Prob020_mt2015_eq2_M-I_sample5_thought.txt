@@ -1,7 +1,0 @@
-The original solution is already optimal for a simple 2-bit equality comparator using the built-in equality operator. However, to improve power slightly, we can register the inputs and perform the comparison on the registered inputs, thereby potentially reducing glitches on the output. This approach is useful if the inputs are synchronous signals and timing slack exists for a pipeline stage. It adds a clock and reset port for registering inputs, which is common in synchronous designs and improves signal stability and power consumption at a system level. If strict combinational logic is required, the original is optimal and minimal.
-
-If clocked logic is acceptable, adding input registers can reduce glitching on output and overall dynamic power by filtering high-frequency toggling on inputs. This optimization trades off a clock cycle of latency.
-
-If no clock is allowed or the design must remain purely combinational, the original code is already optimal and minimal.
-
-Below, I provide the registered-input comparator version with clock and reset for PPA optimization in synchronous environments. This can help reduce dynamic power from glitches by stabilizing inputs before comparison.

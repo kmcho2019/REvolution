@@ -1,5 +1,0 @@
-Instead of decomposing the logic into product terms or partial matches, implement the Karnaugh map directly as a 4-to-1 multiplexer controlled by the 'cd' inputs selecting which 2-bit pattern on 'ab' maps to output 1 or 0. Since each 'cd' pair corresponds to a 4-bit row of outputs for 'ab', encode those 4 bits in a lookup vector and use 'ab' as an index to select the bit from that row.
-
-This approach leverages the natural indexing power of multiplexers and arrays to efficiently realize the Karnaugh map without explicit boolean expressions or auxiliary modules. It also simplifies the design by replacing complex logic with a small combinational ROM and a 2-bit selector, leading to minimal logic depth and clear scalability.
-
-In Verilog, the 'ab' pair is concatenated to form an index, and the 'cd' pair selects the lookup vector (row). The output is just the selected bit from the corresponding row. This method cleanly represents the K-map and optimizes area and power by sharing common hardware resources, avoiding inverted signals or multiple product terms.

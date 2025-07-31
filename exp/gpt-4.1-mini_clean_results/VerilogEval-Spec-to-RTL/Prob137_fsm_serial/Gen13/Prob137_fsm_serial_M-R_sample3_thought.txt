@@ -1,5 +1,0 @@
-Refactor the design by separating the FSM's state register update and combinational next-state and output logic more explicitly, and implement the done signal as a combinational output asserted only in the CHECK_STOP state with a correct stop bit. Use a single always_ff block for state transitions and synchronous reset, and implement the shift register and bit counter updates in a separate always_ff block triggered only in the RECEIVE state. Use parameters for state encoding for clarity. This approach modularizes state control and datapath logic distinctly, improves readability, and reduces the done signal register usage by making done purely combinational based on the current state and input.
-
-Additionally, perform the serial shift by shifting the existing register right and inserting the incoming bit at MSB to maintain LSB-first reception. Keep the synchronous reset and positive-edge clocking consistent.
-
-This refactoring increases modularity and clarity while preserving functionality.

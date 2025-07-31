@@ -1,9 +1,0 @@
-To implement a 64-bit Johnson counter, we first need to understand the basic operation of a Johnson counter. A Johnson counter is a type of ring counter where the most significant bit is shifted to the least significant bit position, either directly or after inversion, to generate the next state. For our specific 64-bit implementation, when the least significant bit (Q[0]) is 0, the counter increments by shifting the current value (Q[63:1]) to the right and appending a 1 at the most significant bit position. Conversely, when Q[0] is 1, the counter decrements by shifting the current value (Q[63:1]) to the right and appending a 0 at the most significant bit position. The counter should also be reset to 0 when the active-low reset signal (rst_n) is asserted.
-
-Given the description, the key operations involve checking the state of Q[0], shifting the register Q accordingly, and handling the reset condition. We will use Verilog's always block to describe these sequential operations, synchronized with the clock signal (clk) and influenced by the reset signal (rst_n).
-
-The logic can be broken down as follows:
-1. Check the reset condition. If rst_n is low, reset Q to 0.
-2. On the rising edge of clk, check Q[0]. If it's 0, increment the counter by shifting Q[63:1] to the right and setting the most significant bit (Q[63]) to 1. If Q[0] is 1, decrement the counter by shifting Q[63:1] to the right and setting Q[63] to 0.
-
-We will use the non-blocking assignment operator (<=) within the always block to update the value of Q at the next clock edge, ensuring the design is suitable for sequential logic implementation.

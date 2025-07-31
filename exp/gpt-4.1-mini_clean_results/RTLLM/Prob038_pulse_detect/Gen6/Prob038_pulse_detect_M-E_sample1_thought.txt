@@ -1,5 +1,0 @@
-Use a shift register of length 3 to continuously track the last three samples of data_in synchronized to clk. Each clock cycle, shift in the current data_in bit. A pulse is detected exactly when the 3-bit register matches the pattern "010" (meaning data_in was 0, then 1, then 0 in three consecutive cycles). On that cycle, assert data_out for one clock cycle to indicate pulse detection.
-
-This method simplifies state handling by leveraging a sliding window of input samples instead of an explicit FSM. It is easy to implement, robust, glitch-free, and outputs data_out exactly at the cycle when the pulse ends (the third bit of the pulse). Reset clears the shift register and output.
-
-This approach also naturally handles overlapping pulses if they occur since each window of three cycles is checked independently.

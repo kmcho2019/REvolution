@@ -1,7 +1,0 @@
-Fuse the strengths of both approaches by implementing byte-wise clock enable signals derived from byteena, allowing each byte's 8 flip-flops to update only when their respective byte enable bit is set. This finer granularity reduces unnecessary toggling inside the registers, lowering dynamic power more effectively than a single global update enable. Retain synchronous active-low reset and positive edge clock triggering. 
-
-Use two always blocks or one always block with separate enable conditions to independently update upper and lower bytes, so the synthesis tool can map byte enables into clock gating or clock enable signals. Also, this minimizes logic in the data path, potentially improving timing by localizing multiplexing to the register inputs only when enabled. 
-
-This approach merges Example 1’s combinational mux for next state with Example 2’s enable gating concept, but at byte granularity, balancing power, performance, and area. The reset clears all bits synchronously when asserted low.
-
-Overall, the design achieves minimal switching and clean, efficient logic that synthesis tools can optimize well.

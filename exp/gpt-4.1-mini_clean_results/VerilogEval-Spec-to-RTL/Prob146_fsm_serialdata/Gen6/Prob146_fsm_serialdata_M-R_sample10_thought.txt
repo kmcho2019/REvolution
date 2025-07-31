@@ -1,5 +1,0 @@
-Refactor the design by splitting combinational and sequential logic into separate always blocks for clearer separation of concerns. Use a Moore FSM style where the next state and outputs are determined combinationally in one always block, and state and data registers update synchronously in another. This approach improves readability and maintainability by clearly distinguishing next-state logic from state updates. Also, implement done as a Moore output that asserts when in the STOP state with a valid stop bit, making done purely combinational to reduce unnecessary toggling. The shift register will be updated in the sequential block when in RECEIVE state, shifting in LSB first.
-
-This structure maintains the original FSM behavior (IDLE, RECEIVE, STOP, WAIT_STOP), detecting start bit, receiving 8 bits LSB first, checking stop bit, and handling bad stop bits with a recovery state. The outputs out_byte and done update correctly when a byte is valid.
-
-Overall, the separation of FSM logic into combinational and sequential parts improves clarity without changing the functional operation.

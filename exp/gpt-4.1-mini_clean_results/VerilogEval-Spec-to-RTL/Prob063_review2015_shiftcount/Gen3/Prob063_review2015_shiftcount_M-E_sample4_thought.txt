@@ -1,9 +1,0 @@
-A different architectural approach is to separate the shift register and down counter functionalities into two conceptual steps within the same always block, maintaining a single 4-bit register `q`. On each clock:
-
-- If `shift_ena` is asserted, shift the register right by one bit, inserting the `data` bit into the MSB.
-- Else if `count_ena` is asserted, treat `q` as a 4-bit down counter and decrement it by one (wrapping around from 0 to 15).
-- Otherwise, hold the value.
-
-To avoid using an explicit reset or initial block, and ensure defined behavior from the start, use a parameterized default initial value for `q` with a synthesizable reset-like approach by loading a fixed known value on the first clock cycle using a small internal flag `initialized`. This flag is cleared after the first clock edge, so subsequent cycles operate normally.
-
-This technique provides defined startup without an external reset signal, meeting the problem constraints. The design is fully synchronous on the posedge of `clk`, with prioritization of shift over count (which the spec allows to be arbitrary if both are asserted). This method improves synthesis friendliness while respecting the problem statement.

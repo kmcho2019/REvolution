@@ -1,9 +1,0 @@
-A novel architectural idea for implementing the HDLC framing decoder is to utilize a combination of counters and comparators to detect the specific sequences of bits. This approach differs from the traditional finite state machine (FSM) methodology by leveraging arithmetic and comparison operations to identify the sequences.
-
-The core idea involves maintaining two counters: one for tracking the number of consecutive ones (counter_ones) and another for tracking the total number of bits since the last flag or reset (counter_total). The comparators are used to detect when the counter_ones reaches specific thresholds (5 or 6) to signal the need to discard a bit or indicate a flag, respectively.
-
-Additionally, a flag_error counter can be used to track consecutive ones beyond the sixth one, signaling an error if it exceeds a certain threshold. This approach simplifies the logic and potentially reduces the area and power consumption compared to an FSM implementation.
-
-The counters are reset or updated based on the input bit stream and the current state of the counters. For example, when a zero is encountered after five consecutive ones, the counter_ones is reset, and the discard signal is asserted. If six consecutive ones are detected followed by a zero, the flag signal is asserted.
-
-This counter-based approach allows for a straightforward implementation that is easy to understand and maintain, potentially offering better performance and area efficiency compared to complex FSM designs.

@@ -1,8 +1,0 @@
-Implement a one-hot encoded FSM with four states: IDLE (waiting for a byte with in[3]=1), BYTE1 (captured first byte), BYTE2 (captured second byte), and DONE (output ready). Use a small shift register of three bytes to hold the message instead of fixed byte lanes, shifting bytes in as they arrive after sync byte detection. Assert done only on the DONE state cycle, then automatically return to IDLE.
-
-Advantages of this approach:
-- One-hot FSM for simpler combinational next state logic, potentially faster timing.
-- Use a shift-register style 24-bit register to hold incoming bytes, shifting left by 8 bits and inserting new bytes, reducing datapath complexity.
-- Separate DONE state allows clean done pulse generation on message complete cycle.
-- Clear separation of states improves modularity and readability.
-- Synchronous reset clears state and register, and done is asserted only for one cycle in DONE state.

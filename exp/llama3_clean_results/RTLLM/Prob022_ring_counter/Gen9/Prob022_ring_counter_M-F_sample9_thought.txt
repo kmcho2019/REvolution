@@ -1,9 +1,0 @@
-To correct the existing ring counter module, we should focus on modifying the line of code that updates the `out` register. Since the goal is to have `out` be an 8-bit vector where only one bit is set to 1 at any given time, and this 1 shifts to the next bit with each clock pulse, we need to use bitwise operations that are valid in Verilog. 
-
-One approach is to use a mask to set the specific bit of `out` indicated by `pos` to 1 and ensure all other bits are 0. We can achieve this by assigning the value of the binary number that has a 1 at the position indicated by `pos` and 0s everywhere else directly to `out`. 
-
-This can be done within the same `always @(posedge clk or posedge reset)` block, eliminating the need for a separate combinational logic block. We calculate the new value of `out` based on the current value of `pos` and update `out` accordingly. By shifting the bits of `out` to the left by one position on each clock pulse (except when we need to wrap around), we can implement the cyclic behavior required by the ring counter.
-
-To correctly initialize `out` when `reset` is high, we set all bits of `out` to 0 except for the least significant bit (LSB), which is set to 1, as per the problem statement. This is achieved by assigning `8'b0000_0001` to `out` when `reset` is asserted.
-
-In the non-reset case, we update `out` based on its current value and the desired shift or wrap-around behavior. This ensures that `out` cycles through the 8-bit sequence with exactly one bit set high at any given time.

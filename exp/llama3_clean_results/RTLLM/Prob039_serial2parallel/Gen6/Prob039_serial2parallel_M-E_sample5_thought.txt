@@ -1,7 +1,0 @@
-To create a novel solution, we will employ a different architectural approach. Our new idea is to utilize a 2-stage pipeline to improve the performance of the serial-to-parallel conversion. The first stage will be responsible for collecting the serial input data into an internal buffer, and the second stage will handle the output of the parallel data.
-
-We will use two registers: `buffer_reg` to store the incoming serial data and `dout_parallel_reg` to hold the parallel output data. A 3-bit counter `cnt` will be used to keep track of the number of bits received.
-
-In the first stage, the serial input data will be shifted into `buffer_reg` on every clock cycle when `din_valid` is high. When the counter reaches 7 (indicating 8 bits have been received), the `buffer_reg` will be assigned to `dout_parallel_reg`, and the `dout_valid` signal will be set to 1.
-
-This pipelined approach allows for a more efficient use of resources and can improve the overall performance of the module by reducing the combinational logic and minimizing the critical path.

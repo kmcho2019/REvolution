@@ -1,8 +1,0 @@
-Refactor the design by explicitly registering the raw sensor input and performing level decoding in a separate combinational block. Maintain two registered levels: the current stable level and the previous stable level. On each clock cycle, update these levels and then use a combinational comparison of the current and previous levels to determine whether the supplemental flow valve (dfr) should be open (only when water level rises). This approach cleanly separates combinational decoding, sequential state updates, and output generation.
-
-This structure improves clarity by:
-
-- Using explicit level registers to keep track of current and previous stable levels.
-- Performing dfr computation combinationally from stable and previous levels to avoid ordering issues in sequential blocks.
-- Resetting all registers and outputs to the lowest water level state with all valves open.
-- Using explicit constants for states and outputs for clarity.

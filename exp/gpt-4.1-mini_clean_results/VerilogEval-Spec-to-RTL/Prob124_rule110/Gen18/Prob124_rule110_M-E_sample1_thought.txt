@@ -1,9 +1,0 @@
-Implement the 512-cell Rule 110 automaton as a single 512-bit shift register with combinational next-state logic computed using bitwise vector operations and carefully shifted versions of the current state vector. To handle boundary conditions, concatenate zeros at both ends. 
-
-This approach uses vectorized operations to derive left, center, and right neighbor bit vectors by left and right shifting the current state with zero padding. The next state is computed simultaneously for all bits with simple bitwise expressions matching Rule 110 logic:
-
-Next[i] = (~Left[i] & Center[i]) | (Center[i] ^ Right[i])
-
-This fully vectorized combinational calculation eliminates modular boundary signals and neighbor coordination complexity. The 512-bit state is stored in a single register, updated synchronously on each clock. On load, the input data directly loads the state. 
-
-This design is compact, easy to understand, and likely synthesizes efficiently using vector operations, minimizing complexity and register count. It is straightforward and amenable to pipelining or optimization by synthesis tools. Boundary conditions are naturally enforced by zero padding on shifts.

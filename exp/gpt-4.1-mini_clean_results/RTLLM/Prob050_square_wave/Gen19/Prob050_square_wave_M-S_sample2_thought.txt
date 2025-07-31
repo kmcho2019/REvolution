@@ -1,5 +1,0 @@
-Simplify the design by removing the synchronous reset input and initializing registers to zero by default, assuming an FPGA or ASIC with power-on reset. Remove the clock enable signal and handle freq=0 case by not toggling wave_out, letting count still increment but never reaching freq-1, effectively pausing toggling.
-
-Use straightforward counting from zero up to freq-1 and toggling wave_out at that point. This reduces logic by removing gating and reset complexity. Use a single always block with non-blocking assignments for clarity.
-
-This simplification maintains functionality with less code and slightly less hardware, suitable when synchronous reset is not mandatory.

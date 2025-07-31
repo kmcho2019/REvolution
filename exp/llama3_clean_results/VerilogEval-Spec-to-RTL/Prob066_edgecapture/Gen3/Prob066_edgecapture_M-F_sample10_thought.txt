@@ -1,9 +1,0 @@
-To address the issues in the original code, we need to correct the way the state and output registers are updated. The main idea is to maintain the previous state of the input signal in the `state` register and use this to detect transitions from 1 to 0. When a transition is detected, the corresponding output bit should be set to 1 and remain set until the reset signal is asserted. 
-
-One approach to achieve this is to use a single register for the output and update it based on the current input and its previous value stored in the `state` register. This involves two steps within the always block: 
-1. Detect the transition from 1 to 0 by comparing the current input with the previous state, and set the corresponding output bit to 1 if a transition is detected.
-2. Update the `state` register with the current input at the end of the always block, after all checks have been performed, to prepare for the next clock cycle.
-
-Additionally, to minimize switching activity and improve power efficiency, we should only update the output register when necessary, i.e., when a transition is detected or when the reset signal is asserted.
-
-This approach ensures that the output bits are correctly set when a transition from 1 to 0 is detected and remain set until the reset signal is asserted, all while aiming to optimize the design for better performance, power, and area.

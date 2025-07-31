@@ -1,9 +1,0 @@
-The previous design using a single-bit direction register (dir) and wave register correctly implements the triangle wave generator as specified and received positive feedback. However, the original problem explicitly requests a state register controlling waveform generation with two states (0 and 1), and the use of a case statement, instead of using a direction flag. To comply exactly with the problem specification, the fix is to:
-
-- Introduce a 1-bit state register.
-- Use a case statement inside the always block for state-based control.
-- On reset, initialize state and wave to 0.
-- In state 0, increment wave by 1; when wave hits 31, transition to state 1.
-- In state 1, decrement wave by 1; when wave hits 0, transition to state 0.
-
-This approach follows the problem description explicitly and uses the requested constructs. The logic remains simple and efficient.

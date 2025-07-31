@@ -1,9 +1,0 @@
-Refactor the design by separating the control state machine from the datapath and using a defined state machine with enumerated states instead of a simple counter. This improves code clarity and modularity. Use nonblocking assignments consistently in sequential logic, and move combinational calculations (e.g., rounding increment, mantissa adjustment) into separate combinational always blocks or continuous assignments to better separate combinational and sequential logic. 
-
-Also, implement special cases handling at the input decoding stage, setting flags and early outputs to skip unnecessary computation when possible. Use explicit states for IDLE, DECODE, MULTIPLY, NORMALIZE, ROUND, and WRITEBACK phases, improving readability.
-
-Use a pipeline register stage style by updating all relevant registers synchronously in a single always_ff block, and rely on combinational logic blocks for calculations (e.g., normalized mantissa, rounding increment). This structure makes it easier to debug and potentially insert pipeline stages in the future.
-
-Width adjustments are tidied by declaring all signals with exact needed widths and using intermediate signals for rounding. This style also simplifies the sticky bit calculation with a single OR-reduction.
-
-Overall, this refactor retains the multi-cycle operation and correct IEEE 754 handling but improves coding style, readability, and separation of concerns.

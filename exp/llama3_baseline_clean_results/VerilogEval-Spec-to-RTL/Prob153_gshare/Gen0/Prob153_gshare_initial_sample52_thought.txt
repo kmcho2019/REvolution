@@ -1,7 +1,0 @@
-The gshare branch predictor module, TopModule, will consist of a 7-bit global branch history register, a 128-entry table of two-bit saturating counters, and logic to perform prediction and training. 
-
-During prediction, the predictor will use the current global branch history and the provided pc to hash into the pattern history table (PHT), producing the predicted branch direction. The global branch history will then be updated for the predicted branch.
-
-For training, the predictor will use the provided pc and branch history to index into the PHT. If the branch was mispredicted, the branch history will be recovered to the state after the mispredicting branch completes execution. The PHT will be updated to train the predictor for the branch.
-
-The module will prioritize training over prediction if both occur in the same cycle, and prediction will see the PHT state before training if both occur at the same time.

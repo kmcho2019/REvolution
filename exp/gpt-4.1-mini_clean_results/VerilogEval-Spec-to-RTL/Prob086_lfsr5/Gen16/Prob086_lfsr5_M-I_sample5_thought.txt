@@ -1,9 +1,0 @@
-To improve the PPA (Performance, Power, Area) of the 5-bit Galois LFSR implementation, I will minimize the number of sequential non-blocking assignments by computing the next state as a whole vector before assigning to the register in a single clocked assignment. This reduces register update complexity and can help synthesis tools optimize timing and power by simplifying the logic.
-
-Specifically, I will:
-- Calculate the feedback bit from q[0].
-- Construct the next state vector by shifting bits right, XORing taps at positions 5 and 3 (q[4] and q[2]) with feedback, all in combinational logic.
-- On the clock edge, assign the entire new vector to q with a single non-blocking assignment.
-- Maintain synchronous reset to initialize q to 1.
-
-This approach reduces combinational logic depth within the always block, eases timing constraints, and potentially lowers power by simplifying switching activity. Area usage remains minimal since the logic is unchanged functionally.

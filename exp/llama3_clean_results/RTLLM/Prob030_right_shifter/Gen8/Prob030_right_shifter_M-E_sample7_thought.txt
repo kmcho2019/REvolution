@@ -1,9 +1,0 @@
-The original right shifter implementation uses a straightforward approach with an 8-bit register `q` that is initialized to 0 and then shifted right by one bit on each rising edge of the clock, with the new input bit `d` inserted into the most significant position. To introduce a novel architectural idea, we can consider utilizing a shift register with a circular buffer approach. 
-
-Instead of directly shifting the bits of `q` and inserting `d` at the most significant position, we can design a module that uses a series of flip-flops connected in a chain, where each flip-flop represents a bit in the shift register. The input `d` is fed into the first flip-flop, and on each clock edge, the value of each flip-flop is transferred to the next one in the chain, effectively shifting the bits to the right. The last flip-flop in the chain would represent the least significant bit of the output `q`.
-
-This approach not only achieves the desired right shift operation but also provides a clear, visible chain of operations, which can be beneficial for educational or debugging purposes. It also maintains the simplicity of the original design while offering a different perspective on how to implement a right shifter.
-
-The key components of this design include a series of D-type flip-flops (each capable of holding one bit of information) and a clock signal to synchronize the shifting operation across all flip-flops. The output `q` is simply the collective value of all flip-flops at any given time.
-
-This implementation can be seen as more modular and scalable, as adding more bits to the shift register would involve simply adding more flip-flops to the chain, without needing to modify the existing logic.

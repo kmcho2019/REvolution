@@ -1,7 +1,0 @@
-The original solution uses a three-input OR gate for the output, which is minimal and functionally correct. However, according to the PPA metrics, the power consumption is moderate, and while the design is already minimal in area, we can attempt to reduce dynamic power by restructuring the logic to reduce switching. Since the output is '0' only when all inputs are zero, the output can be implemented as out = a | b | c, or equivalently, out = ~(~a & ~b & ~c). The NAND-based implementation might result in different gate structures, potentially lowering switching activity by relying on fewer direct input transitions at the output stage.
-
-To attempt reducing power, we will implement the output as an inverted 3-input AND of inverted inputs: out = ~(~a & ~b & ~c). This maintains the same logic but may lead to slight improvement in power consumption due to different gate structures when synthesized on some technologies.
-
-No changes in performance or area are expected, but this is a minor structural optimization that can sometimes help reduce glitches or switching activity.
-
-If synthesis tools still map this to a simple 3-input OR gate, the design will be equivalent in all respects, but this implementation aligns closer to an AND-OR-invert structure which may be more power-friendly in certain flows.

@@ -1,5 +1,0 @@
-To simplify the solution, we can take advantage of the fact that data_in remains constant during the period when data_en is high, and data_en is high for at least 3 clk_b clock cycles. This means we can eliminate the need for the sync_pulse and its delayed versions. Instead, we can directly use data_en to control the data synchronization.
-
-We will use two registers, data_reg and en_data_reg, to store the input data and enable signals, respectively. We will also use two control registers, en_clap_one and en_clap_two, to delay the enable signal by two clock cycles of clk_b.
-
-The data synchronization will be done using a simple if-else statement, where if the delayed enable signal (en_clap_two) is high, we assign the data register value to the output; otherwise, we retain the previous output value.

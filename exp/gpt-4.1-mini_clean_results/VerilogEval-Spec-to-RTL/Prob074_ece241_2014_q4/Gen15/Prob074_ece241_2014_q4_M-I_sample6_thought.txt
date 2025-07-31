@@ -1,9 +1,0 @@
-The initial solution is logically correct, but relying on Verilog initializations for flip-flops' initial state may cause simulation-synthesis mismatches or undefined startup behavior in some tools. To ensure robust and portable initial reset behavior, it's best to add an explicit synchronous reset mechanism inside the module.
-
-Since the problem statement assumes flip-flops are initially zero before operation but does not specify an external reset input, we can use a power-on reset using an internal reset signal derived from an initialized register that asynchronously sets flip-flops to zero on start and then deasserts the reset.
-
-This approach guarantees consistent initial conditions across all tools and synthesis flows, eliminates simulation mismatches, and maintains the original FSM logic unchanged.
-
-No extra inputs/outputs are added. The internal reset lasts only for the first clock cycle, then flip-flops operate normally.
-
-This enhances correctness and tool compatibility without changing the FSM behavior or interface.

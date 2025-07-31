@@ -1,9 +1,0 @@
-To implement the TopModule, we need to design a finite state machine (FSM) that can identify message boundaries based on the input byte stream. The FSM will have the following states:
-- IDLE: This is the initial state where the FSM waits for the first byte of a message (in[3]=1).
-- BYTE1: Once the first byte is received, the FSM moves to this state and waits for the second byte.
-- BYTE2: After receiving the second byte, the FSM moves to this state and waits for the third byte.
-- DONE: Once the third byte is received, the FSM moves to this state and asserts the done signal.
-
-The datapath module will store the received bytes in a 24-bit register (out_bytes) and output the stored bytes whenever the done signal is asserted.
-
-We will use a 2-bit state variable to represent the four states: IDLE (00), BYTE1 (01), BYTE2 (10), and DONE (11).

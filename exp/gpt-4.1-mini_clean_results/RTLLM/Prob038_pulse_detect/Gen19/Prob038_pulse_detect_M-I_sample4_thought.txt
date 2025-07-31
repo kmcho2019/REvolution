@@ -1,5 +1,0 @@
-To optimize the original Mealy FSM for better timing and power without increasing area, I will simplify the state encoding from 2-bit to 1-bit since only two states are fundamentally needed for pulse detection: waiting for a rising edge (IDLE) and waiting for a falling edge (HIGH). The LOW state in the original code does not add value because the pulse definition is strictly a 0->1->0 within three cycles. The essential output condition is the transition from 1 to 0 on data_in after seeing a rising edge.
-
-This simplification reduces state register size and logic depth, potentially improving timing and power. The output remains combinational, asserted exactly when data_in falls after being high. Reset logic remains asynchronous active low.
-
-Also, I will name the states more meaningfully as WAIT_FOR_RISE and WAIT_FOR_FALL to improve readability. This minimal FSM approach reduces switching activity and logic complexity, improving PPA metrics.

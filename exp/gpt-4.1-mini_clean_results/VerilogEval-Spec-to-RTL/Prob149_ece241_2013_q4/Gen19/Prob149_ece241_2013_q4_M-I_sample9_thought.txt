@@ -1,7 +1,0 @@
-Improve the design by correctly using both the current and previous stable water level states to detect if the water level is rising, which controls the supplemental flow valve (dfr). Specifically, assert dfr only if the current water level state is higher than the previous state (meaning the water level has risen since the last stable reading).
-
-Consolidate all output assignments into a single synchronous always block to avoid conflicting combinational and sequential assignments to the same signals. This also ensures glitch-free, synchronous output updates. On reset, set the state to BELOW_S0 and all outputs asserted as required.
-
-The flow valve outputs (fr0, fr1, fr2) depend solely on the current state, while dfr depends on the relative comparison between current and previous states.
-
-This approach ensures correct interpretation of "the level previous to the last sensor change," aligns with the problem specification, and improves output signal integrity.

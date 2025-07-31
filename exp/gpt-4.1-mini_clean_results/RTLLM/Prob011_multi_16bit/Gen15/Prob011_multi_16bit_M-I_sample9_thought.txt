@@ -1,9 +1,0 @@
-To improve the original design for better power and timing while maintaining correctness, I will add explicit clock enable signals to all registers to prevent unnecessary toggling when the module is idle or not updating data. This includes gating updates of the shift count (i), done flag (done_r), multiplicand register (areg), multiplier register (breg), and product register (yout_r).
-
-Additionally, I will gate the combinational adder operand input so that the addition only occurs when needed (add_en), reducing switching activity in the adder logic. This will be done by zeroing the second operand when add_en is low, so the adder output remains stable and does not toggle unnecessarily.
-
-The start and done flag behavior remains identical, with done asserted only at i==16 and cleared at i==17 or when start is deasserted.
-
-This approach will reduce switching and power consumption during idle and waiting cycles and minimize toggling in the critical adder logic, potentially improving timing by reducing unnecessary logic transitions.
-
-The synchronous reset remains active-low and the overall architecture (shift and accumulate, counting, and done flag) is maintained for clarity and correctness.

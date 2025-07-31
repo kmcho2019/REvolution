@@ -1,7 +1,0 @@
-Refactor the 16-bit CLA block to implement carry computation by explicitly calculating group propagate (P) and generate (G) signals per 4-bit sub-block, then combining them hierarchically to compute the carries, instead of a single linear carry chain for all 16 bits. This approach breaks the 16 bits into 4 groups of 4 bits each and computes the carry signals with fewer logic levels, improving timing and clarity.
-
-At the top 32-bit adder level, keep the hierarchical structure with two 16-bit CLA blocks but use block propagate and generate signals (P and G) to compute the upper block carry-in as carry_in_high = G_low | (P_low & Cin), allowing Cin to be parameterized (keep zero here) to keep the design more general and cleaner.
-
-Use direct vector indexing with zero-based internal vectors and map interface ports [32:1] accordingly. Use continuous assignments throughout without generate loops for carries, relying on explicit logic expressions for carries per group and final carries.
-
-This refactoring maintains modularity, improves timing by reducing carry logic depth in 16-bit block, and clarifies carry propagation between blocks while adhering to the problem constraints.

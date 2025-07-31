@@ -1,9 +1,0 @@
-The original solution uses a modular gate-level approach instantiating separate NOT, AND, and OR gates. While structurally clear, this can increase area and power due to the overhead of many small modules and nets.
-
-To optimize for better PPA (power, performance, area) without losing clarity:
-- Replace the structural gate modules with a single continuous assignment using boolean operators. This reduces instantiation overhead, simplifies routing, and lets synthesis tools optimize logic aggressively.
-- Keep the logic expression as f = (~x3 & x2) | (x3 & x1) because it matches the truth table minimally.
-- This direct assign approach reduces the number of logic elements and nets, decreasing area and power, while maintaining zero delay (combinational).
-- The simpler code improves readability and synthesis quality by leveraging RTL style.
-
-This improvement retains correctness, preserves the 2-level logic minimization, and enhances PPA by consolidating the logic into one expression, removing unnecessary modules and signals.

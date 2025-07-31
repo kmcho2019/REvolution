@@ -1,5 +1,0 @@
-The issue with the original code is that the pedge output is assigned the detected_edge from the previous cycle, causing a two-cycle delay between the input's 0->1 transition and the pedge output assertion. The requirement is to have pedge set exactly one cycle after the transition occurs, so pedge should output the edge detected in the current cycle rather than a delayed one.
-
-To fix this, we only need a single register to store the previous input. On each clock edge, we detect edges by comparing the previous input with the current input, and assign the detection result directly to pedge in the same clock cycle. This way, pedge reflects the 0->1 transition detected at the current clock cycle, fulfilling the "one cycle after" requirement.
-
-This also removes the unnecessary extra register, simplifies the logic, and improves timing and power efficiency.

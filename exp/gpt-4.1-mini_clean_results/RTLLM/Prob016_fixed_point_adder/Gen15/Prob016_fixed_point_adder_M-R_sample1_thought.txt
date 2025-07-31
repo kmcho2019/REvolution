@@ -1,9 +1,0 @@
-Refactor the fixed-point adder to use continuous assignments and signed arithmetic for clarity and synthesis friendliness. Instead of using an always block and registers, implement the adder purely combinationally with `assign` statements.
-
-Key points of the refactoring:
-- Inputs and outputs are treated as signed vectors for natural two's complement arithmetic.
-- Use an extended signed wire (`N+1` bits) for the addition result to detect overflow.
-- Define saturation limits as constants and use a conditional operator in the output assignment to clamp the result within range.
-- Store the final saturated result directly in the output port (declared as wire), avoiding registers altogether.
-- This approach maintains the absolute value addition/subtraction implicitly by relying on two's complement addition properties.
-- The structure improves readability and may ease synthesis optimization due to the absence of procedural blocks.

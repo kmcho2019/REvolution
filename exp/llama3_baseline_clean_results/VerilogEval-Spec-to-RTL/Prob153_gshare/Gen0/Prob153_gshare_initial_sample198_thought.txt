@@ -1,9 +1,0 @@
-To implement the TopModule, we need to follow these steps:
-1. Create a 7-bit global branch history register.
-2. Implement a 128-entry table of two-bit saturating counters, indexed by the 7-bit pc and 7-bit global history hashed using xor.
-3. When a branch prediction is requested, use the current pc and global history to index into the table and produce the predicted branch direction.
-4. Update the global branch history register at the next positive clock edge based on the predicted branch direction.
-5. When training for a branch is requested, update the pattern history table (PHT) to train the branch predictor to predict this branch more accurately next time.
-6. If the branch being trained is a misprediction, recover the global branch history register to the state immediately after the mispredicting branch completes execution.
-7. Implement the priority of training over prediction when both occur in the same cycle.
-8. Ensure that the prediction sees the PHT state before training when training and prediction of the same PHT entry happen at the same time.

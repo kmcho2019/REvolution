@@ -1,9 +1,0 @@
-The original design is functionally correct and clean. To optimize PPA:
-
-1. **Area**: Reduce timer bit-width from 8 to 7 bits since max count is 60 (< 64). This saves one flip-flop per timer register.
-2. **Power**: Add an enable signal for the timer decrement so it only counts down when needed (i.e., active states and timer > 0), reducing unnecessary toggling.
-3. **Performance**: Simplify the ped_shortened update logic by explicitly resetting it on state transitions without multiple if-elses to reduce combinational complexity.
-4. **Code clarity**: Use one always block for state and timer updates, and another for next state/timer logic. Compute outputs combinationally for better timing.
-5. **Clock output**: Keep as is but width reduced to 7 bits for consistency.
-
-These changes yield a smaller, lower-power design with slightly simpler logic and no impact on timing correctness.

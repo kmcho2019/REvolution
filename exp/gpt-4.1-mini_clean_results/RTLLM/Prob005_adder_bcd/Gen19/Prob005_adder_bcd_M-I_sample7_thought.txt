@@ -1,9 +1,0 @@
-Improve the original design by simplifying the BCD correction addition. Instead of manually implementing bitwise ripple-carry addition to add 6 when correction is needed, use the Verilog '+' operator to add 6 conditionally. This allows synthesis tools to infer an optimized adder, reducing gate count and logic depth, thereby improving area and power.
-
-Keep the same efficient correction detection logic, since it's minimal and hardware-friendly.
-
-Use a combinational multiplexing approach to select between the raw sum and the corrected sum based on correction_needed, enabling the correction logic only when necessary, which may reduce switching activity.
-
-The carry-out is generated from the MSB of raw_sum or the carry-out of the corrected sum. Since we now use '+' for correction, take care to extract the carry-out from the corrected sum by extending the addition to 5 bits and selecting the MSB as carry-out.
-
-This yields cleaner, more efficient, and potentially faster hardware with improved PPA metrics.

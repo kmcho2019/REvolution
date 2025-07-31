@@ -1,9 +1,0 @@
-To refactor the given code, we will maintain the core idea of using a finite state machine with a shift register to examine the 'w' values over three clock cycles. However, we will simplify the state machine's structure and the condition checking logic for setting the output 'z'. 
-
-We will use a single state variable and a 3-bit shift register to store the 'w' values. The state machine will have two main states: waiting for 's' to be 1 and examining 'w' values. Once in the examining state, we will shift the 'w' value into the shift register every clock cycle. After three clock cycles, we will check the shift register to see if the 'w' value is 1 in exactly two of the last three clock cycles. If it is, we will set the output 'z' to 1; otherwise, we will set it to 0.
-
-We will use a counter to keep track of the number of clock cycles since the state machine transitioned to the examining state. This will allow us to check the shift register at the correct time. 
-
-We will also use `assign` statements to define the combinational logic and `always` blocks to define the sequential logic, making the code more modular and easier to understand.
-
-The condition for setting 'z' will be based on the current state and the values in the shift register. We will count the number of '1's in the shift register and set 'z' to 1 if the count is 2.

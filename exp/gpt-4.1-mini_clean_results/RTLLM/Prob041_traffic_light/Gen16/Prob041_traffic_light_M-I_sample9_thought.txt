@@ -1,9 +1,0 @@
-To optimize the design for better power, performance, and area (PPA), I will:  
-1. Avoid decrementing the timer when it is zero to reduce unnecessary toggling, which lowers power.  
-2. Replace the combinational next_state/next_timer logic with a synchronous FSM style that updates state and timer registers only on the clock edge to simplify synthesis and reduce combinational logic depth.  
-3. Use a simple synchronous state machine with clear state-to-output mapping, avoiding extra combinational logic for outputs, by registering outputs and using minimal combinational logic.  
-4. Incorporate the pedestrian button logic directly in the sequential process to reduce combinational complexity.  
-5. Use one-hot output signals derived simply from the state register to reduce glitches and gating overhead.  
-6. Assign the clock output directly from the timer register as before.  
-
-These changes reduce the combinational logic depth, power consumption, and potentially improve timing by moving timer update and pedestrian logic fully into the synchronous process. This will yield a cleaner, lower-glitch design while maintaining all functionality.

@@ -1,7 +1,0 @@
-The current implementation is already quite optimal, but we can make a small improvement in power consumption by restructuring the fan logic. Instead of using an OR gate for both (heater|aircon) and fan_on, we can prioritize the fan_on signal since it directly controls the fan regardless of other conditions. This reduces switching activity in the fan logic when fan_on is high, as it won't need to evaluate the heater/aircon conditions.
-
-The improved strategy:
-1. Keep heater and aircon logic identical (already optimal)
-2. Modify fan logic to check fan_on first, then check heater/aircon
-3. This reduces unnecessary evaluations of heater/aircon when fan is forced on
-4. Functionally equivalent but slightly better power profile

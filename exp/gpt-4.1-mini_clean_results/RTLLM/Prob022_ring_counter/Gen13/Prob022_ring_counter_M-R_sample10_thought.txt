@@ -1,3 +1,0 @@
-To avoid the synthesis tool limitation on assigning concatenations to the entire vector, we can implement the ring counter using an integer index to track the position of the '1' bit, then use a combinational assignment to generate the one-hot output vector from this index. 
-
-This design uses a register to hold the current position (0 to 7), which increments modulo 8 on each clock cycle or resets to 0 on reset. The output is continuously assigned with a one-hot pattern corresponding to the current position by using a left shift of 1 by the position index. This approach avoids direct rotation or bit slicing concatenation on the output register, splitting the state update and output generation. It's synthesis-friendly and should avoid the array slice assignment issues.

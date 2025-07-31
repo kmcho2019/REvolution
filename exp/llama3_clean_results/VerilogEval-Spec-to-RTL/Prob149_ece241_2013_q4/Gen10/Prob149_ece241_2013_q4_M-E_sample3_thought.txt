@@ -1,9 +1,0 @@
-To address the problem, we can design a state machine that utilizes a more structured approach to manage the water level and flow rate control. Instead of directly driving the output signals from the sensor inputs, we can define distinct states that correspond to different water levels and use a finite state machine (FSM) to transition between these states based on the sensor inputs. This approach can provide a clearer and more scalable solution.
-
-We can define four states: `LOW`, `LOW_MEDIUM`, `MEDIUM_HIGH`, and `HIGH`. The `LOW` state corresponds to the water level being below the lowest sensor, the `LOW_MEDIUM` state corresponds to the water level being between the lowest and middle sensors, the `MEDIUM_HIGH` state corresponds to the water level being between the middle and highest sensors, and the `HIGH` state corresponds to the water level being above the highest sensor.
-
-We can use a `case` statement within the FSM to determine the next state based on the current state and the sensor inputs. Additionally, we can use combinational logic to determine the output signals based on the current state.
-
-To handle the reset, we can initialize the FSM to the `LOW` state, which corresponds to the water level being below the lowest sensor.
-
-We can also use a separate variable to track the previous state of the sensors to determine the supplemental flow rate signal (dfr). If the current state is higher than the previous state, we can assert the dfr signal.

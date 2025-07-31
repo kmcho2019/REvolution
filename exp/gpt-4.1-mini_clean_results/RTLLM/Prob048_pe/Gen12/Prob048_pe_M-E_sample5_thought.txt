@@ -1,7 +1,0 @@
-Implement a 32-bit multiplying accumulator with an asynchronous reset for faster reset response. Instead of a single 64-bit accumulator, maintain two separate 32-bit registers: one for the lower 32 bits (acc_low) and one for the upper 32 bits (acc_high) of the accumulated 64-bit product sum. On each cycle, multiply a and b to produce a 64-bit product, then add it to the 64-bit accumulator represented by {acc_high, acc_low} via ripple-carry addition in two stages. This split accumulation explicitly models the carry propagation from lower to upper half, which can provide better insight or control for hardware synthesis and debugging. The output c exposes the lower 32 bits (acc_low), as requested.
-
-This approach shows an architectural difference by manually handling 64-bit addition through two 32-bit registers and explicit carry propagation, instead of a single 64-bit register, potentially giving synthesis tools more flexibility in partitioning the addition logic.
-
-Reset is asynchronous (on posedge rst) so accumulator clears immediately independent of clock, which might be preferred in some designs.
-
-This design uses non-blocking assignments and synchronous clock edge for accumulation, with asynchronous reset for immediate clearing.

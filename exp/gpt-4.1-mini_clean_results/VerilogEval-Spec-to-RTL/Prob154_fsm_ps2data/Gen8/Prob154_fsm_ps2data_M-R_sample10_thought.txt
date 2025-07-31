@@ -1,5 +1,0 @@
-I will refactor the FSM implementation to use one always block for state transitions and another always block for outputs, adopting a Moore machine style explicitly separating state logic and output logic. Instead of load enables, I'll update bytes directly in the output always block based on state and inputs.
-
-The done signal will be generated from the current state (BYTE3) to assert done for exactly one cycle after the third byte is processed, ensuring synchronous assertion. I will pack the bytes into a shift register style approach, shifting bytes in on each valid state. This approach reduces explicit load signals and makes datapath operations more uniform.
-
-This style improves code clarity by clearly separating combinational next-state and output logic and keeps synchronous reset handling consistent. It also illustrates a classic FSM style different from the prior load-enable approach.

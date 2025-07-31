@@ -1,7 +1,0 @@
-To address the issues raised by the feedback, we need to refine the sequence detection logic to ensure accurate detection of the sequence 1101 and minimize unnecessary transitions of the `start_shifting` signal. One approach is to implement a more explicit state machine that tracks the progression through the sequence, ensuring that the `start_shifting` signal is only set once the complete sequence is detected and remains set until reset.
-
-We can define a state machine with states for each prefix of the sequence 1101. When the sequence is detected, we transition to a final state where `start_shifting` is set to 1 and remains set until a reset occurs. The next state logic should be revised to correctly handle the sequence detection and state transitions.
-
-The condition for setting `start_shifting` to 1 should be revised to check if the sequence 1101 has been detected, and the `start_shifting` signal should be reset when the `reset` signal is asserted. Additionally, we should ensure that the state machine remains in the final state until a reset occurs.
-
-To achieve this, we can introduce a new state, `SEQUENCE_DETECTED`, which indicates that the sequence 1101 has been detected. When this state is reached, `start_shifting` is set to 1 and remains set until a reset occurs. The next state logic should be revised to transition to this state when the sequence is detected, and the state machine should remain in this state until a reset occurs.

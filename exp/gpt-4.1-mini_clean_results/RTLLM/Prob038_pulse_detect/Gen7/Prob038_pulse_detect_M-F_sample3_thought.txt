@@ -1,8 +1,0 @@
-To correctly detect a pulse defined as a 0→1→0 sequence occurring over exactly three consecutive cycles, the FSM should explicitly track this sequence step-by-step. The FSM needs four states: 
-
-1. WAIT_LOW: waiting for initial 0 (start of pulse).
-2. WAIT_HIGH: detected 0, now waiting for 1.
-3. WAIT_LOW2: detected 1, now waiting for 0 again (end of pulse).
-4. PULSE_DETECTED: pulse completed, output data_out=1 for one cycle, then return to WAIT_LOW.
-
-This ensures strict detection of 0→1→0 sequences. The output data_out is asserted only at the last cycle of the pulse (on transition to PULSE_DETECTED) and is zero otherwise. Using a Moore FSM simplifies output logic, with data_out based solely on the current state. This approach avoids false positives, only signals pulse when entire 3-cycle pattern is observed, and meets the original specification accurately.

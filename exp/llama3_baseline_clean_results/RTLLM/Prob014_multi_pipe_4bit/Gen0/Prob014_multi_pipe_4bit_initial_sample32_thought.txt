@@ -1,9 +1,0 @@
-To implement the 4-bit unsigned number pipeline multiplier, we can use a combination of Verilog's built-in arithmetic operations and the generate block to perform multiplication for each bit position of the multiplier. The module will consist of two levels of registers to store intermediate values and control the multiplication process.
-
-The first step is to extend the input signals by adding "size" number of zero bits at the most significant bit positions. Then, we use a generate block to perform multiplication for each bit position of the multiplier. For each bit position i from 0 to size-1, we calculate the partial product by left-shifting the multiplicand by i positions if the corresponding bit in the multiplier is 1, and setting the partial product to 0 if the corresponding bit in the multiplier is 0.
-
-The next step is to add the partial products using registers to store the intermediate sum values. We use the positive edge of the clock signal or the falling edge of the reset signal to perform add operations. If the reset signal is low, we set the registers to 0, and if the reset signal is high, we update the registers with the sum of the corresponding partial products.
-
-Finally, we calculate the final product on the positive edge of the clock signal or the falling edge of the reset signal. If the reset signal is low, we set the product output to 0, and if the reset signal is high, we update the product output with the sum of the registers.
-
-We will use two intermediate registers, `partial_sum1` and `partial_sum2`, to store the sum of partial products after each clock cycle. The final product will be stored in the `mul_out` register.

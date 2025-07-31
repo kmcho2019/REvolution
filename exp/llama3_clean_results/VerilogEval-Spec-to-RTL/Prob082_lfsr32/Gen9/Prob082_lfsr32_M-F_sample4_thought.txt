@@ -1,9 +1,0 @@
-To correct the implementation of the Galois LFSR, we need to properly incorporate all tap positions (32, 22, 2, and 1) into the calculation of the new MSB and ensure the correct shift operation.
-
-First, we need to correct the indexing of the tap positions to match Verilog's 0-based indexing. This means the tap positions should be referred to as 31 (for 32), 21 (for 22), 1 (for 2), and 0 (for 1).
-
-Next, we calculate the new MSB by XORing the bits at the tap positions (excluding the LSB) with the current LSB. This involves XORing q[31], q[21], and q[1] with q[0].
-
-Then, we perform the shift operation. In a Galois LFSR, all bits shift one position to the right, and the new MSB is calculated based on the tap positions and the current LSB.
-
-The corrected code should reflect these changes to accurately implement the desired Galois LFSR.

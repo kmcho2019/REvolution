@@ -1,7 +1,0 @@
-Fix the design by matching the reset behavior to the specification: asynchronous active-low reset sensitive to the falling edge of rst_n and the rising edge of clk. This requires changing the always block sensitivity list to @(posedge clk or negedge rst_n) and handling reset asynchronously inside the always block. 
-
-Also, remove the unused extended multiplier signal to clean the code. 
-
-Keep the existing pipeline structure with two levels of registers accumulating partial sums. This maintains the design's functionality and meets all specified requirements.
-
-Ensure no changes in the parameter interface to avoid elaboration issues; the previous elaboration problem is likely a testbench issue. Provide clean and synthesizable code with proper asynchronous reset.

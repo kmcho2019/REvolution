@@ -1,7 +1,0 @@
-Instead of using a single shift operation with bit concatenation every clock cycle, the 64-bit Johnson counter can be implemented by explicitly tracking the inverted feedback bit and performing a rotation through a shift register. To reduce combinational logic at each clock edge and potentially improve timing, we separate the computation of the feedback bit and implement the shift right by one with the MSB getting the feedback bit, which is precomputed as the inverted LSB of the current state.
-
-This approach makes the dataflow clearer and can ease synthesis and timing optimization because the combinational logic for feedback bit is separated and straightforward. Also, it resembles the canonical linear feedback shift register (LFSR) style, which is well understood.
-
-The asynchronous reset still sets the counter to zero. On each rising edge of the clock, the feedback bit is computed as inverted Q[0] (LSB) and shifted in at MSB. This design keeps logic minimal but re-expresses the counter update flow more modularly.
-
-This design is functionally equivalent but architecturally different and can help synthesis tools optimize the critical path separately for the feedback logic and the register shift.

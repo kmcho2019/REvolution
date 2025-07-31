@@ -1,5 +1,0 @@
-To optimize for better PPA, I will keep the same functionality but refactor the design to further reduce unnecessary toggling. Specifically, when neither load nor enable is asserted, the register value should remain stable without re-triggering an assignment (which might help synthesis tools to minimize switching). Additionally, the asynchronous reset can be maintained on posedge areset, but to possibly improve timing, I will isolate the asynchronous reset path by separating it into a dedicated asynchronous reset flop instantiation style. Although subtle, this can help with reset timing and glitch avoidance in some technologies.
-
-The main logic remains the same priority load > enable > hold, but the update only triggers when needed. This reduces switching and power. The register is updated only on actual changes.
-
-Finally, this approach is clean, minimal, and suitable for synthesis with no extra combinational stages, potentially improving both timing and power with minor structural change.

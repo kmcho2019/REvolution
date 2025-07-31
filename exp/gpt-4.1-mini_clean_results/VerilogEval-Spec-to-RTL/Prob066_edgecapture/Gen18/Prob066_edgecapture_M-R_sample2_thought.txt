@@ -1,8 +1,0 @@
-The core functionality remains detecting a 1-to-0 falling edge on each bit of a 32-bit input vector. To improve clarity and avoid potential timing ambiguities in the original code, I will:
-
-- Separate the storage of the previous input into a dedicated register updated on the clock.
-- Use a combinational signal `falling_edge` derived from `prev_in` and current `in`.
-- Implement a separate register `captured` that accumulates the falling edge detections using a synchronous reset.
-- Finally, drive the output `out` directly from `captured`.
-
-This structure cleanly decouples edge detection logic (combinational) and state-holding (sequential), which can aid synthesis and simulation clarity. It also removes direct bitwise OR updates on output inside the always block, making the capture explicit.

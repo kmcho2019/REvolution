@@ -1,7 +1,0 @@
-The main issue with the original code is that it does not accurately track the number of clock cycles after reset and does not guarantee that the shift_ena signal is asserted for exactly 4 clock cycles. To fix this, we can implement a simple state machine that has two states: idle and shifting. 
-
-In the idle state, the shift_ena signal is low. When the reset signal is high, the state machine transitions to the shifting state. In the shifting state, the shift_ena signal is high, and a counter is incremented on each clock cycle. After 4 clock cycles, the state machine transitions back to the idle state. 
-
-We can use a single always_ff block to implement the state machine and the counter logic. This approach ensures that the shift_ena signal is asserted for exactly 4 clock cycles after reset and remains low until the next reset.
-
-By using a state machine, we can accurately control the shift_ena signal and ensure that it meets the required timing specifications. This approach also minimizes the number of logic gates and reduces switching activity, which can improve the Power, Performance, and Area (PPA) metrics of the design.

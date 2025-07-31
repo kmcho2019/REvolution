@@ -1,9 +1,0 @@
-Implement the shift register by splitting the 64-bit register into eight 8-bit segments to modularize the shift operations, leveraging simpler 8-bit shifts and concatenations. 
-
-For shifting by 1 or 8 bits left or right: 
-- When shifting left by 1 bit, each segment shifts its bits left by 1 and receives the MSB of the lower segment as LSB (or 0 for the lowest segment). 
-- When shifting left by 8 bits, segments are rotated upwards by one segment, with the lowest segment filled with zeros.
-- When shifting right by 1 bit (arithmetic), each segment shifts right by 1 bit and receives the LSB of the upper segment as MSB, with the top bit of the entire register replicated for sign extension.
-- When shifting right by 8 bits (arithmetic), segments rotate downwards by one segment, with the top segment filled with replicated MSB bits.
-
-This approach reduces the combinational complexity by operating on smaller 8-bit units and mimics a segmented barrel shifter with sign extension handled carefully. The synchronous load and enable signals control loading and shifting in the clocked process. This design can improve timing by localizing multiplexing and shifting operations within 8-bit domains, potentially simplifying routing and logic.

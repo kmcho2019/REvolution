@@ -1,9 +1,0 @@
-Fuse the clear synchronous load and rotation logic from both examples into one compact always block, giving load highest priority. Use a case statement on the 2-bit ena to select rotation direction (right, left, or none). Implement rotation using concatenation to wrap bits correctly.
-
-Enhance power efficiency by only updating q when load is asserted or ena indicates a valid rotation (2'b01 or 2'b10). When ena is 2'b00 or 2'b11 (no rotation), explicitly retain the previous q value without unnecessary register toggling, reducing switching.
-
-Add meaningful comments explaining each condition to improve readability and maintainability.
-
-No pipeline or multi-stage barrel shifter is introduced to keep latency minimal and design simple for a single-bit rotate. This design balances clarity, correctness, and a minor power optimization compared to straightforward rotation.
-
-This fusion leverages the explicit conditional assignment to prevent needless toggling, maintain synchronous operation, and keep logic synthesis-friendly while fulfilling all specified functional requirements cleanly.

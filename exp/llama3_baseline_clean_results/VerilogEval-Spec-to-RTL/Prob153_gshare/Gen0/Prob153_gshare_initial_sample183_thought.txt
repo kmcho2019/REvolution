@@ -1,7 +1,0 @@
-To implement the TopModule with the specified interface, we will follow these steps:
-1. Define the internal signals and registers: We need a 7-bit global branch history register (ghr), a 128-entry table of two-bit saturating counters (pht), and signals to store the index, predicted branch direction, and updated history register value.
-2. Calculate the index for the prediction table: We use the XOR of the global history register (ghr) and the 7-bit pc (predict_pc) to get the 7-bit index for accessing the pht table.
-3. Implement the prediction logic: When predict_valid is high, we use the index to access the pht table and predict the branch direction. We also update the ghr based on the predicted branch direction.
-4. Implement the training logic: When train_valid is high, we update the pht table based on the actual branch outcome and whether it was a misprediction. If it was a misprediction, we recover the ghr to the state immediately after the mispredicting branch completes execution.
-5. Handle the case where training and prediction occur in the same cycle: We prioritize training over prediction when they occur in the same cycle.
-6. Implement the reset logic: We reset the ghr and pht table when areset is high.

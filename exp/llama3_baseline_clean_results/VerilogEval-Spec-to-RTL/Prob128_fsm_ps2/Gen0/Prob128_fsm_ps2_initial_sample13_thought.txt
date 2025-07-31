@@ -1,8 +1,0 @@
-The TopModule can be implemented as a finite state machine (FSM) with four states: 
-- IDLE: Initial state where the module waits for the first byte with in[3]=1.
-- BYTE1: State where the module has received the first byte of the message and is waiting for the second byte.
-- BYTE2: State where the module has received the first two bytes of the message and is waiting for the third byte.
-- DONE: State where the module signals that a message has been received and then transitions back to IDLE.
-
-The FSM will discard bytes until it sees one with in[3]=1, and then assume this is the start of a new message. 
-Once all three bytes have been received, it will signal the receipt of a message by setting the done output to 1 for one clock cycle.

@@ -1,7 +1,0 @@
-To improve PPA (performance, power, area), I will optimize the decade counter by simplifying the wrap-around condition check using bitwise logic instead of an equality comparator. The value 9 in binary is 4'b1001; checking q==9 requires a four-bit comparator. Instead, I can detect when q == 9 by the condition that bit3 and bit0 are 1 and bits1 and 2 are 0 (i.e., q[3] & q[0] & ~q[2] & ~q[1]), which is simpler logic.
-
-Also, to reduce switching power, the counter will only increment when not at 9, avoiding unnecessary toggling. The synchronous reset remains the same.
-
-This should slightly improve timing by reducing comparator complexity and may reduce power by minimizing toggling.
-
-The rest of the design remains unchanged and maintains correct functionality.

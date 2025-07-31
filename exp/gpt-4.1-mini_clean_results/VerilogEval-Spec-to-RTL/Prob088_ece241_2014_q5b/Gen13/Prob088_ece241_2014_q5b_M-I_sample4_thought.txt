@@ -1,9 +1,0 @@
-The original design is already minimal with one flip-flop representing the one-hot encoded FSM state, and combinational logic for the Mealy output. To improve power and area slightly without affecting performance, we can explicitly use two one-hot state bits (state_A and state_B) rather than inferring B as ~A. This follows the problem statement strictly and can help synthesis tools optimize flip-flop placement and clock gating better for power.
-
-We will implement state_A and state_B flip-flops with asynchronous active-high reset initializing state_A=1 and state_B=0. The next state logic will update these bits according to the FSM transitions. Output z remains a combinational function of current state and input x as given.
-
-This explicit two-flip-flop one-hot encoding clarifies state representation, enabling synthesis tools better control of power gating and possibly better timing closure, while incurring only a minor area increase. The impact on power may be favorable due to clearer state separation and possible lower glitching on the outputs.
-
-Also, we will keep the output logic combinational (as Mealy FSM) to avoid extra latency.
-
-Overall, this redesign trades a single flip-flop for two explicit one-hot flip-flops, which aligns more closely with one-hot encoding principles and may help synthesis optimizations for power and timing.

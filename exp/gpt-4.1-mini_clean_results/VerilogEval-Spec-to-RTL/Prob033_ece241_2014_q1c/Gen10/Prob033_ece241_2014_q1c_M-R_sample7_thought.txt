@@ -1,9 +1,0 @@
-I will refactor the design by removing the explicit FullAdder module and instead performing addition in a single statement using Verilog's built-in addition operator. Then, I will extract the sum bits and the carry out explicitly to compute the overflow.
-
-Specifically:
-- Perform addition as a 9-bit vector sum = {carry_out, sum[7:0]} = a + b;
-- Assign s as the lower 8 bits of sum.
-- Determine overflow by XORing the carry into and out of the MSB. The carry into the MSB can be computed by comparing the sum's 7th bit to the operands, or more simply by examining the sign bits of inputs and output.
-- Use the classical overflow detection for 2's complement addition: overflow occurs if the sign bits of a and b are the same, but the sign bit of s is different.
-  
-This approach uses behavioral addition, which synthesis tools can optimize well, simplifying the design and potentially improving area and power due to reduced logic gate count, while maintaining the same overflow detection logic.

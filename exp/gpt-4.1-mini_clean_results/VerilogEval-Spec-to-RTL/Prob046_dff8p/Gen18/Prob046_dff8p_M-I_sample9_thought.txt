@@ -1,9 +1,0 @@
-To improve power, area, and timing (PPA) of the original design while keeping functionality:
-
-- Use eight individual D flip-flops each with synchronous reset loading 0x34 bit pattern selectively on reset. This enables partial toggling only on bits that need to change from current state, potentially lowering unnecessary toggling.
-- Since the reset value is 0x34 (0011_0100b), each flip-flop on reset must load either 1 or 0 according to its bit of 0x34.
-- Implement a generate loop to instantiate 8 identical DFFs with synchronous reset at negedge clk.
-- Each DFF loads either 1 or 0 on reset as per reset value bit instead of all bits updating together.
-- This selective reset can reduce toggling on reset compared to loading a whole constant vector on all bits.
-- Using individual flip-flops might slightly increase area due to more always blocks, but can improve power by reducing unnecessary toggles.
-- All other requirements remain: negedge clk triggered, synchronous active high reset, 8-bit input/output.

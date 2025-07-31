@@ -1,9 +1,0 @@
-To optimize the original FSM-based 16-bit multiplier for better power and timing without increasing area significantly, I will:
-
-1. Introduce clock enable gating on the product register updates to prevent unnecessary toggling when the multiplier LSB is zero, avoiding the 32-bit addition and register update.
-2. Simplify addition logic: only add multiplicand when needed, otherwise just shift right, reducing switching.
-3. Maintain the same FSM structure and counter for control to keep control logic simple.
-4. Keep non-blocking assignments and synchronous reset for good synthesis.
-5. Keep done signal asserted only when multiplication completes.
-
-This approach reduces power by gating the adder and product register updates conditionally, potentially improves timing by reducing unnecessary large-width additions, and has negligible area impact as no extra registers are introduced.

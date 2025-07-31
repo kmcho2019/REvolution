@@ -1,7 +1,0 @@
-To optimize the original 32-bit CLA adder for better performance and power (PPA), I will implement a hierarchical carry-lookahead scheme inside the 16-bit CLA block. Instead of generating all 16 carries sequentially, I will compute group propagate and generate signals for 4-bit sub-blocks and then use these to quickly compute carries for each 4-bit block, reducing the carry chain length and improving timing.
-
-This hierarchical approach reduces critical path delay because carry signals are generated in parallel for groups rather than bitwise. The 32-bit adder will still be composed of two 16-bit blocks, but each 16-bit block will be faster due to this internal hierarchy.
-
-I will also keep the code clean and maintain the zero-based indexing for vectors to improve readability and synthesis optimization.
-
-This optimization should reduce worst negative slack and power due to shorter critical paths and more parallel carry generation while minimally increasing area due to added group generate/propagate signals.

@@ -1,7 +1,0 @@
-To optimize the existing binary-encoded Mealy FSM for detecting "10011", I will switch to one-hot state encoding. One-hot encoding simplifies the next-state logic by reducing it to simple gate-level checks, which can improve timing (reduce critical path delay), at the cost of slightly more flip-flops. Given the state space is small (5 states plus an initial), the overhead is minor.
-
-This change should reduce combinational logic complexity in the next-state transitions, improving frequency (timing), and possibly lowering power due to reduced logic switching. The output MATCH remains Mealy-style: combinationally asserted when the pattern is completed.
-
-The state encoding and transitions will be clearly defined as individual flip-flops, which also aids in debugging and synthesis optimizations. Reset will clear all state bits. This implementation maintains continuous and overlapping sequence detection.
-
-This tradeoff prioritizes timing improvement (better WNS and TNS) while keeping power and area reasonable for a 5-state FSM.

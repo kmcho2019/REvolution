@@ -1,7 +1,0 @@
-Refactor the FSM by explicitly separating the pattern detection shift register from the FSM, which only advances states on the clock edge.  
-Instead of always shifting pattern_shift regardless of state, shift it only in IDLE to accurately detect the pattern.  
-Use a clear one-hot style FSM with 5 states (IDLE, SHIFT0..SHIFT3, COUNT, DONE) where SHIFT states explicitly count 4 shift cycles for shift_ena.  
-Use a combinational next state logic that moves from IDLE upon pattern detection, then cycles through SHIFT0 to SHIFT3 asserting shift_ena for exactly 4 cycles, then to COUNT waiting for done_counting, then to DONE waiting for ack, then back to IDLE.  
-Outputs are one-hot decoded from state.  
-This approach eliminates off-by-one errors by explicitly enumerating each shift cycle state, confines pattern detection to IDLE state only, and uses synchronous reset.  
-This structure improves clarity, correctness, and timing alignment for all control outputs.

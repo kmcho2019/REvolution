@@ -1,9 +1,0 @@
-To implement a parameterized fixed-point adder, we need to consider both the integer and fractional parts of the input operands and manage the precision according to the parameter Q. The adder will handle addition and subtraction based on the signs of the input operands. If the signs are the same, it will perform an absolute value addition. If the signs are different, it will perform an absolute value subtraction. We will use Verilog's parameter feature to make the module flexible in terms of the total number of bits (N) and the number of fractional bits (Q).
-
-The module will include input ports for two operands (a and b), and an output port for the result (c). Internally, it will use a register (res) to store the result of the operation. The module will also manage overflow by checking the most significant bit (MSB) of the result.
-
-The absolute value addition will simply add the two operands if they have the same sign. For absolute value subtraction, it will compare the absolute values of the two operands and perform the subtraction accordingly, setting the sign of the result based on which operand is larger.
-
-To handle precision, the module will consider the Q fractional bits in the operands and ensure that the result also maintains this precision. This involves aligning the fractional parts of the operands before performing the arithmetic operation and then ensuring the result is rounded or truncated as necessary to maintain the Q fractional bits.
-
-Finally, overflow handling will be managed by observing the MSB of the result. If the result exceeds the maximum value that can be represented by N bits, the module will take appropriate action to handle the overflow, such as saturating the result at the maximum or minimum value representable by N bits.

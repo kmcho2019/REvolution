@@ -1,8 +1,0 @@
-To optimize the given 100-bit rotator for better power efficiency without affecting functionality or timing significantly, I will add clock gating by using an enable signal at the flip-flop level. This gating disables register updates unless a load or rotation is requested, preventing unnecessary toggling of the register bits when the contents remain unchanged. The enable for clock gating will be (load || ena==2'b01 || ena==2'b10). This simple gating can reduce dynamic power substantially.
-
-The logic remains the same, but the clock gating signal will prevent register updates when no load or rotation is requested. This improves power while keeping the area increase minimal (a clock gating cell or a mux). Timing impact is minimal because gating logic is simple and close to the clock input.
-
-This approach:
-- Reduces dynamic power by disabling register toggling when not needed.
-- Keeps the same functionality and timing behavior.
-- Does not increase area significantly.

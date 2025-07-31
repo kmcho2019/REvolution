@@ -1,7 +1,0 @@
-To optimize the existing Galois LFSR implementation for better PPA, we focus on reducing combinational logic delay and potential dynamic power. By explicitly coding the LFSR feedback bit as q[0], and updating each bit based on whether it is tapped, we can avoid a wide XOR operation with the full tap mask in one expression, potentially reducing critical path delay.
-
-Additionally, we unroll the XOR operations and use generate loops or explicit combinational assignments to minimize gate fan-in. Since taps are sparse, this approach clarifies the logic and potentially allows synthesis tools to optimize better.
-
-We keep the synchronous reset and non-blocking assignments as is.
-
-This explicit approach may yield a slight improvement in timing and power by reducing the XOR fan-in and spreading the logic across multiple bits rather than a single large XOR, without increasing area significantly.

@@ -1,9 +1,0 @@
-To design an unsigned 16-bit multiplier utilizing shift and accumulate operations, we need to create a module named 'multi_16bit' that takes the chip clock signal (clk), active-low reset signal (rst_n), start signal (start), multiplicand (ain), and multiplier (bin) as inputs. The module should produce the product output (yout) and a completion flag (done) as outputs. 
-
-The module will use a shift count register (i) to track the current shift operation. The shift count register (i) will be updated on every positive edge of the clock signal (clk) or the falling edge of the reset signal (rst_n). 
-
-For the multiplication operation, we will use three registers: areg to store the multiplicand, breg to store the multiplier, and yout_r to store the product. The multiplicand and multiplier will be stored in their respective registers when the shift count register (i) is 0. For shift counts greater than 0 and less than 17, if the bit at position i-1 in the multiplicand register (areg) is high, the product register (yout_r) will accumulate the shifted value of the multiplier register (breg) by shifting it left by i-1 positions and appending zeros at the least significant bit positions.
-
-The multiplication completion flag (done_r) will be updated based on the shift count register (i). If the shift count register (i) is equal to 16, indicating the completion of the multiplication operation, the multiplication completion flag (done_r) will be set to 1. If the shift count register (i) is equal to 17, the multiplication completion flag (done_r) will be reset to 0.
-
-Finally, the product output (yout) will be assigned the value of the product register (yout_r).

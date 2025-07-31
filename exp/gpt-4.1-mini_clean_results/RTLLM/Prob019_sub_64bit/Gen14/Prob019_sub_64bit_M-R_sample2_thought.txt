@@ -1,7 +1,0 @@
-Refactor the original design by flattening the hierarchy into a single 64-bit subtractor implemented with one 64-bit carry-lookahead subtractor (CLA) that directly performs A + (~B) + 1. This eliminates the intermediate 16-bit and 8-bit blocks, simplifying the wiring and potentially improving synthesis optimizations by allowing the tool to optimize carry logic globally.
-
-Use generate loops only for the internal carry chain calculation with generate statements for concise and readable code. Precompute the complemented B input once at the top level to reduce redundant inversions.
-
-Implement overflow detection as before, but since we have a single 64-bit result directly computed, the logic remains straightforward.
-
-This restructuring improves clarity, reduces module hierarchy complexity, reduces repeated inversions, and leverages synthesis tool optimizations on a single 64-bit block. It also keeps the arithmetic and overflow checking semantics intact.

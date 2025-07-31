@@ -1,9 +1,0 @@
-To optimize the original detailed carry-lookahead implementation for better PPA while keeping correctness and overflow detection:
-
-- Replace the manual 64-bit carry-lookahead adder with the built-in subtraction operator (`result = A - B;`) which synthesis tools optimize aggressively for area, power, and timing.
-- This eliminates intermediate propagate, generate, and carry signals, reducing area and dynamic power from switching on many internal signals.
-- The overflow detection logic remains the same, implemented by comparing sign bits of inputs and result.
-- This approach leverages the synthesis tool's highly optimized arithmetic operators, improving area and power significantly, and likely reducing critical path delay.
-- The module remains purely combinational and maintains the required interface and functionality.
-
-This strategy achieves a simple, clean, and synthesis-friendly design that preserves correctness and overflow detection while improving PPA compared to the original custom adder logic.

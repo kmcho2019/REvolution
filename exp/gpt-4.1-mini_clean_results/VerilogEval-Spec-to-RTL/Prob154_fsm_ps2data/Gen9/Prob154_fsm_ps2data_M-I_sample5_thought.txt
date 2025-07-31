@@ -1,9 +1,0 @@
-To improve the original design's power and performance without changing its functionality, we will:
-
-1. Enable shift_reg updates only when capturing valid message bytes (when in states BYTE2 or BYTE3), thereby reducing unnecessary toggling.
-2. Register the input byte early to reduce combinational path and to better pipeline the FSM.
-3. Use a minimal 2-bit state encoding and keep done signal asserted for exactly one clock cycle right after the third byte.
-4. Output out_bytes only at the done cycle, keeping it stable.
-5. Maintain synchronous reset and a clean FSM transition for clarity.
-
-These changes reduce switching activity, improve timing by minimizing combinational logic inside the clocked block, and keep area modest.

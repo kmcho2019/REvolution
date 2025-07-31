@@ -1,9 +1,0 @@
-To fully meet the specification, the module must assert shift_ena for exactly 4 clock cycles both immediately after synchronous reset and whenever a "proper bit pattern" is detected. Since the pattern input is missing in the original interface, I'll assume an additional input `pattern_detected` is added to the interface for detecting the proper bit pattern.
-
-The FSM will have two states: IDLE and ENABLE. On synchronous reset or when pattern_detected goes high (and the FSM is in IDLE), transition to ENABLE, and load a 2-bit counter with 3. While in ENABLE, count down each cycle, asserting shift_ena. When counter reaches zero, transition back to IDLE and keep shift_ena low until next reset or pattern_detected.
-
-This ensures shift_ena is asserted for exactly 4 clock cycles on both reset and pattern detection.
-
-I will keep the synchronous reset active high and all sequential logic triggered on posedge clk.
-
-Additionally, to optimize for PPA, the design uses simple FSM encoding with 1-bit state, minimal counter width (2 bits), combinational logic for next state/counter, and avoids unnecessary registers or complexity.

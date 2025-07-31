@@ -1,9 +1,0 @@
-Simplify the design by removing unnecessary reset synchronization logic since the reset is synchronous active high and is directly sampled on the clock edge. On every clock cycle:
-
-- If reset is asserted, load the counter with 4.
-- Else if counter is non-zero, decrement it.
-- Otherwise hold it at zero.
-
-The shift_ena output is driven high whenever the counter is greater than zero, ensuring exactly 4 clock cycles of shift enable immediately after synchronous reset assertion. No extra logic or edge detection is required.
-
-This improves clarity, correctness, and synthesis optimization by reducing state and logic.

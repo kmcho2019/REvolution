@@ -1,8 +1,0 @@
-The current design is functionally correct and relatively minimal. To optimize for better power and area without sacrificing performance, we can reduce gate fan-in and slightly simplify expressions by leveraging the one-hot encoding's mutual exclusivity (only one state bit high at a time). This allows replacing ORs of state bits with simpler multiplexing-style logic.
-
-Specifically:
-- For next_state[0] (A), since only one state is active, it can be expressed as (in==0) & (state == A or C), which can be realized by multiplexing between A and C rather than ORing them. This simplifies logic by using fewer OR gates.
-- Similarly, for next_state[1] (B), instead of ORing A, B, D, we implement a small mux controlled by input and states.
-- This structure reduces gate complexity by limiting wide ORs.
-- The output remains the same (out = D).
-This approach reduces fan-in and can slightly improve power and area by reducing the size of OR gates while maintaining clarity and correctness.

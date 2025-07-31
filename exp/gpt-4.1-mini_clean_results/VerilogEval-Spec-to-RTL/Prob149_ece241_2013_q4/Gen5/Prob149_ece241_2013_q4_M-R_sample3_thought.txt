@@ -1,7 +1,0 @@
-Refactor the design to clearly separate the level decoding, the tracking of previous level, and the logic for dfr. Instead of trying to compute dfr inside the always block with complex conditions, use a register to store the previous level on every sensor change, and then in a separate always block update dfr based on a simple comparison: dfr = 1 if current_level > previous_level, else 0. This guarantees dfr indicates rising water level.
-
-Use a simple state register for previous_level updated synchronously on sensor changes and reset. The nominal flow outputs (fr0, fr1, fr2) remain combinational based on current_level.
-
-Use explicit level encoding for clarity. The reset sets both current and previous level to BELOW_S0 and all nominal flows plus dfr high, as required.
-
-This clear separation reduces logic confusion, ensures dfr is synchronous and stable, and matches the problem statement precisely.

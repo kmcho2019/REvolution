@@ -1,8 +1,0 @@
-To optimize the FSM for better Power, Performance, and Area (PPA), I will:
-
-1. Simplify next-state logic by using a combinational `always @(*)` block with a `case` statement for clarity and potentially simpler synthesized logic.
-2. Use binary state encoding as before for minimal flip-flops.
-3. Replace the Moore output `always @(*)` block with a simple continuous assignment that directly compares the current state to state D, reducing logic area and improving timing.
-4. Keep synchronous reset and state register in a single `always @(posedge clk)` block.
-
-This approach reduces combinational logic complexity and switching activity by avoiding equality checks spread over multiple conditions, and the continuous output assignment reduces unnecessary flip-flop toggling or combinational mux logic. Using a case statement for next state logic enables synthesis tools to optimize more efficiently compared to multiple individual boolean expressions.

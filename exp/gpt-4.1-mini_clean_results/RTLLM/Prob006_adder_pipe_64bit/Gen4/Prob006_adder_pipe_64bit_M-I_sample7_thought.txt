@@ -1,7 +1,0 @@
-The original implementation uses 4 pipeline stages each adding 16 bits with ripple carry propagation, which is straightforward but may have suboptimal latency and throughput due to carry rippling across the entire 16-bit slices in one cycle.
-
-To improve PPA (performance, power, area), we can increase pipeline stages to 8 with 8-bit adders per stage. This reduces the carry propagation delay per stage, improving max frequency. The added registers provide deeper pipelining for higher throughput at a modest area/power cost.
-
-We keep parameterization for bit width and stage width for better scalability and testbench compatibility. The input operands and enable signals are pipelined to match the sum pipeline stages. The final 65-bit result is assembled from partial sums and the last carry-out.
-
-This design improves frequency and throughput by reducing combinational path delay per stage, balancing register overhead with performance gain, and increases compatibility with parameterized testbenches.

@@ -1,5 +1,0 @@
-To optimize the existing design for better power and performance while maintaining correctness, I will introduce a clock enable signal so the register only updates when necessary (either misprediction or prediction valid). This reduces unnecessary toggling of the 32-bit register, lowering dynamic power. Additionally, I will explicitly handle the rollback assignment width to ensure the 32-bit history is correctly formed by shifting train_history left by 1 bit and inserting train_taken at LSB, matching the spec "train_history concatenated with train_taken" (which means older bits shifted left, youngest branch as LSB). This avoids any ambiguity or truncation issues.
-
-The always block remains simple with asynchronous reset, priority for misprediction, and conditional update on predict_valid, but the register update only occurs when enabled, improving timing and power due to reduced switching activity.
-
-Finally, outputs are registered and directly reflect the internal history state.

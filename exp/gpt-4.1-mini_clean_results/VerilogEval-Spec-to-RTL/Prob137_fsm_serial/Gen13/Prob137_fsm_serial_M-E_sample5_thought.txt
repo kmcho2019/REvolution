@@ -1,7 +1,0 @@
-Implement the byte reception FSM with an explicit bit-timer based on counting clock cycles per bit, assuming bits are presented one per clock. Use a Moore FSM with states: IDLE (line high), START_DETECTED (detected start bit), RECEIVE_BITS (counting 8 bits), STOP_BIT (check stop bit), and RESYNC (waiting for stop bit to resynchronize after an error).
-
-Instead of shifting bits into a register, just count bits received; since data bits are not output, no need to store them. The done signal is asserted synchronously for one cycle when a valid stop bit is detected after 8 data bits.
-
-Use one always block triggered on posedge clk for all sequential logic including state, counters, and done pulse generation. Use localparam encoding for states and explicit state transition conditions for clarity.
-
-This minimal design focuses solely on detecting valid bytes and signaling done without storing data bits, simplifying logic and reducing flip-flop use. The FSM waits in RESYNC state until the line returns high (stop bit), then transitions to IDLE for next byte detection.

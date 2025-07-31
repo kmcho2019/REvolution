@@ -1,5 +1,0 @@
-To optimize for better PPA, simplify the FSM by using a 2-bit counter instead of explicit states since we only need to count bytes within a 3-byte message. This reduces the combinational logic of state decoding and next state calculation. Use a simple counter from 0 to 2 to track bytes: 0 means waiting for start byte with in[3]=1, 1 means byte 2, and 2 means byte 3.
-
-Assert 'done' in the cycle immediately after the third byte (count == 2). Reset and update the counter synchronously. This approach reduces logic depth and area by avoiding encoding/decoding FSM states and uses minimal logic for done. Also, use only in[3] of input to gate the counter, minimizing unnecessary toggling.
-
-This strategy keeps clarity while improving timing and power by reducing logic levels and toggling. The overall design is simpler, with a single 2-bit register counter and straightforward logic for transitions and done signal generation.

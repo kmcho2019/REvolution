@@ -1,9 +1,0 @@
-To refactor the provided Verilog code, we can improve the implementation by utilizing a different structure that maintains the same core functionality. The primary goal is to divide the input clock frequency by an odd number defined by the parameter `NUM_DIV`. 
-
-Instead of using a single counter and internal clock divider, we will implement two separate counters, `cnt1` and `cnt2`, to track the rising and falling edges of the clock signal. Each counter will count up to `NUM_DIV - 1`, and two separate clock dividers, `clk_div1` and `clk_div2`, will be used for the positive and negative edges of the clock, respectively. 
-
-These clock dividers will be toggled when the counters reach half of `NUM_DIV`, ensuring that the divided clock output is accurately generated. The final divided clock output, `clk_div`, will be derived by logically OR-ing `clk_div1` and `clk_div2` to account for both clock edges.
-
-To simplify the code and reduce the number of logic gates, we can use continuous assignments (`assign`) instead of `always` blocks for the counter increments and the clock divider toggles. The active low reset signal `rst_n` will initialize the counters and the clock divider outputs.
-
-By restructuring the code in this manner, we can create a more efficient and accurate implementation of the frequency divider module.

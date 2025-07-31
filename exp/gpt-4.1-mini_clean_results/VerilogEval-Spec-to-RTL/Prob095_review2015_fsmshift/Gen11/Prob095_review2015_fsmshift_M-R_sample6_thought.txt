@@ -1,7 +1,0 @@
-Refactor the design into a two-state FSM: IDLE and ENABLE. On synchronous reset, enter ENABLE state and assert shift_ena. Maintain shift_ena asserted for exactly 4 cycles by counting down a 3-bit counter while in ENABLE state. After the count expires, transition to IDLE state where shift_ena is deasserted indefinitely until the next reset.
-
-This clearly separates control states and counting logic, avoiding off-by-one errors by controlling shift_ena assertion explicitly only in ENABLE state. The synchronous reset puts the FSM immediately into the ENABLE state with counter loaded to 4, ensuring shift_ena is asserted starting exactly on the reset clock cycle and remains asserted for 4 cycles thereafter.
-
-The counter decrements at every clock cycle in ENABLE state. When it reaches 1, the FSM moves to IDLE state on the next clock edge, deasserting shift_ena.
-
-This approach cleanly models the enable period as a state with a precise cycle count, improving timing clarity and matching exact assertion duration requirements.

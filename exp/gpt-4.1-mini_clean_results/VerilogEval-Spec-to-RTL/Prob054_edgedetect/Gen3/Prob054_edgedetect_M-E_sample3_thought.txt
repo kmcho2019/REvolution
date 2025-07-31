@@ -1,5 +1,0 @@
-Instead of storing the previous input and comparing it directly on every clock edge, we can create a shift register of length two that captures the input values of the current and previous cycles. Then the positive edge for each bit can be detected by checking if the older value was 0 and the newer value is 1.
-
-This approach clearly separates the data storage (the shift register) and detection logic, and can be easily extended if more history is needed. The output pedge is the delayed detection result, so it will be registered to be synchronous and update one clock cycle after the transition is detected.
-
-Thus, the design uses a 2-stage shift register for the input signal and derives pedge by combinationally comparing stage 1 and stage 0. The pedge signal is then registered for synchronous output.

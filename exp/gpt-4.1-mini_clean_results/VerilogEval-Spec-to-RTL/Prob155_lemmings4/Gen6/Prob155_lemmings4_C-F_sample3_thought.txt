@@ -1,9 +1,0 @@
-Fuse the clear mode encoding and saturating fall timer from Example 1 with the straightforward priority and simplified next-state logic of Example 2. Maintain explicit bump handling (toggle if both bumped, else set direction accordingly) with priority order fall > dig > bump > normal walk.
-
-Use asynchronous posedge reset initializing mode to WALK and direction LEFT. Keep fall_timer as a saturating 5-bit counter incrementing only in fall mode. In SPLAT mode, freeze outputs forever.
-
-The next-state logic uses a simple if-else ladder prioritized by fall, dig, bumps, and default walking direction preservation. Moore outputs derive cleanly from mode and direction.
-
-This fusion yields a clean, minimal, and easy-to-read FSM with robust corner-case handling, efficient logic, and correct behavior per specification.
-
-Also use blocking assignments in combinational logic for clarity and nonblocking in sequential block for registers, preserving standard good coding practice.

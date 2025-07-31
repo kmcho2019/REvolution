@@ -1,8 +1,0 @@
-Refactor the design to use two separate counters for the positive and negative clock edges (cnt1 and cnt2), each counting from 0 to NUM_DIV-1. 
-- On the positive edge, increment cnt1; on the negative edge, increment cnt2.
-- Toggle clk_div1 when cnt1 reaches the half point of NUM_DIV, similarly toggle clk_div2 on cnt2's half count.
-- Both clk_div1 and clk_div2 are flip-flops updated on their respective edges, generating two complementary divided clocks.
-- Combine clk_div1 and clk_div2 with an OR gate to obtain the output clk_div.
-- This approach respects the problem statement exactly, ensuring correct odd division timing and better alignment of the divided clock's edges.
-- The reset asynchronously initializes counters and clk_div outputs.
-- Add a compile-time assertion to ensure NUM_DIV is odd.

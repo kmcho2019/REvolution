@@ -1,9 +1,0 @@
-The original design is functionally correct but the problem states to use a 4-bit counter, so we will adjust the counter width to 4 bits for compliance. Also, to clearly separate internal shift register and output register for clarity and potentially avoid combinational feedback issues, we will latch the shift register to the output only when 8 bits are received.
-
-Moreover, we ensure that dout_valid is asserted for exactly one cycle immediately after 8 bits are shifted in.
-
-The counter increments only when din_valid is asserted and resets after reaching 8 bits.
-
-This clean synchronous design will prevent any confusion and strictly follow the problem statement.
-
-The shift register shifts in each din_serial bit at the MSB side, ensuring that the first bit received becomes the MSB of dout_parallel and the last bit received is the LSB, as required.

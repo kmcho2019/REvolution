@@ -1,5 +1,0 @@
-Instead of using separate "next" signals updated inside the same always block, we implement a two-stage pipeline approach with explicit registers to hold the intermediate state and outputs. 
-
-The design uses a state machine with two states: IDLE (waiting for first byte) and FULL (first byte stored). When the first valid input arrives, we store it in a register (data_lock) and move to FULL state. Upon receiving the second valid input, we concatenate the stored first byte with the current input, but crucially, the output data_out and valid_out are updated one cycle *after* receiving the second input, ensuring the outputs are registered and valid signals are aligned properly.
-
-This pipeline separation avoids combinational feedback and ensures output timing is deterministic. On reset, all state and registers clear. The first byte is placed in the high 8 bits as required. The valid_out is asserted only when a complete 16-bit word is formed from two 8-bit inputs, exactly one clock cycle after the second input arrives.

@@ -1,9 +1,0 @@
-Implement the 100-bit bit reversal by splitting the input vector into 10 chunks of 10 bits each, then reversing the bit order within each chunk, and finally reversing the order of these chunks in the output. This hierarchical chunk-based reversal reduces the length of the per-bit reversing generate loops to 10 bits each, which can be more manageable and potentially optimized by synthesis tools.
-
-Design steps:
-1. Create a BitRev10 module that reverses 10-bit inputs into 10-bit outputs.
-2. In TopModule, split the 100-bit input into 10 chunks (in[99:90], in[89:80], ..., in[9:0]).
-3. For each chunk, use a BitRev10 instance to reverse the bits locally.
-4. Reverse the order of these reversed chunks when assigning to the output, so that the first output chunk corresponds to the reversed last input chunk, etc.
-
-This approach enables modular reuse of BitRev10 and structured wiring for better clarity and possibly synthesis optimizations, especially in chunked or pipelined designs. It differs from the flat full-width bit reversal by explicit chunk-wise handling and output chunk reversal.

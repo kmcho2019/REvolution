@@ -1,9 +1,0 @@
-To improve the existing edge detection module, we need to address the issue with the current implementation where the `prev_a` register is not being updated correctly. The current code only updates `prev_a` when the reset signal is asserted or when the clock edge occurs, but it doesn't actually store the previous state of the input signal `a`. This is because the `prev_a` register is being updated with the current state of `a` instead of its previous state.
-
-To fix this, we need to update the `prev_a` register with the previous state of `a` on the positive edge of the clock. We can do this by using a separate `always` block that updates `prev_a` with the current state of `a` on every clock cycle.
-
-Additionally, to improve the PPA metrics, we can optimize the code to reduce the area and power consumption. One way to do this is to use a single `always` block to update both the `prev_a` register and the output signals `rise` and `down`. This can be done by using a non-blocking assignment to update `prev_a` and then using the updated value of `prev_a` to determine the output signals.
-
-We will also use `assign` statements to directly drive the output signals `rise` and `down` based on the edge detection logic, eliminating the need for separate combinational logic blocks.
-
-The improved code will maintain the same functionality as the original code but with a more concise and efficient structure.

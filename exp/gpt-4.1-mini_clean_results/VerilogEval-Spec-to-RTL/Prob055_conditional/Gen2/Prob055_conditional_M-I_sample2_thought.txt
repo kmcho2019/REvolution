@@ -1,7 +1,0 @@
-The original solution uses pairwise comparisons and ternary operators, which is already optimal for area and power in combinational logic. However, to further optimize for power and area, we can avoid redundant comparator logic by combining the comparisons into a single priority encoder style min selection with chained conditions, which can slightly reduce the number of comparators and muxes synthesized.
-
-Specifically, instead of two intermediate minimum wires, perform a cascade of comparisons directly selecting the minimum in a single expression. This reduces the number of intermediate signals and the logic levels, potentially improving timing and reducing area/power slightly.
-
-Alternatively, since this is a small combinational module, the difference is minimal, but a single combinational always_comb block with if-else can synthesize to equally efficient logic and is sometimes more readable and allows synthesis tools to optimize better.
-
-We implement the direct cascade comparison in an always_comb block for clarity and potential optimization gains.

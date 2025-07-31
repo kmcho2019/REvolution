@@ -1,9 +1,0 @@
-To improve PPA (Power, Performance, Area), I will optimize the ROM design by:
-
-- Using a `localparam` array initialized at compile time instead of a `reg` with an initial block. This can help synthesis tools infer ROM constants directly without requiring RAM initialization logic, reducing area and power.
-- Replacing the memory array with a combinational function or lookup table (`case` statement) which is simpler and often synthesizes to a ROM or LUT-based ROM efficiently.
-- Keeping the output as `wire` driven combinationally, ensuring immediate combinational read.
-- Initializing only the specified entries and defaulting others to zero, minimizing unnecessary data.
-- Removing the synthesis attribute since some tools infer ROM more efficiently from constant functions or case statements, reducing area and power further.
-
-This approach improves power by avoiding RAM initialization logic, reduces area by synthesizing the ROM as a combinational constant block or LUT, and simplifies timing by making the data output a direct combinational function of the input address.

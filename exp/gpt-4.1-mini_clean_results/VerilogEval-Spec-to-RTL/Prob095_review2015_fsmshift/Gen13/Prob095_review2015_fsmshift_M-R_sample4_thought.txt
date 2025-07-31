@@ -1,7 +1,0 @@
-I will refactor the design to use a one-hot style state machine with two states: IDLE and SHIFT_ENABLE. On synchronous reset, the FSM goes to SHIFT_ENABLE and stays there for exactly 4 cycles using a 2-bit counter. After the 4 cycles, it transitions to IDLE and remains there until reset.
-
-The shift_ena output is directly driven by the state SHIFT_ENABLE. This structure separates control (state machine) and counting more explicitly, providing a clear timing relationship and making it easier to extend to pattern detection triggers later.
-
-All synchronous logic remains on the positive clock edge, with synchronous active-high reset.
-
-This approach keeps the same functionality but explicitly models state and cycle counting, rather than a single down-counter representing both. It also provides a clean separation between the FSM state and the cycle counter within the SHIFT_ENABLE state.

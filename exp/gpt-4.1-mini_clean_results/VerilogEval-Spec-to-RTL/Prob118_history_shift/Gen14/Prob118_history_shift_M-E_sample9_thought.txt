@@ -1,9 +1,0 @@
-I will implement the 32-bit global history shift register with a design that uses a single always block triggered on the positive clock edge and asynchronous reset, but without a separate combinational next-state logic or explicit update enable signal. 
-
-Instead, the logic will be prioritized and incorporated directly inside the sequential always block: on each clock edge, if a misprediction occurs, load the shifted train_history and train_taken; else if predict_valid is asserted, shift in predict_taken; else retain the current state.
-
-This simplifies the design, avoids the 32-bit equality comparison required for gating updates, potentially reducing critical path and area.
-
-The asynchronous reset will clear the history to zero. The output simply reflects the current history.
-
-This approach is straightforward, with good clarity, and avoids redundant combinational logic, relying on straightforward sequential updates with clear priority, which is often favored for better timing and simpler synthesis.

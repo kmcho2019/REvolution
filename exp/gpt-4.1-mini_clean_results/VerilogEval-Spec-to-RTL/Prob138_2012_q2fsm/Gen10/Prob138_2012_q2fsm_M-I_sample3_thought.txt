@@ -1,9 +1,0 @@
-To improve the given FSM for better power, performance, and area (PPA), I will switch from binary encoding to one-hot encoding since it can reduce next-state logic complexity and potentially improve timing (positive WNS). The original had a slightly negative WNS (-0.22ns). Though one-hot uses more flip-flops, it often results in simpler combinational logic and better timing, which can outweigh the area cost in many cases.
-
-I'll keep the synchronous reset and separate always blocks for state registers and next-state logic. The output `z` will remain combinational, asserted only in states E and F.
-
-The tradeoff is a small increase in flip-flops (6 vs 3), but simpler and faster next-state decoding should improve the clock period slack (positive WNS), possibly also reducing total power slightly due to reduced glitching in combinational logic.
-
-Hence, the improved design uses one-hot encoding, with straightforward next state logic implemented via combinational if-else or case statements for clarity. Reset is synchronous active-high.
-
-This approach targets improving timing slack and possibly reducing power due to simpler combinational logic, at the cost of moderate area increase.

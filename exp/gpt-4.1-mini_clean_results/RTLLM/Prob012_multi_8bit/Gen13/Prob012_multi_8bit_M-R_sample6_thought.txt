@@ -1,5 +1,0 @@
-Refactor the 8-bit shift-and-add multiplier to use a single always_comb block with an explicit loop accumulating partial products sequentially inside a combinational process instead of generating partial products and adding them in a balanced adder tree. This approach keeps the same shift-and-add concept but accumulates the result iteratively in a variable inside combinational logic. It provides a clear, straightforward behavioral style representation, which might be easier to maintain and understand while preserving the combinational nature.
-
-The multiplier steps through each bit of B, and if the bit is set, the shifted A is added to an accumulator. The multiplicand is shifted inside the loop rather than using multiple parallel shifts. The final product is assigned after the loop completes. This restructuring clarifies the control flow without sacrificing parallelism since synthesis tools will unroll the loop.
-
-This method simplifies debugging and visualization and is functionally equivalent to the original but implemented in a different coding style.

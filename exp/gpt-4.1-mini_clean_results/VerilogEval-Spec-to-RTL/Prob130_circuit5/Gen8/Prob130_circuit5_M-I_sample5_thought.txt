@@ -1,3 +1,0 @@
-The original solution uses a 16-bit vector and shifts it by c[1:0]*4 to select the output, which can lead to less optimal hardware due to a variable barrel shifter. To optimize for performance, power, and area, I will replace the shift operation with an explicit 4-to-1 multiplexer that selects among b, e, a, and d directly based on the lower two bits of c. 
-
-This direct mux implementation reduces logic depth (improving timing), limits switching activity (power), and decreases area by avoiding the complex shift logic. The functionality remains identical: for c < 4, q = one of {b, e, a, d} selected by c, else q = 4'hF.

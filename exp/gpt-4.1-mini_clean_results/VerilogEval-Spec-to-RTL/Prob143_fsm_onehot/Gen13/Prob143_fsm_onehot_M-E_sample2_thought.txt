@@ -1,7 +1,0 @@
-This design employs explicit parallel combinational logic for each next state bit. Instead of a loop, it uses separate continuous assignment statements that directly compute each next_state bit as the OR of all current states that transition to it under the given input conditions. This fully unrolls the state transition logic, improving clarity and enabling the synthesizer to optimize each next_state bit independently. 
-
-Outputs are derived by combinational OR of the relevant state bits, reflecting the one-hot encoding union of states producing those outputs. 
-
-This approach is fully combinational, avoids loops or case statements, and provides clear mapping between each next state and the contributing present states and inputs. It supports multiple active current states naturally, and is easy to verify and optimize for performance and area.
-
-This design trades a larger number of lines for fully explicit, parallel logic, which can help with synthesis and static timing by minimizing dependencies and critical path length.

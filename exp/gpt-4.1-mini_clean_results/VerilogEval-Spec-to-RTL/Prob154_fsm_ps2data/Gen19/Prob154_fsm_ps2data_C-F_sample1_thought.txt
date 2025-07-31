@@ -1,7 +1,0 @@
-Fuse the best aspects of both examples by using explicit byte load enables derived from the FSM state and input conditions to selectively update only the needed portions of out_bytes each cycle, minimizing toggling and thus power. Implement done as a pulse exactly one cycle after the third byte is loaded, defaulting it to zero otherwise to reduce switching.
-
-Keep the FSM clean with clearly separated combinational next state logic and synchronous sequential state transitions with synchronous reset. Use binary-encoded 2-bit FSM states for minimal area and simple state logic.
-
-Additionally, hold the done signal asserted only for one clock cycle immediately after receiving the third byte, ensuring out_bytes is valid at that moment.
-
-This fusion combines partial register update granularity and done pulse gating (Example 1) with the clear, maintainable FSM structure and combinational next state logic (Example 2), optimizing for power, performance, and clarity.

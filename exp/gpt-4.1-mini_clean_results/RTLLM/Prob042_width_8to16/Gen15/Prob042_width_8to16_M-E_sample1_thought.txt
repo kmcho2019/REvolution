@@ -1,9 +1,0 @@
-Use a shift-register-based approach with a simple toggle flag to collect two consecutive valid 8-bit inputs before outputting the concatenated 16-bit data.
-
-- Maintain a 1-bit toggle flag to track whether the next valid_in corresponds to the high byte or the low byte of the output.
-- On each valid_in, store data_in either in a holding register (data_lock) if it's the first byte or concatenate it with data_lock if it's the second byte.
-- valid_out and data_out update on the clock cycle *after* the second valid input arrives, aligning with timing requirements.
-- valid_out is asserted only when two bytes have been collected and the concatenated output is ready, i.e., one cycle after second data arrival.
-- Reset clears all registers and flags.
-
-This design eliminates FSM states by relying on a toggle to track the data pairing, ensuring minimal control logic and straightforward timing.

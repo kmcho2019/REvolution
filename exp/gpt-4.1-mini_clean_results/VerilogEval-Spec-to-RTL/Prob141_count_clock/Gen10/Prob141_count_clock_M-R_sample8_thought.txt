@@ -1,7 +1,0 @@
-Refactor the 12-hour BCD clock to use a single always block to sequentially update seconds, minutes, and hours on the rising edge of clk with synchronous reset and enable. Instead of separate always blocks, update all counters together, using next-state variables to simplify combinational logic. Use non-blocking assignments consistently to prevent unintended race conditions.
-
-Keep internal registers for BCD digits for seconds and minutes as before, but integrate hour counting into this block with the hour stored as binary (1-12). PM toggling is done precisely on the hour rollover from 11 to 12.
-
-For output, use simple continuous assignments to map internal BCD digits to output buses. This reduces the logic depth and separates purely combinational output logic from the sequential logic.
-
-This approach consolidates counting logic, making the design cleaner and potentially improving timing by reducing multi-block dependencies and glitches. Consistent use of non-blocking assignments in one sequential block simplifies the timing analysis and reduces unnecessary toggling outside the clocked logic.

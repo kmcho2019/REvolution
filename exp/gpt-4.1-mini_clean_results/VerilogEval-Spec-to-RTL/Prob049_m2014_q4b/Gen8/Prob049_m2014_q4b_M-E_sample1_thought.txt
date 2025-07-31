@@ -1,9 +1,0 @@
-Instead of the conventional always block with asynchronous reset in the sensitivity list, I will implement the asynchronous reset functionality using a separate combinational block that drives an internal reset signal to the flip-flop. The flip-flop itself will be edge-triggered only on the clock, and will use a synchronous load enable derived from the reset signal.
-
-This approach:
-- Separates asynchronous reset logic from the main clocked always block.
-- Uses an internal signal (reset_n) for the flip-flop to decide whether to load D or reset.
-- Implements asynchronous reset via a separate always_comb block to immediately clear the internal reset_n signal when ar is asserted.
-- Utilizes a synchronous mux inside the flip-flop to choose between 0 and D based on the internal reset signal.
-
-This gives a different architectural style that functionally behaves equivalently but isolates the reset signal handling from the main flip-flop logic.

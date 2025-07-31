@@ -1,7 +1,0 @@
-Implement the Lemming FSM using three separate flip-flops to explicitly represent the behavior modes: walking, falling, and digging, and a direction bit. Instead of encoding states as an enumerated variable, track each mode with dedicated signals. The mode signals are mutually exclusive: walking, falling, digging, and splatted (no modes active). On each clock edge, update these mode signals based on the inputs and previous state following the priority: falling > digging > walking > splatted.
-
-Use a separate fall_timer counter that increments only when falling, resetting when not falling or on reset. Direction flips only on bump inputs when walking (and not falling or digging). Digging only starts if ground is present and the dig input is asserted while walking. Falling starts immediately if ground disappears. Splatter is detected when fall_timer exceeds 20 and ground reappears.
-
-Outputs are Moore: walk_left/right from walking and direction bits, aaah from falling, digging from digging. Splatted means all outputs 0. Reset asynchronously sets walking left with zero fall timer and clears all other modes.
-
-This approach separates mode signals instead of encoding states into an enum or encoded FSM, making the code modular and straightforward, highlighting behavior priorities without complex state transitions.

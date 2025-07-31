@@ -1,9 +1,0 @@
-To create a dual-edge triggered flip-flop, we can use two single-edge triggered flip-flops. One flip-flop is triggered on the positive edge of the clock, and the other is triggered on the negative edge of the clock. We then use an OR gate to combine the outputs of these two flip-flops to get the final output. However, this approach will not work directly because both flip-flops will try to set the output at the same time, potentially causing contention.
-
-A better approach is to use a multiplexer to select which flip-flop's output to use. The selection signal can be derived from the clock signal itself. When the clock is rising, we select the output of the positive-edge triggered flip-flop, and when the clock is falling, we select the output of the negative-edge triggered flip-flop.
-
-However, a more straightforward approach can be used, taking advantage of the fact that a flip-flop triggered on the rising edge can be used to sample the input data at the rising edge of the clock and store it, and another flip-flop triggered on the falling edge can be used to sample the input data at the falling edge of the clock and store it. Then, we can use an OR gate to combine the outputs of these two flip-flops to get the final output.
-
-But the most efficient way to implement a dual-edge triggered flip-flop in Verilog is to use a single always block that is sensitive to both the rising and falling edges of the clock. Although the sensitivity list always @(posedge clk or negedge clk) is not synthesizable, we can use a workaround. We can generate an internal signal that goes high on both edges of the clock and use this signal in the sensitivity list.
-
-We can then use an if-else statement inside the always block to check whether the clock is rising or falling and update the output accordingly.

@@ -1,9 +1,0 @@
-The main fix is to explicitly declare the input and output ports as signed vectors to enable proper two's complement arithmetic and ensure synthesis tools correctly interpret the subtraction operation. Declaring signals as `signed` resolves ambiguity and synthesis issues related to arithmetic operations on fixed-point numbers.
-
-Additionally, to avoid potential synthesis issues with conditional assignments involving sign bits, it is better to apply the zero sign-bit correction by assigning the result as signed and then overriding it if zero by re-assigning all bits to zero (which naturally has a sign bit zero in two's complement).
-
-Keeping the module purely combinational and maintaining parameters N and Q preserves fixed-point precision and clarity.
-
-The testbench also uses signed registers for inputs to match the signed module interface, ensuring consistent simulation and verification.
-
-This approach achieves functionally correct fixed-point subtraction with explicit signed declarations and proper zero sign-bit handling, making the code synthesis-friendly without complicating the logic.

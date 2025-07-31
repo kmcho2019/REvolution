@@ -1,9 +1,0 @@
-I will design a TopModule with a one-hot encoded FSM having four states: IDLE, GOT_BYTE1, GOT_BYTE2, and DONE. This approach simplifies state decoding and can potentially improve timing by avoiding binary state decoding logic.
-
-The FSM will stay in IDLE state discarding bytes until it finds a byte where in[3] is 1, which marks the first byte of a message. Then, it transitions sequentially through GOT_BYTE1 and GOT_BYTE2 as it collects the next bytes. Once the third byte is captured, it asserts done for one cycle and outputs the assembled 24-bit message, packed as requested.
-
-To simplify timing and logic, I will use three separate 8-bit registers to store the message bytes explicitly and update out_bytes only on the done cycle, keeping it stable otherwise (could also be registered in the DONE state). done will be asserted only one cycle after the third byte.
-
-The synchronous reset resets the FSM to IDLE and clears all registers.
-
-This method uses a one-hot FSM encoding, which is well supported by synthesis tools and often yields faster and simpler logic. Also, by explicitly using a separate DONE state for the done pulse, the design can cleanly separate data loading and done signaling cycles.

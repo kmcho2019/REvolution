@@ -1,8 +1,0 @@
-Refactor the two-stage pipelined 4-bit multiplier by separating combinational and sequential logic more cleanly:
-
-1. Compute the partial products combinationally in a generate block and store them in wires.
-2. Instead of separate registers for each partial product, use a packed array of registers for the first pipeline stage to improve scalability and code compactness.
-3. Sum the partial products in a combinational adder tree and register the intermediate sums as the second pipeline stage.
-4. Use a single always block with synchronous active-low reset for registering partial products and final output.
-5. Keep zero-extension and shifts unchanged but clean up naming and data types.
-6. This approach maintains the two-stage pipeline but uses packed arrays for pipeline registers and cleanly divides combinational and sequential logic, easing scalability and readability.

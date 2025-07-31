@@ -1,7 +1,0 @@
-To address the synthesis/simulation tool limitation on assigning the entire vector using concatenations inside an always block, we can refactor the ring counter to use an integer index to track the position of the single '1' bit, and generate the output vector combinationally from this index.
-
-Specifically, maintain a 3-bit register `pos` indicating the current position of the high bit (0 to 7). On reset, set `pos` to 0 (corresponding to LSB). On each clock's rising edge, increment `pos` modulo 8, cycling through positions 0 to 7.
-
-The output `out` is then assigned by shifting 1 by `pos` using a combinational assignment outside the sequential block. This approach avoids concatenation or rotating assignments on vectors and prevents the reported tool limitations.
-
-This separation of state (position index) and output generation allows simple and synthesizable Verilog that should be tool-friendly.

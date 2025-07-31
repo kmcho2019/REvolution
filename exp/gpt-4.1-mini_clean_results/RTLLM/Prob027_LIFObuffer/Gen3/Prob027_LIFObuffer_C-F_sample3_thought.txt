@@ -1,7 +1,0 @@
-Fuse the two example designs by using a stack pointer (SP) that counts from 0 (empty) to 4 (full) to align with intuitive stack semantics: SP points to the next free slot. On push, write to stack_mem[SP], then increment SP; on pop, decrement SP, then read stack_mem[SP]. 
-
-Avoid read-after-write dependencies inside the clocked block by pre-calculating the memory indices before updating SP. Update dataOut only on pop and update EMPTY and FULL flags combinationally from SP, minimizing sequential logic toggling. 
-
-Improve power by not clearing stack memory on pop, only clearing on reset. Initialize memory synchronously with a for-loop on reset for clarity, relying on synthesis tools for optimization. Use non-blocking assignments consistently. 
-
-Additionally, add clock enable gating (only perform push/pop when EN is high and not full/empty) to minimize unnecessary toggling and improve power efficiency. This fusion balances clarity, performance, power, and area and maintains simplicity and intuitive stack operation semantics.

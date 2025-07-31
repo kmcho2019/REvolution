@@ -1,5 +1,0 @@
-Use a one-hot encoded FSM with four states: IDLE, RECEIVE, CHECK_STOP, and WAIT_STOP. On IDLE, wait for the start bit (0). In RECEIVE, shift in each bit on each clock while counting from 0 to 7. When 8 data bits are received, transition to CHECK_STOP to verify the stop bit (1). If the stop bit is correct, pulse done high for one cycle and return to IDLE. If the stop bit is wrong, transition to WAIT_STOP and remain there until a stop bit (1) is detected, ensuring error recovery by resynchronizing to the stop bit before a new start bit is accepted.
-
-Implement the data shift register so that the incoming bit is assigned to the LSB, and existing bits shift towards the MSB to maintain LSB-first order. Use synchronous reset for all registers. All logic is in one always block triggered on the positive clock edge to keep design clean and easy to synthesize. The done output is generated directly in the CHECK_STOP state only when the stop bit is correct.
-
-This approach separates error recovery clearly and uses one-hot encoding for potentially better timing in some FPGA architectures.

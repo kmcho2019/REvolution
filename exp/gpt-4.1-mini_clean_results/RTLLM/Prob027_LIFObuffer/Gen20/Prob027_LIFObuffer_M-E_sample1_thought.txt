@@ -1,9 +1,0 @@
-I will implement the LIFObuffer using a 2-bit stack pointer (SP) that counts the number of elements currently in the stack, instead of a pointer to the top entry index. The SP will count from 0 (empty) up to 4 (full). Push operation will store dataIn at the current SP index and increment SP, pop operation will decrement SP and output the data at SP-1 index. This pointer approach simplifies boundary checking.
-
-The stack memory is a 4-entry array indexed by SP during push and SP-1 during pop. On reset, SP and all stack entries are cleared.
-
-This approach avoids subtraction in push index calculation and avoids post-increment pointer confusion. The dataOut is updated synchronously on pop only.
-
-EMPTY and FULL flags are directly derived from SP count being 0 and 4 respectively.
-
-This design uses an always_ff block for sequential logic and minimal combinational logic to determine next_SP and enable conditions, ensuring clean, synthesizable RTL with straightforward control.

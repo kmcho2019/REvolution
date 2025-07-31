@@ -1,9 +1,0 @@
-Refactor the design by separating the shift register and counter logic into two always blocks to improve clarity and modularity. 
-
-- Use an always block triggered on the clock for the shift register that shifts data only when `din_valid` is high, placing the incoming serial bit at the MSB.
-- Use a separate always block for the counter, which increments on each valid input and resets when it reaches 8.
-- Generate `dout_valid` combinationally by checking if the counter is at 8, synchronized to the clock by registering the output and valid signals in a third always block.
-- Update `dout_parallel` only when 8 bits have been received, capturing the shift register content at that point.
-- This separation increases readability and eases debug and verification.
-
-This approach also enables easier insertion of additional control or handshake signals in the future without merging too many functionalities into one always block.

@@ -1,9 +1,0 @@
-The original implementation correctly captures the state transitions but can be optimized for better readability and potentially better synthesis. Here's the refactoring approach:
-
-1. For Y1 (next state of y[1]): The logic remains simple - just AND of y[0] and w.
-2. For Y3 (next state of y[3]): We can factor out the common ~w term from all conditions, reducing the number of logic operations. This makes the expression more compact and potentially more efficient for synthesis.
-3. Use bitwise OR operations on the relevant state bits before applying the common condition (~w).
-
-The refactored version maintains the same functionality but expresses the logic more concisely by:
-- Combining all state bits that lead to D (y[1], y[2], y[4], y[5]) with a single OR operation
-- Applying the ~w condition only once to the combined state bits

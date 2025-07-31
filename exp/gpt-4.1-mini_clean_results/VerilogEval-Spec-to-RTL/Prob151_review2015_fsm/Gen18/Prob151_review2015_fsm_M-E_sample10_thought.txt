@@ -1,5 +1,0 @@
-Implement the FSM using one-hot encoding for simplicity and fast decoding. Use a 5-bit shift register to detect the start pattern (1101) in a fully serial manner: the FSM will continuously shift in the data bit and compare the last 4 bits against 1101. Once detected, the FSM moves to a shift state for 4 clock cycles to enable shifting in delay bits (using a dedicated 3-bit shift counter). Then it transitions to the counting state waiting for done_counting, then to done state waiting for ack, then back to the initial search state.
-
-Outputs (shift_ena, counting, done) are asserted in corresponding one-hot states for clear combinational logic. The synchronous reset initializes all state bits and counters. The 4-bit pattern detection uses a shift register updated every clock cycle during the search phase, avoiding complex state sequences for pattern detection.
-
-This approach decouples pattern detection from the FSM state progression, simplifying the FSM control logic, reducing combinational complexity and providing a modular, intuitive design.

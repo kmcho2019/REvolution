@@ -1,9 +1,0 @@
-To combine the best ideas from both examples, I will keep the clarity and explicit combinational next_state logic from Example 2, using localparams for state encoding and non-blocking assignments in sequential logic to maintain good coding style and synthesis friendliness. 
-
-To reduce combinational logic in the output path and potentially improve timing/glitch robustness beyond Example 2, I will assign the output directly from the registered current state (not next_state). This better matches the Moore machine definition where output depends solely on the current state, stabilizing output within the clock cycle after state update. 
-
-To minimize logic and improve conciseness (a strength from Example 1), I will implement the next state logic using a single ternary expression rather than a case statement. This reduces code size while maintaining clarity. 
-
-This fusion keeps an explicit next_state register and separate combinational logic to support maintainability and synthesis tools, while keeping output registered from current state to minimize output glitching. The synchronous reset will reset state and output to OFF and 0 respectively, maintaining consistent initialization.
-
-Overall, this design balances clarity, synthesis friendliness, minimal logic depth, and true Moore semantics, yielding a potentially superior PPA tradeoff.

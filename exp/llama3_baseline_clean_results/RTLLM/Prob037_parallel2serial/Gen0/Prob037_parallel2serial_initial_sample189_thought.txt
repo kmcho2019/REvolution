@@ -1,7 +1,0 @@
-To implement the parallel-to-serial conversion module, we need to track the conversion process using a counter and a data register. We start by checking if the counter has reached its maximum value (3), indicating that we have processed all bits of the parallel input. If so, we update the data register with the new parallel input, reset the counter, and set the valid signal high. Otherwise, we increment the counter, clear the valid signal, and shift the data register one bit to the right to output the next bit in sequence.
-
-We will use a finite state machine (FSM) approach with two states: idle and convert. In the idle state, we wait for the counter to reach its maximum value. In the convert state, we shift out the bits of the parallel input one by one. 
-
-The FSM will be implemented using a counter register (cnt) to track the number of bits that have been converted. The data register (data) will hold the parallel input during the conversion process.
-
-The valid_out signal will be asserted high when the counter is 0, indicating that a new conversion cycle has started, and the most significant bit of the parallel input is available at the serial output (dout).

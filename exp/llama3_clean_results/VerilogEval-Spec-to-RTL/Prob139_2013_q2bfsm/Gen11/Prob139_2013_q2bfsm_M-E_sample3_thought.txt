@@ -1,9 +1,0 @@
-To design a novel solution for the finite state machine, we'll approach it by breaking down the problem into smaller, more manageable sub-problems. We'll use a combination of counters and flag signals to track the sequence of `x` inputs and the state of `y` inputs. 
-
-The new idea involves using a single state machine with multiple counters to track the `x` sequence and `y` timer. We'll use a 2-bit counter to track the `x` sequence and a 2-bit counter to implement the `y` timer. The state machine will have four main states: `RESET`, `SET_F`, `CHECK_X`, and `CHECK_Y`. 
-
-In the `RESET` state, we wait for the reset signal to be de-asserted. Once the reset signal is de-asserted, we transition to the `SET_F` state, where we set `f` high for one clock cycle. After that, we transition to the `CHECK_X` state, where we monitor the `x` input to detect the sequence `1, 0, 1`. Once this sequence is detected, we set `g` high and start the `y` timer. 
-
-In the `CHECK_Y` state, we monitor the `y` input and decrement the `y` timer. If `y` becomes high within two clock cycles, we keep `g` high permanently; otherwise, we reset `g` to low after the timer expires.
-
-We'll use a single `always` block to implement the state machine, making the code more concise and easier to understand.

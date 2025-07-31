@@ -1,7 +1,0 @@
-To optimize power, performance, and area (PPA) while maintaining modular clarity, I will share the inverted signals (~a, ~b, ~c, ~d) globally inside TopModule to avoid duplicated inverter logic across submodules. Instead of duplicating inverters inside each term module, the TopModule will compute all inverted signals once and pass them as inputs to the term modules. This reduces switching power and gate count by avoiding repeated inverter instantiations.
-
-Also, by passing the inverted signals as inputs, the term modules become purely AND/OR logic without internal negations, potentially simplifying synthesis.
-
-This approach retains modularity and testability, yet reduces area and power due to inverter sharing. The critical path delay should improve slightly due to less repeated inverter delay. The TopModule will instantiate four term modules that take both original and inverted signals as inputs and compute their respective product terms.
-
-This strikes a better balance by modularizing logic while minimizing duplicated inversion logic overhead.

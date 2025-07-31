@@ -1,7 +1,0 @@
-To improve the design’s power and timing further, I will implement a clock enable logic more explicitly by creating a local enable signal that only allows the counter to increment when needed, thus preventing toggling when the count is wrapping back to 1 or during reset. Additionally, I will replace the comparator (q == 10) with a less complex condition using an equality check on the 4-bit binary value that might map to a simpler gate-level implementation (e.g., checking MSBs and LSBs) which can slightly improve delay.
-
-Moreover, since the counter only counts from 1 to 10, the count values 11 to 15 are unused; to avoid glitches and spurious toggles in downstream logic, I will mask these unused states by resetting to 1 if the count reaches beyond 10, improving robustness.
-
-Finally, I will keep synchronous reset and use non-blocking assignments for safe synthesis and predictable timing.
-
-Overall, these changes aim to reduce unnecessary toggling, simplify combinational logic for wrap detection, and ensure only valid states occur, improving power, performance, and area marginally.

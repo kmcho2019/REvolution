@@ -1,5 +1,0 @@
-Refactor the fixed-point subtractor to explicitly use a registered intermediate result `res` to comply with the requirement and improve synthesis compatibility. Use an always_comb block to perform the subtraction and sign-bit correction in a single procedural block instead of using continuous assignments with conditional bitwise masking.
-
-In this approach, `res` is declared as a register to store the subtraction result, and the output `c` is directly driven by `res`. Within the always_comb block, after subtraction, check if the result is zero; if so, explicitly clear the sign bit by forcing it to 0. This avoids the synthesis ambiguities related to bitwise AND with conditional operators on signed wires and makes the sign bit correction clear and synthesis friendly.
-
-The design remains purely combinational, preserving precision and correctness for fixed-point signed subtraction, while meeting all specification conditions and improving synthesis friendliness by following a standard registered combinational process style.

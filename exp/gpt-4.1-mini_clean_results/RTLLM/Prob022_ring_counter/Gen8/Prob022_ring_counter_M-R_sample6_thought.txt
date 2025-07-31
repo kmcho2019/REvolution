@@ -1,7 +1,0 @@
-To avoid dynamic bit-select assignment inside a combinational always block, we can use a binary-to-one-hot encoder with a combinational assign statement rather than manipulating the output bits inside an always block.
-
-Specifically, we keep the 3-bit position register `pos` that increments on each clock edge or resets to zero. Then, instead of using an always block with indexed assignment, we implement the output as a continuous assignment using a left-shift operator on a constant 1. This creates a one-hot encoding of the `pos` value without requiring variable index assignment.
-
-This approach is fully supported by all Verilog tools and synthesizers, more concise, and functionally equivalent to the previous design. It also cleanly separates sequential logic (position update) and combinational output generation.
-
-This resolves elaboration/synthesis issues while preserving all ring counter behavior and reset functionality.

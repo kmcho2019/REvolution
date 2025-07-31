@@ -1,9 +1,0 @@
-I will refactor the frequency divider using a simple two-process structure separating the counter and the output clock generation. The counter counts clock cycles until it reaches HALF_DIV (NUM_DIV/2), then resets to zero. The clk_div output toggles whenever the counter reaches HALF_DIV, implemented combinationally by detecting the counter terminal count in a separate always block.
-
-This approach separates counting and toggling logic, enhancing readability and making it easier to modify or expand.
-
-I will use a synchronous reset and increment the counter until terminal count, then reset it. The clk_div toggling is controlled by a register updated only when the terminal count is reached.
-
-This method preserves the requirement to divide clock frequency by an even number specified in NUM_DIV and ensures the output toggles every HALF_DIV clock cycles.
-
-The counter width remains calculated via $clog2 for flexibility, and an initial compile-time check enforces the even NUM_DIV constraint.

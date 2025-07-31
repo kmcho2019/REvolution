@@ -1,9 +1,0 @@
-The problem requires implementing a finite state machine (FSM) in the TopModule that detects the start and end of PS/2 mouse protocol messages in a continuous byte stream. The FSM should discard bytes until it encounters a byte with in[3] = 1, assuming this byte as the first byte of a message. It then waits for two more bytes, and after receiving the third byte, it signals the receipt of a message by setting the done output to 1 for one clock cycle. 
-
-The FSM will have four states: 
-1. IDLE: Initial state, waiting for the first byte with in[3] = 1.
-2. BYTE1: First byte received, waiting for the second byte.
-3. BYTE2: Second byte received, waiting for the third byte.
-4. DONE: Third byte received, signal done.
-
-The FSM transitions between these states based on the current state and the input byte. When reset is asserted, the FSM resets to the IDLE state.

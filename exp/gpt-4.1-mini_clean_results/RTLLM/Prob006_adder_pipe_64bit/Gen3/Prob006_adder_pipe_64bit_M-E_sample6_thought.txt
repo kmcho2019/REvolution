@@ -1,7 +1,0 @@
-I will implement a 64-bit ripple carry adder pipelined with 16 stages, where each stage processes 4 bits of the operands. This finer granularity pipeline reduces logic per stage, balancing between latency and clock frequency. At each clock cycle, the pipeline registers carry, partial sums, and the 4-bit chunks of inputs. The carry-in for the first stage is zero. The carry-out from each stage is registered and passed to the next stage, enabling the next 4-bit addition stage.
-
-The input operands and i_en signal are registered at stage 0, and the enable signal is pipelined through 16 flip-flops to generate o_en, indicating result validity.
-
-At the final stage, the 16 partial sums (each 4 bits) are concatenated along with the final carry-out (1 bit) to form the 65-bit result output.
-
-This design uses arrays of registers for inputs, sums, and carry signals for clarity and scalability. All pipeline registers are synchronous with the clock and asynchronous active-low reset (rst_n). The pipeline improves throughput by allowing new inputs every clock cycle, and output valid after 16 cycles latency.

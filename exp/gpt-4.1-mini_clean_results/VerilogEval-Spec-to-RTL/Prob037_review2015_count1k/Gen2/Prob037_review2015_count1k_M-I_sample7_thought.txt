@@ -1,7 +1,0 @@
-To optimize the counter for better timing (performance), reduce the complexity of the terminal count comparator. Instead of comparing all 10 bits at once to 999, decompose the comparison by checking the upper bits and the lower bits separately or use arithmetic properties. For example, 999 decimal is 0x3E7 hex; checking upper bits against 15 (0xF) and lower bits against 7 (0x7) can simplify the comparator logic.
-
-Alternatively, recognize that the counter counts from 0 to 999, so when the count reaches 999, reset. We can check if the count is 999 by comparing q[9:4] == 15 and q[3:0] == 7, which can be cheaper in hardware than a full 10-bit comparator.
-
-This optimization should reduce the critical path delay of the comparator, improving timing without increasing area or power significantly.
-
-The code maintains synchronous active-high reset and non-blocking assignments for correct simulation semantics.

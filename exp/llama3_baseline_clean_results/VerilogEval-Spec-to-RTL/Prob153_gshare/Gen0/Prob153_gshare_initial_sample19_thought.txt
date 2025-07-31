@@ -1,9 +1,0 @@
-To implement the TopModule, we first need to understand the Gshare branch predictor's functionality. The predictor uses a 7-bit global history register and the 7-bit pc to generate a 7-bit index for a 128-entry table of two-bit saturating counters. 
-
-When a prediction is requested, the predictor produces the predicted branch direction and the current state of the branch history register. The branch history register is then updated at the next positive clock edge for the predicted branch.
-
-For training, the predictor updates the pattern history table (PHT) based on the actual branch outcome and whether the branch was a misprediction. If the branch was mispredicted, the branch history register is recovered to the state immediately after the mispredicting branch completes execution.
-
-We will implement this using Verilog, with a focus on proper synchronization of the prediction and training operations. The predictor will use a reg to store the current state of the branch history register and another reg to store the PHT. We will use the predict_valid and train_valid signals to control the prediction and training operations, respectively.
-
-To ensure that training takes precedence over prediction when both occur in the same cycle, we will update the branch history register based on the train_valid signal before updating it based on the predict_valid signal. We will also use a temporary reg to store the predicted branch direction and PHT state to avoid overwriting these values when the PHT is updated for training.

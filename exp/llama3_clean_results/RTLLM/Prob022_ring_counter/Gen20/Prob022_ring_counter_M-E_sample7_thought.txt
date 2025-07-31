@@ -1,7 +1,0 @@
-To implement the 8-bit ring counter with a cyclic state sequence, we can utilize a novel approach involving a combination of combinational logic and sequential logic. The idea is to create a counter that increments its value on each rising edge of the clock signal and then use this value to drive an 8-bit one-hot decoder. The one-hot decoder will produce the desired cyclic sequence where exactly one bit is set high at any given time.
-
-In this architecture, we will use an internal 3-bit counter (`cnt`) to track the current state of the ring counter. The counter will be incremented on each rising edge of the clock signal and will wrap around when it reaches its maximum value (7). We will then use the current state of the counter to drive the one-hot decoder, which will generate the 8-bit output vector (`out`). 
-
-The one-hot decoder will be implemented using a case statement within an always block. The case statement will check the current value of the counter (`cnt`) and set the corresponding bit in the output vector (`out`) to 1, while setting all other bits to 0. This will produce the desired cyclic sequence where exactly one bit is set high at any given time.
-
-To reset the ring counter to its initial state when the reset signal is high, we will include a conditional statement within the always block to reset the counter (`cnt`) to 0.

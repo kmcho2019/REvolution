@@ -1,8 +1,0 @@
-To implement a 2's complementer as a Moore state machine, the key observation is that the 2's complement is formed by copying all least significant bits up to and including the first '1' bit, and then inverting all subsequent bits. The FSM will start in a state where it has not yet seen the first '1' (call this state COPY), and after the first '1' is observed, it will transition to the INVERT state. In the COPY state, the output z is simply equal to x. In the INVERT state, the output is the inverted x. The machine resets asynchronously when areset is asserted and resumes conversion on deassertion of areset.
-
-We will:
-- Use two states: COPY (waiting for first '1') and INVERT (after first '1').
-- On reset (areset = 1), go to COPY state.
-- On each clock rising edge if not reset:
-   - If in COPY and x == 1, move to INVERT.
-- Output depends only on state and input (Moore output).

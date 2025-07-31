@@ -1,9 +1,0 @@
-To improve the existing solution, we can address the identified issues in the code. The main problem lies in the way the next state is being calculated and assigned back to `current_state`. Since the updated value of `current_state` is not yet available when calculating the next state for subsequent cells, we need to introduce a temporary variable or a separate register to hold the next state values. This way, we can avoid the race condition and ensure that the correct values are used for calculating the next state of each cell.
-
-The strategy is to:
-1. Introduce a temporary register `next_state` to hold the next state values.
-2. Use non-blocking assignments (`<=`) to update `next_state` in the `always` block.
-3. Assign the final `next_state` value to `current_state` at the end of the clock cycle.
-4. Maintain the correct functionality of the Rule 110 cellular automaton.
-
-By making these changes, we can improve the code's functionality and avoid the issues caused by the race condition.

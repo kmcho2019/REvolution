@@ -1,5 +1,0 @@
-A novel approach is to implement the subtraction by explicitly using the subtraction operator and avoid conditional inversion and carry-in logic. To ensure clarity and correctness, use a single always block that assigns the output based on do_sub. Additionally, to prevent latches and ensure proper zero flag generation, explicitly set result_is_zero to 0 when the result is non-zero.
-
-Instead of checking if(~out), which only triggers if out is exactly zero, use a reduction NOR operator (~|out) for accurate zero detection. This operator returns 1 only if all bits of out are zero. This removes ambiguity and ensures the zero flag always updates.
-
-This approach is straightforward, explicit, and easy to verify, helping avoid subtle bugs related to the zero flag and the output calculation. It also uses simple combinational logic without complex bitwise tricks, making it suitable for teaching or systems where clarity is preferred over minimal area.

@@ -1,7 +1,0 @@
-To refactor the original design with the same core functionality of a single D flip-flop, I will integrate the flip-flop logic directly inside the TopModule without a separate DFF submodule. Instead of using a separate always block, I will use an `always_ff` block (SystemVerilog style) if possible to clearly indicate sequential logic, or use an always block with non-blocking assignment in Verilog.
-
-Because `assign` statements cannot model storage elements like flip-flops, I cannot replace the always block with assign directly for the flip-flop behavior. However, I can change the structure by implementing the DFF inline and explicitly declare `q` as a reg output, ensuring clarity and simplicity.
-
-This refactoring removes the modular instantiation, making the design more compact and directly synthesizable as a single flip-flop. It remains fully compliant with the interface and maintains correct sequential behavior, triggered on the positive clock edge.
-
-Thus, the refactor swaps out the submodule instantiation for inline sequential logic inside TopModule while maintaining a non-blocking assignment to preserve correct RTL semantics.

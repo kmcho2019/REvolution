@@ -1,9 +1,0 @@
-Refactor the design to use a simple two-state FSM that tracks whether we have received the first 8-bit input or not.  
-- In IDLE state, upon receiving valid_in, store the first 8-bit data and move to WAIT_SECOND state.  
-- In WAIT_SECOND state, upon receiving the second valid_in, concatenate the stored data with the new input and set a registered output valid flag along with the data.  
-- The output valid_out and data_out are registered and delayed by one cycle after the second input arrives as per requirement.  
-- This clean FSM structure avoids combinational feedback and clearly separates input accumulation and output generation.  
-- Registers valid_out and data_out update synchronously on clk and reset asynchronously on negedge rst_n.  
-- This approach improves timing clarity and correctness of valid_out assertion timing.
-
-The outputs valid_out and data_out are updated in the cycle following the arrival of the second valid input, ensuring timing consistency with the specification.

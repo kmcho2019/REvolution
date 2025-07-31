@@ -1,7 +1,0 @@
-To fix the existing frequency divider module `freq_divbyfrac`, we need to correct the state transitions and counter management to align with the intended fractional frequency division of 3.5x. We should adjust the `STATE_IDLE` to `STATE_LONG_PULSE` transition condition to accurately capture the start of the longer pulse in the divided clock cycle. 
-
-Furthermore, the generation of `clk_int1` and `clk_int2` should be revisited to ensure that they accurately represent the phase-shifted versions of the divided clock. To achieve the 3.5x fractional division using the double-edge clocking technique, we will introduce separate counters for the longer and shorter parts of the divided clock cycle.
-
-We will maintain the use of a state machine to control the generation of the divided clock signal but will refine the state transitions and counter logic to accurately achieve the desired fractional division. The final divided clock output `clk_div` will still be a logical OR of `clk_int1` and `clk_int2`, but the logic for generating these intermediate signals will be adjusted to correctly implement the phase-shifting required for fractional division.
-
-Additionally, we will verify that the reset logic correctly initializes all internal signals and the state machine to ensure proper operation after reset. By refining the state machine, counter logic, and phase-shifted pulse generation, we aim to create a frequency divider that accurately produces a divided clock output with a fractional frequency division of 3.5x.

@@ -1,9 +1,0 @@
-The original design is functionally correct and minimal, implementing a positive-edge-triggered D flip-flop with asynchronous reset. Given the already optimal minimal logic, to improve power slightly, I will replace the asynchronous reset with an asynchronous reset signal synchronized internally with a small reset synchronizer to avoid glitches caused by asynchronous resets toggling the flip-flop spuriously. 
-
-However, since the specification explicitly requires an asynchronous reset, I must keep asynchronous reset behavior. To reduce power due to glitches on ar, I'll implement the asynchronous reset using a gated asynchronous reset input on the flip-flop (common practice). I will keep the same approach with the asynchronous reset in the sensitivity list but add a reset synchronizer stage only to gate the reset signal internally, effectively filtering glitches while preserving the asynchronous reset property.
-
-This solution balances the requirement to have asynchronous reset with reduced spurious toggling, slightly improving power consumption. Area impact is negligible due to the small synchronizer logic. Performance is unchanged as the main flip-flop timing remains the same.
-
-Alternatively, to keep the design minimal and standard, I will just remove the continuous assignment and use an output reg port, which is supported in modern Verilog and slightly simplifies the design and tool flow. This may slightly optimize area by reducing the continuous assignment driver.
-
-Hence, I will implement TopModule with output reg q, a single always block sensitive to clk and ar, reset q on ar asynchronously, else capture d on clk rising edge.

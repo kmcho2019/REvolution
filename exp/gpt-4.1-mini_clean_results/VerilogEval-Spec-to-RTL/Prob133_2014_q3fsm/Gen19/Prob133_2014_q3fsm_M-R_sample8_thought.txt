@@ -1,9 +1,0 @@
-I will refactor the design by separating the state machine and the counters distinctly, using one-hot style state encoding for clarity, though still only two states (A and B). Instead of embedding the w accumulation and counting inside the state logic, I will implement the counting and output generation in a separate sequential block, triggered only in state B.
-
-I will also use a combinational always block for next-state logic with case statement, but implement the counting and output in a clean sequential always block with registers that only update when in state B. This modular approach improves readability and maintainability while preserving the original functionality.
-
-Furthermore, I will use a wider register (3 bits) for w_ones_count from the start to avoid the addition at the output stage and simplify the output logic by comparing directly to 2.
-
-The output z will be registered and asserted only one cycle after counting three samples, exactly as before. The synchronous reset and posedge clock triggering are maintained.
-
-This approach separates concerns: state transitions, cycle counting, w sampling count accumulation, and output generation, which often aids synthesis tools and readability.

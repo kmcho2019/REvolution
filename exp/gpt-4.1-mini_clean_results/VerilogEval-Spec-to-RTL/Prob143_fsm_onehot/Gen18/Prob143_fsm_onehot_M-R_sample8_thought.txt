@@ -1,5 +1,0 @@
-Refactor the module to explicitly compute each next_state bit as a wire signal generated from multiple intermediate signals representing active conditions per current state and input. Instead of directly OR-ing conditions inline, create intermediate wires per transition and then OR them to form each next_state bit. This increases code readability by decomposing complex expressions into smaller named parts. Also, the outputs can be computed similarly with intermediate wires for clarity.
-
-This structure retains purely combinational logic and one-hot encoding but uses a more hierarchical and modular approach, making it easier to follow each transition from current state and input to next state or output signal. It helps especially when dealing with multiple active states simultaneously in the current state vector.
-
-No behavioral always blocks are used, all logic is structural and combinational via wires and assign statements.

@@ -1,7 +1,0 @@
-The original implementation is functionally correct, but the ternary operator inside the clocked always block introduces a small comparator and addition logic, which might marginally affect timing and power. To optimize PPA, I will implement a clock enable scheme to prevent updating 'q' when it would hold the same value (e.g., when a=1 and q already equals 4), thus reducing toggling and dynamic power.
-
-Also, I will use a simple 3-bit saturating counter that only increments when a=0 and q != 6; on reaching 6, it wraps to 0. When a=1, q is asynchronously set to 4 only on the clock edge if it differs from 4, preventing unnecessary toggling.
-
-This logic reduces toggling of q when a=1 by avoiding writes when q is already 4, which improves power. The modular counter logic is kept simple to avoid added complexity, supporting timing improvements.
-
-This approach maintains the same behavior, reduces switching, and can marginally improve power and timing.

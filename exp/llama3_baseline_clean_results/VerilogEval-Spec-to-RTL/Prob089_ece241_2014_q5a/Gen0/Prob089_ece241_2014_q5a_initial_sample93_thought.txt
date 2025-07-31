@@ -1,9 +1,0 @@
-To implement a one-input one-output serial 2's complementer Moore state machine, we need to keep track of the bits received so far and their positions. The machine should start accepting input when the reset is released and stop when the reset is asserted. The 2's complement of a binary number can be obtained by inverting all the bits and then adding 1. In the context of a serial input, this means we need to keep track of whether we've seen a '1' in the input stream yet (to know when to stop inverting and start adding 1) and the current bit. The state machine will have two states: an idle state where it waits for the reset to be released, and an operational state where it processes the input bits.
-
-The operation can be broken down into two phases:
-1. Inverting all the bits until the first '1' is seen.
-2. After the first '1' is seen, adding 1 to the inverted bits which is equivalent to adding a '1' at the end of the inverted stream and then propagating the carry through the stream in reverse order.
-
-However, since this is a Moore state machine, the output is determined solely by the current state and not directly by the inputs. Therefore, we will focus on designing the state machine to generate the correct output sequence based on its internal state, which reflects the processing of the input bits.
-
-Given the Moore state machine constraints and the fact that we need to handle inputs of arbitrary length, we'll use a simple state machine that inverts the bits and remembers if a '1' has been seen. Once a '1' is seen, the machine will output the inverted bits for the rest of the input stream, simulating the addition of '1' by ensuring the first '1' sets a flip-flop that changes the output behavior to continuously output '1's after the first '1' is seen in the input stream, reflecting the 2's complement operation in a serial fashion.

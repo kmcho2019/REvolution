@@ -1,8 +1,0 @@
-Design a Moore FSM with three separate state bits to explicitly separate direction (left/right) and ground/falling status, plus a simple "bump detected" signal.  
-- State bits: dir (0=left,1=right), on_ground (1=on ground, 0=falling)  
-- Direction flips only if bumped while on ground; bump while falling ignored.  
-- Transition from on_ground=1 to 0 when ground=0, and back when ground=1.  
-- Use synchronous process for state updates with asynchronous reset.  
-- Outputs decoded from state bits: walk_left = on_ground & ~dir, walk_right = on_ground & dir, aaah = ~on_ground.  
-This explicit separation improves clarity and may simplify synthesis optimizations by isolating the direction and ground logic distinctly.  
-We handle bumping by checking bump inputs only when on_ground=1 and flip direction if bump_left or bump_right is asserted (including both simultaneously).

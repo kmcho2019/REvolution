@@ -1,5 +1,0 @@
-Refactor the design by using a ripple-carry approach where each digit increments based on a carry-in signal from the previous digit. Introduce internal carry signals computed synchronously inside the clocked process to represent whether a digit rolled over, then propagate the carry to the next digit in the same clock cycle. The ena signals correspond directly to these carry-out signals, reflecting when digits 1 to 3 incremented.
-
-By calculating the next state of each digit in a sequential fashion using blocking assignments inside the clocked process, we ensure that carries and increments propagate correctly in one clock cycle. This approach guarantees correct counting order, proper rollover, and consistent ena output. Finally, combine the digits into q synchronously.
-
-This method avoids the timing and semantic issues caused by mixing combinational carry signals with sequential logic and non-blocking assignments.

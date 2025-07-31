@@ -1,9 +1,0 @@
-Fuse the clean FSM structure and clear combinational next-state logic from Example 2 with the partial update of out_bytes and done gating from Example 1 to minimize toggling and enhance power efficiency. Specifically:
-
-- Use a simple 2-bit FSM (WAIT_SYNC, BYTE2, BYTE3) with clear combinational next-state logic.
-- Generate load enables for each byte, updating only the required 8-bit segment of out_bytes on each byte reception to minimize register toggling.
-- Assert done only for one cycle immediately after the third byte is received.
-- Default done low each cycle to avoid glitching but only toggle done when needed.
-- Keep synchronous active-high reset.
-- Keep state encoding binary for synthesis friendliness.
-- This fusion reduces switching on out_bytes and done, maintains good readability and clean FSM design, and should improve power and timing while keeping area minimal.

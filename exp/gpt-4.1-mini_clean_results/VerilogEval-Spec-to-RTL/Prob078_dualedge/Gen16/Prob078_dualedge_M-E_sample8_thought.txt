@@ -1,9 +1,0 @@
-Use a clock-frequency doubling strategy to emulate dual-edge triggering with single-edge flip-flops:
-
-- Generate a 2x frequency clock internally by XORing clk and a delayed version of clk (using a flip-flop).
-- Use this doubled-frequency clock (clk_2x) to clock a single positive-edge flip-flop capturing d.
-- Since the clock toggles at both original clock edges, the flip-flop samples input d at both rising and falling edges of the original clock.
-- This avoids illegal sensitivity lists and extra latches.
-- The drawback is the need for an internal frequency doubler which adds some delay, but this is a common practical technique.
-- The internal clk delay flip-flop is synchronized and uses nonblocking assignments to ensure proper glitch-free clock doubling.
-- This approach is simple, resource-efficient, and synthesizable on FPGAs.

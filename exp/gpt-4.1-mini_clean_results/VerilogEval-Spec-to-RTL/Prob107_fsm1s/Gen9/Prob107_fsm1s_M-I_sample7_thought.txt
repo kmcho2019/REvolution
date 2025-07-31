@@ -1,9 +1,0 @@
-The original design is already minimal and correct for a two-state Moore FSM with synchronous reset, using a 1-bit state encoding. To further improve PPA, the following refinements are applied:
-
-1. Use an enumerated type for states (`typedef enum logic`) for clearer and safer state representation, which can aid synthesis tools for optimized FSM encoding.
-2. Minimize combinational logic by combining next-state and output logic in a single always_comb block, reducing redundant case statements.
-3. Register the output (`out`) only on the clock edge, aligning it to the state register update to avoid glitches and reduce switching power.
-4. Keep synchronous reset.
-5. Use nonblocking assignments consistently in sequential blocks for clarity and synthesis best practice.
-
-This approach can lead to marginal performance and power improvements by reducing glitching on output and combining combinational logic. Area remains minimal due to simple FSM encoding.

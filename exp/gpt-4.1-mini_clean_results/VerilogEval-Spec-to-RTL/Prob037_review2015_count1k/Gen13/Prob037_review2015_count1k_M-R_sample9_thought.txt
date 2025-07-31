@@ -1,9 +1,0 @@
-Refactor the counter logic by separating the next state logic into a combinational always block, and use a synchronous always block only to update the register. This approach improves clarity by cleanly separating combinational and sequential logic, which is beneficial for synthesis tools and readability.
-
-- Declare a 10-bit register for the current count (q).
-- Create a 10-bit combinational signal (next_q) for the next counter value.
-- Compute next_q by checking if the current count equals MAX_COUNT; if so, next_q is 0, else q + 1.
-- Use a synchronous always block for the register update on posedge clk, with synchronous reset.
-- Keep the terminal count detection logic (is_max_count) using the partial bit comparison approach to minimize comparator complexity.
-
-This modular structure isolates combinational and sequential logic clearly while keeping the partial comparator optimization intact.

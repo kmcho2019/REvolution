@@ -1,7 +1,0 @@
-To address the issue identified in the feedback, we need to declare an internal reg variable to hold the value of the next state, rather than attempting to assign directly to the output port `next_state`. This is because in Verilog, output ports are treated as wires, which cannot be assigned values within an `always` block using the syntax `next_state = ...`.
-
-We will introduce a new reg variable, `next_state_reg`, which will hold the calculated next state. Then, we will assign the value of `next_state_reg` to the output port `next_state` outside the `always` block.
-
-Additionally, when assigning values to `next_state_reg` within the `always` block, we should use non-blocking assignments (`<=`) to ensure correct behavior, especially when dealing with sequential logic. However, in this context, since we are only implementing the combinational logic portion and not dealing with sequential elements directly, the use of blocking assignments (`=`) is acceptable and simpler for combinational logic descriptions.
-
-The output logic equation remains the same as it was correctly implemented based on the state machine specifications.

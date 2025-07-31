@@ -1,9 +1,0 @@
-To implement the series-parallel conversion circuit, we'll design a module named 'serial2parallel' that takes in serial data 'din_serial', a validity signal 'din_valid', a clock 'clk', and a reset 'rst_n'. It will output an 8-bit parallel data 'dout_parallel' and a validity signal 'dout_valid' for the parallel data. 
-
-The module will utilize a 4-bit counter 'cnt' to keep track of the number of serial input data bits received. The counter will reset when it reaches 8 (or 1000 in binary), indicating that 8 serial data bits have been received and it's time to output the parallel data. 
-
-The module will also use a shift register to store the incoming serial data bits. Each rising edge of the clock, if 'din_valid' is high, the new serial bit will be shifted into the register. 
-
-When the counter reaches 8, the validity signal 'dout_valid' will be set to 1, and the parallel data 'dout_parallel' will be output. Otherwise, 'dout_valid' will remain 0, indicating that the parallel output is not yet valid.
-
-In the next clock cycle after 'dout_valid' is set to 1, the counter and shift register will reset to prepare for the next set of serial input data.

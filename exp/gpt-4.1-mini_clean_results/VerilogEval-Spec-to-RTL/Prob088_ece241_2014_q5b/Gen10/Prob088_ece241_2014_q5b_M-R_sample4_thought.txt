@@ -1,5 +1,0 @@
-Refactor the design by encapsulating the state encoding and next-state logic inside an enumerated parameter for clarity, while still using one-hot encoding with two bits. Implement the next-state and output logic purely combinationally with a separate always_comb block (using always @*), making the sequential block only responsible for state updates and reset. This approach separates combinational and sequential logic explicitly, improving readability and verification.
-
-Use a single reg vector [1:0] for state where each bit corresponds to a state (one-hot). On reset, state is set to `2'b01` (state A). Next-state logic and output logic are computed in an always @* block. Output z remains Mealy type depending on current state and input.
-
-This approach uses vector registers instead of separate scalars for states, and separates combinational logic from sequential logic, thus maintaining functionality but restructuring for clarity and modularity.

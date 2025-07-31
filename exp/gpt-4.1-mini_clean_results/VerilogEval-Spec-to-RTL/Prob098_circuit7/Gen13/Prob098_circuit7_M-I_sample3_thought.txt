@@ -1,9 +1,0 @@
-The given solution uses a D flip-flop with inversion inside the sequential block, which is functionally correct and clean. However, it introduces a separate module for the DFF with inversion, which adds module overhead and a wire connection, slightly increasing area and potentially power due to wiring and hierarchy.
-
-To optimize PPA:
-- Remove the extra submodule (DFF_invert) and incorporate the inversion directly inside the TopModule's always block.
-- Declare 'q' as reg in TopModule and update it on the positive clock edge by inverting 'a' directly. This eliminates the need for an intermediate wire and module instantiation, reducing netlist complexity and potentially area and power.
-- Since the inversion is done inside the sequential block, the glitching risk remains minimal.
-- This simplification reduces hierarchical overhead and wiring, improving area and power slightly without impacting timing.
-
-This direct approach retains the functional behavior exactly, matches the waveform, and is cleaner and more efficient in terms of resources.

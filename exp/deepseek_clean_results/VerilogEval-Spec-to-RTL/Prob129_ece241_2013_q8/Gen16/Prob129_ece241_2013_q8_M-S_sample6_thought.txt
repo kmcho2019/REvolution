@@ -1,9 +1,0 @@
-The current solution can be simplified by:
-1. Removing the intermediate x_prev_prev register since we only need to track the last two bits (current and previous)
-2. Using a single always block for both state and output logic
-3. Making the output directly dependent on the current state and input (Mealy machine)
-4. Still maintaining the 3-state requirement (though effectively using 2 bits)
-5. Keeping the negative-edge asynchronous reset
-6. Ensuring overlapping sequence detection remains functional
-
-The simplified version will use just one register (x_prev) and detect the sequence by checking if we've seen '10' in previous cycles and current input is '1'.

@@ -1,1 +1,0 @@
-The bug is that 'result_is_zero' is assigned only when out == 0 but not set to 0 otherwise, so it can retain old values. We must assign result_is_zero in all cases to avoid latch inference. Also, using 'if (~out)' is a bit unclear; better to check 'if (out == 0)'. The fixed module should assign result_is_zero to 1 if out == 0, else 0, for all outputs.

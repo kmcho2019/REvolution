@@ -1,5 +1,0 @@
-Refactor the 12-hour BCD clock to a single synchronous always block that updates all counters and the PM flag atomically on each clock edge, triggered by reset or enable. This reduces the number of always blocks and avoids scattered logic, simplifying the control flow and improving PPA by reducing control logic complexity. 
-
-Use intermediate next-state registers inside the block to calculate the new state based on current values and the enable signal, then update all registers simultaneously. Keep hour as a binary counter internally but register the BCD hour output directly in the clocked block rather than using a combinational function, thus removing combinational logic on the critical path and further simplifying timing.
-
-This approach enhances timing by minimizing multi-level combinational logic and reduces power by minimizing unnecessary toggling outside enable pulses. It also improves area by consolidating counters and control logic into one process and direct output registers.

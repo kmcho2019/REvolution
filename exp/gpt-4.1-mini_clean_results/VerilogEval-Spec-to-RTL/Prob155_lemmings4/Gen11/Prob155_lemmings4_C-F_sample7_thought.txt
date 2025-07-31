@@ -1,9 +1,0 @@
-Fuse the compact state+direction packing from Example 1 with the simpler separate direction register from Example 2 to improve clarity and timing: keep a 2-bit state and a separate direction bit. Retain the clear bump handling and prioritization from Example 1 (fall > dig > bump) and the minimal counter saturation logic from Example 2. Use a Moore FSM style with asynchronous positive-edge reset initializing to WALK left.
-
-Implement the fall counter as a saturating 5-bit register capped at 31. Handle bumps only in the WALK state with explicit conditions for bump_left, bump_right, and bump_both for direction updates, ignoring bumps during FALL or DIG.
-
-Ensure that splatting occurs after a fall longer than 20 cycles once ground is reached, then lock the FSM in SPLAT state indefinitely with all outputs zero.
-
-This fusion merges Example 1's efficient state+direction encoding with Example 2's clean separation and simpler counter logic, providing clarity, maintainability, and improved potential timing, while ensuring correctness and minimal area/power overhead.
-
-Outputs are fully Moore, depending only on the current state and direction. This design prioritizes correctness, readability, and synthesis-friendly structure.

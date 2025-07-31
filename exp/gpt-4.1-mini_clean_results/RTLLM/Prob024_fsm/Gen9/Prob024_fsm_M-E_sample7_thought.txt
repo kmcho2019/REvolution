@@ -1,9 +1,0 @@
-I will implement a Mealy FSM using binary-encoded states for minimal flip-flop usage, tracking how many bits of the sequence "10011" have been matched so far. The states will represent the progress in matching the pattern, from 0 (no match) to 5 (full match). The FSM transitions will be designed to handle overlaps by utilizing the longest prefix of the pattern that matches the current input suffix.
-
-Instead of one-hot, binary encoding reduces area and power. The output MATCH is generated combinationally and asserted only when the last bit (the 5th bit, which is '1') of the sequence is received at the right state, following a Mealy output style.
-
-To support continuous and overlapping detection, the next state after full match will jump to the appropriate state depending on the input, ensuring that sequences like "100110011" generate multiple MATCH pulses at correct times.
-
-Reset synchronously clears the FSM to the initial state.
-
-This design demonstrates a compact and efficient implementation leveraging prefix function logic often used in pattern matching (similar to a KMP automaton) for the transitions.

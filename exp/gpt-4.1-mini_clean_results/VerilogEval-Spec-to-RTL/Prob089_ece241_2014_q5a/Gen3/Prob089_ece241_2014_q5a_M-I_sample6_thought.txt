@@ -1,9 +1,0 @@
-To optimize the original design for better PPA without changing functionality, we can:
-
-- Merge the output register logic into the same always block that holds the state and inversion_bit registers. This reduces the number of flip-flops and the clock tree load.
-- Use the inversion_bit directly as the registered output, and produce z as a combinational XOR of x and inversion_bit outside any clocked process. This complies with the Moore FSM definition because inversion_bit is the registered output-related state signal, and z depends only on registered state and input (Moore output derived combinationally from state register and input).
-- This approach eliminates one always block with asynchronous reset on z, thus reducing area and improving timing.
-- The asynchronous reset remains on the state/inversion_bit registers, keeping the reset behavior consistent.
-- Overall, the design maintains the same two states and logic but is structurally more efficient by removing the output register and producing output combinationally.
-
-This should yield better timing (reduced sequential depth), a small area reduction, and possibly lower dynamic power due to fewer registers switching.

@@ -1,9 +1,0 @@
-To improve PPA (performance, power, area) over the original flat 64-bit ripple carry style subtraction, I will implement the subtraction using a hierarchical carry-lookahead approach by splitting the 64-bit adder into 4 blocks of 16 bits each. Each 16-bit block will use a carry-lookahead adder for internal carries, and a small 4-bit carry-lookahead unit will combine the block carries to generate the top-level carry chain.
-
-This reduces carry propagation delay from 64 levels to approximately 16 + 4 levels, improving timing.
-
-Power and area also improve by localizing carry logic and reducing the number of gates in the critical carry path. Each 16-bit block calculates propagate and generate signals for its bits and a block propagate and generate signal for hierarchical carry calculation.
-
-The overflow detection logic remains the same as it depends only on the sign bits of inputs and result.
-
-This hierarchical carry-lookahead subtractor is fully combinational, modular, and scales well for 64-bit operations.

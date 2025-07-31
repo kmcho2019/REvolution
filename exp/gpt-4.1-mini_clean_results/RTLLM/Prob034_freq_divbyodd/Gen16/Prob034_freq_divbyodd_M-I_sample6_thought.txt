@@ -1,9 +1,0 @@
-To improve the original design’s PPA while keeping the same functionality, I will optimize the code by:
-- Removing the duplicated counter register (`cnt_dly`) and instead sampling the counter at negedge clk through a minimal register to synchronize the value. This reduces area and dynamic power.
-- Merging clk_div1 and clk_div2 control logic into a unified FSM-like approach, using toggle logic rather than explicit set/reset for clk_div outputs, simplifying combinational logic.
-- Using a single counter and generating clk_div by toggling on count thresholds on positive and negative edges with minimal combinational comparisons.
-- Simplifying conditional assignments to reduce glitch potential and gate count.
-- Maintaining an asynchronous active-low reset and parameter check for odd divisor.
-- Ensuring clk_div has a ~50% duty cycle with careful toggle points.
-  
-This will reduce register count and switching activity, decrease combinational logic complexity, and improve timing by minimizing critical path logic depth, thereby enhancing overall PPA.

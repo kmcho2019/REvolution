@@ -1,5 +1,0 @@
-To improve synthesis compatibility while preserving the latch functionality, use a non-blocking assignment (<=) inside the always block and explicitly define both the if and else branches. This style is generally better recognized by synthesis tools as a latch: when ena is high, q follows d; when ena is low, q holds its previous value. Keeping both branches explicit improves clarity and synthesis inference. This change avoids reliance on implicit latch inference from incomplete assignments.
-
-Additionally, using non-blocking assignments better matches inferred storage behavior. This will ensure the synthesis tool maps the design to a DLH primitive latch, fixing the functional check failure.
-
-No changes are made to the latch behavior, preserving functionality but improving synthesis friendliness.

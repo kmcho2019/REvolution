@@ -1,9 +1,0 @@
-Refactor the asynchronous FIFO implementation by restructuring pointer management and synchronization logic to use mostly combinational assignments and smaller always blocks with clear separation of concerns. Replace some always blocks with continuous assignments where feasible (e.g., Gray code generation). Use dedicated modules for pointer synchronization and Gray-to-binary conversion but implement Gray-to-binary conversion as a pure combinational function without loops for synthesis clarity. 
-
-Use explicit address generation by slicing synchronized binary pointers for RAM addressing. Handle full and empty flag generation combinationally by comparing synchronized pointers in binary domain. The dual-port RAM remains as a separate module instantiated inside the FIFO. 
-
-This approach reduces registers where not strictly needed, improves clarity by separating combinational and sequential logic, and maintains the same FIFO behavior with parameterizable width and depth. The synchronization modules stay as simple 2-stage synchronizers with non-blocking always blocks for proper metastability mitigation.
-
-We keep resets active-low, synchronous with their clock domains, and carefully gate write/read enables based on full/empty conditions. The read data register is clocked in the read domain and updated only on valid reads.
-
-Overall, this refactoring clarifies the design and separates concerns with a focus on combinational pointer calculations and pointer synchronization modules, maintaining correct asynchronous FIFO operation.

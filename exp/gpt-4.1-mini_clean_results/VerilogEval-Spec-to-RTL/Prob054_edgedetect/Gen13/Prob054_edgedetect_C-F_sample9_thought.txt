@@ -1,6 +1,0 @@
-Fuse both approaches by storing previous input in a register and creating an intermediate combinational signal for the positive edge detection. Then register the pedge output in a separate always block clocked by clk. This pipeline approach breaks the critical path into two stages:
-
-- Stage 1: Register prev_in and compute posedge_comb combinationally.
-- Stage 2: Register pedge from posedge_comb.
-
-This reduces combinational path length between flip-flops, improving timing (performance), keeps minimal register count (two 8-bit registers), avoids glitches by registering pedge output, and maintains power efficiency by limiting combinational logic depth per cycle. This modular separation also enhances code clarity and synthesizability.

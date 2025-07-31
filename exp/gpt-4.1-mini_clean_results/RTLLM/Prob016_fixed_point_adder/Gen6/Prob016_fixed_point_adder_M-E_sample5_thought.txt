@@ -1,9 +1,0 @@
-Use direct two's complement addition but leverage the signs of inputs to decide if we add or subtract their absolute values in magnitude form. Instead of fully converting to magnitude manually, rely on built-in signed arithmetic to compute the raw sum. Then, apply saturation and overflow detection based on two's complement arithmetic rules: if both inputs have the same sign but the result's sign differs, overflow has occurred.
-
-To handle overflow without enlarging bit width, clamp the result to maximum positive or negative value depending on the overflow direction. This approach simplifies the design by using signed arithmetic and overflow detection logic rather than manually handling magnitudes and sign bits separately.
-
-The module takes parameters for total bit width `N` and fractional precision `Q`. Inputs are interpreted as signed fixed-point numbers in two's complement. The output is the sum with saturation on overflow.
-
-Internal register `res` stores the intermediate result. The overflow is detected by comparing input and output signs. Saturation values correspond to the largest positive and negative numbers representable in `N` bits.
-
-This method leverages the hardware-friendly nature of signed addition and two's complement overflow detection, making it efficient and clean.

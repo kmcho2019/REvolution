@@ -1,9 +1,0 @@
-To optimize the FSM for better performance and power without significantly increasing area, I will convert the state encoding from binary to one-hot. One-hot encoding reduces the complexity of next-state logic since only one flip-flop is set at a time, minimizing combinational logic levels and improving timing. This will especially help the critical path as the case statements become simple AND-OR combinations.
-
-I will also register the output z to avoid glitches and reduce dynamic power. Registering the output aligns output changes with clock edges, improving timing predictability.
-
-Although one-hot encoding increases flip-flop count (from 3 to 6), the simpler next-state logic and registered output can improve overall PPA by improving timing (reducing worst negative slack and total negative slack) and lowering power due to reduced glitching.
-
-The FSM will use synchronous reset, and next-state logic will be in combinational always block with simple case statements. Output z will be a registered signal asserted only in states E and F.
-
-This approach balances a modest area increase with improved timing and power characteristics.

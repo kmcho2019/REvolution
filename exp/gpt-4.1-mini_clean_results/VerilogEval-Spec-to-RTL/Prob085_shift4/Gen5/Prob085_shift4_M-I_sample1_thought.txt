@@ -1,7 +1,0 @@
-The original design is already clean and efficient, with asynchronous reset and priority load over enable shifting. To improve PPA:
-
-1. **Performance:** Replace the conditional branches with a single priority-encoded mux to reduce mux tree complexity and potentially improve timing.
-2. **Power:** Introduce a clock enable signal derived from load or ena to gate register updates, preventing unnecessary toggling on clock edges where no change occurs.
-3. **Area:** The area is minimal; no major change needed.
-
-This approach keeps behavior identical but may reduce critical path and switching activity, especially when both load and ena are low, improving timing and dynamic power without extra area overhead.

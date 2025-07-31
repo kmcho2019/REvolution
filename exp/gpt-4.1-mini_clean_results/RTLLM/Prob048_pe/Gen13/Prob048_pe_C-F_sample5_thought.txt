@@ -1,9 +1,0 @@
-Fuse the two examples by using a single 64-bit accumulator register to fully capture the accumulation result without saturation or overflow loss, since the product of two 32-bit numbers is 64-bit and accumulation can easily overflow 32 bits. This prevents precision loss and wrap-around, addressing a key limitation of both previous examples.
-
-To maintain a 32-bit output 'c', continuously assign the lower 32 bits of the accumulator for backward compatibility. Add an optional saturation output flag to indicate overflow beyond 32 bits for diagnostic purposes without limiting accumulation precision.
-
-Use synchronous reset and non-blocking updates for reliable RTL synthesis and timing. Keep multiplier and adder combinational and inside the always block accumulate the 64-bit sum. This single accumulator register reduces complexity and latency.
-
-By removing saturation logic and widening the accumulator, this design improves accuracy and avoids overflow artifacts while retaining a simple interface. It also simplifies the datapath and ensures that no intermediate results are lost, enabling future extensions like wider output or overflow reporting.
-
-This design balances correctness, precision, clarity, and future scalability without incurring large additional area or timing cost of complex saturation logic. The output remains 32-bit as requested but internally the full precision accumulation is kept.

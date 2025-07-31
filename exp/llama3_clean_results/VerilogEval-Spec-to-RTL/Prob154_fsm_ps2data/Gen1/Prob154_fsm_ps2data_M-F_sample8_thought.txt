@@ -1,7 +1,0 @@
-To address the issues identified in the feedback, we need to re-examine the state machine and datapath logic. The primary cause of the 'out_bytes' mismatches seems to be the incorrect assignment of 'out_bytes_reg' and the handling of the 'byte1', 'byte2', and 'byte3' registers. 
-
-We should modify the state machine to ensure that the 'out_bytes_reg' is assigned the correct value only when the 'done' signal is asserted. Additionally, we should preserve the values of 'byte1', 'byte2', and 'byte3' across state transitions to ensure that the 'out_bytes' output is correct.
-
-We will also introduce a new state, BYTE3, to handle the third byte of the message. This will allow us to correctly assign the 'out_bytes_reg' and assert the 'done' signal in the next cycle.
-
-To handle the reset signal, we will ensure that all registers are reset to their initial values when the 'reset' signal is asserted. This will prevent any potential issues caused by the reset signal.

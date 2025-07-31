@@ -1,9 +1,0 @@
-To implement the four-bit shift register that also acts as a down counter, we can use a novel approach that employs two separate registers: one for the shift operation and one for the counter. We will use a flag to track whether the current value in the register is a result of a shift operation or a counter operation. This approach allows us to handle the priority of operations when both 'shift_ena' and 'count_ena' are 1 by using the flag to determine which operation to perform.
-
-We will define two registers, 'shift_reg' and 'count_reg', to store the current value of the shift register and the counter, respectively. We will also define a flag, 'is_shift', to track whether the current value is a result of a shift operation or a counter operation.
-
-When 'shift_ena' is 1, we will update 'shift_reg' by shifting 'data' into the most significant bit position and then assign 'shift_reg' to 'count_reg'. We will also set 'is_shift' to 1.
-
-When 'count_ena' is 1 and 'is_shift' is 0, we will update 'count_reg' by decrementing its current value. If 'count_reg' is 0, we will set it to 4'b1111.
-
-Finally, we will assign 'count_reg' to the output 'q'.

@@ -1,7 +1,0 @@
-Refactor the design to use a single counter clocked on the positive edge that counts from 0 to NUM_DIV-1, then resets. Generate two enable signals that correspond to the half and full period counts to control two flip-flops clk_div1 and clk_div2 toggling on positive and negative edges, respectively. The negative edge toggling is implemented by sampling the output clock with a negedge-triggered flip-flop to mimic the dual-edge effect, but counters are only updated on posedge for simpler timing.
-
-Use combinational logic to derive toggling conditions. Implement clk_div1 as a register toggled at count zero and half count, and clk_div2 as a negedge triggered flip-flop toggled on clk_div1 transitions, effectively producing a similar output.
-
-By using only one counter and one posedge clocked always block plus one negedge triggered always block just for toggling clk_div2, the design avoids two counters and synchronizes the divide ratio changes in a simpler and potentially more synthesis-friendly manner. The output clock is formed by OR-ing clk_div1 and clk_div2 as before.
-
-Reset asynchronously initializes all registers. This structure maintains the same functional behavior but with a cleaner control of toggling and reduces complexity in the counters.

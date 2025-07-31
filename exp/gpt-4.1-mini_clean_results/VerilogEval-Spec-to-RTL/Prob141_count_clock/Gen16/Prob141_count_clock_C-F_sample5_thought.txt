@@ -1,7 +1,0 @@
-Fuse the modular BCD increment approach for seconds and minutes from Example 1, where seconds and minutes counters are implemented as separate always blocks triggered on ena, reducing nesting and improving clarity. Keep the internal binary hour counter with simple increment and pm toggle logic as in Example 1, triggered only on minute rollover. This reduces critical path length and eases timing.
-
-Combine all logic using non-blocking assignments and synchronous reset with priority. Minimize combinational logic inside clocked blocks to reduce timing pressure and power due to glitches. Use a small combinational function to convert the binary hour counter (1-12) into two-digit BCD for output, avoiding complex combinational conversions.
-
-Keep seconds and minutes BCD counters separate with clear increment and rollover conditions and enable gating to avoid unnecessary switching. Hour increments only when minutes rollover from 59 to 00, toggling pm at hour roll from 11 to 12.
-
-This fusion maintains simplicity and modularity for ease of verification, reduces nested if-else complexity inside always blocks, minimizes toggling by gating counters on ena and rollovers, and keeps clocked logic minimal to improve timing and power, while maintaining clean code and correct functionality.

@@ -1,7 +1,0 @@
-Fuse the best ideas from both examples by maintaining modular clarity through a parameterized BitSplitter submodule, but avoid separate individual output ports inside BitSplitter and instead use a single vector output to represent the split bits, which is then directly wired to the outputs in TopModule. This reduces port count and interface complexity, enabling the submodule to be more generic and simpler internally.
-
-Inside TopModule, assign `outv` directly to `vec` for minimal logic and connect the split bits vector outputs from BitSplitter to individual outputs by simple continuous assignments. This approach keeps BitSplitter reusable, reduces module port overhead, and keeps logic flat, minimizing area and power. It also improves readability and scalability by using a vector output for split bits, avoiding multiple separate output ports, thus simplifying wiring when port counts grow beyond 3 bits.
-
-This fusion preserves modularity, reduces hierarchy overhead, and optimizes PPA by flattening bit splitting to a vector output and direct bit slicing at the top level. It also improves maintainability and scalability for wider vectors.
-
-Note: The BitSplitter outputs a vector [WIDTH-1:0] split_bits equal to the input vector; TopModule assigns individual outputs from this vector.

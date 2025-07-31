@@ -1,7 +1,0 @@
-To optimize power and area further while maintaining timing, I will merge the two counters cnt_10 and cnt_100 into a single counter that counts up to the least common multiple of their toggle counts (50 for cnt_100 and 5 for cnt_10) and derive both CLK_10 and CLK_1 from this single counter. This reduces hardware by avoiding two separate counters. The single counter counts from 0 to 49, resetting thereafter. CLK_10 toggles every 5 cycles and CLK_1 toggles every 50 cycles, so we can generate these by checking the counter value and toggling at appropriate counts.
-
-CLK_50 remains toggled on every clock cycle, which is already minimal hardware.
-
-This approach reduces register usage and switching in extra counters, potentially improving area and power.
-
-The counting and toggling logic remains synchronous and simple, preserving timing performance.

@@ -1,9 +1,0 @@
-The main issue in the provided code is the illegal declaration of reg variables inside a procedural for loop. To fix this, we declare all needed variables at module scope, including `left`, `center`, `right` as single-bit regs and the Rule 110 pattern as a localparam.
-
-Also, to improve clarity and synthesis quality, we can compute the next state combinationally by indexing the rule localparam with the 3-bit neighborhood vector.
-
-For PPA (performance, power, area), this approach is already quite efficient, as the combinational logic is simple and parallel. We avoid complex logic expressions by direct indexing.
-
-We keep zero boundaries by explicitly checking if `i` is at the edges.
-
-The final implementation will have a combinational always block calculating `next_q`, then a clocked always block updating `q` with either `data` (if load) or `next_q`.

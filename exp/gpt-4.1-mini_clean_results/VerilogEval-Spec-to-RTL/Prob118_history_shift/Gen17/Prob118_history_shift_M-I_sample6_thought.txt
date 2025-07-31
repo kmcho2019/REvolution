@@ -1,9 +1,0 @@
-To optimize the design for better power, performance, and area (PPA), I will unify the global history into a single 32-bit register instead of splitting it into two 16-bit registers. This reduces routing overhead and area, and simplifies the data path.
-
-I will implement the history as one 32-bit register that shifts left by 1 on prediction (inserting predict_taken at LSB), or loads the corrected history (train_history concatenated with train_taken as the new LSB) on misprediction. The priority of misprediction update over prediction update will be preserved by ordering the if-else blocks.
-
-Additionally, I will add a clock enable signal derived from predict_valid or train_mispredicted, gating register updates to minimize switching activity when no updates are needed, improving power efficiency.
-
-The asynchronous reset remains positive edge triggered as specified.
-
-This approach simplifies the design, reduces interconnect complexity, reduces switching activity when idle, and should improve overall PPA.

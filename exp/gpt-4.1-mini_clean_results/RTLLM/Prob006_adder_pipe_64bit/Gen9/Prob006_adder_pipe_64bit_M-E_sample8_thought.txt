@@ -1,7 +1,0 @@
-Implement a 64-bit ripple carry adder with a deep pipeline where each pipeline stage adds one bit of the operands plus carry-in, producing one bit of the sum and carry-out to the next stage. To realize this, create 64 pipeline stages, each with registers holding input bits, carry, and partial sum bit. This results in a fully sequential ripple carry pipeline, shifting carry and sum bit by bit through the pipeline. Input operands and enable are loaded into stage 0, and each clock cycle, the carry and sum propagate to the next stage.
-
-This approach is different from the usual multi-bit chunk addition per stage; here each stage processes a single bit addition, simplifying each stage logic and enabling maximum pipeline depth. Output result and enable signal will be registered from the last stage, indicating when the final sum is ready. The result is assembled by concatenating the sum bits stored in each stage register, plus the final carry out.
-
-This design trades latency for pipeline throughput and a simple stage logic. It uses arrays of registers for adda bits, addb bits, sum bits, and carry signals per stage, updated sequentially at each clock edge. The enable signal is also pipelined stage-by-stage.
-
-The output 'result' is the concatenation of all pipeline sum bits plus the final carry out bit. The 'o_en' signal indicates when the pipeline is valid and output is ready.

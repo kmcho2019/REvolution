@@ -1,9 +1,0 @@
-The fusion strategy leverages the clarity and explicitness of the procedural always block from Example 2, which groups output assignments together and improves code readability, making dependencies clear. At the same time, it adopts the outputs as wires with continuous assignments from Example 1 to ensure the outputs remain purely combinational without risking inference of registers or latches, thus optimizing area and power.
-
-To combine these benefits, we can declare outputs as wires and implement the logic inside an internal combinational always block that drives internal regs, then assign the outputs from those regs. This keeps the grouped procedural logic style and readability, while the external outputs remain wires driven by continuous assignment, thus maintaining purely combinational, minimal-area logic without registers or latches on outputs.
-
-However, since the logic is simple reductions, creating internal regs adds minor overhead without gain. Therefore, the superior approach is to keep the outputs as wire, use continuous assignment for minimal logic, but document clearly that this approach is combinational and maintain readability with straightforward assignments.
-
-Hence, the best design is to use continuous assignment on wire outputs with direct reduction operators on the 4-bit input vector, combining the simplicity and minimalism of Example 1 with the explicitness of naming and comments to clarify combinational behavior, improving maintainability and clarity.
-
-This fusion delivers optimal power, area, and performance while maintaining clarity and correctness.

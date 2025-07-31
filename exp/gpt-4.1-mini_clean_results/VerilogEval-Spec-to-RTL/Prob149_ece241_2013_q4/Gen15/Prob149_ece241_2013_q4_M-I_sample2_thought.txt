@@ -1,7 +1,0 @@
-To correct the design and ensure accurate supplemental flow valve control (`dfr`), we must properly track the previous and current discrete water levels synchronously. On each clock edge, if the water level changes, we update `prev_level` with the old `curr_level` before assigning the new `curr_level`. Then, `dfr` is asserted if and only if the `curr_level` is greater than `prev_level` (indicating a rising water level).
-
-Additionally, outputs `fr0`, `fr1`, and `fr2` should be driven purely based on the stored `curr_level` to avoid glitches and maintain timing consistency.
-
-On reset, initialize the system to the "below lowest sensor" condition (all flow valves on, including `dfr` asserted), as specified.
-
-This synchronous approach avoids combinational timing hazards and ensures that `dfr` reflects stable state transitions only. This correction respects the problem specification precisely and avoids the previous code's mismatch issues.

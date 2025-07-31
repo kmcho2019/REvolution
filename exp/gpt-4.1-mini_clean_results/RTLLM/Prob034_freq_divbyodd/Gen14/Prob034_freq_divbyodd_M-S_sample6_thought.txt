@@ -1,9 +1,0 @@
-To simplify the frequency divider by an odd number, I will use a single counter running on the positive edge of clk. Since odd division cannot yield a 50% duty cycle, I will generate a pulse whose width is either (NUM_DIV+1)/2 or (NUM_DIV-1)/2 clock cycles. 
-
-The clk_div output will be high for the first half of the count cycle and low for the remaining cycles, creating a frequency of clk/(NUM_DIV) with a non-50% duty cycle.
-
-This approach reduces complexity by using one counter and no separate negative-edge logic, while maintaining the correct frequency division.
-
-The counter counts from 0 to NUM_DIV-1, and clk_div is set high when counter < half_div and low otherwise.
-
-Reset initializes counter and clk_div.

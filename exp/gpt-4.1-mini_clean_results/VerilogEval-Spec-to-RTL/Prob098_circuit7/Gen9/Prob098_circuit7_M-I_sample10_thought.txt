@@ -1,5 +1,0 @@
-The waveform shows q is the delayed inverted value of input 'a' sampled at the positive edge of clk. The initial design uses a flip-flop with inversion inside, which is functionally correct but may slightly increase clock-to-Q delay and area due to inversion logic inside the sequential path.
-
-To optimize for better performance and area, we can implement q as the inverted output of a standard D flip-flop holding 'a'. This approach uses a simple positive-edge triggered flip-flop storing 'a', and q is assigned as the inversion of the stored value combinationally. This removes the need to invert inside the sequential path, thus reducing clock-to-Q delay and area while maintaining the same waveform functionality.
-
-Power can improve slightly as fewer transitions occur inside the flip-flop and the combinational inverter can be optimized or merged by synthesis tools. This is a minimal change yielding better PPA while keeping the same behavior.

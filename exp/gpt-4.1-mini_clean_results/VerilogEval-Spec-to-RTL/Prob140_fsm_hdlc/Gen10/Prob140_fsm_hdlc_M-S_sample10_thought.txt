@@ -1,7 +1,0 @@
-The original solution uses a 3-bit saturating counter and explicit next-state logic to track the count of consecutive 1s. Since the FSM's states correspond directly to the count of consecutive ones, we can simplify the design by eliminating the explicit next_state signal and computing the next state inline in the sequential block. This removes a combinational always block and reduces logic complexity.
-
-Outputs can be computed purely from the state and input in a combinational block, or even directly in the sequential block as registered signals for simpler logic. This maintains the output timing semantics and the synchronous reset.
-
-By folding next-state logic into the sequential block, and using simple arithmetic operations, we reduce the number of signals and always blocks, leading to cleaner, more compact, and potentially more efficient code without changing behavior.
-
-We keep the saturating behavior at state 7 to indicate error and outputs asserted in the cycle after the pattern occurs.

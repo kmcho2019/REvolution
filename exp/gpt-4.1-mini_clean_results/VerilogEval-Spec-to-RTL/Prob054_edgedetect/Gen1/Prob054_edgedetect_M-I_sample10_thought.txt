@@ -1,8 +1,0 @@
-The original design is already minimal and clean, detecting positive edges per bit with a single register and bitwise logic. To optimize PPA further at the RTL level, we can:
-
-1. Combine the pedge and prev_in into a single register to reduce area and possibly power, by registering only the previous input and generating pedge combinationally from prev_in and current input.
-2. Use an output register only if necessary to meet timing; otherwise, pedge can be a combinational output driven by the registered prev_in and input. This reduces flip-flops from 16 to 8.
-3. Removing the pedge register will slightly reduce area and power by cutting flip-flops and logic; timing may improve due to less register-to-register delay.
-4. As pedge is expected to be stable next cycle, it's acceptable to make pedge a purely combinational output derived from prev_in and in, with only prev_in registered.
-
-Thus, the improved design registers only prev_in at each clock cycle, then outputs pedge combinationally from (~prev_in & in). This reduces the number of flip-flops from 16 to 8, thus optimizing area and power, while performance improves slightly by removing one register stage from pedge output path.

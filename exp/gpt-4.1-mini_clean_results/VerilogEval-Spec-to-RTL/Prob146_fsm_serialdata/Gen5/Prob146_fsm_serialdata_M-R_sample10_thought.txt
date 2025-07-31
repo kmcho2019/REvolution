@@ -1,7 +1,0 @@
-Refactor the FSM by separating combinational next state and output logic from the sequential state update, using a classic two-process FSM style. Use a combinational always block to compute next_state, done flag, and data_shift update, and a synchronous always block to update state, counter, and data registers.
-
-Maintain the same four states and data shifting LSB first. This separation improves code clarity and facilitates easier state debugging or modification. It also explicitly shows the FSM behavior and outputs as functions of current state and inputs.
-
-Keep synchronous active-high reset and done asserted for one cycle when a valid stop bit is received. If the stop bit is invalid, stay in WAIT_STOP until a line idle is detected.
-
-This approach trades off some code verbosity for better modularity and common FSM coding style without changing functionality.

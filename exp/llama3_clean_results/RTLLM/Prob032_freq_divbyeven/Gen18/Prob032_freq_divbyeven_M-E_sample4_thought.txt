@@ -1,8 +1,0 @@
-To create a novel architectural idea for the frequency divider, we can leverage a different approach that involves using a combination of counters and a finite state machine (FSM) to achieve the desired division of the input clock frequency by even numbers. This approach allows for more flexibility and potential optimization in terms of power, performance, and area.
-
-The new architectural idea involves the following key components:
-1. **Counter (`cnt`):** A counter that increments on each positive edge of the input clock (`clk`). The counter's width is determined based on the division factor `NUM_DIV`.
-2. **Finite State Machine (FSM):** A simple FSM with two states - `IDLE` and `DIVIDE`. The FSM transitions from `IDLE` to `DIVIDE` when the counter reaches half of `NUM_DIV - 1`, and it resets to `IDLE` when the counter reaches `NUM_DIV - 1`. This ensures that the divided clock output toggles at the correct frequency.
-3. **Divided Clock Output (`clk_div`):** The divided clock output is generated based on the state of the FSM. When the FSM is in the `DIVIDE` state, `clk_div` is set to the opposite of its previous value, effectively toggling the output.
-
-This novel approach provides a more structured and modular design, making it easier to understand, modify, and optimize the frequency divider module.

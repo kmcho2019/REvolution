@@ -1,7 +1,0 @@
-The original solution conditionally updates the anyedge register only when an edge occurs, otherwise clears it. This prevents unnecessary toggling on anyedge but involves an OR gate over all bits as an enable, which slightly increases switching in the enable logic.
-
-To optimize power further and reduce toggle activity, avoid clearing anyedge to zero on cycles without edges; instead, clear anyedge bits only when no edges are detected by masking edge_detect with the XOR result. This way, the anyedge bits that are zero remain stable and only bits with detected edges toggle. This reduces transitions in anyedge output and avoids toggling the register unnecessarily.
-
-Also, update anyedge directly with edge_detect (which already is the XOR of current and delayed input), ensuring that anyedge is one cycle delayed as required. Keeping the edge_detect wire and the previous input registered is necessary.
-
-This approach reduces dynamic power by removing the OR gate enable and conditional logic, simplifying timing paths and slightly reducing area. It avoids unnecessary clearing to zero and instead stores edges directly, yielding a balanced PPA improvement.

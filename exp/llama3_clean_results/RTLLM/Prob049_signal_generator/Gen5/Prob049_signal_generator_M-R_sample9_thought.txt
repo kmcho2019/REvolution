@@ -1,9 +1,0 @@
-To refactor the given Triangle Wave signal generator module, we can simplify the logic and use a more straightforward approach by eliminating the need for a separate `direction` register. Instead, we can directly control the increment and decrement operations based on the value of the `wave` register. This simplification reduces the complexity of the design and potentially improves area efficiency.
-
-We will maintain the same functionality, where the `wave` signal increments from 0 to 31 and then decrements back to 0, repeating the cycle. The main change will be in how we manage the direction of the waveform. 
-
-By removing the `direction` register, we can directly compare the `wave` value to its maximum (31) to decide whether to increment or decrement. This approach simplifies the logic and reduces the number of registers needed, which can lead to improvements in area and potentially power consumption.
-
-We will also consider using non-blocking assignments (`<=`) within the `always` block to prevent race conditions, as is good practice in Verilog for synchronous designs. This ensures that all updates are scheduled to occur at the end of the current time step, preventing unintended behavior due to concurrent updates.
-
-The refactored code will maintain the same input and output ports but with a more streamlined internal logic for generating the triangle wave.

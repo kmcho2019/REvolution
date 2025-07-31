@@ -1,9 +1,0 @@
-Refactor the fractional divider by 3.5 by separating the counter and phase-shift generation clearly and using combinational logic with registered signals to improve timing clarity and avoid glitches.
-
-- Use a 3-bit counter (0 to 6) clocked on the rising edge of clk with synchronous reset.
-- Generate `clk_pos` combinationally: high for count [0..3], low otherwise.
-- Generate `clk_neg` by registering `clk_pos` on the falling edge, creating a half-cycle delayed version.
-- Synchronize asynchronous reset properly for both edges.
-- Generate the output `clk_div` as the OR of `clk_pos` and `clk_neg`.
-
-This refactor uses synchronous logic on both clock edges with reset synchronization and separates combinational signals from registered signals for cleaner and glitch-free operation.

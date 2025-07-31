@@ -1,9 +1,0 @@
-The current design utilizes a simple finite state machine (FSM) to track the reception of bytes and determine when a message is complete. However, this approach requires the FSM to explicitly manage the state of byte reception, which can lead to a somewhat complex state machine with multiple states and transitions.
-
-To simplify the design and potentially improve the PPA metrics, we can consider an alternative architectural approach. Instead of using an FSM to track the state of byte reception, we can use a counter to keep track of the number of bytes received since the last message boundary was detected. This counter can be reset whenever a message boundary is detected (i.e., when a byte with in[3]=1 is received).
-
-We can use this counter to determine when a message is complete. Specifically, when the counter reaches 3, it means we have received 3 bytes since the last message boundary, and we can signal that a message is complete.
-
-This approach simplifies the design by reducing the number of states and transitions in the FSM, which can lead to improved area and power consumption. Additionally, it can potentially improve performance by reducing the complexity of the combinational logic.
-
-Here's the new code implementing this idea:

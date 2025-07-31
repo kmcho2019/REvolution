@@ -1,5 +1,0 @@
-The problem interface has only clk, reset, and shift_ena signals—no pattern input is provided. The specification requires shift_ena to be asserted for exactly 4 clock cycles immediately after a synchronous active-high reset, then stay low indefinitely until the next reset. No other trigger restarts the enable.
-
-To implement this, use a 3-bit counter that loads 4 at the positive clock edge when reset is asserted. On subsequent clock cycles, if the counter is nonzero, decrement it by 1; otherwise, keep it at zero. The shift_ena output is asserted whenever the counter is nonzero.
-
-This approach meets the specification exactly and avoids extraneous inputs or complexity. It also ensures minimal toggling by counting down only when needed. The synchronous reset is respected per spec.

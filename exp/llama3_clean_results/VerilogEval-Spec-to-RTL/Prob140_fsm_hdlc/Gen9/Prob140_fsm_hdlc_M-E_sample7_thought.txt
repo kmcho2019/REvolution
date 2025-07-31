@@ -1,9 +1,0 @@
-A novel approach to implementing the HDLC framing protocol involves utilizing a counter-based state machine. Instead of explicitly defining states for each sequence of ones, we can use a counter to keep track of the number of consecutive ones encountered. This approach simplifies the state machine and reduces the number of states required.
-
-The idea is to use two counters: one for counting the total number of consecutive ones and another for counting the number of consecutive ones after a flag has been detected. When the total counter reaches 6, we check the next bit to determine if it's a flag (0) or an error (1). If it's a flag, we reset the counters and assert the flag output. If it's an error, we continue counting and assert the error output.
-
-To handle the discarding of bits, we use a separate counter that increments whenever a discard condition is met (5 consecutive ones followed by a 0). This counter is used to assert the discard output for one clock cycle.
-
-The state machine will have two main states: IDLE and COUNTING. In the IDLE state, the counters are reset, and the machine waits for a '1' to start counting. In the COUNTING state, the machine increments the counters based on the input bits and checks for the conditions to assert the outputs.
-
-This approach simplifies the design, reduces the number of states, and makes the code more concise and easier to understand.

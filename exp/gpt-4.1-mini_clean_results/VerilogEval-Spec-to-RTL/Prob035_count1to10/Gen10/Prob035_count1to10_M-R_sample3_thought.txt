@@ -1,7 +1,0 @@
-Refactor the decade counter by using a 4-bit binary register for the count value directly, ranging from 1 to 10, instead of one-hot encoding. The synchronous reset sets the count to 1. On each clock edge, if not resetting, the counter increments by 1; when it reaches 10, it wraps back to 1.
-
-The output q is assigned directly from the binary counter, eliminating the decoding logic and reducing combinational complexity. The combinational wrap-around logic is simplified by a conditional operator within the sequential always block.
-
-This approach reduces area by using only 4 flip-flops, lowers dynamic power by minimizing toggling bits and avoids large case statements for next-state and decoding logic, improving timing. The synchronous reset is preserved.
-
-To show a different structure, the output q is implemented as a continuous assignment from the count register, while the sequential logic updates only the count register. This cleanly separates sequential state update and output logic.

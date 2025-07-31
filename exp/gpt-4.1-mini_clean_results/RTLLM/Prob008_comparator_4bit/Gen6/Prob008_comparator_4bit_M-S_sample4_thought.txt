@@ -1,8 +1,0 @@
-Use a simple combinational approach to perform A-B subtraction with ripple borrow chain instead of borrow lookahead to reduce logic complexity. 
-
-- For each bit, calculate borrow out using the standard formula: borrow_out = (~A & B) | ((~(A ^ B)) & borrow_in).
-- Propagate the borrow from LSB to MSB to detect if a borrow occurs out of MSB (indicating A < B).
-- Check equality by comparing A and B bits with XNOR and AND reduction.
-- Outputs are mutually exclusive: if borrow out is 1 => A_less; else if equal => A_equal; else A_greater.
-
-This simplification eliminates the generate loops and borrow lookahead logic, making the design more straightforward and easier to understand while preserving functionality.

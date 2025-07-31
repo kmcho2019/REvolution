@@ -1,9 +1,0 @@
-To improve PPA, I will reduce the number of registers and simplify state encoding by merging the inversion_bit into the state itself, using a single-bit state register indicating COPY (0) and INVERT (1). Since inversion_bit always matches the INVERT state, we don't need a separate register for it.
-
-Also, I will remove the registered input x_reg because the input is a single bit and the problem doesn't specify input stability issues; eliminating x_reg saves a flip-flop and reduces latency.
-
-The asynchronous reset remains on the state register as required, simplifying the design. The output z remains a combinational XOR of x and the state (acting as inversion_bit), implementing the Moore output depending solely on state.
-
-This reduces area (one less register), reduces power (fewer registers toggling), and improves timing by reducing logic levels and register stages, while keeping the FSM fully functional and asynchronous reset intact.
-
-The output logic remains purely combinational and minimal. This yields a clean and efficient FSM implementation for serial 2's complement.

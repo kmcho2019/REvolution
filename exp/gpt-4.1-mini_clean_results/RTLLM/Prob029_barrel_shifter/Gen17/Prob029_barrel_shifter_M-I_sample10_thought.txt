@@ -1,9 +1,0 @@
-To align fully with the requirement, I will implement the barrel shifter explicitly using a hierarchical approach with a `mux2X1` submodule. Each stage (shift by 4, 2, and 1) will consist of 8 mux2X1 multiplexers, one per bit, that select between the original bit and the bit shifted by the stage amount.
-
-The mux2X1 submodule will select between two input bits based on `sel`. For each stage:
-- When the stage control bit is high, each bit in the output is selected from the corresponding bit shifted by that stage amount, effectively rotating the bits.
-- When the control bit is low, the original bits from the previous stage are passed through.
-
-This fine-grained muxing replicates the step-wise rotation in hardware and matches the problem description and the testbench expectations.
-
-This design also clearly shows how the barrel shifter is built from 2-to-1 muxes, making the structure explicit for synthesis and better debugging.

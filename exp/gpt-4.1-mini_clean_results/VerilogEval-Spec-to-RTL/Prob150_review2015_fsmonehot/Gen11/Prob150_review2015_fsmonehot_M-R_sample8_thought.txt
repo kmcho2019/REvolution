@@ -1,7 +1,0 @@
-Refactor the design by packaging the next-state signals into a single 10-bit vector named next_state, computed combinationally with assigns based on current state and inputs, then extract the specific next-state bits from this vector.
-
-This approach contrasts the previous explicit individual next-state signals by using vector operations and bitwise indexing, making the code compact and emphasizing a one-hot next-state vector as a whole.
-
-Output signals remain combinational from current state bits, but next-state logic is combined into one assign block with clear per-state transitions expressed as ORed product terms, enabling a compact expression of the entire next_state vector.
-
-This structure can be easier to scale for additional states or connect to a registered always block elsewhere, preserving the Moore FSM behavior and the given encoding.

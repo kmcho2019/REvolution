@@ -1,7 +1,0 @@
-To create a circuit that functionally behaves like a dual-edge triggered flip-flop, we can use two single-edge triggered flip-flops. One flip-flop is triggered on the positive edge of the clock, and the other is triggered on the negative edge of the clock. The input data (d) is sampled at both edges of the clock, and then the sampled values are combined using a multiplexer to produce the output (q). However, this approach requires synchronization to ensure correct data sampling and to prevent metastability issues.
-
-Another approach is to use a single flip-flop and sample the input data twice per clock cycle using a double-frequency clock that has both rising and falling edges at the desired data sampling points. However, in typical FPGA design, we can't generate such a clock directly from the input clock. 
-
-A more feasible approach involves using two single-edge triggered flip-flops and a mechanism to ensure that the data is correctly captured and shifted through the flip-flops at the correct clock edges without introducing additional latency or requiring a double-frequency clock.
-
-A straightforward way to implement this is to use two D flip-flops, one triggered on the positive edge and the other on the negative edge, but instead of using a multiplexer to select between them, we can simply latch the input data at both edges and ensure the output reflects the most recent update.

@@ -1,9 +1,0 @@
-Since the output Y1 is just y[1], and we need to implement the next-state logic only for y[1], we can express Y1 directly from the state encoding without intermediate terms. Observing the state codes and transitions, y[1] in the next state is set for states B, C, E (when w=1), and F regardless of w. Combining these, the simplified expression is:
-
-Y1 = (state B) | ((state C or state E) & w) | (state F)
-
-which expands to:
-
-Y1 = (~y[2]&~y[1]&y[0]) | ((~y[2]&y[1]&~y[0] | y[2]&~y[1]&~y[0]) & w) | (y[2]&~y[1]&y[0])
-
-This can be written as a direct assign statement without intermediate signals, keeping the code minimal and clear.

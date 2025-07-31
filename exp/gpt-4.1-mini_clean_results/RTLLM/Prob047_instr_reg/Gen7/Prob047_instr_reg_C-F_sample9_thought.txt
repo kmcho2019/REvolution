@@ -1,7 +1,0 @@
-Fuse the strengths of both examples by using a single always block with asynchronous active-low reset for clarity and synthesis friendliness, but separate the update logic for ins_p1 and ins_p2 using explicit if-else branches to ensure mutual exclusivity and clear intent. This avoids duplication of reset logic (improving area) while maintaining simple control flow for register updates (improving readability). Use non-blocking assignments inside the clocked block for proper sequential behavior.
-
-Retain combinational outputs derived from the stored registers for minimal critical path and clarity. This design benefits from simpler reset handling and explicit conditional updates without redundant always blocks, combining the best readability, power, and area aspects from the examples.
-
-Optionally, add enable signals derived from fetch to indicate when each register updates, which could be leveraged by synthesis tools for clock gating to reduce power.
-
-Overall, this fusion yields a clean, minimal, and efficient instruction register module with clear separation of reset and update logic, improved area by avoiding multiple reset blocks, and explicit conditional updates promoting good power and timing characteristics.

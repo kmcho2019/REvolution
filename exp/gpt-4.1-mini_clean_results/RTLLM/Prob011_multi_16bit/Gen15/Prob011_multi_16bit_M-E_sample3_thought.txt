@@ -1,9 +1,0 @@
-I will implement the 16-bit unsigned multiplier using a shift-and-accumulate approach as specified, but architect the design around a simple control and datapath that explicitly tracks each bit of the multiplicand (areg) by indexing through it with a shift count register (i). On start, registers for multiplicand (areg), multiplier (breg), and product (yout_r) are loaded/reset. 
-
-In each clock cycle while i is between 1 and 16 inclusive, if the (i-1)-th bit of areg is 1, the shifted value of breg by (i-1) bits is added to yout_r (shift and accumulate). The accumulation is done combinationally inside a synchronous always block using non-blocking assignments to avoid glitches. The done flag is asserted at the cycle where i reaches 16. The registers reset on active-low reset.
-
-This design explicitly evaluates each bit of the multiplicand sequentially, avoiding complex state machines and only using a counter. It maintains simplicity and clarity in the datapath, making it easy to verify and synthesize, while meeting all given control and timing requirements.
-
-All signals update synchronously at posedge clk or negedge rst_n, with proper reset and start handling. The done signal is derived from done_r registered flag. The product output is continuously assigned from the product register yout_r.
-
-This architecture differs from the example by using the given shift count and bit-wise conditional addition rather than continuous right-shifting of the product, thus preserving input operands and enabling precise control of the accumulation steps.

@@ -1,7 +1,0 @@
-To implement the pulse detection module, we need to track the state of the input signal "data_in" and generate the output "data_out" based on specific conditions. The module should be able to detect a "pulse" which is defined as a transition from 0 to 1 and then back to 0 within three clock cycles. This can be achieved by using a finite state machine (FSM) with multiple states to track the sequence of "data_in" values.
-
-We start by defining the initial state and then move to subsequent states based on the value of "data_in". If "data_in" is 1 after being 0, we move to the state that checks for the next 1 (as the pulse should have a high level). After that, if "data_in" goes back to 0, it means we have detected a pulse, so we set "data_out" to 1 in this cycle and then return it to 0 in the next cycle.
-
-We also need to handle the reset condition, where if "rst_n" is low, we reset the state machine to its initial state and set "data_out" to 0.
-
-To implement this in Verilog, we use an always block that is sensitive to the positive edge of the clock "clk" and the negative edge of the reset "rst_n". Inside this block, we define the logic for each state and the transitions between them.

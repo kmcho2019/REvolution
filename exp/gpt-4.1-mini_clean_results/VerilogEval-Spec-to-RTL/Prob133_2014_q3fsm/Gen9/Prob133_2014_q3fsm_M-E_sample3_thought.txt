@@ -1,5 +1,0 @@
-I will design the FSM using three states: A (reset/wait), B0, B1, B2 to represent the three cycles in state B while counting the number of times w=1. This way, the FSM cycles through B0 → B1 → B2 in three clock cycles, accumulating the count in a small register. After the third cycle (state B2), it transitions back to B0 and outputs z in the next clock cycle based on whether exactly two of the three w inputs were 1. The s input controls transition from A to B0, and reset brings the FSM back to A synchronously.
-
-This approach explicitly tracks each cycle as a separate state, avoiding combinational accumulation and comparisons at the same time, which simplifies the logic and potentially improves timing. Output z is registered after completing the three cycles, ensuring no combinational logic on output paths. This also enables the FSM to continuously check subsequent groups of three w inputs without extra logic.
-
-The code uses a 3-bit state encoding (A=3'b000, B0=3'b001, B1=3'b010, B2=3'b011), a 2-bit counter to count w=1 occurrences, and a registered output z. This clear state sequencing can improve timing and reduce combinational logic depth.

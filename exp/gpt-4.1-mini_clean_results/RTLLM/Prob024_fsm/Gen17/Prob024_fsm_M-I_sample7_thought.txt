@@ -1,9 +1,0 @@
-To improve the design's performance and power without significantly increasing area, I will convert the combinational next-state logic from continuous assignments into a more traditional and synthesis-friendly 'always @(*)' block with case statements. This can reduce glitches and improve timing by letting synthesis tools optimize next-state logic better and prevent hazards. Also, I will encode states with minimal bits but keep explicit case statements for clarity. 
-
-For output MATCH, I will keep it as a combinational signal dependent on current state and input but also express it within the always block to reduce glitching.
-
-Additionally, I will register the output MATCH to reduce glitches on output, making it synchronous with the clock. This typically helps with timing closure and power by reducing spurious toggles on output signals.
-
-The synchronous reset will still clear state and output.
-
-This approach should modestly improve timing (reduce WNS) and power by cutting glitches on combinational outputs, while area remains similar. The slight increase in output latency (one cycle) is often acceptable in FSM outputs. Overlapping and continuous detection are preserved.

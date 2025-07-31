@@ -1,8 +1,0 @@
-Refactor the freq_div module by consolidating all counters and clock outputs into a single always block triggered by CLK_in and RST. Use a single main counter counting from 0 to 99 (for 100 cycles) to generate all three clock outputs by toggling them at appropriate counts:
-- Toggle CLK_50 every 1 count (divide by 2): toggle CLK_50 at each clock cycle.
-- Toggle CLK_10 every 5 counts (divide by 10): toggle CLK_10 when main counter mod 10 equals 4.
-- Toggle CLK_1 every 50 counts (divide by 100): toggle CLK_1 when main counter equals 49.
-
-This approach reduces the number of counters and separate always blocks, improving readability and potentially synthesis optimization by sharing logic. It keeps the same frequency division ratios.
-
-The main counter wraps at 99, and all toggling happens within this single block.

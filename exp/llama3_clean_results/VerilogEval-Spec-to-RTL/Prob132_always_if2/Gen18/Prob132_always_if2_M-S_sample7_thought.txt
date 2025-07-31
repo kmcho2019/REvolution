@@ -1,9 +1,0 @@
-The provided module has a bug because the `shut_off_computer` and `keep_driving` signals are not being assigned a value in all possible cases. The `always @(*)` blocks are used, but they do not cover all possible conditions, which can lead to latches being inferred. 
-
-To simplify and fix the module, we can directly assign the values to the output signals using continuous assignments. This approach avoids the overhead of procedural blocks and ensures that the outputs are always assigned a value.
-
-For the `shut_off_computer` signal, it should be set to 1 when `cpu_overheated` is 1, and 0 otherwise. 
-
-For the `keep_driving` signal, it should be set to 1 when `arrived` is 0 and `gas_tank_empty` is 0, and 0 otherwise. This can be achieved using a simple logical expression.
-
-By using continuous assignments, we can ensure that the module is combinational and does not infer any latches, which can help improve the Area and Performance metrics.

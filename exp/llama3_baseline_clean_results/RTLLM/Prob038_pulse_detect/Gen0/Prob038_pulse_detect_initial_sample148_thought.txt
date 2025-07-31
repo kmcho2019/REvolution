@@ -1,9 +1,0 @@
-To implement the pulse detection module, we need to design a finite state machine (FSM) that tracks the changes in the input signal data_in. The FSM should have states to detect the rising and falling edges of the pulse. We can use a 2-bit state register to represent the current state of the FSM. The states can be defined as follows:
-- State 0: Initial state, waiting for the rising edge of the pulse (data_in = 0).
-- State 1: Rising edge detected, waiting for the high level of the pulse (data_in = 1).
-- State 2: High level detected, waiting for the falling edge of the pulse (data_in = 1).
-- State 3: Falling edge detected, output pulse detected (data_in = 0).
-
-We will use an always block to describe the behavior of the FSM. Inside the always block, we will check the current state and the value of data_in to determine the next state and the output data_out. If the current state is the last state of a pulse (State 3), we will set data_out to 1. Otherwise, we will set data_out to 0.
-
-The reset condition will be used to initialize the state register to the initial state (State 0) and set data_out to 0.

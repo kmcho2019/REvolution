@@ -1,8 +1,0 @@
-Implement a fully hierarchical popcount using a 3-level tree of small popcount blocks, specifically popcount5 modules, which count the number of ones in 5-bit groups efficiently with minimal logic depth. The 255-bit input is partitioned into 51 groups of 5 bits each. Each popcount5 outputs a 3-bit count (max 5). Then, these 51 counts are summed in a 2-stage adder tree:
-
-- First stage: sum 17 groups of 3 popcount5 outputs, each producing a 7-bit intermediate sum.
-- Second stage: sum these 17 intermediate sums into the final 8-bit output.
-
-This approach uses small, simple popcount modules at the bottom, reducing complexity inside each module, and organizes summation in a balanced tree with fixed-size adders for improved synthesis and scalability. It avoids large complex adders at once, and by grouping sums in 3s, the addition tree is manageable and balanced. The choice of 5 bits per popcount module simplifies hardware and makes partial sums small, minimizing the width of intermediate adders.
-
-This novel design leverages small popcount units and a 3-level sum tree summing groups of three counts at each stage, maximizing parallelism and minimizing logic depth.

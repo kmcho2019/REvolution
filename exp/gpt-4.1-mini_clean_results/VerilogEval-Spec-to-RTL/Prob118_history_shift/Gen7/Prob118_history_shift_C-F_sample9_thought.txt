@@ -1,7 +1,0 @@
-Fuse the clean priority logic and straightforward next-state combinational calculation from Example 1 with the power-conscious clock-enable gating and registered output style from Example 2. Maintain an asynchronous active-high reset, ensuring immediate reset of the history. Implement the next state combinational logic separately for clarity and synthesis friendliness. Use a single always block for sequential updates triggered on clock and async reset, with clock enable gating that only updates the register when rollback or prediction occurs, thus reducing unnecessary toggling and dynamic power.
-
-Incorporate explicit priority to rollback on misprediction over prediction update inside the combinational next-state logic, producing a clean next_history value. Output predict_history directly from the register state to ensure stable timing and simplify downstream usage.
-
-This fusion yields a readable, power-efficient, and functionally precise design: the rollback updates override prediction updates, updates happen only when needed to save power, and reset works asynchronously on the positive edge.
-
-This design keeps all logic modular and easy to verify while targeting good PPA tradeoffs.

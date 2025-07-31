@@ -1,6 +1,0 @@
-The original code implements a 64-bit Johnson counter using an `always` block that checks the least significant bit of the current state (`Q[0]`) and updates the state accordingly on every rising edge of the clock signal or the falling edge of the reset signal. 
-To refactor this code, we can utilize a more combinational logic approach by using the `assign` statement for the next state calculation and an `always` block for the sequential update of the state. 
-This approach separates the combinational logic from the sequential logic, which can improve readability and potentially simplify the design for synthesis.
-Additionally, we can define the next state calculation based on the current state (`Q`) and the least significant bit (`Q[0]`), directly assigning the new value to the output `Q` based on the conditions.
-However, since `Q` is also used as an input to calculate its next state, we should ensure that the assignment does not create a combinatorial loop.
-Thus, we introduce an internal signal `next_Q` to hold the next state value, which is then assigned to `Q` at the positive edge of the clock or the negative edge of the reset, maintaining the synchronous operation.

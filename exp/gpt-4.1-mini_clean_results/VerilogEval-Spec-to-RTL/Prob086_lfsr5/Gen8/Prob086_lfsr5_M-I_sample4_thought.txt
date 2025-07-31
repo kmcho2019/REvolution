@@ -1,9 +1,0 @@
-To optimize the design for better performance and area, I will implement the Galois LFSR using vectorized shift operations combined with conditional feedback XOR, rather than assigning each bit individually. This reduces the number of explicit bit assignments and can enable the synthesis tool to infer a more compact shift register with feedback logic. 
-
-Since the taps are at bits 5 and 3 (positions q[4] and q[2]), for a right-shifting Galois LFSR, the feedback bit affects these tap positions by XORing their incoming values with the LSB feedback bit.
-
-I will calculate the feedback bit as the current q[0], then shift q right by 1 bit, inserting feedback-modified bits at the tap positions. This approach reduces combinational XOR gates' fanout and may improve timing and area.
-
-The synchronous reset is retained to set q to 1 on reset.
-
-This vectorized approach both simplifies the code and may help synthesis tools optimize the shift register and XOR feedback logic better, improving overall PPA.

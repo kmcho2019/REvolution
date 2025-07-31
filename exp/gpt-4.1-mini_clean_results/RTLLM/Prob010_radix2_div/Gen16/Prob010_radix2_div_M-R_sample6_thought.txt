@@ -1,9 +1,0 @@
-Refactor the radix-2 divider by implementing a three-state FSM (IDLE, DIVIDE, DONE) using an explicit state register and a combination of sequential and combinational logic with clearer separation between control and data path.
-
-Use registers for remainder and quotient as 9-bit and 8-bit respectively to reflect the dividend shifted left by 1 bit and quotient size. The subtraction step uses a dedicated combinational block with a subtraction result wire.
-
-Handle signed division by precomputing absolute values at the start in the IDLE state and applying sign corrections at the DONE state before output. Manage res_valid to be asserted only when the division is completed.
-
-Use a synchronous process for state, counter, and data update, and use an always_comb block for the next-state logic, which avoids complex nested conditions inside a single always block.
-
-This approach improves modularity, readability, and adheres strictly to the requested interface and control behavior, avoiding unused or missing ports and guaranteeing synthesis-friendly synchronous logic.

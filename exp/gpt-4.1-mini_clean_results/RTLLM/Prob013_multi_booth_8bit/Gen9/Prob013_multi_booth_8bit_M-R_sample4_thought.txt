@@ -1,7 +1,0 @@
-Refactor the radix-4 Booth multiplier to clearly separate combinational and sequential logic. Use a finite state machine with explicit states IDLE, RUNNING, and DONE for better control and clarity. On reset, load and sign-extend multiplicand and multiplier into 16-bit registers. Maintain a 5-bit counter for up to 8 iterations (since radix-4 processes 2 bits per iteration on 8-bit input, it requires 4 iterations; but to simplify indexing, we keep 5-bit counter for indexing bits). 
-
-At each iteration, extract the 3-bit Booth code from the multiplier (with one extra appended bit), decode it to a multiplier factor in {-2, -1, 0, 1, 2}, calculate partial product by multiplying the multiplicand accordingly and shifting it left by 2*iteration count, then accumulate it to a signed 32-bit accumulator. After all 4 iterations complete, output the lower 16 bits of the accumulator as the product and assert ready. 
-
-The ready signal is cleared on reset or when starting a new multiplication, ensuring clear handshake. The multiplier register includes appended zero at LSB for Booth code extraction. The combinational Booth decoding is done in a separate function outside always block. The bit extraction for booth code uses continuous assignments (assign) to avoid procedural variables and ensure synthesizability.
-
-This approach provides clearer structure, separates combinational and sequential logic, and meets the original requirements.

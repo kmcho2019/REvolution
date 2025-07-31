@@ -1,9 +1,0 @@
-To implement the gshare branch predictor, we need to create a module with two main interfaces: prediction and training. The prediction interface takes a pc and returns the predicted branch direction and the state of the branch history register used to make the prediction. The training interface updates the pattern history table (PHT) based on the actual branch outcome and updates the branch history register if the branch was a misprediction. 
-
-The PHT is a 128-entry table of two-bit saturating counters. The index to the PHT is calculated by hashing the 7-bit pc and 7-bit global history using xor. 
-
-We will use a 7-bit global branch history register that is updated at the next positive clock edge for the predicted branch. 
-
-If a misprediction occurs, the branch history register is recovered to the state immediately after the mispredicting branch completes execution.
-
-The training operation takes precedence over the prediction operation when both occur in the same cycle. If training and prediction of the same PHT entry happen at the same time, the prediction sees the PHT state before training.

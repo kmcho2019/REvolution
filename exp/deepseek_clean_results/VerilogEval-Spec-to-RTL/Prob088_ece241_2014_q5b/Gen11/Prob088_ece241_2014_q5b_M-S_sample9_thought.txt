@@ -1,9 +1,0 @@
-The key insight is that state B is a "sticky" state - once entered, it never transitions back. This means we don't actually need to track both states explicitly in one-hot encoding. We can simplify to just tracking whether we're in state B or not (state_B register). State A is implied when state_B is 0.
-
-Optimizations:
-1. Remove state_A register since it's just !state_B
-2. Simplify next state logic to just set state_B when x=1 in state A
-3. Output logic remains simple: z = x when in state A, ~x when in state B
-4. Maintain asynchronous reset to state A (state_B=0)
-
-This reduces the design to just one flip-flop while maintaining identical functionality.

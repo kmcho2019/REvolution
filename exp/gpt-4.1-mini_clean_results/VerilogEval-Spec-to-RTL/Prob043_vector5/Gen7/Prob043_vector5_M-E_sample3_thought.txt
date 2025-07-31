@@ -1,5 +1,0 @@
-Instead of using nested loops and a vector of inputs, I will explicitly define each bit of the output by directly assigning each pairwise XNOR comparison in a flattened, fully unrolled style. This avoids generate constructs and improves readability for small fixed-size inputs. The output bit index `k` corresponds to the pair `(row,column)` with `row` and `column` from 0 to 4, and the mapping `k = 24 - (5*row + column)`.
-
-This approach trades off some code verbosity for explicitness and clarity, which could help in certain synthesis or verification environments that prefer simple continuous assignments without loops. It also avoids creating intermediate wire vectors, connecting inputs directly to output bits. The XNOR operator `~^` is used for each comparison as before to denote equality.
-
-This explicit combinational assignment style is straightforward and easy to verify against the spec, thus improving maintainability and correctness validation.

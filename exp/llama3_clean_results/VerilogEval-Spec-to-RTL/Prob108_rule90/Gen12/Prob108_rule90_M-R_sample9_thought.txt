@@ -1,9 +1,0 @@
-The existing Verilog implementation of the Rule 90 cellular automaton can be refactored to improve its structure and potentially its PPA metrics. One approach to refactoring is to utilize a more systematic and modular approach in implementing the combinational logic for calculating the next state of each cell. Instead of directly assigning the `next_state` within the generate loop, we can define a separate module that encapsulates the logic for a single cell's next state calculation. This modular approach can make the code easier to understand and maintain, and potentially allow for more efficient synthesis by the tool.
-
-Additionally, the current implementation updates the `q_reg` directly with `next_state` without unnecessary conditional checks, which is beneficial for reducing switching activity. However, to further optimize the design, we can consider pipelining or retiming strategies that might improve timing metrics at the cost of additional area and potentially power. 
-
-Given the current design's performance and area metrics, another potential optimization involves examining the synthesis constraints and ensuring that the synthesis tool is optimized for the target technology. This might involve specifying constraints that prioritize area or power reduction, depending on the most critical metrics.
-
-To implement the refactored design, we will create a new module named `Rule90Cell` that encapsulates the logic for a single cell's next state calculation based on Rule 90. Then, we will use a generate loop in the `TopModule` to instantiate `Rule90Cell` for each of the 512 cells, connecting them appropriately to calculate the next state of the entire system.
-
-By modularizing the design and potentially optimizing synthesis constraints, we aim to achieve a more efficient implementation of the Rule 90 cellular automaton.

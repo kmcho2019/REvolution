@@ -1,9 +1,0 @@
-To improve the solution, we need to ensure that once a falling edge is detected and the corresponding bit in the `detected` signal is set, it remains set until a reset is applied. This can be achieved by modifying the sequential logic to only reset the `detected` signal when the `reset` input is active high.
-
-We will maintain the use of a single flip-flop to store the previous value of `in` and the `detected` signal to keep track of which bits have seen a falling edge. The update logic for `detected` will be modified to keep its bits set once they are set, unless a reset occurs.
-
-For PPA optimization, we note that the current implementation is relatively straightforward and should have minimal overhead. However, the use of a `for` loop within the always block could introduce some area overhead. To optimize for area, we can ensure that the logic is minimized while maintaining functionality.
-
-The strategy is to keep the `detected` signal set once a falling edge is detected, and only reset it when the `reset` input is high. This ensures the output reflects the detection of falling edges correctly and persists until reset.
-
-To further optimize, we could consider if the detection logic could be simplified or if there are any timing improvements possible, but given the current functionality focus, these are secondary considerations.

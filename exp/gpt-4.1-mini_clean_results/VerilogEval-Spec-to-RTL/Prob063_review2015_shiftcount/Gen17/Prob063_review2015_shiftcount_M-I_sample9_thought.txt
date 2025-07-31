@@ -1,7 +1,0 @@
-To improve the original design's PPA, I will optimize the mux logic and reduce unnecessary switching. The original approach uses combinational logic that always computes both the shifted and decremented values, causing more switching and longer critical paths. Instead, I will restructure the logic inside the clocked always block with if-else conditions checking enables in priority order. This approach enables the synthesis tool to infer a clock enable style update that updates the register only when needed, potentially reducing toggling and improving timing.
-
-Additionally, I will reorder the shift operation to shift left with the new data entering at the MSB position, as the problem statement says data is shifted in most-significant-bit first. The original code shifted data into LSB; instead, I will shift right and insert data at MSB.
-
-This update simplifies combinational logic, removes separate mux signals, and helps reduce power by limiting switching only to active enable cases. The decrement is done only if count_ena is asserted, and the shift only if shift_ena is asserted. The register holds value otherwise.
-
-Overall, the update is expected to reduce power by preventing unnecessary logic toggling and improve timing by simplifying the mux logic and inference of clock enables.

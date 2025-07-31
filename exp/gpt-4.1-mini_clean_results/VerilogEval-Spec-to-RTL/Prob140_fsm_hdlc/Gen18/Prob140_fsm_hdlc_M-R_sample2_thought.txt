@@ -1,9 +1,0 @@
-Refactor the FSM by implementing the next state logic as combinational logic using a more compact style without a large case statement. Instead, encode the count of consecutive ones directly as a 3-bit counter state plus separate flags for the output states. Outputs are still Moore-type, dependent only on current state.
-
-Use a single 4-bit register: lower 3 bits count consecutive ones (0 to 6), and high bit indicates if in an output state (disc, flag, error). After counting 5 ones and receiving a 0, go into disc state; after 6 ones and a 0, go into flag state; after 7 or more ones, go into error state.
-
-Represent output states as specific bit patterns distinct from counts 0-6. The next state logic is encoded using combinational if-else for clarity and compactness. Outputs are assigned by pattern matching state values.
-
-This reduces explicit large case statement, using simple arithmetic and logic instead, while keeping Moore outputs synchronous with one cycle delay. The synchronous reset initializes the state to zero count.
-
-This refactor improves readability and structure by encoding count and output states in one register and using conditional logic for transitions.

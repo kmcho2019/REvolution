@@ -1,7 +1,0 @@
-A different architectural idea is to implement the selection using a combinational lookup table (LUT) embedded in a wire array indexed by `c`. We create a small array of 16 entries corresponding to all possible 4-bit values of `c`. Each entry stores the 4-bit output value. 
-
-For indices 0 to 3, the output matches the waveform: q= b, e, a, d respectively; for indices 4 to 15, the output is constant 4'hF.
-
-This approach models the output as a ROM with fixed contents rather than a case or nested ternary. It uses an indexed array for direct access, which could map nicely to LUTs in FPGAs or ROM structures in ASICs. The synthesizer should infer a combinational memory or mux tree from this.
-
-Thus, this implementation shows an alternate, clean style using an array indexed by input `c`.

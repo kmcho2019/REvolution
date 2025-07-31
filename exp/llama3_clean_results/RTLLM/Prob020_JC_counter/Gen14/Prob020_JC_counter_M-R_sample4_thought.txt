@@ -1,7 +1,0 @@
-To refactor the existing 64-bit Johnson counter code, we can consider an alternative approach that utilizes combinational logic and a state machine to manage the counter's value. The core idea remains the same: update the counter value based on the least significant bit (`Q[0]`) and handle the reset condition. 
-
-However, instead of using a single `always` block for both sequential and combinational logic, we can separate the logic into distinct parts. We will use an `always` block to handle the sequential update of the `Q` register and an `assign` statement to compute the next state of `Q` based on its current value and the least significant bit (`Q[0]`).
-
-This refactoring aims to improve the readability and maintainability of the code by separating the sequential and combinational logic. Additionally, by using an `assign` statement for the combinational logic, we can potentially simplify the synthesis process and improve the overall performance of the design.
-
-The state machine aspect will be implicit in the `always` block, where we determine the next state of `Q` based on its current state and the value of `Q[0]`. This approach allows for a clear separation of concerns between the sequential update logic and the combinational logic that computes the next state.

@@ -1,7 +1,0 @@
-To implement the finite state machine (FSM) for detecting bytes in a serial stream, we will use a Moore machine approach, where the output depends only on the current state. The FSM will have several states: Idle, Start, Data, and Stop. 
-1. In the Idle state, the FSM waits for a start bit (0) to begin receiving a byte.
-2. Upon detecting a start bit, it transitions to the Start state and starts counting data bits.
-3. After counting 8 data bits, it transitions to the Stop state, expecting a stop bit (1).
-4. If a stop bit is received, it sets the done signal high for one clock cycle and returns to the Idle state.
-5. If a stop bit is not received when expected (i.e., the next bit is not 1 in the Stop state), it transitions back to the Idle state and waits for a stop bit before attempting to receive the next byte.
-The FSM will handle the reset by returning to the Idle state and resetting all counters and flags.

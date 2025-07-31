@@ -1,7 +1,0 @@
-To implement the finite state machine (FSM) that searches for message boundaries, we can define three states: Idle, Byte1, and Byte2. In the Idle state, we wait for a byte with in[3]=1. Once this byte is received, we transition to Byte1 and store this byte as the first byte of the message. Then, in the Byte1 state, we wait for the second byte and store it. Next, in the Byte2 state, we wait for the third byte and store it. After receiving the third byte, we transition back to the Idle state, signal done, and output the 24-bit message.
-
-We will use two registers, state_reg and out_bytes_reg, to store the current state and the 24-bit message, respectively. We will also use a counter, byte_count, to keep track of the current byte being received.
-
-To handle the reset signal, we will reset the state_reg and out_bytes_reg to their initial values when the reset signal is high.
-
-To implement the datapath module, we will use combinational logic to generate the next state and output values based on the current state and input values.

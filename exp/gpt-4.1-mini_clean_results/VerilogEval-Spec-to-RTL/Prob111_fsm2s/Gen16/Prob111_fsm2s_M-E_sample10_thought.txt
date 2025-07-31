@@ -1,7 +1,0 @@
-Implement the FSM using an explicit one-hot encoded state register with two bits: one for OFF and one for ON state. This encoding facilitates straightforward combinational logic for next state computation by directly driving each state bit and can simplify synthesis of some FPGA architectures.
-
-The synchronous reset sets the machine into the OFF state (first bit high, second bit low). For the next state logic, OFF state transitions to ON if j=1, otherwise stays OFF; ON state transitions to OFF if k=1, otherwise stays ON. The output is assigned directly from the ON state bit, which reflects the Moore output logic.
-
-This one-hot encoding can simplify the logic, potentially reducing combinational gate depth and improving timing on some platforms at the cost of slightly more flip-flops. This approach also cleanly separates combinational next-state logic for each state bit and synchronous state register update. The synchronous reset drives the OFF state bit directly and clears the ON bit.
-
-Overall, the design trades one extra flip-flop for possibly simpler state decoding and next state logic and clear state representation.

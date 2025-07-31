@@ -1,7 +1,0 @@
-To optimize the design for better power, performance, and area (PPA), I will eliminate the use of a function to compute the shifted value and replace it with explicit combinational logic using a case statement and generate simpler multiplexers. Since the shifts are only by 1 or 8 bits in either direction, we can implement the shifting using fixed wiring and simpler concatenations without function overhead. This reduces combinational logic depth, improving timing (lower WNS) and potentially reducing area by clearer mux control. 
-
-Additionally, I will gate the shift logic by the enable signal early, so when ena=0, the output next_q simply holds q directly, minimizing switching activity and power. The load signal still supersedes shifting.
-
-The arithmetic right shift will be implemented explicitly using replication of the sign bit as before, but only once per shift type. This direct logic improves clarity and synthesis optimization potential.
-
-Overall, this approach simplifies the next state logic, creates a clean combinational block for next_q using a case statement on amount, and keeps register updates synchronous and simple, leading to improved PPA metrics.

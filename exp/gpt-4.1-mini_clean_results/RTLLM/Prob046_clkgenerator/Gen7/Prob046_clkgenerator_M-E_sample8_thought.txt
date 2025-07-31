@@ -1,9 +1,0 @@
-To create a synthesizable clock generator without using delays (#) or free-running always blocks, implement a simple clock divider driven by an external input clock signal. Internally, use a counter that counts clock cycles up to half the PERIOD, then toggles the output clock. This approach uses synchronous logic suitable for synthesis.
-
-Since no input clock is specified, for testing or simulation purposes, we can use an internal oscillator based on a parameterized initial block with a forever loop toggling an internal signal using a non-synthesizable delay. But for synthesis, the module requires a real clock input.
-
-Therefore, provide a module that accepts an input clock and a reset, uses a parameter for PERIOD, and generates clk by toggling every half period cycles. This design is fully synthesizable and clean.
-
-If no input clock is available, the module cannot generate clocks in real hardware; clocks must come from an oscillator or PLL. The design will therefore include an input clock (e.g., a fast system clock), and output clk toggles at the desired rate using a synchronous counter.
-
-This approach ensures synthesizability, clean timing, and controlled frequency generation.

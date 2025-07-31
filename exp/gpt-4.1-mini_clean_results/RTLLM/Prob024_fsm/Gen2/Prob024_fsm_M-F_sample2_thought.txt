@@ -1,5 +1,0 @@
-To improve synthesis friendliness, area, and power efficiency, I will replace the one-hot encoding with a binary-encoded state machine using a 3-bit state variable since 6 states can be encoded in 3 bits. The next-state logic will be implemented using a clean `case` statement on the current binary state, avoiding "case (1'b1)" style. This binary-encoded Mealy FSM will assert MATCH combinationally when the input sequence "10011" is detected, specifically at the last input bit.
-
-This approach reduces flip-flop count from 6 to 3, simplifies the next-state logic, and improves synthesis and timing. The MATCH output depends on the current state and input (Mealy output), so it remains combinational. The FSM supports overlapping sequences by transitioning to appropriate states after detection.
-
-The reset is synchronous to initialize the FSM. The MATCH output is asserted exactly when the sequence "10011" is completed on the last input bit. This code is more synthesis-friendly while meeting all functional requirements.

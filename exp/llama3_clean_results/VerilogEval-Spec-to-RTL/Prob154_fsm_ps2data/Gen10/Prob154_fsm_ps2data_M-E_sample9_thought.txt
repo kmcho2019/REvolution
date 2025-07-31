@@ -1,7 +1,0 @@
-The task is to implement a finite state machine (FSM) that searches for message boundaries in a given input byte stream. The FSM should discard bytes until it sees one with in[3]=1, then assume this is byte 1 of a message, and signal the receipt of a message once all 3 bytes have been received.
-
-To address the performance, power, and area (PPA) metrics, I propose a novel architectural idea: using a counter-based approach to track the number of bytes received since the start of a message. This approach eliminates the need for a traditional state machine with multiple states, reducing the area and power consumption.
-
-The idea is to use a 2-bit counter to track the number of bytes received since the start of a message. When a byte with in[3]=1 is received, the counter is reset to 1, and the byte is stored in the first byte of the out_bytes register. On subsequent clock cycles, the counter is incremented, and the received byte is stored in the corresponding byte of the out_bytes register. When the counter reaches 3, the done signal is asserted, indicating that a complete message has been received.
-
-This approach has several advantages. Firstly, it reduces the area and power consumption by eliminating the need for a traditional state machine. Secondly, it simplifies the logic and reduces the number of transitions, which can improve the performance. Lastly, it makes the code more readable and easier to understand.

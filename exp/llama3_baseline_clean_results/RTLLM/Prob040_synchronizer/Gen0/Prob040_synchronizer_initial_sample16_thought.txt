@@ -1,9 +1,0 @@
-To implement the multi-bit MUX-based synchronizer, we'll create a Verilog module that incorporates the required registers and logic. The module, named `synchronizer`, will have input ports for clock signals `clk_a` and `clk_b`, active-low reset signals `arstn` and `brstn`, input data signal `data_in`, and input enable signal `data_en`. The output port will be `dataout`.
-
-The module will include three main components:
-1. Data Register: This register, named `data_reg`, will store the input `data_in` signal. It will be updated on the positive edge of `clk_a` or the falling edge of `arstn`.
-2. Enable Data Register: This register, named `en_data_reg`, will store the input `data_en` signal. It will be updated similarly to the data register.
-3. Enable Control Registers: Two registers, `en_clap_one` and `en_clap_two`, will be used to control the selection of the input data. They will be updated on the positive edge of `clk_b` or the falling edge of `brstn`.
-4. Output Assignment: The output `dataout` will be assigned based on the control signal `en_clap_two`. If `en_clap_two` is active, `dataout` will be assigned the value of `data_reg`. Otherwise, it will retain its previous value.
-
-The code will utilize always blocks to describe the behavior of each component and assign the output accordingly.

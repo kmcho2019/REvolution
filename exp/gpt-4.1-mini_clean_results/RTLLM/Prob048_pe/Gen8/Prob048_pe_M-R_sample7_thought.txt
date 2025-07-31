@@ -1,9 +1,0 @@
-Refactor the design by separating the multiplication and accumulation stages using a two-step pipeline style implemented with registers for intermediate values. Instead of directly computing product and adding to accumulator in one always block, use one always block to register inputs, another to perform accumulation. This pipelined approach improves timing closure by breaking the critical path into shorter stages (multiplication and accumulation), which may enable a higher clock frequency. The reset remains synchronous. Output `c` is still the lower 32 bits of the 64-bit accumulator.
-
-Specifically:
-- Register inputs `a` and `b` at the clock edge.
-- Compute the product combinationally from the registered operands.
-- Accumulate the product into a 64-bit accumulator in a separate always block.
-- Output is assigned continuously from the accumulator lower bits.
-
-This restructuring maintains the same functionality and data width but changes the structure to a pipeline with registered inputs to improve timing and modularity.

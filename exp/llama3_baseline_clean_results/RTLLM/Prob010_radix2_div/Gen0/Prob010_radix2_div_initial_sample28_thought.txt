@@ -1,7 +1,0 @@
-To implement the radix-2 divider module, we'll use a finite state machine to control the division process. We'll have two main states: idle and divide. In the idle state, we wait for a valid operation request (opn_valid high and res_valid low), and in the divide state, we perform the division process. We'll use a counter to keep track of the number of iterations and a shift register to store the remainder and quotient. We'll also use a multiplexer to select the correct result based on the carry-out of the subtraction.
-
-We'll start by saving the inputs dividend and divisor when a valid operation request is present. Then, we'll initialize the shift register SR with the absolute value of the dividend shifted left by one bit and set NEG_DIVISOR to the negated absolute value of the divisor. We'll also set the counter cnt to 1 and start_cnt to 1 to begin the division process.
-
-In the division process, we'll check if the counter cnt has reached 8 (most significant bit of cnt is set). If it has, we'll clear cnt and start_cnt, and update the shift register SR with the final remainder and quotient. Otherwise, we'll increment the counter cnt, compute the subtraction of NEG_DIVISOR, and use a multiplexer to select the appropriate result based on the carry-out. We'll then update SR by shifting left and inserting the carry-out.
-
-Finally, we'll manage the res_valid signal based on the reset signal, the counter, and whether the result has been consumed.

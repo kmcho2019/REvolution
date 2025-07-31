@@ -1,7 +1,0 @@
-To refactor the clock generator module, we can adopt a different approach that utilizes a separate system clock to drive the counter and clock generation logic. This approach allows us to avoid the issues associated with the original implementation, such as the `always` block being triggered by the `posedge` of the `clk` signal and the potential race conditions. 
-
-Instead, we will use an `always` block that is sensitive to the system clock (`sys_clk`) and a counter that increments at each system clock cycle. The `clk` signal will be toggled when the counter reaches half of the specified `PERIOD`, and the counter will be reset.
-
-This refactored approach provides a more efficient, synthesizable, and easier-to-understand design. We will also utilize a variable `half_period` to calculate half of the `PERIOD` and avoid any potential division-by-zero issues.
-
-By separating the system clock from the generated clock, we can ensure a more reliable and predictable clock generation.

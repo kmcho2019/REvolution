@@ -1,5 +1,0 @@
-To implement the TopModule, we need to design a 32-bit global history shift register with the ability to roll back its state when a pipeline flush occurs due to a branch misprediction. The module should update the branch history for the predicted branch when a prediction is made, and it should load the branch history register with the corrected history after a misprediction. We will use a synchronous reset and clock edge-triggered sequential logic to implement the desired functionality. 
-We'll use a 32-bit register to hold the current branch history, and we'll update this register based on the input signals predict_valid, predict_taken, train_mispredicted, train_taken, and train_history.
-When predict_valid is high, we'll shift in predict_taken from the LSB side.
-When train_mispredicted is high, we'll load the branch history register with the corrected history after the mispredicted branch.
-If both predict_valid and train_mispredicted are high at the same time, the misprediction will take precedence.

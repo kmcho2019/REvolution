@@ -1,5 +1,0 @@
-To improve compatibility and robustness with the testbench, the clock generator should avoid relying on non-integer delays and ambiguous division in delay expressions. Instead of using `#(PERIOD/2)`, it’s safer to define a local parameter `HALF_PERIOD` as an integer division with proper rounding or truncation to ensure a valid integer delay value. 
-
-Also, moving the clock toggle logic into an always block triggered by a nonblocking wait (`always` with a delay) can improve clarity and simulation alignment. Initializing `clk` explicitly before the always block ensures a known starting state. 
-
-This approach keeps the clock generation self-contained and deterministic, preventing potential issues with integer division or testbench synchronization, thereby addressing the possible root causes noted in the feedback.

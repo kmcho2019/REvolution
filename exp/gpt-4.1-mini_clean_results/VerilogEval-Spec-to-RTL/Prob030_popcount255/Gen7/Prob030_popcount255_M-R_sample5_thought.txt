@@ -1,9 +1,0 @@
-Refactor the TopModule and its submodules by eliminating intermediate wires where possible and using direct vectorized add operations. Instead of multiple intermediate named wires for every summation level, use multi-dimensional arrays and loops to perform summations stepwise in a more compact style.
-
-In popcount4, replace explicit additions with a simple bitwise reduction using the Verilog '+' operator directly, since synthesis tools will efficiently map that for small vectors. In popcount17, similarly replace manual partial sums with a more compact summation using Verilog '+' on concatenated results.
-
-At the top level, compute all partial counts into an array, then iteratively sum pairs in a loop reducing the number of elements by half each stage until one remains. Use a for-loop inside an always_comb block to do the summation tree compactly, reducing the verbose generate blocks and intermediate signals.
-
-This reduces code verbosity, improves readability, and allows easier scaling. The combinational always block with a loop over partial sums is also synthesizable. The logic remains fully combinational, balanced, and efficient.
-
-The overall hierarchical approach and module reusability are retained, but the summation logic is condensed and written in a more algorithmic style.

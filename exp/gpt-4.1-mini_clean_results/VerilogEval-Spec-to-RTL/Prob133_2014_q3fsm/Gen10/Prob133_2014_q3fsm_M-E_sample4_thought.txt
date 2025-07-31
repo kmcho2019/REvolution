@@ -1,5 +1,0 @@
-I will design the FSM using only two states: A and B. State A handles reset and waiting for s=1 to transition to B. In state B, instead of encoding each of the three cycles in separate states, I will use a 2-bit cycle counter and a 2-bit w counter to count the number of w=1 inputs over the three clock cycles. The FSM remains in state B continuously counting groups of three w inputs by incrementing the cycle counter. When the cycle counter reaches 3, the FSM checks if exactly two w's were seen, asserts output z for one clock cycle, then resets both counters to start the next group of three.
-
-This approach reduces the state machine to only two states, simplifying the state encoding and logic. The counters track progress and count of w=1 inputs internally, making the FSM modular. The output z is registered and asserted one clock cycle after the third w input in each group, as required.
-
-Synchronous reset brings FSM back to state A and clears counters. The cycle counter runs from 0 to 2 (3 cycles total). This design uses minimal state logic and shifts the complexity into simple counters, which can be more area and power efficient.

@@ -1,9 +1,0 @@
-The main syntax error was caused by declaring the variable `sum_abs` inside the always block, which is illegal in Verilog. To fix this, `sum_abs` must be declared as a `reg` at the module level.
-
-Additionally, the logic for handling subtraction when signs are the same can be simplified by directly performing `a - b` since inputs are two's complement fixed-point numbers; this inherently respects signs and magnitudes.
-
-For the different sign case, the addition of absolute values is correct, but the sign assignment and two's complement formation must be done carefully to ensure the final result is in two's complement with correct sign.
-
-After computing the result in `res`, if the value is zero, the sign bit should be explicitly cleared as per specification.
-
-Overall, by moving `sum_abs` declaration to the module scope and maintaining combinational logic in the always block, the module will compile correctly, preserve fixed-point precision, and meet all stated requirements.

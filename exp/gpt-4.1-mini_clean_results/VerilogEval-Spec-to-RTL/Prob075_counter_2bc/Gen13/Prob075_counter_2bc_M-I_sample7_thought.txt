@@ -1,9 +1,0 @@
-To optimize the existing design for better PPA, the focus is on further reducing unnecessary toggling and simplifying the comparator logic for update_enable. Instead of comparing next_state and current state (which needs a 2-bit comparator), we can determine update_enable more simply by checking train_valid only because saturating increment/decrement saturate at the bounds and if train_valid=1 but the state is already at max/min, the state does not change anyway.
-
-Thus, removing the explicit comparator (next_state != state) reduces combinational logic complexity and delay. We rely on saturating arithmetic to keep state stable at boundaries, so unnecessary updates cause no change, minimizing toggling inherently.
-
-Additionally, changing update_enable to just train_valid results in always updating on valid training, but because the counter saturates, this won't cause incorrect behavior or excessive toggling.
-
-Finally, keep the asynchronous positive edge reset as specified, as it is required.
-
-This approach simplifies logic, improves timing slightly, and trades off minor increase in toggling (negligible) for less complex comparison logic, which can enhance critical path and area efficiency.

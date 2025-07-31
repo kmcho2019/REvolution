@@ -1,7 +1,0 @@
-Refactor the fractional divider by implementing a 3-bit counter cycling from 0 to 6 to generate the base divided clock `clk_int_a` (high for 4 cycles, low for 3 cycles). Generate the half-cycle delayed and advanced versions of this clock by using separate flip-flops triggered on the positive and negative edges of the input clock, achieving the required half-clock period phase shifts.
-
-- `clk_int_a`: synchronous with positive edge of clk, defines the base uneven duty cycle.
-- `clk_int_b`: flip-flop updated on negative edge of clk, tracking `clk_int_a` but delayed by half a clock period.
-- The final output `clk_div` is the logical OR of these two signals, combining the positive-edge and negative-edge triggered clocks to create an evenly spaced fractional divided clock with improved duty cycle and smooth output.
-
-Reset is synchronous for positive edge logic and asynchronous for negative edge logic is avoided by gating. This approach implements double-edge clocking cleanly without mixing clock domains improperly and ensures timing stability.

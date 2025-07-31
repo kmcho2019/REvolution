@@ -1,7 +1,0 @@
-The original solution is functionally correct and minimal. To improve timing robustness and reduce glitches on data_out, I will register the output signal so that data_out is asserted synchronously at the clock edge after detecting the falling edge of data_in. This prevents combinational glitches and ensures stable output timing, which enhances performance.
-
-Also, I will register data_in to create a simple edge detection, so we can explicitly detect the 0→1→0 pattern by comparing current and previous data_in. This eliminates the need for explicit FSM states and simplifies the design.
-
-This method uses two registers for data_in history and asserts data_out at the clock cycle when the pattern 0→1→0 occurs, matching the pulse definition exactly.
-
-This approach reduces combinational logic between flip-flops and output, improving timing and power by avoiding glitches and unnecessary toggling, while maintaining minimal area.

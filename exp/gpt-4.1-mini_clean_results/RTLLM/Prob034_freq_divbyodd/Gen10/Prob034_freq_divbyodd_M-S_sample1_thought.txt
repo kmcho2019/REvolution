@@ -1,9 +1,0 @@
-To simplify the odd frequency divider, use a single counter that counts from 0 to NUM_DIV-1 and toggle the output clock only once per full cycle, at the counter wraparound. This ensures the output frequency is divided by NUM_DIV.
-
-The output clock will have a duty cycle close to 50% but not exact due to the odd divisor; this is acceptable for many applications and greatly reduces complexity.
-
-Use only one always block on the positive edge of the clock and synchronous reset, avoiding dual-edge and multiple counters.
-
-This approach eliminates the need for two counters and two divided clocks, as well as OR-ing, making the design simpler, easier to understand, and reliable.
-
-Note: This design divides frequency by NUM_DIV exactly, but the output clock toggles every NUM_DIV input clock cycles, resulting in a frequency of clk/(2*NUM_DIV) if toggling twice per period. To get a divide-by-odd NUM_DIV clock output, we toggle output every NUM_DIV cycles. This results in a frequency division of NUM_DIV, which matches requirements.

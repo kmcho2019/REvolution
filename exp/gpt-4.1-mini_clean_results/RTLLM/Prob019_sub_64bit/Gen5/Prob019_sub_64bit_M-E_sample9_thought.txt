@@ -1,8 +1,0 @@
-Implement the 64-bit subtractor using a layered carry-select adder (CSA) structure optimized for subtraction. The subtraction A - B is performed by adding A to the two's complement of B (~B + 1). Instead of a single large CLA, divide the 64-bit adder into 8 blocks of 8 bits each. For each block, precompute sum and carry-out assuming carry-in = 0 and carry-in = 1.
-
-At block boundaries, use a multiplexer to select the correct sum and carry-out based on the actual carry-in propagated from the previous block. This carry-select approach reduces the worst-case carry propagation delay compared to ripple carry and reduces complexity compared to a flat CLA.
-
-Overflow detection is done by checking the sign bits of A, B, and the result as described:
-- Overflow occurs if A and B have different signs, and the result sign differs from A's sign.
-
-This architecture balances performance and area by trading off some area for improved timing over ripple carry, without the large complexity of a full 64-bit CLA. The modular 8-bit block design enables cleaner hierarchical implementation and easier future scaling or modifications.

@@ -1,7 +1,0 @@
-Refactor the design by separating the next state logic from the register update. Compute the next value of the 4-bit register in a combinational always block based on the control signals: if shift_ena is set, perform the left shift with data loaded into MSB; else if count_ena is set, decrement by 1; otherwise hold the value.
-
-Then, update the register q on the rising edge of clk with the computed next value. This separation clarifies the combinational and sequential parts and makes the logic easier to analyze or optimize for synthesis.
-
-Since shift_ena and count_ena are not asserted simultaneously, a simple if-else suffices. This also makes it straightforward to change priorities if needed without nesting shift and decrement operations directly in a clocked always block.
-
-This structure is a common and clean style in RTL coding.

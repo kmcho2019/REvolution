@@ -1,9 +1,0 @@
-Fuse the compact next-state function approach from Example 1 with the one-hot style simplified boolean expressions for next state bits from Example 2, eliminating explicit multi-bit equality checks and multiple decoded signals to reduce gate count and switching. Specifically, implement next state bits as direct boolean expressions derived by analyzing the FSM table and input x without generating full one-hot decoded signals, thereby combining minimal logic complexity with low area.
-
-For output z, use the optimized boolean expression from Example 1 (z = (y == 3'b011) || (y == 3'b100)) to keep output logic simple.
-
-This fusion maintains the clarity and synthesis friendliness of a next_state function approach but replaces the full 3-bit next state vector computation with direct next state bit expressions optimized from state decoding logic, thus reducing intermediate nets and avoiding multiple equality comparators, cutting power and area. The output Y0 (next_state[0]) is directly computed without storing the full next state.
-
-The clk input remains unused per specification, keeping zero clock latency.
-
-Overall, this yields a clean, minimal, efficient FSM combinational implementation combining the best PPA aspects of both examples.

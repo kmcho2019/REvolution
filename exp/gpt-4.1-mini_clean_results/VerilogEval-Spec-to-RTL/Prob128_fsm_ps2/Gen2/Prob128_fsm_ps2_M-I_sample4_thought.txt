@@ -1,7 +1,0 @@
-The original FSM is already minimal and correct. To optimize for power and slightly improve timing, I will implement the 'done' signal as a single-cycle pulse generated from a counter rather than encoding it as a state-dependent signal. This avoids an extra register toggle and separates done generation from state update, potentially aiding timing closure.
-
-Also, the FSM states can be encoded as one-hot style for faster decoding in some synthesis tools, but given the small FSM, this likely won't impact area much. I'll keep the current 2-bit encoding but replace the enum type with localparams for better synthesis compatibility.
-
-Finally, I will introduce a 2-bit counter to track the byte count in the current message rather than separate states for each byte after IDLE. This simplifies the next state logic and makes the FSM scalable if message length changes, also allowing simpler done pulse generation.
-
-The reset remains synchronous. Overall, this aims to slightly reduce toggle activity on done, simplify next state logic, and maintain small area.

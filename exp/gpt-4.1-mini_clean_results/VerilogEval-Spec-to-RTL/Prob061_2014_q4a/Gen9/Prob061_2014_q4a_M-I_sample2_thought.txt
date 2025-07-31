@@ -1,8 +1,0 @@
-To optimize for better PPA without changing functionality, I will slightly refactor the selection logic to reduce logic levels by prioritizing the enable signals and leveraging a priority encoding style. Since L has higher priority than E, I can rewrite the nextQ assignment using a single multiplexer with a combined enable signal or with a select based on L and E together, potentially reducing logic depth and making synthesis simpler. This could slightly improve timing (WNS, TNS) and power by minimizing toggles on internal signals. The area will remain nearly the same as this is a minimal design.
-
-Concretely, express nextQ as a 3-input multiplexer:
-- if L=1: nextQ=R
-- else if E=1: nextQ=w
-- else: nextQ=Q
-
-Use a ternary operator that synthesizers can map into a single priority mux efficiently. Also, declare Q as reg (already done) and keep the always block triggered on posedge clk. This simple change can ease synthesis optimizations for timing and power slightly.

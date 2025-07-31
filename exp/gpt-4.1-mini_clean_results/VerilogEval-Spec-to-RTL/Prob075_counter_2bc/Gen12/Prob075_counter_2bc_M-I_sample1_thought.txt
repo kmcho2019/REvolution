@@ -1,7 +1,0 @@
-To improve PPA, simplify the combinational next-state logic by separating increment and decrement operations into distinct signals, and use min/max style saturation via simple comparisons. This reduces conditional operators and logic depth, possibly improving timing. Also, remove the enable_update signal gating the register update because the register will only change when the counter value actually changes; extra gating logic adds complexity and might hurt timing.
-
-Further, since train_valid=0 means no change, keep the state directly when train_valid=0, removing the unnecessary combinational calculation when not training, reducing dynamic power.
-
-Finally, keep the asynchronous reset and positive-edge triggered clock semantics as required.
-
-These changes simplify logic and may slightly reduce power and improve timing with minimal area impact.

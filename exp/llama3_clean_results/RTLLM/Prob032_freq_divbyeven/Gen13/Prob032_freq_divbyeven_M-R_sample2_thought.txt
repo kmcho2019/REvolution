@@ -1,9 +1,0 @@
-To refactor the given frequency divider code, we can simplify the architecture by using a single counter and eliminating the need for a gradual reset mechanism. The core idea remains the same: to divide the input clock frequency by an even number specified by the `NUM_DIV` parameter.
-
-The refactored design will utilize a single counter (`cnt`) that increments on each positive edge of the input clock (`clk`). When the counter reaches the specified limit (`NUM_DIV / 2 - 1`), it resets to zero and toggles the `clk_div` output signal, effectively dividing the frequency of the input clock by the even number specified by `NUM_DIV`.
-
-We can achieve this using a simple state machine with two states: counting and resetting. The state machine will transition from the counting state to the resetting state when the counter reaches the specified limit, and then back to the counting state after resetting.
-
-To further simplify the code, we can use `assign` statements to directly assign the output values based on the current state of the counter and the `NUM_DIV` parameter.
-
-The refactored code will result in a more efficient and area-optimized frequency divider implementation.

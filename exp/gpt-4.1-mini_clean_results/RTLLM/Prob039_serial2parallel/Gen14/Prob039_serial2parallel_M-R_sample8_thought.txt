@@ -1,9 +1,0 @@
-Refactor the module by separating the counting and shift register update logic, and use a state machine style approach implicitly by controlling output validity. Use an always block for counting and shifting only when din_valid is high, and generate dout_valid as a combinational signal that goes high exactly when 8 bits have been collected.
-
-Additionally, implement the shift register so that the first received serial bit is stored in the MSB (shift left and insert new bit at LSB), and produce dout_parallel from the shift register after 8 bits.
-
-By producing dout_valid combinationally (e.g., dout_valid = (cnt == 7) && din_valid), the output valid pulse is clean and tightly coupled with data reception, which improves clarity.
-
-Reset all signals synchronously on reset.
-
-This approach uses synchronous logic only, but distinct signals for counting, shifting, and output generation, improving modularity and making it easier to test and simulate.

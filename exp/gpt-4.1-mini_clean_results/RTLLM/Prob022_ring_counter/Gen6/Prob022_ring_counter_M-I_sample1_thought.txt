@@ -1,7 +1,0 @@
-To address the toolchain's limitation that disallows full vector assignments in combinational blocks, we can consolidate the entire logic into a single sequential always block triggered on the clock's rising edge.
-
-In this approach, `out` is directly updated as a register on each clock cycle without the need for a separate combinational decoding stage. We start with `out = 8'b00000001` on reset and then perform a circular left shift on each clock pulse to move the '1' bit.
-
-This avoids combinational full-vector assignments, reduces the number of always blocks, and simplifies the design while fully meeting the ring counter requirements. It also improves PPA by minimizing logic and registers since only one 8-bit register is used.
-
-This design is synthesizable, simulation friendly, and compatible with tools having limited support for vector assignments in combinational blocks.

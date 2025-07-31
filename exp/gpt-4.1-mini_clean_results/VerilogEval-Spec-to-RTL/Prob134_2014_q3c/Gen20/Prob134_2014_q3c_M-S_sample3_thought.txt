@@ -1,9 +1,0 @@
-The original solution uses multiple explicit equality checks to decode present states, which increases logic complexity. To simplify:
-
-1. Implement next state logic and output z directly using a case statement on the present state y and input x, avoiding separate one-hot signals.
-2. Since y is a 3-bit value with only 5 valid states, use a combinational always block with a case statement to define next_state and z.
-3. Output Y0 is next_state[0].
-4. This approach reduces redundant comparisons and intermediate wires, making the code clearer and easier to optimize during synthesis.
-5. The code maintains full functionality as per FSM table.
-
-This single always_comb block with case statements improves readability and reduces the combinational logic needed without sacrificing clarity or correctness.

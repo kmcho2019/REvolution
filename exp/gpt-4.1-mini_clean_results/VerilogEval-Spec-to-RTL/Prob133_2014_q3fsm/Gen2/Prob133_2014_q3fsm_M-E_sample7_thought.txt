@@ -1,9 +1,0 @@
-Implement a Moore FSM with three states: A (waiting for s=1), C0, C1, and C2 to represent counting the three w samples in state B. Instead of using an enum, use localparam to define states as simple bit vectors. 
-
-In state A, wait for s=1 to transition to C0, starting the counting cycle.
-
-In states C0, C1, and C2, accumulate w values into a 2-bit counter. After sampling w in C2, check if exactly two of the three w samples were 1; if yes, set z=1 in the next cycle (in C0), else z=0.
-
-Output z is registered and asserted only for one cycle right after completing three w samples. Transition through states C0->C1->C2->C0 to repeatedly sample in windows of three clock cycles.
-
-Use synchronous reset and update all registers on posedge clk. This modular counting approach uses explicit states for cycle positions and simplifies z assertion logic, avoiding counting and output in the same cycle.

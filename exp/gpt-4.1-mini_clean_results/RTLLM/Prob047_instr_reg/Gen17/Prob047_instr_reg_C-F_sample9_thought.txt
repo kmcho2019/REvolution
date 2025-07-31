@@ -1,6 +1,0 @@
-Fuse the two examples by using two separate 8-bit registers (ins_p1 and ins_p2) to hold instructions from different fetch sources as originally specified, which clarifies source distinction and simplifies output extraction, improving design clarity and ease of timing analysis.  
-Use a single always block with synchronous active-low reset for consistent and reliable reset behavior.  
-Update ins_p1 when fetch=2'b01 and ins_p2 when fetch=2'b10, retaining previous values otherwise to minimize switching and power.  
-Derive outputs ins and ad1 always from ins_p1 (the first instruction register) to match opcode and address extraction from the register source, and output ad2 directly from ins_p2 when fetch=2'b10; otherwise, zero ad2.  
-This approach maintains clear separation of instruction sources, preserves functional correctness, and benefits from low switching activity due to selective register updating, while keeping output logic simple and clean to enhance timing and power.  
-Overall, this fusion preserves original semantics with improved modularity and explicitness, aiding PPA optimizations and design maintainability.

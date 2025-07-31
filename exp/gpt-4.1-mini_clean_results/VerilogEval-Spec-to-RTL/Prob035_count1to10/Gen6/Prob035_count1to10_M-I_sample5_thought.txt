@@ -1,7 +1,0 @@
-To improve PPA, the main focus should be reducing the critical path delay and power consumption. The critical path currently includes a comparator (q==10) and a 4-bit adder for incrementing q. To reduce delay, we can precompute the next value of q in combinational logic outside the sequential block, which separates the comparator and incrementer, helping synthesis to optimize the logic better.
-
-For power, although this counter inherently toggles most bits, we can reduce switching in the MSB bit by saturating the count at 10 and wrapping around immediately. Additionally, keeping the comparator and next value calculation outside the clocked block reduces switching activity inside the sequential logic.
-
-The implementation uses a combinational "next_q" signal computed from q, which is then registered on the clock edge with synchronous reset. This separation often improves timing and clarity. The logic remains straightforward, with a single comparator and mux in the combinational block.
-
-We keep q as a 4-bit register and reset it synchronously to 1 as required. This approach aims for a better balance of timing, area, and power without complexity.

@@ -1,9 +1,0 @@
-To implement the TopModule, we need to design a finite state machine (FSM) that handles the walking, falling, and digging behaviors of the Lemming. The FSM should have at least three states: walking, falling, and digging. We will use a Moore state machine, where the outputs are determined by the current state.
-
-The walking state will have two sub-states: walking left and walking right. The FSM will switch between these two sub-states when it receives a bump on either side.
-
-When the ground disappears (ground=0), the FSM will transition to the falling state and output "aaah!". The FSM will remain in this state until the ground reappears (ground=1), at which point it will transition back to the walking state and resume walking in the same direction as before the fall.
-
-The digging state will be entered when the Lemming is walking and receives a dig signal (dig=1). The FSM will continue digging until it reaches the other side (ground=0), at which point it will fall and then continue walking in its original direction once it hits ground again.
-
-We will use a priority encoder to determine the next state based on the current state and inputs. The priority will be: falling, digging, switching directions.

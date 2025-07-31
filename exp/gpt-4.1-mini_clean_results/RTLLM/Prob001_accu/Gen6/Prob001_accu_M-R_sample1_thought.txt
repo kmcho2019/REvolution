@@ -1,5 +1,0 @@
-Refactor the design by implementing a simple finite state machine (FSM) with two states: ACCUMULATE and OUTPUT. In the ACCUMULATE state, accumulate incoming valid_in data and increment a count. When the count reaches 4, transition to the OUTPUT state, output the accumulated sum with valid_out high for one cycle, then reset accumulator and count and return to ACCUMULATE.
-
-This FSM approach cleanly separates accumulation and output phases, making the control logic explicit and clear. Use synchronous reset and non-blocking assignments. The valid_out is asserted only in the OUTPUT state for one clock cycle. This structure improves readability and ease of modification, while preserving the functionality. It avoids setting default valid_out=0 at the top of the always block by making the output depend strictly on FSM state.
-
-Accumulator and count updates only occur in ACCUMULATE state when valid_in is high. The state machine also makes it easier to add future enhancements or state-based optimizations if needed.

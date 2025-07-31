@@ -1,9 +1,0 @@
-To improve the provided Verilog code, we will implement a novel architectural idea that uses a Finite State Machine (FSM) with a more efficient state transition mechanism and a separate counter module for counting the remaining time. 
-
-The FSM will have four states: IDLE, SHIFT, COUNT, and DONE. In the IDLE state, the FSM will detect the input pattern (1101) and transition to the SHIFT state. In the SHIFT state, the FSM will shift in 4 bits to determine the duration of the timer delay and then transition to the COUNT state. In the COUNT state, the FSM will count for exactly (delay + 1) * 1000 clock cycles and then transition to the DONE state. In the DONE state, the FSM will assert the done output and wait for the ack input to be asserted before transitioning back to the IDLE state.
-
-We will use a separate counter module to count the remaining time. This counter module will be enabled when the FSM is in the COUNT state and will decrement the remaining time every clock cycle. When the remaining time reaches 0, the counter module will assert a done signal that will be used to transition the FSM to the DONE state.
-
-We will also use a more efficient state transition mechanism that uses a case statement to determine the next state based on the current state and the input signals. This will simplify the code and make it easier to understand.
-
-Overall, this novel architectural idea will provide a more efficient and scalable solution for implementing the timer functionality.

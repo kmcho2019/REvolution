@@ -1,5 +1,0 @@
-The bug in the provided module is that the `shut_off_computer` and `keep_driving` signals are not properly reset or assigned when their respective conditions are not met. This can lead to latches being inferred, which can cause unexpected behavior. To fix this bug, we need to ensure that all possible paths in the combinational logic assign a value to the outputs. We can achieve this by adding else clauses to handle the alternative conditions.
-
-In the case of `shut_off_computer`, we should set it to 0 when `cpu_overheated` is not asserted. For `keep_driving`, it should be set to 0 when `arrived` is asserted, regardless of the state of `gas_tank_empty`, as there is no more need to drive if the destination has been reached. Additionally, when `gas_tank_empty` is asserted, `keep_driving` should be 0 because the car cannot drive without gas.
-
-To maintain the original logic and make the module more predictable and free of latches, we need to ensure all conditions are covered for both outputs.

@@ -1,7 +1,0 @@
-The existing implementation uses a conditional operator to directly assign the position of the first '1' bit in the input vector. To propose a novel architectural idea, we can leverage the built-in functionality of Verilog's $clog2 function, which returns the number of bits necessary to represent an unsigned value. However, since our goal is to find the first '1' bit from the least significant bit, we need a different approach.
-
-A novel idea is to use a loop-based structure within an always block. The loop iterates over each bit of the input vector from the least significant bit to the most significant bit. As soon as it encounters a '1' bit, it assigns the current bit position to the output "pos" and breaks out of the loop. If no '1' bits are found after iterating over the entire vector, the output "pos" is assigned a value indicating that no '1' bits were found, such as '0'.
-
-This approach not only provides a clear and concise implementation but also allows for easier modification and extension if needed. Furthermore, it avoids the use of nested conditional operators, which can become cumbersome and difficult to read for larger input vectors.
-
-However, it's worth noting that this approach might have a slightly different PPA (Power, Performance, and Area) metric compared to the original implementation, primarily due to the use of a loop. The loop may introduce additional control logic, which could affect the area and potentially the timing. Nonetheless, for a moderate-sized input vector like 8 bits, the difference is likely to be minimal.

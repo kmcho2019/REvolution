@@ -1,5 +1,0 @@
-To improve synthesis compatibility and ensure the latch is correctly inferred, we can implement the D latch using an always block that is sensitive only to the enable signal and use nonblocking assignments. Specifically, we declare `q` as a reg output and write the always block triggered on `ena` (level-sensitive) so that when `ena` is high, `q` follows `d`, and when `ena` is low, `q` retains its value. This style is widely recognized by synthesis tools as a latch inference pattern, avoiding issues seen with combinational always blocks containing feedback assignments.
-
-Alternatively, we can use a continuous assignment combined with a tri-state like buffer using `assign q = ena ? d : q` is illegal because `q` can't be driven by itself; thus, using an always block with sensitivity to `ena` is preferable. We also eliminate the self-assignment in the else branch, as the latch behavior is implicit by not updating `q` when `ena` is low.
-
-Hence, the revised design declares `q` as reg, makes an always block sensitive to `ena` and assigns `q <= d` when `ena` is high. This is a canonical style for a transparent D latch.

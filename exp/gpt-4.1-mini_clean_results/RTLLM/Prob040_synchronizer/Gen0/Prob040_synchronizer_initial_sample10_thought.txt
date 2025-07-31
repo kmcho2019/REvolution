@@ -1,7 +1,0 @@
-To implement the synchronizer module as described, we'll use two clock domains clk_a and clk_b with their respective active-low resets arstn and brstn. On clk_a domain, data_reg and en_data_reg capture data_in and data_en synchronously with arstn reset. Then, en_data_reg is transferred to clk_b domain through two flip-flops en_clap_one and en_clap_two to create a 2-cycle delayed enable signal synchronized to clk_b with brstn reset.
-
-Finally, on clk_b domain, dataout is updated only when en_clap_two is high, loading data_reg (which is from clk_a domain, but assumed stable during data_en high) to output dataout. Otherwise, dataout retains its previous value. Resets set outputs and registers to zero appropriately.
-
-The data_in and data_en signals are stable as per the problem statement, ensuring safe multi-domain synchronization of enable signals via two flip-flops in clk_b domain, thus avoiding metastability issues. The design uses MUX (conditional assignment) in the clk_b domain to decide whether to update dataout or hold its previous value, based on en_clap_two.
-
-All signals and registers are sized and reset according to the description.

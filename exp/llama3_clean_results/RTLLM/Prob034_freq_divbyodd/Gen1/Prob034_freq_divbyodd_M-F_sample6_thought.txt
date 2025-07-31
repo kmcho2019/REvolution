@@ -1,8 +1,0 @@
-To correct the frequency divider module (freq_divbyodd), we need to re-evaluate the implementation of the counters and the clock divider logic. 
-1. The counters (cnt1 and cnt2) should be counting up to NUM_DIV - 1 to ensure the correct division ratio.
-2. The condition for toggling clk_div1 and clk_div2 should be based on the counters reaching their maximum value (NUM_DIV - 1), not half of NUM_DIV.
-3. The counters should be reset to 0 when they reach their maximum value and the corresponding clock divider output is toggled.
-4. The divided clock output (clk_div) should be derived by logically OR-ing clk_div1 and clk_div2 to account for both clock edges.
-5. The active low reset signal (rst_n) should initialize the counters and clock divider outputs correctly.
-6. We should also ensure that the counters and clock divider outputs are properly synchronized with the input clock signal (clk).
-7. To make the design more robust, we can add a check to ensure that NUM_DIV is an odd number, and handle the case where it is not.

@@ -1,9 +1,0 @@
-To optimize the design for better PPA, we can simplify the combinational logic by explicitly coding the modulo-7 counter sequence for the counting state without using addition, thus reducing adder logic and possibly reducing area and power. Also, eliminate the conditional register update (`if (q !== next_state)`) to reduce comparator logic, which can slightly improve performance by simplifying the clock-to-Q path.
-
-Instead, leverage that when `a` is 1, `q` is forced to 4, and when `a` is 0, the state cycles through the fixed sequence 4→5→6→0→1→2→3→4..., which can be encoded in a compact case statement for next_state.
-
-This approach reduces the combinational logic complexity and removes the conditional register update, which tends to improve timing slightly and reduce area and power overhead from the comparator.
-
-The synchronous behavior and functionality remain identical to the original solution and match the waveform.
-
-No explicit reset is used since the waveform shows initial unknown; the circuit stabilizes at q=4 on a=1 immediately at first posedge clk.

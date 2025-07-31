@@ -1,5 +1,0 @@
-To improve the original hierarchical reduction for better PPA, I propose restructuring the reduction tree into a balanced binary tree with groups of 2 inputs at each stage rather than groups of 10. This approach significantly reduces gate fan-in, lowers logic depth, and improves timing by minimizing the critical path delay. It also helps power by reducing switching activity in large fan-in gates and potentially reduces area as smaller gates are generally more efficient.
-
-Specifically, I will implement the 100-input AND, OR, and XOR as balanced trees with stages of 2-input gates. Since 100 is not a power of two, the extra inputs will be handled by propagating them unchanged at the last stages. This balanced reduction is better for synthesis tools to optimize timing and area.
-
-This approach results in roughly log2(100) ≈ 7 stages for each output, improving delay and area over the original two-stage wide fan-in implementation.

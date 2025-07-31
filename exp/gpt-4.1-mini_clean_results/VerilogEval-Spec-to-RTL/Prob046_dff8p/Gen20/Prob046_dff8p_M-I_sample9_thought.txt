@@ -1,7 +1,0 @@
-Improvement strategy:
-- The original design uses a vector-level conditional update (q <= d only if d != q) to reduce toggling and power, which is good.
-- To further optimize for timing and power, replace the vector-level comparison with a single clock enable signal that is asserted only when d != q, thus avoiding combinational comparison for every bit.
-- Implement the comparison outside the always block with a wire, which synthesis tools can optimize well.
-- Maintain negative-edge triggered DFFs with synchronous reset to 0x34.
-- Minor coding style improvements for clarity and synthesis friendliness.
-- This approach can slightly reduce switching activity on the clock tree because the register will update only on needed cycles, which helps dynamic power, and the simple comparison logic is efficient.

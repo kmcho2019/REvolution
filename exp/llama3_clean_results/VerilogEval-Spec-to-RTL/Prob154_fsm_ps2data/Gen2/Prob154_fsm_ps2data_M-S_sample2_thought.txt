@@ -1,5 +1,0 @@
-To simplify the existing solution, we can maintain a two-state finite state machine (IDLE and RECV_BYTES) but reduce the number of registers and improve the logic for asserting the 'done' signal. 
-We will use a single 24-bit register, out_bytes_reg, to store the complete 24-bit message, and a 2-bit counter, byte_count, to track the number of bytes received in the RECV_BYTES state.
-The FSM will start in the IDLE state, checking each input byte for in[3]=1. Once such a byte is received, it transitions to the RECV_BYTES state, stores this byte in the most significant 8 bits of out_bytes_reg, and then appends the next two bytes to out_bytes_reg in subsequent cycles.
-After receiving the third byte, it asserts 'done' in the next clock cycle and resets the state to IDLE in the same cycle, ensuring 'out_bytes' is valid whenever 'done' is asserted.
-The reset signal will reset all registers and the state to IDLE.

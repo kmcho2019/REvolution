@@ -1,9 +1,0 @@
-I will implement the Mealy FSM using binary-encoded states representing how many bits of the pattern "10011" have been matched so far. The FSM will have 6 states (0 to 5) to count the matched prefix length of the sequence. The state transitions will be based on the current input and the longest prefix of "10011" that matches the suffix ending with the new input.
-
-To handle overlapping sequences and continuous input, the FSM uses the "failure function" concept from the KMP (Knuth-Morris-Pratt) algorithm, meaning after a mismatch, it transitions to the longest valid prefix state instead of always going back to zero. This approach reduces state transitions and makes output generation straightforward.
-
-The MATCH output is asserted combinationally when the FSM reaches the accepting state (5) and the current input matches the last '1' in the sequence, i.e., a Mealy output.
-
-A synchronous reset initializes the FSM to state 0 (no match). The design uses a binary state encoding with 3 bits and a simple combinational logic for next state calculation and output generation.
-
-This method is efficient in flip-flop usage and systematic for any similar pattern detection with overlaps.

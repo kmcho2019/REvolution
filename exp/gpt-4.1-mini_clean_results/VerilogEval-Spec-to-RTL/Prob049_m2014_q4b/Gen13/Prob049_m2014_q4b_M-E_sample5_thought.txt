@@ -1,8 +1,0 @@
-To create a novel architectural implementation of a D flip-flop with asynchronous reset, I will separate the asynchronous reset logic from the clocked process by using a continuous assignment for asynchronous reset override and a simple positive edge-triggered D latch.
-
-Specifically:
-- Use a combinational always block sensitive to asynchronous reset to directly drive q low if reset is asserted.
-- Use a clocked always block triggered only on the positive edge of clk to sample d when reset is inactive.
-- Use a reg internal signal q_reg to store flip-flop state, then drive output q combinationally to either 0 during reset or q_reg otherwise.
-- This technique structurally differentiates reset and clock paths, which can sometimes help certain synthesis tools or for verification clarity.
-- This approach also ensures that q is driven asynchronously low immediately when ar is high, without waiting for clk edge.

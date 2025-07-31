@@ -1,7 +1,0 @@
-To refactor the given Verilog code, we can utilize a different state machine structure and employ the use of `assign` statements for combinational logic. The current implementation uses a 2-bit state register to manage the states of the finite state machine (FSM). However, we can refactor this to use a one-hot encoded state machine, which can potentially improve the performance and area efficiency.
-
-In the refactored code, we will use three separate registers to store each byte of the message. This approach will simplify the logic and make it easier to understand. We will also utilize `assign` statements to generate the `done` signal and to assign the values to the `out_bytes` register.
-
-The state machine will have four states: idle, byte1, byte2, and done. The idle state will be the initial state, and the FSM will transition to the byte1 state when a byte with `in[3] = 1` is received. From the byte1 state, the FSM will transition to the byte2 state after receiving the second byte. Finally, the FSM will transition to the done state after receiving the third byte and signal the receipt of a message by asserting the `done` signal.
-
-To optimize the code for better PPA metrics, we will minimize unnecessary switching activity by updating registers only when necessary. We will also use a more efficient state encoding scheme to reduce the area and power consumption.

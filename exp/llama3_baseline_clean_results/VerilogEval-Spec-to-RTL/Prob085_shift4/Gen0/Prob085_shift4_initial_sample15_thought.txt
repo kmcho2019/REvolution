@@ -1,7 +1,0 @@
-To implement the TopModule as described, we need to consider the behavior of the shift register under different input conditions. 
-1. **Reset Condition**: When `areset` is high, the shift register should reset to zero regardless of other inputs. This implies an asynchronous reset.
-2. **Load Condition**: When `load` is high, the shift register should load the value from `data[3:0]`. This operation should occur synchronously with the positive edge of `clk`.
-3. **Enable Condition**: When `ena` is high and `load` is low, the shift register should perform a right shift, moving the value of `q[0]` out and bringing in a zero at `q[3]`.
-4. **Priority of Operations**: `load` has higher priority than `ena`, meaning if both are high, the shift register loads the value from `data`.
-
-Given these conditions, we'll use a combination of if-else statements within a always block (sensitive to the positive edge of `clk`) to handle the synchronous operations and asynchronous reset. We'll also ensure the priority of `load` over `ena` is correctly implemented.

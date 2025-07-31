@@ -1,9 +1,0 @@
-To refactor the JK flip-flop implementation while preserving the core behavior, I will reverse the original approach by modeling Q as a wire assigned from a registered intermediate signal updated on the clock edge.
-
-Specifically, instead of defining Q as a reg updated inside an always block, I will define an internal reg state variable (Q_reg) updated on the clock edge using the JK logic. Then, the output Q will be assigned as a continuous assignment from Q_reg.
-
-This structure separates the sequential state variable from the output port, using continuous assignment for output, which might be preferred in some design styles. The JK characteristic equation will be implemented inside the sequential always block directly, avoiding the intermediate combinational wire.
-
-This approach still uses nonblocking assignments in the sequential block for proper simulation semantics, keeps the logic simple and clear, and allows Q to be output-only driven by the registered state.
-
-Thus, the refactoring changes the style and signal roles but keeps the same JK behavior and synchronous positive-edge clocking.

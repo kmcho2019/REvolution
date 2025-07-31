@@ -1,9 +1,0 @@
-Implement the FSM using binary-encoded states with a more compact 3-bit state vector. This reduces flip-flop count compared to one-hot encoding, saving area and power. Use a Mealy machine approach to immediately assert start_shifting output during the cycle the sequence "1101" is detected, then latch it high in a dedicated "detected" state until reset. The synchronous reset remains active high.
-
-Specifically:
-- States will be binary encoded as S0 to S5 representing partial matches and detected.
-- Transitions check the input bit and advance accordingly, similar to KMP automaton logic.
-- start_shifting output is generated combinationally in the Mealy style on the detecting transition, but latched once the detected state is entered.
-- The "detected" state holds start_shifting high indefinitely until reset.
-- State updates and output latching occur on the clock's rising edge.
-This design reduces state register count and toggling flip-flops, potentially reducing power and area with acceptable timing given the simple FSM.

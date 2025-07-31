@@ -1,7 +1,0 @@
-The original implementation is already quite efficient, but we can make a few structural improvements:
-
-1. For Y3, we can factor out the common ~w term to reduce logic duplication and potentially improve timing.
-2. We can use a bitwise OR reduction of the relevant state bits before ANDing with ~w for Y3, which better expresses the one-hot property that only one y bit is active at a time.
-3. We'll keep the simple assign statements but make the logic more explicit about the one-hot nature of the encoding.
-
-The key insight is that since only one y bit is active at a time (one-hot), we can OR the relevant state bits first before applying the input condition.

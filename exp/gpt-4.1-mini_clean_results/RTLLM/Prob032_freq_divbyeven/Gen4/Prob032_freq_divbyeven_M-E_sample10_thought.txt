@@ -1,9 +1,0 @@
-Instead of counting up to half of NUM_DIV - 1 before toggling, use a straightforward approach where the counter counts from 0 up to NUM_DIV/2 - 1, then resets and toggles the output clock. This guarantees that clk_div toggles every NUM_DIV/2 input clock cycles, effectively dividing the input clock by the even number NUM_DIV.
-
-To avoid ambiguity, use a synchronous reset on the positive edge of clk. The counter width is parameterized to support arbitrary NUM_DIV values, and a compile-time assertion (using a generate-if and an initial block) ensures that NUM_DIV is even.
-
-This design uses a simple counting and toggling method without relying on negedge reset and avoids off-by-one errors by counting precisely to NUM_DIV/2 - 1 before toggling.
-
-The counter width is set with $clog2(NUM_DIV/2) to fit the count range.
-
-This module is named exactly as requested: freq_diveven.

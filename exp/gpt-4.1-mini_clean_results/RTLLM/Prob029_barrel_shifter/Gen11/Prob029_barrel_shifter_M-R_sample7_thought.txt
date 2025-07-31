@@ -1,9 +1,0 @@
-Refactor the barrel shifter to correctly implement the shift stages in the required order: first shift by 4 bits if `ctrl[2]` is set, then by 2 bits if `ctrl[1]` is set, and finally by 1 bit if `ctrl[0]` is set. 
-
-Instead of using chained generate blocks with separate intermediate signals, implement each stage as a combinational assign statement that applies the shift based on the corresponding control bit, using the mux2X1 submodule for each output bit.
-
-This approach ensures clarity and correctness, explicitly passing the intermediate result from the 4-bit shift stage to the 2-bit shift stage and then to the 1-bit shift stage, maintaining the cumulative rotation logic.
-
-Additionally, keep the `mux2X1` submodule with a unique name to avoid conflicts, and use a clean, straightforward instantiation style for the muxes.
-
-This structure guarantees proper left rotation and adheres closely to the problem description.

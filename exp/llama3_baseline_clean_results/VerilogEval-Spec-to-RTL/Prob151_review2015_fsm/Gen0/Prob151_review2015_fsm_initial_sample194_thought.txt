@@ -1,8 +1,0 @@
-To implement the finite-state machine (FSM) that controls the timer, we will define several states to track the progress of the timer. The states can be:
-- IDLE: searching for the pattern 1101
-- PENDING: pattern 1101 detected, waiting for 4 clock cycles to shift in duration
-- COUNTING: waiting for counters to finish counting
-- NOTIFY: notifying the user that the timer has timed out
-- WAIT_ACK: waiting for user acknowledgement
-
-We will use a 4-bit shift register to check for the pattern 1101. When the pattern is detected, we transition to the PENDING state and assert shift_ena for exactly 4 clock cycles. After that, we transition to the COUNTING state and assert counting until done_counting is high. Then, we transition to the NOTIFY state and assert done until ack is high. Finally, we transition back to the IDLE state.

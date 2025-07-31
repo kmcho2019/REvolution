@@ -1,7 +1,0 @@
-To improve the PPA metrics over the existing design, I will reduce combinational fanout and balance the critical path by introducing a one-stage pipeline register for the next_state computation. Instead of computing next_state combinationally and feeding it directly into q, I'll register next_state into an intermediate register. This splits the critical path into two clock cycles: one for computing next_state, and one for loading it into q, effectively pipelining the design.
-
-Additionally, to reduce unnecessary switching when loading data, I'll gate the next_state update logic so it only runs when load is low, potentially saving dynamic power.
-
-This approach adds a small latency but is acceptable for a cellular automaton and can improve timing (smaller worst negative slack) and reduce power by lowering fanout on the main register q. Area increase is minimal due to an extra 512-bit register.
-
-Boundary conditions and load behavior remain the same, and the same generate logic is used for clarity.

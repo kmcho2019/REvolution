@@ -1,5 +1,0 @@
-Refactor the design to replace the combinational always block and for-loop with direct continuous assignments using a set of intermediate wires for next state bits. Each next_state bit is assigned as the OR of all transitions that target that state from any active current states considering the input. This approach removes the loop, explicitly enumerates conditions for each next_state bit, and relies purely on combinational logic assignments. 
-
-The outputs remain assigned via bitwise masking on the current state. This style can improve clarity by clearly showing the logic for each next_state bit as a sum of products, potentially helping synthesis tools optimize independent logic cones in parallel without loop constructs.
-
-This refactor maintains full functionality, supports multiple active current states, and can reduce logic complexity by expressing next state explicitly as simple combinational assignments rather than indexing assignments inside an always block.

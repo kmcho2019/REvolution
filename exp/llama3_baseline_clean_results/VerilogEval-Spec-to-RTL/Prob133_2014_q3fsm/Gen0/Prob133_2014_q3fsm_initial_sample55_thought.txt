@@ -1,9 +1,0 @@
-To implement the finite state machine (FSM) with the given specifications, we can use a minimal number of states while considering the behavior of the FSM in response to the inputs `s` and `w`. The FSM starts in state A and transitions to state B when `s = 1`. Once in state B, it examines the value of `w` over the next three clock cycles to determine the output `z`. 
-
-We can simplify the design by considering the counter for the three clock cycles and the count of `w = 1` within those cycles. This suggests using a finite state machine with at least two states: one for the initial state A and another for the examination state B, where we count the occurrences of `w = 1` within a 3-clock cycle window.
-
-Given the requirement for the FSM to remain in state A as long as `s = 0` and move to state B when `s = 1`, and then to examine `w` for the next three clock cycles to determine `z`, we can manage the transition and output logic within these constraints. The use of a counter for the three clock cycles and a counter for the `w` pulses within those cycles can help in determining the output `z`.
-
-The key insight is to realize that once the FSM enters state B, it remains there, continuously examining `w` and producing `z` based on the pattern of `w` over the 3-clock cycle window. Thus, the main challenge is to implement the logic for counting `w` pulses and determining `z` correctly within state B.
-
-To minimize the number of states, we focus on the essential actions: transitioning from A to B based on `s`, and then managing the `w` pulse count and `z` output within state B. This involves designing a circuit that can count the clock cycles after entering state B and count the number of `w = 1` occurrences within that window, setting `z` accordingly in the subsequent clock cycle.

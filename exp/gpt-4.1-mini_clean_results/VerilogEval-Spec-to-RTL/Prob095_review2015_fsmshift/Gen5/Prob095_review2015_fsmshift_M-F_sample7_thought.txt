@@ -1,5 +1,0 @@
-To fix the off-by-one error, initialize the counter to zero upon reset and keep shift_ena asserted while the counter is less than 4. This means shift_ena will be high for count = 0,1,2,3, totaling 4 cycles. On the next clock cycle (count=4), shift_ena deasserts and counter stops counting. This approach cleanly includes the reset cycle as the first cycle of shift_ena assertion.
-
-The counter resets to zero on every reset assertion, starting the count anew. When not in the enable window, the counter stays at zero and shift_ena stays low until the next reset.
-
-This fully synchronous reset-based enable signal correctly asserts shift_ena for exactly 4 clock cycles starting from the reset assertion, then stays low indefinitely until next reset.

@@ -1,7 +1,0 @@
-Refactor the radix-2 divider by separating the datapath and control more clearly: use an explicit state machine with three states (IDLE, CALC, DONE), but implement the datapath registers separately and use combinational logic for the subtraction and next shift register value. Use nonblocking assignments only in the clocked always blocks for registers. 
-
-Latch the inputs at the start of operation. For division, implement the shift-subtract loop controlled by a counter. At each cycle, perform a subtraction of the divisor from the current remainder and based on the subtraction borrow bit, update the shift register and quotient bit accordingly. After completion, adjust the signs of quotient and remainder if signed division is selected.
-
-Result valid is asserted only in the DONE state. The result output is registered for stability.
-
-This approach improves clarity by isolating combinational and sequential logic, avoiding mixing blocking assignments in sequential blocks, and uses a more canonical FSM style with next-state logic separated from state registers. It also adds proper input latching and sign conversion at start, and handles start of new operations cleanly from DONE or IDLE state.

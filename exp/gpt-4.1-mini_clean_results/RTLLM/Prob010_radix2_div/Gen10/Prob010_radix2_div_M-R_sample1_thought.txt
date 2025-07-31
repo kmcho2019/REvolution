@@ -1,9 +1,0 @@
-Refactor the original design by implementing a clearer finite state machine with three states: IDLE, DIVIDE, and DONE.
-Use a single always block for sequential logic, and explicitly separate combinational logic for subtraction and sign correction.
-Avoid multiple always blocks updating the same registers to improve synthesis friendliness.
-Perform subtraction and decision combinationally right before state transition.
-Use a 17-bit shift register SR to hold remainder and quotient during the operation.
-Implement sign extraction and absolute value conversion at input latching.
-At the end, perform sign correction on quotient and remainder in DONE state.
-Keep res_valid asserted only in DONE state to signal completion.
-This approach simplifies timing and control logic, clarifies data path, and avoids multiple updates of SR in the same clock cycle.

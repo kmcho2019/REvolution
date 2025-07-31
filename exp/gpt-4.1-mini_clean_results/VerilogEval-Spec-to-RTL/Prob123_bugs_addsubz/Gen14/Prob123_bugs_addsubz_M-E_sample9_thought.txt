@@ -1,7 +1,0 @@
-Use the arithmetic identity that subtraction can be performed by adding the two's complement of the subtrahend: out = a + (~b + 1) when do_sub is 1. Implement this by first computing an intermediate inverted version of b when do_sub is high, then add a and this inverted b plus do_sub as carry-in, all in one line using the Verilog + operator, which is synthesis-friendly and straightforward.
-
-To correctly set the zero flag, use a reduction NOR of the result to detect if all bits are zero, assigning the output to result_is_zero.
-
-This approach avoids bitwise for-loops and explicit carry chain logic, leveraging Verilog's built-in arithmetic operators for clarity and likely efficient synthesis. It also fixes the original bug by explicitly setting result_is_zero for all cases and removing conditional assignment without else branches.
-
-The whole logic is in one combinational always block using blocking assignments, ensuring no latches and straightforward combinational logic inference.

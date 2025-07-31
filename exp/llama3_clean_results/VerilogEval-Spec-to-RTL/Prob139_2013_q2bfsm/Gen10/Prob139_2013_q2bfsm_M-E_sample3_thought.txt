@@ -1,5 +1,0 @@
-To design a novel solution for the finite state machine, we'll approach it by breaking down the problem into smaller, more manageable sub-problems. We'll use a combination of counters and flag signals to track the sequence of `x` inputs and the state of `y` inputs. 
-
-The new idea involves using two main states: `INIT` and `RUN`. In the `INIT` state, we wait for the reset signal to be de-asserted, and then we set `f` high for one clock cycle. After that, we transition to the `RUN` state, where we monitor the `x` input to detect the sequence `1, 0, 1`. Once this sequence is detected, we set `g` high and start a two-clock cycle timer. If `y` becomes high within these two clock cycles, we keep `g` high permanently; otherwise, we reset `g` to low after the timer expires.
-
-We'll use a separate module to implement the sequence detector for `x` inputs, making the code more modular and reusable. This approach simplifies the state machine logic and reduces the complexity of the design.

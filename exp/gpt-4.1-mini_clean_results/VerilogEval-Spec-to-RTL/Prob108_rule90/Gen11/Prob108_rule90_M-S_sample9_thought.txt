@@ -1,5 +1,0 @@
-Simplify the design by removing the modular division into 64-bit blocks and instead implement the entire 512-bit Rule 90 automaton directly in one module. This eliminates boundary signal wiring and additional module instantiations, reducing complexity and making the design easier to understand.
-
-Use a single 512-bit register q to hold the state. On each clock cycle, if load is asserted, load data directly; otherwise, compute the next state of each bit as the XOR of its two neighbors, with boundary bits assumed zero.
-
-Implement next_state as a 512-bit wire computed combinationally from q, using shifts and bitwise XOR for concise and clear logic. This approach maintains functionality, reduces code size, and is synthesizable for efficient hardware implementation.

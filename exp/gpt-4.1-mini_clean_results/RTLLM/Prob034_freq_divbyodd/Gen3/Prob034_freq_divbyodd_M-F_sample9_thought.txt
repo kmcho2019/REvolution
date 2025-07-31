@@ -1,9 +1,0 @@
-To divide the clock frequency by an odd number NUM_DIV using separate counters on the positive and negative edges, we create two counters: cnt1 increments on the rising edge, cnt2 on the falling edge. Each counts from 0 up to NUM_DIV-1. 
-
-When cnt1 reaches (NUM_DIV-1)/2, clk_div1 toggles; similarly, clk_div2 toggles when cnt2 reaches (NUM_DIV-1)/2. This toggling on both edges ensures the final output clock has approximately a 50% duty cycle.
-
-The final clk_div is the logical OR of clk_div1 and clk_div2, combining toggles from both edges to form the odd-divided clock.
-
-Reset asynchronously clears counters and divided clocks. Parameter check ensures NUM_DIV is odd and >=3.
-
-This approach satisfies the original requirements by using two edge-sensitive counters and generating clk_div with correct timing and duty cycle.

@@ -1,9 +1,0 @@
-I will simplify the 4-digit BCD counter by using separate 4-bit registers for each digit instead of a packed 16-bit register. This allows straightforward increment and carry logic with clearer and simpler code.
-
-Each digit increments only when needed: the ones digit increments every clock cycle, and higher digits increment only when the previous digit rolls over from 9 to 0. This is done sequentially inside the clocked process, using non-blocking assignments.
-
-Enable signals for the tens, hundreds, and thousands digits are generated combinationally by checking if the lower digit equals 9, exactly as the previous design, but expressed simply from the separate digit registers.
-
-The synchronous reset sets all digits to zero. All logic is triggered on the positive edge of the clock.
-
-This approach reduces nested if-else complexity and avoids the use of a function, making the design easier to understand and potentially more efficient, while maintaining full functionality.

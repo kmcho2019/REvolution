@@ -1,7 +1,0 @@
-A novel architectural approach is to implement the function using a small combinational ROM-style lookup table encoded as a case statement. Instead of directly implementing the boolean expressions, we leverage Verilog's case statement to explicitly define the output for all input combinations that yield '1', and default to '0' otherwise.
-
-This approach results in a structurally simple, fully specified function where synthesis tools typically infer a small ROM or LUT. It is easy to verify against the Karnaugh map because each minterm is explicitly listed. It trades off minimal logic optimization for clarity and potentially faster mapping onto FPGA LUT resources.
-
-This architectural style is beneficial when the logic function is sparse or irregular, as in this case, and can be quickly modified or expanded if the function changes. It also makes debugging and testbench stimulus mapping straightforward.
-
-Thus, we implement the function with an explicit case statement covering all 16 input combinations, setting output to '1' for input vectors per the Karnaugh map, otherwise '0'.

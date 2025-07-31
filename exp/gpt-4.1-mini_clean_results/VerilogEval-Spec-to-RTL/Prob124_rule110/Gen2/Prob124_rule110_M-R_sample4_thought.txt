@@ -1,9 +1,0 @@
-To improve synthesizability and reduce combinational logic complexity in a single clocked block, refactor by separating the combinational next state logic from the sequential register update.
-
-Implement the Rule 110 update as a purely combinational `always @*` block that computes the next state `next_q` from the current state `q`. Use nonblocking assignment only in the sequential block to update `q`.
-
-This separation clarifies the design for synthesis tools and allows better optimization. The neighbor bits are extracted with clear boundary handling, and the rule lookup remains a direct indexing into an 8-bit constant.
-
-No local variables assigned with blocking inside the clocked block are needed anymore, and the logic is explicitly combinational for the update, sequential for the state storage.
-
-This approach keeps the same functionality and interface but improves synthesis friendliness, timing, and resource usage by cleanly separating combinational and sequential logic.

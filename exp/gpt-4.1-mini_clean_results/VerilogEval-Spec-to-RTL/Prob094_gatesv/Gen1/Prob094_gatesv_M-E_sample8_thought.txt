@@ -1,9 +1,0 @@
-We can implement the logic using vector bitwise operations and shift operations to compactly generate the outputs. The idea:
-
-- For out_both: since each bit looks at the bit itself and its left neighbor, we can shift the input left by 1 bit (dropping the MSB) to align neighbors, AND the input with this shifted vector, and assign the result to bits 0-2 of out_both; bit 3 will be zero.
-
-- For out_any: each bit looks at itself and its right neighbor. We can shift the input right by 1 bit (dropping the LSB) to align neighbors, OR the input with this shifted vector, and assign to bits 1-3 of out_any; bit 0 will be zero.
-
-- For out_different: since it wraps around, we can do a circular left shift of the input by 1 bit, then XOR it with the input.
-
-This approach uses vector operations and shifts instead of explicit per-bit logic, resulting in concise and potentially efficient logic.

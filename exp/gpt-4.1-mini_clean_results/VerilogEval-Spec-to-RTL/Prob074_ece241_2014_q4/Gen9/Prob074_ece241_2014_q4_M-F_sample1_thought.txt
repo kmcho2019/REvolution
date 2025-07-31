@@ -1,7 +1,0 @@
-To fix the mismatch issue, we need to ensure that the flip-flops have a known initial state in synthesized hardware. Since the problem does not specify a reset input, but says to assume flip-flops start at zero, the best practical approach is to add a synchronous reset input 'rst' to explicitly initialize the flip-flops to zero on reset. This makes the design fully synthesizable with deterministic startup behavior and resolves any mismatch caused by undefined initial states.
-
-The synchronous reset will be active high, and flip-flops will clear to zero on the rising clock edge when 'rst' is asserted. The rest of the logic remains the same.
-
-This change guarantees consistent initial flip-flop states in hardware and simulation, removing the functional mismatch in 'z'. The problem allows adding ports if needed for clarity and correctness.
-
-Therefore, the fixed design adds input rst, uses synchronous reset for flip-flops, and removes the initial block. The external environment must assert 'rst' at start-up to clear flip-flops.

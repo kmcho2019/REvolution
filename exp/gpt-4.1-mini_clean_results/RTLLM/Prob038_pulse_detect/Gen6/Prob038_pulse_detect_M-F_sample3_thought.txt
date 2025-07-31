@@ -1,7 +1,0 @@
-To address the feedback, we will separate the output logic by registering the data_out signal in a dedicated flip-flop. This ensures that data_out is purely synchronous and reduces combinational logic in the critical path. The registered output will be asserted only for one cycle when a pulse is detected.
-
-Additionally, we will gate the update of data_out to toggle only when a pulse is detected; otherwise, it stays at zero. This reduces unnecessary toggling and dynamic power consumption downstream.
-
-The FSM states and next state logic remain the same for simplicity and minimal area, but the data_out signal is updated based on a pulse_detected wire computed combinationally from the current state and input. The registered data_out then follows pulse_detected, being asserted exactly for one cycle at the end of the pulse pattern "0->1->0".
-
-This clean separation improves timing closure and power efficiency while maintaining functionality.

@@ -1,9 +1,0 @@
-To implement the gshare branch predictor module, we need to create a 7-bit global branch history register, a 128-entry table of two-bit saturating counters, and the necessary logic for prediction and training. 
-
-During prediction, we hash the 7-bit pc and 7-bit global history using XOR to get a 7-bit index, which accesses the saturating counter table. If the counter value is 2 or 3, we predict taken; otherwise, we predict not taken. We also update the global branch history register at the next positive clock edge.
-
-During training, we check if the branch was mispredicted and update the global branch history register to the state after the mispredicting branch completes execution. We then update the saturating counter table based on the actual branch outcome.
-
-We need to ensure that if training and prediction occur in the same cycle, training takes precedence, and if training and prediction of the same PHT entry happen at the same time, the prediction sees the PHT state before training.
-
-We will use Verilog's asynchronous reset feature to implement the active-high reset.

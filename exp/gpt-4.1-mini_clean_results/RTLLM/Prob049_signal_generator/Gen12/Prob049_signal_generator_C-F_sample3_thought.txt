@@ -1,8 +1,0 @@
-Fuse the clarity and clean separation of combinational and sequential logic from both examples, while minimizing redundant toggling and unnecessary holding of wave values at boundaries:
-
-- Compute the next_wave in combinational logic, incrementing or decrementing based on the current state, but do not hold wave constant at boundaries; instead, saturate it properly by limiting increments/decrements.
-- Update the state only when wave reaches boundaries to toggle direction, avoiding unnecessary state toggling at every cycle when at boundary values.
-- Make the state and wave registers update synchronously on posedge clk and asynchronously reset on negedge rst_n.
-- Introduce an enable signal for wave updates to prevent unnecessary assignments when wave saturates; this helps reduce switching activity and potentially power.
-- Use default assignments in combinational always block to avoid latches and remove redundant assignments to next_state in the default case.
-- This approach balances power (less toggling at boundaries), area (minimal registers and simple logic), and performance (short combinational path with clear separation).

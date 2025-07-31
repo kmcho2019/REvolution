@@ -1,9 +1,0 @@
-To implement the Lemmings state machine, we will use a novel architectural idea that separates the control logic into two distinct modules: a 'direction controller' and a 'fall controller'. The 'direction controller' will be responsible for managing the Lemming's walking direction based on the `bump_left` and `bump_right` signals, while the 'fall controller' will handle the Lemming's falling state based on the `ground` signal.
-
-The 'direction controller' will use a finite state machine with two states: 'walking left' and 'walking right'. The state machine will switch between these states based on the `bump_left` and `bump_right` signals. To handle the case where both `bump_left` and `bump_right` are high, we will use a priority encoder to determine the new direction.
-
-The 'fall controller' will use a simple state machine with two states: 'not falling' and 'falling'. The state machine will switch to the 'falling' state when the `ground` signal is low and switch back to the 'not falling' state when the `ground` signal is high.
-
-The outputs of the 'direction controller' and 'fall controller' will be combined using a multiplexer to generate the final `walk_left`, `walk_right`, and `aaah` signals. The multiplexer will select the output of the 'direction controller' when the Lemming is not falling and select the output of the 'fall controller' when the Lemming is falling.
-
-This novel architectural idea will provide a clear and efficient implementation of the Lemmings state machine, with separate modules for managing the walking direction and falling state.

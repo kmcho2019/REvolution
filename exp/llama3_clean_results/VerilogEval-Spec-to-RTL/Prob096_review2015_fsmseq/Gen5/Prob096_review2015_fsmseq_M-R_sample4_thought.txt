@@ -1,7 +1,0 @@
-To refactor the given code, we will employ a different structure for the finite-state machine. We'll utilize `assign` statements for combinational logic and a single `always` block for sequential logic. This approach will simplify the code, making it more concise and easier to understand. 
-
-We'll also correct the state transition logic to properly detect the sequence "1101" in the input bit stream. Once the sequence is detected, the `start_shifting` signal will be set to 1 and remain so until the reset signal is asserted.
-
-We'll use the same binary encoding for the states as in the original code: IDLE (2'b00), SEEN_1 (2'b01), SEEN_11 (2'b10), and SEEN_110 (2'b11). However, we'll add an additional state SEEN_1101 (2'b12 is not valid since we're using 2 bits, so we'll use a different approach to handle this state).
-
-Instead of using a `case` statement for next state logic, we'll use conditional `assign` statements to define the next state based on the current state and input data. For the sequential logic, we'll use a single `always` block to update the current state and `start_shifting` signal based on the reset and clock signals.

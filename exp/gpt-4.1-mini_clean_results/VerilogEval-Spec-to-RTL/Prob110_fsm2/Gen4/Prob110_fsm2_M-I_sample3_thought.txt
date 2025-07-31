@@ -1,9 +1,0 @@
-The current design directly encodes the state as the output bit, which is area and power efficient. To improve performance and reduce glitches on the output (which is combinationally dependent on the state), we can separate state and output registers. This provides a registered output, improving timing and avoiding glitches on asynchronous changes. 
-
-We'll define an explicit state register (1 bit) and a separate registered output. The output will update synchronously from the state, ensuring the output only changes at clock edges, improving signal integrity.
-
-Additionally, we can add a synchronous state transition to reduce metastability risk (the reset remains asynchronous as required). This technique can slightly improve timing by simplifying the output logic.
-
-Although this adds one extra flip-flop, the slight area increase is offset by improved output timing and glitch reduction. Power remains low due to minimal logic and toggling only on state changes.
-
-This change balances all PPA aspects better than the original code while maintaining the original FSM behavior.

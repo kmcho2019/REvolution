@@ -1,8 +1,0 @@
-The original solution is elegant and correct but can be further optimized for power by minimizing the toggling of data_out. Currently, data_out is assigned every cycle, toggling unnecessarily when no pulse is detected, which can cause extra power consumption.
-
-Improvement strategy:
-- Register data_out only when a pulse is detected.
-- Keep data_out low otherwise without re-assigning it unnecessarily.
-- Use a local wire for pattern detection to clearly separate combinational detection from sequential output generation.
-- Initialize the shift register to zeros instead of '11' to represent a known state and ensure stable startup.
-- This will reduce glitching and toggling on the output, improving power without adding area or latency.

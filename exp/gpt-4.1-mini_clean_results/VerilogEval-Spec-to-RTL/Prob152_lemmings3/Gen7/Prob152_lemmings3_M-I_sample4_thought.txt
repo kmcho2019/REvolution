@@ -1,7 +1,0 @@
-To improve power and timing, separate next state logic from registers by introducing combinational next-state variables. Only update direction and mode registers if next values differ, reducing unnecessary toggles. This also clarifies priority and simplifies state transition logic. 
-
-Use a combinational always block to compute next_mode and next_dir based on current mode and inputs, preserving priority falling > digging > bump direction. Then, in the sequential always block, update mode and dir only if values change. This reduces switching activity and may help timing by cleanly separating combinational logic from sequential storage.
-
-Outputs remain combinational from current mode and direction.
-
-This structural refinement targets minor power savings by avoiding redundant register toggles and potentially improves timing due to clearer separation of combinational and sequential logic.

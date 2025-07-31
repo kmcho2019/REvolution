@@ -1,5 +1,0 @@
-To avoid the post-synthesis mismatch and improve synthesis friendliness, merge the 2:1 multiplexer and D flip-flop behavior into a single synchronous always block instead of using a separate combinational assign and a separate DFF module. This allows the synthesis tool to optimize the logic better and ensures the register's next state logic is tightly coupled with the clock edge, matching the expected behavior precisely.
-
-Since no reset input is specified, we should not rely on initialization or asynchronous resets. Instead, focus on making the design fully synchronous and simple. The new single always block will select between r_in and q_in based on L at the clock's rising edge and store the result in Q.
-
-This approach aligns with good synchronous design practice and will likely resolve the mismatch observed post-synthesis.

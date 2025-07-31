@@ -1,7 +1,0 @@
-To simplify the BCD counter, I will leverage a single 16-bit binary counter and convert its value to BCD digits on the fly using simple logic rather than cascading carry logic. Since it's a 4-digit BCD counter incrementing every clock, the ones digit increments every cycle and rolls over after 9, triggering the next digit increment, etc.
-
-I will implement each digit as a simple 4-bit register incremented only when enabled by the lower digit rolling over from 9 to 0. The enable signals for digits 1-3 will be derived from these rollover conditions and output directly.
-
-This avoids complex combinational carry chains by encoding increment enables and digit resets plainly and incrementally. The synchronous reset clears all digits to zero.
-
-The design will use simple conditional increments, minimize combinational complexity, and keep the ena signals aligned with digit increment enables.

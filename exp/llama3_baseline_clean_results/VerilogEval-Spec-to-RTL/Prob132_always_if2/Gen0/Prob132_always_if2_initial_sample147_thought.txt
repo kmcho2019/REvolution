@@ -1,3 +1,0 @@
-The bug in the original module lies in the handling of the `shut_off_computer` and `keep_driving` signals. The `shut_off_computer` signal is only assigned when `cpu_overheated` is true, but it should be explicitly reset when `cpu_overheated` is false to prevent it from retaining its previous value. Similarly, the `keep_driving` signal is only assigned when `arrived` is false, but it should be explicitly reset when `arrived` is true to indicate that the destination has been reached.
-
-To fix the bug, we need to ensure that both `shut_off_computer` and `keep_driving` are assigned in all possible cases. This can be achieved by using an `else` clause to handle the opposite condition for each signal.

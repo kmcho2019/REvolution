@@ -1,7 +1,0 @@
-To fix the dfr output logic, we need to compare the current decoded water level (new_level) not with the immediate previous level (curr_level), but with the level before that (prev_level). This properly implements the requirement that the supplemental flow valve opens if the water level is rising compared to the level before the last sensor change. 
-
-We update prev_level <= curr_level; and curr_level <= new_level; sequentially, but the dfr assignment must be based on (new_level > prev_level). This captures rises spanning two sensor readings, accounting for transitions.
-
-All other logic and outputs remain the same. The reset condition still initializes both curr_level and prev_level to BELOW_S0 and asserts all valves, including dfr.
-
-This correction aligns with the problem statement and addresses the reported mismatches for dfr without affecting other outputs.

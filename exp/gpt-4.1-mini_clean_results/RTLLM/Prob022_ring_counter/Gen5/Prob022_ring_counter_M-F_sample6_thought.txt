@@ -1,5 +1,0 @@
-The feedback indicates that the simulation environment does not support assigning to the entire vector `out` at once. To work around this, we can assign each bit of `out` individually inside the always block. Instead of using a vector assignment like `out <= 8'b00000001` or `out <= out << 1;`, we manually set each bit of `out` one by one.
-
-On reset, we set `out[0] = 1` and all others to 0. On each clock edge without reset, we detect which bit is currently set and move the '1' to the next bit, wrapping around from bit 7 to bit 0.
-
-This avoids assigning to the entire array or slicing and works within the simulator's limitations, while preserving the ring counter's cyclic behavior.

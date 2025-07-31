@@ -1,5 +1,0 @@
-Refactor the design by explicitly separating the datapath and control logic with a simple FSM having IDLE, RUN, and DONE states. Use three always blocks: one for FSM state transitions and control signals, one for the shift count and done flag logic, and one for the shift-and-add datapath including registers for multiplicand, multiplier, and accumulator. This modular separation improves readability and clarity.
-
-Use synchronous reset and non-blocking assignments consistently. The shift-and-add operation is triggered only in the RUN state and is controlled by the shift count. The done signal is asserted in the DONE state. This structure cleanly aligns with the described behavior, while still using the same shift and accumulate logic per bit, but distinctly separates control and data operations.
-
-The output yout is driven directly by the product register. This makes the design easy to understand, maintain, and debug while preserving the required functionality.

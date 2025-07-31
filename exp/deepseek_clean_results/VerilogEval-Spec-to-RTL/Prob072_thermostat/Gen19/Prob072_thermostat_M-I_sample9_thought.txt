@@ -1,9 +1,0 @@
-The original solution is already quite optimal in terms of PPA metrics, but we can make one minor improvement by leveraging the observation that the fan output is simply the OR of three signals (mode&too_cold, ~mode&too_hot, and fan_on). We can optimize the fan logic by:
-1. Removing the intermediate heater/aircon signals from the fan equation
-2. Directly computing fan as (mode&too_cold) | (~mode&too_hot) | fan_on
-This eliminates one OR gate by combining the three terms directly, though the synthesis tool might have already done this optimization.
-
-The improvement is marginal since:
-- Area remains the same (5.0 um^2) as it's the minimal possible
-- Power might see negligible reduction from eliminating one gate level
-- Timing remains optimal (wns/tns = 0)

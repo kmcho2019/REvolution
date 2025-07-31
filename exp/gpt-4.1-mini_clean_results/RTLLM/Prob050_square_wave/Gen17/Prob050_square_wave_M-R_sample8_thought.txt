@@ -1,9 +1,0 @@
-Refactor the design by splitting the counter increment and toggle logic into two separate always blocks: one for counting and another for toggling wave_out when count reaches freq-1. This separation can make the design clearer and may improve synthesis tool optimization by isolating the counter and toggle behavior.
-
-Additionally, replace the explicit reset-driven assignments with an asynchronous reset for wave_out and count, which can allow faster initialization in some FPGA/ASIC flows.
-
-Use a combinational comparator signal to detect the terminal count condition, avoiding redundant comparison logic inside always blocks.
-
-The count increments only when freq is non-zero, preventing unnecessary toggling. When freq=0, both count and wave_out hold steady.
-
-This new structure maintains the original functionality but with a clearer state separation and potentially improved timing by isolating counter and output toggle logic.

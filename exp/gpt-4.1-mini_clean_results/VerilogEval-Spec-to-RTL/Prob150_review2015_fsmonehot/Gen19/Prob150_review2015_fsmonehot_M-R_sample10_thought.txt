@@ -1,9 +1,0 @@
-The previous design used direct combinational assignments of next-state outputs from the current state bits and inputs in a flat structure. To refactor while keeping the same core logic and correctness, I will implement the next-state logic using explicit intermediate wires to represent each next state term, improving readability and modularity. 
-
-This approach decomposes next-state logic expressions into smaller pieces, making it easier to modify or debug. It also facilitates incremental logic optimization or instrumentation if needed.
-
-All Moore output signals remain driven directly from the current state bits, ensuring no change in timing or functionality.
-
-Thus, the refactored code uses intermediate signals for next states, still leverages one-hot state encoding, and assigns the outputs accordingly. This maintains simplicity and clarity but offers a different structural style from the original.
-
-No use of `always` blocks is necessary since these outputs are combinational next-state and Moore output logic.

@@ -1,7 +1,0 @@
-I will implement the 16-bit up/down counter using a single synchronous always block triggered on the rising edge of the clock, combining both the counting direction and reset logic inside the same block. This means the count register will be updated atomically inside one process, improving compactness.
-
-Instead of using a separate combinational block for the next state, I will use a non-blocking assignment that adds or subtracts 1 from the current count directly, controlled by the up_down signal via a conditional operator. This reduces the combinational logic fanout and can help synthesis tools generate efficient carry-chain arithmetic.
-
-The reset is synchronous and sets the counter to zero. The counter naturally wraps around due to 16-bit arithmetic without requiring explicit saturation or bounds checking.
-
-This approach yields minimal code, easier comprehension for simple designs, and potentially slightly improved timing due to fewer combinational logic stages. It is a classic style used often for counters.

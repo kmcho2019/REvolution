@@ -1,9 +1,0 @@
-Refactor to a simple two-state FSM to improve clarity and control over the data capturing and output timing.
-
-- Define two states: IDLE (waiting for first valid input), and WAIT (holding first byte and waiting for second).
-- On the first valid input in IDLE, capture the data_in in a register and move to WAIT.
-- On the second valid input in WAIT, concatenate the stored first byte (upper 8 bits) and current input (lower 8 bits), register the result, and assert valid_out.
-- valid_out and data_out are registered signals updated in the clock cycle after receiving the second input, ensuring correct timing.
-- After outputting, return to IDLE state to accept new pairs.
-- Reset clears all registers and sets FSM to IDLE.
-- Using a state machine ensures clear, glitch-free control of flags and timing and simplifies output logic.

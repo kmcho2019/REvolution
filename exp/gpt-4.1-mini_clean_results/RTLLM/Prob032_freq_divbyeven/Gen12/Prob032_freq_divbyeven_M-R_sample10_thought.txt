@@ -1,9 +1,0 @@
-To refactor the frequency divider, I will implement the counting and clock division logic using a synchronous process that increments a 4-bit counter on each clock cycle, resets when it reaches HALF_DIV, and uses combinational logic to generate the divided clock signal by toggling an internal register. Instead of toggling clk_div inside the same always block where the counter increments, I will separate the toggle generation by tracking an internal toggle signal updated synchronously, and then assign clk_div from it. This structure decouples counting and output toggling, improving clarity.
-
-Also, I will implement a synchronous reset for better synthesis compatibility and initialize clk_div to zero on reset.
-
-This design still ensures clk_div toggles every HALF_DIV input clock cycles, dividing frequency by NUM_DIV (even number), with a 4-bit counter counting from 0 up to HALF_DIV-1.
-
-The parameter check for NUM_DIV being even and >=2 is kept for safety.
-
-This alternative structure uses a separate always block for toggling, clearly separating counting and output state changes, making it easier to extend or modify if needed.

@@ -1,9 +1,0 @@
-To improve PPA, focus on minimal logic depth and power reduction. Replace the 2-bit binary encoding with one-hot encoding to potentially reduce combinational logic delay, as each state bit represents a distinct state. One-hot FSM often leads to simpler next-state and output logic, which can reduce logic depth and improve timing.
-
-Additionally, integrate the output signal directly in the state register logic (since the FSM is Moore, output depends only on current state) by encoding output as a bit of the state register to avoid a separate combinational output block, reducing logic toggling and power.
-
-Maintain asynchronous active-high reset and positive edge clocking as required. The output 'out' is assigned based on state D encoded bit.
-
-This can reduce critical path delay in next state logic and output logic, potentially improving frequency (lower WNS), and reduce power by simpler combinational logic. Area may increase slightly due to one-hot encoding but can be acceptable given better timing.
-
-Implementing a one-hot encoding FSM with asynchronous reset and combining output with state bits for direct output logic.

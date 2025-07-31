@@ -1,9 +1,0 @@
-The primary issue is the uninitialized state register, causing unknown values at simulation start and output mismatches. Since the specification disallows reset signals, we cannot explicitly initialize the register synchronously.
-
-However, we can still initialize the register using an initial block for simulation purposes only. This does not affect synthesis (or minimal impact on FPGA), and it resolves simulation mismatches caused by unknown initial states.
-
-For synthesis on ASIC or FPGA, the register will be initialized to unknown or a default hardware value, but simulation results will be stable and consistent.
-
-No other architectural changes are required since the design is minimal and optimized. The initial block solely improves simulation correctness without affecting performance, power, or area.
-
-Therefore, the improvement strategy is to add an initial block initializing the state to 0 to fix the simulation mismatch while keeping the rest of the design unchanged.

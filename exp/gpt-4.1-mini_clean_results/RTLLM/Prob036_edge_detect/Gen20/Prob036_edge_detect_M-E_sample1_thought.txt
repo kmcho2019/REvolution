@@ -1,8 +1,0 @@
-Instead of just storing the previous value of input 'a' to detect edges, this design uses a simple finite state machine (FSM) to track the input signal transitions explicitly. The FSM has two states representing the last known stable value of 'a' (STATE_0 and STATE_1). On each clock cycle, the FSM checks the current value of 'a' and if a transition is detected (from 0 to 1 or 1 to 0), it asserts the appropriate output signal (rise or down) for exactly one clock cycle. This approach ensures edge detection is synchronized and explicitly tied to the FSM state transitions, improving clarity and extensibility if future state-based features are added. The outputs rise and down are generated as registered signals, guaranteeing that they hold the value 1 for one full clock cycle immediately after detecting the edge.
-
-Key points:
-- Use an FSM with two states representing last stable 'a'.
-- Detect edges on state transitions.
-- Generate rise/down as synchronous one-clock-cycle pulses registered on clk.
-- Active-low asynchronous reset to initialize FSM.
-- Clear and scalable structure for potential extension.

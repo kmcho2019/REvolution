@@ -1,7 +1,0 @@
-To improve the existing design's power and performance without altering functionality, I will optimize toggling on the clk_a domain by loading data_reg only when data_en transitions from low to high, effectively latching the stable data once per data event, as data_en is low for at least 10 clk_b cycles between changes. This reduces unnecessary data_reg updates when data_en remains high over multiple cycles. Similarly, en_data_reg will capture data_en but only update on the rising edge to reduce toggling. 
-
-In clk_b domain, the two-stage synchronizer for en_data_reg is necessary for metastability mitigation and will be retained. To further reduce power, I will update data_sync and dataout only on the rising edge of en_clap_two (detect enable assertion) rather than every cycle while enable is high, thus avoiding redundant data updates. This uses a simple edge detect technique by storing previous en_clap_two state and updating data only on rising edge.
-
-Also, asynchronous reset in clk_a domain and synchronous reset in clk_b domain are retained as they provide the best reset timing characteristics.
-
-These changes reduce dynamic power by minimizing register toggling and unnecessary data updates, improve performance by reducing critical path load in clk_a domain, and maintain area by not adding complex logic. The design remains clean and fully meets the problem specification.

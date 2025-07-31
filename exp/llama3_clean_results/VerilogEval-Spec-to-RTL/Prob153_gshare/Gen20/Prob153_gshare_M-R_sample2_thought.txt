@@ -1,7 +1,0 @@
-To refactor the provided Verilog code, the main objective is to maintain the core functionality of the gshare branch predictor while improving its structure and potentially its performance. The existing code uses a mix of combinational and sequential logic, with updates to the `history` register and the pattern history table (PHT) happening within the same `always` block. 
-
-A key refactoring strategy is to separate the combinational logic from the sequential logic more clearly. This can be achieved by using `assign` statements for the combinational parts (e.g., calculating `predict_index` and `train_index`) and keeping the sequential logic (e.g., updating `history` and PHT) within `always` blocks triggered by the clock edge.
-
-Additionally, the handling of asynchronous reset can be improved by ensuring that the reset logic is applied correctly to all sequential elements. 
-
-Finally, considering the problem's requirements, it's crucial to ensure that the training operation takes precedence over prediction when both happen in the same cycle, especially concerning updates to the `history` register and PHT entries.

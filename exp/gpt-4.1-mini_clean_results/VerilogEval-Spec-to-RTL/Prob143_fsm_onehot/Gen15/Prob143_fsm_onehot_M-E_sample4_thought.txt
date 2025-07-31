@@ -1,7 +1,0 @@
-Use a fully parallel one-hot next state decode where each next_state bit is computed directly from current active states and input, by enumerating which current states and input combinations cause transitions to each next_state bit. This approach avoids hierarchical OR trees and intermediate grouping, resulting in minimal logic depth per next_state bit.
-
-For outputs, implement them as simple combinational ORs of specific states that produce those outputs.
-
-This method leverages the one-hot encoding by directly expressing next_state[i] as an OR of all (state[j] & input_condition) pairs transitioning to state i. It cleanly supports multiple simultaneous active states since the logic is purely combinational and additive.
-
-This architecture trades off a possibly larger OR fan-in for maximum clarity, straightforward synthesis, and balanced timing since no intermediate signals or hierarchy are introduced. It is also easy to verify correctness by inspection.

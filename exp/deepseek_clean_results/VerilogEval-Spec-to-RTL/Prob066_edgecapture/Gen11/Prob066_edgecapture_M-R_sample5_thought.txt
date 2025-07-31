@@ -1,8 +1,0 @@
-To fix the race condition in edge detection, we need to properly separate the current and previous input values. Here's the improved approach:
-1. Use two always blocks to clearly separate sequential and combinational logic
-2. First always block handles the sequential storage of previous input (prev_in)
-3. Second always block handles the output logic and reset
-4. Falling edge detection is done by comparing current input with properly delayed prev_in
-5. Output bits are set when falling edges are detected and remain set until reset
-6. All sequential elements are properly synchronized to posedge clk
-This structure eliminates the race condition by ensuring prev_in always contains the true previous cycle's value when used for edge detection.

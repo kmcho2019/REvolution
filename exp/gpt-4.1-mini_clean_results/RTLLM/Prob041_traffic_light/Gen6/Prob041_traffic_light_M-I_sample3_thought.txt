@@ -1,9 +1,0 @@
-The original design correctly implements the traffic light FSM with pedestrian shortening logic. To improve PPA (power, performance, area), I will:
-1. Reduce the timer width from 8 bits to 7 bits, since the max count is 60 (fits in 7 bits).
-2. Introduce an enable signal for the timer decrement to avoid unnecessary toggling when timer is zero (save power).
-3. Gate the pedestrian request check and shortening logic only in the green state, reducing switching.
-4. Use one-hot style output assignments for clearer combinational output logic (minor synthesis-friendly).
-5. Simplify the ped_shortened flag update logic to avoid redundant assignments.
-6. Keep the asynchronous reset and synchronous state update.
-
-These changes maintain functionality while trimming the timer bit-width and reducing unnecessary toggles to optimize power and area slightly.

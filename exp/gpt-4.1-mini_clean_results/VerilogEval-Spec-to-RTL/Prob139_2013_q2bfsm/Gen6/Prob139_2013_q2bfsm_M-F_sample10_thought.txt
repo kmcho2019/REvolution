@@ -1,9 +1,0 @@
-Fix the FSM by ensuring the following:
-
-- Use a proper one-hot encoding for all states, including the permanent failure state, avoiding the zero vector as a valid state.
-- Implement the reset and 'f' pulse timing correctly: upon synchronous de-assertion of resetn, move to a new state (B) on the next clock edge that asserts 'f' for exactly one cycle, then proceed to sequence detection. This ensures 'f' is high exactly one clock cycle after resetn goes high.
-- For the x sequence (1,0,1), design the FSM so it progresses on each clock edge regardless of input, but transitions between sequence checking states only if the expected input is present; otherwise, reset sequence detection appropriately. This avoids indefinite stalls.
-- Implement the y monitoring count in state D with a counter starting at zero upon entry. Increment each cycle, checking for y=1 or timeout after exactly two clock cycles to move to success or failure states. This avoids off-by-one errors.
-- Drive outputs (f and g) purely combinationally from the current state for clean output timing.
-- Keep all sequential logic (state and counters) in one clocked always block synchronized with clk and synchronous active low reset.
-- This fixes timing, avoids zero state encoding, and correctly sequences outputs, eliminating observed simulation mismatches.

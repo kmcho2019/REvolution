@@ -1,9 +1,0 @@
-To create a superior solution, we will analyze the strengths of both examples and combine them. We will use a one-hot encoded state register as in the second example to simplify the state transition logic and reduce the number of states required. However, instead of using a 3-bit one-hot encoded state register, we will use a 4-bit one-hot encoded state register to include an additional state for handling the case when the stop bit is incorrect.
-
-We will use a 9-bit shift register as in the first example to efficiently collect the incoming bits and check the stop bit. This will allow us to simplify the logic for checking the stop bit and reduce the number of states required.
-
-The FSM will be designed to reset the 'done' signal in the same always block as the rest of the logic to avoid any potential synchronization issues. We will also consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding.
-
-The FSM will have the following states: IDLE, RECEIVE, WAIT_STOP, and DONE. The IDLE state will wait for the start bit, the RECEIVE state will collect the incoming bits, the WAIT_STOP state will handle the case when the stop bit is incorrect, and the DONE state will handle the case when a byte has been correctly received.
-
-To optimize the design for better PPA, we will consider using a single always block to handle all the logic, reducing the size of the shift register, and implementing a more efficient state machine encoding. We will also minimize switching activity by reducing unnecessary updates to the shift register and the state register.

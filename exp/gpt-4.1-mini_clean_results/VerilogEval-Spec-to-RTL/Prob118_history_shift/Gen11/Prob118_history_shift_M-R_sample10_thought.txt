@@ -1,5 +1,0 @@
-Refactor the design by explicitly separating the update logic from the register in two steps: compute the next state combinationally using an always_comb block, then update the register in the clocked always block. This approach clarifies control flow by using an intermediate next_state register variable, improves readability, and makes the priority handling more explicit.
-
-Instead of using nested ternary operators inside the always block, the combinational logic is split into a separate always_comb block that sets next_state based on inputs and priority (rollback has highest priority, then prediction). The clocked always block then just updates the state register or resets it asynchronously.
-
-This structure makes the design easier to understand, maintain, and potentially helps synthesis tools to optimize logic more explicitly.

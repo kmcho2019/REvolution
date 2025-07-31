@@ -1,8 +1,0 @@
-The key simplification comes from recognizing that we don't need to store the previous input separately. Instead, we can:
-1. Use the current captured value as part of the edge detection
-2. Each bit's output becomes 1 if either:
-   - It was already captured (sticky behavior)
-   - A falling edge is detected (current input is 0 and previous input was 1)
-3. Reset clears all captured states
-
-This eliminates one 32-bit register (prev_in) while maintaining identical functionality. The edge detection now uses the captured register's previous value combined with the current input.

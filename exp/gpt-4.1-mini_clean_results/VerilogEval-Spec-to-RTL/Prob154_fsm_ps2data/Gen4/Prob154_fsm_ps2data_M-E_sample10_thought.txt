@@ -1,9 +1,0 @@
-Implement an explicit 4-state FSM with states: IDLE, BYTE1, BYTE2, and DONE.  
-In IDLE, discard bytes until detecting a byte with in[3]=1; then latch it as BYTE1 and move to BYTE1 state.  
-On next clock in BYTE1, latch byte as BYTE2 and move to BYTE2.  
-On next clock in BYTE2, latch byte as BYTE3 and move to DONE.  
-In DONE state, assert done and output concatenated bytes {BYTE1,BYTE2,BYTE3}.  
-On next clock from DONE, return to IDLE to search for next message.  
-This FSM approach cleanly separates message reception from signaling done, allows done to be asserted for one cycle only, and ensures out_bytes is valid when done is asserted.  
-The reset synchronously returns to IDLE and clears outputs.  
-All state changes and registers update on the positive clock edge with synchronous reset.

@@ -1,9 +1,0 @@
-To correctly implement the dfr signal as per specification, we must track the water level two sensor changes ago, i.e., keep a two-level history: current_level, prev_level, and prev_prev_level. The dfr output should be asserted when the current_level is greater than prev_prev_level, indicating a rising water level compared to the level before the last sensor change. This solves the fundamental misunderstanding in the original solution.
-
-We decode the sensor input into discrete water levels cleanly and update prev_prev_level and prev_level only on changes in current_level. The dfr signal is synchronously assigned and asserted for exactly one clock cycle on level rises.
-
-The nominal flow outputs (fr0, fr1, fr2) remain combinational based on current_level as before.
-
-This approach correctly models the requirement: dfr is high if current_level > prev_prev_level (previous to last level), updated only when level changes occur. On reset, state is set to "low water level" (0) with all flow outputs asserted.
-
-This fixes the major bug causing incorrect dfr timing and value by explicitly tracking two previous levels and comparing with current level.

@@ -1,9 +1,0 @@
-Implement a 64-bit pipelined ripple carry adder by dividing the addition into 16 stages, each adding 4 bits. This fine granularity enables balanced pipelining and potentially better clock frequency.
-
-Key design points:
-1. Each pipeline stage holds registered inputs (4-bit slices of operands), the carry-in from previous stage, and computes sum and carry-out.
-2. The carry signal propagates sequentially through the pipeline stages, registered at every clock cycle.
-3. The input enable (i_en) is also pipelined to generate the output enable (o_en) synchronized with the result.
-4. All operations are done in sequential always block triggered on clk and async reset (rst_n).
-5. At the output stage, the final 65-bit sum is assembled by concatenating the 16 sum parts plus the final carry.
-6. The module avoids combinational loops and keeps clean pipelining structure with registered carry and enable signals.

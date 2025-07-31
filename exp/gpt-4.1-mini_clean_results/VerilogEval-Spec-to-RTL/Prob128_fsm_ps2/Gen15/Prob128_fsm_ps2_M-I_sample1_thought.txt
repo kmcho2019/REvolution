@@ -1,7 +1,0 @@
-To improve PPA based on the original design, I will introduce a clock enable signal to gate the counter update logic and reduce toggling of the count register when not in a message. This clock gating approach minimizes dynamic power by preventing unnecessary switching on count bits outside message reception.
-
-Specifically, I'll add an enable signal that is asserted only when inside a message or upon detecting the start byte. The counter increments only when enabled, and done is asserted one cycle after receiving the third byte. This eliminates count toggling during idle cycles, lowering power, with negligible area overhead due to a simple enable signal.
-
-The FSM logic remains simple and synchronous; the counter is only updated when enabled, and done is asserted in the same cycle count reaches 2 (i.e., after the third byte).
-
-This approach reduces unnecessary transitions in count register bits, improving power and potentially timing (shorter critical path), while keeping area and functionality intact.

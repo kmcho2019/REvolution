@@ -1,5 +1,0 @@
-I will refactor the FSM implementation by using an explicit state encoding with an enumerated type via `typedef enum`, enhancing readability and synthesis tool friendliness. Instead of gating the state update with a comparator, I will update the state register unconditionally on every clock edge when not reset, simplifying timing and removing the extra comparator logic.
-
-The next-state logic will be implemented in a combinational `always_comb`-style block (using `always @(*)`), similar to before, but now the output `z` will be described inside a separate combinational always block with a case statement. This keeps output logic clearly separated and explicit, which can be helpful for tools and future modifications.
-
-Overall, this redesign simplifies the sequential logic, improves timing paths by removing conditional state updates, and clarifies the FSM structure via an enumerated type. It still satisfies all problem constraints and synchronous reset behavior.

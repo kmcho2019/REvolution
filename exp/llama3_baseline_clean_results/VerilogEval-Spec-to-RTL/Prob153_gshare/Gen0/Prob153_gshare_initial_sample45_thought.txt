@@ -1,9 +1,0 @@
-To implement the gshare branch predictor module, we will first define the internal signals and variables needed for the predictor. This includes the 7-bit global branch history register, the 128-entry table of two-bit saturating counters (PHT), and the signals to handle the prediction and training interfaces.
-
-The prediction interface will use the input pc and global branch history to index into the PHT and produce a predicted branch direction. The global branch history register will be updated at the next positive clock edge for the predicted branch.
-
-The training interface will use the input pc and branch history to index into the PHT and update the corresponding saturating counter based on the actual branch outcome. If the branch was mispredicted, the global branch history register will be recovered to the state immediately after the mispredicting branch completes execution.
-
-To handle the case where training and prediction of the same PHT entry happen at the same time, the prediction will see the PHT state before training because training only modifies the PHT at the next positive clock edge.
-
-We will also implement the asynchronous active-high reset logic to reset the predictor when the areset signal is high.

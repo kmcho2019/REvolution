@@ -1,7 +1,0 @@
-To address the issues highlighted in the feedback, we need to reevaluate the logic controlling the 'shift_ena' signal and the 'running' flag. The key insight is to recognize that 'shift_ena' should be asserted for 4 clock cycles immediately after 'reset' goes high, and then it should remain low until the next 'reset'. This implies that we need a mechanism to delay the effect of 'reset' by one clock cycle and to keep track of the number of cycles 'shift_ena' has been high. 
-
-The current implementation incorrectly asserts 'shift_ena' as long as 'reset' is high, which is not the desired behavior. We should instead introduce a separate signal that tracks whether we are in the initial reset phase (where 'shift_ena' should be high for 4 cycles) and use this signal to control 'shift_ena'. 
-
-Moreover, the logic for the 'running' flag and the counter needs adjustment to ensure that 'shift_ena' remains low after the initial 4 cycles and only becomes active again upon the next 'reset'. We will use the counter to keep track of the cycles and ensure 'shift_ena' is asserted for exactly 4 cycles after 'reset'. The counter should be reset and 'running' should be set to 1 when 'reset' goes high, allowing 'shift_ena' to be asserted for the next 4 cycles. 
-
-By making these adjustments, we can ensure that 'shift_ena' behaves as intended: it is asserted for exactly 4 cycles after 'reset' is asserted and then remains low until the next 'reset'.

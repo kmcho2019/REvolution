@@ -1,7 +1,0 @@
-The fix requires adding an input to detect the "proper bit pattern" and extending the FSM to trigger the 4-cycle enable sequence both on synchronous reset and on detection of this pattern. I will add an input `pattern_detected` to the module. The FSM will stay in IDLE by default, but whenever reset is asserted (synchronously) or pattern_detected goes high, it will transition to ENABLE state and start a 4-cycle counter (initialized to 3 for 4 cycles). The counter counts down on each clock cycle during ENABLE, and when it reaches zero, the FSM returns to IDLE and disables shift_ena until the next reset or pattern detection.
-
-This way, shift_ena is asserted exactly 4 cycles after reset or pattern detection, fulfilling both requirements. All logic is synchronous to clk with synchronous reset.
-
-I will keep two states (IDLE and ENABLE) encoded as 1 bit reg, and use a 2-bit counter for counting down 4 cycles. The pattern_detected input will be sampled synchronously and any pulse on it triggers the 4-cycle enable.
-
-This solves the previous problem by enabling shift_ena on both reset and pattern detection events.

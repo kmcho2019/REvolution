@@ -1,9 +1,0 @@
-The waveform shows q=1 whenever b=1 or c=1 regardless of a and d. Both examples implement q = b | c, but one uses a 4-to-1 mux and the other a 2-input or gate module. The mux is elegant structurally but less efficient in area and power, while the or gate module is minimal but adds a module hierarchy overhead.
-
-To fuse the best of both:
-- Implement the OR logic directly inside TopModule using a continuous assign statement, eliminating unnecessary module hierarchy for minimal area and power.
-- Keep code clear and readable.
-- Explicitly ignore inputs a and d since they do not affect q.
-This approach yields the smallest, simplest combinational circuit, maximizing PPA by reducing gate count and wiring, while maintaining clear semantic mapping to the waveform data.
-
-Hence, the fusion strategy is to implement q as a simple assign of b | c, with no extra modules, for best performance, power, and area.

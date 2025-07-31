@@ -1,7 +1,0 @@
-The issue arises because the counter initialized to 3 leads to only 3 cycles of `shift_ena` after reset, rather than the required 4. To fix this, I will initialize the counter to 4 at reset, representing the exact number of cycles `shift_ena` should be asserted. 
-
-The counter will decrement on every clock cycle when nonzero, asserting `shift_ena` during all these cycles. When it reaches zero, `shift_ena` deasserts and remains low until the next reset.
-
-This approach cleanly maps the counter value to the number of remaining enabled cycles, including the reset cycle, ensuring exactly 4 cycles of enable.
-
-Using a 3-bit counter avoids overflow and covers the needed count easily. This straightforward synchronous logic guarantees the correct timing of `shift_ena` assertion post-reset.

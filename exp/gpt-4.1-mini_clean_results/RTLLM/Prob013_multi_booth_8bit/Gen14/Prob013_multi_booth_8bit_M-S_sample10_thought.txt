@@ -1,7 +1,0 @@
-Simplify the implementation by focusing on the core multiplication logic without explicitly separating multiplicand and multiplier registers. Use a single 16-bit product register initialized to zero and a 16-bit multiplier register initialized with sign-extended `b`. On reset, load `a` and `b` sign-extended as the multiplicand and multiplier respectively, zero the product, reset counter and ready signal.
-
-At each clock cycle (while counter < 8 because Radix-4 processes 2 bits at a time), use a 3-bit window from the multiplier register (including an appended zero bit for Booth encoding) to decide the operation on the product (add/subtract multiplicand shifted accordingly or do nothing). Then arithmetic right shift the combined product and multiplier register by 2 bits to prepare for the next iteration.
-
-This way, implement a proper Radix-4 Booth multiplier performing 8 iterations for 8-bit inputs, reducing iterations and logic complexity while maintaining functionality. Set ready when done.
-
-This approach preserves signed arithmetic, uses synchronous reset, a simple state machine with counter, and avoids unnecessary register duplication.

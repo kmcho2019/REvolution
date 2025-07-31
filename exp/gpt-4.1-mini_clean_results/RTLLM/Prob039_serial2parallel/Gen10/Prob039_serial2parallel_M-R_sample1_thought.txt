@@ -1,9 +1,0 @@
-Refactor the original design by separating the serial input shifting and the output generation logic into two always blocks for clarity and modularity.
-
-- Use a synchronous reset and a separate always block to handle the 4-bit counter that increments only on valid data input.
-- Use another always block to shift the serial input bits into a register from MSB to LSB on each valid input.
-- Generate dout_valid and dout_parallel combinationally based on the counter value: assert dout_valid when 8 bits (counter == 7) have been received, and output the stored data.
-- Keep dout_parallel registered so it holds the output data stable once valid.
-- This structure emphasizes separation of counting and data shifting, improving readability and maintainability, while preserving the core behavior: MSB-first input shifting, 8-bit accumulation, and one-cycle valid pulse.
-
-The design remains fully synchronous, simple, and uses non-blocking assignments properly.

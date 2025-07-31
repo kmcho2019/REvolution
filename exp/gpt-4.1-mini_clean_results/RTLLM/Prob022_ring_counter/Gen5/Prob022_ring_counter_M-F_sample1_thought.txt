@@ -1,9 +1,0 @@
-The previous design assigned values to the entire 8-bit vector `out` at once, which is not supported by the given toolchain. To fix this, we must avoid whole-vector assignments and use individual bit assignments.
-
-The ring counter holds exactly one '1' bit cycling through bits 0 to 7. On reset, bit 0 is set to 1 and others to 0. On each clock, the '1' bit moves to the next position, wrapping back to bit 0 after bit 7.
-
-We can implement this by maintaining an integer index (0 to 7) representing the position of the '1'. On reset, set index to 0. On each clock, increment the index modulo 8.
-
-Then, assign bits of `out` individually inside the clocked always block based on this index: set only the bit corresponding to the index to 1, others to 0. This avoids vector assignments and slicing, while fulfilling the ring counter behavior.
-
-This approach is compatible with limited toolchains because it avoids direct vector assignments, relying only on individual bit assignment.

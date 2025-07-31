@@ -1,9 +1,0 @@
-To implement the described finite state machine (FSM) with the given inputs and outputs, we can consider a minimal number of states that capture the essence of the state transitions and the conditions for setting the output `z`. The FSM starts in state A and moves to state B when `s` becomes 1. Once in state B, it checks `w` over three clock cycles to determine if `z` should be set to 1 (if `w` is 1 exactly twice) or 0 (otherwise). This behavior can be achieved with a limited number of states by considering the transition from A to B and the logic to count the occurrences of `w` being 1 within the three clock cycles in state B.
-
-The states we can define are:
-- State A (reset state): The FSM starts here and stays until `s` becomes 1.
-- State B: After entering this state, the FSM starts checking `w` over the next three clock cycles.
-
-To implement the logic for counting `w` occurrences and setting `z` accordingly with minimal states, we can use internal signals or counters that are updated based on the value of `w`. However, since we aim to use as few states as possible, we can incorporate the counting logic within the state B's logic, utilizing additional signals or variables to track the number of `w` occurrences.
-
-Given the constraints, a straightforward approach involves using a single state (B) for the `w` checking phase, along with internal counters or signals to track the number of `w` occurrences over the three clock cycles. This approach simplifies the state machine to have a minimal number of states while achieving the required functionality.

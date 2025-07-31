@@ -1,7 +1,0 @@
-Refactor the frequency divider by implementing the counter logic and the divided clock generation within a single always block for simpler state tracking. Instead of separate always blocks for counting and toggling, combine these to update both simultaneously on each clock edge.
-
-The counter counts from 0 up to half the division factor minus 1, then resets. When the counter reaches this terminal count, toggle the output clock signal `clk_div`. This effectively divides the input clock frequency by the even number specified.
-
-Additionally, use a parameter check with a synthesis-time assertion (`initial` block) to ensure `NUM_DIV` is even. The counter width is automatically derived from the division parameter using `$clog2`.
-
-This structure simplifies timing relationships between counter and output clock toggling by having all synchronous logic in one block, making the design straightforward and easy to maintain.

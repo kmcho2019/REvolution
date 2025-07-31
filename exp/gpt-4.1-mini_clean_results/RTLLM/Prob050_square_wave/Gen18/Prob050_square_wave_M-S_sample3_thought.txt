@@ -1,3 +1,0 @@
-Simplify the design by removing the synchronous reset and continuous counter increment. Instead, use a counting approach where the counter increments until it reaches (freq - 1), then resets to zero and toggles wave_out. This uses a single always block triggered on the clock's rising edge, which controls both the count and wave_out registers. This reduces logic complexity and avoids the need for combinational comparison for output, directly generating the toggled output synchronously.
-
-This design assumes freq=0 results in no toggling (wave_out stays at 0), avoiding division or comparison by zero. The toggling frequency is inversely proportional to freq as requested. It keeps the interface minimal and the logic straightforward.

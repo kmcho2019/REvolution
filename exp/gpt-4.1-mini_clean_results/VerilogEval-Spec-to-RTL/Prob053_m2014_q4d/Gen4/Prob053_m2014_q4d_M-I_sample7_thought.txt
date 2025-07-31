@@ -1,7 +1,0 @@
-The original design is functionally correct and minimal, implementing the required XOR feedback and flip-flop behavior. The only minor issue is the initial unknown state of 'out' due to no reset. Since the problem explicitly forbids a reset, we cannot add one to fix initial values deterministically.
-
-However, to improve simulation determinism and avoid initial unknown states during verification (without violating the no-reset constraint), we can initialize the 'out' register to zero at declaration. This is a common synthesis-friendly method supported by modern tools that improves the initial state during simulation without altering the combinational logic or requiring a reset signal.
-
-This change doesn't affect the synthesis behavior on hardware that powers up with unknown states but helps reduce mismatches during simulation and testbench comparison. The logic and interface remain unchanged, so PPA (performance, power, area) impact is minimal and acceptable.
-
-Therefore, the improvement is to add an initial assignment to 'out' to define its starting value as zero.

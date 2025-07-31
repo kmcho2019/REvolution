@@ -1,5 +1,0 @@
-Refactor the FSM by using a one-hot style state register with explicit named states stored in a reg, but without a combinational always block for next_state. Instead, use continuous assignment (`assign`) for next state signals to drive the state register input. This approach eliminates the explicit combinational always block by defining next state logic through `assign` expressions, simplifying the logic and possibly enabling better synthesis optimization.
-
-The synchronous state register loads the computed next state on each clock edge with reset. The output remains Moore style, driven directly from the state.
-
-This also clearly separates combinational logic (next state logic via assign) from sequential logic (state register update), but removes the procedural combinational block, which may improve logic inference or stylistic clarity for some tools.

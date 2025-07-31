@@ -1,9 +1,0 @@
-The original code uses a fixed 8-bit remainder register which does not match the problem's requirement to concatenate the remainder with the next dividend bit and compare a slice matching the divisor width (8 bits). To fix this, I will implement a wider remainder register that starts with the highest 8 bits of the dividend and shifts in the remaining bits one-by-one from the dividend's lower bits, performing the subtraction if possible at each step. This follows the problem statement exactly: extract the higher 8 bits of the dividend as initial remainder, compare to divisor, set quotient bit accordingly, then concatenate the remainder with the next dividend bit and repeat.
-
-I'll use a single combinational always block for the core algorithm to simplify and avoid unnecessary registers. The inputs A and B will be directly used in the block. The remainder will be a variable wide enough to hold the intermediate values (at least 9 bits to hold remainder plus one next bit). The quotient is constructed bit-by-bit, MSB first.
-
-This approach correctly models the desired iterative comparison with concatenation and subtraction in combinational logic, matching the problem statement's method and producing correct quotient and remainder.
-
-Also, the remainder output 'odd' is 16-bit, so I'll zero-extend the final remainder (which is up to 8 bits) to 16 bits.
-
-This design is still combinational but structurally closer to the described algorithm, and removes unnecessary registers and complexity.

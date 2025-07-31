@@ -1,5 +1,0 @@
-Fuse the approaches by using a 64-bit accumulator to safely hold the full range of sums from 32x32 products (avoiding overflow), as in Example 1, but cleanly separating multiplication (combinational) and accumulation (sequential) stages. Use synchronous reset (as preferred for simpler timing and synthesis flows), combine the multiplication result and accumulation in the 64-bit domain to preserve accuracy, and output the lower 32 bits of the accumulator as the final result, ensuring compatibility with the 32-bit output port.
-
-This fusion retains the accuracy and overflow safety of a 64-bit accumulator, the simplicity of synchronous reset for easier timing, and clean combinational-sequential separation to facilitate better synthesis and potential pipelining extensions. This design also explicitly avoids truncating the product before accumulation, preserving maximum precision and avoiding subtle overflow errors.
-
-Further improvement can be made by potentially pipelining or gating signals, but this solution is balanced for correctness, clarity, and PPA tradeoffs.

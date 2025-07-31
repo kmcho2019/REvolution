@@ -1,5 +1,0 @@
-Refactor the design by separating state storage and next-state logic distinctly, and updating the state with a clocked always block. Instead of generating the next state bits with a generate loop and assign statements inside the loop, create a combinational process that computes the entire next state vector at once using a for loop inside a combinational always block. This makes the logic synthesis tool treat next_state as a combinational variable, and makes the code style distinct from the original. 
-
-Load operation still loads the input data synchronously on clk. Next state computation follows Rule 110 with zero boundary conditions, as before.
-
-This approach keeps the same fully parallel logic and behavior but rearranges code structure for clarity and synthesis tool variety.

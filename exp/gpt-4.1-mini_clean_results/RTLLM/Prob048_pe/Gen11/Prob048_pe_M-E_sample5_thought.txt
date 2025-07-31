@@ -1,9 +1,0 @@
-Implement a 32-bit multiplying accumulator using a 64-bit accumulator register internally to avoid overflow during accumulation, allowing precise accumulation of all intermediate results. The input operands are 32-bit each, and their product is up to 64-bit wide. To accumulate without overflow, store the sum in a 64-bit register.
-
-The output 'c' will provide the lower 32 bits of the accumulated result, truncating the upper bits. This approach captures full precision accumulation internally but limits output width, suitable when the user cares mainly about the lower 32 bits of the sum.
-
-The reset is synchronous and active high, clearing the entire accumulator to zero. Multiplication and addition happen in one clock cycle, using a non-blocking update on the accumulator register.
-
-The module exposes only one output port 'c' of 32 bits. Using 64-bit internal register helps prevent premature overflow wrap-around unlike a 32-bit accumulator. This architecture suits applications requiring exact accumulation and truncation rather than saturation or wrap-around.
-
-This design trades off output width for internal precision and avoids overflow inside the accumulator register.

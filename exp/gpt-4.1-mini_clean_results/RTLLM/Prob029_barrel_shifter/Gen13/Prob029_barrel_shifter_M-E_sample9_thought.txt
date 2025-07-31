@@ -1,7 +1,0 @@
-This design implements the barrel shifter as a three-level hierarchy of explicit 2-to-1 multiplexers, each instantiated as a separate `mux2X1` module to match the problem statement precisely.
-
-At each stage, an 8-bit vector is constructed bitwise by choosing either the current input bit or the bit shifted by 4, 2, or 1 positions, depending on the control bit for that stage. This uses explicit mux2X1 instances (eight per stage) for maximum clarity and modularity.
-
-The data flows through three sequential stages (shift by 4, then by 2, then by 1), each controlled by one bit of the 3-bit control input. Each mux chooses between the bit before shifting and the bit after shifting at that stage, enabling a true hardware barrel shifter composed of explicit muxes, as requested.
-
-This structure helps to visualize and potentially optimize timing in synthesis tools by mapping closely to hardware multiplexers, facilitating fine-grained control over logic and potentially better PPA characteristics in ASIC or FPGA implementations.

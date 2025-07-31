@@ -1,9 +1,0 @@
-To optimize the countdown timer for better performance and power without changing functionality, we can eliminate the combinational decrement by using a simple enable flag that gates counting only when necessary, reducing switching activity. 
-
-We implement a single D flip-flop that holds the counter. The counter loads input data when load=1, holds when zero, and decrements by 1 when load=0 and counter is not zero. 
-
-To optimize power, clock gating or conditional counting helps reduce unnecessary toggling. While explicit clock gating isn't specified, we can emulate this with logic that avoids counting when not needed. 
-
-This results in simpler sequential logic and reduces combinational complexity, improving timing (WNS/TNS). The terminal count signal is asserted only when counter is zero. 
-
-Thus, the code uses one always @(posedge clk) block with minimal combinational logic inside, improving PPA and maintaining the single flip-flop constraint.

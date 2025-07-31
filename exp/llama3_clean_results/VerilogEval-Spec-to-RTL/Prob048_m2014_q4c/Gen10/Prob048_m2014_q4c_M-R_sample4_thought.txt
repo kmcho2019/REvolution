@@ -1,9 +1,0 @@
-To refactor the existing code, we aim to simplify the design while maintaining the same functionality. We observe that the original code uses two `always` blocks: one for combinational logic (`always @(*)`) and another for the sequential logic (`always @(posedge clk)`). The combinational logic block calculates the `mux_out` value based on the reset signal `r` and the input data `d`. 
-
-Instead of using two separate `always` blocks, we can achieve the same functionality by using a single `always` block for the sequential logic and directly calculating `mux_out` within it. This simplification removes the need for the `always @(*)` block and the associated signals (`sel` and `mux_out`).
-
-Moreover, we can eliminate the unnecessary `sel` signal and directly use the `r` signal in the calculation of `q`. This approach results in a more compact and straightforward design that maintains the functionality of a D flip-flop with synchronous reset.
-
-Additionally, we will replace the `always @(*)` block with a continuous assignment statement using `assign`. However, given that our main goal is to simplify the logic within the sequential block, the `assign` statement will not directly apply to the sequential logic but can be used for any combinational logic outside of it.
-
-By streamlining the code in this manner, we aim to improve readability and potentially reduce the area and power consumption of the design, as simpler logic often translates to better PPA metrics.

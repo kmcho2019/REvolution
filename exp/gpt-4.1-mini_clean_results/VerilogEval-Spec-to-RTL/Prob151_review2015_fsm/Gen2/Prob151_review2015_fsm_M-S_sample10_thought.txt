@@ -1,8 +1,0 @@
-Use a simpler Moore FSM with four states:
-
-- SEARCH: searching for the pattern "1101" using a 4-bit shift register for pattern detection, which simplifies state complexity compared to multiple search states.
-- SHIFT: assert shift_ena for exactly 4 clock cycles, controlled by a 2-bit counter.
-- COUNT: assert counting until done_counting is high.
-- DONE: assert done and wait for ack to return to SEARCH.
-
-The 4-bit shift register tracks the last 4 bits of data each clock cycle, making pattern detection straightforward and eliminating multiple intermediate SEARCH states. Outputs depend only on the current state. This reduces FSM state count from 7 to 4 and simplifies transition logic.

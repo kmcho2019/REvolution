@@ -1,9 +1,0 @@
-To optimize the existing design for better performance, power, and area (PPA) without sacrificing clarity or correctness, I will:
-
-- Simplify the next state logic to reduce logic gates and critical path by expressing the next state directly as a simple XOR-based toggle when a bump occurs on any side, which reflects the behavior: switch direction on bump(s), else hold.
-- Maintain the asynchronous positive edge reset to WALK_LEFT for immediate initialization.
-- Use a single-bit state encoding as before for minimal area.
-- Implement combinational next_state logic using a simple XOR of the current state and the OR of bump_left and bump_right, so if either bump is asserted, state toggles; otherwise, it remains the same. This naturally handles bump_left only, bump_right only, and both bumps identically, matching the requirements.
-- Keep Moore output logic directly derived from state.
-- Use non-blocking assignment in sequential logic with asynchronous reset to ensure proper flip-flop behavior.
-- This approach will reduce combinational logic depth, hence improving timing (better WNS and TNS), and reduce dynamic power by reducing toggling conditions to a simple XOR gate.

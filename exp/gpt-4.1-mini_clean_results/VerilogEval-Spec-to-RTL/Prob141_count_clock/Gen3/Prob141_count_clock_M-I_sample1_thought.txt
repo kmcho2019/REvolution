@@ -1,9 +1,0 @@
-To fix the pm toggle mismatch, avoid using a blocking assignment inside the sequential always block for the intermediate hour increment calculation. Instead, compute the hour increment and wrap signal in a combinational block or directly inline the function call with nonblocking assignments, ensuring the hour and pm updates occur synchronously and in correct order.
-
-By computing the next hour and wrap flag combinationally before the clock edge, and then updating hh and pm together at the clock edge using nonblocking assignments, we ensure simulation and synthesis semantics match and timing is predictable.
-
-Also, explicitly handle the order of updates: increment seconds, then minutes, then hours and pm toggle if wrap occurs. Keep all signals updated synchronously on the posedge clk. This avoids race conditions and ensures the pm toggle is aligned properly with the hour wrap.
-
-Finally, keep the reset synchronous and high priority as specified.
-
-This approach corrects the pm output mismatch by cleanly separating combinational next-state calculation from sequential register updates.

@@ -1,7 +1,0 @@
-The waveform shows p as a registered version of a sampled on the rising edge of clock, updating immediately at that edge. Output q appears to latch the previous p value and updates on the falling edge of clock, holding its value otherwise.
-
-Simplify by using two registers, both clocked on rising edge: p follows a, and q latches p but only updates at the falling edge of clock. Since Verilog doesn't allow posedge and negedge in the same always block, use a single posedge clock always block to update p and a separate always block triggered on negedge clock to update q with the previous p value.
-
-Initialize outputs to zero to avoid unknowns.
-
-This simplification respects the sequential timing and outputs seen in the waveform with minimal logic and clearer clock-domain separation.

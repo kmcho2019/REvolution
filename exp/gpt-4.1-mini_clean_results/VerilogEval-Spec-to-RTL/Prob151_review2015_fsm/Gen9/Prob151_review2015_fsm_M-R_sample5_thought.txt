@@ -1,7 +1,0 @@
-Refactor the FSM to use one-hot state encoding and a combination of separate sequential and combinational always blocks to enhance clarity and potentially improve timing by reducing combinational complexity.  
-Implement the pattern detection using a 4-bit shift register to track recent bits of data, making pattern matching logic purely combinational and straightforward, which may reduce the number of states needed to represent partial matches.  
-The FSM states are simplified to: IDLE (waiting for pattern), SHIFT (shift_ena for 4 cycles), COUNT (waiting on done_counting), DONE (assert done until ack).  
-A separate 2-bit shift counter tracks SHIFT cycles.  
-Outputs remain Moore-style based on the current state.  
-Synchronous active-high reset sets FSM back to IDLE and clears counters.
-This style separates pattern detection and FSM control clearly, making the code more modular and readable.

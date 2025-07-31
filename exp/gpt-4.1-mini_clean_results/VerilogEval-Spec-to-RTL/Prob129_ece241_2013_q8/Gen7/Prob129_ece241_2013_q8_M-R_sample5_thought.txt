@@ -1,7 +1,0 @@
-Refactor the FSM to use a single always block triggered by the clock and asynchronous reset that combines next state and output logic with explicit output register z. This transforms the design slightly towards a Moore-style output register, but since output depends on input and state, we still update it inside the clocked block to ensure output changes are synchronous with clock edges.
-
-Use a one-hot encoding for the three states to demonstrate an alternative state encoding approach. This also simplifies decoding logic for the states. The output z is asserted inside the sequential block when the sequence "101" is detected (state indicating "10" followed by input '1').
-
-This approach increases synchronous output behavior and eases timing closure by making output changes edge-aligned, though it differs slightly from a pure Mealy output. The asynchronous reset remains negative-edge triggered, and all state transitions and output updates happen synchronously at posedge clk.
-
-This refactoring keeps the original functionality and sequence detection with overlapping, while providing a different structural style and encoding.

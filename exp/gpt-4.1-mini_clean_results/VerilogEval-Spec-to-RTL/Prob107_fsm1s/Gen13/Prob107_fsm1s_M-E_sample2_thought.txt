@@ -1,7 +1,0 @@
-This alternative design represents the two states using a 2-bit one-hot encoding to potentially allow faster decoding and simpler combinational logic. The FSM state is stored in a 2-bit register where only one bit is high per state (B=2'b01, A=2'b10). 
-
-The synchronous active-high reset initializes the state to B (2'b01). The next state logic is implemented via a separate combinational always block to cleanly separate combinational and sequential logic, which is a common FSM coding style and may help synthesis tools generate optimal logic.
-
-The output is directly driven from the one-hot encoded state bits to simplify logic: out = 1 when in state B (bit 0 is high), otherwise 0. This preserves Moore FSM behavior.
-
-This architecture is a departure from a single-bit encoded FSM by leveraging one-hot encoding and explicit next state combinational logic, which can sometimes improve timing at the cost of a slightly larger area due to wider state register.

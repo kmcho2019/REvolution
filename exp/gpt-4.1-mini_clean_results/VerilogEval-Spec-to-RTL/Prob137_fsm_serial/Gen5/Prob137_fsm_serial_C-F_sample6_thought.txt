@@ -1,7 +1,0 @@
-Fuse the strengths of both designs by using one-hot FSM encoding with four states and synchronous reset for clarity and timing. Adopt the reliable LSB-first bit reception by shifting the incoming serial bit into the LSB side (shifting existing bits right), consistent with the first example’s intuitive shifting. Generate the `done` pulse synchronously and precisely for one clock cycle right after a correct stop bit, avoiding glitches.
-
-Keep a 3-bit bit counter incrementing only during RECEIVE state and reset elsewhere, and reset shift register appropriately to avoid residual data. Maintain the WAIT_STOP state to handle framing errors by waiting until a valid stop bit (logic 1) is seen before returning to IDLE.
-
-Optimize clarity by splitting sequential and combinational logic cleanly, and minimize any unnecessary register assignments. This fusion leverages the robust shift direction from Example 1, the clean FSM and done pulse timing from Example 2, and the simple but effective state transitions and resets from both.
-
-This approach yields a clear, well-structured, and timing-friendly FSM that properly detects start, receives data LSB first, checks stop bit, handles framing errors, and pulses done synchronously. It balances area, timing, and power with straightforward logic.

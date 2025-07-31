@@ -1,7 +1,0 @@
-Fuse the memory array-based stack implementation from Example 2 with the concise stack pointer approach from Example 1, but improve pointer handling and dataOut timing. Use a 2-bit stack pointer (SP) counting number of valid entries (0-4). Push increments SP and writes data at stack_mem[SP], pop decrements SP and reads dataOut from stack_mem[SP-1]. Update dataOut synchronously only on pop operations, and avoid unnecessary clearing of stack memory on pop for power saving. Use combinational logic for EMPTY (SP==0) and FULL (SP==4) flags, and gate stack updates by EN and RW signals to minimize toggling. On reset, clear the memory, set SP=0 (empty), and clear dataOut. Use a single always_ff block for synchronous logic. This fusion combines:
-- Example 2’s memory array (avoids wide shifts, improves power and timing)
-- Example 1’s SP counting up from 0 to 4 (intuitive pointer usage)
-- Controlled synchronous dataOut updates only on pop (minimize glitches)
-- Avoid clearing stack_mem on pop for power saving
-- Enable gating for power and timing efficiency
-This design offers better timing, less power due to selective writes, clearer pointer handling, and simple flag computation.

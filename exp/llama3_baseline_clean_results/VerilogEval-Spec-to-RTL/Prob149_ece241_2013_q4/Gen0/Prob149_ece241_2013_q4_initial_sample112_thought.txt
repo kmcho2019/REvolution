@@ -1,9 +1,0 @@
-To solve this problem, we can use a simple state machine that checks the current water level sensors and the previous sensor state to determine the flow rate. The state machine will have a reset state where all outputs are asserted (fr2, fr1, fr0, and dfr are high). 
-
-When the water level is above the highest sensor s[2], the input flow rate should be zero, so all outputs (fr2, fr1, fr0) will be deasserted and dfr will also be deasserted. 
-
-When the water level is between the upper and lower sensors, the flow rate will depend on the current water level and the previous level. If the previous level was lower than the current level, the supplemental flow valve will be opened (dfr asserted). 
-
-The nominal flow rate will be determined by the current water level. If the level is between s[2] and s[1], only fr0 will be asserted. If the level is between s[1] and s[0], both fr0 and fr1 will be asserted. If the level is below s[0], all three (fr0, fr1, and fr2) will be asserted.
-
-We will also keep track of the previous sensor state to determine if the level has increased or decreased.

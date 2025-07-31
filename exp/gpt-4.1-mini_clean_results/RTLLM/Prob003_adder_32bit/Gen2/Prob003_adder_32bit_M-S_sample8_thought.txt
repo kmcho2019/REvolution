@@ -1,7 +1,0 @@
-Simplify the 32-bit CLA by instantiating two 16-bit CLA blocks connected directly with carry-out and carry-in signals, without explicitly computing group propagate/generate signals at the top level. The 16-bit CLA block computes sum and carry-out using simple bitwise propagate and generate signals and a straightforward carry-lookahead carry chain internally. 
-
-At the top level, the lower 16-bit CLA takes Cin=0, produces sum[15:0] and carry-out C16, which feeds as carry-in to the upper 16-bit CLA producing sum[31:16] and final carry-out C32.
-
-This simplification removes the top-level carry-lookahead logic for group propagate/generate, reducing code complexity while keeping CLA's fast carry calculation inside each 16-bit block. Input/output bit indexing is handled by direct bit slicing and concatenation without complex remapping.
-
-This solution balances clarity, maintainability, and performance.

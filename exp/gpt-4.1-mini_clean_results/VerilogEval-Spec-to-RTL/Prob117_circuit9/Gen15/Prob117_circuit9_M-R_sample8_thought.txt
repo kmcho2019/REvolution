@@ -1,7 +1,0 @@
-Refactor the design by removing the next_state function and expressing the combinational next-state logic directly with continuous assignments (`assign`) and a simple conditional operator. We keep the sequential register update on the rising edge of `clk`. 
-
-When `a` is high, `q` synchronously loads 4. When `a` is low, `q` increments cyclically through states 4→5→6→0→1→2→3→4, effectively a modulo-7 counter shifted to start at 4.
-
-To implement this cycle efficiently, represent the 7 states as modulo-7 arithmetic on a value derived from `q`. This avoids the case statement, reduces code verbosity, and uses combinational arithmetic which synthesis tools handle well.
-
-This approach enhances readability and area optimization by directly coding arithmetic transitions and using `assign` statements for combinational logic, eliminating the function overhead.

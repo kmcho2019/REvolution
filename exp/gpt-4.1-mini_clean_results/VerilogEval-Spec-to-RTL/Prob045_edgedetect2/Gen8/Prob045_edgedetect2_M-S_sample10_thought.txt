@@ -1,5 +1,0 @@
-Since the XOR operation and the register assignments are already minimal, the design cannot be further simplified without losing functionality. However, we can declare the output as a wire and directly assign it combinationally from the XOR of the current input and the previous input, then register the previous input only. This way, we eliminate the output register and output anyedge changes combinationally, but that violates the requirement that anyedge be registered one cycle after the input changes. Therefore, the original approach is already minimal for the specification. 
-
-Alternatively, merging the assignments in a single always block with nonblocking assignments and removing explicit separate variables isn't possible here. So the best minimal solution is the original one. 
-
-Therefore, a minimal, clean version of the original design is to use one always block and registers for prev_in and anyedge, exactly as before.

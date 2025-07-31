@@ -1,9 +1,0 @@
-To improve PPA, I'll optimize the ALU by separating carry and overflow computations only for relevant operations (ADD, ADDU, SUB, SUBU) to avoid unnecessary carry logic in logical and shift instructions, reducing logic complexity and potential timing path. I'll use 33-bit intermediate results only for arithmetic operations and avoid defaulting the carry and overflow for others, minimizing toggling.
-
-For the 'flag' signal, I'll assign it only when required (SLT, SLTU), otherwise force it to 'z' to reflect high-impedance as per the original spec, reducing power by avoiding constant driving.
-
-For LUI, I'll fix the implementation to match standard MIPS semantics: loading the immediate into the upper 16 bits and zeros in the lower bits, i.e., r = {b[15:0], 16'b0} since usually LUI uses the immediate (b) shifted left 16 bits; the original code incorrectly uses 'a' for this.
-
-I'll also precompute shift amounts once for clarity, and keep the entire ALU purely combinational with clear, minimal logic to improve timing and reduce unnecessary toggling.
-
-These refinements will reduce area by limiting carry chain to only arithmetic ops, improve power by driving 'flag' as 'z' when inactive, and clarify LUI semantics, enhancing correctness.

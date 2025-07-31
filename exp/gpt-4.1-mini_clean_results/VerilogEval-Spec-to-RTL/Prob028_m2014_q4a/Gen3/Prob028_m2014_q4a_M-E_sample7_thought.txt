@@ -1,5 +1,0 @@
-Implement the D latch by explicitly modeling the latch behavior with a simple always block that uses blocking assignments. Use an "if (ena)" condition to update q with d, and otherwise do nothing, which causes the synthesis tool to infer a latch because q is not assigned in all paths. This method is a classic and widely supported style for latch inference. 
-
-Instead of including q in the sensitivity list, use the level-sensitive enable in the sensitivity list only (i.e., always @ (ena or d)), to make the latch transparent when ena=1, and hold q when ena=0. Using blocking assignments makes the data flow more intuitive and avoids the questionable feedback assignment patterns.
-
-This approach differs from the example by using blocking assignments and the lack of an explicit hold assignment, relying on synthesis tool latch inference by missing assignment paths.

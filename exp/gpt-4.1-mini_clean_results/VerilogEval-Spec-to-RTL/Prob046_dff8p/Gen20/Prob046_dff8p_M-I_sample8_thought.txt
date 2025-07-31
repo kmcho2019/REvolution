@@ -1,7 +1,0 @@
-To optimize the existing design for better power, performance, and area (PPA), I will introduce an enable signal that avoids unnecessary updates to the flip-flops when the data input 'd' is unchanged. This reduces switching activity on the q output, lowering dynamic power. 
-
-The enable signal is derived by comparing the current q and the input d; if they differ or reset is asserted, updating occurs; otherwise, the flip-flops hold their state. This avoids redundant assignments, which can reduce power.
-
-Also, I will keep the synchronous reset and negative edge clocking as required, but using the enable condition inside the always block reduces toggling. The code remains fully vectorized and parameterized, maintaining modularity and area efficiency.
-
-This simple gating mechanism helps improve power with minimal impact on timing or area. No additional clock gating is introduced to avoid complexity and possible timing issues on negedge clock. The design is clean, easy to synthesize, and should yield a measurable power improvement.

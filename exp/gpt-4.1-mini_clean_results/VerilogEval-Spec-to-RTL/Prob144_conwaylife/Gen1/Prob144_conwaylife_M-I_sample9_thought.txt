@@ -1,9 +1,0 @@
-To improve PPA (Performance, Power, Area), we will pipeline the neighbor counting and update computation over multiple clock cycles to reduce combinational complexity. Instead of computing the next state of all 256 cells in a single cycle, we process one cell per cycle, using a cell index counter. This converts the large combinational block into a smaller sequential one, improving max frequency and reducing power and area. The state `q` is stored in a register and updated one cell at a time in an intermediate register `next_q`. When all cells are processed, `next_q` becomes the new `q`. Loading is still synchronous and immediate on `load`. This fully sequential approach trades latency (256 cycles per generation) for better PPA, which is often acceptable in FPGA/ASIC designs for cellular automata. The wrapping function uses modular arithmetic with masking (bitwise AND with 15) to replace if-else, simplifying logic.
-
-Key points:
-- Use a 8-bit counter `cell_idx` from 0 to 255 to sequentially process cells.
-- On `load`, synchronously load input data and reset counter.
-- On each clock, compute next state for `cell_idx` and store in `next_q[cell_idx]`.
-- After 256 cells are processed, transfer `next_q` to `q` and start next generation.
-- The combinational logic now computes neighbors for one cell only, drastically reducing critical path.
-- Use masking for wrap-around indices instead of if-else.

@@ -1,9 +1,0 @@
-Since the original design is already minimal and optimal for a single D flip-flop, further PPA optimization options are limited. However, to potentially reduce power, I will add an explicit clock enable signal inside the module that only updates the flip-flop when the data input 'd' changes value relative to the current output 'q'. This clock enable gating can reduce unnecessary toggling inside the flip-flop and might help reduce dynamic power, especially in a larger design where toggling a register unnecessarily impacts switching activity.
-
-I will integrate this clock enable inside the always block as a condition before updating 'q'. This will not impact performance or area meaningfully for a single flip-flop but could be beneficial in power-sensitive contexts.
-
-The design remains modular and clear, maintaining proper synchronous logic style and nonblocking assignment.
-
-No explicit synthesis attributes are added here as these are vendor/tool-specific, and the added conditional reduces switching activity directly.
-
-This optimization trades off a simple conditional check per clock cycle for potential power savings while preserving all other parameters.

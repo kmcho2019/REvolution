@@ -1,9 +1,0 @@
-Instead of using individual flip-flops for each gate's output, this design uses a small register to hold the three states together in a single vector, ensuring clearer and more compact state management. On each clock edge, the new state bits are computed simultaneously from the current state and input x according to the logic defined.
-
-Specifically:
-- Maintain a 3-bit register `state` where each bit corresponds to the output of one of the D flip-flops.
-- Compute next state bits by applying XOR, AND, OR gates with `x` and the current state's bits or their complements as specified.
-- Output `z` is computed as a NOR of all three bits in `state`.
-- Since no explicit reset port exists, initialize `state` in an initial block for simulation.
-
-This approach simplifies state management into a vector, maintains the required feedback and gate connections, and keeps all combinational logic explicit and grouped.

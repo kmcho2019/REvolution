@@ -1,9 +1,0 @@
-To introduce a novel architectural idea, let's consider a modular approach that separates the prediction and training logic into distinct blocks. This separation can lead to a cleaner design, easier maintenance, and potential improvements in Power, Performance, and Area (PPA) metrics.
-
-The new design concept involves creating a 'prediction block' and a 'training block'. The prediction block will handle the shift operation for updating the branch history based on predictions made. The training block will manage the correction of the branch history when a misprediction occurs.
-
-The key architectural innovation here is the use of a 'history update controller' that coordinates the updates between the prediction and training blocks. This controller will receive inputs from both blocks and decide whether to update the history register based on prediction, training, or neither, ensuring that the history is updated correctly under all scenarios.
-
-Furthermore, to optimize the design, we can implement a clock-gating mechanism at the history register level. The clock to the register will only be enabled when an update is necessary, reducing power consumption by minimizing unnecessary switching activity.
-
-Additionally, instead of using a complex conditional statement to decide the update, we can use a simpler, more sequential approach within the blocks, making the logic easier to follow and potentially more efficient in terms of area and timing.

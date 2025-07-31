@@ -1,7 +1,0 @@
-Use a clear two-state FSM: IDLE and COLLECT.  
-In IDLE, discard bytes until a byte with in[3]=1 is received, which triggers transition to COLLECT and stores that byte as the first message byte.  
-In COLLECT, use a 2-bit shift register (counter) to count bytes received after the start byte. Store each incoming byte into a 3x8-bit shift register that shifts left by one byte on each new byte reception.  
-Once the third byte is collected (counter reaches 2), output the concatenated 24-bit message (byte1 at highest byte), assert done for one cycle, and return to IDLE state to look for next message.  
-Synchronous active-high reset clears state, counters, and registers.  
-This approach uses a shift register style data path simplifying data storage and concatenation, and a simple FSM that cleanly separates waiting and collecting phases, making it intuitive and easy to verify.  
-The done signal is asserted only for one cycle immediately after the full message is received, with out_bytes valid at that cycle.

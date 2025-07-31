@@ -1,9 +1,0 @@
-To fix the timing of the done signal and the output bytes, we separate the capturing of the third byte and the assertion of done into two clock cycles. On the cycle when the third byte arrives (BYTE3 state), we store it but do not assert done yet. Then, we transition to a DONE state where done is asserted and out_bytes are updated with the complete 3-byte message. After asserting done for one cycle, return to IDLE state to wait for the next message.
-
-This ensures done is asserted exactly in the cycle immediately after the third byte reception as required.
-
-The FSM states become: IDLE (waiting for start), BYTE1 (store first byte), BYTE2 (store second byte), BYTE3 (store third byte), DONE (assert done and present full message). After DONE, return to IDLE.
-
-We synchronize all registers with the clock and synchronous reset. The out_bytes register is updated during the DONE state and valid only when done is asserted.
-
-This approach aligns with the problem specification and example waveform.

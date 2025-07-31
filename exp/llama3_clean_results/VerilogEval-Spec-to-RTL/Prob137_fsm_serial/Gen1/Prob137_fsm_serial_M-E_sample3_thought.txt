@@ -1,9 +1,0 @@
-To implement the serial byte receiver, we can design a finite state machine (FSM) with the following novel approach: instead of using a traditional state machine with multiple states, we can use a shift register to collect the incoming bits and a counter to keep track of the number of bits received. This approach simplifies the logic and reduces the number of states required.
-
-The shift register will be 10 bits long, with the first bit being the start bit, the next 8 bits being the data bits, and the last bit being the stop bit. The counter will be used to keep track of the number of bits received and to determine when to check the stop bit.
-
-The FSM will have two main states: IDLE and RECEIVE. In the IDLE state, the FSM will wait for the start bit to initiate the reception of a byte. Once the start bit is detected, the FSM will transition to the RECEIVE state and start collecting the incoming bits in the shift register.
-
-After receiving 10 bits (start bit, 8 data bits, and stop bit), the FSM will check the stop bit. If the stop bit is correct (1), the FSM will set the 'done' signal high for one clock cycle to indicate the successful reception of a byte. If the stop bit is incorrect, the FSM will continue to receive bits until a stop bit is detected.
-
-This approach reduces the complexity of the FSM and simplifies the logic required to implement the serial byte receiver.

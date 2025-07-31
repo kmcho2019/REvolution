@@ -1,7 +1,0 @@
-Implement the counter using a synchronous process with an explicit next-state register for clarity and modularity. Use a separate combinational always block to calculate the next count value based on the current count, the valid_count signal, and whether the maximum count (11) has been reached. When reset is asserted low, asynchronously reset the count to 0. Otherwise, if valid_count is high, increment the count modulo 12; if valid_count is low, keep the count stable.
-
-Instead of using bitwise operations for terminal detection, use a straightforward equality comparison (out == 4'd11) for clarity and possible synthesis optimization.
-
-This separation of combinational next-state logic and sequential state update offers easier testability, maintainability, and potential extensibility (such as adding pause or load functionality later) while preserving functionality and low logic complexity.
-
-The output is a 4-bit register updated every clock cycle when enabled. Holding the output explicitly when not counting ensures clear semantics.

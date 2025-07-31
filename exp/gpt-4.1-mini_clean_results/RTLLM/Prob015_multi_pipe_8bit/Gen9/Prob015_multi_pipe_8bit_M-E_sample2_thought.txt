@@ -1,8 +1,0 @@
-Implement a 4-stage pipelined multiplier where each stage handles two bits of the multiplier to generate and accumulate partial products progressively. The pipeline stages work as follows:
-1. Register inputs and input enable.
-2. Generate partial products for multiplier bits [1:0], add to zero, and register sum.
-3. Generate partial products for multiplier bits [3:2], add shifted previous sum, register sum.
-4. Generate partial products for multiplier bits [5:4], add shifted previous sum, register sum.
-5. Generate partial products for multiplier bits [7:6], add shifted previous sum, register final product.
-
-The enable signal is shifted through a 5-bit shift register to synchronize output enable with data latency. By processing two multiplier bits per stage and accumulating shifted partial sums, this approach reduces the addition complexity per stage and distributes the computation evenly over the pipeline, improving timing. The inputs and enables are sampled synchronously with the clock and reset is active-low synchronous to avoid asynchronous resets. Output is zeroed when output enable is not asserted.

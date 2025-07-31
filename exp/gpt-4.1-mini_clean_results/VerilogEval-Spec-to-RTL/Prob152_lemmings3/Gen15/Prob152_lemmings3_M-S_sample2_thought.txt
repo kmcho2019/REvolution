@@ -1,9 +1,0 @@
-Simplify the FSM by using a 2-bit encoding for mode (walk=0, fall=1, dig=2) plus a single direction bit, keep the same priority logic, but flatten the next state logic into fewer if-else checks by leveraging the priority order and grouping bump conditions into one direction inversion check. This reduces conditionals, keeps the outputs Moore style, and uses a clean asynchronous reset to walk left.
-
-The core simplification:
-- Combine bump_left and bump_right conditions into one: any bump while walking switches direction.
-- Use explicit if-else for falling > digging > bump.
-- Keep direction unchanged when falling or digging.
-- Use simple combinational logic and straightforward output assignments.
-
-This reduces complexity, makes the code more concise, easier to maintain, and still fully meets the spec.

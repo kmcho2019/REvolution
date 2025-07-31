@@ -1,5 +1,0 @@
-Instead of using an 8-bit one-hot shift register directly, implement the ring counter using a 3-bit binary counter that counts from 0 to 7, representing the current active bit position. Then, generate the one-hot output by decoding this position to a single bit set in an 8-bit vector. This architecture separates the counting logic and the output encoding, offering clarity and modularity.
-
-On reset, the counter initializes to zero, corresponding to the LSB bit set high in the output. At each clock rising edge, the counter increments modulo 8. The output is combinationally assigned as a one-hot vector based on the current counter value.
-
-This approach avoids direct shift operations and ensures synthesis compatibility with simple counters and decoders, which is a common design pattern for ring counters.

@@ -1,9 +1,0 @@
-I will fuse the best ideas from both examples by keeping explicit localparam state definitions and separating next-state combinational logic from sequential state update to aid clarity and synthesis optimization.
-
-To improve power without adding combinational complexity on the clock path, I will remove the explicit clock enable logic used in Example 2 (which added complexity) and instead rely on unconditional synchronous state update as in Example 1. However, I will keep the conditional state update inside the always block (`if (next_state != state)`) from Example 1 to minimize toggling and reduce power.
-
-This way, we have minimal combinational logic in the clock path (no extra clock enable wire), a clean separated next-state calculation, and a simple conditional state update that reduces unnecessary register toggling and power.
-
-The output remains a simple combinational assignment from the current state, preserving glitch-free Moore output behavior.
-
-Overall, this approach balances clarity, minimal area, good timing by not adding unnecessary logic to the clock path, and moderate power savings from reduced toggling.

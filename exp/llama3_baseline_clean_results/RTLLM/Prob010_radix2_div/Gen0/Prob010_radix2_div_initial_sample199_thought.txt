@@ -1,9 +1,0 @@
-To implement a simplified radix-2 divider in Verilog, I will first define the module with the given input and output ports. The design will involve a series of steps including initialization, the division process, and result validity management. 
-
-During the initialization step, when a valid operation request (opn_valid) is detected and the result is not yet valid (res_valid is low), the module will save the dividend and divisor, initialize a shift register with the absolute value of the dividend shifted left by one bit, and set a flag (NEG_DIVISOR) to the negated absolute value of the divisor. A counter (cnt) will be set to 1, and a flag (start_cnt) will be set to 1 to begin the division process.
-
-In the division process, the module will repeatedly subtract the divisor from the dividend, updating the shift register and quotient accordingly, until the counter reaches 8 (indicating the completion of the division process). The shift register will be updated based on the subtraction result, and the quotient will be built by shifting in the carry-out from the subtraction.
-
-To manage result validity, the module will set res_valid to high when the division is complete and clear it when the result is consumed or the module is reset.
-
-The module will handle both signed and unsigned division operations based on the 'sign' input.

@@ -1,7 +1,0 @@
-To address the issue in the existing code, we need to modify the logic for updating the `flag` register. Instead of directly assigning the value of the previous state to the `flag` when a transition from 1 to 0 is detected, we should maintain the `flag` register's current state and only set the bits that correspond to a detected falling edge. 
-
-The idea is to use a bitwise OR operation to update the `flag` register. When a falling edge is detected for a bit (i.e., the current input bit is 0 and the previous state bit is 1), the corresponding bit in the `flag` register is set to 1. This ensures that once a bit is set in the `flag` register, it remains set until the reset signal is asserted. 
-
-Additionally, to maintain the current state of the `flag` register and only update the bits that have seen a transition from 1 to 0, we should use a non-blocking assignment (`<=`) for the `flag` register update within the `always` block. This approach ensures that the update is scheduled at the end of the current time step, avoiding any potential race conditions or incorrect updates due to the current state being overwritten prematurely.
-
-By implementing this corrected logic, we ensure that the output of the module accurately captures the transitions from 1 to 0 for each bit in the input vector and maintains the output bits until a reset occurs.

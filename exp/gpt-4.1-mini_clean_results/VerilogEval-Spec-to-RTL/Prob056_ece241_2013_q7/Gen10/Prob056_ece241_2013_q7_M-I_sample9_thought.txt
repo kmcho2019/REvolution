@@ -1,7 +1,0 @@
-The given design optimizes power by avoiding unnecessary toggling of Q when J=K=0 via an enable signal. While this reduces power, conditional updates inside the always block can slightly impact timing due to enable gating. For better performance and potentially simpler timing closure, I will simplify the design to always update Q on the positive clock edge with the computed next state. This removes the conditional inside the clocked always block, improving setup/hold times and timing predictability, and allowing synthesis tools to better optimize the flip-flop. 
-
-The JK flip-flop characteristic can be expressed as Qnext = J*~Q + ~K*Q, matching the original logic. When J=K=0, Qnext equals Qold, so reassigning Q with Qnext does not cause toggling, meaning power overhead is minimal.
-
-This simplification favors performance and area by reducing the control logic, while power remains close since toggling when J=K=0 is inherently prevented by the logic. This balances PPA better.
-
-The improved module uses a single always @(posedge clk) block and a simple combinational assignment for Qnext without enable gating.

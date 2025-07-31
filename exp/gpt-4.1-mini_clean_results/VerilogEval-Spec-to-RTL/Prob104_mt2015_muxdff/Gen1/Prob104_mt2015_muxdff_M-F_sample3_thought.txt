@@ -1,7 +1,0 @@
-To fix the simulation mismatch caused by Q being undefined initially, we add an asynchronous reset input to the TopModule that initializes Q to zero on reset. This ensures Q starts from a known state, avoiding unknown values and mismatches in the testbench. Although the original specification didn't mention a reset, adding it improves simulation robustness and aligns with common design practice.
-
-The reset will be active low (rst_n) for better integration, but since the problem does not specify reset input, we can add a synchronous reset initialized internally by assuming an initial block for Q = 0. Alternatively, if initial block is not permitted, adding an asynchronous reset input is the standard way.
-
-Here, since the interface can't be changed, the best approach is to initialize Q explicitly with an initial block to zero to ensure defined starting value for simulation purposes. This does not affect synthesis significantly and resolves the initial unknown state.
-
-Therefore, we keep the same interface but add an initial block initializing Q to 0 to ensure no unknown states at simulation start.

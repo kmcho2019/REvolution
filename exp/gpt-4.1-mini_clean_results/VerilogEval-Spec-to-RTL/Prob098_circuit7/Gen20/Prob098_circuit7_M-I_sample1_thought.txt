@@ -1,8 +1,0 @@
-Improvement Strategy:
-The previous design encapsulated input inversion inside the DFF module using a parameter, which adds extra logic and parameterization overhead. Since the problem requires a DFF that stores the inverted value of 'a' on the rising edge of clk, the simplest and most power/area-efficient approach is to directly invert 'a' outside the flip-flop input and instantiate a plain DFF.
-
-This removes extra combinational inversion inside the DFF, reduces gate count, switching activity, and routing complexity, thereby improving power and area. Also, removing the parameterization simplifies synthesis and verification.
-
-Hence, implement a simple DFF storing inverted 'a' by assigning d = ~a, and use a standard DFF with non-blocking assignments on clk's positive edge.
-
-This clean and minimalistic RTL matches the waveform and improves PPA metrics while preserving the exact functionality.

@@ -1,7 +1,0 @@
-To design a finite state machine (FSM) that identifies correctly received bytes in a serial communication protocol with a start bit, 8 data bits, and a stop bit, we need to consider the following states:
-- IDLE: Waiting for a start bit (logic 0) to initiate the reception of a byte.
-- START: Found the start bit, waiting for the 8 data bits.
-- DATA: Receiving the data bits and shifting them into a register to form the byte.
-- STOP: After receiving all 8 data bits, waiting for the stop bit (logic 1).
-- DONE: After finding a valid stop bit, assert the done signal and output the received byte.
-The FSM will transition between these states based on the current state and the input bit. It will also handle the case when a stop bit is not received as expected by staying in the STOP state until a stop bit is found, then moving back to the IDLE state to wait for the next start bit.

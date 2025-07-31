@@ -1,7 +1,0 @@
-The existing code implements a simple thermostat controller using combinational logic within an `always` block. To refactor this code, we can achieve the same functionality using continuous assignments (`assign` statements) instead of the `always` block. This approach is suitable for purely combinational logic, as it directly reflects the circuit's behavior without the need for procedural assignment.
-
-The core logic remains the same: the `heater` is on when the mode is heating (`mode` is 1) and it's too cold (`too_cold` is 1), the `aircon` is on when the mode is cooling (`mode` is 0) and it's too hot (`too_hot` is 1), and the `fan` is on when either the `heater` or `aircon` is on, or when `fan_on` is 1.
-
-Using `assign` statements can make the code look more like a netlist, directly showing the signal dependencies without the procedural wrapping of an `always` block. This can be beneficial for synthesis tools and for designers who prefer a more declarative style of Verilog coding.
-
-Additionally, we can keep the same logic expressions for `heater`, `aircon`, and `fan`, as they correctly implement the required behavior based on the input conditions. The use of bitwise operators (`~` for negation, `&&` for logical AND, `||` for logical OR) is straightforward and efficient for expressing these conditions.

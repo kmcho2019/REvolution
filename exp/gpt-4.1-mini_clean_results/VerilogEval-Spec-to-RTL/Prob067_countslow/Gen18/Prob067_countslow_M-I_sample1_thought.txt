@@ -1,9 +1,0 @@
-To optimize the decade counter further for PPA, we can implement a one-hot encoded counter instead of a binary counter. One-hot counters reduce combinational logic complexity for increment and comparison by using a shift register with one bit set at a time, simplifying wrap-around logic. This can improve max frequency (performance) by shortening the critical path, reduce power by minimizing switching in combinational logic, and may slightly increase area due to more flip-flops, but since only 10 states are needed, it’s manageable with a 10-bit register. 
-
-We can map the 10 states in a 10-bit one-hot vector, but since output q must be 4-bit binary, we will decode one-hot to binary output using a small combinational decoder. To keep area and power reasonable, the one-hot register shifts on each slowena pulse; if slowena is low, it holds state. On reset, the one-hot vector sets the first bit (state 0). The binary output q is derived combinationally from the one-hot vector by detecting which bit is set.
-
-This approach removes binary increment and comparator in the clock path, likely improving timing and power, at the expense of a slightly larger register and combinational decoder.
-
-Alternatively, since q is output, the decoder can be implemented using a simple priority encoder or a fixed combinational logic. This trades off area for reduced logic depth on the clock path.
-
-We retain synchronous reset and enable behavior.

@@ -1,5 +1,0 @@
-Fuse the two example designs by keeping the clear separation of combinational next-state logic from sequential register update (a single always @(posedge clk) block) while adding an enable signal to avoid unnecessary register toggling. This enables the counter to update only when loading new data or decrementing a nonzero counter, reducing dynamic power consumption. 
-
-We generate next_counter combinationally as before, but only update the counter register if load=1 or counter!=0 (i.e., only when the counter needs to change). This gating suppresses updates when the counter is zero and no load occurs, saving power without altering functionality.
-
-The terminal count output tc remains asserted when the counter reaches zero. This approach leverages the clean combinational/registered split and adds clock-enable gating at the register level, providing a balanced enhancement in power and potentially performance with minimal area impact, all while using a single 10-bit register ("D flip-flop") as required.

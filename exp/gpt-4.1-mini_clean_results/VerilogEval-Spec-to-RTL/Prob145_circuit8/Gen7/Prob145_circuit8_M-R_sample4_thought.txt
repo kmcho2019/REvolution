@@ -1,8 +1,0 @@
-Retain the FSM idea with a 2-bit state representing {q, p} but simplify and clarify the structure by:
-
-- Initializing the state register explicitly at start (to 2'b00) using a reset signal emulated by an initial block (since no reset input).
-- Use a single always block triggered on posedge clock to update the state.
-- Drive outputs p and q directly as assign statements from the state bits instead of a separate always block, making outputs purely combinational functions of state.
-- Implement a clearer state transition logic, explicitly coding how state updates depend on input a.
-- This refactoring makes the FSM easier to read and simulates output changes synchronously with the clock.
-- The outputs are now continuous assignments, reducing combinational always blocks.

@@ -1,9 +1,0 @@
-To optimize the original hierarchical design for better PPA, I will:
-
-- Merge the two 8-bit CLA subtractors inside each 16-bit block into a single optimized 16-bit CLA subtractor with true carry-lookahead logic instead of the ripple chain. This reduces carry propagation delay and saves area by removing intermediate signals.
-- Compute the complemented B input once per 16-bit block, reducing redundant inversions and switching activity.
-- Replace the ripple carry chain between 16-bit blocks by a 4-bit carry lookahead for the top-level 64-bit block, further speeding up carry propagation across blocks.
-- Use direct slicing for the A and B inputs instead of separate arrays to reduce wiring complexity.
-- Keep the overflow detection logic as is since it is already optimal.
-  
-This approach reduces the carry chain levels, removes unnecessary intermediate signals, minimizes B inversion redundancy, and balances complexity and speed well for a 64-bit subtractor. It should lower delay (better WNS), reduce power from less switching, and save some area by using a single 16-bit CLA and a 4-bit block-level carry lookahead. This design maintains a clear modular style and straightforward overflow logic.

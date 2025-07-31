@@ -1,7 +1,0 @@
-Refactor the FSM to separate the pattern detection into a dedicated shift register and pattern matching logic outside the main FSM states. The FSM itself will have fewer states: IDLE (waiting for pattern detected), SHIFT (shifting 4 bits), COUNT (waiting for done_counting), DONE (waiting for ack).  
-Use a 4-bit shift register to serially capture incoming bits and compare to the pattern 4'b1101 each cycle. When matched, FSM moves from IDLE to SHIFT.  
-Use a 2-bit counter for shift cycles incremented synchronously.  
-Use `always_ff` for sequential logic and `assign` statements for combinational outputs and pattern detection signals.  
-This separates concerns: pattern detection logic is simpler and more parallel, and FSM logic is clearer with fewer states.  
-Outputs are directly assigned from state signals.  
-This structure should improve clarity and modularity while preserving behavior.

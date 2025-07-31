@@ -1,7 +1,0 @@
-Instead of implementing the 2:1 multiplexer as a combinational wire feeding the flip-flop input, we can integrate the mux function directly inside the sequential always block. This approach uses conditional non-blocking assignments inside the clocked block to choose between loading the input r_in or shifting in q_in, reducing combinational logic outside the flip-flop. This integrates mux and flip-flop behavior in one always block, simplifying the module and potentially improving timing by removing a separate mux stage.
-
-Also, instead of outputting reg Q directly, we will keep Q as reg driven only inside the clocked always block, which is standard practice.
-
-This approach provides a clean, straightforward, synchronous design where mux logic happens concurrently with flip-flop update, and only a single always block exists.
-
-The interface remains the same, and this module can be instantiated three times in full_module. This design is minimal, simple, and synthesizable.

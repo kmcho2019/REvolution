@@ -1,9 +1,0 @@
-Refactor the FSM to use binary-encoded states instead of one-hot to reduce flip-flop count and switching activity, thereby improving area and power efficiency. Use a single always block for sequential logic, including state transitions, counter, shift register, and done signal generation for clarity and ease of timing analysis.
-
-Generate the done pulse as a registered signal only for one cycle when a correct stop bit is detected. Use a separate combinational block for next state logic to maintain clear separation and minimize logic depth.
-
-Shift in data bits LSB first by shifting left and inserting the incoming bit at LSB position during RECEIVE state. Only update shift register and bit counter in RECEIVE state to reduce toggling elsewhere.
-
-Maintain synchronous reset to initialize FSM and registers. The WAIT_STOP state remains to handle framing errors by waiting for a valid stop bit before returning to IDLE.
-
-This refactor simplifies state encoding and reduces register toggling while preserving the original FSM behavior and timing correctness.

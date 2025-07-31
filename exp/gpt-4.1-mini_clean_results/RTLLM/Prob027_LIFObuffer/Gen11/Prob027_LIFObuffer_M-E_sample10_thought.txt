@@ -1,7 +1,0 @@
-Implement the LIFO buffer with the stack pointer (SP) pointing to the top valid element index (ranging from -1 indicating empty, up to 3 indicating full). Here, SP=-1 means empty stack, SP=3 means full stack. On push (RW=0), increment SP first, then store dataIn at stack_mem[SP]. On pop (RW=1), output dataOut from stack_mem[SP], then decrement SP. This "top-of-stack" pointer scheme naturally models stack semantics as a valid data index, simplifying push/pop pointer movement and immediate data output from top.
-
-On reset, SP is set to -1 (empty), dataOut zeroed, stack memory cleared. The flags FULL (SP==3) and EMPTY (SP==-1) are combinationally derived. All operations are synchronous on clock and gated by EN.
-
-This design differs from the traditional "next free pointer" by treating SP as the top element's index directly, enabling direct output from current SP on pop without extra offset logic. Clearing the popped memory location after pop reduces stale data but is optional. The dataOut register captures the popped data synchronously, ensuring stable output timing.
-
-This pointer scheme supports straightforward push/pop logic, intuitive indexing, and clear full/empty conditions, offering an alternative architectural perspective on stack pointer management.

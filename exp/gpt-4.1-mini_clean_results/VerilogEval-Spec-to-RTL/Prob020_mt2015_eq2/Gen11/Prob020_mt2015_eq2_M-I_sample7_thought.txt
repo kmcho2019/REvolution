@@ -1,5 +1,0 @@
-The current implementation using ~(|(A ^ B)) is already minimal and highly efficient for comparing two 2-bit inputs. Given the trivial nature of this equality check, further reducing gate count or power at the RTL level is challenging. However, a slight improvement in power could come from breaking the XOR and OR reductions into smaller steps, potentially enabling better optimization and gating during synthesis by exposing intermediate signals.
-
-Specifically, we can first compare individual bits with XNOR gates (which are essentially equality checks per bit), then AND the results to produce the final output. This explicitly structures the logic as two XNOR gates feeding an AND gate, potentially allowing synthesis tools to utilize optimized XNOR and AND gates, leading to minimal delay and power. It also provides clear structural information, which might marginally improve mapping during technology-specific synthesis.
-
-This explicit approach is logically equivalent but more explicit about the individual bit comparisons, potentially benefiting power and area slightly without any loss of performance.

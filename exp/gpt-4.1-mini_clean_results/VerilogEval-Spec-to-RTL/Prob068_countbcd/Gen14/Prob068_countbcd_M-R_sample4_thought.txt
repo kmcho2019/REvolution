@@ -1,8 +1,0 @@
-Refactor the 4-digit BCD counter by splitting the increment and carry propagation into parallel combinational steps before the clocked update, thus reducing combinational path length inside the always block. 
-
-Specifically:
-- Compute the carry and next digit values for each digit in combinational logic outside the sequential block using intermediate wires.
-- Update the bcd_count register synchronously based on these precomputed values.
-- Maintain ena signals as combinational outputs derived from current digit values.
-- This approach improves timing by reducing nested conditional logic inside the clocked process and allows the synthesizer to better optimize the critical path.
-- Retain the synchronous active-high reset and output assignments.

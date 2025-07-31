@@ -1,7 +1,0 @@
-The current solution utilizes a finite state machine (FSM) with a binary encoding for the state variable `byte_count`. While this approach works, it may not be the most efficient in terms of area and power consumption. A novel architectural idea is to use a counter-based approach instead of an FSM. We can use a 2-bit counter to keep track of the number of bytes received. When the counter reaches 3, we know that we have received a complete message and can assert the `done` signal.
-
-Another optimization is to use a shift register to store the received bytes. This way, we can simply shift the register to the left by 8 bits when a new byte is received, and the oldest byte will be discarded. This approach eliminates the need for explicit byte assignment and reduces the complexity of the logic.
-
-We will also use a flag to indicate whether the current byte is the first byte of a message. This flag will be set when the `in[3]` bit is 1, and it will be reset when the counter reaches 3.
-
-The advantage of this approach is that it reduces the number of flip-flops required and simplifies the logic, which can lead to area and power savings. Additionally, the counter-based approach makes it easier to modify the design if the number of bytes in a message changes in the future.

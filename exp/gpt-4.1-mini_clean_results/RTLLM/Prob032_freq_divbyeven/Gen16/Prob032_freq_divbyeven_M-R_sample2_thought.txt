@@ -1,5 +1,0 @@
-I will refactor the frequency divider by implementing a simple synchronous counter that counts from 0 to NUM_DIV-1. The divided clock output (`clk_div`) toggles each time the counter reaches half of the division factor (`NUM_DIV/2`). Instead of using a separate next-state combinational logic block, I will directly update the counter and clock divider registers in the always block with synchronous reset, making the code more compact and straightforward.
-
-To avoid explicit toggling logic based on counter values, I will implement `clk_div` as a flip-flop that toggles whenever the counter reaches `NUM_DIV/2 - 1`. This approach directly integrates counting and output toggling in a single procedural block without separate next-state variables.
-
-This structure maintains the division by even number and 50% duty cycle properties, preserves parameter validation via initial block, and uses a 4-bit counter register. The design remains clean, synchronous, and easy to understand, with minimal logic duplication.

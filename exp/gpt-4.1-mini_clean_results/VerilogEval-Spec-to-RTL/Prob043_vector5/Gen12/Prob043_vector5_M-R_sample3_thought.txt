@@ -1,5 +1,0 @@
-Refactor the design by explicitly declaring an intermediate 2D wire array to hold the pairwise comparison results for clarity and structural modularity. Instead of nested generate loops directly assigning bits to the output vector, first store each XNOR result in a 2D wire array indexed by input indices. Then, flatten this 2D array into the 25-bit output vector with a separate generate loop.
-
-This approach makes the code more modular and easy to follow by separating computation and output assembly stages, while keeping it purely combinational and synthesis-friendly. It avoids complex inline indexing expressions during assignment to `out` and improves readability by clearly separating the comparison matrix from the output vector assembly step.
-
-We still use direct XNOR operator `~^` for efficiency and keep inputs packed for clean indexing.

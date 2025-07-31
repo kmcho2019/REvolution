@@ -1,7 +1,0 @@
-Refactor the design by representing the current water level directly as a registered 2-bit value sampled every clock cycle, removing the conditional state updates and making the state assignment unconditional for better synchronization. Maintain a separate register to hold the previous water level state at every clock edge, so we can always compare current and previous levels to detect rising water level events. 
-
-Decode the sensor inputs combinationally into water level states on each clock, then register this into the current state every clock cycle regardless of whether it changed or not. The previous state is simply the previous cycle's current state. This simplifies tracking the last water level before the current one and avoids glitches or missed transitions.
-
-Outputs for nominal flow valves (fr0, fr1, fr2) are assigned purely combinationally based on the current registered state. The supplemental flow valve (dfr) is asserted when the current water level state is numerically higher than the previous state, indicating rising water level. On synchronous reset, initialize current and previous water level states to BELOW and assert all outputs as specified.
-
-This approach avoids conditional state updates, simplifies previous state tracking, and makes output assignments straightforward and stable.

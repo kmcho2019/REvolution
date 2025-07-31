@@ -1,9 +1,0 @@
-Refactor the design by replacing the explicit state machine with a simpler control driven by the counter and ready signal.  
-- Use a synchronous process triggered by clk and reset without a separate state register.  
-- Drive the ready signal combinationally as (ctr == 4), since radix-4 requires 4 cycles for 8 bits.  
-- Use combinational logic (assign) to decode booth_factor from booth_bits outside the sequential block.  
-- Accumulate partial sums in the sequential block based on the booth_factor decoded signal.  
-- Shift multiplier_reg and increment ctr every cycle when not done.  
-- On reset, latch inputs and initialize registers.  
-- Output p when ready.  
-This removes the explicit state machine and makes control flow simpler and easier to follow, while maintaining the Radix-4 Booth multiplier core logic and timing. It is more compact and uses fewer signals.

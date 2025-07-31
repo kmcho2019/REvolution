@@ -1,7 +1,0 @@
-To optimize the original design for better power and area, we explicitly unroll all assignments without loops or modulo operations. This reduces combinational logic complexity and synthesis overhead for the modulo operator. Also, for bits where the neighbor does not exist, we directly assign zero outside of logic to avoid unnecessary toggling or logic generation.
-
-For out_different, explicitly hardcode the wrap-around neighbor (i=3 compares in[3] and in[0]), avoiding modulo calculation. This reduces gate count and switching activity.
-
-Explicitly unrolled logic improves synthesis ability to optimize and lowers power by removing redundant gates and toggling.
-
-This approach trades minor increase in code length for cleaner, smaller, and lower power hardware, especially valuable in small fixed-width vectors like 4 bits.

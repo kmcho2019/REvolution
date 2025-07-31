@@ -1,8 +1,0 @@
-To optimize the existing FSM design for better power and timing without changing its functionality:
-
-- Add a clock enable signal that activates counting logic only when input `in` is high or when the counter is non-zero. This avoids unnecessary toggling when the input is zero and the counter is already zero, reducing switching activity and power.
-- Keep the counter increment and saturation logic, but gate it with the clock enable to save power.
-- Keep outputs as Moore signals derived from the registered counter and input, registered on clock edge as before.
-- This approach reduces unnecessary state transitions and output toggling, improving power, and can also slightly reduce logic depth by not updating counter when no change needed.
-
-This optimization maintains synchronous reset and single clock domain. It balances power reduction and timing without adding complex encoding or restructuring.

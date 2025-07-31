@@ -1,7 +1,0 @@
-To implement the FSM output logic for Y1 (next input of flip-flop y[1]) and Y3 (next input of flip-flop y[3]) differently, I will exploit the one-hot encoding structure by treating the state bits as vector elements and using bitwise vector operations for the transition logic. 
-
-Instead of using individual gate-level expressions or a dedicated combinational submodule, I will create a parameterized function that computes the next state inputs by scanning the vector states and aggregating transitions in a vectorized manner. This function will return a packed vector of all next inputs, from which I extract Y1 and Y3.
-
-This approach modularizes the FSM logic by a single function and uses vector operations for compactness and potential SIMD-like synthesis optimization, which is different architecturally from separate gate instantiations or multiple output logic blocks.
-
-This vector function approach can easily scale if more outputs or states are added, supporting extensibility and compactness.

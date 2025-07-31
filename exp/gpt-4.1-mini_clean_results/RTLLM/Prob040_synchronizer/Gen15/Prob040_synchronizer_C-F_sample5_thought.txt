@@ -1,5 +1,0 @@
-Fuse the ideas by combining the clear domain separation and robust asynchronous reset on clk_a domain from Example 1 with the simplified structure and synchronous reset on clk_b domain from Example 2. Use asynchronous reset on clk_a domain to promptly clear registers when arstn is low, and synchronous reset on clk_b domain for clean reset synchronization. 
-
-Latch data_in into data_reg only when data_en is asserted to minimize toggling, similarly latch data_en into en_reg in clk_a domain for correct handoff. Synchronize en_reg into clk_b domain using two flip-flops to safely cross clock domains. Use the delayed enable signal (en_clap_two) in clk_b domain as a selection signal for a MUX that either loads new data from data_reg or holds previous output dataout, ensuring glitch-free output transitions.
-
-This combined strategy maintains low switching power, clean resets in respective domains, minimal registers, and clear synchronization, ensuring the output data is stable and synchronized with clk_b domain when data_en is active and data_in stable, satisfying all problem constraints.

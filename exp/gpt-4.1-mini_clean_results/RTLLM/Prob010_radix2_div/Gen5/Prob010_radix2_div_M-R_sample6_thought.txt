@@ -1,7 +1,0 @@
-Refactor the radix-2 divider by restructuring the FSM using a one-hot encoded state machine and separating datapath and control more distinctly. 
-Use a synchronous process for state transitions and input latching, but perform the subtract-and-shift operations in a more explicit combinational block feeding registers on clock edges.
-Maintain sign handling by converting inputs to absolute values at the start and applying sign correction after division completes.
-Implement the quotient and remainder shift register (SR) as a 17-bit register updated each cycle with a mux selecting between subtraction results.
-Use a counter to iterate 8 division steps.
-Use clear signals to start and complete the division, driving res_valid only in the done state.
-This structure increases clarity by cleanly separating state logic, datapath updates, and sign correction, improving readability and maintainability.

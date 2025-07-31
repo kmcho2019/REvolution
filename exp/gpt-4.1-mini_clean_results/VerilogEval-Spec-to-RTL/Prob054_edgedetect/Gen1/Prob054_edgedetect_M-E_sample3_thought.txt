@@ -1,9 +1,0 @@
-To detect a 0-to-1 transition on each bit of an 8-bit input vector and output a pulse exactly one clock cycle after the transition, we can store the previous input vector in a register and on every clock edge compare the stored previous input with the current input to detect transitions.
-
-However, instead of using multiple pipeline registers, we directly generate the positive edge detection signal by computing (~prev_in & in) and output it in the next clock cycle. To achieve this with minimal latency and hardware, we store the previous input and simultaneously generate the edge detection output from the previous cycle’s stored values.
-
-This can be done by registering the input at each clock edge into a `prev_in` register and then assigning the output `pedge` to the detection result from `prev_in` and the current input, effectively making the output pulse appear exactly one clock cycle after the transition.
-
-Thus, the pedge output register is computed combinationally from `prev_in` and the current input, with `prev_in` updated each clock cycle to hold the previous input vector. This one-register approach meets the timing requirement elegantly and saves hardware.
-
-Note: This approach outputs the pedge signal combinationally but synchronized to clock edges due to the registered `prev_in`. The output is stable and correct synchronized to the clock.

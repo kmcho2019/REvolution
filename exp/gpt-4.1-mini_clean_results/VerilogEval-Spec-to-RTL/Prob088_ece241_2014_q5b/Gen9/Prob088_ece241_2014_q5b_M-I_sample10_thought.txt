@@ -1,9 +1,0 @@
-The original design is already minimal, using one flip-flop to encode the two states with one-hot style semantics and asynchronous active-high reset. The output is a Mealy output computed combinationally, which is appropriate.
-
-To optimize PPA slightly, especially power and potential glitches on output z, we can register the output z with a flip-flop. This change converts the output from a Mealy to a Moore-style signal (latched output), which removes glitches and helps with timing closure and power due to fewer glitches on the output net.
-
-We'll add a flip-flop for output z, clocked on the same clock and asynchronously reset on areset (to zero). The output z register will take the Mealy combinational output as next input.
-
-This improvement slightly increases area and flip-flops by one but can reduce glitches and dynamic power, and may improve timing due to registered output.
-
-Thus, the strategy is to add an output register with asynchronous reset. The FSM state encoding and logic remain unchanged, preserving the simplicity and clarity of the original solution.

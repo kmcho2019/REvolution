@@ -1,5 +1,0 @@
-Use a two-bit state encoding capturing direction (0=left, 1=right) and activity mode (00=walking, 01=falling, 10=digging). This reduces state bits and simplifies the state space. The FSM transitions prioritize falling > digging > direction switch as specified. 
-
-Implement separate direction and mode registers combined into a state. Direction toggles only when walking and bumped. Falling and digging modes disable direction changes and bumps. Digging starts only if commanded during walking on ground, and stops on ground loss transitioning to falling. Falling resumes walking in previous direction on ground regain.
-
-The outputs are directly decoded from mode and direction bits. Asynchronous reset initializes to walking left. This approach minimizes state bits and clearly separates mode and direction logic, enabling efficient implementation with a simple FSM.

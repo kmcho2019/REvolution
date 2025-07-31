@@ -1,9 +1,0 @@
-Use a two-process FSM design with explicit duration registers per state and a separate "timer" that counts up to the desired duration.  
-Define four states: idle, s1_red, s2_yellow, s3_green with preset durations (idle=0, s1_red=10, s2_yellow=5, s3_green=60).  
-Use a single up-counter counting clock cycles from 0 to (duration-1) for each state.  
-The pedestrian button shortens green only if remaining green time > 10. To handle this, track elapsed time in green state; when pass_request occurs, if remaining time > 10, set duration for green state to current elapsed + 10 cycles, effectively shortening green period.  
-When green is shortened, do not revert duration back; store shortened duration in a register to enforce it.  
-When transitioning out of green, reset the green duration back to full 60 cycles.  
-All outputs are combinational from the current state.  
-The idle state immediately transitions to s1_red on reset.  
-This approach avoids decrement counters and output edge detection; uses a counting-up timer for intuitive elapsed time handling and dynamic green time shortening.

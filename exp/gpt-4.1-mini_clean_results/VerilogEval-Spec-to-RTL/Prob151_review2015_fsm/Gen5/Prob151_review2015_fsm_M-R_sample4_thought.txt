@@ -1,7 +1,0 @@
-Refactor the FSM to use Mealy outputs where outputs depend on the current state and inputs, reducing output latency by combinationally driving outputs based on the state and inputs instead of strictly Moore outputs registered on the clock. 
-
-Also, keep the pattern detection shift register separately and implement the FSM with a single always block for state transitions and a combinational block for next state. Outputs (shift_ena, counting, done) are assigned combinationally based on the current state (and inputs if needed) to respond immediately after state change, improving output timing alignment with inputs.
-
-This approach avoids one-cycle output delays typical in Moore FSMs and uses `assign` statements for outputs, clarifying their logic and timing. The state machine remains synchronous with active-high reset. Pattern detection logic updates unconditionally every clock cycle to simplify design and improve responsiveness.
-
-The four shift cycles are tracked through sequential states as before, but outputs reflect Mealy logic. This refactor maintains the original FSM behavior and timing but improves output responsiveness and clarity.

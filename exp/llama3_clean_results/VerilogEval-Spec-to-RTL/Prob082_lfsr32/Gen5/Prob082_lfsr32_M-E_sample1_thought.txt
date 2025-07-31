@@ -1,9 +1,0 @@
-To design a 32-bit Galois LFSR with taps at bit positions 32, 22, 2, and 1, we can use a novel architectural idea that involves a combination of shift registers and XOR gates. 
-
-The idea is to implement the LFSR as a series of D flip-flops connected in a shift register configuration, where each flip-flop represents a bit in the LFSR. The taps are implemented as XOR gates that take the output of the flip-flops at the tap positions and the LSB (q[0]) as inputs. 
-
-To calculate the next state of the LFSR, we can use a temporary wire to hold the result of the XOR operation of the taps. This result is then used as the input to the MSB flip-flop, while the outputs of the other flip-flops are shifted to the right.
-
-To handle the reset, we can use an `always` block that sets the output 'q' to 32'h1 when the reset signal is high.
-
-The novelty of this approach lies in the way we use a combination of shift registers and XOR gates to implement the LFSR. This approach allows us to clearly separate the sequential and combinational parts of the design, making the code more readable and maintainable.

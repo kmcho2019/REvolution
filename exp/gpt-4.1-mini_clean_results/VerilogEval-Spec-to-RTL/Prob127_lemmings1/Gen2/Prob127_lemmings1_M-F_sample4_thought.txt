@@ -1,7 +1,0 @@
-To fix the problem of multiple toggles while a bump signal remains high, implement edge detection for bump_left and bump_right signals. Only toggle the walking direction on the rising edge of a bump input, i.e., when bump transitions from 0 to 1. 
-
-Add registers to store the previous values of bump_left and bump_right to detect rising edges. On each clock edge, if either bump input has a rising edge, toggle the state once. This prevents repeated toggling when the bump input stays asserted over multiple clock cycles.
-
-Maintain the asynchronous positive edge reset to initialize walking direction to left. Outputs remain Moore type, derived solely from the state.
-
-This approach guarantees the FSM switches direction exactly once per bump event, consistent with the problem description and feedback.

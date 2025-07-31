@@ -1,8 +1,0 @@
-To optimize the existing FSM for better timing and power while maintaining its correctness, I will:
-- Use one-hot state encoding to simplify next-state logic and improve timing at a small area cost.
-- Separate the shift register update and done signaling into different always blocks to reduce combinational logic depth.
-- Latch done for one cycle when a valid byte is detected, avoiding toggling done unnecessarily.
-- Use a shift-left operation for the shift register because the protocol sends LSB first; shifting left and inserting new bits at LSB reduces the combinational path compared to concatenation.
-- Only update shift_reg during READ_BITS, as before, and reset shift_reg at IDLE.
-- Avoid resetting done each clock; instead, clear done only when start bit detected, reducing switching.
-These changes aim to improve the critical path and reduce switching activity, while keeping the design straightforward and synchronous with a positive-edge clock and synchronous reset.

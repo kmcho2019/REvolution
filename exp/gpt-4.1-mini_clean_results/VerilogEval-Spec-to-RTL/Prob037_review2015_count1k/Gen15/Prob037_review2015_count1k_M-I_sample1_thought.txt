@@ -1,7 +1,0 @@
-To optimize PPA, the equality check (q == MAX_COUNT) will replace the less-than comparison for wrap-around detection since equality checks can synthesize to simpler logic and reduce critical path delay, improving timing (tns and wns). The counting logic remains using a ternary operator for compactness.
-
-Additionally, to reduce dynamic power slightly, the counter will only toggle when q != MAX_COUNT; otherwise, it resets. This avoids unnecessary increment logic when wrapping.
-
-The synchronous reset and all other specifications remain unchanged.
-
-This aims to improve timing by reducing comparator complexity and slightly reduces switching activity on rollover, maintaining the same functionality and minimal area.

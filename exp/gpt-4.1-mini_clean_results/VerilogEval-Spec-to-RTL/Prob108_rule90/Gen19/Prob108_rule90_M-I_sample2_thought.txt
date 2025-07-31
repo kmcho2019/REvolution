@@ -1,9 +1,0 @@
-To improve performance and reduce critical path delay in the original design, I will reduce the block size from 64 bits to 32 bits, thereby halving the combinational path length inside each block. This segmentation trades a minor increase in wiring overhead for a meaningful reduction in the longest combinational logic delay.
-
-Additionally, I will simplify the boundary wiring by adopting explicit boundary signals without overlap or redundancy and keep zero boundary conditions at the edges.
-
-This finer granularity allows shorter XOR chains, potentially higher max clock frequency, while maintaining the modular clarity and correctness of the design. The lower block size also reduces the complexity within each block, which could save area slightly after synthesis optimizations.
-
-The load interface and synchronous update logic remain unchanged: on load=1, the 512-bit input is loaded directly into the state; otherwise, the next state is calculated and stored on each clock cycle.
-
-This redesign balances performance gain with modest area and wiring cost increase, improving the overall PPA while preserving design clarity.

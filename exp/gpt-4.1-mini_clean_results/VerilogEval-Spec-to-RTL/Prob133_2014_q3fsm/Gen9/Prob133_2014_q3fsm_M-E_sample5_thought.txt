@@ -1,9 +1,0 @@
-Instead of using a packed register for counters, implement a Mealy FSM with 5 states that implicitly count cycles by state transitions, reducing combinational additions. Use three states in B phase to count the three clock cycles (B1, B2, B3), and in each state accumulate the number of times w=1 in a small register. At the end of B3, evaluate the count of w to set z for one cycle, then restart the B cycle.
-
-This explicit state encoding avoids arithmetic in combinational logic; increments and resets happen through state transitions and a small 2-bit accumulator register that increments conditionally on w in sequential logic. This approach also separates state and counting logic clearly, improving clarity and potentially enabling easier timing optimization.
-
-Reset synchronously goes to state A; s input only controls transition from A to B1; z asserted only one cycle after counting three w inputs with exactly two being 1. Using one-hot encoding for states can be optionally applied but here simple binary encoding suffices.
-
-The output z is registered and updated synchronously on clock, asserted for one cycle only.
-
-This approach uses a small state machine with explicit states for counting cycles instead of packing counters, thus simplifying combinational logic and easing debugging.

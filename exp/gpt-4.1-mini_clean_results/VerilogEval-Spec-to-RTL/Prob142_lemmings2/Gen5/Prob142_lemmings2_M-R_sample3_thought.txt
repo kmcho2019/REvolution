@@ -1,7 +1,0 @@
-Refactor the FSM by separating the state bits into two one-bit registers: one indicating direction (0 for left, 1 for right) and another indicating falling status (0 for walking, 1 for falling). This dual-bit state encoding simplifies next-state logic into straightforward combinational logic using continuous assignments and multiplexers instead of a case statement.
-
-Use an asynchronous reset on both state bits to initialize to walking left (direction=0, falling=0). The next state of direction changes only when walking and bumped on either side (bump_left or bump_right), with bump signals overriding as described. Falling state bit follows ground directly: if ground=0 then falling=1; if ground=1 then falling=0, preserving direction.
-
-Outputs derive directly from the two state bits (walk_left if walking and direction=0, walk_right if walking and direction=1, aaah if falling). This approach keeps the FSM Moore style with explicit direction and falling bits, avoids enums and case statements, and relies on simpler combinational expressions and separate always blocks for sequential logic.
-
-This structure enhances readability by directly representing state as bits and makes next-state logic clearer and potentially more efficient by using simple boolean expressions instead of full case statements.

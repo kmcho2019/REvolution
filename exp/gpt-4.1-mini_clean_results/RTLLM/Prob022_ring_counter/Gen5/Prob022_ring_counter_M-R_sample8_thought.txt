@@ -1,5 +1,0 @@
-To avoid assigning to the entire 8-bit vector inside the always block, we can represent the ring counter's current state as a 3-bit index indicating which bit is high (0 to 7). On reset, this index is zero (LSB). On each clock edge, increment the index modulo 8. Then, generate the output vector by setting only the bit at the current index to 1 using a combinational assignment with a 1-hot encoder.
-
-This approach separates the state representation (index) from the output vector assignment, avoiding direct assignment to the whole `out` register inside the sequential always block. It also bypasses simulation or synthesis issues with vector assignments by handling output as a combinational mapping from index to 8-bit one-hot code.
-
-This implementation keeps the cyclic behavior and reset semantics unchanged but restructures the design for compatibility with restrictive toolchains.

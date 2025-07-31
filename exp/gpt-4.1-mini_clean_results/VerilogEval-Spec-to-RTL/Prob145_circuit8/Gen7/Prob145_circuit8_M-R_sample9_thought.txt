@@ -1,9 +1,0 @@
-I will refactor the design by separating the state register update and the output logic more cleanly, and use an always block with a nonblocking assignment for synchronous state update on the positive clock edge.
-
-To avoid unknown initial states and better match the waveform, I will explicitly initialize the state register to 2'b00 at declaration.
-
-Outputs p and q will be assigned combinationally using continuous assignments (assign statements) instead of always @(*) blocks, simplifying the output logic and ensuring constant driven outputs.
-
-The state transition logic will be kept the same, as it encodes the intended FSM, but by using nonblocking assignments and separating output logic, simulation should better reflect the synchronous state machine behavior and improve matching the waveform.
-
-This approach retains the two-bit FSM idea, mapping p and q to the bits of the state, but uses more idiomatic Verilog styles with explicit reset initialization and continuous assignments for outputs.

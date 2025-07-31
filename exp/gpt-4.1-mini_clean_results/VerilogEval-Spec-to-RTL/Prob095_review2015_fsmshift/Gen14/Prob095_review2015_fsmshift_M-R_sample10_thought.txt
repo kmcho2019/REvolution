@@ -1,7 +1,0 @@
-Since the problem interface only includes clk, reset, and shift_ena, and the reset is synchronous and active-high, we need to enable shift_ena for exactly 4 clock cycles right after reset, then keep shift_ena low forever afterward until the next reset.
-
-To implement this, use a 2-bit counter that counts the four cycles after reset synchronously. When reset is asserted, initialize the counter to 4. On each clock cycle, if the counter is nonzero, decrement it. The shift_ena output is asserted whenever the counter is greater than zero.
-
-Instead of using a down-counter, implement a simple up-counter with a finite state machine (FSM) that tracks the enable period after reset. Use states IDLE (shift_ena=0) and ENABLE (shift_ena=1) where ENABLE lasts exactly 4 cycles.
-
-This refactoring avoids an explicit down-counter and uses a small FSM with a 2-bit counter for the cycle counting. The shift_ena is driven combinationally by the state. This improves clarity and matches the interface requirements strictly without extra inputs.

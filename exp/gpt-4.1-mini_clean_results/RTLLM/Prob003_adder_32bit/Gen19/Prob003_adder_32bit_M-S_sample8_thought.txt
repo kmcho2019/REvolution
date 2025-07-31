@@ -1,9 +1,0 @@
-To simplify the 32-bit carry-lookahead adder while maintaining correct functionality:
-
-- Keep the hierarchical approach with two 16-bit CLA blocks instantiated in the 32-bit adder.
-- Implement a straightforward 16-bit CLA module that computes per-bit propagate/generate signals and uses a simple carry-lookahead logic via a generate loop, without additional functions.
-- Compute the block propagate as the AND of all propagate bits and block generate using a direct parallel expression (simplified by cascading carries).
-- Use zero-based indexing internally ([15:0] for 16-bit blocks), but maintain the external [32:1] port indexing per specification.
-- Calculate the upper block carry-in as: carry_in_upper = G_low OR (P_low AND Cin), with Cin fixed to zero, so carry_in_upper = G_low.
-- Remove the carry function and compute carries directly with for-generate blocks for simplicity and clarity.
-- This approach is easier to understand and synthesize, reducing complexity while still producing a fast carry-lookahead adder.

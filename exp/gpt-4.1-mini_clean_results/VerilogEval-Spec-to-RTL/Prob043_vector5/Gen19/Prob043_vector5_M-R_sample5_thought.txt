@@ -1,8 +1,0 @@
-Refactor the module by explicitly constructing the 25 output bits as a concatenation of individual XNOR results without using generate loops. Instead of packed vectors and generate blocks, explicitly instantiate 25 continuous assignments for each bit of the output vector. 
-
-We will:
-- Pack the inputs into a vector as before.
-- Manually assign each bit of the output by directly writing the expression for each of the 25 bit comparisons.
-- Arrange output bits starting from out[24] for comparison (a vs a) down to out[0] (e vs e).
-  
-This approach trades code brevity for explicitness, making each output bit's logic clear and unrolled, which can aid some synthesis tools in optimization or ease debugging.

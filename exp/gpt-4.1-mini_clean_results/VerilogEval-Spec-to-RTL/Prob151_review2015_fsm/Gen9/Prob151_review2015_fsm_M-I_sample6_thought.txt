@@ -1,7 +1,0 @@
-To optimize the FSM for better power and area while keeping the performance reasonable, switch from one-hot to binary state encoding, which reduces flip-flop count from 7 to 3 bits. This saves area and reduces power by minimizing toggles across many flip-flops.  
-Implement the shift counter as a 3-bit counter (since 4 cycles needed, 2 bits is enough, but 3 bits maintain clean logic) with enable to count only during SHIFT state, resetting otherwise, which reduces toggling and dynamic power.  
-Use a single always_ff block for synchronous logic and a combinational always_comb block for next_state logic, improving clarity and avoiding unnecessary combinational complexity.  
-Drive outputs as combinational based on decoded state bits, avoiding latches.  
-Maintain synchronous active-high reset and positive edge clocking.  
-Binary encoding makes next-state logic more compact and synthesizes to fewer muxes, thus better for area and power.  
-Overall, this reduces flip-flops, simplifies next-state logic, and cuts power with slightly more complex combinational decoding, a good trade-off for many use cases.

@@ -1,7 +1,0 @@
-The error arises because the `mux2X1` module is declared multiple times in the design environment, causing conflicts during compilation. To fix this, avoid redefining the `mux2X1` module inside this file if it already exists elsewhere in the testbench or project files.
-
-Since the use of `mux2X1` is purely combinational and simple, replace all mux2X1 instances with direct ternary conditional operators (`?:`) inline. This eliminates the need for the separate mux2X1 module, removes duplication issues, and simplifies the code.
-
-Keep the overall barrel shifter logic the same: use a three-stage approach where each control bit controls rotation by 1, 2, or 4 positions, implemented with combinational multiplexing via conditional operators. This approach maintains clear, synthesizable, and efficient implementation without extra submodules.
-
-This resolves the redefinition error and provides a clean, single-module solution.

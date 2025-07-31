@@ -1,7 +1,0 @@
-The existing solution is already optimal, using a single equality operator which maps directly to minimal comparator logic. Given the tiny size of inputs (2 bits), there's no meaningful way to reduce area or power further in this module.
-
-However, to potentially shave off minor gate-level delay and optimize for power by avoiding the equality operator (which could be inferred as multiple gates), we can implement the equality using explicit bitwise XNOR and AND operations. This might allow synthesis tools to optimize better by exposing explicit gate-level operations rather than relying on operator inference.
-
-This change is minimal but can help tools better optimize for PPA in some synthesis flows. It also explicitly shows the comparator logic and can help maintain clarity.
-
-The new design: z = (A[1] XNOR B[1]) & (A[0] XNOR B[0])

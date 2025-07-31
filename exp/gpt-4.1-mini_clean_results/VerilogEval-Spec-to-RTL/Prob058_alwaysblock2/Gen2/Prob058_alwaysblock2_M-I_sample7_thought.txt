@@ -1,7 +1,0 @@
-The original design already computes the XOR once and shares it across the outputs, minimizing logic duplication and ensuring low area and power consumption. To further optimize for timing, power, and area, we can slightly simplify the combinational always block by using an explicit `always_comb` block instead of `always @(*)` to improve readability and better express intent (which some synthesis tools can optimize).
-
-Additionally, we can ensure the sequential block uses non-blocking assignments consistently, which is already done, and avoid extra registers. Since the XOR is simple, no further logic sharing is possible. Power and area are minimal given the problem constraints. 
-
-Thus, the improvement is mostly stylistic for clarity and potential synthesis benefits by using `always_comb` rather than generic `always @(*)`. This aligns better with SystemVerilog practices and helps tools infer combinational logic cleanly, potentially improving PPA slightly without changing functionality.
-
-No functional change is made.

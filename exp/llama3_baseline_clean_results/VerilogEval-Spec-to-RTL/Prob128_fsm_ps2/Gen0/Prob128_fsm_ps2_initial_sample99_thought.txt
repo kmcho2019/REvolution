@@ -1,9 +1,0 @@
-To implement the TopModule, we'll design a finite state machine (FSM) that searches for message boundaries in the input byte stream. The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. 
-
-- In the IDLE state, the FSM will discard input bytes until it encounters one with in[3]=1.
-- Once a byte with in[3]=1 is detected, the FSM will transition to the BYTE1 state and expect the next two bytes to be part of the message.
-- After receiving the first byte (BYTE1), the FSM will transition to the BYTE2 state, and then to the BYTE3 state after receiving the second byte.
-- When the third byte is received (in the BYTE3 state), the FSM will signal done in the next cycle and then reset to the IDLE state.
-- The FSM will also have a reset mechanism to return to the IDLE state when the reset signal is high.
-
-We'll use a counter to keep track of the current byte in the message and a flag to signal when a message has been received. The done signal will be asserted in the cycle immediately after the third byte of each message is successfully received.

@@ -1,9 +1,0 @@
-I will refactor the design by separating the accumulation and output logic using a two-stage process. First, accumulate inputs on valid_in using a register updated inside an always block. Then, when 4 inputs are accumulated, output the stored sum and assert valid_out for one cycle.
-
-To avoid redundant addition in the output cycle, I will accumulate inputs only in the accumulator register and use an additional register to hold the output sum when count reaches 4.
-
-A separate always block will manage valid_out timing to assert it for exactly one clock cycle.
-
-This approach decouples accumulation from output and makes the code more modular and easier to analyze. The code will still update the accumulator only when valid_in is high and reset appropriately on rst_n.
-
-No combinational assign is used for summation to keep synchronous logic clean and timing predictable.

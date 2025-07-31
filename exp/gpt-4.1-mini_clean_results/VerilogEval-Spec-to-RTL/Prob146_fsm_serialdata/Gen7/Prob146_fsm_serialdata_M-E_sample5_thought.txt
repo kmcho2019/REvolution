@@ -1,9 +1,0 @@
-Use a Moore FSM with 5 states encoded in one-hot style to simplify next-state logic and reduce critical path delay. Separate counting and shifting logic explicitly: use a bit counter to track received data bits and a parallel load register for out_byte. Sample input bits at each clk in RECEIVE state, shift in LSB-first order by left-shifting the register and inserting the new bit at LSB.
-
-Detect start bit on the falling edge of input (i.e., from idle high to 0) by implementing a simple input synchronizer with a delayed input register to detect edge. This helps align sampling precisely on bit boundaries.
-
-To handle invalid stop bits, enter a WAIT_STOP state that waits for input to return high before allowing a new start bit. Assert done for one clock cycle when a valid stop bit (1) is detected, outputting the received byte.
-
-Use synchronous reset to initialize all registers and FSM. The one-hot FSM encoding eases timing and reduces combinational logic, potentially improving clock frequency. The shift register updates and bit counter increment only in RECEIVE state. done is driven high only in STOP state when the stop bit is valid.
-
-This approach emphasizes timing robustness, edge detection for start bit, and clean separation of concerns.

@@ -1,9 +1,0 @@
-To design a novel architectural idea for the gshare branch predictor, we will utilize a combination of a pattern history table (PHT) and a state machine to manage the branch prediction and training. The PHT will be implemented using a hybrid approach, where the 7-bit global history and 7-bit PC are hashed using a combination of XOR and shift operations to index the PHT.
-
-The state machine will have two main states: prediction and training. In the prediction state, the branch predictor will use the current global history and PC to index the PHT and retrieve the corresponding two-bit saturating counter. The counter value will determine the predicted branch direction.
-
-In the training state, the branch predictor will update the PHT entry based on the actual branch outcome and whether the branch was mispredicted. If the branch was mispredicted, the global history will be recovered to the state immediately after the mispredicting branch completes execution.
-
-To improve the accuracy of the branch predictor, we will also implement a mechanism to detect and adapt to changes in the branch behavior. This can be achieved by monitoring the number of mispredictions and updating the PHT accordingly.
-
-The novel architectural idea is to use a hierarchical PHT, where each PHT entry is associated with a smaller sub-PHT that stores additional information about the branch behavior. This will allow the branch predictor to adapt to changes in the branch behavior more quickly and accurately.

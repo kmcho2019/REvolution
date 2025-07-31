@@ -1,9 +1,0 @@
-Refactor the shift register by separating the combinational next-state logic from the sequential register update. Instead of computing all shifted variants upfront and selecting via muxes, implement a unified combinational function that performs the shift based on direction and amount using a case statement. This approach improves clarity and scalability for future shift amounts and directions.
-
-Use a combinational always block to compute the next value of the shift register (next_q) depending on load, ena, and the shift amount and direction. Then update the register q sequentially on the clock edge.
-
-This structure avoids generating multiple full-width shifted wires simultaneously, potentially reducing switching. It also centralizes shift logic, making it easier to modify or expand. The arithmetic right shift sign extension is naturally handled by replicating the sign bit during the shift operation within the combinational block.
-
-The synchronous load and enable logic remain the same, with load having priority.
-
-This separation of combinational and sequential logic is a common design style that enhances readability and can facilitate formal verification and debugging.

@@ -1,7 +1,0 @@
-Refactor the design to explicitly compute the next values of seconds, minutes, hours, and pm signals in combinational logic before updating registers on the clock edge. This avoids non-blocking update race conditions and ensures correct cascading increments. Use local combinational variables to hold next-state values and update all outputs together synchronously.
-
-Improve the hour increment function to cleanly handle BCD rollover from 12 to 01, returning both the next hour and an overflow flag as separate outputs. Use this overflow to toggle pm precisely on hour wrap from 12 to 1.
-
-On each clock, if reset is asserted, synchronously reset to 12:00 AM; else if ena is high, update the registers with computed next values; else hold current state.
-
-This approach clarifies control flow, eliminates nested ifs with shared state updates, and aligns pm toggling correctly with hour wrap, ensuring correct synchronous behavior and resolving the pm mismatch.

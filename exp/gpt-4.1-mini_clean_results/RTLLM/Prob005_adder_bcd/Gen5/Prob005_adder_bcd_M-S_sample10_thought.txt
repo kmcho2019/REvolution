@@ -1,7 +1,0 @@
-Simplify the BCD adder by performing the full 5-bit addition first, then detecting the need for correction by checking if the 5-bit sum exceeds 9 using a simple condition. If correction is needed, add 6 to the lower 4 bits using a straightforward 4-bit addition with carry-in equal to correction_needed (0 or 1), merging correction addition and its enable in one step.
-
-This allows us to express correction addition as: corrected_sum = sum_lower + (correction_needed ? 6 : 0) with carry-in = 0. But since 6 = 4+2 (0110), we can encode the addition concisely by adding 6 * correction_needed.
-
-Finally, output either corrected sum or original sum based on correction_needed, and assign Cout as correction_needed (since any sum > 9 produces a carry in decimal).
-
-This approach removes explicit carry chain wires and uses Verilog addition with conditional operand, making the code more concise and easier to read and synthesize, yet functionally equivalent.

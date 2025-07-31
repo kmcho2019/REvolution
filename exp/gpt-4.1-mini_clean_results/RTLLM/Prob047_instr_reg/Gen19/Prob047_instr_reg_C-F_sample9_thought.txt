@@ -1,7 +1,0 @@
-Fuse the asynchronous active-low reset from Example 1 with the single always block structure and internal fetch tracking from Example 2 to gain both robust initialization and simplified control logic. Use separate 8-bit registers ins_p1 and ins_p2 to separately store instructions from the two fetch sources, preserving clarity and avoiding multiplexing output logic, which benefits timing and power by isolating switching activity.
-
-Use a single always block triggered on posedge clk and negedge rst for synchronous updates with asynchronous reset. Inside the block, reset both registers to zero asynchronously when rst is low. Otherwise, update ins_p1 if fetch==2'b01 and ins_p2 if fetch==2'b10. Retain previous values if neither matches, avoiding unnecessary switching.
-
-Derive outputs directly from these stable registers: ins and ad1 from ins_p1, and ad2 from ins_p2. This maintains area-efficiency close to Example 1 but improves power and timing by reducing register dependencies and glitches from conditional output multiplexing seen in Example 2.
-
-This hybrid approach leverages clear separation of stored instructions, straightforward combinational outputs, and robust reset, combining the best clarity, timing robustness, power efficiency, and area optimization from both examples.

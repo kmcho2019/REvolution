@@ -1,9 +1,0 @@
-Refine the ALU implementation to address the feedback:  
-- Replace tri-state (high-impedance 'z') assignment for the flag output with an explicit '0' to reduce switching noise and avoid synthesis issues.  
-- Assign default output `r` to zero instead of 'z' to prevent latches or complex logic synthesis.  
-- Compute carry and overflow only when relevant (arithmetic operations) and clear them for logical and shift operations.  
-- Maintain the reuse of intermediate 33-bit registers for addition and subtraction to reduce area.  
-- Keep the operation decoding structure for clarity and synthesizability, as it is suitable for this ALU design.  
-- Keep flag output active only for SLT and SLTU, else zero, to make its behavior explicit and reduce power and area overhead.  
-- Ensure consistent signed/unsigned handling for SLT/SLTU and arithmetic shifts.  
-This improves power, area, and synthesis friendliness without changing the functional behavior.

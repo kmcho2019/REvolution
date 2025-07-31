@@ -1,7 +1,0 @@
-Instead of a simple edge detector that stores the previous input vector, use a shift register approach for each bit to track its history over two cycles. For each bit, keep a 2-bit shift register that shifts in the current input bit at every clock. A '0 to 1' transition is then detected when the older bit is 0 and the most recent bit is 1. Output the positive edge detection delayed by one cycle as required.
-
-This method uses a small 2-bit shift register per bit instead of a single flip-flop, which is slightly more hardware but conceptually different. The advantage is that the edge detection logic can be fully combinational based on these shift registers and is easy to extend to detect other multi-cycle patterns.
-
-Here, the 2-bit history per bit is stored in a register array, and the pedge output is generated combinationally based on the transition from bit 0 to 1 across the shift register bits.
-
-This design explicitly shows a pipeline of the input signal, which can be generalized and may help in timing closure or future feature expansion.

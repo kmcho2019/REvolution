@@ -1,7 +1,0 @@
-Refactor the original design by implementing the read logic inside a clocked always block with an output register, making the read synchronous instead of combinational. This adds one clock cycle latency for reads but improves timing predictability and eases timing closure for high-frequency designs. 
-
-Also, separate the reset logic for RAM initialization into a dedicated always block triggered on negative edge of rst_n, so initialization happens asynchronously. This way, on reset assertion RAM is cleared immediately rather than waiting for the next clock edge, which may help in systems requiring fast reset. The write operation remains synchronous on the clock's rising edge.
-
-Finally, the read data register is cleared to zero when read_en is low, matching original behavior but with synchronous read updates.
-
-This refactoring enhances timing and reset responsiveness while preserving functionality and enabling concurrent read/write operations.

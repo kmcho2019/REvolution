@@ -1,5 +1,0 @@
-To optimize PPA, we reduce the number of flip-flops by using binary encoding instead of one-hot for the three FSM states, since the FSM is small. This reduces area and dynamic power due to fewer state bits toggling. 
-
-Also, instead of updating done every cycle, we generate done as a pulse only one cycle after receiving the third byte, using a separate combinational logic that depends on the current and next state, avoiding unnecessary toggling of done. This minimizes power used by done toggling.
-
-Finally, we keep the synchronous reset, use consistent non-blocking assignments, and keep the FSM simple. These changes reduce flip-flop count from 3 to 2, simplify done logic, and decrease overall switching, improving power and area without harming timing.

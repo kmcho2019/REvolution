@@ -1,8 +1,0 @@
-Implement the 100-bit rotator using vector concatenation to achieve rotation in a single assignment without loops. Use a synchronous process triggered by the clock. On load, assign the input data directly. On enable signals, perform either left or right rotation by slicing and concatenating q accordingly:
-
-- For right rotation by one bit: q <= {q[0], q[99:1]}
-- For left rotation by one bit: q <= {q[98:0], q[99]}
-
-For ena=00 or 11, keep q unchanged by using a clock enable approach—only update q if load or rotation is active, reducing unnecessary toggling and improving power.
-
-This approach ensures minimal combinational logic delay by avoiding loops and conditional indexing, producing efficient, synthesizable code. It also uses a single vector concatenation per rotation direction, which synthesis tools easily optimize, improving timing and area. The design is clean and fully synchronous.

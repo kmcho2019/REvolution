@@ -1,7 +1,0 @@
-The new architectural idea for the 64-bit Johnson counter involves utilizing a combination of a shift register and a control logic block to efficiently update the counter value. Instead of directly updating the entire 64-bit register `Q` in a single operation, we can use a pipelined approach where the least significant bit of `Q` is used to control the shifting operation, and then the result is fed back into the register. This approach can potentially reduce the switching activity within the register, as only the necessary bits are updated.
-
-To implement this, we will use two registers: `Q_reg` to hold the current state of the counter and `Q_next` to compute the next state. The control logic block will determine whether to shift `Q_reg` to the right and append a 1 or a 0 based on the least significant bit of `Q_reg`. This approach allows for a more modular design and can potentially lead to better PPA metrics by reducing the complexity of the combinational logic required to update `Q`.
-
-Additionally, we will maintain the reset condition as a priority, ensuring that the counter is correctly reset to 0 when the `rst_n` signal is low. This involves adding a reset signal to both the `Q_reg` and `Q_next` registers to ensure they are initialized correctly.
-
-By breaking down the operation into smaller, more manageable parts, this novel architectural idea aims to reduce the power consumption and improve the area efficiency of the design without compromising its performance.

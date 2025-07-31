@@ -1,9 +1,0 @@
-The novel architectural idea for implementing a one-input one-output serial 2's complementer Moore state machine involves utilizing a more dynamic approach to handle the input stream and generate the 2's complement output. Instead of using a static detector signal, we can implement a state machine that tracks the input stream and adjusts its output based on the history of inputs received.
-
-The state machine will have two main states: an initial state where it waits for the first '1' in the input stream (indicating the beginning of the number) and a computation state where it calculates the 2's complement of the input number. Upon receiving the first '1', the state machine transitions to the computation state and starts calculating the 2's complement.
-
-To optimize for power and area, we can use a simple counter to track the number of '1's received in the input stream. When the state machine is in the computation state, it will invert the output for every '1' received after the first '1', effectively calculating the 2's complement.
-
-This approach minimizes switching activity by only changing the output when necessary and reduces area usage by eliminating the need for complex combinational logic. The state machine's simplicity also contributes to better timing performance.
-
-The implementation will utilize a single always block to handle both the state machine logic and the output computation, ensuring proper synchronization with the clock edge and asynchronous reset.

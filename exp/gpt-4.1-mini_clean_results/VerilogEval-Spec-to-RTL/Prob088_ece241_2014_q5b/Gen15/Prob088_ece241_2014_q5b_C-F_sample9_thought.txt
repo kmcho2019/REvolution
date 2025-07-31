@@ -1,7 +1,0 @@
-Fuse the clarity and explicit one-hot semantics of Example 1's two flip-flop state encoding with the register minimization of Example 2 by encoding state_A explicitly as a flip-flop and state_B as a flip-flop driven combinationally (like Example 1) but updated with a minimal next state logic that mirrors Example 2's simplicity. Maintain asynchronous active-high reset that initializes state_A=1 and state_B=0.
-
-Keep the output z as a continuous combinational assignment (as in both examples) for clean synthesis and to avoid extra always blocks. This preserves the one-hot encoding explicitly with two state bits (beneficial for debugging and formal verification), but limits flip-flops to just one (state_A) and derives state_B combinationally, reducing area and power.
-
-The next state logic uses only state_A and input x: next_state_A = state_A & ~x; next_state_B = ~next_state_A to maintain one-hot semantics. The sequential block updates state_A only, with asynchronous reset.
-
-This fusion achieves minimal flip-flops with explicit one-hot output and next state logic clarity, good for PPA, readability, and synthesis friendliness without output glitches or complex sequential output logic.

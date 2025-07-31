@@ -1,4 +1,0 @@
-To fix the functional issue, reverse the shift direction so that the first received serial bit is shifted into the MSB, and subsequent bits fill toward LSB. This matches the requirement that the first serial bit received is dout_parallel[7].  
-Use `shift_reg <= {din_serial, shift_reg[7:1]};` to shift bits in MSB-first order. Increment the counter on each valid input; when count reaches 8, output the parallel data and assert dout_valid for one cycle.  
-To optimize for PPA, avoid resetting dout_valid to 0 every cycle by default; instead, set it only when outputting valid data, and clear it on reset. Use non-blocking assignments consistently.  
-This approach ensures correct functionality and minimal switching activity.

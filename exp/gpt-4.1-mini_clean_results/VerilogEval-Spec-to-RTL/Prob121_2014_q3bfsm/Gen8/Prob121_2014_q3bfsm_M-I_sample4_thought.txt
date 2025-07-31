@@ -1,5 +1,0 @@
-To improve the PPA while maintaining correctness, I will adopt one-hot state encoding instead of binary encoding. One-hot encoding typically reduces combinational logic depth for the next state and output logic, potentially improving timing (reducing worst negative slack) and power due to simpler decoding. Since we only have 5 states, one-hot encoding is reasonable area-wise. 
-
-I will also merge the output logic into the next state combinational block for fewer always blocks, using non-blocking assignments only in the sequential block. The synchronous reset is kept as is. Additionally, I will use 'default' cases to ensure safe state transitions and outputs.
-
-This change should simplify the next state logic by enabling direct wire assignments with fewer logic gates, improving performance and possibly power. The area impact may be slightly higher due to one-hot registers but should be manageable given the small FSM size.

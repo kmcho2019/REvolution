@@ -1,9 +1,0 @@
-The problem can be solved by designing a finite state machine (FSM) with the following states: 
-1. IDLE: The initial state, waiting for a start bit (0).
-2. RECV_BIT: The state where the FSM receives the data bits.
-3. STOP_CHECK: The state where the FSM checks the stop bit.
-
-The FSM will transition from IDLE to RECV_BIT when it encounters a start bit (0), and from RECV_BIT to STOP_CHECK after receiving 8 data bits.
-In the STOP_CHECK state, the FSM checks if the stop bit is 1. If it is, the FSM asserts the 'done' signal and outputs the received byte.
-If the stop bit is not 1, the FSM stays in the STOP_CHECK state until it encounters a stop bit (1), at which point it transitions back to the IDLE state.
-The FSM also includes an active-high synchronous reset to reset the FSM to the IDLE state.

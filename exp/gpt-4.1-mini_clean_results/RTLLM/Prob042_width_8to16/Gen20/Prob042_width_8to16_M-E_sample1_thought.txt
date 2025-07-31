@@ -1,9 +1,0 @@
-Instead of using a flag and a locked 8-bit register to collect the first data and a pipeline stage for output, use a two-state finite state machine (FSM): IDLE and WAIT_SECOND.
-
-- In IDLE state, when a valid_in arrives, store it as the high byte of a 16-bit temp register, then move to WAIT_SECOND.
-- In WAIT_SECOND state, when the next valid_in arrives, complete the 16-bit data by placing it as the low byte, and assert valid_out and update data_out in the next clock cycle.
-- The valid_out and data_out will be registered outputs updated one cycle after the second valid_in is received, meeting the timing requirement.
-- If valid_in is not asserted, remain in the current state without updating outputs.
-- On reset, clear all outputs and return to IDLE.
-
-This FSM-based approach makes control flow explicit and easier to follow, improving robustness and clarity. The separation of data collection and output timing is straightforward, ensuring valid_out and data_out are always synchronized and delayed by one cycle after the second input, exactly as specified.

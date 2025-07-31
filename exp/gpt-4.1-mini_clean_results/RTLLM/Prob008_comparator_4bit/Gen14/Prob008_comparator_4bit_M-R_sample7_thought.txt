@@ -1,5 +1,0 @@
-Refactor the comparator by directly performing a subtraction and examining the borrow out and zero flags from the subtraction result, still using combinational logic. Instead of explicitly generating borrow propagate and generate signals, implement a ripple-borrow subtractor chain via continuous assign statements that propagate the borrow. Then derive outputs from borrow out and whether the difference is zero.
-
-This preserves the same comparison principle (borrow out indicates A < B), equality from zero result, and greater from neither less nor equal, but uses a ripple subtractor chain explicitly rather than borrow-lookahead logic. This approach is straightforward, easily understandable, and still fully combinational, using only assign statements, no always block.
-
-It highlights the subtraction process more explicitly and makes the borrow ripple visible, useful for clarity in small-width comparators.

@@ -1,9 +1,0 @@
-Instead of using explicit state transitions, we can implement this using a 2-bit counter that tracks the current byte position in the message. The key insights are:
-1. We only need to track positions 0-2 (3 bytes per message)
-2. The counter increments on each valid byte received
-3. When counter reaches 2 and we receive a byte, we:
-   - Assert 'done'
-   - Reset counter to 0 if next byte starts a new message (in[3]=1), else keep counting
-4. The counter resets to 0 when we detect in[3]=1 (new message start)
-
-This approach eliminates explicit state transitions and reduces control logic by using arithmetic comparison for position tracking.

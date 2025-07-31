@@ -1,9 +1,0 @@
-Refactor the design by eliminating the combinational always block and using a continuous assign statement to compute the next value of the rotator register based on the current state, load, and ena signals. Then, update the register synchronously on the clock edge with the assigned next value.
-
-This approach separates combinational logic (next state calculation) and sequential logic more explicitly using a continuous assignment for next_q. It simplifies code by removing the case statement inside always and leverages a conditional (ternary) operator chain for clarity.
-
-The synchronous process simply updates q with next_q. This structure emphasizes clear data flow from inputs and current state to next state, facilitating easier debugging and formal analysis.
-
-Rotation is implemented using vector concatenation and slicing, same as before, but embedded inside a single assign statement instead of an always block.
-
-This style reduces potential latch inference risks and might be preferred for small combinational logic feeding registers. It also fits well with functional RTL coding styles favored in some coding guidelines.

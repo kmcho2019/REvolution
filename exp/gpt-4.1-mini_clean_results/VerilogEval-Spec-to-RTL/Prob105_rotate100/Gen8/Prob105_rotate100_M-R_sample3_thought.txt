@@ -1,7 +1,0 @@
-Refactor the design to use a combinational function that computes the next rotated or loaded value of q, and register q with a single always @(posedge clk) block that simply updates q with this computed next value. This separates combinational next-state logic from sequential state update logic, improving code readability and maintainability. 
-
-Rotation and load logic is moved into a separate combinational block or function to clearly distinguish control and data flow. The synchronous behavior is preserved by registering the combinational next value on clk rising edge. The case structure inside the combinational block handles load and ena conditions, producing a next q value accordingly.
-
-This approach avoids direct concatenation assignments inside always @(posedge clk), keeping the sequential block focused on registering data and the combinational block focused on data manipulation, a common good practice in RTL design.
-
-No functional changes occur, but the modularization clarifies the data path and control flow.

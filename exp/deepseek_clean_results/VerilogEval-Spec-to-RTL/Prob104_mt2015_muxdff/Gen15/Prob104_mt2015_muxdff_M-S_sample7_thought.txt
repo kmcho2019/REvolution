@@ -1,7 +1,0 @@
-The original full_module shows that when not loading (L=0), each flip-flop's next state depends on a combination of other bits. However, this feedback logic should be handled at the full_module level when instantiating the TopModule components, not within TopModule itself.
-
-TopModule should remain a simple, atomic component: a single-bit register with load capability. It should just implement a basic mux-DFF structure where:
-1. When L=1, it loads r_in
-2. When L=0, it loads q_in (which will be connected to appropriate feedback logic in full_module)
-
-This keeps TopModule simple and reusable, while allowing the full_module to implement the specific feedback connections between instances.

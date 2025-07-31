@@ -1,7 +1,0 @@
-Refactor the design by implementing the next state logic with a continuous assign statement instead of a combinational always block. This separates combinational and sequential logic more clearly: next_state is purely combinational and driven by assign; the state register q is updated synchronously on the rising edge of clk.
-
-This approach uses a simple conditional expression in the assign statement for next_state: if a is high, next_state is 4; otherwise, increment q modulo 7. The modulo-7 increment is done by checking if q equals 6, then wrapping to 0, else incrementing by 1.
-
-By removing the conditional update in the always block (no checking if q differs), the sequential logic is straightforward: q updates to next_state every clock cycle.
-
-This design is functionally equivalent but leverages continuous assignment for combinational logic, improving clarity and potentially synthesis quality.

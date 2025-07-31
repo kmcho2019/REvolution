@@ -1,5 +1,0 @@
-The original design is already minimal and efficient, implementing the required functionality cleanly. To slightly improve power and potentially performance, I will reduce the logic levels in the mux by encoding the priority selection with a smaller logic depth. Instead of a nested ternary operator, I will use a 2-bit select vector and a case statement inside a combinational block to determine nextQ. This can improve clarity for synthesis tools and may enable better optimization. Also, ensure signals L and E are mutually exclusive if possible (though not enforced here) for glitch reduction.
-
-Additionally, to reduce glitching on nextQ (and hence dynamic power), nextQ will be registered in a separate always_comb block to avoid direct assignment from inputs with different timing. This helps with stable next-state calculation and potentially better power optimization.
-
-These are modest improvements focusing on clearer next-state logic separation and potentially enabling tools to optimize better.

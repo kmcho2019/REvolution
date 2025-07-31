@@ -1,9 +1,0 @@
-Implement a Moore FSM that tracks the serial protocol phases with a binary-encoded state machine: IDLE (waiting for start bit), RECEIVING (collecting 8 data bits), STOP (checking stop bit), and ERROR_WAIT (waiting for a valid stop bit to recover).
-
-Instead of shifting data into a register, use a parallel bit counter that increments on each data bit clock and latch the input bits into a simple shift register by shifting left and inserting the LSB first to align with protocol requirements. This maintains clear data order but uses left-shifting with LSB input.
-
-Generate the 'done' output as a registered pulse synchronized with the clock, asserted only when a valid stop bit is detected immediately after receiving all data bits.
-
-Use synchronous reset to initialize all registers. Separate the combinational next state logic and done output logic for clarity.
-
-This approach differs by shifting left (inserting new bits at LSB), simplifying data load logic, and explicitly separating error recovery states while preserving synchronous control and output pulse generation.

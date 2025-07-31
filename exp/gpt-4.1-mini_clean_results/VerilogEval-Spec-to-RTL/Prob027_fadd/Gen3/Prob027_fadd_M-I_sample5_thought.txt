@@ -1,5 +1,0 @@
-The original implementation uses a single addition operator, which infers a small adder circuit, synthesizing efficiently. However, the addition operator may infer a more general adder than necessary, potentially incurring a slightly higher area or power cost.
-
-To optimize for PPA, explicitly implementing the full adder logic using bitwise XOR and AND gates can give the synthesis tool more deterministic control over the resulting logic. This approach usually results in minimal and well-known gate-level implementations with predictable delays and lower area and power since only essential gates are instantiated.
-
-Hence, I will implement the sum as XOR of a, b, and cin, and cout as the carry-out logic: majority of the three inputs (a & b) | (b & cin) | (a & cin). This should improve power and area slightly without impacting performance.

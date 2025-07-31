@@ -1,6 +1,0 @@
-Use a simple two-state FSM (IDLE and RECEIVE) with a counter to track bits including start and stop bits, simplifying state encoding and transitions.  
-In IDLE, wait for start bit (0); when detected, move to RECEIVE.  
-In RECEIVE, shift in bits LSB first on each clock, increment counter.  
-When 10 bits (start + 8 data + stop) received, check stop bit; if correct (1), assert done for one cycle and go back to IDLE; if not, stay in IDLE waiting for next start bit, effectively ignoring framing errors without a separate WAIT_STOP state.  
-Use synchronous reset.  
-This reduces state encoding to 1 bit and eliminates extra states, simplifying control while preserving functionality.

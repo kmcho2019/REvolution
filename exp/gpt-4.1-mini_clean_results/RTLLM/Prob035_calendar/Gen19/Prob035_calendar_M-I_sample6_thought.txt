@@ -1,7 +1,0 @@
-To improve the original design’s PPA, the main target is to reduce the combinational path delay and minimize unnecessary toggling. Separating the combinational next-state logic from the sequential state register updates will reduce critical path length and improve timing (TNS and WNS). Additionally, introducing clock enable signals for minutes and hours counters will prevent their registers from toggling every cycle, reducing power consumption. 
-
-The reset remains asynchronous for quick initialization, but all counter updates are synchronous to the clock. The combinational next-state logic is computed in a separate always_comb block, which improves synthesis optimizations and clarity. Register updates occur only on clock edge if enabled, preventing unnecessary toggling and lowering dynamic power.
-
-Hours is 5 bits (0-23), Mins and Secs are 6 bits (0-59) as before, preserving minimal width for area efficiency.
-
-Overall, this approach improves timing by reducing the sequential block’s complexity, decreases power by gating register updates, and keeps area minimal by no added logic beyond combinational next-state calculations and enable signals.

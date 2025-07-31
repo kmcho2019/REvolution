@@ -1,8 +1,0 @@
-The original design uses two 4-bit ripple carry adders, resulting in an 8-bit ripple path and extra module overhead. To optimize for area and power while maintaining clarity, I will:
-
-1. Replace the two 4-bit ripple carry adders with a single 8-bit ripple carry adder implemented directly in one module. This reduces module overhead and wiring complexity.
-2. Use behavioral addition (`+`) inside a combinational always block to infer a fast adder from synthesis tools, which usually results in optimized hardware.
-3. Calculate overflow using the signed overflow condition from the input and output sign bits.
-4. This approach reduces area by avoiding manual carry chains and extra intermediate signals, and can result in lower power due to simpler logic and reduced wiring.
-
-This design is simpler, uses fewer gates, and lets synthesis tools optimize the adder implementation, likely improving area and power without sacrificing correctness.

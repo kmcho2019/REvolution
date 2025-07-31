@@ -1,9 +1,0 @@
-The original code’s logic is sound: it tracks previous input and latches bits where a 1->0 transition occurred. However, the feedback suggests possible timing or initialization mismatches, especially that prev_in is reset to 0, which might cause missed detection if the input starts at 0, or that updates happen simultaneously causing edge detection glitches.
-
-To fix this, I will:
-- Initialize prev_in to all ones (32'hFFFFFFFF) on reset. This way, if the input starts at zero, the transition 1->0 is detected cleanly on the first change.
-- Use non-blocking assignments properly to ensure prev_in updates only after out is computed.
-- Separate the transition detection into a combinational signal, then update out accordingly.
-- Keep the design synchronous, and maintain the latch of detected transitions until reset.
-
-These changes ensure that any 1->0 transition is detected reliably, including the first clock cycle after reset, preventing missed transitions due to reset value of prev_in.

@@ -1,8 +1,0 @@
-To implement the 12-hour clock with the given interface, we'll create counters for hours, minutes, and seconds. Each counter will be clocked by the fast-running 'clk' signal and will increment only when 'ena' is high, which should occur once per second. The 'pm' signal will be asserted when the clock is in PM mode. We'll use a combination of counters and logic to keep track of the hours, minutes, and seconds, and to determine whether it's AM or PM. The 'reset' signal will be used to reset the clock to "12:00 AM" when it's asserted.
-
-We'll use the following approach:
-- Create three counters: one for hours (hh), one for minutes (mm), and one for seconds (ss).
-- Each counter will have two BCD digits to represent the numbers from 00 to 59 for minutes and seconds, and from 01 to 12 for hours.
-- When 'ena' is asserted, increment the seconds counter. If the seconds counter reaches 60, reset it and increment the minutes counter. If the minutes counter reaches 60, reset it and increment the hours counter. If the hours counter reaches 12 (for PM) or 13 (for AM), reset it to 1 (for AM) or 12 (for PM).
-- Use the hours counter to determine whether it's AM or PM and assert 'pm' accordingly.
-- When 'reset' is asserted, reset all counters to their initial values.

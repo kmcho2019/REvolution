@@ -1,8 +1,0 @@
-To simplify the existing solution, we can eliminate unnecessary logic and signals. The key observation is that the 'done' signal only needs to be asserted in the cycle immediately after the third byte of each message is received. This can be achieved by simplifying the state machine to only track the reception of the three bytes without introducing additional signals like 'msg_received'. The state machine can directly transition between states based on the input byte stream, and the 'done' signal can be asserted based on the current state and the input condition that indicates the start of a new message.
-
-The simplified approach involves:
-1. Reducing the number of signals and states to the minimum necessary for the functionality.
-2. Eliminating the 'msg_received' signal and instead asserting 'done' directly based on the state and input conditions.
-3. Maintaining the same functionality of identifying message boundaries and asserting 'done' after the third byte of each message.
-
-By simplifying the logic and reducing the number of signals, the complexity of the design is decreased, which can lead to better PPA metrics.

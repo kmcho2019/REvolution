@@ -1,9 +1,0 @@
-The waveform shows that the output q at each rising clock edge becomes the negation of the input a sampled at that clock edge. To achieve the same functionality differently, I will implement the sequential logic using a process that samples input a at the positive clock edge, stores it in an internal register, and then assign q as the negation of that register outside the clocked always block.
-
-This creates a registered version of a and uses combinational logic for inversion, but since q is assigned from a registered signal, it still represents a one-clock cycle delayed and inverted version of input a. This approach differs from the prior solution by explicitly separating the storage and inversion logic, providing clearer control over the data path and potentially making timing or debugging easier.
-
-This two-step method:
-- Samples input a at posedge clk into a register
-- Produces q as inversion of that register in combinational logic
-
-This architectural style offers clear separation of storage and output logic, useful for debugging and modularity.

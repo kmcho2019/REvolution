@@ -1,7 +1,0 @@
-Improve the initial LFSR design by ensuring the reset initializes the register to a non-zero value to avoid lock-up at zero, as zero state is a terminal state for an LFSR. Also, maintain the separation of combinational next-state logic from sequential state updates for clarity and synthesis friendliness. To optimize power and area, use bitwise operators efficiently, avoid unnecessary signals, and ensure the feedback calculation is minimal. The feedback inversion is retained as per specification. 
-
-Additionally, modify the reset value from 4'b0001 (a valid non-zero state) to 4'b1000 for potentially better sequence diversity and ease of synthesis. Using a parameter for initial value enables easy adjustment. The design remains fully synchronous with asynchronous reset replaced by synchronous reset, which is better for most ASIC flows. 
-
-The output is registered, and the feedback bit insertion is via a simple concatenation shift-left operation, which is optimal for area and speed for a small LFSR.
-
-No external dependencies, and the code is compact and clear.

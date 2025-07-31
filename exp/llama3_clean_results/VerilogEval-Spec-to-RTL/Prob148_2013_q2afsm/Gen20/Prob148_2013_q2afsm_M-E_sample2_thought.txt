@@ -1,7 +1,0 @@
-The existing solution implements a simple finite state machine (FSM) with four states (A, B, C, D) to manage requests from three devices. To introduce a novel architectural idea, let's consider a hierarchical approach where we separate the priority decoder from the state machine logic. This could potentially simplify the state machine itself and make the priority logic more explicit and easier to modify if the priority rules change.
-
-The new architecture will consist of two main blocks:
-1. **Priority Decoder**: This module will take the request inputs (r[2:0]) and produce a priority-encoded output indicating which device has the highest priority request. This encoding can be done in a way that directly corresponds to the states of the FSM, simplifying the state transition logic.
-2. **State Machine**: This will be a simplified FSM that transitions between states based on the output of the priority decoder and the current state. The states will correspond to granting access to devices based on the priority decoder's output.
-
-This approach allows for easier modification of the priority rules (if needed) without altering the FSM logic, potentially reducing the complexity of the overall design and making it more scalable for systems with more devices or complex priority rules.

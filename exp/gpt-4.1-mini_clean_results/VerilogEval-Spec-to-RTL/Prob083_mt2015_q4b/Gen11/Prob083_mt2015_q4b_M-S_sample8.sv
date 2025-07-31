@@ -1,8 +1,0 @@
-module TopModule(
-    input  wire x,
-    input  wire y,
-    output wire z
-);
-    // Output z is high when x equals y.
-    assign z = ~(x ^ y);
-endmodule

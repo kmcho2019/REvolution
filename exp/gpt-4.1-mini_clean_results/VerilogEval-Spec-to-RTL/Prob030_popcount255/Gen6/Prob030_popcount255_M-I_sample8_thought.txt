@@ -1,5 +1,0 @@
-To improve the existing design's power, performance, and area (PPA), replace the behavioral popcount8_fn function with explicit structural instantiations of the provided popcount8 module. This allows synthesis tools to better optimize the logic and reduces inferred large adders from the function loops, decreasing switching activity and area. Keep the balanced reduction tree summation as-is because it efficiently balances delay and area without loops or always blocks.
-
-The last 7 bits zero-padded to 8 bits remain the same. Explicitly instantiate 32 popcount8 modules for all 8-bit chunks (including the last padded chunk). Then sum partial counts hierarchically using explicitly sized adders at each tree level. This structural approach also improves readability and synthesis optimization compared to the previous mixed behavioral-function code.
-
-No clocked elements are added; the module remains fully combinational. The approach balances synthesis-friendly structural coding with a clean, explicit adder tree for summation, which should yield better timing and area while maintaining functionality.

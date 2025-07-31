@@ -1,7 +1,0 @@
-Refactor the design to use a 4-bit input vector and directly implement the minimal sum-of-products and product-of-sums expressions as combinational continuous assignments instead of an always block. From the problem, minterms for logic 1 correspond to decimal 2 (0010), 7 (0111), and 15 (1111). The minimal SOP is derived by combining these minterms, yielding: 
-out_sop = (~a & ~b & c & ~d) + (~a & b & c & d) + (a & b & c & d).
-
-For the minimal POS, considering the zeros and don't cares, the minimal product of sums expression is:
-out_pos = (a + ~b + ~c + d) * (a + b + c + ~d).
-
-Implement both as continuous assign statements for clarity and efficiency, avoiding the previous always block and arbitrary POS expression. This approach simplifies the design, avoids ambiguity in bit ordering by explicitly using `in_vec = {a,b,c,d}`, and ensures both outputs match the minimal logical forms required.

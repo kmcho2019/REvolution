@@ -1,9 +1,0 @@
-To fix the frequency divider module `freq_divbyfrac`, we need to correctly implement the logic for generating the divided clock signals with the required duty cycle and phase shift. This involves creating two intermediate divided clock signals (`clk_int1` and `clk_int2`) that have uneven clock periods (4 and 3 clock cycles) and then phase-shifting them to achieve the desired fractional frequency division.
-
-The main issue with the current implementation is that it does not accurately generate the intermediate divided clock signals. To fix this, we need to introduce separate counters and logic to generate `clk_int1` and `clk_int2` signals, which will then be OR-ed to produce the final `clk_div` signal.
-
-We will use a main counter to keep track of the current clock cycle position and then use this counter to generate the `clk_int1` and `clk_int2` signals. The `clk_int1` signal will be generated every 4 clock cycles, while the `clk_int2` signal will be generated every 3 clock cycles, but with a half-cycle phase shift.
-
-By using this approach, we can ensure that the `clk_div` signal has a uniform period and accurately represents the desired fractional frequency division. Additionally, we will incorporate the necessary logic to handle both the rising and falling edges of the input clock signal to achieve the correct phase shift.
-
-This revised design should address the issues identified in the feedback and provide a working implementation of the frequency divider module.

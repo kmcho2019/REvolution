@@ -1,8 +1,0 @@
-Instead of partitioning into 64-bit blocks, I will implement the entire 512-bit Rule 90 state as a single shift-register style vector updated on each clock edge.  
-To compute the next state, I will generate the next 512-bit vector in a purely combinational loop, where each bit is the XOR of its left and right neighbors with zero boundary bits at the edges.  
-The entire state will be stored in one 512-bit register updated every cycle, or loaded with input data when `load` is high.  
-This monolithic design eliminates inter-block boundary wiring and simplifies the dataflow, potentially improving timing by minimizing inter-block dependencies and reducing routing overhead.  
-The combinational next state computation will be done with a generate loop producing a wire vector.  
-Non-blocking assignment is used to update the register on the rising clock edge.  
-The output `q` directly reflects the internal state register.  
-This approach trades off modularity for simplicity and a clear combinational-next-state computation, possibly reducing area and power by avoiding duplicated block logic and unnecessary interconnect.

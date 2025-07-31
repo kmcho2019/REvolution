@@ -1,5 +1,0 @@
-Instead of a classic shift-left approach, this design uses a shift-right method and a parallel load approach to build the byte from the MSB downwards. When each serial bit arrives (when din_valid is high), the input bit is shifted into the MSB of an 8-bit register while the register shifts right. This way, the first received bit ends up in the MSB position of the register, fulfilling the requirement of MSB-first loading.
-
-A 4-bit counter tracks how many bits have been received. When the counter reaches 8, the assembled byte is output at dout_parallel, and dout_valid is asserted for exactly one cycle. The counter resets to zero after outputting data, ready to accept a new byte. All state updates and outputs are synchronous to the rising edge of clk and include an active-low synchronous reset for clear initialization.
-
-This approach provides clear bit ordering without needing complex bit reordering logic, and the use of a shift-right register is a simple and novel variation from the typical shift-left implementations.

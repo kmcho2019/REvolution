@@ -1,5 +1,0 @@
-To optimize the design for better power efficiency without compromising area and timing, I will implement clock enable gating by adding an enable signal that is asserted only when input d changes or reset is asserted. This prevents unnecessary clocking of the flip-flops when the input data is stable, thus reducing switching activity and dynamic power. 
-
-This approach keeps the synchronous reset on the positive clock edge and still updates all 8 bits in one always block, minimizing area and complexity. The enable signal is computed combinationally as (reset | (d != q)), so the registers only load new data or reset when needed.
-
-No external clock gating cells are used; instead, the enable signal gates the register load internally, which is a commonly used technique in RTL for power savings. The design remains synthesizable, simple, and efficient.

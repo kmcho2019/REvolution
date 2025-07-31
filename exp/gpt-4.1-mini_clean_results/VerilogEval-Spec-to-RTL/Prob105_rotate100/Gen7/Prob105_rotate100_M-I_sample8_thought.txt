@@ -1,7 +1,0 @@
-To improve PPA while maintaining functionality, we can introduce clock gating to prevent unnecessary toggling when the rotator is not active (i.e., when neither loading nor rotating). Specifically, we generate an enable signal that is high only when load or rotation is enabled (ena == 2'b01 or 2'b10). We then gate the clock to the register to avoid clock toggling when no update is needed. This reduces dynamic power by preventing unnecessary clocking of the 100-bit register. The combinational rotation logic remains the same since it is simple and efficient for a 1-bit rotate.
-
-This optimization reduces power consumption significantly without impacting timing or area substantially. It avoids the entire 100-bit register toggling when idle, which is the dominant dynamic power consumer here. Such gating is a standard low-overhead technique for register-heavy designs.
-
-Note: The clock gating cell is not instantiated explicitly here, but we implement clock gating logically (with a gated clock signal). In a real design, clock gating cells should be used during synthesis for safe gating. Alternatively, an enable input to the register could be used if supported by the target FPGA/ASIC library.
-
-Overall, this solution maintains a simple structure and improves power efficiently.

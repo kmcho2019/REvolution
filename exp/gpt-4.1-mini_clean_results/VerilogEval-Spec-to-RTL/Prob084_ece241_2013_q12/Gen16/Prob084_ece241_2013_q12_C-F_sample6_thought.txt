@@ -1,5 +1,0 @@
-Fuse the two designs by implementing a clean, concise 8-bit shift register as a single vector updated synchronously on the positive clock edge when enable is high, shifting in input S at Q[0] (MSB). Instead of using a separate combinational next state register, embed the shift logic directly inside the sequential block to minimize glitching and reduce power/area.
-
-For the output Z, use direct vector indexing with the 3-bit select signal {A,B,C} after properly mapping Q[0]...Q[7] to bits in the shift register. Since Q[0] is MSB (shift_reg[7]) and Q[7] is LSB (shift_reg[0]), invert the select index by subtracting from 7 to match the mapping.
-
-This fusion achieves the succinctness and indexing efficiency of Example 1 with the clean, glitch-free clocked shift register update of Example 2, optimizing power, area, and timing without extra combinational registers or verbose mux case statements.

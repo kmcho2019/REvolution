@@ -1,9 +1,0 @@
-Refactor the FSM by separating the state and counter/w_count updates into distinct always blocks to improve clarity and potentially aid synthesis. Use a combinational always block for next-state and output logic and a synchronous block for state and counters update.
-
-Implement the counting of w=1 occurrences using a shift register of 3 bits to store the recent w inputs. Use combinational logic to count the number of ones in this shift register and generate output z accordingly.
-
-This approach reduces arithmetic operations and simplifies counting by bit counting, which may improve timing. Also, output z is registered synchronously but only updated when the 3-cycle window completes.
-
-Keep state encoding the same, with minimal states, but introduce a cycle counter separate from the shift register index.
-
-This style enhances readability by decoupling combinational and sequential logic and may aid in achieving better synthesis results by explicit next-state logic and reducing adder usage.

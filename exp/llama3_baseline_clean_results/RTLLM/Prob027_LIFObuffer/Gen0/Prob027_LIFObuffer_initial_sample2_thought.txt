@@ -1,9 +1,0 @@
-To design the LIFO buffer (LIFObuffer) module, we will use a stack-based approach. The module will have input ports for data (dataIn), read/write control (RW), enable signal (EN), reset signal (Rst), and clock signal (Clk). The output ports will include flags for empty (EMPTY) and full (FULL) buffer conditions, as well as the output data (dataOut). 
-
-We will utilize a stack memory array (stack_mem) to store the data and a stack pointer (SP) to track the current position in the stack. The module's operations will be synchronous, occurring on the rising edge of the clock (Clk) when the enable signal (EN) is high.
-
-When the reset signal (Rst) is high, the stack will be cleared, the stack pointer will be set to indicate an empty buffer, and all memory locations will be initialized to 0. 
-
-For normal operations, if the buffer is not full and a write operation is requested (RW is low), data from dataIn will be pushed onto the stack, and the stack pointer will be decremented. If the buffer is not empty and a read operation is requested (RW is high), data will be popped from the stack into dataOut, the corresponding stack memory will be cleared, and the stack pointer will be incremented.
-
-The EMPTY and FULL flags will be updated based on the stack pointer's status, indicating whether the buffer is empty or full, respectively.

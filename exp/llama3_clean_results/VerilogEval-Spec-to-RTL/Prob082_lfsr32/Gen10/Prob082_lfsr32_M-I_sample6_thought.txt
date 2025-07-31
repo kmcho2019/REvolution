@@ -1,9 +1,0 @@
-To improve the solution, we should first correct the functional errors in the implementation of the Galois LFSR. The key is to understand that in a Galois LFSR, the next state of the MSB is determined by the XOR of the current state's bits at the tap positions, while the rest of the bits simply shift right. 
-
-Given the taps are at positions 32, 22, 2, and 1 (which translates to indices 31, 21, 1, and 0 in a 0-indexed array), the calculation of the feedback term seems to be correct. However, the shifting logic needs to be corrected. 
-
-Instead of using a loop to shift the bits, which can be inefficient and may not be synthesisable by all tools, we can use bitwise operations to shift the entire register to the right and then update the MSB with the feedback term.
-
-Moreover, since we are working with a 32-bit vector, we can directly calculate the next state by shifting the current state and updating the MSB without needing a loop. This approach not only simplifies the code but also ensures that the logic is correctly implemented and synthesisable.
-
-Lastly, ensuring the reset logic is correctly implemented to reset the LFSR to 32'h1 when the reset signal is high is crucial.

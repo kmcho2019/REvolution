@@ -1,5 +1,0 @@
-Refactor the module by separating the combinational rotation logic from the synchronous register update. Use a continuous assignment (`wire`) to calculate the next value of the rotator (`next_q`) based on the current register value, load, and ena inputs. Then, inside a single always block triggered on the rising edge of clk, update the register `q` with the computed `next_q`. This cleanly separates combinational logic from sequential logic, improving readability and making the design intent explicit.
-
-The priority remains: synchronous load overrides rotation, which occurs only if ena is 01 or 10; otherwise, the register holds its value. The rotation is performed combinationally by concatenating bits accordingly.
-
-This approach also eases the understanding of logic dependencies and can help synthesis tools optimize the design by clearly distinguishing combinational logic (assign) from sequential logic (always). Comments are added for clarity.

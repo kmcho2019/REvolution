@@ -1,9 +1,0 @@
-The current implementation is correct but can be optimized further for power and area by leveraging the don't-care conditions more aggressively. Looking at the Karnaugh map:
-
-1. When a=1 (right half), output is always 1 (independent of b,c,d)
-2. When a=0, output is 1 only when c=1 (except for ab=01 case, but this is covered by don't-cares)
-
-This suggests we can simplify the logic to: out = a | c. This covers all required 1's in the K-map while using don't-cares to our advantage. The simplification:
-- Removes the ~a & ~b term entirely
-- Reduces gate count from 3 operations (OR, AND, NOT) to just 2 operations (OR)
-- Maintains correctness for all specified cases while optimizing don't-cares

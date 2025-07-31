@@ -1,8 +1,0 @@
-To simplify the solution, we focus on maintaining the required functionality while minimizing unnecessary logic and conditional checks. The existing design correctly implements the 32-bit global history shift register and handles pipeline flushes due to branch misprediction. 
-
-We simplify by ensuring the update logic for the `history` register is concise and directly addresses the conditions for updating based on `predict_valid` and `train_mispredicted`. The essential operations are:
-1. Reset `history` to zero on asynchronous reset (`areset`).
-2. If `train_mispredicted`, update `history` with `train_history` concatenated with `train_taken`.
-3. Otherwise, if `predict_valid`, update `history` by shifting in `predict_taken` from the LSB side.
-
-This approach maintains the correct functionality while ensuring the code remains straightforward and easy to understand.

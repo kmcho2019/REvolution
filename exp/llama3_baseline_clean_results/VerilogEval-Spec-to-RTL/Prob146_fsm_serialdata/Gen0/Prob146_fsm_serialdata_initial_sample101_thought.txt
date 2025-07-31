@@ -1,8 +1,0 @@
-To solve this problem, we will design a finite state machine (FSM) that tracks the reception of a byte over a serial communication protocol. The FSM will have states to identify the start bit, collect the 8 data bits, and verify the stop bit. It will also handle the case where the stop bit is missing and wait for it before attempting to receive the next byte. The FSM will have the following states:
-1. IDLE: The initial state where the FSM waits for a start bit (0) to begin receiving a byte.
-2. START: Once a start bit is detected, the FSM moves to this state and begins collecting the data bits.
-3. DATA: In this state, the FSM collects the 8 data bits. It shifts in each bit and keeps track of the number of bits received.
-4. STOP: After receiving 8 data bits, the FSM moves to this state to verify the stop bit.
-If the stop bit is correct (1), the FSM outputs the received byte and asserts the 'done' signal. If the stop bit is incorrect, it waits for a stop bit before returning to the IDLE state.
-
-The module will also include a synchronous reset that resets the FSM to the IDLE state when 'reset' is high.

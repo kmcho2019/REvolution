@@ -1,9 +1,0 @@
-To address the issues identified in the feedback, the following steps will be taken:
-
-1. **Correct Stop Bit Verification**: Modify the 'STOP' state to wait for the next stop bit (logic 1) before transitioning back to the 'IDLE' state. This will ensure the FSM waits for a correct stop bit before attempting to receive the next byte.
-2. **Handle LSB-First Data Transmission**: Update the 'DATA' state to correctly collect the data bits when the least significant bit is sent first. This can be achieved by assigning the incoming bit to the correct position in the `data` register.
-3. **Reset Bit Counter**: Add a condition to reset the `bit_counter` when transitioning from the 'STOP' state back to the 'IDLE' state to ensure correct bit counting in subsequent bytes.
-4. **Optimize State Machine Transitions**: Review and optimize the state machine transitions to minimize the number of transitions and reduce unnecessary assignments.
-5. **Improve Output Signal Handling**: Update the `out_byte` output signal to reflect the correctly received data byte when the `done` signal is asserted, minimizing unnecessary assignments.
-
-By addressing these issues, the corrected code will accurately implement the finite state machine for identifying correctly received bytes from a stream of bits with a start bit, 8 data bits, and a stop bit.

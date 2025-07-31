@@ -1,8 +1,0 @@
-Instead of tracking the position of the '1' bit as an integer and using a shift operation (which some tools may not support), we can implement the ring counter as a shift register of 8 bits with a single '1' circulating.
-
-The approach:
-- Represent the ring counter state as an 8-bit register initialized to 8'b00000001 on reset.
-- On each clock edge (if not reset), rotate the 1-bit by shifting the register left by 1 bit, and wrapping around the MSB to LSB.
-- To implement wrapping without vector slicing or concatenation, use bit-by-bit assignments or bitwise operations in the always block.
-- Since assigning to the whole vector at once might cause tool issues, update the register bit by bit based on previous state bits.
-This approach maintains one-hot output with a circulating '1' and avoids vector slice assignments or dynamic shifts.

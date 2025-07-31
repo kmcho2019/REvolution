@@ -1,7 +1,0 @@
-To implement the counter counting from 0 to 11 with pause capability and synchronous active-low reset, I will use a simple 4-bit register to hold the count. Instead of detecting the max count using an equality or bitwise expression, I will implement the counter as a modulo-12 counter by explicitly comparing the count to 12. When the count reaches 12 (4'd12), the counter will reset to zero on the next increment.
-
-The counting will be gated by valid_count by using it as an enable signal inside the always block. When valid_count is low, the counter will hold its value by not updating the register. This approach prevents unnecessary toggling, reducing dynamic power consumption.
-
-The reset signal rst_n is active low and synchronous, meaning the reset action happens on the clock edge when rst_n is low.
-
-This approach uses a simple compare against 12 to reset the counter, which is easily optimized by synthesis tools, and is conceptually clean. The count outputs values from 0 to 11 inclusive, then resets to 0, and the counting pauses when valid_count is zero.

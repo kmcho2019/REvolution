@@ -1,7 +1,0 @@
-The existing code implements the state machine logic using separate modules for `StateBNext` and `StateDNext`, which contributes to modularity but may not be necessary for such a straightforward state machine. By simplifying the logic directly within the `TopModule`, we can reduce complexity and potentially improve PPA metrics. The key is to directly implement the logic for `Y1` and `Y3` based on the given state transitions and the one-hot encoding.
-
-For `Y1`, the state `B` (y[1]) is reached from state `A` (y[0]) when `w` is 1. This can be directly implemented as `Y1 = w & y[0]`.
-
-For `Y3`, the state `D` (y[3]) is reached from states `B`, `C`, `E`, and `F` when `w` is 0. This logic can be simplified to `Y3 = ~w & (y[1] | y[2] | y[4] | y[5])`, which directly reflects the required transitions.
-
-By integrating these simplified expressions directly into the `TopModule`, we eliminate the need for separate modules, thus reducing the overall complexity of the design.

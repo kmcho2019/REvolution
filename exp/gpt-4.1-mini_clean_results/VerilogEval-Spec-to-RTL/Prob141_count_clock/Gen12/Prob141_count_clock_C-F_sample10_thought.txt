@@ -1,8 +1,0 @@
-Fuse the efficiency of binary internal counters from Example 1 with the explicit BCD digit storage and enable gating of Example 2 to optimize timing, power, and area:
-
-- Keep internal counters in binary (seconds and minutes as 6-bit, hours as 4-bit) for compactness and simple rollover logic.
-- Use synchronous logic only to update these binary counters on ena, with synchronous reset.
-- Perform the BCD conversion of seconds, minutes, and hours only when values change (on the clock edge with ena or reset), storing BCD digits in output registers to reduce toggling and combinational delay on outputs.
-- Hours are kept in binary and converted to BCD on register update, avoiding combinational subtraction and multiplication for output.
-- Toggle pm on the 11→12 hour transition in the synchronous always block.
-- This approach reduces combinational critical path delays by moving BCD conversion into registers, lowers power by updating outputs only when counters change, and maintains minimal area by keeping compact binary counters.

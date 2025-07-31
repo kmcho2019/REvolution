@@ -1,8 +1,0 @@
-Since the original design is already minimal and uses the built-in equality operator (==), which synthesizes efficiently, further optimization can target lowering switching activity to reduce power. One approach is to implement equality checking using bitwise XNOR gates and AND gate so that the logic is explicitly combinational and possibly optimized by synthesis tools for gate-level minimization. This may help synthesis tools with better optimization compared to the high-level == operator. Additionally, using assign without the ternary operator is more concise.
-
-The logic is:
-z = (A[1] XNOR B[1]) AND (A[0] XNOR B[0])
-
-This avoids the ternary operator and could help slightly with power and area by exposing explicit gates. It's still a minimal logic block.
-
-Although improvement is expected to be small, this direct gate-level style can be beneficial in some synthesis scenarios.

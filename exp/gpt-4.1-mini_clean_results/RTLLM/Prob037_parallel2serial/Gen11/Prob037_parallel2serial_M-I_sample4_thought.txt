@@ -1,9 +1,0 @@
-To improve power efficiency and reduce glitching in the output, I will capture the input parallel data `d` into an internal 4-bit register at the start of each serialization cycle (when the counter resets to 0). This prevents glitches caused by asynchronous changes on the input `d` directly affecting `dout`.
-
-The output `dout` will be driven from this internal register rather than the input directly. The valid_out signal will be asserted only on the first output bit (MSB) cycle to comply with the specification.
-
-The counter will count from 0 to 3 synchronously on clk, with synchronous active-low reset. When `cnt == 3`, the next cycle loads new data and resets the count to 0, asserting `valid_out`.
-
-This approach trades a small area increase (4 flip-flops for data register) for better timing stability and lower power, as the input data changes only update the internal register once per 4-cycle serialization.
-
-Also, I will use non-blocking assignments inside the clocked always block to maintain proper sequential logic behavior.

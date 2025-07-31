@@ -1,5 +1,0 @@
-Observing the waveforms, p and q behave like a two-bit shift register that shifts in the input 'a' on the rising edge of the clock. Initially, p and q are unknown until the first rising edge when p is set to 0 and q is undefined. From the waveforms, q updates to the previous value of p on the falling edge, effectively delaying q by half a clock cycle compared to p.
-
-Hence, we can implement p as a register updated on the rising edge of clock directly from input 'a', and q updated on the falling edge of clock with the previous value of p. This captures the observed asynchronous staggered update of p and q, with p leading and q following.
-
-This approach uses dual-edge triggered registers but carefully assigns p on posedge clock and q on negedge clock, reflecting their temporal offset. This model matches the waveform where p responds immediately on the clock rising edge to 'a', and q follows with p's prior state on the falling edge, creating a shifted sequence.

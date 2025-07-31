@@ -1,5 +1,0 @@
-We maintain a single 32-bit register `prev` to store the previous cycle's input. On each clock edge, we compare `prev` and the current `in` to detect falling edges bit-by-bit by checking bits that were previously 1 and now 0 (`prev & ~in`). We then update the output `out` by OR-ing it with this falling edge detection, making `out` sticky until reset clears it.
-
-This single-vector approach is both simple and efficient, capturing falling edges correctly and holding them until a synchronous reset. The synchronous reset clears both `prev` and `out`.
-
-This minimal approach meets the functional requirement cleanly and reduces complexity without unnecessary separation or flip-flops per bit.

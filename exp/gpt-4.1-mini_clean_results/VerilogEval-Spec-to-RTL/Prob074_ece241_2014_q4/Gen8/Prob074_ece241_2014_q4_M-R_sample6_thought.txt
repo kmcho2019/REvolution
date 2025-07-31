@@ -1,9 +1,0 @@
-Refactor the design by encapsulating the flip-flops in a separate always block that stores all flip-flop outputs in a single register vector, which simplifies state handling. Use intermediate wires for the combinational logic feeding the flip-flops. Then update all flip-flops synchronously on the clock edge. The output z is assigned as the NOR of the individual bits in the register vector.
-
-This approach maintains the same functional behavior but uses a grouped state register instead of separate scalar registers, improving readability and scalability. We still do not use an explicit reset signal since it was not specified; the testbench or the initial condition should guarantee zero initialization, matching the problem assumption.
-
-Summary:
-- Use a 3-bit register vector for flip-flops.
-- Compute combinational next state wires based on vector bits.
-- On posedge clock, update all flip-flops simultaneously.
-- Output z is NOR of all register bits.

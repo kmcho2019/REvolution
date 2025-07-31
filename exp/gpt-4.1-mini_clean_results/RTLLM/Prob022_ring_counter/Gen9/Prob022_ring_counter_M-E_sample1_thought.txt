@@ -1,7 +1,0 @@
-Instead of storing the entire one-hot 8-bit vector, I will use a 3-bit index register that tracks the position of the single '1' in the ring counter. On reset, the index is set to 0. On each clock rising edge, the index increments modulo 8 (wraps from 7 back to 0). The output 'out' is generated combinationally from this index by setting only the bit at the current index to 1.
-
-This approach avoids manipulating large vectors directly inside the sequential block and only uses a small integer register internally. The one-hot output is formed using a combinational decode of the index, making it both synthesizable and potentially more compatible with restrictive tools that struggle with vector rotations or concatenation assignments inside always blocks.
-
-The output 'out' is declared as reg because it is assigned in an always block, and the index is updated synchronously with the clock and reset.
-
-This architectural difference eliminates vector slice assignments and rotations inside the sequential always block and clearly separates state (index) and output decoding, which enhances tool compatibility.

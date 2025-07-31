@@ -1,9 +1,0 @@
-The new architectural idea for the edge detection module, named `edge_detect`, involves a two-stage approach. The first stage is a simple, clock-synchronized sampler that captures the current and previous states of the input signal `a`. This is achieved through two D-flip-flops in a series, where the first flip-flop samples the input signal `a` at every positive edge of the clock `clk`, and its output is then sampled by the second flip-flop at the next clock edge. 
-
-The second stage is a combinational logic circuit that takes the outputs of these two flip-flops (representing the current and previous states of `a`) and generates the `rise` and `down` signals accordingly. This circuit uses basic logic gates (AND, OR, NOT) to compare the current and previous states and determine if a rising or falling edge has occurred.
-
-This approach ensures that the edge detection is synchronous with the clock signal, minimizing potential metastability issues and making the design more suitable for digital systems. The use of two flip-flops in series allows for a clear and straightforward detection of edges without requiring additional combinational logic for storing the previous state of `a`, thus potentially reducing area and improving timing.
-
-The reset logic is also simplified, focusing on resetting the flip-flops that store the state of `a` and the output signals `rise` and `down`, ensuring the module starts in a known state upon reset.
-
-This novel architecture aims to provide a balanced solution in terms of performance, power consumption, and area usage, while maintaining simplicity and ease of implementation.

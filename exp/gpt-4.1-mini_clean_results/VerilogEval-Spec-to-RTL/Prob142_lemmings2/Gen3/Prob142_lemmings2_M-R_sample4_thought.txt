@@ -1,7 +1,0 @@
-Refactor by encoding the walking direction entirely in the state, removing the separate walking_dir register. Use a three-state FSM with states WALK_LEFT, WALK_RIGHT, and FALLING, where WALK_LEFT and WALK_RIGHT encode walking directions. Detect ground edges by registering previous ground synchronously and derive ground falling and rising edges combinationally.
-
-The next state logic is combinational and prioritizes ground falling (start FALLING), ground rising (resume previous walking direction stored in state), and then bump logic only when walking and ground stable. Bumps cause direction flips only when walking on ground, and bumps during falling or during ground edges do not affect direction.
-
-Use one synchronous always block triggered by clk and async reset to update state and ground_d (previous ground). Outputs are purely Moore-style from state. This approach simplifies state management by folding walking_dir into state, ensures correct timing of ground edge detection and state updates, and clearly separates synchronous and combinational logic. It also simplifies bump handling and ground transitions, avoiding glitches from separate direction registers.
-
-This refactoring produces a clean, easily verifiable FSM that matches the problem's requirements exactly.

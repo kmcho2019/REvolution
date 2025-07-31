@@ -1,9 +1,0 @@
-Simplify the FSM by merging the pattern detection states into a single shift register that continuously captures the last 4 bits of data to detect the "1101" pattern. This eliminates multiple sequential states for pattern matching and reduces state complexity.
-
-Once the pattern is detected, move to a simple SHIFT state asserting shift_ena for 4 cycles using a 2-bit counter. Then progress to COUNT waiting for done_counting, then to DONE waiting for ack before returning to pattern detection.
-
-Use a minimal 3-state FSM: WAIT (pattern detection), SHIFT, COUNT, DONE, with a small counter for shift cycles.
-
-Outputs remain Moore-type, derived from the current state.
-
-This approach reduces state encoding complexity, logic for pattern detection, and maintains the synchronous reset and Moore FSM style.

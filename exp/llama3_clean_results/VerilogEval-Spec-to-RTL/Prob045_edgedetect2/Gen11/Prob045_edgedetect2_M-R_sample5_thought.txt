@@ -1,7 +1,0 @@
-The provided Verilog code for the TopModule can be refactored by utilizing a different structure while maintaining the core functionality of detecting any edge in the 8-bit input vector. One approach is to use a combination of always blocks and assign statements to simplify the logic and potentially improve the PPA metrics. 
-
-Instead of directly assigning `anyedge` within the always block that updates `prev_in`, we can use an assign statement to continuously update `anyedge` based on the current state of `in` and `prev_in`. This approach keeps the same logic but separates the combinational logic from the sequential logic, which can sometimes lead to better optimization opportunities for the synthesizer.
-
-Additionally, we maintain the use of `prev_in` to store the previous state of `in` and update it on every positive edge of the clock, ensuring that the comparison for edge detection is between the current and previous states of `in`.
-
-The goal of this refactoring is to explore whether a different implementation structure can lead to improvements in power, performance, or area without altering the module's functionality.

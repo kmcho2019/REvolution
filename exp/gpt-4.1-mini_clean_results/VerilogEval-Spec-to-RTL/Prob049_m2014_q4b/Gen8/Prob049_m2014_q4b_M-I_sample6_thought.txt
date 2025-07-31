@@ -1,7 +1,0 @@
-To improve PPA while keeping the asynchronous reset functionality, convert the asynchronous reset to a synchronous reset if system permits, which often improves timing and reduces power glitches due to asynchronous reset glitches. If asynchronous reset must remain, introduce a clock enable signal derived from d and reset to prevent unnecessary toggling of q, reducing power. However, as per the problem statement, asynchronous reset is required and only a single bit output, so minimal additional logic is possible. Another approach is to keep the asynchronous reset and minimize signal toggling by adding clock enable that disables clock when d equals q and reset inactive, preventing unnecessary toggling and saving power without changing function.
-
-Therefore, we add a clock enable signal that allows updating q only when d differs from q or reset is asserted. This will reduce toggling in q, thus reducing dynamic power without changing behavior.
-
-This approach slightly increases area (additional combinational logic for the clock enable) but generally reduces dynamic power and can improve timing by reducing switching.
-
-This change preserves the asynchronous reset behavior and positive-edge triggered D flip-flop functionality.

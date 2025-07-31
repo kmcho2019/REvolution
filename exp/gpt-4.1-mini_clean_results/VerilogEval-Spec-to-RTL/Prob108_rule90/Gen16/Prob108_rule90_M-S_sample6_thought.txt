@@ -1,7 +1,0 @@
-Implement the entire 512-bit Rule 90 automaton as a single 512-bit register. Compute the next state in one combinational step using bitwise operations and shifts, treating the boundaries as zeros. This avoids the complexity of multiple blocks and inter-block wiring.
-
-Specifically, the next state of each bit is the XOR of its left and right neighbors. We can use bit shifts and XORs on the entire vector: next_q = (q << 1) ^ (q >> 1), with zeros shifted in for boundaries.
-
-On load, the register takes the input data; otherwise, it updates to next_q each clock cycle.
-
-This approach simplifies the design by eliminating generate loops and boundary signals, reducing logic and improving readability while preserving full functionality.

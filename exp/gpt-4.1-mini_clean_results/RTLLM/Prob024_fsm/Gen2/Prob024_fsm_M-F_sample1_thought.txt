@@ -1,7 +1,0 @@
-To fix the dual-driving issue on the MATCH signal, MATCH should be driven only in the sequential always block, making it a registered output synchronized with the clock. The combinational always block will only calculate the next_state and a combinational signal next_MATCH based on current state and input. Then, at the clock edge, we update the state and assign MATCH from next_MATCH.
-
-This way, MATCH is a registered Mealy output reflecting the detection of the sequence "10011" synchronously, avoiding conflicting assignments and synthesis issues. The next state and next_MATCH signals are purely combinational, maintaining correct Mealy FSM behavior.
-
-Also, ensure the FSM supports overlapping sequence detection by carefully defining transitions for each state, restarting detection from appropriate intermediate states when mismatch occurs or after a successful match.
-
-This approach follows proper synchronous design practices with a Mealy FSM, meeting the problem requirements and fixing the output assignment conflicts.

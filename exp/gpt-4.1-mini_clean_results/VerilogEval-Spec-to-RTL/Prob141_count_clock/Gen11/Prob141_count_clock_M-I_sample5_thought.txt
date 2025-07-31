@@ -1,9 +1,0 @@
-To optimize the existing design for better PPA, I will reduce the long combinational critical path in the nested increment logic by implementing modular incrementers for seconds, minutes, and hours that compute their rollover and carry signals cleanly and in parallel. This removes deeply nested if-else chains and reduces combinational delay.
-
-For hour conversion, I will replace the function with a combinational case statement outputting BCD digits, which synthesis tools can better optimize into minimal logic or LUTs rather than a function with arithmetic.
-
-I will also separate the combinational next-state logic for each time unit (seconds, minutes, hours) into smaller steps that propagate carries explicitly to improve timing and clarity.
-
-Finally, I will merge output assignments directly in the sequential block to avoid extra combinational logic and ensure registers drive outputs directly, minimizing glitches and power.
-
-This structured, carry-propagation approach reduces max combinational delay, easing timing closure, while maintaining synchronous reset priority and functional correctness.

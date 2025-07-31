@@ -1,7 +1,0 @@
-To refactor the given code, we can leverage the use of the `assign` statement for the combinational logic part of the design, specifically for the XOR operation that detects the edges. The sequential logic part, which involves updating the `prev_in` register, can remain within an `always` block. This approach maintains the core functionality of the original design while presenting an alternative implementation structure.
-
-By using `assign` for the XOR operation, we explicitly separate the combinational logic from the sequential logic, which can enhance readability and potentially make the code more efficient for synthesis, as it clearly indicates to the synthesizer which parts of the design are combinational and which are sequential.
-
-The `always` block will still be triggered on the positive edge of the clock, ensuring that `prev_in` is updated with the current input value at each clock cycle. Meanwhile, the `assign` statement will continuously update `anyedge` based on the current input and the previous input stored in `prev_in`, without needing an explicit clock trigger for this operation.
-
-This refactoring strategy focuses on clarity, efficiency, and adherence to best practices for digital design, while maintaining the original functionality of detecting any edge (0 to 1 or 1 to 0 transition) in the input signal and setting the corresponding output bit high the cycle after the transition occurs.

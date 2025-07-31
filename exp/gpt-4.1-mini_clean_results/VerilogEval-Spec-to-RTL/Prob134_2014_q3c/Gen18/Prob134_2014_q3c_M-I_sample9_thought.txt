@@ -1,9 +1,0 @@
-The original solution uses a conditional operator for ns0, which introduces a multiplexer and may increase critical path delay and area slightly. To improve PPA, I will re-express ns0 without a conditional operator, replacing it with purely combinational logic by expanding the condition. Also, common subexpressions like (~y[2] & ~y[1] & y[0]) and (y[2] & ~y[1] & ~y[0]) appear multiple times; extracting them into wires will reduce redundant logic and area. This also makes the code cleaner and may reduce power due to less switching on repeated terms. The output z uses the same subexpressions, so sharing these signals benefits both output and next state logic.
-
-Hence, the strategy is:
-1. Define intermediate signals for repeated state patterns.
-2. Simplify ns0 logic by expressing the ternary logic as a Boolean expression using the intermediate signals.
-3. Maintain straightforward combinational logic for ns1 and ns2 using shared signals.
-4. Assign Y0 and z as before.
-
-This should reduce gate count, possibly improve timing by removing mux logic, and lower power due to less duplicated logic.

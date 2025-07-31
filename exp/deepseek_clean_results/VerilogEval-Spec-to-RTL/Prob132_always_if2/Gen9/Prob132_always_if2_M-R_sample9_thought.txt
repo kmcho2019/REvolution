@@ -1,9 +1,0 @@
-The original code uses always blocks with incomplete sensitivity lists (missing else clauses), which can lead to inferred latches in synthesis. We should refactor this to:
-
-1. Use continuous assignments (assign statements) instead of always blocks for this simple combinational logic
-2. Ensure all outputs are fully defined for all input combinations
-3. Maintain the same logical behavior:
-   - shut_off_computer = 1 when cpu_overheated (0 otherwise)
-   - keep_driving = 1 when not arrived AND gas tank not empty (0 otherwise)
-
-This refactoring eliminates potential latch inference, makes the code more concise, and clearly shows the combinational nature of the logic.

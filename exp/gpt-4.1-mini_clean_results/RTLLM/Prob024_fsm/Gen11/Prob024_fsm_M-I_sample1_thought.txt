@@ -1,7 +1,0 @@
-To improve the FSM design for better PPA, I will apply one-hot encoding to the states instead of binary encoding. One-hot encoding often yields faster and lower-power circuits on FPGAs and can reduce critical path delay by simplifying the next-state logic, since each state is represented by a single flip-flop bit, and combinational logic becomes simpler.
-
-Additionally, I will register the MATCH output (making it a Moore output) instead of a Mealy output to reduce glitches and dynamic switching power caused by combinational outputs depending directly on inputs. This adds a clock cycle latency on the MATCH signal but enhances power and signal stability.
-
-I will maintain the clear and clean structure of the next-state logic with a straightforward always block and synchronous reset. The state transitions will be rewritten to use one-hot encoding and the combinational next state logic adapted accordingly.
-
-Overall, this optimization targets improved timing (performance), reduced switching activity (power), and minimal area overhead due to simpler next-state combinational logic, especially beneficial on FPGA targets.

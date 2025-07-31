@@ -1,5 +1,0 @@
-Refactor the FSM by implementing the Mealy FSM using a single always block for both the next state and output logic combined. Instead of defining output z as a continuous assignment outside the always block, declare it as a reg and update it inside the synchronous block based on the state and input x. This can simplify the design by containing state transitions and output updates together.
-
-Also, keep the asynchronous negative edge reset as required. The FSM states remain encoded with parameters, but the next state and output logic are merged in one always block triggered on posedge clk or negedge aresetn. This approach often aligns with classical Mealy FSM implementations and ensures the output is registered alongside the state, which can aid timing by aligning output changes with the clock edge.
-
-By merging output and next state logic inside the sequential always block, the design shifts output to registered logic rather than purely combinational, which could reduce glitches and improve timing predictability without changing the FSM functionality or number of states.

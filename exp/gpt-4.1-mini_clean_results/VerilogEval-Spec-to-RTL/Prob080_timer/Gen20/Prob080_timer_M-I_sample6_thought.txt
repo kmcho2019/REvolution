@@ -1,7 +1,0 @@
-To improve performance, power, and area, I will implement an enable signal to gate the counter update only when needed: load=1 or counter!=0. This reduces unnecessary toggling and combinational logic on cycles when the counter is zero and no load is requested, thus saving power. Also, the decrement by 1 will be done only when counter is nonzero, otherwise we just hold zero.
-
-This change simplifies the next count logic to avoid unnecessary subtract operations, thereby potentially reducing critical path delay.
-
-We still use a single always @(posedge clk) block for the sequential register update, satisfying the single D flip-flop requirement.
-
-The terminal count (tc) remains asserted when the counter is zero.

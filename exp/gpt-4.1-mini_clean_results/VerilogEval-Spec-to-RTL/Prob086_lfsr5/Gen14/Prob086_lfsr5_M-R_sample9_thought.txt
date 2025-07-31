@@ -1,7 +1,0 @@
-I will refactor the LFSR implementation to separate the combinational next state logic from the sequential register update. Specifically, I will compute the next LFSR state in a combinational always @* block (or as a wire), and then update the register q synchronously in an always @(posedge clk) block.
-
-This approach improves timing by eliminating any read-after-write hazards in the sequential block, since the sequential block only updates q from the precomputed next state.
-
-I will use a 5-bit wire next_q that holds the next state calculated by shifting right and applying XOR feedback at taps 5 and 3 (bits 4 and 2 in zero-based indexing). The synchronous reset still sets q to 1.
-
-This refactoring enhances clarity by separating combinational and sequential logic, and can improve performance while preserving maximal-length Galois LFSR behavior.

@@ -1,7 +1,0 @@
-Instead of using a single always block handling all 8 bits simultaneously, I will instantiate 8 individual D flip-flop modules with asynchronous reset, one per bit. This modular approach makes the design highly scalable and reusable, and clearly shows the presence of 8 separate flip-flops, each with asynchronous reset.
-
-Each flip-flop module will have clk, areset, d, and q ports. The TopModule will then instantiate 8 of these modules, connecting each bit of d and q accordingly.
-
-This structural approach is more verbose but can be advantageous for hierarchical verification, testing, or when individual bits need to be instrumented differently in a more complex system. It also clearly separates the asynchronous reset and clock edge-triggering logic per bit, which may help with some synthesis tools and formal analysis.
-
-The asynchronous reset will be active-high and reset each flip-flop output to zero asynchronously, with data loaded at the positive clock edge.

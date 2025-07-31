@@ -1,9 +1,0 @@
-Refactor the design to remove recursion and explicit base modules by implementing a flat, parameterized popcount function using a generate-for loop that sums bits pairwise and progressively reduces the width until a final count is obtained.
-
-In TopModule, split the 255-bit input into five 51-bit chunks and compute partial popcounts via the flat popcount function. Then sum these partial counts using straightforward combinational adders.
-
-This approach avoids recursion and small dedicated modules, simplifying the module hierarchy and making the popcount logic fully combinational with predictable and regular structure. Using $clog2 directly improves clarity and synthesis friendliness.
-
-The code uses only assign statements and generate blocks, no module instantiations inside popcount, improving readability and potentially synthesis efficiency.
-
-The final output remains 8 bits wide, summing all 255 bits correctly.

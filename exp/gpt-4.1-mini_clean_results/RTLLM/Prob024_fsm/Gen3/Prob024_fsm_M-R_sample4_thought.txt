@@ -1,7 +1,0 @@
-Refactor the FSM by representing states with one-hot encoding and using continuous assignments (`assign`) for the combinational next-state logic and MATCH output. This removes the need for a combinational always block and uses a synchronous always block only to update the state registers on clock edges or reset.
-
-The state is encoded as one-hot signals to simplify next state logic and improve readability; each state's next value is computed using logic expressions based on current states and input. The MATCH output is assigned combinationally as a function of the current state and input (Mealy style), not registered separately, which is valid since MATCH depends on present input and state.
-
-This approach keeps synchronous state updates, uses combinational `assign` statements for next state and output logic, and avoids dual-driven signals. The one-hot encoding can provide easier timing and synthesis optimizations on certain FPGAs, and the absence of a combinational always block prevents potential simulation-synthesis mismatches.
-
-This structure meets the original FSM function and supports overlapping sequence detection, while being structurally different from the original code.

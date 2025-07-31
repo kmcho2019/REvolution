@@ -1,9 +1,0 @@
-To fix the design, ensure that the input registers (mul_a_reg and mul_b_reg) sample the inputs every clock cycle regardless of mul_en_in, while the enable pipeline controls validity of each pipeline stage. This avoids stale or invalid data in the pipeline. The input enable signal (mul_en_in) should be shifted through a 3-bit pipeline register (mul_en_out_reg) to track validity per stage.
-
-Partial products should be generated combinationally based on the registered inputs. Use explicit shifts instead of concatenations with varying zeros for clarity and consistency.
-
-In pipeline stages 2 and 3, sum registers should be updated every clock cycle but only load new values when the corresponding enable bit in mul_en_out_reg is active; otherwise, clear to zero to avoid stale data.
-
-The output enable (mul_en_out) is the MSB of mul_en_out_reg, signaling a valid output result after 3 pipeline stages. The output mul_out is assigned the final product register value when mul_en_out is high; otherwise, zero.
-
-Overall, propagate data and enable signals through the pipeline each cycle without gating input registers on enable, and carefully control partial sums and output updates based on staged enable signals. This maintains data and enable synchronization and prevents invalid output.

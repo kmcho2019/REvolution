@@ -1,5 +1,0 @@
-Refactor the design to implement the 512-bit state register update using a synchronous always block that updates q only, but compute the next state bits combinationally with a dedicated function that cleanly handles boundary conditions within the function. This encapsulates the next-state logic, improving modularity and readability.
-
-Inside the combinational always block (or continuous assign), use a for-loop to generate next_state by calling the function for each bit, which checks boundaries internally. The synchronous register q updates on the clock's rising edge and loads data when load is high.
-
-This approach separates the combinational next-state computation from sequential logic more explicitly and leverages a function to neatly encapsulate the Rule 110 logic, aiding clarity and maintainability without changing functionality.

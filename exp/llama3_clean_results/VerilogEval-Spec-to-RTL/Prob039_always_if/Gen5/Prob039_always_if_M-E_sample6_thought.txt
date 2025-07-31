@@ -1,7 +1,0 @@
-A novel approach to implementing the 2-to-1 mux with the given conditions is to use a single always block that handles both the direct assignment and the procedural assignment. This can be achieved by utilizing the non-blocking assignment (`<=`) for the procedural output and the blocking assignment (`=`) for the direct assignment within the same always block. This methodology minimizes the use of combinational logic outside of the always block, potentially reducing area usage and simplifying the design.
-
-The idea is to use a single always block that is sensitive to all inputs (`@(*)`). Inside this block, we use a case statement to determine which input to assign to the procedural output (`out_always`) based on the select signals (`sel_b1` and `sel_b2`). Simultaneously, we use a direct assignment for the combinational output (`out_assign`) to reflect the same selection logic but in a combinational manner.
-
-This approach ensures that both assignments are aligned in terms of functionality, reducing the complexity of managing separate modules or logic paths for each type of assignment. It also allows for potential optimization by the synthesis tool, as the logic is more compact and directly related.
-
-The key benefit of this approach is its simplicity and the reduction of redundant logic, which can lead to improvements in area and power consumption, while maintaining the performance due to the direct and procedural assignments being handled within a single always block.

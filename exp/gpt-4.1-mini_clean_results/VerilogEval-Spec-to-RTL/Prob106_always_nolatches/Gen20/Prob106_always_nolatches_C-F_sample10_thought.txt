@@ -1,7 +1,0 @@
-To fuse the strengths of both examples:
-- From Example 1, take the clear two-step decoding: first verify the 0xE0 prefix, then decode only the lower byte using a case statement. This reduces the comparison logic width from 16 to 8 bits and leverages the known PS/2 protocol structure, thus saving area and reducing power.
-- From Example 2, take the use of an internal small enumerated code for outputs, which simplifies output logic to one-hot decoding, improving readability and maintainability.
-- Combine both by implementing a 3-bit internal arrow_code register that is set only if the upper byte equals 0xE0, else zero (no arrow).
-- Outputs are then simple combinational assignments from arrow_code, ensuring minimal switching and mutually exclusive outputs.
-- This hybrid approach decreases logic complexity compared to Example 2’s full 16-bit matching, while enhancing clarity and optimization over Example 1 by consolidating output logic through arrow_code.
-- Result: efficient prefix filtering, reduced decoding width, compact one-hot output generation, minimal logic depth, and a structure that is highly synthesis-friendly for area, power, and timing.

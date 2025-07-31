@@ -1,8 +1,0 @@
-Improve the existing ALU implementation by addressing these points:
-- Correct the LUI instruction to use the upper 16 bits of input 'a' concatenated with 16 zeros as per the specification.
-- Optimize SLT and SLTU operations by computing the less-than comparison once and reuse its result for both `r` and `flag` outputs, reducing redundant logic and improving performance.
-- Maintain default output `r` assignment to zero to avoid latches and glitches.
-- Keep carry and overflow computed only for arithmetic operations to reduce unnecessary logic and power.
-- Set flag to 0 explicitly for non-SLT/SLTU operations to avoid high-impedance or 'z' states, which improves synthesis friendliness and reduces power.
-- Keep all other operations as before for clarity, correctness, and synthesis efficiency.
-These changes improve correctness (LUI fix), reduce combinational logic depth and switching (flag reuse), and keep power and area optimization in mind.

@@ -1,9 +1,0 @@
-To design the dual-port RAM as specified, we need to focus on two primary aspects: writing data into the RAM and reading data from it. Both operations should be able to occur simultaneously without interfering with each other. The design will utilize two always blocks in Verilog to handle the write and read operations separately but within the same module. The module will be parameterized to easily adjust the width and depth of the RAM if needed.
-
-The first step is to define the parameters WIDTH and DEPTH for the RAM, specifying the bit width of each memory location and the total number of locations, respectively. The RAM array will be declared as a register array with the specified width and depth.
-
-For the write operation, an always block will be used that is sensitive to the positive edge of the clock signal (clk) and the negative edge of the reset signal (rst_n). This block will reset the RAM array to zero on reset and write data to the specified address when the write enable signal (write_en) is active.
-
-For the read operation, another always block will be used that is also sensitive to the positive edge of the clock signal (clk) and the negative edge of the reset signal (rst_n). This block will reset the read_data register to zero on reset and assign the data from the specified address in the RAM array to the read_data register when the read enable signal (read_en) is active.
-
-By using two separate always blocks for write and read operations, we can ensure that both operations can be performed simultaneously without conflicts, as required for a dual-port RAM.

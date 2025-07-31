@@ -1,7 +1,0 @@
-Fuse the simplicity and minimal register usage from Example 1 with the explicit tracking of instruction source in Example 2 for clearer output control and easier timing optimization. Use a single 8-bit register to store the instruction, and a small 1-bit register as a valid flag indicating whether the stored instruction is from fetch=2'b10 (RAM/ROM) or 2'b01 (register). This avoids continuously decoding the fetch signal combinationally on outputs, reducing output logic complexity.
-
-On reset (active low), clear both registers. On clock rising edge, update the instruction register and source flag only when fetch indicates a valid fetch (01 or 10). Outputs are then directly derived from the stored instruction and the source flag register, ensuring stable outputs without combinational dependency on the dynamic fetch input, reducing glitches and improving timing.
-
-This design is compact (one 8-bit register + one 1-bit flag), easy to understand, and mitigates combinational hazards on outputs. It also enables straightforward clock gating or enable insertion later for power optimizations without losing functionality. The outputs ins (opcode) and ad1 (reg address) always reflect the stored instruction. The full 8-bit ad2 output is valid only when the stored instruction came from fetch=2'b10, else zeroed.
-
-This fusion combines Example 1's minimalism and Example 2's state-tracking concept to produce an efficient, clean, and robust implementation.

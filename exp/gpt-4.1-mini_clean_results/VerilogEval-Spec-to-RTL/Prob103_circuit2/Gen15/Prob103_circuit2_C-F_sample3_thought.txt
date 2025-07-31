@@ -1,7 +1,0 @@
-Both examples correctly implement the even parity function as the inverse of the XOR of all inputs, but expressed differently: one uses ~(a ^ b ^ c ^ d), the other uses a ~^ b ~^ c ~^ d. These are logically equivalent, but the second uses chained XNOR operators, potentially mapping to fewer gates or a single primitive in synthesis.
-
-To fuse the best ideas, I will use the chained XNOR operator expression, as it explicitly represents even parity in a way synthesis tools may optimize better (fewer gates and less switching power), while keeping the code simple and combinational. This directly corresponds to the logic function implied by the waveform and minimizes gate count and transitions.
-
-Hence, I implement q as the chain of XNOR of inputs a, b, c, and d: assign q = a ~^ b ~^ c ~^ d;
-
-This approach fuses the clarity and efficiency of the XOR-based parity with the slight synthesis-level optimization advantage of XNOR chaining.

@@ -1,9 +1,0 @@
-Implement the FSM using a one-hot state encoding to simplify the next-state logic and output decoding at the cost of slightly more flip-flops. Each state will be represented by a unique bit in a 4-bit register: A, B, C, D. This encoding allows next-state logic to be expressed as simple combinational AND/OR operations, potentially easing synthesis optimizations in some tools. 
-
-Use synchronous active-low reset to state A on the positive clock edge, and separate always blocks for state register and combinational logic for next state and output. 
-
-Outputs will be assigned by continuous assignments derived from the current state one-hot bits. This modularizes output logic and shows a different approach compared to always blocks. 
-
-Prioritize requests in state A by checking r[0], then r[1], then r[2] in that order, transitioning to the corresponding grant state. Each grant state holds as long as its request remains asserted, otherwise transitions back to idle (A).
-
-This approach makes state transitions and outputs very explicit and easy to debug, showing an alternate encoding and output assignment style from the earlier example.

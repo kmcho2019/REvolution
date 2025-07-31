@@ -1,9 +1,0 @@
-Instead of using simple vector slicing, this approach leverages bitwise shifts and masks for neighbor comparisons:
-
-- For out_both: Shift the input left by 1 bit, then AND with the original input to get pairs of adjacent bits both set. Clear out_both[99] explicitly since in[99] has no left neighbor.
-
-- For out_any: Shift the input right by 1 bit, OR with the original input to check if either bit or its right neighbor is '1'. Clear out_any[0] explicitly as in[0] has no right neighbor.
-
-- For out_different: Compute the XOR of the input with a circular left-rotated version of itself (using concatenation). This inherently handles the wrap-around neighbor comparison for all bits.
-
-This shift-based implementation provides an alternative architectural perspective emphasizing the use of shift operations to handle neighbors and is equally combinational and efficient. It also cleanly isolates boundary conditions using explicit masks.

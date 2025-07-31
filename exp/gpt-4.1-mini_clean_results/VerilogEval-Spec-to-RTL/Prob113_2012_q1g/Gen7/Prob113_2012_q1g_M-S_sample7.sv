@@ -1,8 +1,0 @@
-module TopModule(
-    input  [3:0] x,
-    output f
-);
-    // Simplified boolean expression derived from Karnaugh map grouping:
-    // f = (~x[0] & ~x[1]) | (x[2] & ~x[0]) | (~x[3] & ~x[1])
-    assign f = (~x[0] & ~x[1]) | (x[2] & ~x[0]) | (~x[3] & ~x[1]);
-endmodule

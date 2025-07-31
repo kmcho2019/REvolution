@@ -1,8 +1,0 @@
-Instead of using explicit state variables, we can implement this using a counter that tracks the message byte position:
-1. Use a 2-bit counter to track which byte we're expecting next (0=waiting for start, 1=first byte, 2=second byte)
-2. When reset or after completing a message, counter resets to 0
-3. When counter is 0, we look for in[3]=1 to start counting
-4. Each valid byte increments the counter until we reach 3 (message complete)
-5. Done is asserted when counter transitions from 2 to 0
-
-This approach eliminates explicit state variables and reduces the logic to a simple counter with conditional increment.

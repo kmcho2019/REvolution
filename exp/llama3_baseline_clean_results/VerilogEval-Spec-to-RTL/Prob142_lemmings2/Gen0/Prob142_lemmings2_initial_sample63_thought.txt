@@ -1,7 +1,0 @@
-To implement the Lemmings behavior using a Moore state machine, we need to identify the states and transitions. We can define three states: walking left, walking right, and falling. The state machine will transition between walking left and walking right based on the bump_left and bump_right inputs. When ground=0, the state machine will transition to the falling state. While in the falling state, the aaah output will be set to 1, and the walk_left and walk_right outputs will be set to 0. When ground=1 again, the state machine will transition back to the previous walking state.
-
-We can use a 2-bit state variable to represent the three states: 2'b00 for walking left, 2'b01 for walking right, and 2'b10 for falling. The state machine will be reset to walking left (2'b00) when areset is asserted.
-
-The next state logic will be based on the current state and the inputs. If the current state is walking left or walking right, and ground=0, the next state will be falling. If the current state is falling and ground=1, the next state will be the previous walking state.
-
-The output logic will be based on the current state. If the current state is walking left, walk_left will be set to 1. If the current state is walking right, walk_right will be set to 1. If the current state is falling, aaah will be set to 1.

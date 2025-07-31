@@ -1,9 +1,0 @@
-I will implement the 512-bit Rule 90 cellular automaton in a fully combinational fashion for the next state calculation, feeding into a single 512-bit register to hold the current state. The next state for each bit i is the XOR of q[i-1] and q[i+1], with boundary bits q[-1] and q[512] assumed zero.
-
-This approach avoids splitting into smaller blocks and instead leverages simple vector slicing and concatenation to obtain shifted versions of the state. Specifically, I will create two 512-bit vectors: one shifted left by one with a zero padded at the right, and one shifted right by one with a zero padded at the left. XOR-ing these two vectors yields the next state of all 512 bits in parallel.
-
-On a positive clock edge, if load is asserted, the state register is loaded from input data; otherwise, it updates to the next state.
-
-This approach uses minimal additional wiring and no generate loops, making the code very concise, clear, and likely synthesizing into a single 512-bit wide register and simple combinational logic, which should be efficient both in area and speed.
-
-It fully meets the specification: positive edge clock, boundary bits zero, one-step state update per clock, and load capability.

@@ -1,7 +1,0 @@
-The original code is already optimal in terms of area, performance, and power for a simple 8-bit register with positive-edge triggered D flip-flops. Given the lack of reset or enable signals, there is no scope for clock gating or additional control logic to save power or improve performance. The reported simulation mismatch is likely due to initial unknown values (X) at startup, which is common without reset. 
-
-To address this and improve design robustness without affecting PPA negatively, I will add a synchronous reset input that initializes the register output `q` to zero. This ensures defined initial conditions, eliminating initial mismatches in simulation and improving testability. The reset can be active-high and synchronous to the clock, which is simple and commonly supported.
-
-Adding reset logic slightly increases area but greatly improves correctness and simulation behavior without impacting timing negatively. The code remains clean, with no extra combinational logic on the critical path.
-
-Therefore, the improvement strategy is to add a synchronous reset input to initialize `q`, which resolves simulation mismatches and improves design robustness while maintaining PPA tradeoffs.

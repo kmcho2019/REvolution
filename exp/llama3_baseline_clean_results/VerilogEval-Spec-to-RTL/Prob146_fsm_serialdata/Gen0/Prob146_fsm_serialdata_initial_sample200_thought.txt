@@ -1,8 +1,0 @@
-To design the finite state machine (FSM) for receiving bytes with start and stop bits, we'll break down the process into distinct states. 
-1. **Idle**: The initial state, waiting for the start bit (0) on the input line. 
-2. **Start**: Once a start bit is detected, the FSM moves into this state, preparing to collect data bits.
-3. **Data**: In this state, the FSM collects the 8 data bits. The least significant bit is sent first.
-4. **Stop**: After collecting all data bits, the FSM waits for the stop bit (1). If the stop bit is correct, it asserts `done` and updates `out_byte`. If not, it returns to waiting for a stop bit.
-5. **Reset**: On a synchronous reset, the FSM returns to the Idle state, resetting any collected data and outputs.
-
-The `out_byte` is updated with the collected data bits when a valid stop bit is detected, and `done` is asserted at the same time to signal that a complete byte has been received.

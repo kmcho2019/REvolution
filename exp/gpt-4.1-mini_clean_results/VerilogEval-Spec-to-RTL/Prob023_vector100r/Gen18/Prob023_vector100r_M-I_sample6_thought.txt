@@ -1,5 +1,0 @@
-The original solution uses a recursive hierarchical structure to reverse the bits, which leads to deep module instantiation and extra logic overhead. To optimize for better PPA (performance, power, area), we should flatten the design and avoid recursion.
-
-A straightforward approach is to use a single generate-for loop inside TopModule that directly assigns output bits from input bits in reversed order (out[i] = in[N-1 - i]). This eliminates intermediate wires, recursion, and hierarchy, reducing area and power and improving timing by minimizing logic levels.
-
-This flat combinational assignment is synthesizable and more PPA-friendly while maintaining correctness.

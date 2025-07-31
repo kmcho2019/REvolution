@@ -1,9 +1,0 @@
-To improve the PPA of the 12-hour BCD clock design while keeping the same functional behavior, I will:
-- Replace separate BCD digit counters with binary counters internally for seconds, minutes, and hours, as binary counters are simpler and use fewer resources.
-- Only convert to BCD at output ports via combinational logic, reducing combinational logic in the counting path.
-- Implement the hour counter as a 1–12 binary counter, toggling PM at rollover from 11 to 12.
-- Keep synchronous reset and increment only on ena pulses.
-- This approach reduces combinational logic depth and area in the counting logic, improving timing and power by simplifying logic transitions and removing redundant checks.
-- Use non-blocking assignments properly and keep all sequential logic within a single always block triggered by clk.
-- The PM toggle and reset logic remain, but with simpler conditions due to binary hour counter.
-This will improve timing (shorter critical path), reduce area (less combinational and comparator logic), and reduce switching power (simpler logic).

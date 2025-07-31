@@ -1,9 +1,0 @@
-The original implementation is already minimal and clean, simply summing the input bits to get the population count. Given the small input width (3 bits), further optimization for performance, power, or area is limited. However, a slightly different approach is to implement the population count using a combinational logic expression based on bitwise operations, which may improve gate-level efficiency for synthesis by explicitly encoding the sum instead of relying on addition.
-
-By encoding the sum with simple boolean equations:
-- out[0] = in[0] ^ in[1] ^ in[2]  (parity)
-- out[1] = (in[0] & in[1]) | (in[1] & in[2]) | (in[2] & in[0]) (majority)
-
-This can reduce the adder logic to simple AND/OR/XOR gates, potentially lowering the power and area slightly compared to a small adder, especially in certain synthesis flows.
-
-Thus, the improved code implements the population count as the sum of three bits using simple logic gates, which may yield marginal PPA benefits.

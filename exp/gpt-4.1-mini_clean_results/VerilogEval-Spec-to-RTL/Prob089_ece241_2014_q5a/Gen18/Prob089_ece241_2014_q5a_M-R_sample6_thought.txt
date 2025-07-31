@@ -1,9 +1,0 @@
-Refactor the design to use a one-hot encoded state machine with two flip-flops representing the states explicitly, eliminating the typedef and case statement. Instead of sampling the input `x` in a separate register, directly use the input signal in the state transition logic and output combinational logic to reduce one register stage and simplify timing.
-
-The state machine is implemented with two state bits `state0` and `state1` representing S0 and S1 respectively, with asynchronous reset clearing both. The next state logic is computed combinationally using assign statements, and the registered state bits are updated on the clock edge or asynchronously reset.
-
-The output `z` is driven combinationally as a pure Moore output depending only on the current state bits and the current input `x`. This approach simplifies the control path and input sampling, reduces register count, and clarifies state encoding with explicit signals.
-
-Asynchronous reset remains in the design per spec. The output logic uses simple AND/OR gates with the state bits to keep minimal logic levels. The approach maintains correct 2's complement behavior, with `S0` state copying input bits until first '1' is seen, then `S1` state inverting all subsequent bits.
-
-This restructuring keeps the core functionality but improves clarity and may slightly improve timing by removing input register stage and using explicit one-hot state bits.

@@ -1,9 +1,0 @@
-The original code implements a finite state machine (FSM) to identify message boundaries in a PS/2 mouse protocol byte stream. It uses a simple state machine with three states (SEARCH, BYTE1, BYTE2) and introduces a separate signal 'msg_received' to indicate when a message is fully received. The FSM transitions between these states based on the input 'in' and signals 'done' when a message is fully received.
-
-To refactor this code, we can use a different structure, such as using `assign` statements instead of `always` blocks, and restructure the state machine to use a one-hot encoding. We will also aim to simplify the combinational logic to reduce the number of operations and minimize glitches.
-
-One approach is to use a one-hot encoding for the state machine, where each state is represented by a unique binary code. This can simplify the state transition logic and reduce the number of conditional statements.
-
-Additionally, we can use `assign` statements to directly assign the values of the next state and 'msg_received' signal based on the current state and input conditions. This can eliminate the need for separate `always` blocks and simplify the code.
-
-The refactored code will aim to maintain the same functionality as the original code while improving the structure and simplicity of the implementation.

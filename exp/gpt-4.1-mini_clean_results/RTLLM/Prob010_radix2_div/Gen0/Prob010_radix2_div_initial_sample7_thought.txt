@@ -1,9 +1,0 @@
-Implement a radix-2 divider handling both signed and unsigned division of 8-bit inputs.
-On opn_valid and res_valid low, latch inputs and prepare absolute values and negated divisor.
-Use a shift register SR that holds (dividend shifted left by 1) in its lower bits plus one extra bit for the quotient build-up.
-Perform the division iteratively for 8 cycles:
-- At each cycle, subtract NEG_DIVISOR from the upper bits of SR, check the borrow/carry-out.
-- Update SR by shifting left and inserting the quotient bit (determined by carry-out).
-Manage sign corrections on quotient and remainder at the end.
-Output result is concatenation of remainder (upper 8 bits) and quotient (lower 8 bits).
-Control res_valid to indicate completion.

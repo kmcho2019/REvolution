@@ -1,7 +1,0 @@
-The module TopModule will implement a gshare branch predictor. The gshare predictor uses the global branch history to make predictions. The global branch history register is updated based on the predicted branch direction. When a branch prediction is requested, the module produces the predicted branch direction and the state of the branch history register used to make the prediction. When training for a branch is requested, the module updates the pattern history table (PHT) to train the branch predictor to predict the branch more accurately next time.
-
-The PHT is a 128-entry table of two-bit saturating counters, indexed by a 7-bit index which is the result of hashing the 7-bit pc and 7-bit global history using xor.
-
-The branch predictor will handle the case when training for a misprediction and a prediction (for a different, younger instruction) occurs in the same cycle. In this case, training takes precedence, and the branch history register is recovered to the state immediately after the mispredicting branch completes execution.
-
-The module will be implemented using Verilog, with the interface specified in the problem statement. The module will contain the necessary logic to implement the gshare branch predictor, including the PHT, the global branch history register, and the logic to handle prediction and training requests.

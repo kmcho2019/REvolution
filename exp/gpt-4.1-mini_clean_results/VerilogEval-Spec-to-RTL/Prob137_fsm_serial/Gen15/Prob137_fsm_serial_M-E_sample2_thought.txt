@@ -1,7 +1,0 @@
-Use a Moore FSM with distinct states for idle, start bit validation, data bit reception, stop bit validation, and error recovery. To simplify timing, capture input bits synchronously at each clock edge and count bits received. Use a shift-left register shifting in the input bit at LSB to receive LSB-first data, which aligns intuitively with the serial protocol. The FSM asserts 'done' for one cycle right after confirming the correct stop bit.
-
-When a start bit (0) is detected, the FSM transitions from IDLE to START state to confirm start bit presence. It then moves to DATA state to shift in 8 data bits sequentially, counting bits as they come. After receiving 8 bits, it transitions to STOP state to check the stop bit (should be 1). If stop bit is correct, 'done' pulses high, and FSM returns to IDLE. If not, FSM enters ERROR state, where it waits until a '1' line is seen (valid stop bit) before returning to IDLE, preventing false frame detections.
-
-Synchronous reset initializes the FSM and data registers. The done signal is registered and pulses only for one cycle upon successful frame reception. The FSM state is encoded as a 3-bit binary code, balancing simplicity and area. The data shift register is updated only in DATA state, and the bit counter increments accordingly.
-
-This approach provides clear separation of protocol stages, simple logic for timing and correctness, and explicit error recovery, all beneficial for synthesis and robust operation.

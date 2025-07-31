@@ -1,7 +1,0 @@
-The bug in the original module arises because the output `out` is declared as a single-bit scalar, while the inputs `a` and `b` are 8-bit vectors. The mux operation attempts to use bitwise operations on 8-bit vectors but assign the result to a 1-bit output, causing width mismatch and functional errors.
-
-To fix this, the output should be declared as an 8-bit vector to match the inputs. 
-
-To provide a different structural approach while maintaining the same mux functionality, I will implement the mux inside a combinational always block rather than using a continuous assign statement. This will explicitly select `a` or `b` based on `sel` and assign the entire 8-bit vector to `out`. This approach is clear and synthesizable and still simple.
-
-This refactoring also prevents any confusion about signal width, and since `out` is declared as an 8-bit output, it matches the input width and the expected functionality.

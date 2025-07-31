@@ -1,9 +1,0 @@
-Refactor the decade counter by implementing the next state logic directly using a continuous assignment (`assign`) for the next count value. The synchronous reset and counting logic will remain the same, but the combinational logic is moved outside always blocks for simpler structure and potentially clearer data flow.
-
-Specifically:
-1. Use a wire `reached_ten` as before to detect the count of 10.
-2. Implement the `next_q` as a wire, assigned via a conditional operator based on reset and reached_ten.
-3. Maintain a single always block triggered on `posedge clk` to update the registered output `q` with the wire `next_q`.
-4. This style reduces the need for a combinational always block and may be simpler to read while keeping synchronous reset and the counting sequence intact.
-
-This refactor maintains the same counting behavior and synchronous reset but uses continuous assignment and conditional operator instead of an always @(*) block for next-state logic.

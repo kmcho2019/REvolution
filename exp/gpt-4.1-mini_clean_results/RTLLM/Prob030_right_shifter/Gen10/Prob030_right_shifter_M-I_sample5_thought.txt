@@ -1,9 +1,0 @@
-To improve the existing right shifter design for better Power-Performance-Area (PPA), I will optimize the logic to minimize switching activity and simplify the assignment. Instead of building a shifted wire each cycle, I will directly perform the right shift and insert the new bit in a single assignment in the always block, reducing wire fanout and extra logic. Since the initial solution uses a combinational wire for next state, removing it avoids unnecessary routing and gates.
-
-Further, I will use non-blocking assignments carefully to update q in one statement: q <= {d, q[7:1]}; This is a common idiom for shift registers, and synthesis tools typically optimize it well.
-
-This approach slightly reduces combinational load and maintains clean synchronous logic, improving timing and possibly power consumption without adding complexity or area.
-
-Initialization remains with an initial block for simulation consistency.
-
-Overall, this is a minimal and efficient solution well-suited for small shift registers.

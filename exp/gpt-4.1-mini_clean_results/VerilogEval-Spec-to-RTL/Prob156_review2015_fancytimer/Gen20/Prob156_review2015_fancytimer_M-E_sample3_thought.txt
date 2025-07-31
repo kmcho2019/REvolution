@@ -1,7 +1,0 @@
-Use a simple three-stage FSM: SEARCH, LOAD, COUNT, DONE. In SEARCH, continuously shift in data bits (MSB first) into a 4-bit shift register each clock; when the register matches 1101, transition to LOAD. In LOAD, shift in 4 bits serially MSB first into a 4-bit delay register. Once loaded, transition to COUNT.
-
-In COUNT, maintain two counters: a 10-bit cycle counter (0 to 999) and a 4-bit block counter initialized to delay + 1. Every clock increment cycle counter. When cycle counter reaches 999, decrement block counter and reset cycle counter. Output the current count as block counter minus 1 (to show remaining blocks). Assert counting signal high. When block counter reaches zero after completing counting cycles, transition to DONE.
-
-In DONE, assert done signal high, keep counting low and count output don't-care. Wait for ack to go high, then reset FSM to SEARCH state and all counters to zero, ready for next pattern detection.
-
-By always shifting in data during SEARCH state, detection is robust. The delay bits load MSB first by shifting delay register left and inserting input bit into LSB. Counting exactly (delay+1)*1000 clocks is achieved by nested counters, and output count shows the current remaining block for exactly 1000 cycles. This clear FSM with explicit counters and synchronous reset satisfies all requirements without subtle timing dependencies.

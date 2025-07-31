@@ -1,7 +1,0 @@
-Implement the 64-bit subtractor as a single 64-bit ripple borrow subtractor built from a chain of full subtractor (one-bit subtractor) modules. Each full subtractor takes a borrow-in and outputs a borrow-out, enabling precise borrow propagation. The subtraction is performed bitwise as A - B - borrow_in. 
-
-The overflow detection logic uses the classic signed overflow condition for subtraction: overflow occurs if the sign bits of A and B differ, and the sign bit of the result differs from the sign bit of A. This overflow logic is implemented at the final stage.
-
-This fully bit-serial borrow ripple approach is conceptually simple and modular with fully synthesizable logic. Although slower than carry-lookahead, it is easy to understand, verify, and is area-efficient. The single-bit subtractor module is reused 64 times and the borrow is propagated from LSB to MSB. The overflow is computed from the MSB bits only, making it straightforward.
-
-This differs from the provided solution by using borrow logic for subtraction rather than transforming subtraction into addition with carry-lookahead adders. It emphasizes a fundamental borrow ripple subtractor chain and modular design.

@@ -1,9 +1,0 @@
-Refactor the design to separate the combinational logic and flip-flops more explicitly, by creating combinational signals for each D input based on the current flip-flop states and input x, then using flip-flops to capture those values on the clock's rising edge.
-
-This keeps the core functionality identical but improves clarity by making the combinational and sequential parts explicit.
-
-Also, use an asynchronous reset input internally to initialize the flip-flops to zero, but since the original interface does not specify a reset, we can include a reset internally for simulation with an initial block but focus on a clean structural approach using continuous assignments for combinational parts and registers for sequential parts.
-
-The output z is then the NOR of the flip-flop outputs, implemented with an assign statement.
-
-This refactoring uses separate wires for the combinational D inputs and registers for state storage, highlighting the FSM nature more clearly.

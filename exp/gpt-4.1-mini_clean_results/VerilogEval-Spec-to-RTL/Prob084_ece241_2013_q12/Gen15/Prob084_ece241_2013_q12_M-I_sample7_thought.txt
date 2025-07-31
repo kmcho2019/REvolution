@@ -1,9 +1,0 @@
-To optimize for better power and performance without changing the functionality, we can implement clock gating internally to disable the clock to the flip-flops when 'enable' is low, thereby reducing unnecessary switching and power consumption. Also, since the shift register shifts data on each positive clock edge only if enable is high, gating the clock can simplify internal logic and potentially reduce delay and power.
-
-We will create an internally gated clock signal by ANDing clk and enable, so that the flip-flops only clock on enable=1. This reduces toggling inside the shift register when enable=0.
-
-The multiplexer remains the same, as it is already minimal and efficient.
-
-This approach retains all synchronous logic triggered on clk's positive edge while reducing power, and potentially improves timing by removing enable gating logic inside the sequential always block.
-
-Note: Internal clock gating is a synthesis-friendly style but depends on tool support; alternatively, enable-based load with enable signal is used, but clock gating can save power when enable is sparse.

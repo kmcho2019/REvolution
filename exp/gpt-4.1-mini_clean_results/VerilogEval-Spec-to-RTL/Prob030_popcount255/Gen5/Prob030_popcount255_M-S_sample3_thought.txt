@@ -1,5 +1,0 @@
-Simplify the 255-bit popcount by directly summing in a balanced binary tree of adders instead of the three-level ternary tree. First, split the input into 51 groups of 5 bits and use the same popcount5 module for partial counts. Then, combine these 51 partial counts using a binary adder tree. This reduces complexity by eliminating complicated multiple stages and multiple padding, uses only simple 2-input adders, and makes the structure more straightforward and easy to verify.
-
-Since 51 partial sums each max 5, max total count is 255 (8 bits). We can sum pairs of 7-bit values (each popcount5 output zero-extended to 7 bits) in a binary tree until one output remains. The tree height is ceil(log2(51))=6 stages max, which is a simple and clear structure.
-
-This approach keeps the popcount5 module, simplifies the summation, and reduces the size of intermediate sums without complicated radix-3 summation or large arrays, easing synthesis and analysis.

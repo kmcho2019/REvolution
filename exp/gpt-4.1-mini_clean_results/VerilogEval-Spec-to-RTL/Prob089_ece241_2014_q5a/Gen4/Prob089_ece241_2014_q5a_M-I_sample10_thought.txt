@@ -1,7 +1,0 @@
-To optimize the given design for better PPA (Performance, Power, Area), we separate the combinational next-state and output logic from the sequential state and output registers. This enables the output to be generated combinationally based on current state and input, reducing output latency and critical path delay. The sequential always block only updates the state and output registers on the clock edge or asynchronous reset.
-
-Additionally, by making output combinational before registering it, the output latency is improved (output changes immediately with input/state changes within the clock cycle). The asynchronous reset still initializes state and output registers properly.
-
-This two-process style (combinational next-state/output + sequential state/output registers) improves timing by shortening the critical path to just the registers without combinational logic in the data path of the registers. It also helps synthesis tools optimize clock gating and power.
-
-The logic remains minimal and clean, preserving the one-bit state and output. This results in improved timing (lower critical path), slight power improvement by enabling clock gating, and no increase in area.

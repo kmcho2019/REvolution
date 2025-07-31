@@ -1,8 +1,0 @@
-To achieve a fractional frequency division by 3.5 using double-edge clocking and phase shifting, the approach is:
-- Use a counter that runs through 7 source clock cycles (MUL2_DIV_CLK=7).
-- Generate a divided clock that stays high for 4 cycles and low for 3 cycles, creating an uneven duty cycle with period equal to 7 input clocks.
-- Create two versions of this clock: one normal, and another phase-shifted by half a clock cycle. This is done by toggling the outputs on both rising and falling edges of the input clock.
-- By OR-ing the two clocks together, the output clock has a stable frequency divided by 3.5 with a more even duty cycle.
-- Implement reset and synchronous logic to maintain timing.
-
-The design uses counters and toggling registers triggered on both edges of the input clock to produce the phase-shifted clocks. This ensures the output frequency is clk/3.5.

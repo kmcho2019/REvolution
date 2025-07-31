@@ -1,5 +1,0 @@
-To fully implement the requirement, add an input signal pattern_detected that triggers enabling shift_ena for exactly 4 clock cycles anytime the pattern is detected. Keep the synchronous active-high reset behavior as before. The FSM now transitions to COUNT state and loads the 4-cycle counter on either reset or pattern_detected asserted. While counting down, shift_ena remains asserted. When the count reaches zero, transition back to IDLE and shift_ena deasserts until reset or pattern_detected reoccurs.
-
-This adds the missing pattern detection trigger and enables repeated shift_ena assertions as required. The FSM structure remains simple with two states and a down counter, so PPA impact is minimal. Using a single always block for state and counter update keeps the design clear and synchronous. The combinational block determines next state and counter based on current state and inputs, ensuring correct transitions.
-
-This resolves the previous functional incompleteness and aligns the design with the specification and testbench expectations.

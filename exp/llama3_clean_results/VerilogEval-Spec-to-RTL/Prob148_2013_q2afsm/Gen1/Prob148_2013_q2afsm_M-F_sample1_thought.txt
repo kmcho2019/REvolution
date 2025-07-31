@@ -1,9 +1,0 @@
-To fix the code, we need to modify the state table to correctly handle multiple simultaneous requests. We will check the input signals in the order of their priority and transition to the corresponding state. If a device with higher priority is requesting access, we will grant access to that device. If multiple devices with the same priority are requesting access, we will grant access to the device that was granted access previously. We will also remove the unnecessary state `2'b11` (State D) and modify the assignment of `g[2]` to grant access to device 2 if it is the only device requesting access.
-
-We will use the same state codes as before: A = 2'b00, B = 2'b01, and C = 2'b10. We will also use a separate always block to describe the FSM outputs.
-
-In the state table, we will first check if device 0 is requesting access. If it is, we will transition to State B. If not, we will check if device 1 is requesting access. If it is, we will transition to State C. If neither device 0 nor device 1 is requesting access, we will check if device 2 is requesting access. If it is, we will transition to a new state that grants access to device 2.
-
-We will also modify the assignment of `g[2]` to grant access to device 2 if the FSM is in the new state that grants access to device 2.
-
-We will add a new state `2'b11` to grant access to device 2.

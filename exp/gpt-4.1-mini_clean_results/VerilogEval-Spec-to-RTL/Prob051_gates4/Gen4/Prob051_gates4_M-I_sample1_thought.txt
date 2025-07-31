@@ -1,7 +1,0 @@
-The original implementation uses bitwise reduction operators which are already optimal and minimal in logic and area. Given the extremely low power and small area metrics, further RTL-level optimization for PPA is unlikely. Any PPA improvements would come from synthesis or technology mapping. However, to further aid synthesis tools, I can explicitly instantiate simple gate primitives to potentially reduce logic levels and improve timing slightly, especially if synthesis tools support primitive gates with lower delay. This trade-off may increase code verbosity but can slightly improve PPA by removing an implicit reduction operator step.
-
-Therefore, I will implement the 4-input AND, OR, and XOR functions using gate-level instantiation of 2-input gates, chained together to get the final output. This might allow synthesis tools to map gates more efficiently.
-
-Also, to keep the design strictly combinational and clear, I will use continuous assignments with simple gate-level modules.
-
-This is a minor optimization attempt, since the original solution is already very efficient. If synthesis tool supports reduction operators well, it might produce the same or better results. But this could provide clearer mapping for some tools.

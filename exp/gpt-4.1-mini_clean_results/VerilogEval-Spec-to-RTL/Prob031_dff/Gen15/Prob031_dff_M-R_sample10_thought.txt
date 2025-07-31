@@ -1,7 +1,0 @@
-The original design uses an always block with a nonblocking assignment to implement a positive-edge-triggered D flip-flop inside a submodule, which is clean and modular.
-
-To refactor with a different structure yet the same core functionality, I will embed the flip-flop logic directly into the TopModule without a submodule. Instead of explicitly coding a sequential always block, I will use a continuous assignment with a clocked process implemented as a procedural block using an explicit register updated on the positive edge of the clock. This removes modular hierarchy but keeps clear and direct DFF behavior. 
-
-Since DFF inherently requires sequential logic, it is not possible to replace the flip-flop with a purely combinational assign statement, but I can inline the register into TopModule as a reg output to avoid submodule instantiation. This refactor thus flattens the hierarchy and simplifies the design for synthesis while maintaining the exact functional behavior of a positive edge triggered D flip-flop.
-
-This approach trades off modularity for simplicity and might better suit very small designs where hierarchy is unnecessary, while still maintaining synthesis friendliness.

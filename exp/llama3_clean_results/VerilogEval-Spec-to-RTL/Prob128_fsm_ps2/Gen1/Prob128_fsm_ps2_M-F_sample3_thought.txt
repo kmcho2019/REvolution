@@ -1,5 +1,0 @@
-To address the functional errors in the original code, we need to ensure that the finite state machine (FSM) correctly identifies the start of a message and then proceeds to receive the next two bytes. The key insight is to only transition from the IDLE state to the BYTE1 state when a byte with in[3] = 1 is received, and then to proceed through the BYTE2 and BYTE3 states. The 'done' signal should be asserted in the cycle after receiving the third byte of the message. 
-
-One approach to fix the code is to modify the FSM's transition logic to only proceed to the next state when a valid byte is received. Additionally, we need to ensure that the 'done' signal is correctly asserted after receiving the third byte. This can be achieved by using a separate signal to indicate when the third byte has been received and then asserting 'done' in the next cycle.
-
-To optimize the code for PPA (Power, Performance, Area), we should consider minimizing the number of state transitions and using efficient encoding for the state variable. In this case, using a binary encoding for the states could be more efficient than the enum type used in the original code.

@@ -1,8 +1,0 @@
-To optimize the given 4-bit BCD adder for better performance, power, and area, the key is to avoid performing a second full addition to apply the BCD correction. Since the BCD correction is always adding 6 (0110) when sum > 9, this can be efficiently implemented using combinational logic to generate corrected sum bits and carry-out directly. The overflow detection and correction can be encoded using simple logical expressions based on the bits of the raw sum instead of a comparator and second adder.
-
-Specifically:
-- Detect overflow by checking sum > 9, which occurs if (sum[4]) is 1 (indicating raw_sum ≥ 16) or if (sum[3] & (sum[2] | sum[1])) is 1 (binary patterns > 9).
-- Use a combinational circuit (such as a small truth table or logic equations) to produce the corrected BCD digit and carry-out based on raw_sum[4:0], without a second addition.
-- This reduces critical path delay and area by eliminating a second adder and reduces power by minimizing switching and logic complexity.
-
-The code implements this by computing raw_sum = A + B + Cin, detecting overflow with minimal logic, then generating Sum and Cout through combinational logic mapping directly from raw_sum.

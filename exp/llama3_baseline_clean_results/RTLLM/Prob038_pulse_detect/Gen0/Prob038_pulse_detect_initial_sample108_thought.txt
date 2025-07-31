@@ -1,7 +1,0 @@
-To implement the pulse detection module, we can use a finite state machine (FSM) with three states: IDLE, RISING, and FALLING. The IDLE state represents the initial state where we wait for the rising edge of the pulse. The RISING state represents the state where we have detected a rising edge and are waiting for the falling edge. The FALLING state represents the state where we have detected a falling edge and are checking if it's the end of a pulse.
-
-We will use a register 'state' to keep track of the current state. The 'data_out' signal will be set to 1 when we are in the FALLING state and 'data_in' is 0, indicating the end of a pulse. In all other cases, 'data_out' will be set to 0.
-
-The FSM will transition between states based on the value of 'data_in'. If 'data_in' is 1 in the IDLE state, we will transition to the RISING state. If 'data_in' is 0 in the RISING state, we will transition to the FALLING state. If 'data_in' is 0 in the FALLING state, we will set 'data_out' to 1 and transition back to the IDLE state. In all other cases, we will stay in the same state.
-
-We will also handle the reset condition where 'rst_n' is 0, in which case we will set the 'state' register to the IDLE state and 'data_out' to 0.

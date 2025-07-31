@@ -1,9 +1,0 @@
-To optimize the multiplier for better performance, power, and area, implement the shift-and-add multiplication algorithm iteratively inside a sequential always block. This approach processes one bit of B per clock cycle, adding A shifted accordingly when B's bit is 1, and shifting A left by one bit each iteration. It avoids the large combinational chain of adders, reducing critical path delay and dynamic power by sequential operation.
-
-The module will include a clock and reset input to control the iterative process, exposing a start signal to begin multiplication and a done signal indicating completion. This approach uses a small FSM and registers to hold intermediate results, significantly improving timing and power compared to fully combinational logic.
-
-If a purely combinational design is required, an alternative is to replace the long linear addition chain by a balanced adder tree and pre-extend the multiplicand once, but the sequential iterative approach is more scalable and power-efficient.
-
-Since the original interface does not have clock, reset, or start signals, I will add them to implement the iterative approach. If strictly combinational is required, please clarify.
-
-Here, I implement the sequential shift-and-add multiplier with clock, reset, start inputs, and done output. The product output updates when done is asserted.

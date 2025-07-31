@@ -1,7 +1,0 @@
-To optimize the design for better Power, Performance, and Area (PPA), we can leverage the one-hot decoding of the 3-bit address {A,B,C} to select the corresponding flip-flop output without using an 8-input multiplexer implemented via a large case statement. By decoding ABC into a one-hot signal and ANDing each Q[i] with that decoded bit, then OR'ing all together, the logic is simpler, more balanced, and can map better to LUTs and gates, potentially improving timing and power.
-
-Furthermore, to avoid glitches on the output Z caused by combinational AND-OR logic, register the address inputs (A,B,C) and output Z. This trades a single cycle of latency for cleaner timing and potentially reduced power from glitching.
-
-Finally, I will keep the shift register structure intact and enable shifting only when 'enable' is high, and make the design fully synchronous except the combinational decoding. The output Z will be registered for timing stability.
-
-These changes improve timing by simplifying multiplexing logic, reduce power from glitches, and maintain a small area footprint.

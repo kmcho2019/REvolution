@@ -1,7 +1,0 @@
-Refactor the 32-bit Galois LFSR to separate the next-state combinational logic from the sequential register update for better modularity and potential synthesis optimizations. Implement the next state as a combinational function `lfsr_next` that calculates the next LFSR value from the current `q`. Then use an always block only for the state update on the clock edge. This approach improves readability and may help synthesis tools optimize combinational logic separately from flip-flops.
-
-Specifically:
-- Compute feedback = q[0].
-- Compute the next LFSR state bits combinationally by shifting right and XORing tapped bits with the feedback.
-- On synchronous reset, load 32'h1; else update with the combinational next state.
-- Keep all ports and reset behavior unchanged.

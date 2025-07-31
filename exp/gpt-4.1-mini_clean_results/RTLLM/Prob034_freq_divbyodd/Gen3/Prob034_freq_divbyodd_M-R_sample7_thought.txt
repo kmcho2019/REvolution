@@ -1,7 +1,0 @@
-Refactor the frequency divider by using a single counter that increments on every clock edge (both posedge and negedge) using an always block triggered on both edges. Since the divisor is odd, the effective frequency division can be achieved by toggling the output clock every NUM_DIV clock edges. This approach eliminates dual counters and separate toggling of clk_div1 and clk_div2, thus avoiding glitches caused by ORing two signals asynchronously.
-
-The counter counts from 0 to NUM_DIV-1 on each edge of clk. When the count reaches NUM_DIV-1, toggle the clk_div output and reset the counter. The toggle rate will be such that the output frequency is divided by NUM_DIV, and the duty cycle is approximately 50% due to toggling at every NUM_DIV edges (considering both edges as counting events).
-
-Using a single counter and toggling output at the right times simplifies logic and improves waveform correctness while still using both edges for counting. Reset logic initializes the counter and output properly.
-
-This approach keeps the dual-edge counting concept but simplifies the implementation and removes glitches caused by OR combination.

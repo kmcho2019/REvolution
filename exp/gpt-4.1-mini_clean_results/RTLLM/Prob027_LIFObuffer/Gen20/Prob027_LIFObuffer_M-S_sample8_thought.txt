@@ -1,8 +1,0 @@
-Simplify the LIFObuffer by:
-1. Using a single always block triggered on the clock edge.
-2. Implementing the stack pointer (SP) as a 3-bit register counting entries (0 to 4) where SP=0 means empty and SP=4 means full, to avoid subtraction in push.
-3. On push (RW=0), if not full, write dataIn to stack_mem[SP], then increment SP.
-4. On pop (RW=1), if not empty, decrement SP, then output stack_mem[SP].
-5. Update EMPTY and FULL flags directly from SP.
-6. Reset sets SP=0 (empty) and clears memory and output.
-7. This approach eliminates the need for complex combinational next_SP calculations and makes pointer arithmetic intuitive and simpler.

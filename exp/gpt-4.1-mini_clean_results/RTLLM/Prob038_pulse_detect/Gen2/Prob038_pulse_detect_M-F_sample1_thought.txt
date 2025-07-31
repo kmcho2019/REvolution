@@ -1,9 +1,0 @@
-The previous implementation is essentially correct and efficient as a 3-state FSM detecting the 0->1->0 pulse pattern with data_out asserted at the last 0. However, it can be improved by clarifying the state names and ensuring that the initial "0" sample is well defined. Also, the example shows "01010" input resulting in "00101" output, which means data_out goes high exactly on cycles when a pulse ends (0 after 1).
-
-To match this behavior explicitly and avoid confusion, rename states as WAIT_FOR_0 (idle waiting for data_in=0 to start pulse), GOT_0 (detected first 0), GOT_1 (detected the 1 after 0), then on next 0 assert data_out and return to GOT_0 to allow multiple pulses in a stream.
-
-Maintain non-blocking assignments for state and data_out inside a single always block triggered by posedge clk and negedge rst_n for asynchronous reset.
-
-This ensures a clean, minimal, and clearly understandable FSM that meets all requirements.
-
-Also, add comments for clarity.

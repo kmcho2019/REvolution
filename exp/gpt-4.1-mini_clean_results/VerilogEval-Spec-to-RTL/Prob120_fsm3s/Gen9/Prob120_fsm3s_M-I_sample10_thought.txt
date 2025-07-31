@@ -1,7 +1,0 @@
-The current FSM design uses a binary encoding with 2-bit state registers, which is already minimal in area and power. To optimize timing (reduce critical path delay), switching to a one-hot encoding can simplify next-state logic, potentially improving speed at the cost of a slight increase in area and power. However, since the state machine is small (4 states), one-hot encoding will only require 4 flip-flops (instead of 2 bits), with very simple combinational next-state logic (mostly AND/OR gates). The Moore output depends only on state D, so it becomes a simple direct mapping from the one-hot encoded register for D.
-
-This approach is expected to improve clock period (tns, wns), potentially at a slight power and area cost, but for a very small FSM the area and power increase is negligible. The one-hot FSM next-state logic is straightforward and allows for better pipelining and faster synthesis results in some tools.
-
-The synchronous reset remains unchanged. The output logic will be a simple OR of the state D flip-flop. Non-blocking assignments are used correctly for registers.
-
-This improvement focuses on timing enhancement by changing state encoding from binary to one-hot.

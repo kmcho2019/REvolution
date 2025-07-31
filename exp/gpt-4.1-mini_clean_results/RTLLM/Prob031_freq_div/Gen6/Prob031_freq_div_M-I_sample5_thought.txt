@@ -1,5 +1,0 @@
-To optimize the original frequency divider for better power and area while maintaining timing, we can merge the two counters (cnt_10 and cnt_100) into a single counter that counts up to 49 (the largest required count for 1 MHz generation). By generating enable pulses for 10 MHz and 1 MHz toggling based on this single counter, we reduce register usage and combinational logic complexity. This approach also simplifies control logic and potentially reduces switching activity and power by eliminating separate counters. The 50 MHz clock toggle remains as a simple flip-flop toggle on each clock cycle.
-
-Additionally, we'll implement synchronous reset only (remove asynchronous reset) to simplify timing and reduce clock path complexity, which often benefits timing closure. The code will be structured into a single always block clocked by CLK_in with synchronous reset RST.
-
-This method effectively shares counter resources without affecting output frequency correctness, improving area and power while maintaining the original functional requirements.

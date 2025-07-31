@@ -1,9 +1,0 @@
-To optimize power and area while maintaining the dual-edge triggered behavior, we can avoid the 2-to-1 mux controlled by the clock signal at the output by introducing a register that updates on both edges by combining outputs of two flip-flops. Instead of using a combinational mux, we can use a single flip-flop clocked by the original clock and update it from the two sampled values at each clock edge, effectively pipelining the output and reducing the combinational delay on the critical path.
-
-This approach reduces the combinational mux delay and switching activity at the output, potentially lowering dynamic power and improving timing. Also, by carefully controlling clock enables, switching activity can be minimized.
-
-Hence, the design will consist of two flip-flops sampling 'd' on posedge and negedge clk, respectively, and a single output register updated on posedge clk that picks either the posedge or negedge sample based on a toggle, effectively doubling the clock frequency inside the logic but keeping a single output register, reducing output mux complexity.
-
-This is known as a "double data rate" style approach internally, but here we keep a single bit output. The output register will update on posedge only but sequentially select the sampled inputs.
-
-This approach trades a small increase in latency (half clock cycle) for better PPA.

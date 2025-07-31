@@ -1,9 +1,0 @@
-Revised dual-counter architecture for odd frequency division:
-1. Maintain two counters (posedge and negedge) but modify counting logic
-2. Each counter counts full NUM_DIV cycles (not half) to ensure proper division
-3. Generate intermediate clocks (clk_div1 and clk_div2) that toggle at different phases
-4. clk_div1 toggles when posedge counter reaches (NUM_DIV-1)/2
-5. clk_div2 toggles when negedge counter reaches (NUM_DIV-1)/2
-6. Combine intermediate clocks with OR operation to create 50% duty cycle output
-7. Reset synchronizes both counters and intermediate clocks
-8. Remove complex phase alignment logic since OR operation naturally combines phases

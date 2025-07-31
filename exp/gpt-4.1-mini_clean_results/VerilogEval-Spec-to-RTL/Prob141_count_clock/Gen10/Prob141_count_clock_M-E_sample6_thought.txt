@@ -1,7 +1,0 @@
-This design will implement a fully BCD-based 12-hour clock, maintaining all digits (hours, minutes, seconds) as BCD from the start without internal binary conversion. To handle the hour rollover cleanly, hours are counted as two BCD digits ranging from 01 to 12 inclusive, with logic to increment and wrap between these bounds. The PM indicator toggles only when the hour rolls over from 11 to 12. Seconds and minutes counters increment in conventional chained BCD fashion (units digit 0-9 and tens digit 0-5). 
-
-The main advantage is uniform BCD logic for all counters, avoiding any binary-to-BCD conversion logic. The hour counter increments using explicit BCD digit logic constrained to 01-12 range with a separate condition for rolling from 12 back to 1. All counters are updated synchronously on clock edge when ena is high, and synchronous reset sets the clock to 12:00:00 AM.
-
-This approach simplifies the hour logic to standard BCD increments with an explicit range limit and clear rollover detection, making the code structure modular and easy to follow while ensuring correctness and simplicity. The PM signal changes state only on hour rollover from 11 to 12.
-
-The output ports are directly connected to the internal BCD digit registers, minimizing extra combinational logic for output conversion.

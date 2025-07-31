@@ -1,9 +1,0 @@
-To improve the 16-bit adder for better performance and potentially lower power and area, I will replace the ripple carry 8-bit adder with a small carry-lookahead adder (CLA) for each 8-bit block. This reduces carry propagation delay within each 8-bit block significantly. 
-
-The carry-lookahead adder generates group propagate and generate signals, allowing fast calculation of carry signals without ripple carry delay. Then, the 16-bit adder will instantiate two 8-bit CLA adders, still connected in ripple fashion between the two blocks to keep modularity.
-
-This approach improves timing by reducing internal carry latency inside the 8-bit block while maintaining hierarchical reuse. The logic is still purely combinational and synthesizable with minimal overhead.
-
-I will implement the 8-bit CLA using generate/propagate signals and carry-lookahead logic. The 16-bit adder instantiation remains similar but connects the carry-out of the lower 8-bit block to the carry-in of the upper 8-bit block.
-
-This optimization keeps design clean and hierarchical but improves maximum frequency and power by minimizing carry ripple delay.

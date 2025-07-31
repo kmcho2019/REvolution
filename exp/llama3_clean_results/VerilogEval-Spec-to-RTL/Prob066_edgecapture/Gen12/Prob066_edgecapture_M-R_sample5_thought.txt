@@ -1,7 +1,0 @@
-To refactor the existing code, we'll maintain the core idea of capturing transitions from 1 to 0 in the input signal and keeping the corresponding output bits high until reset. However, we'll implement it with a different structure, focusing on simplifying the logic and ensuring correct functionality.
-
-The main issue with the current code is the premature update of `prev_in` before it's used to check for transitions. To fix this, we can introduce a separate register that holds the previous state of `in`, and update this register only when we've finished checking for transitions. This ensures that `prev_in` always represents the input state from the previous clock cycle, not the current one.
-
-Another optimization is to remove unnecessary logic that recalculates `out` every cycle if it's already set. Since once an output bit is set due to a falling edge, it should remain set until reset, we can simplify the logic for setting `out[i]`.
-
-We'll also ensure that all sequential logic is triggered on the positive edge of the clock and that the module correctly handles the reset condition.

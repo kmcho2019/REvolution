@@ -1,9 +1,0 @@
-Implement the multiplying accumulator using a wider 64-bit accumulator register internally to hold full precision intermediate sums, avoiding overflow and saturation within the 32-bit domain. On each clock cycle, multiply the two 32-bit inputs to get a 64-bit product, then add it to the 64-bit accumulator register.
-
-The output port 'c' presents the lower 32 bits of the 64-bit accumulator, effectively providing the accumulated sum truncated to 32 bits. 
-
-The accumulator is reset synchronously. This design avoids overflow saturation logic and wrap-around is prevented at internal 64-bit precision. This approach maintains full precision accumulation, reduces complexity (no saturation detection), and allows simple output truncation, offering a straightforward, high-performance MAC unit.
-
-This method is beneficial when the user wants to accumulate many products without losing data due to overflow or saturation in a 32-bit accumulator. If needed, the upper 32 bits can be exposed or used for overflow monitoring in an extended design.
-
-The module uses synchronous reset, a single always block on clk, and outputs 'c' from the lower half of the 64-bit accumulator register.

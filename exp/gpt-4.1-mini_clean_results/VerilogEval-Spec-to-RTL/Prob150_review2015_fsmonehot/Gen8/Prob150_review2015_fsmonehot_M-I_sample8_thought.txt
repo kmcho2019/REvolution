@@ -1,9 +1,0 @@
-The existing design is already minimal and clear for a one-hot encoded FSM next-state and output combinational logic. To slightly improve PPA without affecting functionality, I will:
-
-- Combine the next state assignments into fewer expressions to reduce gate count (especially S_next and the Wait/Count next state logic).
-- Use local variables/wires for intermediate conditions only if they help reduce repeated expressions.
-- Maintain one-hot encoding for simplicity and clarity, but avoid unnecessary ORs by factoring common sub-expressions.
-- Remove explicit intermediate wires that are used only once to reduce routing and logic.
-- Keep outputs directly tied to state bits since they are one-hot, which is optimal.
-
-These subtle simplifications can reduce gate count and logic depth, improving timing and power, while keeping the code concise and synthesizable.

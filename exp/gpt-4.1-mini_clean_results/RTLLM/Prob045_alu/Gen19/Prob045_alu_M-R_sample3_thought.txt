@@ -1,5 +1,0 @@
-Refactor the ALU to use a single combinational always block with a case statement for the operations, storing the output and flags in registers, but still ensuring all outputs are purely combinational by making the always block combinational (sensitive to inputs only). This approach consolidates the operation decoding and flag calculation together, enhancing readability by localizing the logic flow. 
-
-The carry and overflow flags are calculated inside the block only when necessary, otherwise cleared. The flag output is assigned either 1 or 0 (never high-Z) to ensure stable output. The zero and negative flags are derived directly from the resulting output. Shifts use either the fixed shift amount from the low 5 bits of `a` or variable shifts from `a[4:0]` depending on the operation.
-
-This restructuring trades multiple parallel wire assignments for a single combinational process block, facilitating easier modifications or expansions and potentially improving synthesis results by clarifying mutual exclusivity of operations.

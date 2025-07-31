@@ -1,9 +1,0 @@
-I will refactor the FSM into a Moore-style FSM with one-hot encoding to simplify next-state and output logic. The state register, output register, and bit counter will be updated synchronously on the clock, with clear separation of combinational next state logic.
-
-The shift register will use a simple right shift with the incoming bit assigned to the MSB, consistent with LSB-first serial input. The done signal will be asserted synchronously for one clock cycle when the stop bit is correctly received.
-
-Instead of a 2-bit encoded FSM, one-hot encoding uses four flip-flops, enabling simpler combinational logic and clearer state transitions. The stop bit validation and WAIT_STOP state are included to recover correctly from framing errors.
-
-Additionally, I will use separate always blocks for the state register, next state logic, shift register update, bit counter, and output logic, improving modularity and clarity.
-
-This refactoring keeps the functional behavior identical but provides an alternative FSM style and clearer code structure.

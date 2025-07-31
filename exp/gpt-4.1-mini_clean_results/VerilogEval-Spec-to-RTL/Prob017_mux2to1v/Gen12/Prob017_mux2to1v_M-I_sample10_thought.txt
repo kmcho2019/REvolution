@@ -1,5 +1,0 @@
-To improve the current design's power and area efficiency while maintaining the same functionality and timing, we can leverage the fact that a 2:1 mux can be implemented using bitwise operations, which are often more power- and area-efficient than conditional operators in some synthesis tools. Specifically, implement the output as a bitwise combination: out = (~sel_mask & a) | (sel_mask & b), where sel_mask replicates the sel signal across all 100 bits. This expression can be optimized by synthesis tools into minimal multiplexing logic, potentially reducing glitching and switching activity.
-
-Moreover, avoiding the conditional operator '?' can reduce dynamic power caused by switching inside mux implementations in some scenarios. This method also explicitly shows the bitwise masking, which can be beneficial for formal verification and tool optimization.
-
-This approach will keep the design fully combinational, concise, and synthesis-friendly, potentially reducing power and area slightly without impacting timing.

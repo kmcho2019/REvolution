@@ -1,8 +1,0 @@
-Fix the FSM by explicitly using the current state (not next_state) in the output logic to avoid timing mismatches of f and g.  
-Generate f=1 for exactly one cycle in state B (the cycle after resetn de-asserts), by directly setting f=1 when state == B.  
-Improve the x-sequence detection logic in C1, C2, C3 states so that the sequence 1,0,1 is detected exactly and the FSM restarts the sequence cleanly on any mismatch.  
-Use a separate register for counting cycles in state D (d_count) and update next_state based on the current count synchronously, ensuring that the combinational next_state logic uses stable d_count values.  
-Make g=1 starting from state D (on the cycle after detecting the sequence) and keep it in E or clear permanently in F, as required.  
-All outputs f and g are registered and driven based on the current state for clear timing.  
-Keep synchronous active-low reset affecting state, d_count, and outputs properly.  
-This approach addresses timing mismatches and sequence detection issues and ensures outputs match specification exactly.

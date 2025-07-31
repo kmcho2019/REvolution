@@ -1,7 +1,0 @@
-Refactor the design to use a single 512-bit register for the entire state instead of partitioning into blocks with separate registers. Compute the next state for all 512 cells in a single combinational block using generate statements and assign statements, and update the state register synchronously on the clock edge.
-
-For neighbor bits at the boundaries, explicitly consider q[-1] = 0 and q[512] = 0 by extending the current state with two zeros at the boundaries for simpler indexing.
-
-Use a continuous assignment to compute the next state vector based on current q and its neighbors. This approach simplifies the design hierarchy and wiring, reduces module instantiations, and avoids cross-block neighbor signal wiring. The state update is in a single always block.
-
-This change retains the same Rule 110 logic but organizes the logic as a single vector-wide combinational function with synchronous register update, improving code simplicity and ease of verification.

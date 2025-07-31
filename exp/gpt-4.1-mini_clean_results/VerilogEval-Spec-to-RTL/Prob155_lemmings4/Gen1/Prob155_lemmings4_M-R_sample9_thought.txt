@@ -1,8 +1,0 @@
-Refactor the FSM to use a single always_ff block for state transitions and fall timer updates, making next-state logic more explicit and separated. Use separate combinational always_comb blocks for output logic.  
-Use an enumerated state variable and explicitly define state transitions and fall timer updates in the sequential block to avoid subtle combinational logic errors.  
-In this approach, the sequential block reacts on clk and areset asynchronously.  
-The fall timer saturates at 21 (enough to detect >20 cycles) to simplify comparison logic and reduce logic depth.  
-The outputs are purely combinational functions of the current state, clarifying the Moore FSM separation.  
-This structure often improves clarity, prevents combinational feedback issues, and reduces glitches in outputs caused by combinational next-state logic mixed with fall timer logic.  
-The direction switching and bump checks remain the same but are implemented inside the sequential block with clearly prioritized conditions.  
-This approach can also help to identify and avoid subtle bugs in the direction logic and input reaction timing.

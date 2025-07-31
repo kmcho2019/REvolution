@@ -1,9 +1,0 @@
-To implement the Lemming behavior as a Moore state machine, we need to identify the states and transitions based on the given conditions. The states can be: WALK_LEFT, WALK_RIGHT, FALLING, and DIGGING. The initial state will be WALK_LEFT due to the asynchronous reset. We will use a state register to store the current state and a next-state logic to determine the next state based on the current state and inputs.
-
-The transition logic will handle the following conditions:
-1. Bumping: When bumped on the left, transition from WALK_LEFT to WALK_RIGHT. When bumped on the right, transition from WALK_RIGHT to WALK_LEFT.
-2. Falling: When ground disappears (ground=0), transition from WALK_LEFT or WALK_RIGHT to FALLING.
-3. Digging: When dig=1 and the Lemming is walking (WALK_LEFT or WALK_RIGHT), transition to DIGGING.
-4. Resuming walking after falling or digging: When ground reappears (ground=1) and the Lemming was falling or digging, transition back to WALK_LEFT or WALK_RIGHT based on the previous walking direction.
-
-We will use a 2-bit state register to encode the four states: WALK_LEFT (00), WALK_RIGHT (01), FALLING (10), and DIGGING (11). The outputs will be generated based on the current state.

@@ -1,9 +1,0 @@
-To improve the existing pulse_detect design for better performance, power, and area:
-
-1. Separate the output logic from state transitions by registering the output data_out. This registers the pulse indication signal, reducing combinational path delays and potentially improving max frequency.
-
-2. Gate the output update so that data_out toggles only when a pulse is detected; otherwise, it stays low without unnecessary toggling, reducing switching power on downstream logic.
-
-3. Retain minimal FSM states and clean coding style.
-
-The core FSM logic remains unchanged, but output assignment moves to a separate register updated only when the pulse is detected, eliminating unnecessary toggling each clock cycle.

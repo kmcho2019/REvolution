@@ -1,7 +1,0 @@
-The problem statement requires the implementation of a finite-state machine that controls a timer. To simplify the design, we can divide the timer's operation into distinct phases: Pattern Detection, Duration Shifting, Counting, and Acknowledgment. Each phase can be represented as a separate state in the finite-state machine.
-
-We can utilize a novel architectural idea by using a ring counter to keep track of the states. The ring counter will have four states: IDLE, SHIFT, COUNTING, and DONE. The IDLE state will detect the pattern '1101' and then transition to the SHIFT state. The SHIFT state will assert the shift_ena signal for exactly 4 clock cycles, allowing the duration to be shifted in. After shifting, the state machine will transition to the COUNTING state, where it will wait for the done_counting signal. Once done_counting is asserted, the state machine will transition to the DONE state, asserting the done signal and waiting for the ack signal.
-
-To improve the design, we can use a modular approach, where each state is handled separately, making the code more readable and maintainable. Additionally, we can utilize a separate counter to keep track of the number of clock cycles during the shifting phase, ensuring that the shift_ena signal is asserted for exactly 4 clock cycles.
-
-This novel architectural idea simplifies the design, making it more efficient and easier to understand. By using a ring counter and a modular approach, we can ensure that the finite-state machine accurately implements the required behavior.

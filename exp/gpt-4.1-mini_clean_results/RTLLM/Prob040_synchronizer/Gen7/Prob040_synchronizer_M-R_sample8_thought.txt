@@ -1,6 +1,0 @@
-Refactor by separating the synchronization of the enable signal into a dedicated submodule for clarity and modular reuse.  
-Use continuous assignment (`assign`) to generate the delayed enable signals from the synchronized flip-flops instead of explicitly using multiple always blocks.  
-Keep the data_reg and en_data_reg updates synchronous to clk_a with async reset as before.  
-In clk_b domain, use a single always block to update en_clap_one and en_clap_two sequentially and generate en_clap_two as a wire using assign.  
-For the dataout register, explicitly hold its previous value in an else branch to improve clarity and synthesis friendliness.  
-This reorganization improves readability by modularizing enable synchronization and leverages combinational logic (`assign`) for delayed enable signals, while maintaining the same functional behavior and clock domain crossing robustness.

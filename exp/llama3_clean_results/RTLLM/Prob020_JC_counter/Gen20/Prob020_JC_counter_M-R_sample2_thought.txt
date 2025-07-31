@@ -1,9 +1,0 @@
-To refactor the existing Johnson counter implementation, we will focus on simplifying the logic and potentially improving the overall design structure for better readability and maintainability. 
-
-One approach to refactoring is to separate the logic into combinational and sequential parts. The combinational part will determine the next state of the counter based on the current state and the reset condition, while the sequential part will handle the updating of the counter value at the rising edge of the clock.
-
-We will maintain the use of a 64-bit register `Q` to represent the current count value. The combinational logic will be used to compute the next value of `Q` based on the current value of `Q[0]`. 
-
-If the reset signal `rst_n` is low, the next state of `Q` will be set to 0. Otherwise, if `Q[0]` is 0, the next state of `Q` will be the current value of `Q[63:1]` shifted right and appended with a 1 at the most significant bit position. If `Q[0]` is 1, the next state of `Q` will be the current value of `Q[63:1]` shifted right and appended with a 0 at the most significant bit position.
-
-By separating the combinational and sequential logic, we can potentially improve the readability and maintainability of the design, as well as simplify the synthesis process.

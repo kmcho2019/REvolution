@@ -1,5 +1,0 @@
-To avoid array slicing and entire vector assignments that the toolchain does not support, we can implement the ring counter by explicitly assigning each bit of `out` individually inside the always block. 
-
-On reset, set `out[0]` to 1 and all others to 0. On each clock edge without reset, the "1" bit shifts to the next position, with wrap-around from `out[7]` back to `out[0]`. This can be done by storing the index of the active bit in a 3-bit register and decoding it into the `out` bits individually.
-
-This approach avoids unsupported operations such as vector assignment, concatenation, and slicing, while keeping the ring counter logic simple and clear. It also uses minimal resources since only a 3-bit pointer and combinational decoding logic are needed.

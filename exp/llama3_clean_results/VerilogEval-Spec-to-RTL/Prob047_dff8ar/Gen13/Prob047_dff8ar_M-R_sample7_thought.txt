@@ -1,7 +1,0 @@
-To refactor the existing code while maintaining the same functionality, we can eliminate the use of a separate DFF_8bit module and directly implement the 8-bit D flip-flop with an active high asynchronous reset within the TopModule. This simplification aims to reduce the overall design complexity while ensuring that the core functionality of the 8-bit D flip-flop remains intact.
-
-The current design uses a non-blocking assignment (`<=`) within an `always` block to handle the sequential logic. We can maintain this approach to ensure that the D flip-flop operation at the positive edge of the clock is correctly implemented. However, instead of using a separate module, we will embed this logic directly into the TopModule.
-
-By integrating the D flip-flop logic into the TopModule, we can potentially simplify the overall design structure while maintaining the required functionality. This refactoring approach focuses on reducing design hierarchy without compromising the performance or functionality of the original design.
-
-Another key consideration is ensuring that the asynchronous reset functionality remains intact. This means that upon the assertion of `areset`, the output `q` should be reset to 0, regardless of the clock state. We will maintain this functionality in the refactored design.

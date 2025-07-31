@@ -1,9 +1,0 @@
-Instead of partitioning the 512-bit array into multiple blocks, I will implement the entire 512-bit state as a single shift register and compute the next state in one combinational step. The next state for each cell is the XOR of its left and right neighbors, with zero padding on the boundaries.
-
-To efficiently compute all next states in parallel, I will create two shifted versions of the current state: one shifted left by one (with zero inserted at LSB) and one shifted right by one (with zero inserted at MSB). Then, the next state is simply the bitwise XOR of these two shifted vectors.
-
-On each clock edge, if load is high, the state registers load the input data. Otherwise, they update to the next state computed as described.
-
-This approach uses a single 512-bit register and simple vector shifting and XOR operations, avoiding block boundaries and inter-block wiring. It simplifies the design and reduces interconnect, potentially improving timing and area.
-
-This method also makes it straightforward to implement and analyze, keeping the combinational logic simple and fully parallel.

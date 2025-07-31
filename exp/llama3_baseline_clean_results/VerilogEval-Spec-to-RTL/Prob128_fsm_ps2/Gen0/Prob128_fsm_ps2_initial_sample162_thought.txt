@@ -1,9 +1,0 @@
-To solve this problem, we'll design a finite state machine (FSM) with the following states:
-- IDLE: The initial state where the FSM waits for a byte with in[3] = 1 to start a new message.
-- BYTE1: The state after receiving the first byte of a message, waiting for the second byte.
-- BYTE2: The state after receiving the second byte of a message, waiting for the third byte.
-- DONE: The state where the FSM signals that a message has been successfully received.
-
-The FSM will transition from IDLE to BYTE1 when a byte with in[3] = 1 is received. Then, it will transition from BYTE1 to BYTE2 after receiving the second byte, and from BYTE2 to DONE after receiving the third byte. In the DONE state, the FSM will assert the 'done' signal and then return to IDLE.
-
-To implement this, we'll use a parameterized case statement to handle the different states and a parameterized if statement to handle the reset condition.

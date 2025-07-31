@@ -1,9 +1,0 @@
-Refactoring this design to maintain the same core functionality but with a different structure, I will implement the 64-bit subtractor and overflow detection using a single 64-bit adder module instead of chaining four 16-bit CLAs. This simplifies the hierarchy by directly performing A + ~B + 1 using a single 64-bit carry-lookahead adder implemented with generate/propagate signals.
-
-The overflow detection logic remains unchanged.
-
-This approach uses a full 64-bit adder with carry lookahead at the bit level, but structured in one module for clarity. It avoids explicit slicing and chaining, making the code more concise while still synthesizable and efficient.
-
-Using continuous assignments and generate blocks emphasizes combinational style without intermediate wires for parts like partial carries, improving readability.
-
-This also serves as a clean contrast to the original, demonstrating a monolithic adder style rather than modular 16-bit blocks.

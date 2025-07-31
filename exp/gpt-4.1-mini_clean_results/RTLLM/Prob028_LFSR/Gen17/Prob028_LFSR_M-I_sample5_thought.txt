@@ -1,7 +1,0 @@
-Improve the original LFSR by switching to a fully synchronous reset instead of asynchronous, since synchronous resets generally lead to simpler timing closure and better synthesis optimizations in FPGA/ASIC flows. This also avoids asynchronous reset issues with metastability or reset de-assertion glitches.
-
-Additionally, initialize the LFSR register to a non-zero value on reset (e.g., 4'b0001) to avoid a locked zero state, since starting from zero in an LFSR means it will remain zero forever and produce no pseudo-random sequence.
-
-Keep the feedback logic as the inverted XOR of bits 3 and 2. Maintain a clean, single always block with edge-triggered clock and synchronous reset.
-
-This approach optimizes for area and power by removing asynchronous reset logic, prevents stuck states in the LFSR sequence, and improves overall reliability and synthesis quality.

@@ -1,8 +1,0 @@
-The issue was that the output 'out' was declared as a single bit but was expected to be 8 bits wide to match the inputs 'a' and 'b', which are both 8-bit vectors. The testbench expects 'out' to be 8 bits as well, and it compares the entire vector.
-
-To fix this, 'out' must be declared as an 8-bit output vector, matching the width of inputs 'a' and 'b'. Then the multiplexer selects either the entire 8-bit 'a' or 'b' vector based on the 'sel' signal. This avoids width mismatch and preserves correct mux behavior.
-
-The solution is to change the output port to `output [7:0] out`, and assign using the ternary operator:
-`assign out = sel ? b : a;`
-
-This design correctly implements an 8-bit 2-to-1 mux.

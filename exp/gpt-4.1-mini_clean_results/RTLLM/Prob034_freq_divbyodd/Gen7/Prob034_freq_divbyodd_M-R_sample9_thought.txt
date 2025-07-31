@@ -1,7 +1,0 @@
-To fix the toggling issue and improve output signal integrity, I will refactor the design by using counters on positive and negative edges separately that each count from 0 to NUM_DIV-1. Each counter will generate a pulse exactly once per full count cycle at the halfway point (HALF_COUNT), instead of toggling twice.
-
-I will create pulse signals that assert for one clock cycle at HALF_COUNT on posedge and negedge domains, and use these pulses to toggle clk_div1 and clk_div2 flip-flops respectively. This guarantees a single toggle per full period.
-
-Finally, I will OR clk_div1 and clk_div2 to generate clk_div output. To reduce glitches, I will synchronize the clk_div2 signal to the posedge clk domain using a two-stage synchronizer, and then OR the synchronized clk_div2 with clk_div1.
-
-This method preserves the two-counter, dual-edge clocking approach but prevents multiple toggles per cycle and asynchronous glitches, yielding a clean odd division output with ~50% duty cycle.

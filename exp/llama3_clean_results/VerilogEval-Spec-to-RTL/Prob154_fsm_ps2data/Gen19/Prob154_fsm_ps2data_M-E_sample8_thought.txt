@@ -1,5 +1,0 @@
-To create a novel architectural solution, we will utilize a different approach by employing a hybrid finite state machine (FSM) that integrates a shift register to store the incoming bytes. The shift register will be used to construct the `out_bytes` signal. We will also use a separate counter to keep track of the number of bytes received. This approach will allow us to simplify the FSM logic and reduce the number of states, making the design more efficient and easier to understand.
-
-The FSM will have three main states: `IDLE`, `RECEIVING`, and `DONE`. In the `IDLE` state, the FSM waits for the first byte with `in[3] = 1`. When such a byte is received, the FSM transitions to the `RECEIVING` state and starts shifting the incoming bytes into the shift register. After receiving three bytes, the FSM transitions to the `DONE` state, where it asserts the `done` signal and outputs the constructed `out_bytes` signal.
-
-This approach minimizes unnecessary switching activity and reduces the complexity of the FSM, making it more power-efficient and area-friendly.

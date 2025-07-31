@@ -1,7 +1,0 @@
-To improve the existing one-hot FSM for better PPA, we target area and power reduction while preserving good timing and functionality. The one-hot encoding uses 5 flip-flops and more switching; switching to a binary-encoded FSM reduces flip-flops from 5 to 3, saving area and dynamic power significantly.
-
-We maintain a sticky final state, asserting start_shifting once the sequence is found, and synchronous active-high reset. Next-state logic is carefully written with non-blocking assignments, and output logic is combinational. This binary encoding reduces both combinational complexity and flip-flop count.
-
-This should reduce area and power noticeably while retaining timing due to the smaller state register and simpler state encoding. Since the FSM is small (5 states), the combinational logic won't be deeply nested, so timing will remain good.
-
-Overall, this binary encoding approach improves PPA by cutting flip-flop count and related dynamic power and area, with minimal impact on timing.

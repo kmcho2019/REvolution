@@ -1,7 +1,0 @@
-Implement the FSM using separate mode and direction state registers to clearly separate the Lemming's mode (walking, falling, digging) from its direction (left or right). Use two 1-bit registers: one for mode (2 bits encoded for walking=00, falling=01, digging=10) and one for direction (0=left, 1=right).
-
-This split architecture allows for straightforward handling of precedence: falling overrides dig and bump; digging overrides bump; walking responds to bumps. Direction changes only occur in walking mode when bumped. Falling and digging modes keep the direction stable regardless of bumps or dig signals.
-
-The FSM transitions are coded in a clear priority order in combinational logic, simplifying debug and verification. Outputs are decoded combinationally from mode and direction registers. Asynchronous reset sets mode to walking and direction to left.
-
-This approach increases code clarity by explicit separation of behavioral aspects and reduces complex state encodings. It makes adding extra behaviors or debugging easier.

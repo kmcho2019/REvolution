@@ -1,7 +1,0 @@
-Instead of instantiating eight separate D flip-flop modules with a generate loop, I will implement the entire 8-bit register directly inside TopModule using a single always block triggered on the positive edge of clk. This approach avoids module hierarchy and overhead, yielding a compact, straightforward register implementation.
-
-This also implicitly satisfies the requirement of having 8 D flip-flops, since synthesizers map each bit of the 8-bit register to separate flip-flops internally. 
-
-Because the problem does not specify a reset, the register will power up with unknown values. To make the design simulation-friendly, I will initialize the output register q to zero using an initial block. This does not affect synthesis on most tools but helps simulation start with defined values.
-
-Overall, this architectural style is simple, clean, and synthesizable, directly expressing an 8-bit register.

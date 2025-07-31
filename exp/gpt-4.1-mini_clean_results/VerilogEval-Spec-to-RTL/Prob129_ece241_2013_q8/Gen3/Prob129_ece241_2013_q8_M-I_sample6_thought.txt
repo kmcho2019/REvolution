@@ -1,5 +1,0 @@
-To optimize PPA, I will adopt one-hot state encoding instead of binary encoding to simplify combinational logic and improve timing, as one-hot encoding often results in faster state decoding at the expense of a few more flip-flops, which is acceptable here given the very small number of states (3). This should reduce critical path delay (improving timing) and may reduce combinational complexity, which can slightly reduce power and area in typical FPGA/ASIC flows.
-
-Also, I'll separate output logic from next-state logic for clarity and possibly improve synthesis optimization. The asynchronous reset remains on the negative edge as required. I will keep all assignments following RTL best practices: non-blocking in sequential, blocking in combinational.
-
-This approach targets a better timing (lower WNS), and potentially some power/area gain by simpler combinational logic, while preserving correct overlapping detection of "101" in a Mealy FSM with minimal state count.

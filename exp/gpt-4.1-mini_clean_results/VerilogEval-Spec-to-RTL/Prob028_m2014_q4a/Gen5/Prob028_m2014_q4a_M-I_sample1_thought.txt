@@ -1,8 +1,0 @@
-To improve latch inference compatibility and synthesis friendliness (especially for tools like Yosys), use a combinational always block with blocking assignments, explicitly assigning q only when ena is asserted, and otherwise leaving q unchanged (implying a latch). This avoids the problematic pattern of non-blocking assignments with feedback in the same statement. The standard pattern is:
-
-always @(ena or d) begin
-    if (ena)
-        q = d;
-end
-
-This clearly implies a latch: when ena=1, q follows d (transparent); when ena=0, q holds its previous value (latched). Using blocking assignments and an if-statement is the most synthesis-friendly style for inferring latches and should resolve the synthesis failure and improve tool compatibility.

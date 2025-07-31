@@ -1,1 +1,0 @@
-The issue is that the "result_is_zero" output is not assigned in all branches of the always block; when out is nonzero, result_is_zero is left unchanged (latch inferred). We must assign result_is_zero in all cases. Also, checking if (~out) is less clear than comparing out to zero explicitly. Fix by always assigning result_is_zero to (out == 0).

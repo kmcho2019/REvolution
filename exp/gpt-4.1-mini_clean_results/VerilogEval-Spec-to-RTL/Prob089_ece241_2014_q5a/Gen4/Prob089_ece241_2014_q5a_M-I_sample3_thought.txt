@@ -1,9 +1,0 @@
-To optimize for performance and area, we combine the output logic with the state register block to reduce the number of sequential always blocks and minimize clock-to-output latency. Instead of registering the output z separately, we register the state and inversion_bit only, and then drive the output z combinationally as XOR of input x and inversion_bit. This removes one flip-flop stage for z, decreasing latency and saving one register. Since the output depends only on registered signals and input x (which changes asynchronously), this remains a Moore-like behavior regarding state-dependent output, while output timing is improved.
-
-This approach:
-- Reduces sequential logic stages (from 2 to 1).
-- Keeps asynchronous reset on state registers only.
-- Makes output combinational (but depending only on registered inversion_bit and current input).
-- Still respects the 2's complement serial conversion semantics.
-
-This tradeoff improves timing and area with minimal impact on power, as the XOR output toggles only as needed. Overall, it's a practical improvement that balances Moore FSM rigor and efficient hardware implementation.

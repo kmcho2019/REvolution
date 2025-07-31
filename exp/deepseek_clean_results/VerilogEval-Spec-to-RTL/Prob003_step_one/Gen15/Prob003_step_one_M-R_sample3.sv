@@ -1,5 +1,0 @@
-module TopModule (
-    output wire one = 1'b1
-);
-    // Implicit continuous assignment through wire declaration
-endmodule

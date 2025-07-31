@@ -1,9 +1,0 @@
-Fuse the two examples by keeping the clear and efficient 2-bit binary FSM with separate combinational next-state logic for clarity and easy verification. Implement the done signal purely combinationally in the next-state logic to produce a clean, glitch-free one-cycle pulse immediately on detecting a valid stop bit, then register it synchronously to avoid timing hazards.
-
-Adopt the first example's explicit LSB-first data shifting style — shift left with incoming bit entering bit 0 — which directly matches LSB-first protocol and makes the shift direction visually intuitive in the code.
-
-Use non-blocking sequential logic to update state, shift register, bit counter, and done register. Update the shift register and bit counter only in RECEIVE state to minimize toggling and power; clear them in other states as needed.
-
-Keep the WAIT_STOP state logic minimal by clearing shift_reg and bit_count once entering WAIT_STOP, and remain there until stop bit (1) is detected to recover from framing errors.
-
-Overall, this design cleanly separates combinational and sequential logic, keeps a simple FSM, explicitly expresses bit shifting direction consistent with protocol, uses done as a combinational pulse from state+input then registered for timing robustness, and limits register toggling for better power efficiency.

@@ -1,9 +1,0 @@
-To optimize for power and timing, I will eliminate the unnecessary conditional update inside the clocked block by directly assigning `q <= next_state` every clock. This reduces complexity and potential critical path.
-
-For area and power, I will replace the modulo-7 counting logic with a small combinational logic that uses simple comparison and increment, avoiding addition by using combinational logic to produce the next state efficiently.
-
-Since `a=1` always forces state 4, I will keep that logic straightforward.
-
-This approach keeps the logic minimal and fast, reducing logic depth and unnecessary gating while ensuring the exact same behavior. Avoiding the conditional assignment inside the sequential always block should improve timing and simplify synthesis. The combinational block remains simple with one comparison and increment logic, and direct assignment of the register should reduce toggling power.
-
-No explicit reset is added to match the waveform's initial unknown state.

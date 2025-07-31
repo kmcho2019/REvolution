@@ -1,7 +1,0 @@
-Refactor the FSM to use a one-hot encoding style with separate state flip-flops for clarity and potentially better timing. Implement the next state logic with continuous assignments (`assign`) outside always blocks to reduce combinational logic depth. Use a shift-left scheme to shift in bits least significant bit first, placing the new bit into bit 0, which is a more typical serial LSB-first approach and clearer to understand.
-
-Control the bit counter with an enable signal derived from state registers. Use synchronous reset for all registers.
-
-Generate `done` as a pulse in the STOP state when the stop bit is correct, and maintain `out_byte` valid only on that clock.
-
-This refactoring keeps the same protocol and behavior but modularizes state encoding, simplifies combinational logic with continuous assignments, and adopts a shift-left data register, which might ease verification and improve timing by reducing muxing and logic levels in the next state determination.

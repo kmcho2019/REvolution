@@ -1,9 +1,0 @@
-To implement the one-hot encoded FSM with multiple active states, a novel approach is to use a fully decoded combinational transition matrix implemented as a parallel combinational logic block. For each possible current state S_i (represented by state[i] == 1), and the input, the corresponding next state bit next_state[j] is asserted accordingly.
-
-Instead of directly ORing many state bits for next_state[0], I will leverage priority-based assignment where next_state bits are calculated by accumulating transitions from all current active states. This can be implemented by summing all partial contributions (bitwise OR of AND terms). 
-
-To handle multiple active states, we sum all transitions from each active state and input condition to next states using OR reduction, so that if multiple states are active, next_state reflects all possible reachable states.
-
-For output logic, since outputs depend on active states and their combinations, outputs are directly derived as OR of relevant current states, as specified.
-
-This approach modularizes the transition assignment, simplifies modification and debugging, and preserves clear FSM behavior with multiple states active. It avoids deep or wide OR trees by breaking down next_state assignments into manageable OR of AND groups, improving logic synthesis quality.

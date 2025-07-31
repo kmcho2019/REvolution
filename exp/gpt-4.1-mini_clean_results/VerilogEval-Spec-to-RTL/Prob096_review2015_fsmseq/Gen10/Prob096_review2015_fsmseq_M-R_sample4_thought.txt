@@ -1,5 +1,0 @@
-Refactor the FSM by encoding the states as a binary-encoded one-hot style using a vector of bits but instead of defining a next_state register and using a clock enable signal, directly update the state register each clock cycle based on synchronous reset and the computed next state, thereby removing the explicit clock enable and associated combinational logic. 
-
-Additionally, compute the next state in a separate combinational block using a function to encapsulate the next-state logic for cleaner code structure. The output `start_shifting` remains purely combinational and derived directly from the current state. This approach reduces combinational logic on the clock path by avoiding the clock enable signal, maintains a sticky final state, and simplifies the FSM control flow.
-
-This refactoring improves readability by using a next_state function, removes the clock enable combinational signal for potential timing benefits, and keeps synchronous reset semantics intact.

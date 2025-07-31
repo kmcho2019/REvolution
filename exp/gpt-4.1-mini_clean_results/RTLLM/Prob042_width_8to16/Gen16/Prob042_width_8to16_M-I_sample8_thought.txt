@@ -1,7 +1,0 @@
-To correctly meet the requirement that valid_out and data_out are generated in the clock cycle *after* receiving the second valid input (i.e., one cycle delay after concatenation), we introduce a small pipeline stage. On receiving the second valid input, we capture the concatenated 16-bit data into an intermediate register and assert a one-cycle delayed valid_out.
-
-This decouples data capture from output staging, avoiding simultaneous updates of valid_out and data_out that caused synthesis or timing issues. It also ensures proper timing semantics: first store the initial byte, wait for the next valid input; upon second valid input, prepare concatenated output in an intermediate register, then output it in the next clock cycle with valid_out asserted.
-
-Additionally, resetting all registers, defaulting valid_out low each cycle, and making all registers synchronous except reset improves timing and synthesis robustness. This method adds a slight pipeline stage, improving timing closure and reducing glitch chances while slightly increasing latency, which matches the requirements.
-
-This approach optimizes performance and synthesis friendliness without increasing area or power noticeably.

@@ -1,9 +1,0 @@
-Refactor the design from a saturating counter Moore FSM into a more explicit Moore FSM with distinct states representing the count of consecutive ones (0 to 7), including separate named states. 
-
-- Use an enumerated FSM with one-hot style states for clarity, implementing state transitions with a combinational block.
-- Drive outputs (disc, flag, err) purely from the current FSM state in a separate combinational block to preserve Moore FSM output behavior.
-- Synchronize state transitions on the clock edge with synchronous reset.
-- This structure highlights clear FSM states instead of a numeric saturating counter and makes the decoding logic more transparent, separating next-state logic and output generation.
-- The outputs remain synchronous and valid for one clock cycle after detecting the input pattern, as required.
-
-This approach increases code readability by mapping each consecutive ones count to a state, maintains synchronous outputs, and decouples state transitions and outputs cleanly, facilitating easier debugging and modification.

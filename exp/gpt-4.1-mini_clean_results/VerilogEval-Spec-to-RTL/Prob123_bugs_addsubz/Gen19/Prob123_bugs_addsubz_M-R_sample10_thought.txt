@@ -1,5 +1,0 @@
-Refactor the combinational ripple-carry adder-subtractor by moving from an always block with an explicit loop to a fully combinational function that returns the sum and zero flag. Use a function to encapsulate the ripple carry logic, called from an always block, which improves code readability and modularity. The function takes inputs and subtraction control, performs the bitwise XOR of B with do_sub, propagates the carry through each bit using local variables, and returns the sum.
-
-The always block then calls this function to assign `out` and computes the zero flag using a reduction NOR of the output. This approach cleanly separates the arithmetic logic from the output assignments, reduces potential loop synthesis issues, and keeps all outputs registered within a combinational block as required.
-
-This restructuring maintains the same ripple-carry mechanism, with explicit carry propagation, but improves code clarity and reusability by leveraging a function rather than inline loop logic.

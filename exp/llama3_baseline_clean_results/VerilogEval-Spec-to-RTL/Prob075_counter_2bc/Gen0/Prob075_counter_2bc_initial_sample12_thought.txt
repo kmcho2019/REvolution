@@ -1,5 +1,0 @@
-To implement the two-bit saturating counter, we'll first define the counter's behavior based on the given conditions. The counter should increment when both train_valid and train_taken are high, and decrement when train_valid is high but train_taken is low. When train_valid is low, the counter should hold its current value. We'll use a 2-bit register to store the counter value and update it based on these conditions on the positive edge of the clock. The asynchronous reset areset will reset the counter to 2'b01 (weakly not-taken) whenever it is asserted, regardless of the clock.
-
-We will use a simple if-else statement to implement the desired behavior. On every positive clock edge, we check the state of train_valid and train_taken to decide whether to increment, decrement, or hold the counter. We also implement the saturating behavior, ensuring the counter does not exceed 3 (2'b11) when incrementing or go below 0 (2'b00) when decrementing.
-
-For the asynchronous reset, we use the `always` block with a sensitivity list that includes the clock and the areset signal, and we reset the counter to 2'b01 whenever areset is high.

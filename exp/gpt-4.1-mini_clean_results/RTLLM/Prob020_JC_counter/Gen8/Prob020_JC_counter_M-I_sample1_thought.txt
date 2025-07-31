@@ -1,9 +1,0 @@
-The original implementation is functionally correct and simple, but can be slightly improved for better PPA by removing the temporary variable and using non-blocking assignment directly. We can also avoid the explicit next_Q variable by updating Q in place with minimal logic.
-
-Improvement Strategy:
-1. Remove the intermediate next_Q register to reduce logic fanout and unnecessary allocation.
-2. Assign Q directly using non-blocking assignment with a concatenation that inserts ~Q[0] at MSB and shifts Q right by one.
-3. This minimal change simplifies logic and data flow, potentially improving timing and slightly reducing area and power.
-4. Keep asynchronous active-low reset as specified.
-
-The functional behavior remains identical, but the simplification helps synthesis tools optimize the design further.

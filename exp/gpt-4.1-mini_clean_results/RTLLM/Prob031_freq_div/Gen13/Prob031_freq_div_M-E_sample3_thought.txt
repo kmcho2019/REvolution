@@ -1,9 +1,0 @@
-Implement the frequency divider using a single shared main counter driven by the 100MHz input clock, and generate all output clocks by comparing the counter value with predefined toggle points. This approach replaces separate counters with one wider counter and uses combinational logic to toggle output clocks when the counter reaches specific values, improving area efficiency by reducing redundant counters.
-
-Specifically:
-- Use a 7-bit main counter counting from 0 to 99 to handle the 1MHz division (divide by 100).
-- Toggle CLK_1 when the counter reaches 49 (half period).
-- Toggle CLK_10 when the counter modulo 10 reaches 4 (half period of divide by 10).
-- CLK_50 toggles every clock, effectively dividing by 2, so implement a single flip-flop toggled on every clock.
-  
-This design uses synchronous reset and non-blocking assignments to maintain good coding practices. The single counter simplifies timing paths and can be easily scaled or modified for different frequencies.

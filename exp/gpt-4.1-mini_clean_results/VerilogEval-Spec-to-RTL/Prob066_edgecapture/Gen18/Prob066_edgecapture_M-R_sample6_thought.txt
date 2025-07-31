@@ -1,5 +1,0 @@
-Refactor the design by separating the edge detection logic from the output register update for clarity and to ensure better timing semantics. Use a combinational wire to detect the falling edge bits (`falling_edge = prev_in & ~in`) and then latch this into the output register on the clock edge. Keep `prev_in` as a registered version of the input for previous cycle comparison. This separation helps clarify the detection and capture steps and may reduce confusion in simulation or synthesis.
-
-Maintain synchronous reset behavior: on reset, clear output and initialize `prev_in` to all ones to prevent spurious detection. The output register `out` accumulates detected falling edges and holds them until reset.
-
-This approach preserves the original functionality but improves readability and might help with timing in some tool flows.

@@ -1,7 +1,0 @@
-The issue is that the original module defines `out` as a single bit but tries to assign a bitwise expression between 8-bit vectors, causing a width mismatch.
-
-The correct approach is to have `out` as an 8-bit output vector, selecting either the entire `a` or `b` vector based on `sel`.
-
-To fix this while changing the structure, we can implement the multiplexer using an `always @(*)` block instead of a continuous assign. This gives a clear combinational logic style with an if-else statement.
-
-This approach preserves the 8-bit width, fixes the bug, and demonstrates a structurally different implementation compared to the original assign statement.

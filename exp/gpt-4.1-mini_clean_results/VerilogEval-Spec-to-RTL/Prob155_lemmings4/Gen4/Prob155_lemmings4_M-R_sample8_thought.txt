@@ -1,9 +1,0 @@
-Refactor the FSM by separating state and direction logic into two smaller state machines: one for the mode (walking/falling/digging/splat) and one for direction. Use explicit one-hot style state encoding and combinational next-state logic with multiple always_comb blocks for clarity.
-
-Replace the combined always @(*) block with separate combinational always_comb blocks for next state and next direction, improving modularity and testability.
-
-Also implement the fall counter using a saturating increment within a dedicated always_comb block. Use non-blocking assignments in sequential always_ff block for registers and asynchronous reset as before.
-
-Use explicit named parameters for states and direction for improved readability. This approach simplifies combinational logic by splitting concerns, improves code maintainability, and makes formal verification easier by isolating logic parts.
-
-Finally, outputs are assigned directly from current states and direction with simple assign statements, preserving Moore FSM characteristics.

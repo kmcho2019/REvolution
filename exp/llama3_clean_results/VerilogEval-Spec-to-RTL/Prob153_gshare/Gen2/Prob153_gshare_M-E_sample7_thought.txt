@@ -1,9 +1,0 @@
-To implement the TopModule, we can utilize a novel architectural idea that incorporates a three-stage pipeline approach for the branch predictor. The first stage, or the "fetch stage," is responsible for generating the 7-bit index into the pattern history table (PHT) using the 7-bit PC and the 7-bit global branch history register.
-
-The second stage, or the "predict stage," uses the generated index to access the PHT and retrieve the corresponding 2-bit saturating counter value. This value is then used to make a prediction about the branch direction. If the counter value is 2'b11, the branch is predicted to be taken; otherwise, it is predicted to be not taken.
-
-The third stage, or the "update stage," is responsible for updating the PHT based on the actual branch outcome. If the branch is mispredicted, the global branch history register is recovered to the state immediately after the mispredicting branch completes execution.
-
-To further improve the accuracy of the branch predictor, we can incorporate a simple dynamic branch prediction algorithm, such as the "always taken" or "always not taken" approach, and use it as a fallback when the PHT prediction is uncertain.
-
-The key benefits of this three-stage pipeline approach are improved prediction accuracy, reduced latency, and increased throughput. By breaking down the branch prediction process into three stages, we can optimize each stage individually and improve the overall performance of the branch predictor.

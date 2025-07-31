@@ -1,9 +1,0 @@
-module TopModule (
-    input  [15:0] in,
-    output [7:0]  out_hi,
-    output [7:0]  out_lo
-);
-    // Directly assign the upper and lower 8-bit slices of the 16-bit input
-    assign out_hi = in[15:8];
-    assign out_lo = in[7:0];
-endmodule

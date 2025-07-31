@@ -1,5 +1,0 @@
-Refactor the design by moving the asynchronous reset logic into individual single-bit D flip-flop modules rather than using a vectorized 8-bit register. This approach instantiates eight separate 1-bit DFFs with asynchronous resets, explicitly showing the flip-flop behavior per bit. The top module then instantiates these single-bit DFFs in a generate loop for compactness and scalability.
-
-This restructuring maintains the original functionality and asynchronous reset semantics but improves code modularity by isolating each flip-flop. The use of generate blocks makes it concise and clear how each bit is handled, which can facilitate debugging, testing, and possible bit-wise modifications. The asynchronous reset remains in the sensitivity list within each single-bit flip-flop module for correct behavior.
-
-This approach replaces a monolithic vector register with multiple small modules, providing a structural perspective without changing the core behavior.

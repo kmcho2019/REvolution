@@ -1,7 +1,0 @@
-Implement the 16-bit unsigned multiplier using a classical shift-and-add approach with explicit registers for multiplicand (areg), multiplier (breg), and an accumulator register (accum) for partial sum. Use a 5-bit counter (i) to track the iteration from 0 to 16. 
-
-At i=0 on start, load ain and bin into areg and breg, and clear accum. For each i from 1 to 16, check the LSB of breg: if it is 1, add areg to accum. Then shift areg left by 1 (multiplicand << 1) and breg right by 1 (multiplier >> 1). Increment i.
-
-When i reaches 16, done is asserted, and yout is assigned accum (the 32-bit product). This approach fully separates multiplicand and multiplier registers and accumulation logic, mimicking a serial multiplier, but shifting multiplicand left and multiplier right each cycle. 
-
-Reset conditions clear all registers. start initiates multiplication. If start is low, i resets to 0 and done de-asserted. This clear organization simplifies control and data path, explicitly showing shift-and-add principle in the registers, and uses straightforward shifts and additions without packing multiplier and product in one register.

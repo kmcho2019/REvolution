@@ -1,5 +1,0 @@
-To ensure shift_ena is asserted exactly 4 clock cycles on synchronous reset and then remains low forever, I will simplify the design by using a shift enable counter that counts down from 4 to 0 while shift_ena is asserted. When reset is asserted synchronously, the counter loads 4. The counter decrements on every clock cycle when non-zero and shift_ena is asserted whenever the counter is not zero.
-
-This avoids a separate FSM state, making the logic simpler and removing off-by-one errors. The counter acts both as the state and timing controller. Once the counter reaches zero, shift_ena stays low indefinitely until the next reset.
-
-This approach is fully synchronous, has clean combinational output assignment, and meets the exact timing requirement with minimal logic.

@@ -1,9 +1,0 @@
-To optimize for better power, area, and timing, the main lever is to reduce unnecessary updates to the history register when the inputs don't require a change. Adding a clock enable (update_enable) gating the register write to only when a misprediction or a prediction occurs will reduce switching activity and dynamic power. This avoids updating the history every cycle if inputs are inactive.
-
-Also, separating the combinational next_state logic and using the clock enable cleanly simplifies synthesis and may improve timing by reducing the data path load on the sequential register.
-
-No complex FSM or additional buffering is needed as the logic is straightforward.
-
-This optimization maintains the same functional correctness and priority of misprediction over prediction.
-
-The asynchronous reset remains, and non-blocking assignments are used appropriately.

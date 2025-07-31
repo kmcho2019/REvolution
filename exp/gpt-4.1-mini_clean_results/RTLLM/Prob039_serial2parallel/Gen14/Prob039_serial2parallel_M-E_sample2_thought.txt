@@ -1,7 +1,0 @@
-Use a shift register that captures serial bits on each valid input, but instead of shifting bits left, shift right so the first bit received is placed into the MSB of the output. We count from 0 to 7; when 8 bits are received, output the shift register and assert dout_valid for one clock cycle. 
-
-The main difference is to shift right and insert the new bit into the MSB, aligning with MSB-first serial input. This simplifies understanding of bit order since the MSB of the output is loaded first. The counter counts bits received and resets after 8 bits.
-
-To ensure a clean dout_valid pulse, it is only asserted when the count reaches 7 (after the 8th bit is loaded).
-
-This approach makes the bit ordering explicit and intuitive by directly loading new bits into the MSB and shifting toward LSB.

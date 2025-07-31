@@ -1,9 +1,0 @@
-Implement a two-stage pipeline approach with an explicit state machine having two states: IDLE (waiting for first valid input) and WAIT_SECOND (waiting for second valid input).
-
-- On receiving the first valid input in IDLE, store it in a register and transition to WAIT_SECOND without producing output.
-- On receiving the second valid input in WAIT_SECOND, concatenate the stored first byte as high 8 bits and the new byte as low 8 bits.
-- Register the concatenated 16-bit output and assert valid_out in the following clock cycle (one cycle after the second valid input).
-- Use a one-cycle delayed valid_out and data_out register to cleanly separate input capture and output generation, which improves timing and synthesis friendliness.
-- On reset, clear all registers and return to IDLE.
-
-This design ensures the output data and valid_out are generated strictly one clock cycle after receiving the second valid input, fulfilling the timing requirements, and uses an explicit state encoding for clarity and synthesis robustness.

@@ -1,5 +1,0 @@
-Refactor the design to separate the combinational rotation logic from the sequential register update. Use a combinational block to determine the next value of q based on load and ena, then use a sequential always block to update q on the clock edge.
-
-This approach modularizes the design by explicitly defining next-state logic (`next_q`) before registering it, which enhances code clarity and makes potential formal verification or debugging easier. It also clearly prioritizes load over rotation, and no rotation occurs when ena is 2'b00 or 2'b11.
-
-The rotation logic is implemented combinationally with vector concatenations, and the register is updated synchronously in a minimal sequential block.

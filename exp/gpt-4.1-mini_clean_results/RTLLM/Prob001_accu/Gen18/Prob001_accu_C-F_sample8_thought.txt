@@ -1,9 +1,0 @@
-Combine the strengths of both examples by using a single always block with synchronous reset and non-blocking assignments for clarity and simplicity. 
-
-To optimize timing and power, accumulate only the first three valid inputs in the accumulator. On receiving the 4th valid input (when count is 3), output the sum by adding the current accumulator and data_in directly, asserting valid_out for one cycle, then reset accumulator and count.
-
-Default valid_out to zero every cycle to ensure a clean one-cycle pulse. Use an enable signal gated by valid_in to update the accumulator and count only when new data is valid, reducing switching activity and power consumption.
-
-This fusion maintains minimal area with a 10-bit accumulator and 2-bit counter, minimizes the critical path delay by avoiding unnecessary addition in non-output cycles, and ensures clean output signaling with a single-cycle valid_out pulse.
-
-Overall, this solution is functionally correct, power efficient, and optimized for timing and area.

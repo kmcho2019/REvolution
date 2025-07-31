@@ -1,8 +1,0 @@
-Refactor the design by representing the entire 512-bit state in one register rather than eight 64-bit blocks, simplifying the boundary management and eliminating inter-block wiring.  
-- Use one 512-bit register `q_reg` to hold the current state.  
-- Use a single combinational `next_state` wire computed using the shifted versions of `q_reg`, padded by zeros on both ends for boundaries.  
-- Specifically, left neighbors are `q_reg` shifted right by 1 with a zero appended on the left, right neighbors are `q_reg` shifted left by 1 with zero appended on the right.  
-- The next state for each bit is the XOR of corresponding left and right neighbors.  
-- On the rising edge of `clk`, load data when `load` is high, otherwise update `q_reg` with `next_state`.  
-- Drive output `q` directly from `q_reg`.  
-This structure uses vector operations and built-in bitwise logic, which synthesizes efficiently, reduces interconnect complexity, and simplifies the design without changing the functionality.

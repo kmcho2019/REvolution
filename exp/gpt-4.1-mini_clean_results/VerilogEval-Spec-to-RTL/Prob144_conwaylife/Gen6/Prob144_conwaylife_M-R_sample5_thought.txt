@@ -1,9 +1,0 @@
-Refactor the design by representing the 16x16 grid as a two-dimensional reg array for clarity internally and then flatten the output vector. Compute the next state using continuous assignments and generate loops rather than nested for loops inside always blocks, improving readability and potentially synthesis friendliness.
-
-Since WIDTH=16 (power of two), replace multiplication by shifts when computing indices, and implement wrap-around with bit masking (modulo 16) instead of conditional statements in the wrap_index function.
-
-Precompute all neighbors summations using generate blocks with wire vectors, performing summation in a tree-like manner for clarity, then use a combinational function to determine next cell state.
-
-Keep synchronous load and state update on posedge clk, but separate combinational logic and registers more explicitly.
-
-This approach uses generate blocks and continuous assignments rather than a large combinational always block, potentially enabling better parallelism and clearer datapath for synthesis tools.

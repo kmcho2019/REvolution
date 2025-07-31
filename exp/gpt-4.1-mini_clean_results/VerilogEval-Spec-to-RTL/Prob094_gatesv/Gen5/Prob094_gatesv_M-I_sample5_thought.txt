@@ -1,7 +1,0 @@
-To optimize the module for better PPA, replace the three always blocks with continuous assignments to enable better synthesis optimization and reduce switching activity. Use vector-level operations and explicit bitwise expressions instead of loops and modulo operations. 
-
-- For out_both: shift `in` left by 1 bit, and bitwise AND with `in`, with the MSB set to zero since `in[3]` has no left neighbor.
-- For out_any: shift `in` right by 1 bit, bitwise OR with `in`, with LSB set to zero since `in[0]` has no right neighbor.
-- For out_different: compute XOR between `in` and a rotated version of `in` left by 1 bit to implement wrap-around without modulo.
-
-This approach reduces logic complexity, removes the modulo operator, and merges logic into simple vector operations, improving timing and reducing area and power.

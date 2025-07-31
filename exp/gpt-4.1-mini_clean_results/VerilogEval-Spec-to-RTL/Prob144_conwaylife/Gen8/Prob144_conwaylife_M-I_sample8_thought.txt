@@ -1,9 +1,0 @@
-To improve PPA (performance, power, area), I will optimize neighbor counting by using a balanced adder tree per cell instead of summing all 8 neighbors in a single large addition expression. This reduces the critical path by performing additions in a balanced tree rather than a wide fan-in addition. 
-
-Also, instead of separately calculating neighbor indices for each neighbor per cell, I will precompute the row and column indices with wrapping once per cell and then access neighbors directly.
-
-To reduce power, I will store the current grid state as a 2D reg array and use combinational logic with minimal intermediate wires to compute the next state. This avoids unnecessary large arrays of wires and reduces fanout.
-
-Finally, I will flatten the 2D state only once at the register update stage, keeping indexing simple. The synchronous load remains unchanged.
-
-This balanced tree adder approach and simpler intermediate signals will help reduce combinational logic depth (improving timing) and reduce switching power and area slightly due to fewer intermediate wires.

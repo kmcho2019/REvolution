@@ -1,7 +1,0 @@
-A novel approach to implementing the 32-bit global history shift register could involve utilizing a combination of a register and a state machine to manage the history updates. The state machine can help in prioritizing the updates based on the `train_mispredicted` and `predict_valid` signals, ensuring that the pipeline flush due to a misprediction takes precedence over a prediction.
-
-This approach can provide a structured way of handling the different scenarios, making the code more modular and potentially easier to understand and debug. The register will hold the current history, and the state machine will determine how this history is updated based on the input signals.
-
-The state machine can have two main states: an idle state and an update state. In the idle state, the history remains unchanged. When `train_mispredicted` is high, the state machine transitions to the update state, loading the history with the new value based on `train_history` and `train_taken`. If `predict_valid` is high and `train_mispredicted` is low, the state machine also transitions to the update state but shifts the current history and appends the `predict_taken` value.
-
-This architectural idea allows for a clear separation of concerns between the history register and the logic controlling its updates, potentially making the design more scalable and maintainable.

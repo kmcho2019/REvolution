@@ -1,7 +1,0 @@
-Fuse the benefits of both examples by using an expanded binary-encoded FSM with separate explicit substates for pattern detection and for each of the four shift cycles, eliminating the separate shift_count register. This reduces area by removing the counter and simplifies control by unrolling shift cycles into states, improving timing and power by reducing register toggling.
-
-Maintain a Moore-style output decoded directly from the state for glitch-free signals and a synchronous active-high reset. Use clear state encoding and straightforward next state logic for synthesis friendliness.
-
-Pattern detection is done through a clear chain of SEARCH states that match '1101' precisely, which ensures minimal logic and deterministic behavior without extra data registers. The SHIFT phase has four sequential substates to guarantee exactly four shift cycles with shift_ena asserted.
-
-After shifting, move to COUNT state to wait for done_counting, then to DONE to assert done output until ack is received. This structure offers a balance of minimal state register width, no extra counters, low toggling, and simple logic, aiming to improve PPA over both examples.

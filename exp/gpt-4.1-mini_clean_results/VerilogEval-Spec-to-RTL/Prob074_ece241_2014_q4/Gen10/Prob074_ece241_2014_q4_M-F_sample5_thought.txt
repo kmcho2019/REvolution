@@ -1,7 +1,0 @@
-To fix the functional mismatch while adhering strictly to the problem specification, we must remove the explicit reset input port. Instead, we will rely on Verilog's initial block to set the flip-flops to zero at simulation start, which models the "assumed reset" state before the machine begins.
-
-This approach avoids introducing an unused reset input and resolves the floating input warning. The design will have no external reset, and the flip-flops will initialize to zero only in simulation, matching the problem statement.
-
-The rest of the logic remains unchanged: the three D flip-flops are clocked on the positive edge, each receiving their respective inputs from the gates as specified. The output is the NOR of the three flip-flop outputs.
-
-This ensures both correct simulation behavior (initial zero states) and correct hardware intent as specified, without adding extra ports.

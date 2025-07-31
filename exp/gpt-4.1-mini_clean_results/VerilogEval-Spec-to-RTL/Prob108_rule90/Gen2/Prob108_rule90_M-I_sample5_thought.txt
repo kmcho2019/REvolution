@@ -1,9 +1,0 @@
-To improve synthesis PPA, especially timing, we avoid large wide concatenation and XOR on 512 bits at once. Instead, implement the next_state computation via a generate loop that processes each bit individually using direct bitwise XOR of neighbors with boundary checks.
-
-This approach exposes more explicit local logic to synthesis tools, which can map better to hardware and optimize XOR gate placement, potentially improving timing.
-
-Also, breaking logic into per-bit assignments avoids large wide XOR operations that can create a large critical path.
-
-The sequential logic remains the same. This explicit per-bit approach keeps the design fully combinational for next_state without large vector shifts.
-
-This technique improves synthesis friendliness and may reduce combinational path depth and area by enabling localized optimizations.

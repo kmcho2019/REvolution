@@ -1,9 +1,0 @@
-I will implement a straightforward FSM with states IDLE, START, DATA, STOP, and ERROR to handle the serial byte reception, making it easy to reason about each protocol phase explicitly.
-
-The design will synchronously detect the start bit by waiting for a '0' while idle and move to START state to verify that the line remains '0' (the start bit). Then it will proceed to receive the 8 data bits serially, shifting each bit into a data register LSB-first on each clock cycle while incrementing a bit counter.
-
-After all data bits are collected, the FSM checks the stop bit in STOP state; if the stop bit is '1', it asserts done for one clock cycle with the valid byte output and returns to IDLE; if the stop bit is not '1', it transitions to ERROR state, where it waits for the line to return to '1' (idle) before going back to IDLE, ensuring it resynchronizes properly.
-
-All sequential logic will be in a single always block triggered by the clock and synchronous reset. The done output will be a single-cycle pulse generated at the moment the stop bit is verified correctly. This structure is clear, robust, and matches the serial protocol well.
-
-This approach differs from the prior solution by explicitly separating START and ERROR states and handling the start bit verification as a separate state instead of in the combinational next state logic. It ensures stable sampling of bits and robust error recovery with a clean, easy-to-read structure.

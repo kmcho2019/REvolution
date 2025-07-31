@@ -1,9 +1,0 @@
-Implement a two-state Moore FSM where the state tracks whether the carry (from adding 1) has been absorbed or not. Instead of registering the input first and then using that for output, latch the input bit synchronously and generate output from the state only, keeping the input bit combinational in the output logic to maintain Moore machine criteria.
-
-The states are NO_CARRY (before encountering the first '1') and CARRY_PROCESSED (after carry propagation started).
-
-The FSM transitions from NO_CARRY to CARRY_PROCESSED on the first input bit '1'. The output z in NO_CARRY state is simply x (the incoming bit), and in CARRY_PROCESSED state is the inverted input bit (to complete 2's complement).
-
-The output is registered to ensure stable timing and strict Moore definition (output depends only on state and stored data). To achieve that, the input bit x is delayed by one clock (registered) to align with the state update, so output depends on registered state and previous input bit.
-
-This architecture emphasizes registering output to improve timing and separates input latching from output generating logic, while using asynchronous reset to initialize state and registers.

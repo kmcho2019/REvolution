@@ -1,5 +1,0 @@
-Use a two-step approach: first perform the straightforward 4-bit binary addition of A, B, and Cin to get a 5-bit sum. Then detect if the sum is invalid BCD (sum > 9 or carry-out from the 4-bit addition), which means either sum[4] = 1 or (sum[3] & (sum[2] | sum[1])). If correction is needed, add 6 using a small ripple-carry adder on the 4-bit sum only, and generate the corrected carry out from the 5-bit result. 
-
-This design modularizes the logic by separating the raw addition and the correction addition into two small adders, improving clarity and maintainability. Using small ripple carry additions and explicit logic for correction detection makes it easy to verify and potentially optimize later. The carry out of the correction adder forms the final carry output.
-
-This approach differs from the previous example by using two adders rather than conditional logic to directly add correction, increasing modularity and clarity.

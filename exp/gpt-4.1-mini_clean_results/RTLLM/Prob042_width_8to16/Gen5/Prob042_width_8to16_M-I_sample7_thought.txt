@@ -1,5 +1,0 @@
-To meet the specification exactly, I will use a `data_lock` register to hold the first 8-bit valid input and a flag to indicate that the first data is locked. When a new valid input arrives, if the flag is set (meaning one data is already stored), we concatenate `data_lock` in the higher 8 bits and the new input in the lower 8 bits. Then, in the next clock cycle, `valid_out` and `data_out` are asserted and updated respectively.
-
-The output signals are registered one clock cycle after receiving the second valid input to satisfy timing requirements. On reset, all registers clear properly.
-
-This design uses a simple two-state logic with the `flag` to track data storage, cleanly separates input accumulation and output generation, ensures correct byte ordering (first data high byte, second data low byte), and properly delays output signals by one clock cycle after the second input arrives.

@@ -1,7 +1,0 @@
-To improve power efficiency, I will prevent unnecessary register updates by writing to the output register only when the output value changes. This avoids unnecessary toggling inside the register and reduces dynamic power consumption.
-
-In the original design, the register updates every clock cycle if load or ena is asserted, even if the output value remains the same. I will introduce a next_q signal, calculate the next state combinationally, and update q only when next_q differs from q.
-
-This approach preserves the original functionality and priority of load over ena, but reduces needless writes to the flip-flops, which can reduce dynamic power consumption with minimal impact on area or timing.
-
-Since the original design was already minimal, this minor gating of register updates improves power without adding significant complexity.

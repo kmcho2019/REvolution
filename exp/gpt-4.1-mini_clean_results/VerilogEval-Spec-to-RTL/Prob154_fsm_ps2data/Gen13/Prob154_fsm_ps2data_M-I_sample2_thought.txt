@@ -1,7 +1,0 @@
-To optimize for better power and timing without changing functionality, introduce an enable signal for updating the out_bytes register so it only changes when a relevant byte is captured. This reduces unnecessary toggling of out_bytes bits when waiting for the start byte or between message receptions.
-
-Also, register the done signal explicitly with a one-cycle pulse aligned with the FSM transition, using a small state machine and a done flag register to avoid glitches and improve timing.
-
-Maintain the same 2-bit FSM state encoding, but add an enable for the shift register update, reducing switching activity and improving power. The done signal will be asserted only one cycle after receiving the third byte, as specified.
-
-This will lead to reduced toggling and potentially better timing while keeping area nearly unchanged.

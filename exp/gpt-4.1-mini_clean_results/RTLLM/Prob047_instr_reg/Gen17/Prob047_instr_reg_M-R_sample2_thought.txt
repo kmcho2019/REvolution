@@ -1,9 +1,0 @@
-Refactoring this design, I will separate the instruction storage into two distinct registers, ins_p1 and ins_p2, as originally described, each holding instructions from the two fetch sources (01 and 10). 
-
-On reset, both registers clear to zero. On each clock's rising edge, when fetch indicates source 01, ins_p1 captures the input data; when fetch is 10, ins_p2 captures data. Otherwise, they hold their previous values.
-
-Outputs ins and ad1 come from ins_p1 (opcode and address fields), and ad2 is directly from ins_p2 (the full 8-bit data). This explicit separation aligns with the original problem, improves clarity, and simplifies output assignments without extra flags.
-
-This also avoids additional state bits like `ins_p2_sel`, and leverages straightforward combinational assignments for outputs, resulting in easy-to-understand and maintainable code.
-
-No clock enables are used here; instead, both registers update conditionally inside the clocked always block, which should be efficient for typical synthesis tools.

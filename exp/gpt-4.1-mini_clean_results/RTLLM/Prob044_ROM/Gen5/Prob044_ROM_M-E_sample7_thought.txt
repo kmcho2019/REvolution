@@ -1,9 +1,0 @@
-Implement the ROM as a purely combinational function using a case statement inside an always_comb block, instead of using a memory array. This approach treats the ROM contents as a set of hardwired constants mapped directly from the address input, avoiding reg array inference and potentially enabling simpler logic or LUT-based implementation.
-
-The output dout is declared as reg, assigned in a combinational always block with a case statement that enumerates all 256 addresses. For uninitialized addresses, output zero by default.
-
-This structure provides explicit, synthesizable ROM logic that can be optimized by synthesis tools for small ROMs, with clear visibility of ROM contents in the code and easier control over default data.
-
-This approach is different from array indexing, and especially useful if the ROM content is mostly sparse or small, as here only the first 4 entries are initialized with specific values, others being zero.
-
-Such design might increase code size but can reduce memory inference or allow finer control over encoding or synthesis options.

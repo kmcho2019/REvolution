@@ -1,9 +1,0 @@
-Refactor the counter by separating the next-state logic into a combinational always block to compute the next counter value, and then use a sequential always block for state update. This cleanly separates combinational and sequential logic, making the design more modular and easier to analyze. Instead of a direct equality check, use a comparison operator (q >= MAX_COUNT) for terminal count detection, which is functionally equivalent but often synthesizes efficiently.
-
-The synchronous reset remains active high, resetting the counter to zero.
-
-Summary:
-- Compute next counter value combinationally.
-- Use a comparator (>= MAX_COUNT) to detect terminal count and reset next value to zero.
-- Sequential block updates the registered count on clk edge, with synchronous reset.
-- Output q is a reg driven by the sequential block.

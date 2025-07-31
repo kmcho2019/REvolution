@@ -1,7 +1,0 @@
-Use the Verilog built-in addition operator with conditional modification of operand B and carry-in to implement subtraction as addition of two's complement (b's bitwise negation plus 1). The approach directly computes `out = a + (do_sub ? (~b + 1) : b)` in a single expression, simplifying logic and eliminating the need for explicit ripple carry adder logic.
-
-For the zero flag, use a simple combinational check of the output value by comparing to zero (`out == 0`). This approach is concise, synthesizable, and portable.
-
-Maintain `out` and `result_is_zero` as `reg` types updated in a combinational always block triggered by inputs, as the original module did, but fix the zero flag logic to properly assign 0 when output is non-zero (was missing before).
-
-This architecture leverages native Verilog arithmetic operators for clarity and synthesis friendliness, resulting in a straightforward, efficient combinational adder/subtractor with zero detection.

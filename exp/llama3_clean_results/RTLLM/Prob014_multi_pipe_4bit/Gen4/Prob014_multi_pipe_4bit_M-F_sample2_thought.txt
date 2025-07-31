@@ -1,9 +1,0 @@
-To fix the 4-bit unsigned number pipeline multiplier, we need to address the issues mentioned in the feedback. The primary goal is to correctly implement a pipelined multiplier that calculates partial products over multiple clock cycles. 
-
-Here's a revised design approach:
-1. **Proper Pipelining:** Divide the multiplication process into stages, each corresponding to one bit of the multiplier (`mul_b`). This ensures that each partial product is calculated and accumulated separately, avoiding race conditions and incorrect behavior.
-2. **Correct Accumulation of Partial Products:** Use a separate stage for each bit of the multiplier to calculate the partial product and add it to the running total. This approach ensures that the multiplication is performed correctly and that the results are accumulated over multiple clock cycles.
-3. **Intermediate Registers:** Use two levels of registers as originally intended, but ensure they are used to store the intermediate results of the multiplication process. The first register (`stage1`) will hold the result after the first bit of the multiplier has been processed, and the second register (`stage2`) will hold the final product after all bits have been processed.
-4. **Sequential Calculation:** Process each bit of the multiplier sequentially, starting from the least significant bit (LSB) to the most significant bit (MSB). This approach ensures that the partial products are correctly accumulated over time.
-
-By following this revised approach, the corrected code should implement a functioning 4-bit unsigned number pipeline multiplier that accurately calculates the product of two 4-bit numbers over multiple clock cycles.

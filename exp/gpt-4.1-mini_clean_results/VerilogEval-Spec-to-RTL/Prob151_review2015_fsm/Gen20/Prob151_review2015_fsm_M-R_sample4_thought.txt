@@ -1,6 +1,0 @@
-Refactor the FSM by encoding the main states as a simple binary state machine using fewer states and using a separate 3-bit shift counter register to handle the 4 shift cycles.  
-This separates the concerns: the state machine tracks the major phases (SEARCH, SHIFT, COUNT, DONE), and the shift counter controls how many bits have been shifted, improving modularity and making the shift enable timing explicit.  
-Use combinational logic to decode outputs from the state and counter.  
-Implement synchronous reset and state updates in a single always block to maintain clarity.  
-This structure reduces the state encoding size, simplifies transitions, and avoids expanding SHIFT into multiple states, potentially reducing area and improving timing by localizing shift cycle counting to a small register instead of multiple shift states.  
-Overall, the FSM maintains the same functionality but uses a state-plus-counter approach to control shift timing.

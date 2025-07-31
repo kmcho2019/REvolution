@@ -1,9 +1,0 @@
-To simplify the ALU design while maintaining full functionality, I will remove redundant intermediate wires for each operation and instead directly compute the result inside the combinational always block based on the opcode. This avoids parallel calculation of all operations, reducing complexity.
-
-I will merge the adder and subtractor operations into a single block using a signed addition or subtraction. For SLT and SLTU, I will compute the flag within the always block and assign the flag output with a simple conditional drive instead of tri-state `'z'`, using 0 when not relevant, as tri-state outputs are generally discouraged and not necessary here.
-
-Shift operations will use concise shift amounts and operations directly in the always block to reduce overhead. The LUI operation is corrected to shift `b` left by 16 bits (as per MIPS ISA) instead of manipulating `a`.
-
-The status flags zero, carry, negative, and overflow will be set inside the always block based on the result of the chosen operation. Carry is only meaningful for add and addu, so it is assigned accordingly; overflow is only meaningful for signed add and sub.
-
-This approach greatly simplifies the logic, avoids redundant wiring, removes tri-state output, and keeps the code clean, readable, and synthesizable without losing correctness.

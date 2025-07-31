@@ -1,9 +1,0 @@
-To implement the Moore state machine for a one-input one-output serial 2's complementer, we need to consider the basic principles of 2's complement representation. In 2's complement, the most significant bit (MSB) represents the sign of the number. To get the 2's complement of a binary number, we first invert all the bits (which gives us the 1's complement) and then add 1. 
-
-Since this is a serial input, we'll process one bit at a time. The machine needs to keep track of the current state (whether we are in the initial state, inverting bits, or adding 1) and handle the reset condition. We will use a simple state machine with two main states: an idle state where we wait for reset to be released, and an operational state where we start processing the input bits.
-
-The operational state involves two phases: the first phase where we simply pass through the input bits until we detect the most significant bit (indicated by a transition from '1' to '0'), and the second phase where we invert the bits and then add 1.
-
-However, for a Moore machine, the output is determined solely by the current state. Thus, we need to modify our approach slightly. We will use the current state to determine the output based on the input bits seen so far. When we are in the process of inverting bits (after detecting the MSB), the output will be the inverse of the input. When we reach the point where we need to add 1 (after all bits have been inverted), the output will reflect this addition.
-
-Given that our machine accepts numbers of arbitrary length and stops when reset is asserted, we will utilize a flag to indicate when we are in the "add 1" phase, which happens after we've seen the MSB and all subsequent bits have been inverted.

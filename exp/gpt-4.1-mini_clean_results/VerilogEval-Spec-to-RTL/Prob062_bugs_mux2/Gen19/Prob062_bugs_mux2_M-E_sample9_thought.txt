@@ -1,7 +1,0 @@
-The original problem stems from trying to produce a 1-bit output by selecting between two 8-bit inputs. The bug arises because the output is declared as 1-bit but the code uses bitwise operations on 8-bit vectors, causing width mismatches.
-
-A novel approach is to clearly specify which bit from the 8-bit inputs should drive the 1-bit output. For example, we can add an additional input signal specifying the index of the bit to select (3 bits needed to index bits 0 to 7). The output will be a single bit, selecting either bit `idx` of `a` or bit `idx` of `b` based on `sel`.
-
-This design explicitly and cleanly selects one bit from either bus `a` or bus `b` based on the select and bit-index input, avoiding any width mismatch. It is more flexible, general, and completely solves the original bug.
-
-This architectural change is especially useful if the testbench or use case expects a single bit output from a selected bit position, not the entire bus. It also clearly separates bit selection and mux selection, preventing any confusion or width mismatch.

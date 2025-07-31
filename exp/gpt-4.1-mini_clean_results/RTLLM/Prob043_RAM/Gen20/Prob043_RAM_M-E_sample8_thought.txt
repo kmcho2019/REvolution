@@ -1,7 +1,0 @@
-Implement the dual-port RAM with synchronous read and write operations both registered at the clock edge. On reset (active low), asynchronously clear all RAM entries and the read_data output to zero.  
-Use a synchronous reset approach inside always blocks for both reading and writing, but asynchronously trigger reset on negedge rst_n.  
-The RAM will be a 2D reg array of DEPTH by WIDTH. The read address and output data registers will enable data stability and timing closure at the cost of 1-cycle read latency.  
-This approach ensures clean timing, less glitching on output read_data, and full reset coverage.  
-The read operation uses a separate always block that captures the output data on posedge clk if read_en is asserted. If read_en is low, read_data is cleared to zero.  
-This design fully supports simultaneous read and write at different addresses with full control signals, and reset clears all memory contents and output.  
-Address widths are parameterized using $clog2(DEPTH).

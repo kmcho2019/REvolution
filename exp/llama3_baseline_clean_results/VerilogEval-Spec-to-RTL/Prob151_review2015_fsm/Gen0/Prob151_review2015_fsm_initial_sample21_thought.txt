@@ -1,6 +1,0 @@
-To solve this problem, we need to design a finite-state machine (FSM) that can recognize the pattern '1101' and then perform the required actions. The FSM will have several states:
-- IDLE: The initial state where it waits for the pattern '1101' to be detected.
-- SHIFT: After detecting the pattern, it shifts in 4 more bits by asserting shift_ena for 4 clock cycles.
-- COUNT: Waits for the counters to finish counting by asserting counting and waiting for done_counting.
-- DONE: Asserts done to notify the user and waits for ack to reset.
-We will use a 4-bit shift register to detect the pattern '1101'. Once the pattern is detected, the FSM moves to the SHIFT state. A counter will be used to count the 4 clock cycles for shifting. After shifting, it moves to the COUNT state. The FSM will then wait for done_counting to move to the DONE state. In the DONE state, it will assert done and wait for ack to reset to the IDLE state.

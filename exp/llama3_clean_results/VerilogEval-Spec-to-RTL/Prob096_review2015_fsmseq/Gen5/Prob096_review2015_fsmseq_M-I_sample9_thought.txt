@@ -1,9 +1,0 @@
-To improve the existing solution, we should focus on addressing the issue with the `seq_found` signal and optimize the design for better PPA (Performance, Power, Area) metrics. The main goal is to ensure that once `seq_found` is set to 1, it remains 1 until the `reset` signal is asserted. This can be achieved by explicitly handling the case when `seq_found` is 1 and `reset` is 0, ensuring that `seq_found` remains 1 in this condition.
-
-We will add a condition to keep `seq_found` as 1 once it has been set, regardless of the current `shift_reg` value, until `reset` is asserted. Additionally, to optimize for PPA, we should minimize the number of logic gates and reduce the complexity of the combinational logic, reduce switching activity by avoiding unnecessary transitions in the signals, and ensure that the design operates correctly under all conditions, minimizing the need for additional logic or correction circuits.
-
-One potential optimization is to use a single flip-flop for `seq_found` and remove the unnecessary logic that updates it based on the current sequence. Instead, once `seq_found` is set, it will remain set until `reset` is asserted. This simplifies the logic and reduces the switching activity, as `seq_found` will not change once it is set.
-
-Another optimization is to ensure that the logic for handling `start_shifting` is correctly implemented and minimize unnecessary transitions. Since `start_shifting` should remain 1 once the sequence is detected, we can assign it the value of `seq_found` directly, eliminating the need for additional logic.
-
-By addressing the issue with `seq_found` and optimizing the design for better PPA, we can create a more reliable and efficient implementation of the finite-state machine.

@@ -1,9 +1,0 @@
-To optimize the given triangle wave generator for better PPA, the approach focuses on reducing unnecessary toggling and switching activity at boundary conditions without changing the functional behavior. Specifically:
-
-- Avoid holding the wave at the boundary value for an extra cycle when the state toggles; instead, increment or decrement directly to the boundary and toggle the state in the same cycle. This eliminates one extra clock cycle where the wave value is stable but state toggling logic evaluates repeatedly.
-- Implement a clock enable internally so wave and state update only when necessary, which reduces toggling and switching on registers.
-- Use synchronous reset instead of asynchronous reset to improve timing closure and reduce complexity, assuming the target allows this. If asynchronous reset is required, keep it but minimize logic dependency.
-- Combine the state and wave update logic into a single always_ff block to simplify logic synthesis and potentially improve critical path.
-- Use explicit signed arithmetic is not necessary since wave is unsigned, but careful boundary checks prevent overflow/underflow.
-  
-These changes improve power by minimizing toggling, improve timing by simplifying logic paths, and maintain minimal area since no extra registers or complex logic are introduced.

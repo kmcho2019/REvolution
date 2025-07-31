@@ -1,9 +1,0 @@
-The original design uses an always block to synchronously update the state register and a generate loop with a function call to calculate the next state combinationally. To refactor while keeping the core design:
-
-1. Replace the next state function with direct bitwise logic expressions in the generate loop to avoid function call overhead and potentially improve synthesis clarity.
-2. Instead of using an always block, instantiate a separate module for the 512-bit state register with load enable functionality, making the top module purely combinational outside of the register.
-3. Use a single continuous assignment for next state generation via a generate block with direct expressions, improving structural clarity.
-4. This modularizes the design, separating combinational logic from sequential logic, enabling better reuse and potentially clearer synthesis results.
-5. The boundaries remain handled by the zero-padded extended vector.
-
-This refactor makes the combinational next state logic explicit as assignments and separates sequential state update into a dedicated register module with load capability, improving modularity and possibly easing timing analysis.

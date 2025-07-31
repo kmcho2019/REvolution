@@ -1,9 +1,0 @@
-To improve PPA (performance, power, and area) over the provided design, we focus on: 
-1. Performance: Reduce combinational logic on critical path by avoiding checking multi-variable conditions unnecessarily every clock. Instead, generate clock enable signals based on seconds rolling over, so minutes and hours counters only update when needed.
-2. Power: Introduce clock enable signals so minutes and hours counters toggle only when seconds wrap, lowering switching activity.
-3. Area: Merge all counters into a single always block, sharing increment logic and minimizing resource duplication. This also simplifies timing paths.
-4. Use synchronous reset for better timing closure and allow easier optimization.
-5. Maintain non-blocking assignments for sequential logic correctness.
-6. Keep Hours at 5 bits, Mins and Secs at 6 bits.
-
-This approach reduces complex combinational checks, improves timing by limiting critical path length, and lowers power due to gating updates. The merged block also can help area by resource sharing and smaller control logic.

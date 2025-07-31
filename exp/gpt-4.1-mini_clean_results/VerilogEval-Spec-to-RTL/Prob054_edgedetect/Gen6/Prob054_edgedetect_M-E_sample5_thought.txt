@@ -1,7 +1,0 @@
-Instead of tracking the previous input directly, the module uses a two-stage shift register (a pipeline of two registers) to delay the input signal by one and two cycles. The positive edge (0-to-1) detection is then done by comparing the delayed signals: the first delayed stage (in_d1) and the second delayed stage (in_d2).
-
-The logic for detecting a 0-to-1 transition is: if the signal was 0 two cycles ago (in_d2 bit = 0) and is 1 one cycle ago (in_d1 bit = 1), it means the rising edge occurred in the cycle between in_d2 and in_d1 sampling. Since the output pedge must be asserted one cycle after the transition, we can directly assign pedge with this condition at the current clock.
-
-This approach uses two registers for pipelining but gives a novel way to detect edges based on two previous samples and aligns the pedge output timing with the problem statement. It is a fresh structural approach compared to the single previous input approach.
-
-This method inherently delays the output by two cycles total (due to two pipeline stages), but since the requirement is to assert pedge one cycle after a 0->1 transition, this pipeline technique effectively shifts input samples to realize that delay explicitly.

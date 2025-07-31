@@ -1,5 +1,0 @@
-The original design decomposes the 100-bit 2-to-1 multiplexer into ten 10-bit mux instances and concatenates their outputs. This modular approach is clear but introduces extra module instances and wiring overhead.
-
-To refactor while preserving the core functionality, we can replace the multiple 10-bit mux instances with a single continuous assignment that selects between the full 100-bit vectors directly. This uses Verilog’s vector conditional operator (`assign out = sel ? b : a;`) which is concise, fully combinational, and likely more optimal for synthesis. 
-
-This refactoring simplifies the design by removing intermediate signals and generate blocks, making the module easier to understand and potentially more power- and area-efficient, as it lets synthesis tools implement the mux with minimal overhead. It also reduces code size and avoids explicit sub-module instantiation while preserving the exact multiplexing functionality.

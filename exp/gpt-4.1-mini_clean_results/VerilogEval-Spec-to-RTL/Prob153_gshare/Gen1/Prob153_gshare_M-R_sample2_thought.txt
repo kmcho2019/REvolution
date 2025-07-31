@@ -1,7 +1,0 @@
-Refactor the design to separate combinational read and synchronous write clearly, and resolve update precedence by splitting update decisions into distinct combinational signals. Use a single always_ff block triggered by clock or async reset for all state updates: PHT and global_history. Avoid direct combinational access to the PHT memory; instead, read the PHT entries synchronously or register the read outputs to remove races. Store the read PHT entry for prediction in a register updated at each clock cycle, reflecting the state before any training update. Generate the prediction outputs from this registered value to ensure stable outputs. The global_history update logic uses a mux to select between:
-
-- train_history when train_mispredicted (recovery),
-- else update by shifting in predicted taken bit if predict_valid and no misprediction training,
-- else hold current history.
-
-PHT update for training happens synchronously on clock edge if train_valid is asserted, updating saturating counters properly. This clear separation ensures predictable and deterministic updates, resolves race conditions, and aligns with the timing diagram specification. Reset initializes PHT entries and global history synchronously or asynchronously as required. This restructuring improves clarity, correctness, and simulation behavior.

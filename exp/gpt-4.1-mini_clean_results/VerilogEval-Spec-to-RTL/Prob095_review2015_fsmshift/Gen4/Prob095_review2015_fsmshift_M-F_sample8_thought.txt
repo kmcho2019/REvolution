@@ -1,5 +1,0 @@
-To correctly assert shift_ena for exactly 4 clock cycles starting from the clock cycle when reset is active, the counter should start counting *during* reset and continue incrementing after reset deasserts, until it reaches 4. During these 4 cycles (including cycles with reset high), shift_ena remains high. After 4 cycles, shift_ena stays low forever until the next reset.
-
-Implement a synchronous process that increments a counter when it's less than 4 or when reset is high. On reset, counter resets to 0 and counting begins immediately, including the reset cycle. The output shift_ena is asserted whenever the counter is less than 4. After counting 4 cycles (from 0 to 3), the counter stops incrementing, ensuring shift_ena stays low forever until the next reset.
-
-This method aligns the assertion of shift_ena exactly with the 4 clock cycles starting from the cycle with reset active, fixes the previous issue where shift_ena was never asserted *during* reset cycles, and ensures shift_ena is correctly deasserted afterward.

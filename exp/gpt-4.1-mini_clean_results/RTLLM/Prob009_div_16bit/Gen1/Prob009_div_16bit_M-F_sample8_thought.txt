@@ -1,5 +1,0 @@
-To fix the division logic, remove unnecessary input latching and work directly with inputs A and B. Implement the division by maintaining a remainder register of width equal to divisor width (8 bits) plus one extra bit to accommodate subtraction borrow and shifting. At each of the 16 steps, shift the remainder left by one, input the next dividend bit starting from MSB, and extract the upper bits equal to divisor width for comparison with divisor B.
-
-If the extracted bits are greater or equal to B, subtract B and set the quotient bit to 1; otherwise, leave it and set quotient bit to 0. After processing all bits, the remainder register will hold the remainder (up to 8 bits). Pad the remainder to 16 bits by placing the remainder in the lower bits and zeroing upper bits.
-
-This approach maintains the stepwise division as described, correctly aligns bits for comparison, updates quotient bits in MSB-to-LSB order, and yields accurate quotient and remainder. Use a single combinational always block for the division logic.

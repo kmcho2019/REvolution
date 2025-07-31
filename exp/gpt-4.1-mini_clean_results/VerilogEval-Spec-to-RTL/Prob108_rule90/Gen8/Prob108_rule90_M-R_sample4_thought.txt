@@ -1,9 +1,0 @@
-Refactor the design by separating the combinational next state calculation fully from the sequential state update. Instead of computing next_state inside each block with generate loops assigning wires and updating q_out in an always block, calculate the next state for the entire 512-bit vector using a single combinational assign in the top module with explicit boundary padding and shifting. Then register the entire 512-bit state in one always block with a load input.
-
-This approach removes per-block modules, simplifying inter-block boundary passing, and clarifies next-state calculation as a pure combinational function of the current state. Using bit-slice concatenation and shift operators with zero-padding at boundaries implements Rule 90 efficiently and clearly. The load logic is also simplified.
-
-This refactoring reduces hierarchy and potentially improves timing by removing multiple module boundaries and improves clarity by centralizing combinational logic. It also allows easier modification for different automata sizes or rules.
-
-Nonblocking assignments remain in the sequential block to ensure correct synchronous update. The state is held in a single reg [511:0] variable. The combinational logic uses bitwise XOR of shifted states with boundary zeros inserted.
-
-The output q is driven directly from the registered state.

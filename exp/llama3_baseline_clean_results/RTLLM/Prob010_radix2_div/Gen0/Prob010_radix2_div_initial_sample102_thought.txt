@@ -1,8 +1,0 @@
-The implementation of the radix-2 divider will be performed in several stages:
-1.  Synchronization and initialization: The module will first check for a valid operation request (opn_valid high and res_valid low). Upon a valid request, it will save the inputs (dividend and divisor) and initialize the necessary registers (shift register SR, NEG_DIVISOR, counter cnt, and start_cnt).
-2.  Division process: If start_cnt is high, the module will perform the division steps. It checks if the counter cnt has reached 8 (most significant bit set), indicating the division is complete. If not, it increments the counter cnt and updates the shift register SR based on the subtraction result of NEG_DIVISOR from SR. The update process uses a multiplexer to select the appropriate result based on the carry-out.
-3.  Result validity management: The module will manage the res_valid signal based on the reset signal, the counter, and whether the result has been consumed. When the division is complete (cnt is 8), it will set res_valid high, indicating the result is ready.
-
-To handle signed and unsigned operations, the module will use the sign input to determine whether to perform signed or unsigned division. The absolute value of the dividend and divisor will be used for calculations, and the NEG_DIVISOR will be computed accordingly.
-
-The final result will contain the remainder in the upper 8 bits and the quotient in the lower 8 bits, as required.

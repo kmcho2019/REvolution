@@ -1,5 +1,0 @@
-Refactor the FSM to use binary-encoded states with a single state register of 3 bits, representing each distinct state numerically. Implement the next-state logic and output logic entirely as combinational `assign` statements, rather than using a function or separate combinational always block. Keep synchronous reset and state updates inside a single `always @(posedge clk)` block for clarity and synthesis friendliness.
-
-This binary encoding reduces flip-flop usage compared to one-hot encoding and simplifies the state register. The combinational logic for next state and output is explicitly described through continuous assignments, which can ease understanding and synthesis tool optimizations.
-
-The output `start_shifting` remains sticky in the final state (state representing full match), and synchronous reset resets FSM to initial state. This maintains the same FSM behavior while changing coding style and encoding to a more compact form.

@@ -1,8 +1,0 @@
-The given truth table can be analyzed by expressing q as a sum of minterms where q = 1. Another approach is to use a 4-input LUT-based formulation, or implement q as a multiplexed function: let’s consider the inputs (a,b) as the select lines to a 4-to-1 multiplexer whose inputs are functions of (c,d). By carefully examining the pattern of q for each (a,b) value, we can assign corresponding functions on (c,d). For example:
-
-- When (a,b)=00, q = ~c & ~d (from table: q=1 only when c=0,d=0, else 0 except c=1,d=1 => q=1)
-- When (a,b)=01, q = (c & ~d) | (~c & d) (observed from the pattern)
-- When (a,b)=10, q = (c ^ d) (from the pattern)
-- When (a,b)=11, q = c & d
-
-This approach modularizes the problem by splitting inputs into two groups, computing intermediate functions on c and d, then selecting via (a,b). This is a novel architectural take, different from parity or direct XOR implementations.

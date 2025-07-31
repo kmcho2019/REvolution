@@ -1,9 +1,0 @@
-The original design suffers from timing misalignment due to toggling one of the clocks on negedge clk based on a posedge-synchronized counter. To fix this, I will avoid mixing posedge and negedge clocking for internal logic. Instead, I will implement both intermediate clocks (`clk_pos` and `clk_neg`) purely using posedge clocking and combinational logic, generating half-period pulse enables based on the counter.
-
-The counter will run on the rising edge of clk from 0 to 6 (7 counts). I will generate two pulse signals `pulse_pos` and `pulse_neg` that indicate when to toggle `clk_pos` and `clk_neg` respectively. Then, `clk_pos` and `clk_neg` are updated synchronously on posedge clk according to these pulses.
-
-To mimic double-edge toggling without using negedge clk, `clk_neg` will toggle on counts offset by 1 from `clk_pos`, effectively simulating the delay or advance by half a clock cycle.
-
-Finally, `clk_div` is produced by OR'ing `clk_pos` and `clk_neg`, yielding a smooth 3.5x frequency division with proper duty cycle.
-
-This approach keeps all logic synchronous to the same clock edge, eliminating metastability and timing issues and ensuring correct phased clock outputs.

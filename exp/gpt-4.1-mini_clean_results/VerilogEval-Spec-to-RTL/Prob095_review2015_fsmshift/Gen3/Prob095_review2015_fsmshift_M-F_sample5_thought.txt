@@ -1,7 +1,0 @@
-To fix the issue, we need to precisely assert shift_ena for exactly 4 clock cycles *after* the synchronous reset is deasserted. That means during the reset cycle shift_ena=0, and starting from the next clock cycle after reset goes low, shift_ena should be asserted for 4 cycles. To achieve this, we track a 3-bit counter that increments only when enabled. On reset, the counter resets and shift_ena is deasserted. When reset deasserts, we start asserting shift_ena and count four cycles, then stop. This approach aligns with the expected timing: the shift enable period starts after reset, not during reset.
-
-Additionally, since the problem states shift_ena should also be asserted for 4 cycles when a detected bit pattern occurs (implying a trigger input), but no trigger input is given, we only implement the reset-triggered behavior as per the user request.
-
-The count should increment only when shift_ena is active and stop afterward to avoid overflow. This ensures stable timing and behavior.
-
-This synchronous approach avoids off-by-one errors and matches the testbench expectations.

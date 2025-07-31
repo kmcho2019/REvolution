@@ -1,9 +1,0 @@
-Implement the LIFO buffer using a 4-entry memory array (`stack_mem`) and a 3-bit stack pointer (`SP`) that points to the current top of the stack. Here, SP ranges from 0 (full stack) to 4 (empty stack), but it works in reverse compared to the typical approach: the stack pointer indicates the next free position to push data. 
-
-- On reset, SP is set to 4, meaning the stack is empty. 
-- For a push (RW=0): if not full, decrement SP and write dataIn into `stack_mem[SP-1]` (the newly occupied slot). 
-- For a pop (RW=1): if not empty, read data from `stack_mem[SP]`, output it on dataOut, clear that entry, then increment SP. 
-
-The EMPTY flag is asserted when SP == 4, FULL when SP == 0. The dataOut register updates only on pop, so data is stable otherwise. This approach avoids shifting data around and simplifies stack pointer updates and memory management. The stack memory uses 4 separate registers, each 4 bits wide. Clearing entries on pop helps reduce power and avoids stale data. 
-
-The module uses synchronous logic with reset and enable signals as specified, with flags combinationally driven by SP.

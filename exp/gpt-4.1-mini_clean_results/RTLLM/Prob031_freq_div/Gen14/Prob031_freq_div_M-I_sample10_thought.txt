@@ -1,7 +1,0 @@
-To improve power and area efficiency, I will consolidate the two separate counters (cnt_10 and cnt_100) into a single larger counter counting up to 100. From this single counter, I will generate the 1 MHz and 10 MHz clocks by toggling the output clocks at specific counter values, eliminating redundant counter logic and reducing switching activity.
-
-For the 50 MHz clock (divide by 2), it simply toggles every cycle and can remain as a separate flip-flop toggled on each clock edge, since it is trivial and minimal overhead.
-
-This approach reduces the number of counters from two to one and avoids multiple counters incrementing every clock cycle, lowering dynamic power and area. Also, the toggles for the 10 MHz and 1 MHz clocks occur only when required rather than constantly incrementing independent counters. Using a single up-counter also simplifies control logic.
-
-The asynchronous reset behavior remains unchanged. Non-blocking assignments remain for synchronous logic. This design balances simplicity with improved PPA metrics.

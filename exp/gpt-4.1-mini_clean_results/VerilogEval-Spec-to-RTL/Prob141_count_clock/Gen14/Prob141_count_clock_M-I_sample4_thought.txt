@@ -1,5 +1,0 @@
-To improve the design's performance and reduce the critical path, I will separate the increment logic for seconds, minutes, and hours into separate always blocks triggered by the enable pulse. This breaks the deeply nested conditional increments into smaller steps. The seconds counter increments every enable; when it rolls over, it triggers minutes increment in a separate process, and similarly for hours. This pipelining reduces combinational delay in each clock cycle. 
-
-Additionally, I will update the PM signal only when the hour counter changes from 11 to 12, minimizing toggling. Hour will be kept as a binary counter, converted to BCD on output as before. This approach retains synchronous reset priority. The enable input gates counting logic, so no counting occurs without enable, saving power. 
-
-This modular approach improves timing by dividing logic and reduces dynamic power by minimizing signal toggling.

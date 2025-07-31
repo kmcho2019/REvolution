@@ -1,9 +1,0 @@
-To implement the 12-hour clock with a set of counters, we can start by creating three separate counters for hours, minutes, and seconds. Each counter should handle Binary-Coded Decimal (BCD) digits, ensuring that the values wrap around correctly (e.g., 00 to 59 for seconds and minutes, and 01 to 12 for hours).
-
-We'll use the 'ena' signal to control when the clock increments, which should happen once per second. Since 'clk' is much faster than once per second, we can use a separate counter to generate a signal that pulses once per second based on 'clk'.
-
-The 'reset' signal will be used to reset the clock to "12:00 AM" when asserted. This reset should be synchronous, meaning it only takes effect on the positive edge of 'clk', and it should have priority over the 'ena' signal.
-
-For the am/pm indicator 'pm', we can simply set it based on the hour value, toggling between AM and PM as the hour crosses from 11 to 12 or vice versa.
-
-The hours, minutes, and seconds will be represented as two BCD digits each, and we will ensure that they are correctly updated based on the 'ena' and 'reset' signals.

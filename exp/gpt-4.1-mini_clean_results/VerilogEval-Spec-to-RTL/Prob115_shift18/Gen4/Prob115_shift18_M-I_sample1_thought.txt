@@ -1,9 +1,0 @@
-To optimize the existing 64-bit arithmetic shift register for better performance, power, and area, we combine the two-stage shift into a single barrel shifter stage that directly performs the required shifts (left by 1 or 8, right arithmetic by 1 or 8) in one combinational operation. This reduces the combinational path delay and switching activity since the logic is evaluated once per shift.
-
-Additionally, we gate the shift operation with ena so that when ena is low and load is low, the output remains unchanged without performing any unnecessary combinational operations, thus reducing power consumption.
-
-We implement the arithmetic right shift by replicating the sign bit (MSB) accordingly using a left-padded concatenation. The left shifts are zero-extended on the right. For the right shifts, the sign bit is replicated to fill the vacated bits for arithmetic shift correctness.
-
-The design retains a synchronous load and synchronous enable-based update, ensuring clean timing and no glitches on q.
-
-This approach simplifies the combinational logic, reduces switching activity when shift is disabled, and shortens critical path delay, improving the overall PPA metrics.

@@ -1,8 +1,0 @@
-Instead of performing the bitwise operations directly on slices, use a different approach:
-
-- Treat the input vector as a circular shift register for the neighbors.
-- Create two shifted versions of the input: one shifted left (neighbor to the left) and one shifted right (neighbor to the right) with proper zero padding or wrap-around as required.
-- For out_both, shift the input left by one and AND with the original input. Since the highest bit has no left neighbor, we set that bit to zero.
-- For out_any, shift the input right by one and OR with the original input. Since the lowest bit has no right neighbor, set that bit to zero.
-- For out_different, create a wrap-around left neighbor by concatenating the lowest bit at the high end and XOR with the input.
-- This method avoids complex slicing and leverages simple shift operations to find neighbors, making the code more uniform and easy to maintain.

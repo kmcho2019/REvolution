@@ -1,7 +1,0 @@
-To implement the finite-state machine that controls the timer, we will define an enumerated type to represent the different states of the machine. The machine will start in an idle state, waiting for the pattern 1101 to be detected. Once the pattern is detected, it will transition to a state where it shifts in 4 more bits to determine the duration to delay. After shifting in the bits, it will transition to a state where it waits for the counters to finish counting. Once the counters are done, it will transition to a state where it notifies the user and waits for the user to acknowledge the timer. The machine will then reset to the idle state and begin searching for the next occurrence of the start sequence.
-
-The states and their corresponding actions are:
-- Idle: Wait for the pattern 1101 to be detected.
-- Shift: Assert shift_ena for exactly 4 clock cycles to shift in the duration bits.
-- Count: Assert counting to indicate waiting for the counters, and wait for done_counting to be high.
-- Done: Assert done to notify the user, and wait for ack to be high.

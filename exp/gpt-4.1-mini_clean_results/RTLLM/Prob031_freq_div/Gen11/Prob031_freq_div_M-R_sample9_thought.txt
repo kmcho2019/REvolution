@@ -1,8 +1,0 @@
-Refactor the frequency divider by separating the generation of each output clock into individual always blocks to improve modularity and potentially improve timing. Use synchronous reset and counters that count up to half the division factor minus one, toggling the output clocks accordingly. This approach makes the logic for each clock domain clearer and isolates their counters and toggling logic. 
-
-Specifically:
-- For CLK_50 (divide by 2), use a 1-bit counter toggling output every clock cycle.
-- For CLK_10 (divide by 10), count from 0 to 4, toggle CLK_10 on reaching 4.
-- For CLK_1 (divide by 100), count from 0 to 49, toggle CLK_1 on reaching 49.
-
-This structure separates concerns and can simplify timing closure and debugging. The asynchronous active-high reset remains. All counters and outputs are updated on the positive edge of CLK_in or when reset is asserted.

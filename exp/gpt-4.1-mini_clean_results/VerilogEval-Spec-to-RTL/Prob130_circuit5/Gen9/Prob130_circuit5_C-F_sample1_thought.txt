@@ -1,9 +1,0 @@
-To fuse the strengths of both examples, we combine the clarity and simplicity of the explicit case statement (Example 2) with the efficient combinational assignment style from Example 1 to avoid using an always block and reg output.
-
-We implement q as a combinational output using a simple, explicit conditional expression that checks if c < 4, and then selects among inputs b, e, a, d based on c's 2-bit value. If c ≥ 4, output 4'hF.
-
-This combines Example 2's straightforward decoding with Example 1's continuous assignment style, eliminating the always block and reg. It reduces area and power by limiting switching to only necessary signals and improves clarity with explicit input selection logic. Using a range check c < 4 avoids an expensive case statement with many defaults and encourages synthesis of a simple 4-to-1 multiplexer plus a default value.
-
-This approach also replaces multiplication-based shift in Example 1 with simple conditional operator and indexing, improving synthesis friendliness and reducing combinational path length.
-
-Hence, the module is purely combinational, with minimal logic depth, clear semantics, and minimal switching activity, leading to a better PPA profile.

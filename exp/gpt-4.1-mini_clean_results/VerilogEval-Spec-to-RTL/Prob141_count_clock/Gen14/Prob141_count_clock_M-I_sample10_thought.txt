@@ -1,5 +1,0 @@
-To improve the PPA of the existing 12-hour clock design, I will separate the hour, minute, and second counters into independent always blocks to reduce the combinational critical path in a single clock cycle. This parallelizes increments and improves timing (TNS/WNS). I will also update the hour BCD only when the hour changes, using an additional reg to hold the BCD hour output to reduce switching power on the hour outputs. Similarly, I'll update the pm output only on hour rollovers to limit toggling.
-
-For power, I will gate the counting logic by ena so no unnecessary toggling occurs on non-enabled cycles.
-
-Area impact is minimal since we're mainly restructuring the always blocks and adding minimal logic for output latching. Overall, this approach balances improved timing and power without sacrificing correctness or area significantly.

@@ -1,7 +1,0 @@
-Implement a straightforward shift-and-add multiplier with separate registers for multiplicand, multiplier, and product accumulator, controlled by a shift counter. On start, load inputs into registers and reset accumulator. Each clock cycle, check the least significant bit of the multiplier register: if it is '1', add the multiplicand to the accumulator. Then shift the multiplier right by one and the accumulator left by one bit to prepare for next bit multiplication.
-
-Use a 5-bit shift counter that increments each cycle during operation. When the counter reaches 16, the multiplication is complete and the done flag is set. On reset or when start is inactive, all internal registers and counters reset.
-
-This approach keeps multiplicand fixed, shifts the multiplier right, and accumulates partial products in the product register shifted left accordingly, avoiding shifts of large combined registers. The product width is 32 bits, accumulator holds upper 16 bits plus carry from additions, multiplier holds remaining bits. This architecture is simple, clear, and cleanly separates data path and control.
-
-Use synchronous reset and non-blocking assignments for clean sequential logic. Output the final product from the product register combined with the multiplier register after operation ends.

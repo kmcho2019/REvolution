@@ -1,9 +1,0 @@
-Implement the FSM by separating the direction and behavior into two distinct registers: a 1-bit direction register (0 = left, 1 = right) and a 2-bit mode register encoding walking, falling, and digging states. 
-
-This decomposition simplifies transition logic by isolating direction changes from behavioral state changes. The direction changes only when walking and bumped. The mode changes according to ground, dig inputs, and current mode with clear priority: fall > dig > walking.
-
-Using separate registers makes output assignments straightforward as outputs depend on mode and direction independently.
-
-On reset, direction is left and mode is walking. State transitions update direction and mode accordingly at each clock.
-
-This approach models the Moore FSM clearly, simplifies next-state logic, and reduces combinational decoding complexity compared to encoding all in one state vector.

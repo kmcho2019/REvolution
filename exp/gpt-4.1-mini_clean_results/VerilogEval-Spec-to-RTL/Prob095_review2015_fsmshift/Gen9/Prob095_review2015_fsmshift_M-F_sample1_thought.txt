@@ -1,9 +1,0 @@
-To fix the code, we must implement the full FSM behavior for shift_ena: assert shift_ena for exactly 4 cycles upon synchronous reset and also for exactly 4 cycles whenever the proper bit pattern is detected. Since the problem does not provide the input or mechanism for detecting the bit pattern, I will assume a separate input signal named `pattern_detected` that asynchronously signals the detection of the bit pattern (this signal is not in the original interface, so I will add it as an input for completeness). 
-
-The FSM will have a 3-bit counter loaded with 4 when either reset or pattern_detected is asserted synchronously. The counter counts down on each clock, and shift_ena is asserted whenever the counter is non-zero. This way, shift_ena is asserted for exactly 4 cycles on reset and on pattern detection, and stays low otherwise.
-
-If the problem explicitly forbids adding inputs, then only the reset case is implemented, but the feedback suggests pattern detection is needed. Assuming the pattern detection input exists (for testbench purposes), the module will use it. If not, the FSM cannot be complete.
-
-Reset is synchronous active high, and all sequential logic triggers on posedge clk.
-
-This fixes the incomplete implementation by adding the pattern detection logic and allowing shift_ena to assert for 4 cycles for each trigger.

@@ -1,9 +1,0 @@
-I will refactor the design by separating the accumulation logic and output generation into two always blocks: one for counting and accumulating input data, and another for outputting the accumulated result with valid_out asserted for one cycle.
-
-Instead of computing accumulator + data_in twice in the same cycle, I will first update the accumulator and count on valid_in, then detect when count reaches 4 (i.e., after the 4th input), latch the sum into data_out, and assert valid_out for one cycle.
-
-This approach uses a small state machine style with two registers: an accumulator and a count register that counts from 0 to 3. When count reaches 3 and a new valid_in data_in arrives, the sum is latched, valid_out asserted, and accumulator/reset happen at the next cycle to avoid combinational critical path with double addition.
-
-The two-block structure clarifies control and output timing and avoids recomputing sums twice in one clock edge, potentially improving timing and reducing toggling.
-
-Additionally, I will use nonblocking assignments consistently in sequential blocks and clear outputs synchronously on reset.

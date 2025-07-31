@@ -1,9 +1,0 @@
-To address the functional errors in the frequency divider module (`freq_divbyfrac`), we need to revisit the logic for generating the intermediate divided clocks (`clk_div_int1` and `clk_div_int2`) and the phase-shifting mechanism using the delayed and advanced intermediate clocks (`clk_div_int1_dly` and `clk_div_int2_adv`).
-
-First, we correct the counter logic to accurately reflect the -cycle window for 3.5x division. We then adjust the conditions for generating `clk_div_int1` and `clk_div_int2` to ensure they represent the required uneven clock periods of 4 and 3 cycles, respectively.
-
-Next, we refine the phase-shifting mechanism by introducing additional signals to track the phase of the divided clocks and ensure uniform periods. We use these signals to control the generation of `clk_div_int1_dly` and `clk_div_int2_adv`, allowing for precise phase-shifting and duty cycle adjustment.
-
-Finally, we modify the logic for generating the final fractional divided clock output (`clk_div`) to correctly implement the double-edge clocking technique. We use the phase-shifted clocks to produce a smooth fractional clock output, ensuring the divided clock signal has a uniform period.
-
-By addressing these issues, we can improve the accuracy and functionality of the frequency divider module, achieving the required 3.5x division with a uniform output clock signal.

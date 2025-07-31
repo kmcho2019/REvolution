@@ -1,7 +1,0 @@
-Implement the 8x1 memory as a shift register with the LSB being Q[0] and the MSB Q[7]. We shift-in the input S at the LSB side on each clock pulse when enable is high, shifting bits leftwards towards MSB. This means Q[0] corresponds directly to shift_reg[0]. 
-
-For reading, we will directly use {A,B,C} as a 3-bit select to multiplex the output Z from shift_reg, with no need for bit reversal or complex indexing.
-
-This approach simplifies data alignment: the newest bit is always at Q[0], and the oldest at Q[7]. Reading is a simple indexed mux using ABC as address, improving clarity and reducing combinational logic compared to approaches that require bit reversal or inverted indexing.
-
-Hence, the shift register loads S at LSB, shifts left (towards MSB), enable controls shifting, and output Z is shift_reg indexed by ABC.

@@ -1,9 +1,0 @@
-To fix the timing mismatch, explicitly assert shift_ena during the reset cycle itself (when reset is high), as the testbench likely expects the output to be high immediately when reset is asserted synchronously. We will keep the existing ENABLE and DISABLE states and counter logic but modify the sequential logic so that when reset is high, shift_ena is asserted directly, and the state and count are reset to enable counting from zero on the next cycle.
-
-We can achieve this by making shift_ena a registered output driven by the state and reset: when reset is high, shift_ena is high, ensuring it is asserted during the reset cycle. When reset goes low, the FSM runs as before: ENABLE state asserts shift_ena for exactly 4 cycles by counting from 0 to 3, then transitions to DISABLE and deasserts shift_ena permanently.
-
-This slight adjustment aligns the output timing exactly with the synchronous reset assertion, preventing the first cycle mismatch in simulation and thus eliminating the observed 66 cycle mismatches.
-
-We retain synchronous reset and state transition logic, but make the output explicitly high during reset, ensuring proper assertion in the reset cycle and thereafter exactly 4 cycles of shift_ena enabled.
-
-Additionally, to be safe, we will avoid using `typedef enum` in case the environment is plain Verilog by using localparams for states.

@@ -1,7 +1,0 @@
-Fuse the best practices from both examples by using a SystemVerilog typedef enum for FSM states to improve readability and enable better optimization. Separate combinational next-state and output logic from synchronous state and datapath registers for clarity and synthesis friendliness. Assert the done signal as a one-clock-cycle pulse registered synchronously, triggered only when the stop bit is correct.
-
-Maintain the LSB-first reception by shifting the data register right and inserting the incoming bit into the MSB, consistent with the serial protocol and both examples. Reduce unnecessary toggling by clearing the bit counter and shift register only in IDLE and WAIT_STOP states.
-
-Additionally, add a clock-enable style gating for updating the shift register and bit counter only during the RECEIVE state, minimizing switching activity and improving power efficiency. Keep the FSM minimal with 2-bit binary encoding covering four states: IDLE, RECEIVE, CHECK_STOP, and WAIT_STOP.
-
-This design cleanly separates concerns, optimizes power by gating datapath updates, aligns bit ordering with the protocol, and provides a robust one-cycle done pulse, resulting in a maintainable, efficient, and clear FSM implementation for serial byte reception with start and stop bit detection.

@@ -1,5 +1,0 @@
-Refactor the original sequential logic by explicitly defining two internal state registers to represent p and q. Use a synchronous always block triggered on the positive edge of clock to update p and q. Instead of updating q directly from p, treat p and q as two registers holding the current state, and update p from a combinational expression of input a and the previous states of p and q. Then update q with the old value of p to capture the previous p state delay.
-
-This approach clarifies the separation between current and next states and avoids the subtle timing confusion of simultaneous assignments. Initialize p and q to zero to avoid unknowns. The logic expression for updating p remains the same: next p = a | (p & q). q is updated as previous p.
-
-This refactoring preserves the original functional idea but makes the behavior explicit by separating next state calculation and state update. It eases reasoning about the behavior and better matches the waveform sequential pattern.

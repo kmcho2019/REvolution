@@ -1,9 +1,0 @@
-Instead of tightly coupling state transitions and output logic in one synchronous block, separate the FSM into two always blocks: one purely for next-state and control signals combinational logic, and another for synchronous state and data updates. Use a Moore FSM approach where outputs depend only on the current state, reducing glitches and improving timing. 
-
-Also, implement a start bit detection that requires the input to be stable low for one full clock cycle before transitioning to data reception, which adds robustness to noise. Capture data bits into a shift register by shifting right on each clock cycle, loading LSB first. After receiving 8 bits, check the stop bit; if valid, assert done and output the byte. If invalid, remain in a "hold" state where it samples the input until a proper stop bit is observed to resynchronize.
-
-To reduce switching on done, assert it only for one clock cycle when the stop bit is correctly received. The output out_byte holds the last correctly received byte and remains stable otherwise.
-
-Use an explicit counter for bits received, incrementing only in the RECEIVE state. The FSM has states: IDLE, START_WAIT (confirm start bit), RECEIVE, STOP_CHECK, and WAIT_STOP.
-
-This structured approach improves timing by separating combinational and sequential logic, and robustness by confirming start bit stability.

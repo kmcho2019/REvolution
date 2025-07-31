@@ -1,7 +1,0 @@
-To create a novel solution, let's consider an architectural approach that utilizes a single counter to generate all three output clock signals. This can be achieved by using a large counter that runs at the input clock frequency and generates the output clock signals based on specific thresholds. The counter will be reset when the reset signal is active.
-
-The counter will have a width sufficient to accommodate the division ratios for all output clock signals. For a 100MHz input clock and output frequencies of 50MHz, 10MHz, and 1MHz, we need a counter that can count up to at least 100 (for the 1MHz signal, as 100MHz / 1MHz = 100). However, to ensure flexibility and simplicity, we can use a slightly larger counter.
-
-Upon reaching specific thresholds (e.g., 1 for 50MHz, 10 for 10MHz, and 100 for 1MHz), the corresponding output clock signal will be toggled. This approach reduces the hardware required compared to having separate counters for each output signal and simplifies the logic.
-
-To further optimize, we can use a single always block that checks the counter value and toggles the output clocks accordingly, ensuring a compact and efficient design.

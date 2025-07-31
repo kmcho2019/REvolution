@@ -1,5 +1,0 @@
-Refactor the module by splitting the combinational rotation logic into a separate always_comb block that calculates the next value of the register `q_next`. The sequential always_ff block only updates the register `q` on the rising clock edge, either loading `data` or assigning `q_next`.
-
-This structure separates the combinational rotation logic from the sequential register update, improving code readability and making the data flow explicit. Instead of using a case statement inside the sequential block, we use combinational logic to generate the rotated output, which then feeds the register on the clock edge. This also avoids direct modification of `q` inside the always block, which can help synthesis tools optimize better.
-
-The core functionality remains the same: synchronous load, rotate left or right by one bit, or hold, depending on `ena`. This approach clearly distinguishes combinational and sequential logic, making the design modular and easier to maintain or extend.

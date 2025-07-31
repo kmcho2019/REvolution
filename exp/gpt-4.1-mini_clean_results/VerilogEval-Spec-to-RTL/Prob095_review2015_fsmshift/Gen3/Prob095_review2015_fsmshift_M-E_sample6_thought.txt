@@ -1,7 +1,0 @@
-Implement a shift enable timer using a simple cycle counter that starts counting down from 4 whenever a trigger event occurs. The triggers are twofold: synchronous reset asserted high, or an external input signal 'pattern_detected' going high. 
-
-Instead of an explicit FSM, use a counter register (e.g., 3 bits) that loads the value 4 when triggered and decrements each clock cycle while nonzero. The 'shift_ena' output is driven high whenever the counter is nonzero.
-
-This approach eliminates explicit state machines and makes logic concise and robust. On reset, the counter loads 4, causing shift_ena to be high for exactly 4 cycles. Likewise, on pattern detection, the counter reloads 4, and shift_ena is asserted similarly. If triggers overlap (e.g., pattern detected during active enable), reload the counter to 4 again, effectively extending the enable period.
-
-All logic is synchronous, with output driven directly from the counter value.

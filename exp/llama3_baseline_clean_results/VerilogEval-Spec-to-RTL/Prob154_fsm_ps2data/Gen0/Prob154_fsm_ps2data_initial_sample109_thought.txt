@@ -1,7 +1,0 @@
-To implement the TopModule, we need to design a finite state machine (FSM) that searches for message boundaries in the input byte stream. The FSM should have states to handle the following scenarios:
-- Waiting for the first byte of a message (WAITING): In this state, the FSM discards incoming bytes until it receives a byte with in[3] = 1.
-- Receiving the second byte of a message (RECEIVING_BYTE2): Once the first byte is received, the FSM moves to this state to receive the second byte.
-- Receiving the third byte of a message (RECEIVING_BYTE3): After receiving the second byte, the FSM moves to this state to receive the third byte.
-- Signaling done (DONE): After receiving the third byte, the FSM signals that a message has been received.
-
-We will use a 2-bit state variable to represent these four states. We will also use registers to store the incoming bytes. The out_bytes output will be assigned the value of the three bytes when the FSM is in the DONE state.

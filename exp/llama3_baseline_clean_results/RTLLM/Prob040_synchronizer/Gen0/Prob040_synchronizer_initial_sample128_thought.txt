@@ -1,8 +1,0 @@
-The synchronizer module is designed to handle data synchronization between two different clock domains. The input data signal (data_in) and enable signal (data_en) are referenced to clock signal A (clk_a), while the output data signal (dataout) is referenced to clock signal B (clk_b). The module includes several registers to store the input data and enable signals, as well as control registers to manage the selection of the input data. The module uses two D flip-flops to delay the enable signal by two clock cycles of clk_b, ensuring that the data is synchronized correctly.
-
-The implementation involves the following steps:
-
-1. Data Register: Store the input data signal (data_in) in a register (data_reg) on the positive edge of clock signal A (clk_a) or the falling edge of reset signal A (arstn).
-2. Enable Data Register: Store the input enable signal (data_en) in a register (en_data_reg) on the positive edge of clock signal A (clk_a) or the falling edge of reset signal A (arstn).
-3. Enable Control Registers: Update two control registers (en_clap_one and en_clap_two) on the positive edge of clock signal B (clk_b) or the falling edge of reset signal B (brstn) based on the value of en_data_reg.
-4. Output Assignment: Assign the output data value (dataout) on the positive edge of clock signal B (clk_b) or the falling edge of reset signal B (brstn) based on the control signal (en_clap_two) and the value of the data register (data_reg).

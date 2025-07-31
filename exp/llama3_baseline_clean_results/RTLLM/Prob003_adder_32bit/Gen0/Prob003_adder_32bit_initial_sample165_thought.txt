@@ -1,7 +1,0 @@
-To implement a 32-bit carry-lookahead adder using the Carry-Lookahead Adder (CLA) architecture, we need to first design a 16-bit CLA block. The 16-bit CLA block will generate the sum and carry-out bits for 16-bit operands. We will then use two instances of this 16-bit CLA block to create the 32-bit adder, with the carry-out from the first 16-bit CLA block connected to the carry-in of the second 16-bit CLA block. This approach enables us to efficiently compute the sum and carry-out for 32-bit operands.
-
-The 16-bit CLA block can be implemented using the standard equations for generating the carry bits in a carry-lookahead adder, which involve the propagate (P) and generate (G) signals for each bit position. The propagate signal indicates whether a carry from the previous bit position will propagate to the current bit position, and the generate signal indicates whether a carry will be generated at the current bit position.
-
-Once we have the 16-bit CLA block, we can instantiate it twice within the top-level adder_32bit module to create the 32-bit adder. The inputs to the first instance will be the lower 16 bits of the input operands A and B, and the inputs to the second instance will be the upper 16 bits of A and B, along with the carry-out from the first instance.
-
-The final output of the 32-bit adder will be the concatenation of the sum outputs from the two 16-bit CLA blocks, along with the carry-out from the second 16-bit CLA block.

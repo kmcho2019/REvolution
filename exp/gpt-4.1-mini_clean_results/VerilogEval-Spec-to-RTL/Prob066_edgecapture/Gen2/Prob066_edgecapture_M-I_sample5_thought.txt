@@ -1,5 +1,0 @@
-To avoid spurious detection of 1->0 transitions immediately after reset, we should not assume any initial state of prev_in that causes false transitions. Instead, on reset, prev_in should be initialized to the current input value 'in'. This way, the first comparison after reset finds no transition since prev_in == in, preventing false triggering of the falling-edge capture. The out register still clears on reset. This simple change ensures only actual 1->0 transitions after reset are captured.
-
-No other changes are needed since the update of out and prev_in on each clock edge already correctly preserves previous captures and detects new falling edges.
-
-This approach preserves correctness without adding extra logic, also beneficial for PPA as no unnecessary initialization to all-ones is done.

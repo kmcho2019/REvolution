@@ -1,9 +1,0 @@
-Implement a Moore FSM with one-hot encoding for clarity and simpler state decoding. The FSM will have states IDLE, START, DATA (with a 3-bit counter), STOP, and ERROR_WAIT. The DATA state will be split into counting states by combining the bit counter within the state encoding by using 8 states for receiving each data bit (DATA0 through DATA7). This removes the need for an explicit counter register, simplifying control logic and potentially reducing glitches since state transitions implicitly count bits.
-
-Shift in the data bits LSB first into an 8-bit shift register by shifting right and inserting the new bit at the MSB. Since the problem only requires to assert done on reception, the data storage is optional, but we keep it for possible extension.
-
-The done signal is generated synchronously for one cycle when the stop bit is correctly received. On a framing error (stop bit not detected after data bits), transition to ERROR_WAIT state, where the FSM waits for an idle line (logic 1) before returning to IDLE.
-
-Use synchronous active-high reset to initialize the FSM and registers.
-
-This design emphasizes simple one-hot states, implicit bit counting by state, and clear, minimal combinational next state logic.

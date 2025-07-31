@@ -1,8 +1,0 @@
-Use a three-state FSM to explicitly represent each of the three cycles in state B where we observe w, minimizing the need for counters:
-- State A: idle, wait for s=1 to enter state B1.
-- States B1, B2, B3: each represents one of the three consecutive cycles where we sample w.
-- Accumulate the count of w=1 in a 2-bit register across these three states.
-- After B3, transition back to B1 and output z=1 if the count is exactly 2; else 0.
-- The output z is registered and updated synchronously on each clock cycle after B3 completes.
-- This approach eliminates explicit counters by encoding cycle position in states, potentially simplifying control logic.
-- Reset puts FSM back to A, clears count and output.

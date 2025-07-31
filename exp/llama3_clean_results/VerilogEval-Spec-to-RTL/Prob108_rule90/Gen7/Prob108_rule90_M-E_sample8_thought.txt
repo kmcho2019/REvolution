@@ -1,9 +1,0 @@
-To create a novel architectural solution for the Rule 90 cellular automaton, we can exploit the properties of bitwise operations and the fact that each cell's next state depends only on its immediate neighbors. A new approach involves using a combination of shift registers and bitwise XOR operations to efficiently calculate the next state of all cells in parallel. This method leverages the fact that in Verilog, vectors can be shifted and bitwise operations can be performed element-wise, which can simplify the implementation of the cellular automaton's rules.
-
-The main points of this novel architectural idea are:
-1. **Shift Registers for Neighboring Cells**: Instead of directly accessing neighboring cells' states through indexing, we can use shift registers to align the left and right neighbors with each cell. This allows for a more streamlined calculation of the next state.
-2. **Bitwise XOR for Rule 90**: By using the bitwise XOR operator (`^`) on the shifted vectors representing the left and right neighbors, we can compute the next state of all cells simultaneously, which is more efficient than looping through each cell individually.
-3. **Boundary Conditions Handling**: We will handle the boundary conditions (leftmost and rightmost cells) by ensuring that the shift operations correctly account for the "virtual" cells outside the boundaries, which are always considered to be in the "off" state.
-4. **Simplified Clock-Driven Logic**: The update logic for the current state register (`q_reg`) can be simplified by directly using the result of the bitwise XOR operation without needing an intermediate `next_state` register.
-
-By implementing this novel architecture, we aim to achieve a more efficient, concise, and potentially faster design for the Rule 90 cellular automaton.

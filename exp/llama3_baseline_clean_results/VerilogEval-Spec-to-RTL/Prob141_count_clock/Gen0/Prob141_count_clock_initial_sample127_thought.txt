@@ -1,7 +1,0 @@
-To create a 12-hour clock module, we will need to design counters for hours, minutes, and seconds. These counters should be able to handle BCD (Binary-Coded Decimal) representations of the time, where each digit can range from 0 to 9. For hours, the valid range is 01-12; for minutes and seconds, it's 00-59. 
-
-Given the requirements, we'll use three counters: one for seconds, one for minutes, and one for hours. The seconds counter will increment every time ena is high (once per second), and when it reaches 59, it will reset to 0 and increment the minutes counter. Similarly, when the minutes counter reaches 59, it will reset to 0 and increment the hours counter. For the hours counter, we need to handle the AM/PM transition and the 12-hour wraparound.
-
-We'll use a synchronous reset to reset all counters and the AM/PM indicator to their initial states when the reset signal is high. The AM/PM indicator will toggle every 12 hours. 
-
-We will implement the logic using always @(posedge clk) to capture the positive edge of the clock and perform the necessary operations based on the ena and reset signals.

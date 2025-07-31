@@ -1,7 +1,0 @@
-To refactor the given code, we can simplify the design by removing the FIFO and using a single register to store the concatenated data. We will also use a flag to indicate when the data is valid. 
-
-The main idea is to store the first valid 8-bit data in a temporary register, and then wait for the next valid 8-bit data to concatenate them and generate the valid_out signal and the corresponding 16-bit data_out.
-
-We will use a 2-state machine to control the flow of data: IDLE and VALID. In the IDLE state, we wait for the first valid 8-bit data. Once we receive it, we move to the VALID state and store the data in a temporary register. In the VALID state, we wait for the next valid 8-bit data. Once we receive it, we concatenate the two data values and generate the valid_out signal and the corresponding 16-bit data_out.
-
-We will also use an `assign` statement to directly assign the values of valid_out and data_out based on the current state and the stored data.

@@ -1,8 +1,0 @@
-To simplify the next-state logic for Y2 (y[1]) and Y4 (y[3]), we can observe that:
-1. Y2 (next y[1]) is only set when transitioning from A to B (y[0] & ~w)
-2. Y4 (next y[3]) is set in most cases when w=1 (from B, C, E, F) or when staying in D (y[3] & w)
-3. The logic can be significantly simplified by focusing only on the conditions that actually set these bits in the one-hot encoding
-
-Simplified equations:
-Y2 = y[0] & ~w  (only A->B transition sets Y2)
-Y4 = w & (y[1] | y[2] | y[3] | y[4] | y[5])  (any state except A with w=1 sets Y4)

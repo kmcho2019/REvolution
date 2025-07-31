@@ -1,6 +1,0 @@
-Simplify the design by removing the shifting of multiplier register `breg` and instead shift `breg` left by (i-1) bits only when accumulating. Keep `areg` intact except for indexing its bit at (i-1). Use a 5-bit counter `i` from 0 to 17 for control.  
-At i=0, load inputs into registers and clear the product register.  
-For i in 1 to 16, check `areg[i-1]` bit; if set, add `bin << (i-1)` to the product register.  
-Done flag is asserted at i=16, cleared at i=17 or reset.  
-Reset and start logic remain straightforward.  
-This removes shifting registers each cycle, simplifying logic and reducing toggling, while preserving correctness.

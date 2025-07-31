@@ -1,9 +1,0 @@
-Implement the sequence detector using a binary-encoded Moore FSM with four states (S0 to S3) plus a final sticky detection state (S4). The FSM transitions track the longest prefix of the sequence "1101" matched so far. Instead of a one-hot encoding, use binary encoding to reduce flip-flop count (3 bits). 
-
-Output start_shifting is asserted whenever the FSM reaches the final state (S4) and stays asserted indefinitely until synchronous reset.
-
-The FSM state updates synchronously at the clock's positive edge with synchronous reset active-high. The output is registered (Moore-type) so start_shifting is asserted one cycle after sequence detection, ensuring glitch-free output.
-
-This approach uses a compact binary state encoding for area efficiency, has simple next-state logic with explicit transitions, and a single output register holding start_shifting high after detection.
-
-It is a classic, straightforward design that trades off the immediate combinational output assertion for simpler encoding and smaller area.

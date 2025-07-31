@@ -1,7 +1,0 @@
-To improve the existing design's power efficiency and reduce unnecessary switching while maintaining performance and minimal area, I will add a condition to update the sampled input register (x_reg) only when the FSM is active (i.e., after reset is released). This prevents toggling of x_reg when the machine is idle or in reset, reducing dynamic power. 
-
-I will also slightly simplify the next_state logic by directly using the current input x instead of the registered x_reg for the state transition, which is valid because input x is stable at the clock edge and also reduces one register read. This should reduce combinational logic depth and possibly improve timing.
-
-All other design features (asynchronous reset, Moore output as XOR of state and registered input) will be kept for clarity and correctness.
-
-Overall, the change aims for improved power by reducing unnecessary register toggling and a minor simplification to improve timing without increasing area.

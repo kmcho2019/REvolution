@@ -1,5 +1,0 @@
-Refactor the design to separate the combinational logic for nominal flows and supplemental flow detection from the sequential logic that tracks previous and current water levels. Use a synchronous always block only for registering the previous level and sensor state. Compute the current level and nominal flows combinationally from the input sensors `s`. 
-
-The key is to keep `prev_level` as the water level before the last sensor change and derive `curr_level` and nominal outputs directly from current `s`. Then assert `dfr` if the current level is higher than `prev_level`.
-
-This avoids updating both levels in the same clock edge and ensures the comparison for `dfr` uses stable registered previous level and the freshly decoded current level. The reset initializes to the lowest level with all valves open. Using `assign` statements for combinational parts improves clarity and ensures correct timing of outputs.

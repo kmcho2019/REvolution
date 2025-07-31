@@ -1,7 +1,0 @@
-The main issue is the initial value of `prev_in` upon reset. The feedback suggests that the testbench likely expects `prev_in` to be initialized to zero on reset, not all ones. Initializing `prev_in` to zero avoids falsely detecting 1->0 transitions immediately after reset, and aligns better with the testbench expectations.
-
-Other logic is sound: on each positive clock edge, `out` accumulates bits where `prev_in` was 1 and the current `in` is 0, i.e., falling edges; `prev_in` is updated to the current `in` to enable next cycle detection. The synchronous reset sets `out` and `prev_in` to zero, ensuring no spurious detections right after reset.
-
-Thus, the fix is to change the reset initialization of `prev_in` from all ones to all zeros. This approach guarantees that only actual 1->0 transitions after reset are captured, preventing mismatch with the testbench.
-
-No other changes are necessary.

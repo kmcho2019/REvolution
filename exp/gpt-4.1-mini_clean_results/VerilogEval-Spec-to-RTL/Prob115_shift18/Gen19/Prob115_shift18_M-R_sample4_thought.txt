@@ -1,9 +1,0 @@
-Refactor the design to separate combinational shift logic from the sequential register update by using continuous assignments for the shifted values and a single always block only for updating the register `q`. This approach improves clarity by explicitly defining the next-state logic outside the always block and then registering that value on the clock edge. 
-
-Specifically:
-- Create a combinational `next_q` wire that selects load, shift, or hold value.
-- Compute the shifted values similarly with concatenations and sign extension.
-- Use a combinational always block (or assign statements) for `next_q` based on `load` and `ena`.
-- The sequential always block just updates `q` with `next_q` on `posedge clk`.
-  
-This structure emphasizes separation of combinational logic and sequential storage, which can aid readability and synthesis tools in optimization. It also keeps all shift computation combinational but cleanly encapsulated in the `next_q` calculation.

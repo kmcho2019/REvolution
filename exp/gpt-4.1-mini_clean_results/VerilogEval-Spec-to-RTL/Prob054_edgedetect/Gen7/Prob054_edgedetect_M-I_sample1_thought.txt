@@ -1,9 +1,0 @@
-To optimize PPA, the main opportunity lies in reducing unnecessary toggling and thus power consumption. Since pedge depends on changes in input, we can gate the update of prev_in to only when input changes. This can be done by comparing in with prev_in and updating prev_in only if they differ. This reduces unnecessary register toggling.
-
-Moreover, instead of updating pedge every cycle, we can register pedge one cycle later as the problem states, so we compute the edge detection logic as combinational from prev_in and in, then register pedge. This slightly pipelines the logic, but can help timing.
-
-Thus, two always blocks: one combinational block to detect edges, and one sequential block to update prev_in and pedge only when needed. This selective updating will reduce switching in prev_in and pedge registers, improving power.
-
-Area overhead is minimal since we only add some conditional logic.
-
-Overall, this approach maintains correctness while reducing toggle rate and potentially improving power and timing.

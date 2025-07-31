@@ -1,9 +1,0 @@
-Instead of shifting right and appending a bit directly each cycle, I will split the 64-bit Johnson counter into two 32-bit shift registers that operate in a pipelined manner. On each clock, the LSB of the entire 64-bit value is checked; if it is 0, the combined 64-bit value shifts right by one bit with a 1 inserted at MSB; otherwise, it shifts right with 0 inserted at MSB.
-
-To achieve this, I'll keep two 32-bit registers: upper (bits 63:32) and lower (bits 31:0). The shift operation is implemented by shifting both registers right by one bit, and the MSB input is determined by the condition (~Q[0]). The tricky part is propagating the bit crossing the boundary between lower and upper registers.
-
-This split approach explicitly shows boundary crossing and can improve synthesis tools' mapping by using smaller registers and explicit logic. It is a novel structural decomposition compared to a monolithic 64-bit shift.
-
-On reset, both registers are cleared to zero.
-
-Finally, the 64-bit output Q is formed by concatenating the upper and lower registers.

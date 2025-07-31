@@ -1,5 +1,0 @@
-To implement the TopModule, we need to design a finite state machine (FSM) that searches for message boundaries in the input byte stream. The FSM will have four states: IDLE, BYTE1, BYTE2, and BYTE3. It will start in the IDLE state and transition to BYTE1 when it encounters a byte with in[3]=1. Then, it will transition to BYTE2 and BYTE3 after receiving the next two bytes. After BYTE3, it will signal the receipt of a message by asserting the done signal and outputting the 24-bit message.
-
-The datapath module will output the 24-bit message whenever a packet is received. It will store the bytes in a 24-bit register and output the register whenever the done signal is asserted.
-
-The reset signal is active high synchronous, so the FSM and datapath will be reset to their initial states when the reset signal is high.

@@ -1,9 +1,0 @@
-To optimize the ALU for better power and area (PPA), we can minimize redundant signals and computations, especially the separate carry and overflow calculations for ADD and SUB variants that share similar logic. We unify the carry and overflow computations across both signed and unsigned adds/subs using a signed extended adder/subtractor. This reduces logic duplication.
-
-Additionally, the shift amount signals shamt and shamt_var both extract a[4:0], so unify to a single signal.
-
-Also, for the flag output, instead of driving 'z' when not SLT or SLTU, which is unconventional for combinational outputs and complicates synthesis, drive '0' for disabled states to avoid tri-states in combinational logic and improve synthesis friendliness.
-
-Lastly, reordering the conditional assignments to cluster similar operations and remove unnecessary intermediate signals reduces logic overhead and switching power.
-
-These changes simplify logic, reduce signal toggles, and maintain full functionality, thereby improving area and power efficiency without sacrificing performance.

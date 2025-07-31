@@ -1,5 +1,0 @@
-Fix the shifting and output latching to ensure the entire 8-bit shift register holds all received bits before outputting. Shift the register on each valid input by inserting the new bit into the MSB, thereby keeping the first received bit at the MSB side as required. Increment the counter on each valid input.
-
-When the counter reaches 7 (i.e., after receiving the 8th bit), latch the current shift register value into dout_parallel and assert dout_valid for one clock cycle. Do not mix the input bit directly into dout_parallel separately on output; rely solely on the fully shifted register.
-
-Reset the counter and shift register after outputting. Default dout_valid low each clock cycle except when outputting valid data. Maintain synchronous reset with non-blocking assignments for clean timing. This ensures accurate data assembly, correct output timing, and prevents simulation stalls.

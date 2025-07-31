@@ -1,9 +1,0 @@
-Use a simple two-stage approach with one register to hold the first 8-bit input and a flag to indicate its presence. Upon receiving the second valid input, concatenate the stored data and new data and register them in output registers, but delay valid_out and data_out by one clock cycle to meet timing requirements.
-
-Specifically:
-- Store the first valid 8-bit data in `data_lock` and set `has_data`.
-- On next valid input, latch concatenated 16-bit data into `data_out_reg` and assert `valid_out_reg`.
-- Finally, register `data_out_reg` and `valid_out_reg` into outputs on the next clock cycle, ensuring outputs update one cycle after the second input.
-- This approach keeps logic simple with clear staging and avoids combinational feedback or glitches.
-
-Reset clears all registers.

@@ -1,7 +1,0 @@
-Replace the unconventional internal reset register with a standard asynchronous active-low reset input (or synchronous if preferred) to explicitly initialize the flip-flops to zero at simulation start and ensure correct known initial states. Since the problem statement does not specify an external reset input, the simplest fix is to initialize the flip-flops to zero using an initial block, which is typically supported for simulation and inferred as reset in synthesis for registers initialized to zero. This avoids any first-cycle unknown states and ensures the flip-flops start cleared.
-
-Maintain the combinational logic for D inputs and update all flip-flops simultaneously on the rising edge of the clock using non-blocking assignments.
-
-The output z is assigned as the NOR of the three flip-flop outputs.
-
-This approach aligns with the specification "flip-flops are initially reset to zero before the machine begins," ensuring a known initial state without complicated reset logic.

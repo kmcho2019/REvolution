@@ -1,9 +1,0 @@
-Instead of decomposing the output logic into basic gates and instantiating them explicitly, we can encapsulate the entire next-state logic for Y1 and Y3 in combinational always blocks using case statements keyed on the current one-hot state vector and input w. This approach uses behavioral style and leverages the one-hot encoding as a simple input vector to a case statement, making it easily extensible and highly readable.
-
-Specifically:
-- For Y1 (next-state input to y[1]), it is high only if current state is A (y[0]) and w=1.
-- For Y3 (next-state input to y[3]), it is high if the current state is one of B(y[1]), C(y[2]), E(y[4]), or F(y[5]) and w=0.
-
-We implement these in a single always_comb block that assigns Y1 and Y3 based on the current state bits and w. This removes the need for explicit gate modules and intermediate signals, yielding a flat combinational logic description. It is also very clear to maintain or modify in future expansions.
-
-This behavioral modeling style is well suited for synthesis, and the synthesizer will produce optimal logic from these case statements.

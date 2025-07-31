@@ -1,5 +1,0 @@
-Implement a shift enable controller using a simple up-counter that runs only immediately after reset, without an explicit FSM. On synchronous reset, start counting from 0 to 3 on each clock cycle, asserting shift_ena when the count is less than 4. After counting 4 cycles, stop incrementing and keep shift_ena deasserted until the next reset. This approach treats shift_ena as directly derived from a timer counter gated by reset, making the control logic simpler and eliminating separate FSM states.
-
-The counter resets to zero on synchronous reset and increments on each clock cycle while less than 4. shift_ena is driven high when the counter is within the 4-cycle window. After 4 cycles, the counter saturates and shift_ena remains low indefinitely until the next reset.
-
-This solution guarantees exactly 4 cycles of shift_ena assertion after reset, clean synchronous reset behavior, and minimal logic without the need for explicit state encodings.

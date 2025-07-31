@@ -1,5 +1,0 @@
-To fix the timing of the done signal, we should assert done as a registered pulse exactly one clock cycle after receiving the third byte. This requires adding an extra state or mechanism to delay done assertion until the cycle after BYTE3 is received. We can add a DONE state after BYTE3 where done is asserted synchronously. On the next clock cycle, we return to IDLE to search for new messages.
-
-The done signal should be assigned only in sequential logic (on posedge clk) to avoid glitches. Reset should clear done. The FSM states become: IDLE (searching for byte1), BYTE1 (received first byte), BYTE2 (second byte), BYTE3 (third byte), DONE (assert done pulse).
-
-This way, the FSM cleanly identifies messages, and done is a one-cycle synchronous pulse immediately after the third byte reception, meeting the specification and fixing the simulation mismatches.

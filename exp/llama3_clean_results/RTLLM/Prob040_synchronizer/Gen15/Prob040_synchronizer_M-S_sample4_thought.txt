@@ -1,9 +1,0 @@
-To simplify the existing solution, we will focus on reducing unnecessary logic and minimizing the number of registers. The key observation is that the `en_delay` register is only used to delay the `data_en` signal by two clock cycles of `clk_b`. This can be achieved more efficiently by using a single register to store the `data_en` signal and its delayed version.
-
-The simplified design will have two main components: 
-1. A data register (`data_reg`) that stores the input `data_in` signal on the positive edge of `clk_a`.
-2. An enable register (`en_reg`) that stores the `data_en` signal on the positive edge of `clk_a` and its delayed version on the positive edge of `clk_b`.
-
-The output `dataout` will be assigned the value of `data_reg` when the delayed `data_en` signal is active. Otherwise, it will retain its previous value.
-
-By reducing the number of registers and simplifying the logic, the new design aims to improve area efficiency and reduce power consumption while maintaining the required functionality.

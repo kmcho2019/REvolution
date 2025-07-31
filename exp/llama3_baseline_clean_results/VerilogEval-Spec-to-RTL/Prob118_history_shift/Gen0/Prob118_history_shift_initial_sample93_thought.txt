@@ -1,9 +1,0 @@
-To implement the TopModule, we can use a 32-bit register to hold the branch history. We will use the clk signal as the clock for all sequential logic, and the areset signal as an asynchronous reset to reset the register to zero. 
-
-When predict_valid is high, we shift in predict_taken from the LSB side to update the branch history. 
-
-When train_mispredicted is high, we load the branch history register with the history after the completion of the mispredicted branch. This is done by concatenating train_history with train_taken.
-
-If both predict_valid and train_mispredicted are high at the same time, we give precedence to train_mispredicted to handle the pipeline flush.
-
-The current state of the branch history register is output on predict_history.

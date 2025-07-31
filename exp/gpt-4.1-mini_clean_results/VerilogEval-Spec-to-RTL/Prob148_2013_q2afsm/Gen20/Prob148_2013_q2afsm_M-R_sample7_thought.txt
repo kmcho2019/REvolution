@@ -1,9 +1,0 @@
-Refactor the FSM by encoding states as a 2-bit binary code instead of one-hot to reduce flip-flop count and explicitly declare state encoding with parameters. Use an enumerated style with parameters for clarity (A=2'b00, B=2'b01, C=2'b10, D=2'b11). Implement the state register with synchronous active-low reset using non-blocking assignments.
-
-The next-state logic will be a combinational always block using a case statement, implementing the same priority and hold grant behavior.
-
-For outputs, use continuous assignments that decode the state to grant signals, eliminating the output always block.
-
-This approach keeps clear priority logic, reduces register count (2 bits vs 3 bits), and provides a more conventional FSM design style with explicit state encoding and output decoding logic separated from the state register.
-
-This refactor maintains functionality while slightly reducing flip-flops and using combinational continuous assigns for outputs, improving clarity and potentially area.

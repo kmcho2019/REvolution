@@ -1,8 +1,0 @@
-Implement a dual-edge triggered flip-flop by sampling the input `d` on the positive edge into a flip-flop `q_pos` and on the negative edge into another flip-flop `q_neg`. Then use a simple clock-driven process that updates the output `q` on every positive edge by selecting the latest sample from both edges. This works because the negative edge FF captures data just before the positive edge, so at the positive edge we can choose the freshest data among the two.
-
-Specifically:
-- Use a positive-edge flip-flop `q_pos` sampling `d` on posedge `clk`.
-- Use a negative-edge flip-flop `q_neg` sampling `d` on negedge `clk`.
-- Use a positive-edge clocked process that updates output `q` with `q_neg` if the clock is transitioning from low to high (because `q_neg` just captured the data at negedge), else `q_pos`.
-  
-This avoids transparent latches or combinational muxes. The output `q` updates synchronously on the positive edge, combining data from both edges indirectly, thus modeling a dual-edge FF with synchronous output updates. This architecture improves timing predictability and avoids latch transparency, is synthesizable on FPGAs, and has a straightforward control structure.

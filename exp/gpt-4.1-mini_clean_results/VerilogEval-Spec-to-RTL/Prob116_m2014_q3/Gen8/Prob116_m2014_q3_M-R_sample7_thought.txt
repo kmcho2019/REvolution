@@ -1,9 +1,0 @@
-Refactor the design by replacing the combinational always-case statement with a direct combinational assign statement using a 16-bit lookup table constant. The input vector x is used as an index to select the function value from this constant.
-
-This approach still encodes the exact function values corresponding to the Karnaugh map entries, with 'd' entries assigned zero. It avoids any bit-ordering confusion by explicitly matching each address (4-bit x input) to its function value.
-
-By using a single vector lookup and continuous assignment, the code is more concise and synthesizes to a ROM-like structure with clear indexing. This also eliminates the always block, potentially reducing combinational delay.
-
-To ensure the bit ordering matches the problem description (x[1]x[2] for columns and x[3]x[4] for rows), we carefully assign the function vector bits according to the Karnaugh map indexing, mapping x[0]..x[3] to the bits in the lookup table accordingly.
-
-This clarifies and simplifies the mapping while preserving the same function and fulfilling the problem specification.

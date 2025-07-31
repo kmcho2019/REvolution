@@ -1,7 +1,0 @@
-The original solution uses a combinational always block with a case statement for next_state and a continuous assignment for output. To improve power, area, and possibly timing slightly, I will combine next_state and output logic into a single always block. This reduces the number of concurrent logic blocks and can allow synthesis tools to share logic better, reducing area and power.
-
-Also, since output depends solely on the current state, we can implement the output as part of the case statement, assigning both next_state and out simultaneously. Using an explicit default for both signals will ensure safe coding style.
-
-This approach avoids multiple drivers and potentially redundant logic, possibly improving PPA without altering functionality.
-
-The code style is kept clean and consistent by declaring next_state and out as reg in the always block. The output is no longer a separate assign statement but a reg driven by the same combinational always block.

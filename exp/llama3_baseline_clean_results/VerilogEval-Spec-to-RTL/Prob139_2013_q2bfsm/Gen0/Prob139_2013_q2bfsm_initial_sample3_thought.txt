@@ -1,9 +1,0 @@
-To solve this problem, we need to design a finite state machine (FSM) that can handle the specified states and transitions based on the inputs x and y, and outputs f and g. We can break down the design into several states:
-
-1. **State A (Reset State):** The FSM stays in this state as long as the reset input is asserted. When the reset is de-asserted, it moves to the next state after the next clock edge.
-2. **State B (Set f=1):** In this state, the FSM sets the output f to 1 for one clock cycle and then moves to the next state to monitor the x input.
-3. **State C (Monitor x):** The FSM monitors the x input for the sequence 1, 0, 1 in three successive clock cycles. After detecting this sequence, it moves to the next state to set g=1.
-4. **State D (Set g=1 and Monitor y):** In this state, the FSM sets g=1 and then monitors the y input. If y becomes 1 within two clock cycles, the FSM stays in this state with g=1 permanently. If y does not become 1 within two clock cycles, the FSM moves to the next state.
-5. **State E (Set g=0):** The FSM sets g=0 permanently (until reset).
-
-We will use a parameterized enumeration to represent the states and utilize a case statement to handle the transitions between these states based on the inputs x and y.

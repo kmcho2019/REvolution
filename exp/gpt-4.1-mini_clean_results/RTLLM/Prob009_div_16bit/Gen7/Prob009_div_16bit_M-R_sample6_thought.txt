@@ -1,8 +1,0 @@
-Refactor the combinational 16-bit division by 8-bit divisor into a single always_comb block that iteratively performs the division steps within a for loop. Instead of using a generate block with arrays of wires, use internal registers within the always block to track remainder and quotient bits. This approach consolidates the division process into one combinational procedural block for clarity and ease of modification.
-
-- Use registers `rem` (9 bits) and `quot` (16 bits) inside an always_comb block.
-- Iteratively shift in dividend bits into `rem`, compare with divisor, subtract if possible, and set quotient bits accordingly.
-- Maintain the same division logic: high bits of dividend processed stepwise, generating quotient and remainder.
-- Inputs `A` and `B` are directly used without intermediate wire assignments.
-- Outputs are assigned directly in the always block, ensuring combinational behavior.
-- This makes the design conceptually simpler, easier to debug, and suitable for synthesis.

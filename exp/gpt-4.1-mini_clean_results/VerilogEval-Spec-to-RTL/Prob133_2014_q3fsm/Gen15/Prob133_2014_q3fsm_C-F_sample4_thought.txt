@@ -1,9 +1,0 @@
-Fuse the strengths of both examples by implementing a minimal 2-state FSM (A and B) with synchronous reset and a cycle counter plus a w accumulator. Use separate 2-bit registers for the cycle count and w accumulation for simpler arithmetic and clearer logic.
-
-In state A, the FSM waits for s=1 to transition to B, and counters stay reset to reduce toggling. In state B, counters are incremented only when enabled (i.e., during state B) to minimize switching power.
-
-Use clock enable signals derived from the FSM state to update counters only when necessary, reducing toggling further compared to unconditional updates. Output z is registered and asserted one cycle after the 3-cycle window ends when exactly two w's were detected as 1.
-
-By gating the counter updates via an enable signal and separating counter and w_accum increments, this design reduces combinational path complexity and power consumption from unnecessary toggling.
-
-This fusion keeps the minimal FSM state encoding and logic simplicity from both examples, while improving power efficiency and timing through clock-enable gating and straightforward addition logic for counters. It also maintains synchronous reset and ensures output z timing matches the specification.

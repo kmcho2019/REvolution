@@ -1,9 +1,0 @@
-To provide a novel architectural idea, I will implement a simple finite state machine (FSM) based controller that explicitly models three states: OFF, HEATING, and COOLING. The mode and temperature inputs cause transitions between states: in heating mode, if it is too cold, the FSM goes to HEATING; in cooling mode, if it is too hot, the FSM goes to COOLING; otherwise, it remains or goes to OFF.
-
-Outputs are derived from the current state: heater is on in HEATING state, aircon is on in COOLING state, and fan is on whenever heater or aircon is active or if the user requests fan_on.
-
-This FSM approach introduces explicit state encoding and state transitions, which differ structurally from purely combinational logic. It could be extended easily for hysteresis or other control policies. Despite being sequential, the FSM is minimal with two bits of state and updates synchronously on a clock (or combinational style if no clock is specified—here I will implement a combinational state machine style to fit the problem).
-
-To keep the solution fully combinational as no clock is specified, the FSM states will be encoded combinationally from inputs; in practice, this will act as combinational logic, but expressing it as a state machine clarifies the distinct operation modes and output logic.
-
-This approach aids understandability by emphasizing control states explicitly and separating state transition logic from output logic.

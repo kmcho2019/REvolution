@@ -1,7 +1,0 @@
-I will implement the 4-digit BCD counter using a single 16-bit register to hold all BCD digits collectively, avoiding separate digit registers. The counter increments by treating the entire 16-bit value as four BCD digits and applying increment and carry logic with a sequential approach in a single always block. To reduce nested if-statements and improve clarity, I will implement the BCD increment logic using a separate combinational function that takes the current 16-bit BCD count and returns the incremented 16-bit BCD count, handling digit-wise carry propagation inside the function.
-
-The enable signals (ena) for digits 1 to 3 will be generated combinationally by checking if all lower digits are 9, which indicates a carry into the higher digit. This logic is straightforward and clearly reflects when each digit increments. The synchronous reset clears the whole 16-bit BCD register.
-
-Using a function improves modularity and reusability, and the single register approach reduces register count and eases output wiring. The BCD increment function uses local variables and explicit digit extraction to maintain clarity and synthesis friendliness.
-
-This design promotes clean separation of combinational (BCD increment and ena generation) and sequential logic (register update), enabling better timing and easier maintenance.

@@ -1,9 +1,0 @@
-Instead of using chunked vector mux instances, this design implements a single fully vectorized 2-to-1 mux using a bitwise combination of the inputs and the select signal, exploiting Verilog bitwise operators for hardware efficiency. Specifically, the output is computed as (a & ~sel) | (b & sel) for all bits simultaneously without any generate loops or instantiations. This fully flattened approach enables synthesis tools to optimize the mux as one unit, potentially resulting in faster routing and smaller area by reducing hierarchical overhead and improving signal locality.
-
-This method:
-- Uses only bitwise operations to implement a wide 2-to-1 mux, avoiding multiplexing logic duplication.
-- Removes all generate constructs and submodule instances, simplifying the netlist.
-- Yields potentially improved PPA by flattening logic and minimizing routing complexity.
-- Maintains clear functional intent, with very compact code.
-
-This architecture is ideal for scenarios where the design benefits from a minimal, flattened, and highly synthesis-friendly combinational implementation without modular chunking.

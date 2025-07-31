@@ -1,5 +1,0 @@
-To implement this finite state machine (FSM) in Verilog, we need to design a module named `TopModule` with the given interface. The FSM will start in state A when the `resetn` signal is asserted. When `resetn` is de-asserted, it will move to a state where it sets `f` to 1 for one clock cycle. Then, it will monitor `x` for the sequence 1, 0, 1. Once this sequence is detected, it will set `g` to 1 and monitor `y` for a maximum of two clock cycles. If `y` becomes 1 within this time, `g` will remain 1; otherwise, `g` will be set to 0. We can achieve this by defining different states and using a counter to track the sequence of `x` and the timeout for `y`.
-
-We will use an enumeration to define the states of the FSM for clarity. The states are: `A` (reset state), `SET_F` (set `f` to 1), `MONITOR_X` (monitor `x` for the sequence), `MONITOR_Y` (monitor `y` after `g` is set to 1), `G_SET` (permanent `g` = 1), and `G_CLR` (permanent `g` = 0).
-
-We'll also use a counter to monitor the sequence of `x` and to implement the timeout for `y`.

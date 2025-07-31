@@ -1,5 +1,0 @@
-Fuse the minimal one-hot encoding and single flip-flop state representation from Example 1 with the explicit dual-register one-hot style and clean output logic from Example 2. Use a single register `state_A` to represent state A (1) and implicitly state B when `state_A`=0, preserving one-hot encoding semantics (one-hot for two states is just one bit with the other state being the complement). Implement asynchronous active-high reset initializing to state A.
-
-Derive next state logic as `state_A & ~x`, which keeps the FSM in A when x=0 or moves to B when x=1. The output `z` depends on current state and input, reflecting Mealy outputs: `z=1` when in state A with `x=1` or in state B (`state_A=0`) with `x=0`, i.e., `z = (state_A & x) | (~state_A & ~x)`.
-
-This fusion keeps the minimal area and power from the single-flip-flop approach, explicit one-hot interpretation, and the clean combinational output logic, while meeting all specs including asynchronous reset and Mealy behavior. It is concise and synthesis-friendly, optimizing for readability and efficiency.

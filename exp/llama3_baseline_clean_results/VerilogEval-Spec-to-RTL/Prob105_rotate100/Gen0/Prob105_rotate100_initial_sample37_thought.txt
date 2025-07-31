@@ -1,9 +1,0 @@
-To implement the 100-bit left/right rotator module, we need to consider the following steps:
-1. On every clock cycle, check if the load signal is high. If it is, load the data into the register.
-2. If the load signal is low, check the ena[1:0] signal to determine the direction of rotation. 
-   - If ena[1:0] is 2'b01, rotate the bits to the right by one position.
-   - If ena[1:0] is 2'b10, rotate the bits to the left by one position.
-   - If ena[1:0] is 2'b00 or 2'b11, do not rotate the bits.
-3. The output q should always reflect the current state of the rotator register.
-
-To achieve the rotation, we can use Verilog's concatenation and bit manipulation operators. For a right rotation, we concatenate the least significant bit with the rest of the register (excluding the least significant bit), and for a left rotation, we concatenate the most significant bit with the rest of the register (excluding the most significant bit).

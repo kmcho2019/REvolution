@@ -1,8 +1,0 @@
-To refactor the design while keeping the core idea of dual-edge triggering using two single-edge triggered flip-flops, we will eliminate the transparent latch and replace it with a combinational multiplexer controlled by the clock level. 
-
-Specifically:
-- Retain the two flip-flops: one positive-edge triggered, one negative-edge triggered.
-- Replace the always block with a continuous assignment that selects q_pos when clk is high, else q_neg.
-- This removes the latch and simplifies timing analysis since the output is purely combinationally derived from the two flip-flop outputs and the clock level.
-- The output q is declared as wire and driven by the continuous assign, removing the need for q to be a reg and also avoiding latch inference.
-- This structure reduces complexity and improves code readability, while maintaining the original functional behavior.

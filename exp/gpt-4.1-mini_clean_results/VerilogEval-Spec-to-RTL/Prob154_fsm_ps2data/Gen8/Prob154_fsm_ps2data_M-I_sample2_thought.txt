@@ -1,9 +1,0 @@
-To improve PPA, I will add clock gating to the FSM state and byte registers by using an enable signal that activates only when the FSM advances or the bytes load, thus reducing unnecessary toggling especially in WAIT_SYNC state when bytes are discarded.
-
-Also, I will modify the done signal to be combinationally derived from the state transition to BYTE3 to avoid storing done in a flip-flop, eliminating one register and reducing the critical path.
-
-Output out_bytes will be updated only on the third byte capture cycle, as before, using a clock enable.
-
-This approach reduces switching activity on internal registers and output registers without changing the functional behavior or FSM structure, improving power and potentially timing.
-
-The FSM encoding remains binary with 3 states for area efficiency. The synchronous reset is unchanged.

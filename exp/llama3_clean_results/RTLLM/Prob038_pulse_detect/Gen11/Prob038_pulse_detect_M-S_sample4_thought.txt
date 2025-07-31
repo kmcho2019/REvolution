@@ -1,5 +1,0 @@
-To simplify the existing pulse detection module, we can eliminate the need for an explicit state machine by directly detecting the rising and falling edges of the input signal `data_in`. This approach reduces the complexity of the design by removing the enumeration and the combinational logic for next state determination.
-
-We can use two registers, `prev_data` and `prev_prev_data`, to keep track of the previous two values of `data_in`. By comparing these values, we can detect when `data_in` transitions from 0 to 1 (rising edge) and from 1 to 0 (falling edge). If the current value of `data_in` is 0, the previous value is 1, and the previous previous value is 0, it indicates a pulse has ended, and we set `data_out` to 1. Otherwise, `data_out` remains 0.
-
-This simplified approach maintains the same functionality as the original implementation while reducing the complexity and improving code readability.

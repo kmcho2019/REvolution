@@ -1,7 +1,0 @@
-To simplify the existing solution, we need to focus on the core functionality: detecting the transition from 1 to 0 in the input signal and setting the corresponding output bit to 1 until a reset occurs. The main issue with the current code is that it only updates the output bit when the transition is detected, but it does not retain the state of the output bit across clock cycles. 
-
-We can simplify the code by removing the need for the `prev_in` register and directly comparing the current input with the previous input stored in the `out` register. However, this is not directly possible since the `out` register is not intended to store the previous input values but rather the state of the output bits.
-
-A more straightforward approach is to keep track of the previous input values in a separate register and then compare these values with the current input to detect the transition. Once a transition is detected, the corresponding output bit is set to 1. The output bits are only reset when the `reset` signal is high.
-
-By simplifying the logic and focusing on the core functionality, we can reduce the complexity of the code and improve its readability and maintainability.

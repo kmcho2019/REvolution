@@ -1,5 +1,0 @@
-A novel architectural approach to reversing the byte order of a 32-bit vector is to use a combinational case statement that explicitly maps each byte position from input to output. Instead of a generate loop or concatenation, the case statement provides a clear, unrolled assignment for each byte, which could be beneficial in certain synthesis scenarios or when debugging.
-
-This approach treats the entire input vector as four separate bytes extracted using bit slicing and then reassigns them in reversed order through a single combinational always block. This method leverages a combinational procedure for clearer sequential reasoning and easy extension to more complex byte rearrangements in the future. Though it uses an always block rather than continuous assignments, it is purely combinational and synthesizes into simple wiring.
-
-This style may also be preferable if the designer wants to integrate conditional or variant byte manipulations later on, or for synthesis tools that optimize procedural assignments differently, possibly improving timing or routing compared to multiple concurrent assigns.

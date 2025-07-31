@@ -1,5 +1,0 @@
-To optimize for power, reduce unnecessary toggling on en_data_reg in clk_a domain by latching data_en only when it transitions from low to high (rising edge) rather than directly mirroring data_en; this avoids repeated toggling of en_data_reg during the entire data_en high period.  
-Implement a data latch that captures data_in only once per data_en assertion to further minimize switching.  
-Also, eliminate the combinational next_dataout mux by registering the synchronized enable and data directly to reduce switching activity in combinational logic and improve timing.  
-Keep the two-flip-flop synchronizer on en_data_reg unchanged for metastability protection.  
-This approach retains full functionality but reduces dynamic power and potentially eases timing closure by lowering toggle rates and combinational complexity.

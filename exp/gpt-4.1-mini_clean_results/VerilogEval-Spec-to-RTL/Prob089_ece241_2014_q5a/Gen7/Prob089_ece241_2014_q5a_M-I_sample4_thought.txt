@@ -1,7 +1,0 @@
-To optimize PPA while preserving functionality and FSM clarity, remove the registered input `x_reg` by using the asynchronous input `x` directly in the output combinational logic. Keep the state register for FSM control and synchronize state updates with the registered `x` in the sequential block to avoid metastability, but since `x` is a one-bit input and used only combinationally for output and next-state, using it directly can reduce registers, thus area and dynamic power.
-
-This reduces register count from two to one and simplifies logic, potentially improving area and power without adding timing complexity because the FSM is simple and output depends on current state and input. The asynchronous reset is retained.
-
-This approach slightly alters the output timing, making output react combinationally to input `x` and current state without double-registering the input, which may improve timing slack and reduce toggle power. Output logic remains simple, and FSM state logic is unchanged.
-
-This improvement trades off a registered input sample for a direct input use to minimize registers and combinational paths, optimizing PPA.

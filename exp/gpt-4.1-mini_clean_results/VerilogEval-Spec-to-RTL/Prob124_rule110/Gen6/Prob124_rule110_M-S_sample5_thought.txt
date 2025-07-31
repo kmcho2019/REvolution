@@ -1,9 +1,0 @@
-Simplify the design by removing the generate loop and instead leverage vector bitwise operations to calculate the next state all at once. Use the shifted versions of q to represent left and right neighbors with boundary conditions zero-filled by concatenation. This reduces code size and improves clarity.
-
-Specifically:
-- Define left as {q[510:0],1'b0} to represent left neighbors (cells shifted left, rightmost boundary zero).
-- Define right as {1'b0,q[511:1]} to represent right neighbors (cells shifted right, leftmost boundary zero).
-- Compute next_state as (~left & q) | (q ^ right) vector-wise.
-- Keep synchronous load and update logic on the positive clock edge.
-
-This approach eliminates the per-bit generate loop and replaces it with simple vector logic, simplifying the code while retaining exact Rule 110 behavior and boundary conditions.

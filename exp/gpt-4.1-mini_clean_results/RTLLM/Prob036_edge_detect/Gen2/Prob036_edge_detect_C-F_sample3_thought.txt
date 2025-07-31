@@ -1,9 +1,0 @@
-Fuse the robustness and metastability protection of the 2-flip-flop synchronizer from Example 1 with the clean sequential edge output logic of Example 2 that asserts rise/down as registered signals for exactly one clock cycle after the detected edge.
-
-Specifically, first synchronize the asynchronous input 'a' using a two-stage shift register to avoid metastability (from Example 1). Then store the previous synchronized value in a register to detect edges synchronously. Upon detecting a rising or falling edge, assert 'rise' or 'down' output signals respectively as registered outputs that are set to 1 on the clock cycle after edge detection and cleared the cycle after (single-cycle pulse), as in Example 2.
-
-This fusion ensures metastability robustness, avoids glitches on outputs, and uses non-blocking assignments for clean synthesis. The outputs are registered, which aligns well with synchronous design practices and meets the requirement that rise/down are set at the clock cycle *after* the edge and held only for one cycle.
-
-Reset asynchronously clears synchronization registers and synchronously clears edge detection registers for consistent initialization.
-
-This design is optimal in terms of reliability, clarity, and synthesis friendliness.

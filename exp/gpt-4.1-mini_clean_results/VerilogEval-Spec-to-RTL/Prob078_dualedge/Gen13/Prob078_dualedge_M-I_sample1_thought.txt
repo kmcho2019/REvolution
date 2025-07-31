@@ -1,9 +1,0 @@
-The original design uses two separate flip-flops triggered on opposite edges of the clock and a combinational mux to select output based on clock level. While functionally correct, the mux output can glitch when clk transitions, causing potential timing issues and power inefficiency.
-
-To optimize, I will add a registered stage for the final output q that updates on the positive edge of clk. This reduces glitches on q by synchronizing the mux output. Internally, the dual-edge flip-flop behavior is preserved since q_posedge updates on posedge clk, and q_negedge updates on negedge clk. The mux output is captured at posedge clk, so output transitions only at stable clock edges, reducing glitches and switching power.
-
-Also, I will keep the output mux logic combinational but register q synchronously. This trades minimal latency for improved timing and power.
-
-This approach improves glitch immunity, reduces power from output toggling, and likely enhances timing closure and overall PPA, with a minor increase in latency and area from one extra register on q.
-
-No clock inversion or unsafe sensitivity lists are introduced, maintaining FPGA compatibility.

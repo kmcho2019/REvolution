@@ -1,8 +1,0 @@
-Refactor the design by modeling the two-stage storage of 'a' as a two-bit shift register inside a single always block triggered only on the rising edge of the clock. Then generate the outputs `p` and `q` as continuous assignments to the respective bits of this register. This avoids using both posedge and negedge triggered always blocks, improving synthesis and simulation reliability. The shift register captures the current input 'a' and previous value synchronously, matching the original behavior observed in the waveform.
-
-Thus:
-- Use a 2-bit register `shift_reg` updated on posedge clock: shift_reg <= {shift_reg[0], a};
-- Assign p = shift_reg[0]; q = shift_reg[1];
-- Initialize the shift register to zeros for defined startup state.
-
-This approach preserves the core idea (two-stage delayed versions of input 'a'), but structures the design as a synchronous shift register with combinational outputs, eliminating potential timing issues from the previous dual-edge triggered design.

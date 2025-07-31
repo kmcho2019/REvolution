@@ -1,9 +1,0 @@
-Refactor the FSM by encoding states using localparams with one-hot style (each state represented by a unique bit set in a 4-bit register). This style may simplify next state logic as only one bit is active, and state transitions can be expressed using straightforward bitwise operations. 
-
-Use combinational always block for next state using case with state bits, and synchronous always block for state update. Output grant signals can be directly mapped from the state register bits, e.g., g0 = state_B, g1 = state_C, g2 = state_D.
-
-This approach differs structurally by using a 4-bit one-hot encoding instead of 2-bit binary encoding, making the FSM state representation and transitions explicit and potentially easier to modify or extend.
-
-The reset remains synchronous active-low.
-
-This method keeps the same priority scheme and behavior, but expresses state and next-state logic differently.

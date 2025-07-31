@@ -1,9 +1,0 @@
-The original design captures the inverted value of input 'a' on the rising edge of clk, which matches the waveform behavior. To improve power and area slightly, we can eliminate the separate inverter by incorporating the inversion into the flip-flop itself, making the design a negative-edge triggered flip-flop on 'a' or using a complemented D input inside a single always block without extra gates. However, since the output q directly follows ~a at the clock edge, a simple direct assignment with a single flip-flop storing inverted 'a' is minimal. 
-
-To optimize area and power further, we remove the explicit DFF module, implement the flip-flop directly inside TopModule, and perform inversion inline, reducing module overhead and potential wiring. This reduces hierarchy complexity and synthesizes to a minimal flip-flop with inversion at input or output stage. Also, assigning q <= ~a directly inside the always block avoids the need for an inverter gate instantiated outside.
-
-This inline inversion inside the flip-flop should yield slight improvements in area and power by reducing net count and module hierarchy.
-
-Performance remains unchanged as the logic depth is the same.
-
-Overall, this provides a minimal, single process, single flip-flop implementation with inverted input, optimized for synthesis with less hierarchy and potentially fewer gates.

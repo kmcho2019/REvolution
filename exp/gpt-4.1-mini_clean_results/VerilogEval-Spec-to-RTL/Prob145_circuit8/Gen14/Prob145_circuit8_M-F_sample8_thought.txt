@@ -1,8 +1,0 @@
-The feedback indicates that updating p on posedge clock and q on negedge clock causes timing mismatches and race conditions. Instead, both p and q should be updated synchronously on the same clock edge, likely the posedge, following a two-stage shift-register style: p captures input 'a', and q captures the previous value of p. This aligns with the waveform pattern where p follows a delayed version of 'a' and q follows a delayed version of p, all synchronized on the rising clock edge. 
-
-Also, the initial unknown states of p and q can be set to 'x' to reflect the waveform's initial undefined values. This approach avoids mixing edges and ensures clean sequential updates that match the waveform's behavior.
-
-Hence, implement:
-- An initial block setting p and q to 'x'
-- A single always block triggered at posedge clock
-- On posedge, p <= a; q <= previous p

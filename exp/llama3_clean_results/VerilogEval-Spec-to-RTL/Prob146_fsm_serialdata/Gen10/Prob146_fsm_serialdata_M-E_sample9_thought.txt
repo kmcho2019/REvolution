@@ -1,9 +1,0 @@
-To address the issues in the existing solution, we can design a novel finite state machine (FSM) architecture that utilizes a two-stage approach to receive bytes from a serial stream. The first stage involves detecting the start bit and accumulating the incoming data bits in a shift register. The second stage involves verifying the stop bit and outputting the received data byte.
-
-Our novel architectural idea involves introducing a separate module to handle the serial data reception, which we will call the "Serial Receiver" module. This module will have its own state machine that controls the reception of the serial data stream.
-
-The Serial Receiver module will have four states: `IDLE`, `START_DETECT`, `DATA_RECEIVE`, and `STOP_VERIFY`. The `IDLE` state waits for the start bit, the `START_DETECT` state detects the start bit, the `DATA_RECEIVE` state receives the 8 data bits, and the `STOP_VERIFY` state verifies the stop bit.
-
-To handle the case where the stop bit is not present, we will introduce a separate state, `STOP_WAIT`, which will wait for the stop bit before transitioning back to the `IDLE` state. This approach ensures that the finite state machine correctly handles the serial communication protocol and asserts the `done` signal only when a byte is correctly received.
-
-We will also introduce a separate signal, `byte_received`, which will be asserted when a byte is correctly received. This signal will be used to trigger the output of the received data byte.

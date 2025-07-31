@@ -1,9 +1,0 @@
-Refactor the design by implementing the entire 512-bit Rule 90 automaton in a single always block without breaking it into smaller blocks. This removes inter-block boundary wiring and simplifies the design. Use a single register holding the full 512-bit state and compute the next state vector combinationally with bitwise operations.
-
-Leverage vector slicing and concatenation to handle boundary conditions: prepend and append zeros to the current state to form left and right neighbors. The next state is simply left_neighbor ^ right_neighbor.
-
-This approach makes the design more compact, easier to understand, and may synthesize better due to the simplicity of one wide register and a single combinational next-state logic. It avoids the complexity of multiple module instances and boundary signal wiring.
-
-The load input still asynchronously loads the entire data input into the register, else on each clock cycle, the register updates to the computed next state.
-
-This refactor trades modularity for simplicity and straightforwardness, which can be preferable for a flat design and easier verification.

@@ -1,5 +1,0 @@
-Refactor the FSM by explicitly separating state, direction, and fall_count registers. Implement the FSM using enumerated states and two sequential always blocks: one for state transitions and direction updates on clock, and another for the fall counter. Use combinational logic with continuous assignments for next state, direction, and outputs. This removes the combined next_state_dir register and next-state always block, improving clarity and modularity.
-
-Handle asynchronous reset with an always block sensitive to clk and areset. Encode direction as a separate 1-bit register. Use separate signals for next_state, next_direction, and next_fall_count calculated with assign statements, which improves readability and could help synthesis tools optimize. Maintain the same priority of fall > dig > bump and saturate fall counter at 31.
-
-Outputs remain purely Moore outputs from the current state and direction. This style provides clearer separation of combinational next-state logic and sequential update, avoids the packed register, and simplifies debugging and maintenance.

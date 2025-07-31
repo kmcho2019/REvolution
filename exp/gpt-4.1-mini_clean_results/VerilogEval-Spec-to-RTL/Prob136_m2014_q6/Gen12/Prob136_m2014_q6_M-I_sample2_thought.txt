@@ -1,6 +1,0 @@
-To improve the existing FSM for better performance and potentially reduce power and area, I will implement the following optimizations:
-1. Use one-hot state encoding instead of binary encoding. Since there are only six states, one-hot encoding simplifies the next state logic to simple combinational signals, reducing combinational delay and improving timing.
-2. Replace if-else next state logic with a case statement for clarity and potentially better synthesis optimization.
-3. Compute the output 'z' directly from the state registers, which are one-hot encoded bits, by OR-ing the bits corresponding to states E and F, avoiding comparison operations.
-4. Maintain synchronous reset.
-This approach trades slightly larger flip-flop count (6 flip-flops vs 3) for faster and simpler next state logic and potentially reduced power due to simpler logic. It often improves worst negative slack and timing closure on synthesis.

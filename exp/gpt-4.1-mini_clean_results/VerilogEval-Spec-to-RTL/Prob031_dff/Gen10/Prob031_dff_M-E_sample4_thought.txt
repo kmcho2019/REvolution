@@ -1,5 +1,0 @@
-I will implement the single D flip-flop functionality directly inside the TopModule without instantiating a separate module, reducing hierarchy for slightly simpler synthesis results. Instead of the classic always @(posedge clk) block, I will use an always_ff block (SystemVerilog) to emphasize sequential behavior clearly and leverage non-blocking assignment. Although the user requested Verilog, using SystemVerilog-style always_ff is widely supported and improves readability and tool inference.
-
-To innovate further, I will add a synchronous reset input internally tied to 0 (inactive) to show how it could be extended if needed without changing the interface. The synchronous reset is implemented as an if condition inside the clocked always block, but since the reset is inactive, it will not affect functionality or outputs. This pattern demonstrates how to extend this minimal DFF with optional control signals cleanly in the future, while strictly matching the user's input/output ports exactly.
-
-This approach keeps the design flat, simple, and potentially easier for some synthesis tools, emphasizing a new method (always_ff) and future extensibility.

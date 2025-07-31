@@ -1,5 +1,0 @@
-Refactor the code by separating the counters for seconds, minutes, and hours into individual always blocks for clarity and possibly better synthesis. Also, implement the hour counter directly in BCD instead of binary to eliminate combinational binary-to-BCD conversion logic. This means hours count from 1 to 12 in BCD, toggling PM when rolling from 11 to 12. 
-
-Use non-blocking assignments consistently. The BCD hour counter rolls over from 12 to 1 and increments appropriately. Seconds and minutes are kept as two BCD digits with separate always blocks for units and tens. The pm signal is updated only when hours wrap from 11 to 12.
-
-The outputs hh, mm, ss are directly assigned from the respective tens and units counters. The reset synchronously initializes the clock to 12:00:00 AM. This structure increases modularity, may improve timing by reducing long nested if-else chains, and avoids combinational hour BCD conversion logic.

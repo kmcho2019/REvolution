@@ -1,5 +1,0 @@
-To implement the TopModule, we can use a finite state machine (FSM) to track the receipt of the input bytes. The FSM will have three states: IDLE, BYTE_1, and BYTE_2. In the IDLE state, the module will discard bytes until it sees one with in[3]=1. Once this byte is seen, the module will transition to the BYTE_1 state, storing the byte in the upper 8 bits of out_bytes. In the BYTE_1 state, the module will wait for the next byte, which it will store in the middle 8 bits of out_bytes, and then transition to the BYTE_2 state. In the BYTE_2 state, the module will wait for the final byte, which it will store in the lower 8 bits of out_bytes, and then assert the done signal in the next cycle.
-
-We will use a counter or a series of if-else statements to keep track of the current state of the FSM. The FSM will reset to the IDLE state when the reset signal is high.
-
-In addition to the FSM, we will need to implement a datapath to store the input bytes in the correct positions in out_bytes.

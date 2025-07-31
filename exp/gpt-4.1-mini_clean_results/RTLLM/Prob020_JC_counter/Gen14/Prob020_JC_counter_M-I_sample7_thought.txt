@@ -1,7 +1,0 @@
-The original solution is functionally correct and already highly efficient, but we can optimize it further for timing and power by removing the asynchronous reset and implementing a synchronous reset instead. This change reduces the complexity and improves the timing path since asynchronous resets can cause metastability and glitches. Additionally, explicitly naming the reset as synchronous makes the design more portable and may help synthesis tools to better optimize flip-flops.
-
-Moreover, the Johnson counter can be updated by a simple shift-right with MSB driven by the inverted LSB, which is already optimal. We can keep the same logic but make the reset synchronous and active low to slightly improve timing and reduce glitches.
-
-Finally, adding synthesis directives like "synopsys preserve" or "keep" is generally not necessary here due to the simplicity, but ensuring the code style is clean and succinct helps synthesis tools infer efficient shift register structures.
-
-Overall, the main improvement is switching from asynchronous to synchronous reset, which often yields better PPA metrics without changing functional behavior.

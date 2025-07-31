@@ -1,9 +1,0 @@
-To optimize power and area, reduce toggling in counters during state A by gating counter updates using an enable signal, instead of unconditional register updates with multiplexing.
-
-Replace the packed 4-bit register with separate cycle_cnt and w_accum registers, each updated only when in state B and enabled. This avoids unnecessary toggling and simplifies increment logic: cycle_cnt increments by 1, w_accum increments by w (a single-bit input), so no arithmetic addition needed beyond simple increments.
-
-Keep the FSM states minimal (A and B) and implement synchronous reset.
-
-Implement a one-cycle delayed output z after the 3-cycle window completion by registering z accordingly.
-
-This approach maintains correctness, simplifies combinational logic by avoiding packed addition, reduces power by minimizing register toggling in state A, and slightly reduces area by using enable-controlled simple counters rather than a packed 4-bit adder register.

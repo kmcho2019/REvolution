@@ -1,5 +1,0 @@
-Refactor the timer by implementing the countdown logic within a single always block without using a separate combinational wire for next state. Inside the always block, directly update the counter register based on the load signal and the current counter value: if load is asserted, load the counter with data; else if the counter is not zero, decrement it; otherwise, hold at zero. 
-
-The terminal count signal `tc` is still assigned by detecting when the counter is zero. This structure simplifies the logic by removing the combinational next_counter wire and instead encapsulating all sequential logic in one always block, emphasizing state transitions directly and making the code more straightforward for synthesis tools that infer counters and registers.
-
-This also maintains a single flip-flop and complies with the original requirements while offering a clear state-update style.

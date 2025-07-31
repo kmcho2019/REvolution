@@ -1,9 +1,0 @@
-To implement the finite state machine (FSM) that searches for message boundaries in the input byte stream, we can use a 2-bit state register. The states can be defined as follows:
-- State 0 (IDLE): This is the initial state where the FSM waits for a byte with in[3]=1 to start a message.
-- State 1 (RECEIVE_BYTE_1): In this state, the FSM has received the first byte of the message and waits for the next two bytes.
-- State 2 (RECEIVE_BYTE_2): In this state, the FSM has received the second byte of the message and waits for the last byte.
-- State 3 (DONE): This state is not actually needed as a separate state but rather as a condition to be checked after State 2. When the FSM is in State 2 and receives the third byte, it asserts the done signal in the next clock cycle.
-
-For the datapath, we need to store the received bytes in a 24-bit register (out_bytes). When a message is detected (i.e., after receiving the third byte), out_bytes should hold the 24-bit message with the first byte in out_bytes[23:16], the second byte in out_bytes[15:8], and the third byte in out_bytes[7:0].
-
-The reset signal is active high synchronous, meaning that when it is high, the FSM resets to its initial state (IDLE) and out_bytes is cleared.

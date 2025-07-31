@@ -1,7 +1,0 @@
-To optimize PPA (Power, Performance, Area) without changing functionality, reduce the generate loops by using vectorized bitwise operations where possible. This eliminates repetitive per-bit assignments, simplifies logic, and may help synthesis tools better optimize and share gates for these wide bitwise operations. Specifically:
-
-- Implement out_both as a vectorwise AND between in[98:0] and in[99:1], then pad with zero at bit 99.
-- Implement out_any as a vectorwise OR between in[99:1] and in[98:0], then pad with zero at bit 0.
-- Keep out_different as vectorized wrap-around XOR since it is already optimal.
-
-This change reduces code complexity and logic duplication, potentially improving area and power by enabling better synthesis optimization of wide vector operations rather than per-bit logic loops. It also simplifies the code making it more readable and maintainable.

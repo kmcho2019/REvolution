@@ -1,9 +1,0 @@
-Refine the FSM to precisely control the timing of output 'g' and clarify state transitions, especially around the 'g' assertion period and y monitoring window. Specifically:
-
-- Introduce a distinct one-cycle pulse state (D) for asserting g=1 immediately after detecting the pattern.
-- Move to a dedicated state (E) to monitor y for exactly two clock cycles.
-- Use a 2-bit counter in E to track these two cycles and transition to permanent g=1 (F) if y=1 observed, else permanent g=0 (G).
-- Ensure outputs 'f' and 'g' are purely Moore (based on current state) for stable timing.
-- Reset synchronously and active low, returning to initial state A with both outputs low.
-- Shift the x input in C each clock cycle, so pattern detection is synchronous and robust.
-- This clearly separates output assertion phases, ensuring exactly one clock pulse for f, one for g initial assertion, and explicit monitoring cycle count for y, removing any ambiguity or off-by-one errors.

@@ -1,5 +1,0 @@
-Instead of storing the entire previous input vector, use a shift-register style pipeline that keeps the previous input stored in a single register. On each clock cycle, compute a 32-bit vector indicating the falling edges by bitwise AND of the previous input and the complement of the current input (`prev_in & ~in`). Then, rather than ORing this with the output register, immediately latch the detected bits by accumulating them in a separate register that only sets bits on detected falling edges and never clears them except on reset. This keeps a clean separation of the stored previous input and the latched falling edges.
-
-Additionally, use nonblocking assignments and ensure that the previous input is updated after the detection to avoid combinational mixing of current and next state. This architecture is straightforward but uses two registers, one for previous input and one for latched output, making the logic explicit and potentially more robust in synthesis and simulation.
-
-This approach captures each falling edge bit exactly once and keeps it latched until reset, fulfilling the requirement.

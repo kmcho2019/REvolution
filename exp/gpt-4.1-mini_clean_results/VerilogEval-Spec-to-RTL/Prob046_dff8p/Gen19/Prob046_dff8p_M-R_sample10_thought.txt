@@ -1,7 +1,0 @@
-Refactor the design by implementing the 8 D flip-flops as individual negative-edge triggered flip-flops with synchronous reset, instantiated in a generate loop for clarity. Instead of one vector register with a vector enable, implement a per-bit conditional update inside the always block for each flip-flop. This explicit per-bit approach preserves the same functionality but makes the structure more modular and readable on a per-bit basis.
-
-Each flip-flop has synchronous active-high reset to 1 or 0 depending on the corresponding bit in 8'h34. On reset, set q[i] to the corresponding bit of 0x34. On the negative clock edge, if reset is low, update q[i] from d[i]. Although this doesn't optimize toggling like vector comparison, the modular approach enhances understandability and potentially easier bit-level instrumentation or modification.
-
-No combinational assigns are used since flip-flops require always blocks triggered by clock edges. This explicit style is a common teaching and debugging pattern.
-
-This maintains the original spec: 8-bit register, negative-edge clock, synchronous reset active high to 0x34.

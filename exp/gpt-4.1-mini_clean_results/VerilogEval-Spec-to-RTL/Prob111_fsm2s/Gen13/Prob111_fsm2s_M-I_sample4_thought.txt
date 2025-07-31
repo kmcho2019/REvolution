@@ -1,7 +1,0 @@
-The current design is minimal and efficient with a one-bit state register directly driving the output. To improve PPA, especially performance and power, we can keep the minimal state register but explicitly define symbolic localparams for states to improve readability without adding overhead. Additionally, using a combinational next_state signal and separating next state logic from state update can improve synthesis results and timing. This also helps clock gating or retiming optimizations.
-
-We will keep synchronous reset as required, maintain the Moore output logic, and use nonblocking assignments for state updates. This structure makes the design more synthesis-friendly while keeping area minimal. The combinational next_state logic could enable better tool optimizations, potentially improving the critical path delay and power by simplifying the logic cone feeding the register.
-
-No extra flip-flops or logic are added, so area will remain minimal. The code is clearer for maintainability and may lead to improved PPA due to better synthesis interpretation of FSM encoding and separation of logic.
-
-Overall: add symbolic states, split next state combinational logic from sequential update, keep output assignment simple.

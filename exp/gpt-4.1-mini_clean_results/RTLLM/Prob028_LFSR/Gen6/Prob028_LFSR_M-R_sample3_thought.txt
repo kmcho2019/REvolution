@@ -1,8 +1,0 @@
-Refactor the 4-bit LFSR by separating the register update and feedback calculation more explicitly. Use a non-blocking assignment inside an always block for the register update on the positive clock edge, but move the feedback logic to a separate assign statement for clarity. Replace the synchronous reset inside the always block with an asynchronous reset using an always_ff block and sensitivity list including `rst`, improving reset responsiveness.
-
-Also, explicitly declare the LFSR state register separate from the output port, and assign the output port continuously from the internal register to clarify data flow.
-
-This approach:
-- Improves modularity and clarity by cleanly separating combinational and sequential logic.
-- Uses an asynchronous reset to allow immediate reset response.
-- Assigns output as continuous logic for simpler downstream use.

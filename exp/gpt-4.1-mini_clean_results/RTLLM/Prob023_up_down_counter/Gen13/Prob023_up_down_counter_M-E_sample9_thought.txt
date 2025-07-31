@@ -1,7 +1,0 @@
-To implement the 16-bit up/down counter in a different way, I will embed the counting logic directly within the sequential always block rather than separating the next-state logic into a combinational block. 
-
-Specifically, the counter register `count` will be updated on the rising edge of `clk`. When `reset` is asserted, `count` resets to zero. Otherwise, depending on the `up_down` signal, the counter will increment or decrement accordingly. 
-
-This direct approach removes the need for an intermediate `next_count` variable, leading to a compact, straightforward design where state update and counting logic coexist inside the same process. This style is common in simple synchronous counters and is easy to understand.
-
-The counter naturally wraps around due to the fixed 16-bit width: incrementing 16'hFFFF rolls over to 16'h0000, decrementing 16'h0000 rolls under to 16'hFFFF, which matches typical behavior of unsigned counters.

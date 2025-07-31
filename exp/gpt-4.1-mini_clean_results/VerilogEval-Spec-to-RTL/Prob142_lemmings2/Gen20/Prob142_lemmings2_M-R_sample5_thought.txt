@@ -1,9 +1,0 @@
-Refactor the Moore FSM by splitting the state bits into two separate registers: one 1-bit register for falling (falling_flag) and one 1-bit register for direction (dir). This allows simpler and clearer combinational next-state logic using separate always blocks for direction and falling states. Use synchronous reset with asynchronous reset still on areset signal but cleanly separate direction updates from falling logic.
-
-- Use a single state register for direction and another register for falling.
-- Update falling based solely on ground signal.
-- Update direction only when walking and when bumped, ignoring bumps while falling.
-- Outputs derived straightforwardly from the two registers.
-- This structuring reduces complexity in the combinational next-state logic and makes explicit how direction changes happen independently from falling state.
-- The asynchronous reset initializes falling=0 and direction=0 (walk left).
-- This structure keeps the Moore FSM concept but with explicitly separated state bits and next state logic.

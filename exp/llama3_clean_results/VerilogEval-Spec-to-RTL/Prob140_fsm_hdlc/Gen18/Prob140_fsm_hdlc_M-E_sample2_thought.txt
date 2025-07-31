@@ -1,7 +1,0 @@
-To implement a Moore-type finite state machine for recognizing HDLC framing patterns, we can utilize a different architectural approach. This novel approach involves using a combination of counters and a simple state machine to detect the required patterns. 
-
-The idea is to use two counters: one to count the number of consecutive ones (up to 6) and another to count the total number of ones when a "flag" pattern is detected. We will also use a simple state machine with three states: IDLE, COUNTING_ONES, and FLAG_DETECTED.
-
-In the IDLE state, we reset the counters and wait for the input to become '1'. When the input is '1', we transition to the COUNTING_ONES state and start counting the consecutive ones. If we count 5 consecutive ones and the next input is '0', we discard this bit and reset the counters. If we count 6 consecutive ones and the next input is '0', we detect a "flag" pattern and assert the flag output. If we count more than 6 consecutive ones, we detect an error and assert the error output.
-
-This approach simplifies the state machine logic and reduces the number of states required, making it more efficient and easier to implement.

@@ -1,9 +1,0 @@
-Improve power efficiency and slightly reduce area by minimizing unnecessary register updates and logic:  
-1. Change the counter and ped_shortened registers to update only on changes to reduce toggling (clock gating is implicit with fewer changes).  
-2. Make outputs purely combinational from the state without extra register copies.  
-3. Use a synchronous reset-only approach (eliminate async reset) for better synthesis and timing.  
-4. Optimize state encoding explicitly with one-hot encoding to simplify next-state logic, potentially reducing area and improving timing.  
-5. Reduce counter width to 7 bits as max value is 60, but keep 8 bits output as per spec, padding MSB zero.  
-6. Simplify the always_comb block to avoid multiple assignments, streamlining combinational logic.  
-7. Ensure ped_shortened is cleared only on state transitions, reducing unnecessary toggling inside states.  
-This enhances the existing design's power and timing slightly, keeping it simple and clean without sacrificing functionality.

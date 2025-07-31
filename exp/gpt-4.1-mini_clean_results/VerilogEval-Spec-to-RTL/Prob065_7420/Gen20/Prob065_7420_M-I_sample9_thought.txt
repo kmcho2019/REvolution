@@ -1,9 +1,0 @@
-To optimize for better PPA (power, performance, area), I will inline the 4-input NAND operations directly into the TopModule instead of instantiating a separate parameterized module. This removes the additional module boundary, minimizing synthesis overhead, reducing area slightly, and potentially improving power by reducing unnecessary nets and buffers.
-
-This approach retains the same logical function of two independent 4-input NAND gates, but with simpler, more direct RTL:
-
-- Use continuous assign statements with the reduction NAND operator (~&).
-- Remove parameterization and module instantiation since the NAND4 module is simple.
-- Keep code clean and readable by using direct input concatenations.
-
-This change maintains optimal performance (pure combinational logic with minimal gate delay) and improves area and power modestly by reducing the number of instantiated modules and nets.

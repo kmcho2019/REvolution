@@ -1,9 +1,0 @@
-To fix the provided Verilog code, we need to correct the state transition logic to accurately detect message boundaries based on the PS/2 mouse protocol. The issue with the current implementation is that it increments the state counter regardless of the value of `in[3]`, which can lead to incorrect message boundary detection. 
-
-We should modify the state transition logic so that it only increments the state counter when a byte is received, regardless of the value of `in[3]`, but it only sets the initial state (state 1) when a byte with `in[3]=1` is received. This ensures that we correctly identify the start of a message and subsequently increment the state counter for each byte received until we reach the end of the message (state 3). 
-
-Additionally, we should ensure that the `done` signal is asserted in the cycle immediately after the third byte of a message is received. This can be achieved by using the current state to determine when to assert the `done` signal.
-
-We will maintain the use of a 2-bit counter to keep track of the number of bytes received after seeing a byte with `in[3]=1`. The counter will be reset to 0 when the FSM is in the IDLE state or when it transitions from the state where the third byte has been received back to IDLE.
-
-To simplify the design and reduce the number of state transitions, we can use combinational logic to determine the next state and the `done` signal based on the current state and the input byte stream.

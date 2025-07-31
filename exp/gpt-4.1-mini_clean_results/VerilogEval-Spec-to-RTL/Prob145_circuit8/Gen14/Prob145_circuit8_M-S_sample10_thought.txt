@@ -1,9 +1,0 @@
-The circuit can be implemented as a simple synchronous sequential circuit with a two-bit state formed by p and q. Observing the waveform, p updates on the rising clock edge based on the input a and current q, and q follows p with a one-cycle delay, effectively implementing q as the previous p.
-
-To simplify, use a single always block triggered on the rising edge of clock, update p as p <= a | q, and update q as q <= previous p (saved in a temporary register or by using nonblocking assignments' scheduling).
-
-This removes the complexity of dual-edge clocking and asynchronous updates while preserving the sequential behavior inferred from the waveforms.
-
-Initialize p and q to zero at time zero to match the initial unknowns turning to zeros.
-
-This solution matches the observed behavior with simpler and synthesizable code.

@@ -1,7 +1,0 @@
-To improve timing and reduce critical path delay, pipeline the output assembly by registering intermediate bytes before concatenation to out_bytes, which reduces the combinational load at clock edge. Also, separate the done signal generation into a distinct register to avoid toggling done unnecessarily every cycle, using a done_pending flag to assert done for exactly one cycle. The FSM state is maintained by a 2-bit counter as before but now pipelined output reduces logic on the critical path.
-
-For power reduction, minimize done toggling to only a single clock cycle pulse by asserting done only when the message is complete and then clearing it. Keep out_bytes stable except on done cycles to reduce switching.
-
-No change in area significantly, but pipeline registers slightly increase flip-flop count, trading a bit of area for improved timing and power.
-
-Overall, the main timing bottleneck is reduced by registering byte storage and only updating out_bytes and done when message is complete, ensuring done and out_bytes are valid simultaneously and stable otherwise.

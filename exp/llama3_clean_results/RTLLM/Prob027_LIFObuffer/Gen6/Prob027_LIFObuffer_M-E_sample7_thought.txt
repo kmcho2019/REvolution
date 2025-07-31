@@ -1,7 +1,0 @@
-A novel architectural idea for the LIFO buffer is to implement it using a hybrid approach combining the benefits of a stack-based architecture and a counter-based tracking system. This design utilizes a 4-element array to store the data and two counters: a write counter (WC) and a read counter (RC). The WC keeps track of the number of elements written to the buffer, while the RC tracks the number of elements read from the buffer.
-
-When the buffer is reset, both counters are reset to 0, and the buffer is cleared. During a write operation, data is written to the buffer at the location pointed to by the WC, and then the WC is incremented. If the WC reaches the maximum value (4 in this case), it wraps around to 0, ensuring that the buffer operates in a circular manner.
-
-During a read operation, data is read from the buffer at the location pointed to by the RC, and then the RC is incremented. If the RC reaches the maximum value, it wraps around to 0. The EMPTY flag is set when the WC equals the RC, indicating that the buffer is empty. The FULL flag is set when the difference between the WC and RC is 3 (considering the circular nature of the buffer), indicating that the buffer is full.
-
-This design ensures that the LIFO buffer operates correctly, and the EMPTY and FULL flags are accurately updated. The hybrid approach provides a efficient and scalable solution for implementing the LIFO buffer.

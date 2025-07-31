@@ -1,7 +1,0 @@
-To optimize for better area and power, avoid using a wire array which can cause synthesis tools to infer more complex mux structures and routing overhead. Instead, use a case statement that directly selects the output based on 'sel'. This often yields simpler mux logic with fewer LUTs and less routing complexity, as synthesis tools can optimize case constructs well.
-
-Since sel ranges only from 0 to 8 for valid inputs, and 9-15 map to all ones, a case statement covers all options explicitly and defaults to 16'hFFFF for others. This also prevents possible glitches from array indexing.
-
-This approach prioritizes minimal combinational logic overhead and potentially better LUT packing, which can reduce area and dynamic power, especially in FPGAs. The code remains clean and readable, with straightforward combinational logic.
-
-The always_comb block remains combinational with no unnecessary registers. This approach is a good tradeoff between clarity and better PPA.

@@ -1,5 +1,0 @@
-To implement a novel architectural idea for the TopModule, we can utilize a shift register to store the last three bytes received. This approach eliminates the need for a separate counter and simplifies the state machine. The shift register can be used to check for the condition in[3]=1 in the first byte of each message.
-
-The module will have two main states: IDLE and MESSAGE RECEIVED. In the IDLE state, it will continuously check the input byte stream for a byte with in[3]=1. Once such a byte is detected, it will shift this byte into the shift register and transition to the MESSAGE RECEIVED state. In the MESSAGE RECEIVED state, it will continue to shift in the next two bytes. After the third byte has been shifted in, it will assert the 'done' signal in the next cycle and transition back to the IDLE state.
-
-This approach reduces the number of transitions in the FSM and minimizes the number of combinational logic blocks, resulting in improved PPA metrics.

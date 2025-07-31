@@ -1,7 +1,0 @@
-Fuse the clean Mealy FSM structure from both examples to leverage minimal states and combinational output logic for low latency and efficient pulse detection. Use a 2-bit state register with three defined states (IDLE, HIGH, LOW). Implement synchronous state updates with nonblocking assignments triggered by clk and asynchronous active-low reset. Use a combinational always block for next state calculation based on current state and data_in, improving clarity and synthesis friendliness.
-
-For output, use combinational logic within an always @(*) block rather than a continuous assign statement or registered output, reducing potential glitches while keeping output purely combinational from current state and input. This combines the low latency Mealy output from example 1 with the clean, easy-to-follow combinational logic style of example 2.
-
-Additionally, keep the output pulse one cycle wide and precisely aligned with the falling edge of data_in after a detected rising edge, ensuring correct pulse detection per spec. The output data_out is asserted when transitioning from HIGH to LOW, i.e., current state is HIGH and data_in drops to 0.
-
-This fusion balances clarity, simplicity, and robustness while enabling easy extensions such as registering output later if timing requires. It avoids redundant logic and uses nonblocking sequential assignments consistently for best coding practice.

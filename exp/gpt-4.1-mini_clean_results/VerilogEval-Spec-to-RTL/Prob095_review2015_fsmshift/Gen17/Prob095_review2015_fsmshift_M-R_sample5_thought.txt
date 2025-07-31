@@ -1,9 +1,0 @@
-The original design uses a down-counter in a single always block and an explicit register for shift_ena derived from the counter. To refactor and change structure, I will implement a small FSM with two states: IDLE and SHIFT_EN. On reset, we go to SHIFT_EN state and count 4 cycles of shift enable. After that, we transition to IDLE and keep shift_ena low forever until reset. This removes the explicit counter decrement in the always block by using a register for the state and a separate counter increment logic.
-
-The shift_ena output will be driven combinationally from the current state (shift_ena is high only in SHIFT_EN). The 4-cycle enable period will be tracked with a counter that increments each clock cycle when in SHIFT_EN state. When the counter reaches 4, FSM transitions to IDLE.
-
-This approach uses an explicit two-state FSM with a counter counting the number of cycles shift_ena has been high. It emphasizes state transitions and outputs as functions of states rather than the original counter-down approach.
-
-Since the problem does not specify any input other than reset, we implement only the required synchronous reset-driven behavior (assert shift_ena for 4 cycles after reset then 0 forever). No pattern_detected input will be included.
-
-This solution is clean, clearly structured, and meets the spec fully.

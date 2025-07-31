@@ -1,9 +1,0 @@
-To improve the PPA metrics while maintaining correctness and readability, I will use one-hot encoding for the 3-state FSM. One-hot encoding typically improves timing (lower combinational logic depth) at the expense of a slightly larger area, but for 3 states this increase is minimal and can reduce critical path delay, potentially improving the worst negative slack (wns) and total negative slack (tns). The asynchronous negative-edge reset will remain, but the output z will be registered (Mealy output logic combined inside the sequential block) to reduce glitches and improve timing closure, as the output depends directly on state and input. This also slightly simplifies combinational logic by only computing next state in the combinational block. The output z will be assigned based on current state and input after state update, aligning with Mealy behavior.
-
-Thus, the strategy:
-- Use one-hot encoding (3 flip-flops) for states.
-- Separate next state logic combinational block, and sequential block for state + output update.
-- Register the output z to reduce glitches and improve timing.
-- Retain asynchronous negative edge reset as specified.
-
-This should improve timing (smaller combinational depth on next state logic), improve output stability (registered z), and keep area overhead minimal for 3 states.

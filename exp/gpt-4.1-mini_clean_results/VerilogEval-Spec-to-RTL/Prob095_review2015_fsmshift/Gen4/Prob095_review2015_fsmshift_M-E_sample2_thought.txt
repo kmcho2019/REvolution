@@ -1,7 +1,0 @@
-Instead of tracking the enable period starting after reset, we incorporate the reset itself as the start of the 4-cycle shift_ena assertion period. Since reset is synchronous and active high, we design a 3-bit counter that counts both during reset and after reset is released, enabling shift_ena for exactly 4 cycles total including the cycles when reset is high. 
-
-The idea is to start counting when reset is asserted, increment the counter on each clock cycle, and keep shift_ena asserted until 4 cycles have elapsed. After that, shift_ena stays low indefinitely. The counter resets to zero on reset assertion so the counting always restarts when reset is high again.
-
-This approach treats reset as the trigger signal and merges counting across the reset assertion and deassertion cycles seamlessly, ensuring shift_ena is asserted exactly 4 cycles including the reset period.
-
-This avoids the confusion of starting enable after reset and aligns perfectly with the requirement of asserting shift_ena for 4 cycles upon reset synchronously.

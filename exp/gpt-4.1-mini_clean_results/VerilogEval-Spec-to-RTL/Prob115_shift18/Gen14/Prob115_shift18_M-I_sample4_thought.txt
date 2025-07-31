@@ -1,9 +1,0 @@
-To optimize for better power, performance, and area (PPA), I'll remove the function call and replace it with explicit combinational logic using a single always_comb block with a case statement for shift operations. This reduces combinational logic depth by avoiding conditional concatenations inside functions and helps synthesis tools infer efficient multiplexers.
-
-Also, I will implement shifts by wiring for left shifts (since shifts by 1 or 8 bits are just wiring and zero padding) and for arithmetic right shifts, replicate the sign bit efficiently.
-
-By explicitly enumerating the four shift cases with separate assignments, synthesis can infer a simpler barrel shifter structure.
-
-Furthermore, the shift logic will only be evaluated if ena is asserted; otherwise, the register holds its current value or loads data synchronously.
-
-This structure reduces switching activity when ena=0 by gating the shift logic in combinational next_q, and explicit case-based logic minimizes multiplexing complexity, improving timing and reducing area and power.

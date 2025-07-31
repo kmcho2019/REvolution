@@ -1,5 +1,0 @@
-The module must assert shift_ena for exactly 4 clock cycles immediately after synchronous reset, then keep it low forever until the next reset. Since the problem interface only includes clk, reset, and shift_ena (no pattern detection), the design only needs to handle the reset-triggered enable.
-
-A simple 2-bit counter can count 4 cycles when reset occurs. On reset, load counter to 3 and assert shift_ena. Each clock cycle, decrement counter until it reaches 0, then shift_ena goes low and stays low until next reset.
-
-This eliminates any FSM states and extra inputs, reducing complexity and meeting the spec.

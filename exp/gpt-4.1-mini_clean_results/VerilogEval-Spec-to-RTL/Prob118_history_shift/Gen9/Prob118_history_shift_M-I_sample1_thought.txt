@@ -1,5 +1,0 @@
-To improve PPA, I will reduce unnecessary toggling by more explicitly gating the updates to the history register. Specifically, I'll split the logic so that the next state is computed only when an update is actually required. Since train_mispredicted has priority, the register should only update when rollback or prediction occurs; otherwise, hold its value. Also, I'll use separate signals for rollback and prediction to simplify logic and minimize toggling.
-
-To optimize area and power, I'll avoid computing the concatenation unless needed by controlling it with conditional assignments. This will reduce combinational toggling. Finally, I will keep the asynchronous reset and maintain nonblocking assignments for proper simulation.
-
-This approach maintains functional correctness while reducing dynamic power and potentially improving timing by simplifying combinational logic paths.

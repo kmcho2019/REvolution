@@ -1,6 +1,0 @@
-Refactor the FSM by splitting the state register and counters update from output logic, using a Moore FSM with one-hot style state encoding internally. Use combinational logic to compute next states and counters, and registers only for state and counters on clock edges.  
-Also, separate the output logic combinationally from counters and state, so z is assigned by combinational logic rather than inside the sequential block.  
-This improves clarity by clearly separating sequential and combinational parts, while maintaining the same functionality and minimizing states.  
-The output z is asserted exactly one cycle after counting three w inputs, based on the recorded count of w=1 occurrences.  
-Reset synchronously initializes all registers and output.  
-State encoding uses a 1-bit reg as before for minimal area.

@@ -1,9 +1,0 @@
-Refactor the design by breaking down the 8-bit vector DFF into 8 individual single-bit DFF modules triggered on the negative edge of clk, each with synchronous active-high reset to 0x34 bit value. Implement the reset value by a parameter per bit, instantiate 8 such modules in TopModule, and manage the reset bit individually per flip-flop.
-
-Instead of using clock enable inside the flip-flop module, use combinational logic outside the flip-flops to select input d only when it differs from q, but implement the flip-flops without internal clock enable. This reduces complexity inside each DFF.
-
-This modular approach simplifies internal DFF logic to a minimal always block with only synchronous reset and d input, relying on TopModule for input gating. It avoids vector inequality comparison inside the DFF, possibly improving critical path and power, and shows a different structural style.
-
-Each DFF instance uses parameters for reset value (bit 0 or 1) matching 0x34 = 00110100b, so reset bits are [0]=0, [1]=0, [2]=1, etc.
-
-This approach clearly separates logic and storage, enhancing readability and maintainability.

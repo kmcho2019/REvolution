@@ -1,8 +1,0 @@
-To implement the 12-hour clock with AM/PM indicator, we need to design a set of counters for hours, minutes, and seconds. These counters will be clocked by the fast-running clk and will increment only when ena is high, which happens once per second. The pm signal will be generated based on the hour value. When reset is high, the clock will reset to "12:00 AM". We will use synchronous reset, meaning the reset signal will only be considered on the positive edge of the clock.
-
-The counters will be designed as follows:
-- The seconds counter (ss) will count from 0 to 59 and then wrap around to 0.
-- The minutes counter (mm) will count from 0 to 59 and then wrap around to 0, and it will only increment when the seconds counter wraps around.
-- The hours counter (hh) will count from 1 to 12, and it will only increment when the minutes counter wraps around. We will also generate the pm signal based on the hour value.
-
-We will use a 2's complement representation for the negative numbers, and we will add a mechanism to handle the wrap-around cases for hours, minutes, and seconds.

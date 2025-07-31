@@ -1,7 +1,0 @@
-To implement the state output logic for the given finite-state machine, we first need to identify the conditions under which each state's flip-flop input is asserted. Given the one-hot encoding and the state transitions, we can derive the logic for Y1 (input of y[1]) and Y3 (input of y[3]) based on the current state (y[5:0]) and the input w.
-
-For Y1, which corresponds to state B, the flip-flop input should be asserted when the current state is A (000001) and w is 0, or when the current state is D (001000) and w is 0, or when the current state is C (000100) and w is 0. This covers the transitions A->B (on w=0), D->B is not directly possible, but we consider D->A->B indirectly, and there's no direct C->B transition given in the table but we consider C->D->A->B.
-
-For Y3, which corresponds to state D, the flip-flop input should be asserted when the current state is B (000010) and w is 0, or when the current state is C (000100) and w is 0, or when the current state is E (010000) and w is 0, or when the current state is F (100000) and w is 0, or when the current state is D (001000) and w is 0. This covers the transitions B->D, C->D, E->D, F->D, and D->D (stay in D) on w=0.
-
-The implementation in Verilog should involve combinational logic that evaluates the current state and input w to determine the next state's flip-flop inputs.

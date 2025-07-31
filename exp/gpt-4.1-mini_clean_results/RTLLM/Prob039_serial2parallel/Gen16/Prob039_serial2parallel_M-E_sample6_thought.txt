@@ -1,5 +1,0 @@
-Instead of using a shift register that shifts bits on every valid input, implement a parallel load register using an 8-bit shift register indexed by a counter. On each valid clock, store the incoming serial bit into the register position indicated by the counter, starting from MSB (index 7) down to LSB (index 0). Use a 4-bit counter that decrements from 7 to 0 to track position. When the counter reaches 0 after storing a bit, set dout_valid high and output the full 8-bit register.
-
-This approach explicitly assigns each bit into its correct parallel position without shifting. It also clearly models the filling of the register from MSB to LSB, following the problem statement directly. The counter counts down from 7 to 0, simplifying the logic for detection of full data reception.
-
-Reset the counter to 7 on reset or after 8 bits have been collected. This method also ensures dout_valid is asserted for exactly one clock cycle after the 8th bit is stored.

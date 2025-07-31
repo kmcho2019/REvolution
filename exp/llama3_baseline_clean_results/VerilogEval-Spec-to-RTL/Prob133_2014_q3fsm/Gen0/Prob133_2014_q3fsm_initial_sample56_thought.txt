@@ -1,7 +1,0 @@
-To implement the described finite state machine (FSM) with the fewest possible states, we can consider the following approach:
-1. **State A (Reset State)**: The FSM starts in this state. It remains here as long as `s = 0` and moves to state B when `s = 1`.
-2. **State B (Monitoring State)**: Once in state B, the FSM checks the input `w` over the next three clock cycles. To minimize states, we don't need separate states for each cycle of checking `w`. Instead, we can use counters and combinational logic to determine the output `z` based on the counts of `w = 1` in the three cycles.
-3. **Use of Counters**: We can use a counter to keep track of the number of cycles since entering state B and another to count how many times `w = 1` in those cycles.
-4. **Output Logic**: `z` should be set to `1` if the count of `w = 1` is exactly two in the three cycles and should be `0` otherwise.
-
-Given the need to monitor `w` over three cycles and then decide on `z` in the next cycle, the FSM essentially remains in state B once it leaves state A, using counters and combinational logic to manage the logic flow.

@@ -1,9 +1,0 @@
-Use a handshake-style synchronizer with explicit data-valid latching to reduce timing and logic.  
-1. In clk_a domain, data and data_en are latched into a staging register only when data_en is asserted, holding data stable.  
-2. The data_valid signal (derived from data_en) is synchronized into clk_b domain via a 2-stage flip-flop synchronizer.  
-3. A data_ready register in clk_b domain captures the synchronized data_valid signal's rising edge (indicating new data availability).  
-4. On data_ready event, data from clk_a domain (held in staging register) is transferred asynchronously via a simple dual-clock FIFO-like handshake: data is sampled into clk_b domain register.  
-5. The output dataout register holds the sampled data, updating only when new data is ready, otherwise holding previous value.  
-6. Reset signals are handled asynchronously as per requirements but designed carefully to avoid glitches.  
-7. The core idea is to treat data_valid as a handshake signal that crosses clock domains with a clear detect of new data pulses, minimizing data hazards and allowing safe data transfer with minimal logic.  
-This approach ensures data is only captured and propagated when a new data item is indicated by the data_valid transition synchronized into clk_b domain, improving reliability and timing closure in multi-bit CDC data synchronizer designs.

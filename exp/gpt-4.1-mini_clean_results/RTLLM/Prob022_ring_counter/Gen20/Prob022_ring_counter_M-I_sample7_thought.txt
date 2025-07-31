@@ -1,5 +1,0 @@
-To improve the design and avoid the tool issues with assigning the entire 'out' vector in a combinational always block, I will combine the state update and output generation into a single synchronous always block. This approach stores the one-hot output directly in a register 'out', and on each clock edge, the active bit in 'out' shifts left by one, wrapping around from the MSB back to LSB. 
-
-This fully synchronous design avoids combinational vector assignments and simplifies the logic, ensuring better synthesis and simulation compatibility. It also minimizes the registers needed, keeping only the 'out' register as state. Reset sets 'out' to 8'b0000_0001. On each clock cycle, if not reset, 'out' is rotated left by one bit, creating the ring counter behavior.
-
-This approach is optimal for area and power, as it only uses an 8-bit register with a simple shift-and-wrap operation and no extra counters.

@@ -1,9 +1,0 @@
-To optimize the design for better timing (wns) and reduce combinational complexity, refactor the hour counter to use two BCD digits directly, eliminating the binary-to-BCD conversion logic. This will simplify the critical path and remove subtraction and concatenation in the combinational path.
-
-Use separate always blocks for seconds, minutes, and hours counters to localize logic and reduce the longest combinational chain on a single clock edge. Each counter increments only when its lower unit rolls over, thus limiting toggling and potentially improving power.
-
-Keep pm logic tightly coupled with hour rollover from 11 to 12 but implement it inside the hour counter block for clarity.
-
-Use non-blocking assignments consistently and synchronous reset with priority over enable. This modular approach should reduce logic depth, improve timing, and may also reduce area by eliminating combinational hour conversion.
-
-Overall, this approach balances straightforward implementation and PPA optimization by splitting counters and removing binary hour conversion.

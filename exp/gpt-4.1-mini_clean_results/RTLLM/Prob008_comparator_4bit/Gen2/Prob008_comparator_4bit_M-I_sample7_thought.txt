@@ -1,9 +1,0 @@
-Optimize the existing 4-bit comparator by leveraging Verilog's built-in arithmetic operator for subtraction (A - B). This simplifies the design and reduces area as the synthesizer infers a single subtractor block rather than four explicit full subtractors. Then, analyze the borrow by checking if A < B (which can be directly derived using comparison operators). To maintain the combinational nature and mutually exclusive outputs:
-
-- Use (A < B) to determine A_less.
-- Use (A == B) to determine A_equal.
-- Use (A > B) to determine A_greater.
-
-This approach uses simple comparison operators that synthesis tools optimize efficiently, resulting in better area and potentially power due to reduced logic complexity. This also reduces code verbosity and improves readability, which indirectly benefits maintainability and synthesis optimizations.
-
-All outputs remain mutually exclusive by definition of the operators. The design remains fully combinational.

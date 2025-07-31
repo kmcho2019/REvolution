@@ -1,9 +1,0 @@
-Refactor the FSM by separating state, outputs, and counters more clearly to avoid timing ambiguities. Use one-hot encoding for states for clarity and simpler combinational next-state logic. Use explicit registers for outputs f and g, updating them only on clock edges.
-
-Implement the x pattern detection using a 3-bit shift register shifting in x at each clock cycle during monitoring state. When pattern detected, transition to a state that pulses g for one cycle.
-
-Then, transition to a y-waiting state with a 2-cycle counter incremented each clock cycle. If y=1 within these two cycles, latch g=1 permanently; else, latch g=0 permanently. Outputs f and g are updated synchronously with states and flags.
-
-All synchronous resets and outputs updates occur in a single clocked always block. Next state and output logic is derived combinationally from current state and inputs.
-
-This clear separation and use of one-hot encoding simplifies debugging and ensures correct timing of outputs and transitions.

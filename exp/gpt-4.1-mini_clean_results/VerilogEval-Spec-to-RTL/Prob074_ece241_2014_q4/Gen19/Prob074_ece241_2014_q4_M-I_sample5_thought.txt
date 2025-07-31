@@ -1,9 +1,0 @@
-The original design correctly implements the combinational logic and flip-flop updates as per specification, but the internal reset logic is non-standard and may cause simulation and synthesis issues due to lack of explicit initialization and reliance on startup conditions.
-
-To improve, I will remove the internal reset generation logic and instead use an asynchronous reset input signal named 'rst_n' (active low) to allow explicit and reliable reset control from outside the module. This is a common and synthesis-friendly approach, enabling proper initialization of flip-flops.
-
-If an external reset input is not desired, I will provide an optional initial block to initialize flip-flops to zero in simulation, acknowledging that this doesn't synthesize.
-
-Additionally, I will clearly separate combinational and sequential logic, keep registers for each flip-flop, and assign the output z directly as the NOR of flip-flop outputs.
-
-This approach improves simulation correctness, synthesis compatibility, and design clarity.

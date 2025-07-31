@@ -1,9 +1,0 @@
-Fuse the best ideas from both examples to build a well-pipelined unsigned 8-bit multiplier with a three-stage pipeline for balanced timing and good throughput:
-- Stage 1: Sample inputs mul_a, mul_b, and mul_en_in into registers on clock edge if mul_en_in is asserted.
-- Stage 2: Generate partial products combinationally using the registered inputs.
-- Stage 3: Instead of summing all partial products in one combinational step (long critical path), implement the partial sum calculation as a balanced 2-stage pipelined adder tree:
-    - On stage 2 clock edge, sum pairs of partial products into intermediate sum registers.
-    - On stage 3 clock edge, sum the intermediate sums into the final product register.
-- Maintain a 4-bit enable pipeline shift register to track mul_en_in signal through all pipeline stages, with mul_en_out derived from its MSB to indicate valid output.
-- Output product is valid only when mul_en_out is active; otherwise zero.
-This fusion improves timing by distributing the large adder into smaller combinational steps, improves power by gating partial sums with enable signals, and maintains a clean enable propagation and pipeline flow.

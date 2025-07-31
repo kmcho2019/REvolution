@@ -1,9 +1,0 @@
-To simplify and improve the design reliability, the shift register will be loaded from MSB to LSB directly: on each valid input bit, shift the register right, inserting the new bit at the MSB side. This way, after 8 valid bits, the register holds the bits in the desired order naturally (first bit received at MSB, last at LSB), eliminating the need for bit reversal.
-
-A 4-bit counter counts how many bits have been received, incremented only on `din_valid`. When the count reaches 7 (meaning the 8th bit is received), the output parallel data is updated from the shift register, and the output valid is asserted for one clock cycle. Then the counter and shift register reset to prepare for the next 8 bits.
-
-This design is synchronous and respects the active low reset. The output valid is generated as a one-clock pulse exactly when 8 bits are assembled.
-
-This approach eliminates the complexity and potential delay of bit reversal, and the output aligns naturally with the problem specification: bits collected serially with earliest bit placed at MSB and latest bit at LSB.
-
-Also, the `dout_valid` signal is held low by default and only asserted on the exact clock cycle when data is ready, preventing ambiguity or latching errors.

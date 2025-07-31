@@ -1,7 +1,0 @@
-The existing design is already minimal and optimal for a single synchronous reset D flip-flop in terms of performance, area, and power. To potentially reduce power further, we can introduce clock enable logic by gating the clock internally using the input signals. This would prevent unnecessary toggling of the flip-flop when neither reset nor data changes are active, lowering dynamic power. However, adding explicit clock gating can be risky if not carefully handled in all tools and flows.
-
-An alternative low-risk method is to add an enable signal inside the always block, derived from r and d inputs, to avoid unnecessary register toggling. Since it's a synchronous reset, we only update q if r or d changes compared to q, which may help reduce switching activity in the register output by avoiding redundant writes. This technique slightly improves power without adding clock gating complexity.
-
-Therefore, I will implement a conditional update to q inside the always block that only assigns when (r == 1) or (d != q), which is synthesis-friendly and may reduce toggling power by avoiding unnecessary nonblocking assignments that don't change state.
-
-The rest of the code remains the same for clarity and synthesis friendliness.

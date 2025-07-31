@@ -1,7 +1,0 @@
-The existing solution cleverly concatenates inputs and uses a shift to select the output based on c. To optimize PPA:
-
-- Replace the multiplication by a shift operation for the index offset to ensure minimal combinational delay and better synthesis.
-- Simplify the index clamping by saturating c at 4 using a min operation to avoid the ternary operator.
-- Use a small case statement instead of wide concatenation and shifting. This reduces switching power and area by only selecting from the needed inputs and a constant 4'hF, rather than shifting a large bus.
-- The case approach directly maps c values 0-4 to outputs (b, e, a, d, 4'hF) and outputs 4'hF for c>4.
-- This explicit multiplexer-style implementation will provide better timing and less switching, resulting in better power and area metrics.

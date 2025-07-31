@@ -1,7 +1,0 @@
-I will design a Moore FSM explicitly with named states representing the count of consecutive ones seen so far. Each state corresponds to how many consecutive ones have been detected (from zero up to seven or more). The FSM transitions on each input bit: if input is 1, move to the next "count of ones" state; if input is 0, reset to zero count state (or flag/disc if appropriate).
-
-The outputs (disc, flag, err) will be asserted based on the FSM state only, ensuring a true Moore machine. For example, the disc output will be asserted in the state after seeing exactly five consecutive ones followed by a zero, flag for six consecutive ones followed by zero, and err for seven or more ones.
-
-This approach makes the FSM states and output encoding explicit and intuitive, improving readability and ease of verification. All outputs are registered and synchronous. The reset places the FSM into the zero ones state, assuming prior zero input.
-
-This solution differs structurally from the previous counter-based approach by explicitly enumerating states rather than using a counter variable, which could also help in debugging and future extensibility.

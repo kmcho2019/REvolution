@@ -1,5 +1,0 @@
-Refactor the frequency divider by splitting the design into combinational logic for next-state calculation and synchronous logic for state updates. This approach separates the counter increment and toggle conditions from the sequential always blocks, improving clarity and potentially easing formal verification and synthesis optimizations. 
-
-We use synchronous reset and update all registers on the clock's positive edge. The toggling conditions are computed combinationally based on counters reaching their toggle thresholds. The CLK_50 output still toggles every clock cycle by simply inverting itself on each clock edge, but now the toggling is placed in the sequential block clearly. 
-
-This refactor replaces multiple always blocks doing mixed logic with a structure having explicit next-state variables and a single clocked process per output domain, improving modularity and readability.

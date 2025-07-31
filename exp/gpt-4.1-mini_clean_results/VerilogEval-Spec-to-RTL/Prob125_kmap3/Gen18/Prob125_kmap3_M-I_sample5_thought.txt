@@ -1,7 +1,0 @@
-The original solution implements the logic as three product terms: (~c & a), (c & ~b), and (c & a), then ORs them. This can be optimized by factoring out common terms to reduce gate count and switching activity. Specifically, the terms (c & ~b) and (c & a) share the 'c' input, so they can be combined as c & (~b | a). Hence the output can be expressed as out = (~c & a) | (c & (~b | a)).
-
-This reduces the AND gates from three to two and the OR gates from one (with three inputs) to one (with two inputs). Also, this reuses the OR (~b | a) which reduces inverter count for ~b (since ~c is needed anyway) and simplifies the logic.
-
-The don't-care input d is not used, which is valid. This factoring will reduce area and power while maintaining zero delay due to simple combinational logic.
-
-Thus the improved design generates ~c and ~b once each, combines (~b | a) into an OR, then produces the output by ORing (~c & a) and (c & (~b | a)). This optimization reduces gate count and power usage.

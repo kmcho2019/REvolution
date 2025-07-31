@@ -1,7 +1,0 @@
-The original solution correctly implements z as the XNOR of x and y, matching the waveform perfectly. Since this is a minimal combinational logic function with only two inputs, no flip-flops, or complex gates, the implementation is already optimal in area and performance.
-
-To possibly improve power consumption, one subtle improvement is to rewrite the logic as an equivalence gate if the synthesis tool supports it, which could marginally reduce power by using a dedicated XNOR primitive rather than composing XOR and NOT gates. However, in Verilog, "xnor" is available as a primitive operator.
-
-Therefore, replacing the assign statement with 'assign z = x xnor y;' directly uses the xnor operator and can help synthesis tools generate slightly more optimized gate-level netlists for power and area.
-
-This change keeps the logic functionally identical, maintains minimal delay, and potentially enables better power or area optimizations downstream, meeting the PPA goals.

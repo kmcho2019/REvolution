@@ -1,9 +1,0 @@
-Refactor the 16-bit CLA module to explicitly compute the carry signals using the canonical carry-lookahead equations rather than a simple ripple of carry with generate statements. 
-
-This means computing group propagate (P) and group generate (G) signals for blocks of bits to calculate carries at multiple levels, improving clarity about the carry-lookahead principle within the 16-bit block itself.
-
-At the top 32-bit level, still instantiate two 16-bit CLAs and connect carry-out of the lower to carry-in of the upper block.
-
-The sum calculation remains bitwise XOR of propagate and carry-in. Carry signals are computed using assign statements in a hierarchical structure without loops, showing the classical CLA logic explicitly for clarity and educational purposes.
-
-This refactor keeps the same functional behavior but expresses the internal carry logic differently, emphasizing carry-lookahead theory.

@@ -1,4 +1,0 @@
-To implement the ring_counter module, we will use a reg variable to hold the current state of the counter. The ring counter's behavior can be achieved by shifting the bits of the current state one position to the left with each clock pulse, and then handling the wrap-around when the 1 reaches the MSB. When the reset signal is high, we will reset the current state to the initial state where only the LSB is 1. 
-We will use the always @(posedge clk) block to describe the clock-driven behavior and the always @(reset) block to handle the reset condition. 
-However, the always @(reset) block isn't a standard way of handling reset. Instead, we will check for reset within the always @(posedge clk) block to ensure that the reset only takes effect at the clock edges, following synchronous reset design practices.
-The 8-bit ring counter's output will be generated based on the current state, ensuring that only one bit is high at any given time.

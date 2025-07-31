@@ -1,5 +1,0 @@
-Instead of performing the feedback XOR in a fully vectorized manner each cycle, I will implement the Galois LFSR using a bit-by-bit procedural approach inside a single always block. The register will shift right by one bit every clock, but the feedback XOR for the tapped bits will be computed explicitly through combinational logic for the new MSB. This approach emphasizes clarity by directly assigning the next state bits without relying on vector masks, making it easier to trace and verify the LFSR behavior.
-
-I will construct the next state in a separate wire variable, explicitly XORing q[0] with the tapped bits (q[31], q[21], q[1], q[0]) only for the MSB bit. All other bits just shift the bit at the position above it unless tapped, meaning only the MSB bit is the XOR feedback of taps with the output bit. This differs from the previous approach by explicitly building the new state vector and then registering it.
-
-This bitwise approach has the benefit of clear tap logic and may synthesize into simple XOR gates and multiplexers, potentially easing timing analysis and logic debugging.

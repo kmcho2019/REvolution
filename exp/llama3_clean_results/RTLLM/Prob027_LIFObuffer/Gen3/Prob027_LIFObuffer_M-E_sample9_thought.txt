@@ -1,7 +1,0 @@
-The new architectural idea for the LIFObuffer module involves implementing a circular buffer instead of a traditional stack-based design. This approach allows for more efficient use of memory and simplifies the logic for managing the buffer. The circular buffer will have a fixed size of 4 entries, and two pointers, `WRITE_PTR` and `READ_PTR`, will be used to keep track of the current write and read positions in the buffer.
-
-The buffer will operate as follows: when `RW` is low (write operation), data from `dataIn` will be written to the current `WRITE_PTR` position, and `WRITE_PTR` will be incremented. If `RW` is high (read operation), data will be read from the current `READ_PTR` position, and `READ_PTR` will be incremented. The `EMPTY` and `FULL` flags will be updated based on the difference between `WRITE_PTR` and `READ_PTR`.
-
-To handle the circular nature of the buffer, the pointers will wrap around to the beginning of the buffer when they reach the end. This can be achieved using modular arithmetic to update the pointer values.
-
-The use of a circular buffer simplifies the management of the buffer's empty and full conditions, as it eliminates the need for explicit stack pointer management. Additionally, this design can be more efficient in terms of memory usage and can reduce the complexity of the control logic.

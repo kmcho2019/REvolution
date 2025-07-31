@@ -1,5 +1,0 @@
-The original design is functionally correct, but it instantiates many small 2-to-1 multiplexers for each bit and shift stage, which could be simplified and optimized. Instead of using separate `mux2X1` modules for each bit, we can directly implement the selection logic using conditional operators on whole vectors. This reduces the number of module instantiations, simplifies the code, and potentially improves area and delay (PPA), as synthesis tools can optimize vector operations better than many fine-grained module instances.
-
-The index wrapping is handled by concatenation and slicing rather than modular arithmetic, which tends to synthesize better. For example, rotation by N bits can be done by `{in[7-N:0], in[7:8-N+1]}` style concatenation. Applying this for each shift stage controlled by `ctrl` bits results in a compact, efficient implementation without multiple mux instantiations.
-
-This approach keeps the functional behavior identical while improving code clarity and likely PPA.

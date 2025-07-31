@@ -1,9 +1,0 @@
-To optimize for better PPA while keeping the design minimal and clear:
-
-- Change the combinational mux implementation from a continuous assignment to an always_comb block. This can improve synthesis clarity and tool friendliness.
-- Declare the output Q as reg for synchronous updates, keep the mux output as reg inside an always_comb block.
-- Keep the logic simple: the mux output is registered before the flip-flop clock edge.
-- Avoid introducing extra signals; the mux is implemented purely combinationally right before the flip-flop input.
-- Maintain the synchronous positive-edge triggered flip-flop with non-blocking assignment.
-
-This approach slightly improves synthesis tool interpretation for the mux logic, potentially improving timing without increasing area or power significantly.

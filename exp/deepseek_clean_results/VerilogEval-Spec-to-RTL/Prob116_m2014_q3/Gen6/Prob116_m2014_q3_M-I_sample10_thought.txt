@@ -1,9 +1,0 @@
-The current implementation is correct but can be optimized further for power by simplifying the logic expression. Looking at the Karnaugh map and the current implementation:
-
-1. The term (~x[2] & x[3] & x[0] & x[1]) can be simplified because when x[3]x[4]=01 and x[1]x[2]=11, the x[3] condition is redundant since we already have ~x[2] (which is x[3] in the K-map) and x[3] (which is x[4] in the K-map). 
-
-2. The simplified expression becomes:
-   f = (x[2] & ~x[0]) |  // Covers x[4]x[3]=11/10 with x[2]x[1]=00/01
-       (~x[2] & x[0] & x[1])  // Simplified term for x[4]x[3]=01 with x[2]x[1]=11
-
-This reduces the number of AND operations from 4-input to 3-input in the second term, which should improve power consumption while maintaining the same functionality.

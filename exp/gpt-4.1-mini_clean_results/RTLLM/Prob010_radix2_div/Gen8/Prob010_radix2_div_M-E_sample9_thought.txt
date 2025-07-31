@@ -1,9 +1,0 @@
-Use a classic restoring division algorithm implemented as a multi-cycle synchronous process with explicit phases controlled by an FSM.  
-On opn_valid, latch inputs and convert to unsigned magnitude if signed division is requested.  
-Maintain a 17-bit register combining remainder (9 bits) and quotient (8 bits), initialized with 0 remainder and dividend magnitude quotient.  
-At each division step, shift left remainder and quotient by 1 bit, subtract divisor magnitude from remainder; if remainder stays non-negative (no borrow), set quotient LSB to 1; else restore remainder and set quotient LSB to 0.  
-Repeat 8 times to get complete quotient and remainder.  
-On completion, correct quotient and remainder signs based on the signs of the original operands.  
-Output concatenates remainder (upper 8 bits) and quotient (lower 8 bits).  
-res_valid flags when division is done; reset clears states.  
-This approach has clear states (IDLE, RUN, DONE), explicit subtraction/restoring, and is easy to understand and synthesize.

@@ -1,9 +1,0 @@
-I will implement the 5-bit maximal-length Galois LFSR with taps at bits 5 and 3 by combining the strengths of both examples:
-
-1. Use a single always block triggered on the positive clock edge for clarity and to avoid unnecessary intermediate signals.
-2. Use non-blocking assignments to maintain proper synchronous behavior and timing.
-3. Compute the feedback implicitly by using q[0] as the basis since the Galois LFSR's feedback depends on the least significant bit.
-4. Update bits carefully: bits with taps (positions 5 and 3, i.e. q[4] and q[2]) will XOR the current feedback bit, while others shift right directly.
-5. Use explicit bitwise assignments rather than concatenations or loops for clear intent and easy synthesis.
-6. Initialize the register to a non-zero state synchronously on reset to avoid lock-up.
-7. This approach avoids combinational wires, reduces signal fanout, and keeps logic depth minimal, which can improve PPA metrics modestly.

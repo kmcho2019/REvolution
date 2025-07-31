@@ -1,9 +1,0 @@
-Fuse the strengths of both approaches by implementing a fully combinational design using continuous assignments for clarity, synthesis friendliness, and explicit carry logic, while retaining the ripple carry adder's clear carry generation and propagation structure for better hardware mapping. This design uses wire outputs to reflect pure combinational logic (like Example 1), making it easily synthesizable and avoiding reg outputs and always blocks that can complicate combinational logic and cause accidental latches. 
-
-The subtraction is done by conditionally inverting B using vector XOR with do_sub, and initializing carry[0] with do_sub, implementing two's complement subtraction accurately. The carry chain is explicit, with generate loop instantiating sum and carry bits, making the carry propagation transparent. The zero flag is implemented as a reduction NOR of the sum, ensuring the flag is correct and simple.
-
-This fusion avoids procedural code to reduce potential bugs in combinational always blocks, improves clarity by using wires and assign statements, and maintains explicit carry logic for accurate hardware synthesis and potential for further optimization (e.g., carry-lookahead) by tooling.
-
-The interface retains the original port directions, but now outputs are wires instead of reg, reflecting combinational outputs.
-
-This approach combines the clarity, correctness, and synthesis-friendly continuous assignment style of Example 1 with the explicit, clear ripple carry logic of Example 2, producing a concise, robust, and clean design that fixes the original bug and is easy to maintain and optimize.

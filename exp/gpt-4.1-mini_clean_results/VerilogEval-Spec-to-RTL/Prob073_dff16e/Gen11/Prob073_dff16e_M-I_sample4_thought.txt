@@ -1,9 +1,0 @@
-To improve the original design for better power efficiency and potentially better timing, I will introduce clock enables per byte, derived from byteena signals. Rather than updating all flip-flops on every clock cycle, each byte's flip-flops will only update if the corresponding byteena bit is set. This reduces unnecessary toggling inside the flip-flops when the byte enable is inactive, lowering dynamic power.
-
-The synchronous active-low reset remains the same and resets the entire 16-bit register to zero. I will implement this by instantiating two 8-bit registers (upper and lower bytes), each with its own clock enable signal derived from byteena. This approach improves clarity and may help synthesis tools generate more optimal clock gating or enable logic.
-
-Performance-wise, having clock enables can reduce the amount of data toggling and potentially improve timing since only the enabled bytes propagate new data. The mask-based approach is replaced by explicit clock enables, removing the masking combinational logic from the critical path before flip-flop inputs.
-
-Area impact should be minimal as clock enable signals are a simple gating input to flip-flops; no extra flip-flops are added, and combinational logic is simplified.
-
-This solution balances functional correctness and PPA improvements through clock enable usage at the byte granularity.

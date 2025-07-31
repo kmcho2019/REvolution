@@ -1,9 +1,0 @@
-Implement a dual-edge triggered flip-flop by using a single positive-edge triggered flip-flop clocked at double frequency generated internally from the original clock. The double-frequency clock can be synthesized by XORing the original clock and its delayed version. On each rising edge of this generated double-frequency clock, capture the input `d`. To avoid timing issues with the delayed clock generation, use an output stage that samples the stored data at the original clock edges to generate stable output `q`.
-
-This architecture eliminates the need for negative-edge triggered flip-flops or transparent latches and only uses positive-edge triggered flip-flops and combinational logic. This is fully synthesizable on FPGAs, uses only standard flip-flops, and avoids illegal sensitivity lists.
-
-In summary:
-- Generate a "toggle" signal toggling at twice the input clock frequency by XORing the current clock with a delayed version.
-- Use this signal as the clock input to a positive-edge FF that samples `d` on both edges of original clk.
-- Output `q` is synchronized to original clock domain by passing the sampled data through a final positive-edge FF clocked by `clk`.
-- This produces a dual-edge triggered flip-flop behavior with only positive-edge triggered elements and simple combinational logic.

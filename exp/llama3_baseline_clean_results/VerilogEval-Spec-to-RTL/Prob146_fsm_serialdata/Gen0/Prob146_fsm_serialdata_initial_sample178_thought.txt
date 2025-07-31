@@ -1,7 +1,0 @@
-To solve this problem, we'll design a finite state machine (FSM) with several states to handle the reception of a byte in the described serial communication protocol. The states we'll need are: 
-- IDLE: Waiting for the start bit (0) to indicate the beginning of a byte.
-- START: Found the start bit, now preparing to receive the data bits.
-- RECEIVE: Receiving the 8 data bits. 
-- STOP: Waiting for the stop bit (1) to confirm the end of the byte.
-- ERROR: If the stop bit is not found, wait here until a stop bit is received, then return to IDLE.
-The FSM will transition between these states based on the current state and the input bit at each clock cycle. When a complete byte is received (including the correct stop bit), it asserts the `done` output and makes `out_byte` valid.

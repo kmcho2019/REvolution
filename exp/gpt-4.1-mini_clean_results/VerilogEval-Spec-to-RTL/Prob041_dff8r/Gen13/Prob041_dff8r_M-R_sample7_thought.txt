@@ -1,5 +1,0 @@
-Refactor the design by using an array of individual DFF instances to implement the 8-bit register instead of a single vectorized always block inside TopModule. Each bit of the input vector d is connected to a separate instance of the DFF module. 
-
-This approach emphasizes modularity and clarity by explicitly instantiating 8 single-bit D flip-flops with synchronous reset, and connects them in a generate-for loop to avoid repetitive code. The output q is formed by concatenating each single-bit flip-flop output.
-
-The DFF module remains the same, triggered on the positive edge of clk with synchronous reset. This provides explicit instantiation and separation of each flip-flop, which may be preferable for certain testbenches or designs requiring bitwise control or observation.

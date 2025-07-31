@@ -1,9 +1,0 @@
-Here's a novel approach using parallel computation and early zero detection:
-
-1. **Parallel Computation**: Compute both addition and subtraction simultaneously in parallel, then select the correct result. This trades area for potential speed improvement by eliminating the carry chain dependency on the do_sub signal.
-
-2. **Early Zero Detection**: Instead of checking the output after computation, we'll compute zero flags for both operations in parallel. This allows the zero flag logic to be part of the critical path rather than adding to it.
-
-3. **Result Selection**: Use the do_sub signal to mux between the pre-computed results and zero flags. This makes the selection purely combinatorial after the parallel computations are complete.
-
-This approach may improve timing at the cost of some additional area for the parallel arithmetic units.

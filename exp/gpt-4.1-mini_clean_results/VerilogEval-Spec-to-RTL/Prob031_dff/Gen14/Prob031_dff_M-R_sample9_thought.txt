@@ -1,9 +1,0 @@
-To refactor the D flip-flop implementation while keeping the core functionality, I will eliminate the explicit DFF module and implement the flip-flop directly inside TopModule using an always block. Instead of declaring q as a reg output and wiring it through a submodule, I will declare q as reg directly in TopModule. This flattens the hierarchy slightly and simplifies the design.
-
-Additionally, to show a different structure while still modeling a positive-edge triggered D flip-flop, I will use a synchronous process with a nonblocking assignment as usual, but without instantiating a separate module.
-
-This approach retains synthesis friendliness and correct sequential semantics, just with a simpler, monolithic module that directly models the DFF behavior. The port interface remains the same. This style is common in many RTL designs and emphasizes straightforward, clear coding style.
-
-The output q is declared as reg since it must be assigned within an always block. No assign statements can replace this flip-flop behavior because q must hold its value between clock edges.
-
-This refactor demonstrates a simpler, flattened coding style without hierarchy, suitable for small modules or when hierarchy is unnecessary.

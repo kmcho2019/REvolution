@@ -1,9 +1,0 @@
-Add an explicit synchronous reset input to guarantee flip-flops initialize to zero for synthesis and hardware correctness. Since the problem doesn't provide a reset input, we can internally generate a reset on the first clock cycle using a small reset logic (e.g., a power-on-reset signal derived from an internal state). 
-
-This ensures the flip-flops start at zero after FPGA/ASIC power-up without relying on an initial block, which is non-synthesizable. 
-
-Implement the combinational logic for the D inputs separately for clarity and synthesis friendliness.
-
-Finally, compute output z as a NOR of the flip-flop outputs.
-
-This approach fixes synthesis initialization issues, keeps the logic clear, and ensures correct FSM startup behavior.

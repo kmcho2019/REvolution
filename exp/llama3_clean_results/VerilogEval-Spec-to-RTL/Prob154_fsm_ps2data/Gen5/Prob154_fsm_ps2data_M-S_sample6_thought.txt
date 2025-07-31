@@ -1,7 +1,0 @@
-To simplify the existing solution, we can maintain the same basic structure of the finite state machine (FSM) but reduce the complexity of the code. The main simplification will come from reducing the number of conditional checks and directly updating the `out_bytes` signal based on the current state. 
-
-We will use the same states: Idle (0), Byte1 (1), and Byte2 (2), and transition between them based on the current state and the input `in[3]`. When `in[3]` is 1 in the Idle state, we transition to Byte1, capturing the first byte. Then, we move to Byte2 and capture the second byte, and finally, capture the third byte and assert `done`.
-
-The `out_bytes` signal will be updated directly in each state where a byte is captured. This approach simplifies the logic within the case statement, making the code easier to understand and maintain.
-
-Furthermore, we'll minimize the number of lines and reduce unnecessary logic to improve readability and potentially reduce synthesis area and power consumption.

@@ -1,7 +1,0 @@
-Refactoring the multiplier by replacing the FSM with a simpler control using a shift counter and done flag without explicit states. The process is controlled by a shift count register that increments when start is asserted until the multiplication is complete. Use registers to hold the multiplicand, multiplier, and accumulator. The multiply operation inspects each bit of the multiplicand in sequence and accumulates the shifted multiplier accordingly.
-
-This design keeps logic synchronous with clk and asynchronous active-low reset but structures control signals and data updates separately. Assign the done flag combinationally from the shift count. This removes explicit FSM states and uses a clearer, more direct control with fewer signals.
-
-The shift count increments only during operation and resets on start deassert or reset. Data registers load inputs at the beginning of multiplication (when shift count is zero). The accumulator adds shifted multiplier conditionally if the examined bit is set.
-
-This refactor uses separate always blocks for control, data load, and accumulation, improving readability and modularity while preserving the original algorithm and interface.

@@ -1,9 +1,0 @@
-The original solution uses a ripple carry adder implemented with explicit full adder logic and generates the zero flag with a reduction NOR. While functionally correct and clear, the ripple carry structure is relatively slow due to carry propagation through all bits sequentially. To optimize for better PPA:
-
-- Replace the ripple carry adder with a built-in '+' operator to infer the addition and subtraction using the synthesis tool's optimized adder. This typically results in better area and timing because synthesis tools infer efficient adder structures (e.g., carry-lookahead or carry-select) from '+' operators rather than manual ripple carry logic.
-- Use continuous assignments for outputs to keep the design purely combinational.
-- Maintain the zero flag using reduction NOR as it is already power and area efficient.
-- Avoid explicit bitwise carry generation, simplifying code and potentially reducing routing complexity.
-- Keep `out` and `result_is_zero` as wires to emphasize combinational logic.
-
-This approach leverages synthesis tool optimizations for add/sub operations while keeping the code clean, readable, and efficient for area and performance.

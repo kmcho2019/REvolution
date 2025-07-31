@@ -1,7 +1,0 @@
-Implement the byte framing detection with a 3-state FSM: WAIT_START, SHIFT_DATA, and WAIT_STOP. In WAIT_START, we wait for the line to go low indicating start bit. Once start bit is detected (in=0), move to SHIFT_DATA where an 8-bit shift register captures the data bits, shifting in the received bit each cycle with LSB first. Maintain a counter for bits shifted. After 8 bits are received, transition to WAIT_STOP state where we check if the stop bit (in) is 1. If yes, assert done for one cycle and return to WAIT_START. If stop bit is incorrect, stay in WAIT_STOP until a high (stop bit) is seen to resynchronize, then go back to WAIT_START.
-
-Use a shift register that shifts left inserting new bits at LSB, i.e. data_reg <= {in, data_reg[7:1]} would shift right; instead, shift left to put LSB first correctly: data_reg <= {in, data_reg[7:1]} is right shift, so instead do data_reg <= {data_reg[6:0], in} to shift left.
-
-For synchronous reset, clear all registers and set state to WAIT_START. done is asserted high for one clock cycle immediately after a good stop bit.
-
-This approach avoids an explicit ERROR state by using WAIT_STOP to handle both validation and error recovery, keeping FSM minimal and simple.

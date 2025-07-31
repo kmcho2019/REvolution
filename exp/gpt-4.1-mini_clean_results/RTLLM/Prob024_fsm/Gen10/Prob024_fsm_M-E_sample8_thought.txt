@@ -1,9 +1,0 @@
-I will implement the Mealy FSM detection circuit using a binary-encoded state machine with explicit state enumeration corresponding to the number of bits matched from the sequence "10011". Instead of one-hot, this compact encoding reduces flip-flop count.
-
-The FSM will have states S0 to S5, where S0 means no bits matched yet, and S5 means the full sequence matched. The transitions will be defined carefully to handle overlaps by checking input bits and moving to the longest possible prefix state that corresponds to the current input sequence suffix.
-
-The MATCH output will be asserted combinationally when the FSM is in state S4 (matched first 4 bits "1001") and the input bit IN=1 (the final bit of the pattern). This is a Mealy output, asserted simultaneously with the input bit that completes the pattern.
-
-State transitions will be implemented in a synchronous always block for clarity, and the output MATCH will be a combinational signal. The reset signal will synchronously initialize the FSM to S0.
-
-This approach uses a binary state encoding and explicit next-state computation with overlap handling by leveraging the prefix function of the pattern (similar to KMP automaton), ensuring efficient overlap detection and sequence recognition.

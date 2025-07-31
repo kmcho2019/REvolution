@@ -1,9 +1,0 @@
-To optimize for better PPA, I will add an enable signal internally to reduce unnecessary toggling of the counter register when the count does not actually change. However, since the counter counts every clock cycle unless reset, there's no idle period, so clock gating may not be very effective here.
-
-Another minor improvement is to minimize switching in the combinational logic by calculating the next count value with a separate variable and only updating the register if needed. But given the counter increments or decrements by 1 every cycle, this optimization provides limited benefit.
-
-Instead, I will ensure that the counter uses the minimum required logic by explicitly using addition and subtraction with proper widths, and keep the design as simple and synthesis-friendly as possible.
-
-Overall, the original design is already near optimal for this specification. I will slightly restructure to use a non-blocking assignment and remove redundant constants for clarity, which may help synthesis tools better optimize the design.
-
-No functional change but clearer and potentially slightly better PPA.

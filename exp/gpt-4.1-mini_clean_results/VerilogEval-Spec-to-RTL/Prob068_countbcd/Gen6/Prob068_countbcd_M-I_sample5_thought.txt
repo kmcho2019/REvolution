@@ -1,9 +1,0 @@
-To optimize for performance and power, I will restructure the BCD counter to increment digits sequentially, each enabled only when the lower digit rolls over from 9 to 0. This approach limits unnecessary digit updates and breaks the long carry propagation chain in combinational logic inside the clock cycle.
-
-I will implement the counter with four 4-bit digit registers (ones, tens, hundreds, thousands), each incremented conditionally with enable signals derived from the previous digit's rollover. The enable signals become one-hot increments per digit, reducing switching activity and logic toggling for digits that don't change.
-
-The ena output signals will correspond to the actual increment enables for digits 3:1 (tens, hundreds, thousands) on the cycle before they increment.
-
-This design removes the nested function call in combinational logic, reduces the critical path by serializing increments over the same clock edge with gating, and keeps all increments synchronous and single-cycle. The synchronous reset is preserved.
-
-Overall, the improved approach yields shorter critical paths, lower dynamic power due to enable gating, and simplified area, maintaining the correctness and improving max frequency potential.

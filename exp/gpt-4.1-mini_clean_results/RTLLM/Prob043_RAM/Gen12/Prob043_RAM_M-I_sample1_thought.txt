@@ -1,9 +1,0 @@
-To improve PPA (performance, power, area) from the provided example, I will register the read data output instead of using a purely combinational read. This will break the long combinational path on the read port and reduce glitches on the read_data output, improving timing and power. 
-
-The read operation will be synchronous: on clock edge, if read_en is asserted, read_data register captures RAM[read_addr]. If not asserted, output is cleared to zero, matching the original spec. The RAM reset and write remain synchronous with a synchronous reset. 
-
-The RAM size is small, so initialization with a for loop on reset is acceptable. This design balances clean functionality and better timing and power, suitable for higher clock frequencies.
-
-Addresses are sized with $clog2(DEPTH), ensuring correct width and avoiding out-of-range indexing.
-
-Overall, this approach improves timing by registering reads and reduces glitches, improving power, while area impact is minimal.

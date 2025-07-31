@@ -1,7 +1,0 @@
-To implement the TopModule, we will use a finite state machine (FSM) with two states: idle and shift. The shift state will have a counter to keep track of the number of cycles. However, to simplify the design and improve PPA metrics, we can use a Johnson counter (also known as a twisted ring counter or switch-tail ring counter) instead of a traditional binary counter. The Johnson counter is a type of synchronous counter that can be used to generate a specific sequence of states.
-
-The Johnson counter will have 4 states (S0 to S3), and we will use a 2-bit register to store the current state. The Johnson counter sequence will be: S0 -> S1 -> S2 -> S3 -> S0. We will assert shift_ena for the first 4 cycles after reset, which corresponds to the states S1 to S4.
-
-When the reset signal is asserted, we will transition to the S1 state and assert shift_ena. The Johnson counter will then increment to the next state on each clock cycle. After 4 cycles, we will transition back to the idle state (S0) and deassert shift_ena.
-
-By using a Johnson counter, we can simplify the design and reduce the number of logic gates required, which can improve the PPA metrics.

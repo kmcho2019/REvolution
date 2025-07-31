@@ -1,7 +1,0 @@
-We can simplify the pulse detection by just using a 2-bit shift register to keep track of the last two values of data_in. When the pattern "0->1->0" occurs over three consecutive clock cycles, it means data_in had the sequence 0 at t-2, 1 at t-1, and 0 at current cycle. By capturing the past two data_in samples, we can directly detect this pattern without an explicit FSM.
-
-On each clock cycle, shift in the current data_in value. Then, if the last three samples are "0 1 0", assert data_out for one cycle. This approach reduces complexity and state usage, and is easy to implement and verify.
-
-Reset clears the shift register and data_out.
-
-This method matches the example: For data_in = 0 1 0 1 0, data_out = 0 0 1 0 1.

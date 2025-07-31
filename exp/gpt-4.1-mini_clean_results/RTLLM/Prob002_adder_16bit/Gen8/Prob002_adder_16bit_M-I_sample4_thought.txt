@@ -1,9 +1,0 @@
-To improve the 16-bit adder design for better timing (reduced critical path delay) without significantly increasing area, I will upgrade the internal 8-bit adders from simple ripple carry to carry lookahead adders (CLA). A carry lookahead adder generates carries faster by precomputing propagate and generate signals and resolving carries in parallel rather than waiting for ripple.
-
-Thus, each 8-bit adder will implement a carry lookahead structure internally, drastically reducing delay within each 8-bit block, while the 16-bit adder still instantiates two 8-bit CLAs with carry ripple between them (the upper-level carry chain remains single stage).
-
-This approach improves overall timing while retaining modularity and reasonable area overhead. The carry lookahead logic uses standard generate and propagate signals with combinational logic to compute carry signals quickly.
-
-The improved design keeps inputs and outputs the same and is purely combinational.
-
-This improvement targets the critical path, reducing delay from O(n) ripple to O(log n) for each 8-bit block, which benefits the 16-bit addition as a whole.

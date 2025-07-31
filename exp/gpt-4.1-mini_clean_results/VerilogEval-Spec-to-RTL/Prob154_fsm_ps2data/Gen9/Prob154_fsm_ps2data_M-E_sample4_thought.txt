@@ -1,9 +1,0 @@
-Implement a Moore-style FSM with explicit states: IDLE (waiting for start byte), BYTE2 (waiting second byte), BYTE3 (waiting third byte), and DONE (indicate message done).  
-On reset, go to IDLE state and clear outputs.  
-In IDLE, ignore bytes until in[3] is 1, then store first byte and transition to BYTE2.  
-In BYTE2, store second byte and move to BYTE3.  
-In BYTE3, store third byte and transition to DONE.  
-In DONE state, assert done output with valid out_bytes combining the three bytes, then return to IDLE in the next clock.  
-This separates the done signaling cycle distinctly and uses registered FSM states for clear timing and state transitions.  
-All registers and FSM state transitions are synchronous to clk with synchronous reset.  
-This approach makes the FSM explicit and simple, easing debug and potential enhancements.

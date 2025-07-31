@@ -1,7 +1,0 @@
-The provided Verilog code implements a Gshare branch predictor with a 7-bit pc and 7-bit global history, hashed into a 7-bit index to access a 128-entry table of two-bit saturating counters. To refactor this code, we will restructure the state machine and use `assign` statements instead of `always` blocks where possible. We will also separate the prediction and training logic into different modules to improve readability and maintainability.
-
-The prediction logic will be implemented using a combinational circuit, where the `predict_taken` and `predict_history` signals are generated based on the current `predict_pc` and `branch_history` signals. The training logic will be implemented using a sequential circuit, where the `pht` and `branch_history` registers are updated based on the `train_valid`, `train_taken`, and `train_mispredicted` signals.
-
-We will also use a more efficient way to update the `pht` register, by using a single `always` block to update all the entries in the `pht` array, instead of using a `for` loop to iterate over each entry.
-
-Additionally, we will add some comments to the code to explain the functionality of each module and the signals used.

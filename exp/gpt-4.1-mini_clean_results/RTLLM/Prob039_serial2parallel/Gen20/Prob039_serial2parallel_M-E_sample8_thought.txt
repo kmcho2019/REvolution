@@ -1,5 +1,0 @@
-Implement the serial-to-parallel converter using a shift register that shifts data in from the least significant bit side, and maintain a 4-bit counter that counts the number of valid bits received. When the count reaches 8, the parallel output is formed by reversing the shift register bits so that the first received bit maps to the MSB of the output, aligning with the specification.
-
-The key novelty is to store bits shifted in LSB-first for simpler hardware (shift left), then use a bit-reversal function to produce the output aligning the first received bit at MSB. The dout_valid signal is asserted for one clock cycle immediately after the 8th bit is received.
-
-The design includes synchronous active-low reset, and all sequential logic is in one clocked always block. After outputting, the counter and shift register reset to zero, preparing for the next frame. This approach simplifies shift logic and clearly separates input data collection from output formatting, making the code easy to understand and verify.

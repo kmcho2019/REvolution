@@ -1,5 +1,0 @@
-I will implement a three-state FSM with explicit states to track the byte position within the PS/2 message. The states are IDLE (waiting for the start byte with in[3]=1), BYTE1 (first byte received), and BYTE2 (second byte received). When in IDLE, any byte with in[3]=0 is ignored. Upon receiving a byte with in[3]=1, we transition to BYTE1, then sequentially move to BYTE2 and back to IDLE after receiving the third byte.
-
-The done signal will be asserted for one cycle immediately after the third byte (BYTE2) is received and the FSM returns to IDLE. This approach provides clear and explicit state transitions, which simplifies debugging and verification and makes the design easy to extend.
-
-The FSM updates are synchronous with the clock and respect the active-high synchronous reset. This design avoids counters and relies solely on FSM states, which may reduce complexity and improve readability.

@@ -1,7 +1,0 @@
-A novel approach to designing the frequency divider module `freq_divbyodd` involves utilizing a phase-locked loop (PLL) architecture to divide the input clock frequency by an odd number. This approach takes advantage of the PLL's ability to generate multiple clock outputs with varying frequencies. However, since a traditional PLL may not directly support odd divisors, we can utilize a digital circuit that incorporates a counter and a control logic to achieve the desired frequency division.
-
-The key idea is to use a single counter that counts up to `NUM_DIV - 1` and generates a divided clock output at every `NUM_DIV / 2` count. To handle both rising and falling edges of the clock, we can use a single counter and a toggle signal that alternates between 0 and 1 for each divided clock output. This ensures that the divided clock output `clk_div` is high for one clock cycle and low for the next `NUM_DIV - 1` clock cycles, effectively dividing the input clock frequency by `NUM_DIV`.
-
-To improve the design, we can add a control logic that resets the counter and the toggle signal when the active low reset signal `rst_n` is low. This ensures that the module initializes correctly and provides a stable divided clock output.
-
-Overall, this approach provides a simple and efficient way to divide the input clock frequency by an odd number, while minimizing the area and power consumption.

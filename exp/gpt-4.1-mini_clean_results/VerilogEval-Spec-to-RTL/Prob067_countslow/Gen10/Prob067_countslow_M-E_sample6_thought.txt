@@ -1,9 +1,0 @@
-I will implement the decade counter using a 4-bit register `q` with synchronous reset and enable, but instead of using arithmetic increment and comparison, I will implement the counting logic using a small 10-state one-hot encoded state machine internally. This means that internally, I will keep a 10-bit register to represent the current count as one-hot encoding (only one bit set, representing the current count 0 to 9). 
-
-The 4-bit output `q` will be derived combinationally from the one-hot state by using a priority encoder to convert the one-hot vector to a binary count value. On each clock edge with `slowena` high, the one-hot state will shift to the next bit (wrapping from position 9 to 0). The synchronous reset will initialize the one-hot state to the position 0 bit.
-
-This approach uses a one-hot encoding which may simplify the next state logic to just shifting a single ‘1’ bit, avoiding the need for arithmetic increment and explicit comparison. It is a novel architecture compared to the classic binary counter and might be advantageous for certain technologies or allow easy expansion.
-
-The output is computed combinationally by converting the one-hot vector to the binary count value with a simple case statement or combinational priority encoding.
-
-This design highlights a different architectural style, using one-hot state internally but a binary-coded output externally.

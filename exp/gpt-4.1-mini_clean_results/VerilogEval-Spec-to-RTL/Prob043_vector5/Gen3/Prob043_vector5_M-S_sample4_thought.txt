@@ -1,5 +1,0 @@
-Since all 25 outputs are pairwise comparisons of the same 5 inputs, we can flatten the problem by explicitly listing the inputs in an array and directly assigning the output bits using a single continuous assignment with a generate loop. To simplify further, instead of nested loops and generate statements, we can unroll all assignments in a straightforward combinational block or assign statement, using a simple double loop inside an always_comb or continuous assignment. But since continuous assignments cannot have loops, we can create a compact for-generate with just one dimension, combining the two indices by arithmetic to reduce nesting. Alternatively, since 25 is small, manually unroll the 25 comparisons with a vector of inputs and a single for-generate loop.
-
-An efficient, yet simpler method is to define a 5-element wire vector and directly assign the out bits using a single generate loop with an index that corresponds to i and j. We can calculate i and j from the index and use the XNOR operation.
-
-This removes one generate loop and simplifies indexing logic while keeping the code readable and functionally the same.

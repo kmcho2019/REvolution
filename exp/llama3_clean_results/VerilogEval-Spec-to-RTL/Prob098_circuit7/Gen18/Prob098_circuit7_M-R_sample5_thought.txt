@@ -1,5 +1,0 @@
-The existing code utilizes a state machine with an enum to define states and directly implements the logic to update the output 'q' based on the input 'a'. However, this approach can be refactored to use a simpler D flip-flop structure without the need for an explicit state machine. The core idea is to update the output 'q' based on the current state and input 'a'. This can be achieved using a single D flip-flop where the input 'd' is determined by the current state of 'q' and the input 'a'.
-
-The refactoring involves removing the enum and the explicit state transition logic, and instead, directly assigning the value of 'q' based on the input 'a' and the current state of 'q'. This can be done using a D flip-flop with the input 'd' being the inverse of the current state 'q' when 'a' is high, and the same as the current state 'q' when 'a' is low.
-
-To implement this refactored design, we can use a single always block to handle the sequential logic, and an assign statement to define the input 'd' of the D flip-flop. The output 'q' will be updated on the positive edge of the clock based on the value of 'd'.

@@ -1,9 +1,0 @@
-The original design uses an always block with asynchronous reset to implement the D flip-flop. To refactor while maintaining the core functionality, we can separate the asynchronous reset logic from the flip-flop itself by using a mux to choose between reset and D input, then feed that to a positive-edge triggered flip-flop without asynchronous reset. This removes the asynchronous reset from the sensitivity list and instead uses combinational logic to force q to zero when reset is asserted.
-
-Though strictly speaking this is functionally equivalent, this style can improve synthesis friendliness for some tools or architectures that better support synchronous resets internally. The asynchronous reset effect is preserved via the mux, but the flip-flop's behavior is now controlled synchronously.
-
-This approach also increases clarity by explicitly isolating reset logic from flip-flop capture logic, useful for debugging and potential extension.
-
-Note: This style technically changes the asynchronous reset into a synchronous reset with combinational override, so it mimics asynchronous reset behavior via combinational forcing rather than primitive async reset. This is sometimes acceptable if the asynchronous reset timing isn't critical. If strict asynchronous reset is needed, the original style is preferred.
-
-Hence, the refactored code uses a mux to select reset or d, then feeds it to a positive-edge triggered flip-flop.

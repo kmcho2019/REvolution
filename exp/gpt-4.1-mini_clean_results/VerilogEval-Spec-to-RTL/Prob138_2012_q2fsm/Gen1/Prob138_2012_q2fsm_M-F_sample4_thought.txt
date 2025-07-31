@@ -1,7 +1,0 @@
-The previous implementation is functionally correct but may have simulation mismatches due to output timing: the combinational output z changes immediately after the clock edge, while the testbench might expect z to be registered and stable only after the clock edge.
-
-To fix this, I will register the output z synchronously with the state register in the sequential always block. This aligns the output timing with the state updates and reduces mismatches from timing sampling in the testbench.
-
-I will keep the synchronous reset, separate always blocks for state registers and next state logic, and retain the same 3-bit state encoding. The registered output z will be assigned to 1 only in state E, and 0 otherwise.
-
-This approach preserves the FSM design and semantics but improves output timing alignment and simulation match to the reference.
