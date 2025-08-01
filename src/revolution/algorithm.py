@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 import datetime
 import json
@@ -11,38 +9,128 @@ import shutil
 import time
 import uuid
 from collections import defaultdict
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Literal, TypeVar, cast, get_args, overload
 
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
 from .llm import LLMInterface
 from .logging import EoHLogger
 
+# Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
+EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F"]
+"""
+Defines the set of all possible evolutionary strategies.
+- **initial**: The first set of candidates generated from the problem description.
+- **M-F**: Mutate-Fix: Corrects functional errors from parent.
+- **M-S**: Mutate-Simplify: Simplifies the design while preserving functionality
+- **M-E**: Mutate-Explore: Generates completely new designs based on parent.
+- **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
+- **M-I**: Mutate-Improve: Make general enhancements from parent.
+- **C-F**: Crossover-Fusion: Combines the thought and code of two successful parents.
+"""
+EvolStrategyMethodFail = Literal["M-F", "M-S", "M-E", "M-R", "M-I"]
+"""
+Define the set of all possible evolutionary strategies for failing candidates(fail_pool).
+- **M-F**: Mutate-Fix: Corrects functional errors from parent.
+- **M-S**: Mutate-Simplify: Simplifies the design while preserving functionality
+- **M-E**: Mutate-Explore: Generates completely new designs based on parent.
+- **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
+- **M-I**: Mutate-Improve: Make general enhancements from parent.
+"""
+EvolStrategyMethodSuccess = Literal["M-S", "M-E", "M-R", "M-I", "C-F"]
+"""
+Define the set of all possible evolutionary strategies for successful candidates(success_pool).
+- **M-S**: Mutate-Simplify: Simplifies the design while preserving functionality
+- **M-E**: Mutate-Explore: Generates completely new designs based on parent.
+- **M-R**: Mutate-Refactor: Maintains original thought from parent but refactors code.
+- **M-I**: Mutate-Improve: Make general enhancements from parent.
+- **C-F**: Crossover-Fusion: Combines the thought and code of two successful parents.
+"""
+
+# Generic TypeVar for strategy types
+StrategyT = TypeVar("StrategyT", EvolStrategyMethodFail, EvolStrategyMethodSuccess)
+"""
+Defines a generic type variable for strategy types, which can be either EvolStrategyMethodFail or EvolStrategyMethodSuccess.
+"""
+
+
+# Literal Typing for status
+HeuristicStatus = Literal[
+    "new",
+    "success",
+    "failed_syntax",
+    "failed_functionality",
+    "failed_synthesis",
+    "failed_synthesis_functionality",
+]
+"""
+Defines the status of a heuristic candidate.
+- **new**: Newly created candidate, not yet evaluated.
+- **success**: Successfully passed all evaluations (syntax, functionality, synthesis, PPA).
+- **failed_syntax**: Failed syntax check during compilation.
+- **failed_functionality**: Failed functional simulation against the reference design.
+- **failed_synthesis**: Failed synthesis process.
+- **failed_synthesis_functionality**: Synthesis successful, but post-synthesis functionality check failed.
+"""
+
+# Literal Typing for heuristic origin pool
+HeuristicOriginPool = Literal["initial", "fail_pool", "success_pool"]
+"""
+Defines the origin pools for heuristic candidates.
+- **initial**: The original pool of candidates generated from the problem description prompt from 0th generation.
+- **fail_pool**: The pool of candidates that failed at least one evaluation.
+- **success_pool**: The pool of candidates that passed all evaluations with valid fitness scores.
+"""
+
+# Literal Typing for strategy selection methods
+StrategySelectionMethod = Literal["random", "epsilon-greedy", "ucb"]
+"""
+Defines the strategy selection methods for dynamic strategy selection.
+- **random**: Randomly selects a strategy from the available strategies.
+- **epsilon-greedy**: Greedy selection with exploration (epsilon) for strategy selection.
+- **ucb**: Upper Confidence Bound selection for balancing exploration and exploitation but, uses softmax probabilities for selection.
+"""
+
 
 class Heuristic:
-    """Represents a single candidate solution in the evolutionary process.
+    """
+    Represents a single candidate solution in the evolutionary process.
 
     This class holds the "genetic" material (thought and code), evaluation
     results, and metadata about its origin and performance.
 
-    Attributes:
-        id (str): A unique identifier for the heuristic.
-        thought (str): The design strategy or "thought process" from the LLM.
-        code (str): The generated Verilog code.
-        feedback (str): The analysis or feedback received after evaluation.
-        score (float): The fitness score, typically based on PPA improvement.
-        generation (int): The generation number in which this heuristic was created.
-        parent_ids (List[str]): A list of IDs of the parent(s).
-        status (str): The current evaluation status of the candidate.
-        synthesis_success (bool): Whether the code was successfully synthesized.
-        synthesis_functionality (bool): Whether the synthesized netlist passed functional checks.
-        ppa_success (bool): Whether PPA metrics were successfully extracted.
-        ppa_metrics (Dict[str, Any]): A dictionary of PPA metrics.
-        code_file_path (Path): The path to the saved Verilog file for this heuristic.
-        strategy (str): The evolutionary strategy used to generate this heuristic.
-        reward_from_parent (float): The reward value calculated for the strategy.
-        origin_pool (str): The population pool this heuristic originated from.
+    :param id: Unique identifier for the heuristic (UUID).
+    :type id: str
+    :param thought: The design strategy or "thought process" from the LLM.
+    :type thought: str
+    :param code: The generated Verilog code.
+    :type code: str
+    :param feedback: The analysis or feedback received after evaluation.
+    :type feedback: str
+    :param score: The fitness score, typically based on PPA improvement.
+    :type score: float
+    :param generation: The generation number in which this heuristic was created.
+    :type generation: int
+    :param parent_ids: A list of IDs of the parent(s).
+    :type parent_ids: list[str]
+    :param status: The current evaluation status of the candidate.
+    :type status: HeuristicStatus
+    :param synthesis_success: Whether synthesis was successful.
+    :type synthesis_success: bool
+    :param synthesis_functionality: Whether post-synthesis functionality check was successful.
+    :type synthesis_functionality: bool
+    :param ppa_success: Whether PPA evaluation was successful.
+    :type ppa_success: bool
+    :param ppa_metrics: The PPA metrics obtained from synthesis (if applicable).
+    :type ppa_metrics: dict[str, float]
+    :param code_file_path: The file path where the Verilog code is saved.
+    :type code_file_path: str
+    :param strategy: The evolutionary strategy used to generate this heuristic.
+    :type strategy: EvolStrategyMethod
+    :param reward_from_parent: The reward obtained by the strategy that created this heuristic.
+    :type reward_from_parent: float
+    :param origin_pool: The population pool this heuristic originated from.
+    :type origin_pool: HeuristicOriginPool
     """
 
     def __init__(
@@ -52,33 +140,36 @@ class Heuristic:
         feedback: str,
         score: float = 0.0,
         generation: int = 0,
-        parent_ids: Optional[List[str]] = None,
-        status: str = "syntax",
-        strategy: str = "initial",
-        origin_pool: str = "initial",
-    ):
+        parent_ids: list[str] | None = None,
+        status: HeuristicStatus = "new",
+        strategy: EvolStrategyMethod = "initial",
+        origin_pool: HeuristicOriginPool = "initial",
+    ) -> None:
         self.id: str = str(uuid.uuid4())  # Use UUID for unique ID
         self.thought: str = thought
         self.code: str = code
         self.feedback: str = feedback  # Feedback from LLM
         self.score: float = score
         self.generation: int = generation
-        self.parent_ids: List[str] = parent_ids if parent_ids else []
+        self.parent_ids: list[str] = parent_ids if parent_ids else []
         # New attributes for synthesis and PPA
-        self.status: str = status  # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis', 'failed_synthesis_functionality'
+        self.status: HeuristicStatus = status  # Status can be 'new', 'success', 'failed_syntax', 'failed_functionality', 'failed_synthesis', 'failed_synthesis_functionality'
         self.synthesis_success: bool = False
         self.synthesis_functionality: bool = False
         self.ppa_success: bool = False
-        self.ppa_metrics: Dict[str, Any] = {}
+        self.ppa_metrics: dict[str, float] = {}
         # File path to the code for evaluation purposes
-        self.code_file_path: Path = Path("")
-        self.strategy: str = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
+        self.code_file_path: str = ""
+        self.strategy: EvolStrategyMethod = strategy  # Strategy used to generate this heuristic, e.g., "initial", "M-F", "C-F", etc. (Total of 6 strategies + "initial")
         self.reward_from_parent: float = (
             0.0  # Reward obtained by the strategy that created this heuristic
         )
-        self.origin_pool: str = origin_pool  # "initial", "fail_pool", or "success_pool"
+        self.origin_pool: HeuristicOriginPool = (
+            origin_pool  # "initial", "fail_pool", or "success_pool"
+        )
 
     def __repr__(self) -> str:
+        """String representation for debugging and logging."""
         thought_repr = self.thought[:50]
         ppa_info = "PPA: Not run or failed"
         if self.ppa_success and self.ppa_metrics:
@@ -86,8 +177,13 @@ class Heuristic:
             clk = self.ppa_metrics.get("eff_clk_period")
             area = self.ppa_metrics.get("area")
             power = self.ppa_metrics.get("power")
-            ppa_str = f"Eff. Clk: {clk:.4f}ns, Area: {area:.2f}, Power: {power:.4e}"
-            ppa_info = f"PPA: ({ppa_str})"
+            # Check if clk, area, power are not None
+            if clk is not None and area is not None and power is not None:
+                # Format the PPA string with 4 decimal places for clk and 2 for area, power
+                ppa_str = f"Eff. Clk: {clk:.4f}ns, Area: {area:.2f}, Power: {power:.4e}"
+                ppa_info = f"PPA: ({ppa_str})"
+            else:
+                ppa_info = f"PPA: Incomplete metrics or not available (clk: {clk}, area: {area}, power: {power})"
         return (
             f"Heuristic(ID: {self.id}, Gen: {self.generation}, Origin: {self.origin_pool}, Strategy: {self.strategy}, Score: {self.score:.4f}, "
             f"Status: {self.status}, Thought: '{thought_repr}...', Parents: {self.parent_ids}, {ppa_info})"
@@ -96,26 +192,73 @@ class Heuristic:
 
 # Entire class executing for the new REvolution framework for each problem in the benchmark.
 class EoHEngine:
-    """The main engine for the REvolution evolutionary framework.
+    """
+    The main engine for the REvolution evolutionary framework.
 
     This class orchestrates the entire evolutionary process for a single
     hardware design problem, including population management, evaluation,
     selection, and generation of new candidates.
 
-    Attributes:
-        benchmark_dir (Path): Path to the directory for the specific benchmark.
-        benchmark_name (str): Name of the benchmark being solved.
-        output_dir (Path): Root directory for saving all experiment outputs.
-        problem_name (str): The name of the specific problem being solved.
-        llm (LLMInterface): The interface for communicating with LLMs.
-        evaluator (VerilogEvaluator): The tool for Verilog simulation.
-        synthesis_evaluator (SynthesisEvaluator): The tool for synthesis and PPA.
-        population_size (int): The number of individuals in the population (μ).
-        num_offspring_lambda (int): The number of offspring to generate each gen (λ).
-        num_generations (int): The total number of generations to run.
-        problem_description (str): The text description of the design problem.
-        fail_pool (List[Heuristic]): The population of failing candidates.
-        success_pool (List[Heuristic]): The population of successful candidates.
+    :param base_save_path: Base directory for saving results.
+    :type base_save_path: str
+    :param benchmark_name: Name of the benchmark being solved.
+    :type benchmark_name: str
+    :param problem_name: Name of the specific problem being solved.
+    :type problem_name: str
+    :param benchmark_path: Path to the benchmark directory.
+    :type benchmark_path: str
+    :param problem_description: Text description of the design problem.
+    :type problem_description: str
+    :param llm: The interface for communicating with LLMs.
+    :type llm: LLMInterface
+    :param evaluator: The tool for Verilog simulation.
+    :type evaluator: VerilogEvaluator
+    :param synthesis_evaluator: The tool for synthesis and PPA evaluation.
+    :type synthesis_evaluator: SynthesisEvaluator
+    :param population_size: Number of individuals in the population (μ).
+    :type population_size: int
+    :param num_offspring_lambda: Number of offspring to generate each generation (λ).
+    :type num_offspring_lambda: int
+    :param num_generations: Total number of generations to run.
+    :type num_generations: int
+    :param default_llm_temp: Default temperature for LLM sampling.
+    :type default_llm_temp: float
+    :param default_llm_top_p: Default top-p sampling parameter for LLM.
+    :type default_llm_top_p: float
+    :param default_llm_max_tokens: Default maximum tokens for LLM responses.
+    :type default_llm_max_tokens: int
+    :param clk_period: Clock period for the design, used in PPA evaluation.
+    :type clk_period: float
+    :param fail_pool: Population of failing candidates.
+    :type fail_pool: list[Heuristic]
+    :param success_pool: Population of successful candidates.
+    :type success_pool: list[Heuristic]
+    :param strategy_selection_method: Method for dynamic strategy selection (e.g., "random", "epsilon-greedy", "ucb").
+    :type strategy_selection_method: StrategySelectionMethod
+    :param epsilon: Epsilon value for epsilon-greedy strategy.
+    :type epsilon: float
+    :param ucb_c: Exploration parameter for UCB strategy.
+    :type ucb_c: float
+    :param fail_strats: List of strategies for failing candidates.
+    :type fail_strats: List[EvolStrategyMethodFail]
+    :param success_strats: List of strategies for successful candidates.
+    :type success_strats: List[EvolStrategyMethodSuccess]
+    :param fail_strategy_stats: Statistics for failing strategies.
+    :type fail_strategy_stats: dict[EvolStrategyMethodFail, dict[str, int | float]]
+    :param success_strategy_stats: Statistics for successful strategies.
+    :type success_strategy_stats: dict[EvolStrategyMethodSuccess, dict[str, int | float]]
+    :param current_generation: Current generation number.
+    :type current_generation: int
+    :param ref_ppa_metrics: Reference PPA metrics for comparison and fitness score calculation.
+    :type ref_ppa_metrics: dict[str, float]
+    :param logger: Logger instance for logging events and results.
+    :type logger: EoHLogger
+    :param run_start_time: Start time of the entire run.
+    :type run_start_time: float
+    :param run_start_utc: Start time of the run in UTC.
+    :type run_start_utc: datetime.datetime
+    :param gen_start_time: Start time of the current generation.
+    :type gen_start_time: float
     """
 
     def __init__(
@@ -131,8 +274,8 @@ class EoHEngine:
         default_llm_temp: float = 1.0,
         default_llm_top_p: float = 0.95,
         default_llm_max_tokens: int = 2048,
-        base_save_path: Optional[Path] = None,
-        strategy_selection_method: str = "random",
+        base_save_path: str | None = None,
+        strategy_selection_method: StrategySelectionMethod = "random",
         epsilon: float = 0.1,
         ucb_c: float = 2.0,
     ):
@@ -168,35 +311,46 @@ class EoHEngine:
         self.clk_period: float = synthesis_evaluator.clk_period
 
         # Simplified to two population pools
-        self.fail_pool: List[Heuristic] = []
-        self.success_pool: List[Heuristic] = []
+        self.fail_pool: list[Heuristic] = []
+        self.success_pool: list[Heuristic] = []
 
         # Add attributes for dynamic strategy selection using meta-strategies
         # Formulate problem of picking which strategy to use as a multi-armed bandit problem
-        self.strategy_selection_method = (
+        self.strategy_selection_method: StrategySelectionMethod = (
             strategy_selection_method  # "random", "epsilon-greedy", "ucb"
         )
-        self.epsilon = epsilon  # For epsilon-greedy strategy (default 0.1)
-        self.ucb_c = ucb_c  # Exploration parameter for UCB strategy (default 2.0)
+        self.epsilon: float = epsilon  # For epsilon-greedy strategy (default 0.1)
+        self.ucb_c: float = (
+            ucb_c  # Exploration parameter for UCB strategy (default 2.0)
+        )
 
-        self.fail_strats = ["M-F", "M-S", "M-E", "M-R", "M-I"]
-        self.success_strats = ["M-S", "M-E", "M-R", "M-I", "C-F"]
+        self.fail_strats: list[EvolStrategyMethodFail] = list(
+            get_args(EvolStrategyMethodFail)
+        )
+        self.success_strats: list[EvolStrategyMethodSuccess] = list(
+            get_args(EvolStrategyMethodSuccess)
+        )
+        self.fail_strategy_stats: dict[
+            EvolStrategyMethodFail, dict[str, int | float]
+        ] = {s: {"count": 0, "value": 0.0} for s in self.fail_strats}
+        self.success_strategy_stats: dict[
+            EvolStrategyMethodSuccess, dict[str, int | float]
+        ] = {s: {"count": 0, "value": 0.0} for s in self.success_strats}
 
-        self.fail_strategy_stats = {
-            s: {"count": 0, "value": 0.0} for s in self.fail_strats
-        }
-        self.success_strategy_stats = {
-            s: {"count": 0, "value": 0.0} for s in self.success_strats
-        }
+        self.current_generation: int = 0
+        self.ref_ppa_metrics: dict[str, float] = {}
+        self.logger: EoHLogger | None = None
+        self.run_start_time: float = 0
+        self.run_start_utc: datetime.datetime | None = None
+        self.gen_start_time: float = 0
 
-        self.current_generation = 0
-        self.ref_ppa_metrics = {}
-        self.logger = None
-        self.run_start_time = 0
-        self.run_start_utc = None
-        self.gen_start_time = 0
+    def load_problem_description(self) -> str:
+        """
+        Load the text prompt ``<problem>_prompt.txt`` from the benchmark folder.
 
-    def load_problem_description(self):
+        :return: The problem description text.
+        :rtype: str
+        """
         prompt_path = os.path.join(
             self.benchmark_path, f"{self.problem_name}_prompt.txt"
         )
@@ -208,7 +362,16 @@ class EoHEngine:
                 f"Problem description file not found: {prompt_path}"
             )
 
-    def _copy_misc_files(self, output_directory):
+    def _copy_misc_files(self, output_directory: str) -> None:
+        """
+        Copy non-RTL auxiliary files required by some test-benches to *output_directory*.
+
+        :param output_directory: Directory where the files should be copied.
+        :type output_directory: str
+
+        :return: None
+        :rtype: None
+        """
         misc_files = [
             f
             for f in os.listdir(self.benchmark_path)
@@ -235,12 +398,29 @@ class EoHEngine:
 
     def _save_result_to_file(
         self,
-        code_content,
-        thought_content,
-        generation_num,
-        sample_idx_in_generation,
-        strategy=None,
-    ):
+        code_content: str,
+        thought_content: str,
+        generation_num: int,
+        sample_idx_in_generation: int,
+        strategy: EvolStrategyMethod | None = None,
+    ) -> tuple[str, str]:
+        """
+        Save the generated code and thought process to ``<save_path>/Gen<k>/``.
+
+        :param code_content: The Verilog code to save.
+        :type code_content: str
+        :param thought_content: The thought process or strategy description to save.
+        :type thought_content: str
+        :param generation_num: The generation number (k) for this candidate.
+        :type generation_num: int
+        :param sample_idx_in_generation: The index of this sample in the generation.
+        :type sample_idx_in_generation: int
+        :param strategy: The evolutionary strategy used to generate this candidate.
+        :type strategy: EvolStrategyMethod | None
+
+        :return: Tuple containing the file paths of the saved code and thought files.
+        :rtype: tuple[str, str]
+        """
         model_name_cleaned = self.llm.model_name.replace("/", "_")
         directory_path = os.path.join(
             self.base_save_path,
@@ -263,7 +443,11 @@ class EoHEngine:
         self._copy_misc_files(directory_path)
         return code_file_path, thought_file_path
 
-    def _calculate_reference_ppa(self):
+    def _calculate_reference_ppa(self) -> None:
+        """
+        Loads the pre-calculated PPA metrics for the reference design.
+        If the PPA file is missing or malformed, it sets default high values.
+        """
         print(f"\n--- Calculating Reference PPA for {self.problem_name} ---")
         # Instead of synthesizing the reference Verilog file, we will use the pre-synthesized reference file.
         # This is to ensure that we have a consistent reference PPA across all runs.
@@ -331,8 +515,26 @@ class EoHEngine:
                 }
                 print(f"Reference PPA loaded successfully: {self.ref_ppa_metrics}")
 
-    def _calculate_fitness_score(self, candidate):
-        """Calculates a fitness score for a successful candidate based on PPA improvement."""
+    def _calculate_fitness_score(self, candidate: Heuristic) -> float:
+        """
+        Calculates a fitness score for a successful candidate based on PPA improvement.
+        Fitness score formula:
+        * P_gen = candidate's power
+        * A_gen = candidate's area
+        * T_gen = candidate's effective clock period
+        * P_ref = reference power
+        * A_ref = reference area
+        * T_ref = reference effective clock period
+        - if sequential circuit:
+        fitness = (-(P_gen - P_ref) / P_ref + -(A_gen - A_ref) / A_ref + -(T_gen - T_ref) / T_ref) / 3
+        - if combinational circuit:
+        fitness = (-(P_gen - P_ref) / P_ref + -(A_gen - A_ref) / A_ref) / 2
+
+        :param candidate: The candidate Heuristic to score.
+        :type candidate: Heuristic
+        :return: The calculated fitness score. PPA improvement compared to the reference design results in higher score.
+        :rtype: float
+        """
         if not candidate.ppa_success or not self.ref_ppa_metrics:
             return 0
 
@@ -349,21 +551,31 @@ class EoHEngine:
                 f"Warning: Missing PPA values for {candidate.id} or reference. Assigning low fitness."
             )
             return 0
+        else:
+            # Reassign values so that they are not None
+            # Because of earlier check, we know that they are not None
+            # But we add this to avoid type errors
+            p_gen = P_gen if P_gen else 1.0
+            a_gen = A_gen if A_gen else 1.0
+            t_gen = T_gen if T_gen else 1.0
+            p_ref = P_ref if P_ref else 1.0
+            a_ref = A_ref if A_ref else 1.0
+            t_ref = T_ref if T_ref else 1.0
 
-        power_improvement = (P_gen - P_ref) / P_ref
-        area_improvement = (A_gen - A_ref) / A_ref
+        power_improvement = (p_gen - p_ref) / p_ref
+        area_improvement = (a_gen - a_ref) / a_ref
         timing_improvement = None  # Default to None for combinational circuits
 
         # A non-zero TNS or WNS in reference implies a sequential circuit for this calculation
         # Combinatorial circuits will have TNS and WNS as 0, and eff_clk_period of 0
         # If T_ref is 0.0 than it is a combinational circuit
-        if T_ref == 0.0:
+        if t_ref == 0.0:
             is_sequential = False
         else:
             is_sequential = True
 
         if is_sequential:
-            timing_improvement = (T_gen - T_ref) / T_ref
+            timing_improvement = (t_gen - t_ref) / t_ref
             total_improvement = (
                 power_improvement + area_improvement + timing_improvement
             ) / 3
@@ -373,8 +585,20 @@ class EoHEngine:
         # Fitness is maximized, and lower improvement % is better. So, fitness = -improvement.
         return -total_improvement
 
-    def _save_feedback_files(self, candidate, feedback):
-        """Helper to save feedback files for a failed candidate."""
+    def _save_feedback_files(
+        self, candidate: Heuristic, feedback: dict[str, int | str | None]
+    ) -> None:
+        """
+        Helper to save feedback files for a failed candidate.
+        This function creates a feedback file named `<code_base_name>_feedback.txt` in the same directory as the candidate's code file.
+
+        :param candidate: The candidate for which feedback is being saved.
+        :type candidate: Heuristic
+        :param feedback: The feedback dictionary containing score, justification, and analysis.
+        :type feedback: dict[str, int | str | None]
+        :return: None
+        :rtype: None
+        """
         base_path = candidate.code_file_path.rsplit(".", 1)[0]
         feedback_file_path = f"{base_path}_feedback.txt"
         with open(feedback_file_path, "w") as f:
@@ -382,10 +606,16 @@ class EoHEngine:
                 f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}"
             )
 
-    def _evaluate_candidates(self, candidates_to_evaluate):
+    def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
         """
         Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
         Updates each candidate object with its final status, feedback, and score.
+
+        :param candidates_to_evaluate: List of Heuristic candidates to evaluate.
+        :type candidates_to_evaluate: list[Heuristic]
+
+        :return: None
+        :rtype: None
         """
         if not candidates_to_evaluate:
             return
@@ -554,8 +784,15 @@ class EoHEngine:
                 self._save_feedback_files(cand, feedback_data)
 
     # Prompt generation functions for the 6 new strategies
-    def _format_parent_for_prompt(self, parent, example_num=1):
-        """Helper to format a parent candidate for inclusion in a prompt."""
+    def _format_parent_for_prompt(self, parent: Heuristic, example_num: int = 1) -> str:
+        """
+        Helper to format a parent candidate for inclusion in a prompt.
+
+        :param parent: The parent candidate to format.
+        :type parent: Heuristic
+        :param example_num: The example number for formatting. (default is 1) Useful for fusion strategy where we have two parents.
+        :type example_num: int
+        """
         parent_prompt = (
             f"<Example {example_num}>:\n"
             f"```thought\n{parent.thought}\n```\n"
@@ -568,42 +805,91 @@ class EoHEngine:
             )
         return parent_prompt
 
-    def _create_prompt_M_F(self, parents):  # Fix
+    def _create_prompt_M_F(self, parents: list[Heuristic]) -> str:  # Fix
+        """
+        Creates a prompt for the 'Fix' mutation strategy.
+        This strategy is used when a previous attempt has failed, and the goal is to fix the code based on feedback.
+
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent_info = self._format_parent_for_prompt(parents[0])
         return (
             f"{self.problem_description}\n\nThe following attempt failed. Use the feedback to fix it.\n\n"
             f"{parent_info}\nYour task is to fix the code based on the feedback. Provide a new thought process explaining the fix and the corrected code."
         )
 
-    def _create_prompt_M_S(self, parents):  # Simplify
+    def _create_prompt_M_S(self, parents: list[Heuristic]) -> str:  # Simplify
+        """
+        Creates a prompt for the 'Simplify' mutation strategy.
+        This strategy is used to simplify a previous solution while maintaining its functionality.
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent_info = self._format_parent_for_prompt(parents[0])
         return (
             f"{self.problem_description}\n\nHere is a previous solution.\n\n{parent_info}\n"
             f"Your task is to simplify this solution. Reduce complexity while maintaining functionality. Provide your simplified thought and code."
         )
 
-    def _create_prompt_M_E(self, parents):  # Explore
+    def _create_prompt_M_E(self, parents: list[Heuristic]) -> str:  # Explore
+        """
+        Creates a prompt for the 'Explore' mutation strategy.
+        This strategy is used to generate a completely new solution based on a previous one.
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent_info = self._format_parent_for_prompt(parents[0])
         return (
             f"{self.problem_description}\n\nHere is one approach.\n\n{parent_info}\n"
             f"Your task is to generate a completely new and different solution. Come up with a novel architectural idea. Describe your new idea and provide the code."
         )
 
-    def _create_prompt_M_R(self, parents):  # Refactor
+    def _create_prompt_M_R(self, parents: list[Heuristic]) -> str:  # Refactor
+        """
+        Creates a prompt for the 'Refactor' mutation strategy.
+        This strategy is used to refactor a previous solution while maintaining its functionality.
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent_info = self._format_parent_for_prompt(parents[0])
         return (
             f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
             f"Your task is to refactor this code. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). Explain the refactoring and provide the new code."
         )
 
-    def _create_prompt_M_I(self, parents):  # Improve
+    def _create_prompt_M_I(self, parents: list[Heuristic]) -> str:  # Improve
+        """
+        Creates a prompt for the 'Improve' mutation strategy.
+        This strategy is used to improve a previous solution while maintaining its functionality.
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent_info = self._format_parent_for_prompt(parents[0])
         return (
             f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
             f"Your task is to improve this solution. If it failed, make it correct. If it succeeded, optimize it for better PPA based on its metrics. Describe your improvement strategy and provide the improved code."
         )
 
-    def _create_prompt_C_F(self, parents):  # Fusion
+    def _create_prompt_C_F(self, parents: list[Heuristic]) -> str:  # Fusion
+        """
+        Creates a prompt for the 'Fusion' mutation strategy.
+        This strategy is used to create a new solution by combining elements from multiple previous solutions.
+        :param parents: List of parent candidates to use as examples.
+        :type parents: list[Heuristic]
+        :return: The formatted prompt string.
+        :rtype: str
+        """
         parent1_info = self._format_parent_for_prompt(parents[0], 1)
         parent2_info = self._format_parent_for_prompt(parents[1], 2)
         return (
@@ -611,8 +897,15 @@ class EoHEngine:
             f"Your task is to create a superior solution by fusing the best ideas from both examples. Analyze their strengths and combine them. Explain your fusion strategy and provide the new code."
         )
 
-    def initialize_population(self):
-        """Creates and evaluates the initial population."""
+    def initialize_population(self) -> None:
+        """
+        Creates and evaluates the initial population.
+
+        This method generates the initial population of candidates using the LLM,
+        evaluates them, and categorizes them into success and failure pools.
+        It also logs the results of the initial generation.
+
+        """
         print(f"\n--- Initializing Population (Size: {self.population_size}) ---")
         self.gen_start_time = time.time()
         # For initial population generation the strategy is always "initial".
@@ -637,9 +930,9 @@ class EoHEngine:
                     code, thought, 0, i + 1, "initial"
                 )
                 cand = Heuristic(
-                    thought,
-                    code,
-                    "",
+                    thought=thought,
+                    code=code,
+                    feedback="",
                     generation=0,
                     strategy="initial",
                     origin_pool="initial",
@@ -665,18 +958,19 @@ class EoHEngine:
                 self.fail_pool.append(cand)
 
         gen0_runtime = time.time() - self.gen_start_time
-        llm_calls = self.llm.get_and_reset_api_calls()
-        self.logger.log_generation(
-            0,
-            initial_candidates,
-            gen0_runtime,
-            llm_calls,
-            {},
-            {},
-            self.fail_strategy_stats,
-            self.success_strategy_stats,
-            strategy_avg_selection_probabilities,
-        )  # No rewards for initial generation
+        llm_calls = asyncio.run(self.llm.get_and_reset_api_calls())
+        if self.logger:
+            self.logger.log_generation(
+                0,
+                initial_candidates,
+                gen0_runtime,
+                llm_calls,
+                defaultdict(float),
+                defaultdict(float),
+                self.fail_strategy_stats,
+                self.success_strategy_stats,
+                strategy_avg_selection_probabilities,  # For initial generation dict[str, float] is used as there is only one strategy available
+            )  # No rewards for initial generation
 
         print(
             f"--- Initial Population Processed. Success: {len(self.success_pool)}, Fail: {len(self.fail_pool)} ---"
@@ -685,42 +979,50 @@ class EoHEngine:
             self.success_pool.sort(key=lambda c: c.score, reverse=True)
             print(f"Best initial candidate: {self.success_pool[0]}")
 
-    def _select_strategy(self, pool_type, available_strategies, selected_this_gen=None):
+    def _run_selection_algorithm(
+        self,
+        method: StrategySelectionMethod,
+        available_strategies: list[StrategyT],
+        stats_dict: dict[StrategyT, dict[str, int | float]],
+        selected_this_gen: set[StrategyT],
+    ) -> tuple[StrategyT, dict[StrategyT, float]]:
         """
-        Selects a strategy based on the chosen multi-armed bandit algorithm.
-        Also return the probability distribution of strategies for debugging purposes.
-        The probability should be ex-ante, for example for epsilon-greedy, it should be the probability of selecting each strategy before the selection is made.
-        pool_type: 'fail' or 'success' to indicate which pool we are selecting from
-        available_strategies: List of strategies available for the given pool type.
-        Returns the selected strategy name and dictionary with key: strategy name and value: probability of selection.
-        If no strategies are available, returns None, None.
-        Args:
-            pool_type (str): 'fail' or 'success' to indicate which pool.
-            available_strategies (list): List of strategies available for the pool.
-            selected_this_gen (set, optional): Strategies already selected in this generation's loop. Defaults to None.
+        Implements the core logic for the multi-armed bandit strategy selection algorithms.
 
-        Returns:
-            tuple: The selected strategy name and a dictionary of selection probabilities.
+        This is a generic helper function that operates on a specific, type-safe set of strategies
+        (either for the 'fail' or 'success' pool) and their corresponding statistics. It is called
+        by the `_select_strategy` dispatcher. This approach ensures type safety and avoids
+        code duplication between the two pools.
+
+        The method implements the following selection algorithms:
+        - **random**: Selects a strategy with uniform random probability.
+        - **epsilon-greedy**: Selects the current best-performing strategy (exploitation) with probability
+          `1-epsilon`, and explores a random strategy with probability `epsilon`.
+        - **ucb**: Uses the Upper Confidence Bound (UCB1) formula to balance exploration and exploitation.
+          It ensures all strategies are tried at least once before applying the UCB formula. Selection is
+          done via a softmax over the UCB scores to allow for probabilistic choice rather than a hard argmax.
+
+        :param method: The selection algorithm to use ('random', 'epsilon-greedy', 'ucb').
+        :type method: StrategySelectionMethod
+        :param available_strategies: A list of the strategies available for selection in the current pool.
+        :type available_strategies: list[StrategyT]
+        :param stats_dict: A dictionary containing the performance statistics ('count' and 'value') for each strategy.
+        :type stats_dict: dict[StrategyT, dict[str, int | float]]
+        :param selected_this_gen: A set of strategies already chosen in the current generation's loop. This is
+                                  crucial for the UCB algorithm's initialization phase to ensure each
+                                  strategy is tried once.
+        :type selected_this_gen: set[StrategyT]
+        :type StrategyT: A TypeVar representing either EvolStrategyMethodFail or EvolStrategyMethodSuccess.
+
+        :return: A tuple containing the selected strategy and a dictionary representing the ex-ante
+                 probability distribution over all available strategies for this selection event.
+                 This function assumes `available_strategies` is not empty and will not return None.
+        :rtype: tuple[StrategyT, dict[StrategyT, float]]
         """
-        if not available_strategies:
-            print(
-                f"No available strategies for pool type '{pool_type}'. Returning None."
-            )
-            return None, None
-
-        if selected_this_gen is None:
-            selected_this_gen = set()
-
-        stats_dict = (
-            self.fail_strategy_stats
-            if pool_type == "fail"
-            else self.success_strategy_stats
-        )
-        method = self.strategy_selection_method
-
         if method == "random":
             dist = {s: 1.0 / len(available_strategies) for s in available_strategies}
-            return random.choice(available_strategies), dist
+            choice = random.choice(available_strategies)
+            return choice, dist
 
         elif method == "epsilon-greedy":
             # Probability should be ex-ante, so we calculate it before making the selection
@@ -735,7 +1037,7 @@ class EoHEngine:
             k = len(best_strategies)
 
             # Build probability distribution
-            dist = {}
+            dist: dict[StrategyT, float] = {}
             for s in available_strategies:
                 base_prob = self.epsilon / n
                 if s in best_strategies:
@@ -743,12 +1045,14 @@ class EoHEngine:
                 else:
                     dist[s] = base_prob
 
-            # Select strategy
+            # Select strategy based on epsilon-greedy logic
             if random.random() < self.epsilon:
                 selected = random.choice(available_strategies)
             else:
                 selected = (
-                    random.choice(best_strategies) if k > 1 else best_strategies[0]
+                    random.choice(best_strategies)
+                    if k > 0
+                    else random.choice(available_strategies)
                 )
             return selected, dist
 
@@ -760,17 +1064,12 @@ class EoHEngine:
                 for s in available_strategies
                 if stats_dict[s]["count"] == 0 and s not in selected_this_gen
             ]
-            print(f"Debug UCB: Untried strategies: {untried_strategies}")
             # If there are untried strategies, randomly select one. This ensures that for the
             # first evolution, strategies are selected as evenly as possible, and each
             # strategy is guaranteed to be chosen once before moving to exploration.
             if untried_strategies:
-                # untried_strategies should have equal probability of selection
                 prob = 1.0 / len(untried_strategies)
                 dist = {s: prob for s in untried_strategies}
-                print(
-                    f"Debug UCB: Untried strategies selected with equal probability: {dist}"
-                )
                 return random.choice(untried_strategies), dist
 
             # --- Exploration Phase (Standard UCB) ---
@@ -789,16 +1088,14 @@ class EoHEngine:
                 dist = {s: prob for s in available_strategies}
                 return random.choice(available_strategies), dist
 
-            ucb_scores = {}
+            ucb_scores: dict[StrategyT, float] = {}
             for strat in available_strategies:
                 # If a strategy has 0 pulls, its exploration value is infinite.
                 # This prevents a ZeroDivisionError and correctly prioritizes it.
                 # Infinite seems to cause nan issues in softmax, so we set it to a very high value.
                 # This is a common trick in UCB to handle untried arms.
                 if stats_dict[strat]["count"] == 0:
-                    ucb_scores[strat] = (
-                        1000  # Use a large constant instead of infinity to avoid NaN issues in softmax
-                    )
+                    ucb_scores[strat] = 1e3  # Large constant for untried arms
                     continue
 
                 avg_reward = stats_dict[strat]["value"]
@@ -813,26 +1110,96 @@ class EoHEngine:
             # Use the max trick to avoid overflow in exponentiation
             # Compute softmax probabilities
             scores = [ucb_scores[s] for s in available_strategies]
-            max_score = max(scores)
+            max_score = max(scores) if scores else 0.0
             exp_scores = [math.exp(score - max_score) for score in scores]
             sum_exp = sum(exp_scores)
-            weights = [exp_score / sum_exp for exp_score in exp_scores]
-            print(
-                f"Debug UCB: Strategy scores: {ucb_scores}, Weights: {weights}, dist: {dict(zip(available_strategies, weights))}"
+            weights = (
+                [s / sum_exp for s in exp_scores]
+                if sum_exp > 0
+                else [1.0 / len(scores)] * len(scores)
             )
             dist = dict(zip(available_strategies, weights))
-
             # Select strategy using softmax distribution
             selected = random.choices(available_strategies, weights=weights, k=1)[0]
             return selected, dist
 
-        else:  # Fallback to random
-            print(
-                f"[WARNING] Unknown strategy selection method '{method}'. Defaulting to random selection."
-            )
-            prob = 1.0 / len(available_strategies)
-            dist = {s: prob for s in available_strategies}
+        else:  # Fallback
+            print(f"[WARNING] Unknown method '{method}'. Defaulting to random.")
+            dist = {s: 1.0 / len(available_strategies) for s in available_strategies}
             return random.choice(available_strategies), dist
+
+    @overload
+    def _select_strategy(
+        self,
+        pool_type: Literal["fail"],
+        available_strategies: list[EvolStrategyMethodFail],
+        selected_this_gen: set[EvolStrategyMethodFail] | None = None,
+    ) -> tuple[
+        EvolStrategyMethodFail | None, dict[EvolStrategyMethodFail, float] | None
+    ]: ...
+
+    @overload
+    def _select_strategy(
+        self,
+        pool_type: Literal["success"],
+        available_strategies: list[EvolStrategyMethodSuccess],
+        selected_this_gen: set[EvolStrategyMethodSuccess] | None = None,
+    ) -> tuple[
+        EvolStrategyMethodSuccess | None, dict[EvolStrategyMethodSuccess, float] | None
+    ]: ...
+
+    def _select_strategy(
+        self,
+        pool_type: Literal["fail", "success"],
+        available_strategies: list[Any],
+        selected_this_gen: set[Any] | None = None,
+    ) -> tuple[Any | None, dict[Any, float] | None]:
+        """
+        Selects a strategy by dispatching to the core selection logic based on pool type.
+
+        This method is an overloaded dispatcher. Based on the `pool_type` ('fail' or 'success'),
+        it calls the generic `_run_selection_algorithm` with the correctly typed strategy lists
+        and statistics dictionaries. This design ensures that operations within the selection
+        logic are type-safe.
+
+        It returns the selected strategy along with a dictionary representing the ex-ante
+        probability distribution of all available strategies for that selection event.
+        The probability is calculated *before* the selection is made, which is useful for
+        analyzing the behavior of the selection algorithm.
+
+        If no strategies are available for the given pool, it returns (None, None).
+
+        :param pool_type: The pool to select a strategy for ('fail' or 'success').
+        :type pool_type: Literal['fail', 'success']
+        :param available_strategies: A list of strategies available for the specified pool.
+        :type available_strategies: list[EvolStrategyMethodFail] | list[EvolStrategyMethodSuccess]
+        :param selected_this_gen: A set of strategies already selected in the current generation. This is
+                                  passed to the UCB algorithm to handle its initialization phase. Defaults to None.
+        :type selected_this_gen: set[EvolStrategyMethodFail] | set[EvolStrategyMethodSuccess] | None
+
+        :return: A tuple containing the selected strategy name and a dictionary of its selection probabilities.
+                 Returns (None, None) if the `available_strategies` list is empty.
+        :rtype: tuple[ EvolStrategyMethodFail | EvolStrategyMethodSuccess | None, dict[EvolStrategyMethodFail | EvolStrategyMethodSuccess, float] | None]
+        """
+        if not available_strategies:
+            return None, None
+
+        sel_gen = selected_this_gen if selected_this_gen is not None else set()
+
+        if pool_type == "fail":
+            return self._run_selection_algorithm(
+                self.strategy_selection_method,
+                available_strategies,
+                self.fail_strategy_stats,
+                sel_gen,
+            )
+        else:  # pool_type == "success"
+            return self._run_selection_algorithm(
+                self.strategy_selection_method,
+                available_strategies,
+                self.success_strategy_stats,
+                sel_gen,
+            )
 
     def evolve_one_generation(self):
         """Performs one generation of the REvolution algorithm."""
@@ -859,7 +1226,8 @@ class EoHEngine:
         )
         num_from_success = self.num_offspring_lambda - num_from_fail
 
-        prompts, metadata = [], []
+        prompts: list[str] = []
+        metadata: list[dict[str, Any]] = []
 
         success_strategy_average_probabilities = {s: 0.0 for s in self.success_strats}
         fail_strategy_average_probabilities = {s: 0.0 for s in self.fail_strats}
@@ -874,7 +1242,7 @@ class EoHEngine:
                 strat_name, prob_dist_dict = self._select_strategy(
                     "fail", self.fail_strats, fail_strategies_selected_this_gen
                 )
-                if strat_name is None:
+                if strat_name is None or prob_dist_dict is None:
                     print("No valid fail strategies available. Skipping...")
                     continue
                 fail_strategies_selected_this_gen.add(strat_name)
@@ -912,7 +1280,7 @@ class EoHEngine:
                     available_success_strategies,
                     success_strategies_selected_this_gen,
                 )
-                if strat_name is None:
+                if strat_name is None or prob_dist_dict is None:
                     print("No valid success strategies available. Skipping...")
                     continue
                 success_strategies_selected_this_gen.add(strat_name)
@@ -997,11 +1365,11 @@ class EoHEngine:
                 else:
                     candidate_origin_pool = "success_pool"
                 cand = Heuristic(
-                    thought,
-                    code,
-                    "",
-                    self.current_generation,
-                    [p.id for p in meta["parents"]],
+                    thought=thought,
+                    code=code,
+                    feedback="",
+                    generation=self.current_generation,
+                    parent_ids=[p.id for p in meta["parents"]],
                     strategy=meta["strategy"],
                     origin_pool=candidate_origin_pool,
                 )
@@ -1067,13 +1435,15 @@ class EoHEngine:
             # 1 / (n) satisfies the stochastic approximation condition
             # sigma alpha_n = infinity, and sigma alpha_n^2 < infinity
             # R_n is the reward from the parent, and Q_n is the current value of the strategy
-            stats_dict = (
-                self.fail_strategy_stats
-                if parent_pool_type == "fail"
-                else self.success_strategy_stats
-            )
+            if parent_pool_type == "fail":
+                s = self.fail_strategy_stats[
+                    cast(EvolStrategyMethodFail, strategy_name)
+                ]
+            else:  # parent_pool_type == "success"
+                s = self.success_strategy_stats[
+                    cast(EvolStrategyMethodSuccess, strategy_name)
+                ]
 
-            s = stats_dict[strategy_name]
             s["count"] += 1  # Increment the count of times this strategy was used
             s["value"] = s["value"] + (reward - s["value"]) / (s["count"])
 
@@ -1099,15 +1469,11 @@ class EoHEngine:
             best_by_score = max(successful_candidates, key=lambda c: c.score)
             best_by_power = min(
                 successful_candidates,
-                key=lambda c: c.ppa_metrics.get("power")
-                if c.ppa_metrics.get("power") is not None
-                else float("inf"),
+                key=lambda c: c.ppa_metrics.get("power", float("inf")),
             )
             best_by_area = min(
                 successful_candidates,
-                key=lambda c: c.ppa_metrics.get("area")
-                if c.ppa_metrics.get("area") is not None
-                else float("inf"),
+                key=lambda c: c.ppa_metrics.get("area", float("inf")),
             )
 
             champions = [best_by_score, best_by_power, best_by_area]
@@ -1120,9 +1486,7 @@ class EoHEngine:
             if is_sequential:
                 best_by_delay = min(
                     successful_candidates,
-                    key=lambda c: c.ppa_metrics.get("eff_clk_period")
-                    if c.ppa_metrics.get("eff_clk_period") is not None
-                    else float("inf"),
+                    key=lambda c: c.ppa_metrics.get("eff_clk_period", float("inf")),
                 )
                 champions.append(best_by_delay)
 
@@ -1152,7 +1516,10 @@ class EoHEngine:
                 self.fail_pool.append(cand)
 
         gen_runtime = time.time() - self.gen_start_time
-        llm_calls = self.llm.get_and_reset_api_calls()
+        # get_and_reset_api_calls is an async function, so we need to run it in the event loop
+        # This will reset the API call count for the next generation
+        llm_calls = asyncio.run(self.llm.get_and_reset_api_calls())
+        # Check that self.logger is not None before logging should have been initialized during initialization
         if self.logger:
             self.logger.log_generation(
                 self.current_generation,
@@ -1164,6 +1531,10 @@ class EoHEngine:
                 self.fail_strategy_stats,
                 self.success_strategy_stats,
                 strategy_avg_selection_probabilities,
+            )
+        else:
+            print(
+                "WARNING: Logger is not initialized. Generation statistics will not be logged."
             )
 
         print(

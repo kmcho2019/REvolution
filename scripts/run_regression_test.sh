@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e # Exit immediately if a command fails
 
+# vllm docker configuration
+# docker run --runtime nvidia --gpus all -v /path/to/model/Qwen3-Coder-30B-A3B-Instruct:/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct -p 8000:8000 --ipc=host vllm/vllm-openai:latest --model /root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct --tensor-parallel-size 8 --host 0.0.0.0 --port 8000
+# Replace /path/to/model/Qwen3-Coder-30B-A3B-Instruct with the actual path to your model directory.
+
 # --- Configuration ---
-MODEL_NAME="google/gemini-2.5-flash-lite"
+MODEL_NAME="/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct" #"google/gemini-2.5-flash-lite"
 BENCHMARKS="RTLLM VerilogEval-Spec-to-RTL"
 PROBLEMS="Prob001_zero Prob010_mt2015_q4a Prob052_gates100 Prob068_countbcd Prob096_review2015_fsmseq Prob116_m2014_q3 Prob129_ece241_2013_q8 Prob001_accu Prob021_counter_12 Prob022_ring_counter"
-API_BACKEND="openrouter"
+API_BACKEND="vllm" #"openrouter"
 POP_SIZE=10
 NUM_GEN=4
 NUM_WORKERS=10
@@ -47,8 +51,8 @@ python3 scripts/evolutionary_report_generator.py \
 echo "--------------------------------------------------"
 
 # 2. Run the refactored script and generate its report
-echo "3. Running REFACTORED script (run_revolution.py)..."
-python3 scripts/run_revolution.py \
+echo "3. Running REFACTORED script (run_evolution.py)..."
+python3 scripts/run_evolution.py \
     --benchmarks $BENCHMARKS \
     --problems $PROBLEMS \
     --api_backend $API_BACKEND \

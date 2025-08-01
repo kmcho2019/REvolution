@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 
 # Import Heuristic class from local module
-from .algorithm import Heuristic
+from .algorithm import EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 
 
 class EoHLogger:
@@ -152,29 +152,42 @@ class EoHLogger:
         llm_calls_this_gen: int,
         fail_rewards_this_gen: defaultdict[str, float],
         success_rewards_this_gen: defaultdict[str, float],
-        fail_strategy_stats: dict[str, dict[str, int | float]],
-        success_strategy_stats: dict[str, dict[str, int | float]],
-        strategy_avg_selection_probabilities: dict[str, dict[str, float]],
+        fail_strategy_stats: dict[EvolStrategyMethodFail, dict[str, int | float]],
+        success_strategy_stats: dict[EvolStrategyMethodSuccess, dict[str, int | float]],
+        strategy_avg_selection_probabilities: dict[str, float]
+        | dict[str, dict[str, float]],
     ) -> None:
         """
         Record all per-generation statistics to the JSONL log file.
 
         :param generation_num:                     Zero-based index of this generation.
+        :type generation_num: int
         :param candidates_this_gen:                All Heuristic objects produced.
+        :type candidates_this_gen: list[Heuristic]
         :param runtime_sec:                        Wall-clock time in seconds for this generation.
+        :type runtime_sec: float
         :param llm_calls_this_gen:                 Number of LLM API calls made.
+        :type llm_calls_this_gen: int
         :param fail_rewards_this_gen:              Mapping from strategy name to
                                                    the reward obtained for fail-pool Q.
+        :type fail_rewards_this_gen: defaultdict[str, float]
         :param success_rewards_this_gen:           Mapping from strategy name to
                                                    the reward obtained for success-pool Q.
+        :type success_rewards_this_gen: defaultdict[str, float]
         :param fail_strategy_stats:                Q-value dicts for each strategy in the
                                                    fail pool (contains “count” and “value”).
+        :type fail_strategy_stats: dict[EvolStrategyMethodFail, dict[str, int | float]]
         :param success_strategy_stats:             Q-value dicts for each strategy in the
                                                    success pool (contains “count” and “value”).
+        :type success_strategy_stats: dict[EvolStrategyMethodSuccess, dict[str, int | float]]
         :param strategy_avg_selection_probabilities:
                                                    Mapping from strategy name to its
                                                    selection probabilities (next generation).
+                                                   (dict[str, float] for initial generation,
+                                                   dict[str, dict[str, float]] for subsequent generations).
+        :type strategy_avg_selection_probabilities: dict[str, float] | dict[str, dict[str, float]]
         :return: None (appends one JSON line to `generation_log.jsonl`).
+        :rtype: None
         """
 
         total_generated = len(candidates_this_gen)
