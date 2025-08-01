@@ -202,14 +202,6 @@ def main():
                 )
                 exit(1)
 
-    # OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    IVERILOG_EXECUTABLE = "iverilog"
-    VVP_EXECUTABLE = "vvp"
-    YOSYS_EXECUTABLE = "yosys"
-    OPENROAD_EXECUTABLE = "openroad"
-
-    # verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
-    # synthesis_evaluator = SynthesisEvaluator()
 
     # Main execution block now handles comprehensive, aggregated logging
     # --- Task Preparation ---

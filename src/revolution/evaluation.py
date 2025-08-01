@@ -244,7 +244,7 @@ class SynthesisEvaluator:
 
         sdc_lines = []
         sdc_lines.append(f"current_design {module_name}\n")
-        sdc_lines.append(f"set clk_name clk\n")
+        sdc_lines.append("set clk_name clk\n")
         sdc_lines.append(f"set clk_period {clk_period}\n")
         for clk_port in clk_ports:
             sdc_lines.append(

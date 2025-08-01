@@ -467,7 +467,7 @@ class EoHEngine:
             )
             if not os.path.exists(top_module_name_file):
                 print(
-                    f"WARNING: Top module name file not found. Using default module name 'TopModule'."
+                    "WARNING: Top module name file not found. Using default module name 'TopModule'."
                 )
                 top_module_name = "TopModule"
             else:

@@ -467,7 +467,7 @@ class LLMInterface:
         return {
             "score": 0,
             "justification": "LLM call for feedback failed.",
-            "analysis": f"Could not generate feedback due to an API error: {e}",
+            "analysis": f"Could not generate feedback due to an API errors after {self.max_retries} attempts.",
         }
 
     def _parse_feedback_response(self, feedback_text):
