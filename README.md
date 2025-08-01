@@ -3,8 +3,6 @@
 
 # REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models
 
-> **Note:** This repository contains the source code for our anonymous submission to an ASP-DAC 2026. The contents have been cleaned to remove any personally identifiable information.
-
 -----
 
 ## 📜 Abstract
@@ -19,13 +17,16 @@ Experiments on the VerilogEval and RTLLM benchmarks show that REvolution increas
 
 The repository is organized as follows:
 
-  - `./script/main.py`: The main script that contains the full implementation of the **REvolution** framework.
-  - `./exp/`: This directory contains all experimental results. The `_clean` suffix in the directory names indicates that potentially identifiable information has been removed for anonymous review.
-      - `./exp/llama3_clean_results/`: Results from the REvolution run using Llama-3.3-70B.
-      - `./exp/llama3_baseline_clean_results/`: Baseline results for Llama-3.3-70B (pass@200) without the evolutionary framework.
-      - `./exp/gpt-4.1-mini_clean_results/`: Results from the REvolution run using GPT-4.1-mini.
-      - `./exp/deepseek_clean_results/`: Results from the REvolution run using DeepSeek-V3-0324.
-
+  - `src/revolution/`: The core Python package containing the **REvolution** framework.
+    - `algorithm.py`: Implements the main evolutionary engine, including population management, selection, and the dual-pool strategy.
+    - `evaluation.py`: Contains the `VerilogEvaluator` (for Icarus Verilog simulation) and `SynthesisEvaluator` (for Yosys/OpenROAD PPA analysis).
+    - `llm.py`: Provides a unified `LLMInterface` for interacting with various LLM backends (OpenAI, OpenRouter, etc.).
+    - `logging.py`:  Manages detailed generation-by-generation logging and final summary reports.
+  - `scripts/`: Contains executable scripts for running experiments and generating reports.
+    - `run_evolution.py`: The main entry point to run the REvolution framework.
+    - `evolutionary_report_generator.py`: Generates detailed reports from experiment logs.
+  - `data/`: Contains benchmark problems (`bench/`) and the Process Design Kit (`pdk/`).
+  - `exp/`: The default output directory for experimental results and logs.
 -----
 
 ## ⚙️ Setup and Installation
@@ -82,7 +83,7 @@ The following commands can be used to reproduce the experiments presented in the
 This command runs the baseline experiment without the evolutionary framework to calculate pass@200.
 
 ```bash
-python3 script/main.py \
+python3 scripts/run_evolution.py \
     --strategy_selection ucb \
     --api_backend openrouter \
     --model_name meta-llama/llama-3.3-70b-instruct \
@@ -102,7 +103,7 @@ These commands execute the REvolution framework for different models.
 **Llama-3.3-70B-Instruct**
 
 ```bash
-python3 script/main.py \
+python3 scripts/run_evolution.py \
     --strategy_selection ucb \
     --api_backend openrouter \
     --model_name meta-llama/llama-3.3-70b-instruct \
@@ -118,7 +119,7 @@ python3 script/main.py \
 **DeepSeek-V3-0324**
 
 ```bash
-python3 script/main.py \
+python3 scripts/run_evolution.py \
     --strategy_selection ucb \
     --api_backend deepseek \
     --model_name deepseek-chat \
@@ -134,7 +135,7 @@ python3 script/main.py \
 **GPT-4.1-mini**
 
 ```bash
-python3 script/main.py \
+python3 scripts/run_evolution.py \
     --strategy_selection ucb \
     --model_name gpt-4.1-mini \
     --num_workers 32 \
@@ -157,7 +158,7 @@ After running the experiments, you can generate reports to view the results.
 To generate a detailed markdown report for a specific experimental run, use the `evolutionary_report_generator.py` script. This report includes PPA metrics but does **not** apply the gate-level cutoff used in the paper.
 
 ```bash
-python script/evolutionary_report_generator.py \
+python scripts/evolutionary_report_generator.py \
     --experiment_path ./exp/deepseek_clean_results \
     --save_markdown
 ```
@@ -169,7 +170,7 @@ This will save a report named `(benchmark_name)_evolutionary_report.md` inside t
 To generate the final, PPA-filtered results as reported in our paper, run the following shell script. It applies a gate count (50) cutoff to filter the results.
 
 ```bash
-./script/generate_cutoff_compile_result_variants.sh --gate 50
+./scripts/generate_cutoff_compile_result_variants.sh --gate 50
 ```
 
 This will create a `compile_results_gate_cutoff_50.md` file in the base directory, containing the table of results presented in the paper.
@@ -179,7 +180,7 @@ This will create a `compile_results_gate_cutoff_50.md` file in the base director
 To recreate the PPA scatterplot for the `VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c` problem, run the following script:
 
 ```bash
-python3 script/plot_problem_pareto.py
+python3 scripts/plot_problem_pareto.py
 ```
 
 This script will generate the plots and save them in a newly created directory named `VerilogEval_Prob033_ece241_2014_q1c_plots`.
