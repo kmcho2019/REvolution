@@ -4,6 +4,7 @@ import shutil
 import subprocess
 from typing import Dict, Any, List
 
+
 class SynthesisEvaluator:
     def __init__(self, yosys_path="yosys", openroad_path="openroad", pdk_path="./pdk"):
         self.yosys_path = yosys_path
@@ -16,11 +17,15 @@ class SynthesisEvaluator:
         # Get the directory where this script is located (./src/revolution/evaluation.py)
         script_main_dir = os.path.dirname(os.path.abspath(__file__))
         # From there, construct the path to the 'scripts' directory (../../scripts)
-        self.script_root_dir = os.path.abspath(os.path.join(script_main_dir, "..", ".."))
+        self.script_root_dir = os.path.abspath(
+            os.path.join(script_main_dir, "..", "..")
+        )
         # The ref directory is inside the script root
         self.ref_dir_path = os.path.join(self.script_root_dir, "scripts", "ref")
         # The pdk directory is in the data directory (../../data/pdk)
-        self.pdk_path = os.path.abspath(os.path.join(self.script_root_dir, "data", "pdk"))
+        self.pdk_path = os.path.abspath(
+            os.path.join(self.script_root_dir, "data", "pdk")
+        )
 
         # Print directories for debugging
         print(f"Script Main Directory: {script_main_dir}")
@@ -28,7 +33,17 @@ class SynthesisEvaluator:
         print(f"Reference Directory: {self.ref_dir_path}")
         print(f"PDK Directory: {self.pdk_path}")
 
-    def evaluate(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, verilog_evaluator, test_sv_file, ref_sv_file):
+    def evaluate(
+        self,
+        verilog_file,
+        problem_name,
+        synth_top_module_name,
+        output_directory,
+        report_base_path,
+        verilog_evaluator,
+        test_sv_file,
+        ref_sv_file,
+    ):
         """
         Performs synthesis and PPA analysis on a given Verilog file.
         The report files will be named based on `report_base_path`.
@@ -46,7 +61,14 @@ class SynthesisEvaluator:
 
         synthesized_netlist_path = verilog_file.replace(".sv", ".syn.v")
 
-        synthesis_success, synthesis_log = self._run_synthesis(verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, synthesized_netlist_path)
+        synthesis_success, synthesis_log = self._run_synthesis(
+            verilog_file,
+            problem_name,
+            synth_top_module_name,
+            output_directory,
+            report_base_path,
+            synthesized_netlist_path,
+        )
 
         if not synthesis_success:
             return {
@@ -54,17 +76,19 @@ class SynthesisEvaluator:
                 "synthesis_functionality_success": False,  # No functionality test if synthesis failed
                 "ppa_success": False,
                 "synthesis_log": synthesis_log,
-                "ppa_metrics": None
+                "ppa_metrics": None,
             }
 
         # After synthesis add post-synthesis functionality test
-        synthesis_functionality_success, func_check_log = self._check_synthesis_functionality(
-            synthesized_netlist_path,
-            test_sv_file,
-            ref_sv_file,
-            "tb", # Assuming the top module name for the testbench is "tb"
-            output_directory,
-            verilog_evaluator
+        synthesis_functionality_success, func_check_log = (
+            self._check_synthesis_functionality(
+                synthesized_netlist_path,
+                test_sv_file,
+                ref_sv_file,
+                "tb",  # Assuming the top module name for the testbench is "tb"
+                output_directory,
+                verilog_evaluator,
+            )
         )
 
         if not synthesis_functionality_success:
@@ -73,7 +97,7 @@ class SynthesisEvaluator:
                 "synthesis_functionality_success": False,
                 "ppa_success": False,
                 "synthesis_log": f"{synthesis_log}\n\n--- Post-Synthesis Functional Verification Log ---\n{func_check_log}",
-                "ppa_metrics": None
+                "ppa_metrics": None,
             }
 
         ppa_metrics = self._parse_ppa_log(synthesis_log)
@@ -83,24 +107,44 @@ class SynthesisEvaluator:
             "synthesis_functionality_success": True,
             "ppa_success": True,
             "synthesis_log": synthesis_log,
-            "ppa_metrics": ppa_metrics
+            "ppa_metrics": ppa_metrics,
         }
 
-    def _run_synthesis(self, verilog_file, problem_name, synth_top_module_name, output_directory, report_base_path, synthesized_netlist_path):
+    def _run_synthesis(
+        self,
+        verilog_file,
+        problem_name,
+        synth_top_module_name,
+        output_directory,
+        report_base_path,
+        synthesized_netlist_path,
+    ):
         """
         Runs the Yosys synthesis script.
         Synthesis report saved based on report_base_path.
         """
 
-        clk_period = self.clk_period # ns
+        clk_period = self.clk_period  # ns
 
         output_file = synthesized_netlist_path
 
-        sdc_file_path = self._create_sdc_file(verilog_file, synth_top_module_name, output_directory, clk_period=clk_period)
-        yosys_script_path = self._create_yosys_script(verilog_file, synth_top_module_name, output_directory, clk_period, output_file)
-        openroad_script_path = self._create_openroad_script(sdc_file_path, synth_top_module_name, output_directory, output_file)
+        sdc_file_path = self._create_sdc_file(
+            verilog_file, synth_top_module_name, output_directory, clk_period=clk_period
+        )
+        yosys_script_path = self._create_yosys_script(
+            verilog_file,
+            synth_top_module_name,
+            output_directory,
+            clk_period,
+            output_file,
+        )
+        openroad_script_path = self._create_openroad_script(
+            sdc_file_path, synth_top_module_name, output_directory, output_file
+        )
 
-        report_path = report_base_path + "_synthesis_report.rpt" #os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
+        report_path = (
+            report_base_path + "_synthesis_report.rpt"
+        )  # os.path.join(output_directory, f"{problem_name}_synthesis_report.rpt")
 
         command = f"yosys {yosys_script_path} && openroad {openroad_script_path} | tee {report_path}"
 
@@ -108,7 +152,9 @@ class SynthesisEvaluator:
 
         print(f"INFO: Running synthesis command: {command}")
 
-        process = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
         if process.returncode == 0:
             print(f"Synthesis completed successfully. Report saved to {report_path}")
@@ -122,12 +168,22 @@ class SynthesisEvaluator:
             return False, report_path
 
     # Method for post-synthesis functionality check/verification
-    def _check_synthesis_functionality(self, synthesized_netlist, test_sv, ref_sv, tb_top_module, output_dir, verilog_evaluator):
+    def _check_synthesis_functionality(
+        self,
+        synthesized_netlist,
+        test_sv,
+        ref_sv,
+        tb_top_module,
+        output_dir,
+        verilog_evaluator,
+    ):
         """
         Runs a functional simulation on the synthesized netlist using the provided testbench.
         """
         # need to include the verilog files from pdk for simulation of synthesized netlist
-        pdk_verilog_lib = os.path.join(self.pdk_path, "Nangate45", "work_around_yosys", "cells.v")
+        pdk_verilog_lib = os.path.join(
+            self.pdk_path, "Nangate45", "work_around_yosys", "cells.v"
+        )
         if not os.path.exists(pdk_verilog_lib):
             error_msg = f"PDK Verilog library not found at: {pdk_verilog_lib}"
             print(f"ERROR: {error_msg}")
@@ -137,43 +193,49 @@ class SynthesisEvaluator:
         # The VerilogEvaluator's evaluate method has been slightly adapted to accept a list of files
         # Example: iverilog -Wall -Winfloop -Wno-timescale -g2012 -o compiled.vvp -s tb testbench.sv synthesized_netlist.syn.v pdk_verilog_lib.v
         sim_results = verilog_evaluator.evaluate(
-            generated_sv_file=[synthesized_netlist, pdk_verilog_lib], # Pass synthesized netlist and PDK lib
+            generated_sv_file=[
+                synthesized_netlist,
+                pdk_verilog_lib,
+            ],  # Pass synthesized netlist and PDK lib
             test_sv_file=test_sv,
             ref_sv_file=ref_sv,
-            top_module_name=tb_top_module
+            top_module_name=tb_top_module,
             # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
         )
 
         if sim_results["status"] == "compilation_error":
-            print(f"Synthesis functionality check failed during compilation: {sim_results.get('compilation_stderr', 'Compilation log not available')}")
+            print(
+                f"Synthesis functionality check failed during compilation: {sim_results.get('compilation_stderr', 'Compilation log not available')}"
+            )
         log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
 
-        if sim_results['status'] == 'success':
-            output = sim_results.get('simulation_stdout', '')
+        if sim_results["status"] == "success":
+            output = sim_results.get("simulation_stdout", "")
             # Check for simulation output in two ways:
             # Looks for "Mismatches: 0" in the output (VerilogEvalv2)
             # or checks for "===========Your Design Passed===========" in the output (RTLLMv2)
-            m_match = re.search(r'^Mismatches: (\d+)', output, re.M)
-            if (m_match and int(m_match.group(1)) == 0) or "===========Your Design Passed===========" in output:
+            m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+            if (
+                m_match and int(m_match.group(1)) == 0
+            ) or "===========Your Design Passed===========" in output:
                 return True, log
 
         return False, log
-
 
     def _create_sdc_file(self, verilog_file, module_name, output_directory, clk_period):
         """
         Creates a simple SDC file for timing constraints.
         """
         clk_ports = []
-        clk_pattern = r'\b(clk|Clock|clock|Clk|CLK|CK|ck)\w*'
+        clk_pattern = r"\b(clk|Clock|clock|Clk|CLK|CK|ck)\w*"
 
-        with open(verilog_file, 'r') as inFile:
-            lines = inFile.read().split(';')
+        with open(verilog_file, "r") as inFile:
+            lines = inFile.read().split(";")
             for line in lines:
                 if f"module {module_name}" in line:
-                    ob = line.find('(')
-                    cb = line.rfind(')')
-                    matches = re.findall(clk_pattern, line[ob:cb-1])
+                    ob = line.find("(")
+                    cb = line.rfind(")")
+                    matches = re.findall(clk_pattern, line[ob : cb - 1])
                     if matches:
                         clk_ports.extend(matches)
                     else:
@@ -185,24 +247,30 @@ class SynthesisEvaluator:
         sdc_lines.append(f"set clk_name clk\n")
         sdc_lines.append(f"set clk_period {clk_period}\n")
         for clk_port in clk_ports:
-            sdc_lines.append(f"create_clock -name $clk_name -period $clk_period [get_ports {clk_port}]\n")
+            sdc_lines.append(
+                f"create_clock -name $clk_name -period $clk_period [get_ports {clk_port}]\n"
+            )
 
         sdc_gen = f"{output_directory}/{module_name}.sdc"
-        with open(sdc_gen, 'w') as outfile:
+        with open(sdc_gen, "w") as outfile:
             for sdc_line in sdc_lines:
                 outfile.write(sdc_line)
 
         return sdc_gen
 
-    def _create_yosys_script(self, verilog_file, module_name, output_directory, clk_period, output_file):
-        yosys_ref = os.path.join(self.ref_dir_path, 'ref.yosys.tcl')
-        yosys_gen = f'{output_directory}/{module_name}.yosys.tcl'
+    def _create_yosys_script(
+        self, verilog_file, module_name, output_directory, clk_period, output_file
+    ):
+        yosys_ref = os.path.join(self.ref_dir_path, "ref.yosys.tcl")
+        yosys_gen = f"{output_directory}/{module_name}.yosys.tcl"
 
-        with open(yosys_ref, 'r') as infile:
-            with open(yosys_gen, 'w') as outfile:
+        with open(yosys_ref, "r") as infile:
+            with open(yosys_gen, "w") as outfile:
                 text = infile.read()
                 text = text.replace("__VERILOG_FILE__", os.path.abspath(verilog_file))
-                text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
+                text = text.replace(
+                    "__MODULE_NAME__", module_name
+                )  # Reverted to using module_name directly as we now extract it from the Verilog file
                 text = text.replace("__OUTPUT_DIR__", os.path.abspath(output_directory))
                 text = text.replace("__OUTPUT_FILE__", output_file)
                 text = text.replace("__REF_DIR__", self.ref_dir_path)
@@ -212,19 +280,26 @@ class SynthesisEvaluator:
 
         return yosys_gen
 
-    def _create_openroad_script(self, sdc_file_path, module_name, output_directory, output_file):
+    def _create_openroad_script(
+        self, sdc_file_path, module_name, output_directory, output_file
+    ):
         # A simplified OpenROAD script. This may need to be adapted for your specific PDK and design.
-        or_ref = os.path.join(self.ref_dir_path, 'ref.openroad.tcl')
-        or_gen = f'{output_directory}/{module_name}.openroad.tcl'
+        or_ref = os.path.join(self.ref_dir_path, "ref.openroad.tcl")
+        or_gen = f"{output_directory}/{module_name}.openroad.tcl"
 
-        with open(or_ref, 'r') as infile:
-            with open(or_gen, 'w') as outfile:
+        with open(or_ref, "r") as infile:
+            with open(or_gen, "w") as outfile:
                 text = infile.read()
-                text = text.replace("__UTIL_DIR__", os.path.join(self.script_root_dir, "scripts", "util"))
+                text = text.replace(
+                    "__UTIL_DIR__",
+                    os.path.join(self.script_root_dir, "scripts", "util"),
+                )
                 text = text.replace("__PDK_DIR__", os.path.abspath(self.pdk_path))
                 text = text.replace("__DESIGN_NAME__", module_name)
-                text = text.replace("__MODULE_NAME__", module_name) # Reverted to using module_name directly as we now extract it from the Verilog file
-                text = text.replace("__NETLIST__", os.path.abspath(f'{output_file}'))
+                text = text.replace(
+                    "__MODULE_NAME__", module_name
+                )  # Reverted to using module_name directly as we now extract it from the Verilog file
+                text = text.replace("__NETLIST__", os.path.abspath(f"{output_file}"))
                 text = text.replace("__SDC__", sdc_file_path)
                 text = text.replace("__UTILIZATION__", str(0.5))
                 outfile.write(text)
@@ -238,7 +313,7 @@ class SynthesisEvaluator:
         tns, wns, power, area = None, None, None, None
 
         try:
-            with open(report_path, 'r') as file:
+            with open(report_path, "r") as file:
                 for line in file:
                     parts = line.split()
                     if not parts:  # Skip empty lines
@@ -246,34 +321,41 @@ class SynthesisEvaluator:
 
                     try:
                         # Handle TNS and WNS
-                        if parts[0] == 'tns':
-                            tns = float(parts[2] if parts[1] == 'max' else parts[1])
-                        elif parts[0] == 'wns':
-                            wns = float(parts[2] if parts[1] == 'max' else parts[1])
+                        if parts[0] == "tns":
+                            tns = float(parts[2] if parts[1] == "max" else parts[1])
+                        elif parts[0] == "wns":
+                            wns = float(parts[2] if parts[1] == "max" else parts[1])
                         # Handle Power and Area
-                        elif line.startswith('Total'):
+                        elif line.startswith("Total"):
                             power = float(parts[4])
-                        elif line.startswith('Design area'):
+                        elif line.startswith("Design area"):
                             area = float(parts[2])
                     except (ValueError, IndexError):
                         # Safely ignore lines that don't parse correctly
                         continue
         except FileNotFoundError:
             print(f"Error: PPA report file not found at {report_path}")
-            return {"tns": None, "wns": None, "eff_clk_period": None, "power": None, "area": None, "report_path": None}
+            return {
+                "tns": None,
+                "wns": None,
+                "eff_clk_period": None,
+                "power": None,
+                "area": None,
+                "report_path": None,
+            }
 
         # Calculate effective clock period only if wns was found
         eff_clk_period = None
         if wns is not None:
-            if wns < 0.0: # Indicates that it is a sequential design
+            if wns < 0.0:  # Indicates that it is a sequential design
                 eff_clk_period = self.clk_period - wns
-            else: # Indicates that it is a combinational design
+            else:  # Indicates that it is a combinational design
                 eff_clk_period = 0.0
 
         ppa_path = report_path.replace(".rpt", ".ppa")
-        with open(ppa_path, 'w') as f:
-            f.write('tns,wns,eff_clk_period,power,area\n')
-            f.write(f'{tns},{wns},{eff_clk_period},{power},{area}')
+        with open(ppa_path, "w") as f:
+            f.write("tns,wns,eff_clk_period,power,area\n")
+            f.write(f"{tns},{wns},{eff_clk_period},{power},{area}")
 
         return {
             "tns": tns,
@@ -281,7 +363,7 @@ class SynthesisEvaluator:
             "eff_clk_period": eff_clk_period,
             "power": power,
             "area": area,
-            "report_path": ppa_path
+            "report_path": ppa_path,
         }
 
 
@@ -304,8 +386,15 @@ class VerilogEvaluator:
         # Base flags for iverilog compilation
         self.base_iverilog_flags = ["-Wall", "-Winfloop", "-Wno-timescale", "-g2012"]
 
-    def evaluate(self, generated_sv_file, test_sv_file, ref_sv_file,
-                 top_module_name="tb", output_directory=None, simulation_timeout_seconds=60):
+    def evaluate(
+        self,
+        generated_sv_file,
+        test_sv_file,
+        ref_sv_file,
+        top_module_name="tb",
+        output_directory=None,
+        simulation_timeout_seconds=60,
+    ):
         """
         Compiles and simulates the given Verilog files.
 
@@ -338,8 +427,12 @@ class VerilogEvaluator:
             dut_files = [generated_sv_file]
             output_basename = os.path.splitext(os.path.basename(generated_sv_file))[0]
             if not os.path.isfile(generated_sv_file):
-                return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                         comp_stderr=f"Generated Verilog file not found: {generated_sv_file}")
+                return self._format_result(
+                    "file_error",
+                    log_file_path=None,
+                    compiled_file_path=None,
+                    comp_stderr=f"Generated Verilog file not found: {generated_sv_file}",
+                )
             # Determine paths using the string
             if output_directory is None:
                 actual_output_dir = os.path.dirname(generated_sv_file)
@@ -352,11 +445,17 @@ class VerilogEvaluator:
             # The first file in the list is considered the generated Verilog file and used to determine the output basename
             main_dut_file = dut_files[0]
             # Check for duplicates within the list while ensuring the first file is always included first
-            dut_files = list(dict.fromkeys(dut_files))  # Removes duplicates while preserving order
+            dut_files = list(
+                dict.fromkeys(dut_files)
+            )  # Removes duplicates while preserving order
             for f in dut_files:
                 if not os.path.isfile(f):
-                    return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                             comp_stderr=f"Additional Verilog file not found: {f}")
+                    return self._format_result(
+                        "file_error",
+                        log_file_path=None,
+                        compiled_file_path=None,
+                        comp_stderr=f"Additional Verilog file not found: {f}",
+                    )
 
             # Determine paths using the FIRST element of the list
             if output_directory is None:
@@ -365,26 +464,37 @@ class VerilogEvaluator:
                 actual_output_dir = output_directory
             output_basename = os.path.splitext(os.path.basename(main_dut_file))[0]
         else:
-            return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                     comp_stderr="Invalid type for generated_sv_file. Expected str or list of str.")
+            return self._format_result(
+                "file_error",
+                log_file_path=None,
+                compiled_file_path=None,
+                comp_stderr="Invalid type for generated_sv_file. Expected str or list of str.",
+            )
 
         if not os.path.isfile(test_sv_file):
-            return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                     comp_stderr=f"Test Verilog file not found: {test_sv_file}")
+            return self._format_result(
+                "file_error",
+                log_file_path=None,
+                compiled_file_path=None,
+                comp_stderr=f"Test Verilog file not found: {test_sv_file}",
+            )
         # Check if the reference file is provided and exists
         if ref_sv_file is None:
             pass
         elif not os.path.isfile(ref_sv_file):
             # If ref_sv_file is not None, it should be a valid file path
             # If it is None, we skip this check
-            return self._format_result("file_error", log_file_path=None, compiled_file_path=None,
-                                     comp_stderr=f"Reference Verilog file not found: {ref_sv_file}")
-
-
-
+            return self._format_result(
+                "file_error",
+                log_file_path=None,
+                compiled_file_path=None,
+                comp_stderr=f"Reference Verilog file not found: {ref_sv_file}",
+            )
 
         os.makedirs(actual_output_dir, exist_ok=True)
-        compiled_vvp_file = os.path.join(actual_output_dir, output_basename + "_compiled.vvp")
+        compiled_vvp_file = os.path.join(
+            actual_output_dir, output_basename + "_compiled.vvp"
+        )
         log_file = os.path.join(actual_output_dir, output_basename + "_simulation.log")
 
         # Initialize result components
@@ -394,7 +504,7 @@ class VerilogEvaluator:
         # --- 2. Compile Verilog files ---
         compile_cmd_list = [self.iverilog_executable]
         compile_cmd_list.extend(self.base_iverilog_flags)
-        compile_cmd_list.extend(["-s", top_module_name]) # Specify top module
+        compile_cmd_list.extend(["-s", top_module_name])  # Specify top module
         compile_cmd_list.extend(["-o", compiled_vvp_file])
         compile_cmd_list.extend(dut_files)  # Add the generated Verilog file(s)
         # Add logic for testing for duplicate files, if the same file is given multiple times, it should be added only once
@@ -417,7 +527,7 @@ class VerilogEvaluator:
                     compile_cmd_list,
                     capture_output=True,
                     text=True,
-                    check=False # Do not raise exception on non-zero exit
+                    check=False,  # Do not raise exception on non-zero exit
                 )
                 comp_stdout = compile_process.stdout or ""
                 comp_stderr = compile_process.stderr or ""
@@ -430,8 +540,9 @@ class VerilogEvaluator:
 
                 if compile_process.returncode != 0:
                     print(f"ERROR: Compilation failed. See {log_file} for details.")
-                    return self._format_result("compilation_error", log_file, None,
-                                             comp_stdout, comp_stderr)
+                    return self._format_result(
+                        "compilation_error", log_file, None, comp_stdout, comp_stderr
+                    )
                 print(f"INFO: Compilation successful. Output: {compiled_vvp_file}")
 
             except FileNotFoundError:
@@ -439,24 +550,31 @@ class VerilogEvaluator:
                 error_msg = f"Icarus Verilog executable (iverilog) not found during compilation. Path: {self.iverilog_executable}"
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result("file_error", log_file, None, comp_stderr=error_msg)
+                return self._format_result(
+                    "file_error", log_file, None, comp_stderr=error_msg
+                )
             except Exception as e:
                 error_msg = f"An unexpected error occurred during compilation: {e}"
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result("compilation_error", log_file, None, comp_stderr=error_msg)
+                return self._format_result(
+                    "compilation_error", log_file, None, comp_stderr=error_msg
+                )
 
             lf.write("\n--- Simulation Phase ---\n")
             # --- 3. Simulate the compiled VVP file ---
             # The compiled .vvp file is typically made executable by iverilog using a shebang
             # pointing to the vvp runtime.
-            if os.name != 'nt': # On non-Windows systems, ensure it's executable
+            if os.name != "nt":  # On non-Windows systems, ensure it's executable
                 try:
-                    os.chmod(compiled_vvp_file, 0o755) # rwxr-xr-x
+                    os.chmod(compiled_vvp_file, 0o755)  # rwxr-xr-x
                 except OSError as e:
-                    print(f"WARNING: Could not set execute permission on {compiled_vvp_file}: {e}")
-                    lf.write(f"WARNING: Could not set execute permission on {compiled_vvp_file}: {e}\n")
-
+                    print(
+                        f"WARNING: Could not set execute permission on {compiled_vvp_file}: {e}"
+                    )
+                    lf.write(
+                        f"WARNING: Could not set execute permission on {compiled_vvp_file}: {e}\n"
+                    )
 
             # Execute using the vvp runtime directly
             run_cmd_list = [self.vvp_executable, compiled_vvp_file]
@@ -478,8 +596,8 @@ class VerilogEvaluator:
                     capture_output=True,
                     text=True,
                     timeout=simulation_timeout_seconds,
-                    check=False, # Do not raise exception on non-zero exit
-                    cwd=simulation_working_dir  # Set the working directory for the simulation
+                    check=False,  # Do not raise exception on non-zero exit
+                    cwd=simulation_working_dir,  # Set the working directory for the simulation
                 )
                 sim_stdout = run_process.stdout or ""
                 sim_stderr = run_process.stderr or ""
@@ -492,38 +610,82 @@ class VerilogEvaluator:
 
                 if run_process.returncode == 0:
                     print(f"INFO: Simulation successful. See {log_file} for details.")
-                    return self._format_result("success", log_file, compiled_vvp_file,
-                                             comp_stdout, comp_stderr, sim_stdout, sim_stderr)
+                    return self._format_result(
+                        "success",
+                        log_file,
+                        compiled_vvp_file,
+                        comp_stdout,
+                        comp_stderr,
+                        sim_stdout,
+                        sim_stderr,
+                    )
                 else:
                     # Non-zero return code could be due to $finish(X) with X!=0, or runtime errors.
-                    print(f"ERROR: Simulation finished with non-zero status ({run_process.returncode}). See {log_file} for details.")
-                    return self._format_result("simulation_error", log_file, compiled_vvp_file,
-                                             comp_stdout, comp_stderr, sim_stdout, sim_stderr)
+                    print(
+                        f"ERROR: Simulation finished with non-zero status ({run_process.returncode}). See {log_file} for details."
+                    )
+                    return self._format_result(
+                        "simulation_error",
+                        log_file,
+                        compiled_vvp_file,
+                        comp_stdout,
+                        comp_stderr,
+                        sim_stdout,
+                        sim_stderr,
+                    )
 
             except subprocess.TimeoutExpired:
-                timeout_msg = f"Simulation timed out after {simulation_timeout_seconds} seconds."
+                timeout_msg = (
+                    f"Simulation timed out after {simulation_timeout_seconds} seconds."
+                )
                 print(f"ERROR: {timeout_msg}")
                 lf.write(f"TIMEOUT ERROR: {timeout_msg}\n")
                 # Capture any partial output before timeout
                 # (Note: subprocess.run with timeout might not populate stdout/stderr for timed-out process easily)
-                return self._format_result("simulation_timeout", log_file, compiled_vvp_file,
-                                         comp_stdout, comp_stderr, sim_stderr=timeout_msg)
+                return self._format_result(
+                    "simulation_timeout",
+                    log_file,
+                    compiled_vvp_file,
+                    comp_stdout,
+                    comp_stderr,
+                    sim_stderr=timeout_msg,
+                )
             except FileNotFoundError:
                 # This case should ideally be caught by __init__, but as a safeguard:
                 error_msg = f"vvp executable not found during simulation. Path: {self.vvp_executable}"
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result("file_error", log_file, compiled_vvp_file,
-                                         comp_stdout, comp_stderr, sim_stderr=error_msg)
+                return self._format_result(
+                    "file_error",
+                    log_file,
+                    compiled_vvp_file,
+                    comp_stdout,
+                    comp_stderr,
+                    sim_stderr=error_msg,
+                )
             except Exception as e:
                 error_msg = f"An unexpected error occurred during simulation: {e}"
                 print(f"ERROR: {error_msg}")
                 lf.write(f"CRITICAL ERROR: {error_msg}\n")
-                return self._format_result("simulation_error", log_file, compiled_vvp_file,
-                                         comp_stdout, comp_stderr, sim_stderr=error_msg)
+                return self._format_result(
+                    "simulation_error",
+                    log_file,
+                    compiled_vvp_file,
+                    comp_stdout,
+                    comp_stderr,
+                    sim_stderr=error_msg,
+                )
 
-    def _format_result(self, status, log_file_path, compiled_file_path,
-                       comp_stdout="", comp_stderr="", sim_stdout="", sim_stderr=""):
+    def _format_result(
+        self,
+        status,
+        log_file_path,
+        compiled_file_path,
+        comp_stdout="",
+        comp_stderr="",
+        sim_stdout="",
+        sim_stderr="",
+    ):
         """Helper method to format the return dictionary."""
         return {
             "status": status,
@@ -532,5 +694,5 @@ class VerilogEvaluator:
             "compilation_stdout": comp_stdout,
             "compilation_stderr": comp_stderr,
             "simulation_stdout": sim_stdout,
-            "simulation_stderr": sim_stderr
+            "simulation_stderr": sim_stderr,
         }
