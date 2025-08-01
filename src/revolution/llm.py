@@ -1,41 +1,56 @@
-import os
-import re
-import random
 import asyncio
-from typing import Optional, Tuple, List, Dict, Any
+import random
+import re
+from collections.abc import Coroutine
+from typing import Any
 
 from openai import (
-    OpenAI,
-    AsyncOpenAI,
     APIConnectionError,
-    RateLimitError,
-    InternalServerError,
     APITimeoutError,
+    AsyncOpenAI,
     BadRequestError,
+    InternalServerError,
+    RateLimitError,
 )
 
 
 class LLMInterface:
+    """
+    Unified interface for calling an LLM backend (OpenAI, OpenRouter, DeepSeek, vLLM).
+
+    Manages API-key configuration, retry/backoff logic, and parsing of
+    “thought”/“code” blocks or structured feedback.
+    """
+
     def __init__(
         self,
-        api_key=None,
-        model_name="gpt-3.5-turbo",
-        api_backend="openai",
-        max_retries=10,
-        base_delay=2,
-    ):
+        api_key: str | None = None,
+        model_name: str = "gpt-3.5-turbo",
+        api_backend: str = "openai",
+        max_retries: int = 10,
+        base_delay: float = 2.0,
+    ) -> None:
+        """
+        :param api_key:      Your LLM API key (not required for 'vllm' backend).
+        :param model_name:   Model identifier to send in the request.
+        :param api_backend:  One of "openai", "openrouter", "deepseek", or "vllm".
+        :param max_retries:  Maximum number of retry attempts for transient errors.
+        :param base_delay:   Initial backoff delay in seconds (doubles each retry).
+        :raises ValueError:  If api_key is missing for non-vllm backends, or
+                             api_backend is unsupported.
+        """
         if not api_key and api_backend != "vllm":
             raise ValueError("API key is required for LLMInterface initialization.")
 
-        self.api_backend = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
-        self.model_name = model_name
-        self.max_retries = max_retries  # Maximum number of retries
-        self.base_delay = base_delay  # Base delay in seconds for backoff
+        self.api_backend: str = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
+        self.model_name: str = model_name
+        self.max_retries: int = max_retries  # Maximum number of retries
+        self.base_delay: float = base_delay  # Base delay in seconds for backoff
 
         # Configure arguments for the AsyncOpenAI client based on the backend
-        self.client_args = {
+        self.client_args: dict[str, Any] = {
             "api_key": api_key,
-            "timeout": 120,
+            "timeout": 120.0,  # Set a reasonable timeout for API calls
         }
 
         if api_backend == "openai":
@@ -55,21 +70,50 @@ class LLMInterface:
                 f"Unsupported API backend: '{api_backend}'. Choose from 'openai', 'openrouter', 'deepseek'."
             )
 
-        self.api_call_count = 0  # Initialize API call counter
-        self.lock = asyncio.Lock()  # Make counter thread-safe with async calls
+        self.api_call_count: int = 0  # Initialize API call counter
+        self.lock: asyncio.Lock = (
+            asyncio.Lock()
+        )  # Make counter thread-safe with async calls
 
     # Method for managing API call count in a thread-safe manner
-    async def _increment_call_count(self, n=1):
+    async def _increment_call_count(self, n: int = 1) -> None:
+        """
+        Thread-safe increment of the internal API call counter.
+
+        :param n: Number of calls to add (default: 1).
+        """
         async with self.lock:
             self.api_call_count += n
 
     # Synchronous method that will be called my main engine thread
-    def get_and_reset_api_calls(self):
-        count = self.api_call_count
-        self.api_call_count = 0  # Reset the counter after getting the value
-        return count
+    async def get_and_reset_api_calls(self) -> int:
+        """
+        Retrieve the accumulated API-call count since last reset, then zero it.
+        This operation is now async to be thread-safe.
 
-    def parse_thought_and_code(self, response_text):
+        :return: The count of API calls made.
+        """
+        async with self.lock:
+            count = self.api_call_count
+            self.api_call_count = 0  # Reset the counter after getting the value
+            return count
+
+    def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
+        """
+        Extract the “thought” and “code” blocks from a raw LLM completion.
+
+        Expects:
+            ```thought
+            ...
+            ```
+            ```code
+            ...
+            ```
+
+        :param response_text: Full text from the LLM.
+        :return: A (thought, code) tuple, each `None` if parsing failed.
+                 If either is missing, returns `(full_text_with_warnings, full_text_with_warnings)`.
+        """
         thought_match = re.search(
             r"```thought\s*\n(.*?)\n```", response_text, re.DOTALL
         )
@@ -104,8 +148,26 @@ class LLMInterface:
             return thought, code
 
     async def generate_response(
-        self, prompt, temperature=1.0, top_p=1.0, max_tokens=2048
-    ):
+        self,
+        prompt: str,
+        temperature: float = 1.0,
+        top_p: float = 0.95,
+        max_tokens: int = 2048,
+    ) -> tuple[str | None, str | None]:
+        """
+        Generate a single (thought, code) reply for a user prompt.
+
+        Handles API calls, retries on transient errors with exponential backoff,
+        and parsing of the response.
+
+        Retries on transient errors with exponential backoff + jitter.
+
+        :param prompt:       The user`s Verilog/design question.
+        :param temperature:  Sampling temperature.
+        :param top_p:        Nucleus sampling threshold.
+        :param max_tokens:   Maximum tokens to generate.
+        :return: A (thought, code) tuple, or (None, None) on failure.
+        """
         # print(f"\n--- LLM Request ---")
         # print(f"Prompt (first 200 chars):\n{prompt[:200]}...")
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
@@ -149,11 +211,20 @@ class LLMInterface:
                         max_tokens=max_tokens,
                         top_p=top_p,
                     )
-                    full_response_text = chat_completion.choices[
-                        0
-                    ].message.content.strip()
-                    thought, code = self.parse_thought_and_code(full_response_text)
-                    return thought, code
+
+                    content = chat_completion.choices[0].message.content
+
+                    # If the response content is valid, parse it and return.
+                    if content and content.strip():
+                        full_response_text = content.strip()
+                        thought, code = self.parse_thought_and_code(full_response_text)
+                        return thought, code
+
+                    # If content is None or empty, we'll treat it as a retriable issue.
+                    # The code will fall through to the retry logic below.
+                    print(
+                        f"Warning: Received empty response from API on attempt {attempt + 1}/{self.max_retries}."
+                    )
 
                 except (
                     APIConnectionError,
@@ -177,13 +248,31 @@ class LLMInterface:
                         f"An unexpected, non-retriable error occurred in generate_response: {e}"
                     )
                     return None, None
+        print("Failed to generate a response after multiple retries.")
+        return None, None
 
     # This new method uses the 'n' parameter for more efficient batching of identical prompts.
     async def generate_n_responses(
-        self, prompt, n, temperature=1.0, top_p=1.0, max_tokens=2048
-    ):
+        self,
+        prompt: str,
+        n: int,
+        temperature: float = 1.0,
+        top_p: float = 0.95,
+        max_tokens: int = 2048,
+    ) -> list[tuple[str | None, str | None]]:
         """
-        Generates 'n' different responses for a single prompt in a single API call.
+        Generates 'n' different responses for a single prompt.
+
+        Attempts to use the 'n' parameter for a single, efficient API call.
+        If the backend does not support 'n' > 1, it gracefully falls back
+        to making 'n' individual, concurrent requests.
+
+        :param prompt: The user's Verilog/design question.
+        :param n: The number of desired responses.
+        :param temperature: Sampling temperature.
+        :param top_p: Nucleus sampling threshold.
+        :param max_tokens: Maximum tokens to generate.
+        :return: A list of (thought, code) tuples.
         """
         print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
 
@@ -228,24 +317,19 @@ class LLMInterface:
                     num_responses_received = len(chat_completion.choices)
                     if num_responses_received < n:
                         print(
-                            f"Warning: API backend '{self.api_backend}' returned {num_responses_received} response(s) for a batch request of {n}."
+                            f"Warning: API returned {len(chat_completion.choices)}/{n} responses. Requesting remaining concurrently."
                         )
-                        print(
-                            "This indicates a lack of full support for the 'n' parameter."
-                        )
-
                         # Parse the responses that were successfully received.
-                        parsed_results = [
+                        parsed = [
                             self.parse_thought_and_code(c.message.content.strip())
                             for c in chat_completion.choices
+                            if c.message.content
                         ]
-
                         # Concurrently request the remaining responses.
-                        num_remaining = n - num_responses_received
+                        num_remaining = n - len(parsed)
                         print(
                             f"Falling back to {num_remaining} individual concurrent requests for the remainder."
                         )
-
                         tasks = [
                             self.generate_response(
                                 prompt, temperature, top_p, max_tokens
@@ -253,36 +337,18 @@ class LLMInterface:
                             for _ in range(num_remaining)
                         ]
                         remaining_results = await asyncio.gather(*tasks)
-
-                        # Combine the initial results with the fallback results.
-                        parsed_results.extend(remaining_results)
                         print(
                             f"--- Fallback with {num_remaining} individual requests completed ---"
                         )
-                        return parsed_results
+                        return parsed + remaining_results
                     # *** END: WORKAROUND ***
 
                     # Parse each of the 'n' choices in the response
-                    parsed_results = []
-                    for choice in chat_completion.choices:
-                        full_response_text = choice.message.content.strip()
-                        try:
-                            thought, code = self.parse_thought_and_code(
-                                full_response_text
-                            )
-                            parsed_results.append((thought, code))
-                        except ValueError as e:
-                            print(
-                                f"Warning: Failed to parse one of the initial responses: {e}"
-                            )
-                            # Debug
-                            # print(f"\nSystem prompt: \n{system_prompt_content}")
-                            # print(f"\nUser prompt: \n{prompt}")
-                            # print(f"\nFull response text: \n{full_response_text}...")  # Print the text for context
-                            parsed_results.append((None, None))  # Add a failure marker
-
-                    print("--- Single-Prompt Batch Response Received ---")
-                    return parsed_results
+                    return [
+                        self.parse_thought_and_code(c.message.content.strip())
+                        for c in chat_completion.choices
+                        if c.message.content
+                    ]
 
                 except BadRequestError as e:
                     # Found that DeepSeek API does not support 'n' > 1, so we need to handle this case.
@@ -342,27 +408,35 @@ class LLMInterface:
                         f"An unexpected, non-retriable error occurred in generate_n_responses: {e}"
                     )
                     return [(None, None)] * n
+        print("Failed to generate responses after multiple retries.")
+        return [(None, None)] * n  # Return failures if all retries fail
 
     async def generate_feedback(
         self,
-        problem_def,
-        verilog_code,
-        simulation_log,
-        temperature=1.0,
-        top_p=1.0,
-        max_tokens=2048,
-    ):
+        problem_def: str,
+        verilog_code: str,
+        simulation_log: str,
+        temperature: float = 1.0,
+        top_p: float = 0.95,
+        max_tokens: int = 2048,
+    ) -> dict[str, int | str | None]:
         """
-        Verilog 코드, 시뮬레이션 로그, 문제 정의를 LLM에 보내 코드의 오류를 분석하고 점수를 매기게 합니다.
-        점수, 채점 이유, 분석 내용이 포함된 딕셔너리를 반환합니다.
+        Analyzes Verilog code against a problem and simulation log to provide feedback.
+
+        :param problem_def: The high-level problem description.
+        :param verilog_code: The user's Verilog code submission.
+        :param simulation_log: The log output from simulating the code.
+        :param temperature: Sampling temperature for the feedback model.
+        :param top_p: Nucleus sampling threshold.
+        :param max_tokens: Maximum tokens for the feedback response.
+        :return: A dictionary containing 'score', 'justification', and 'analysis'.
         """
         # print(f"\n--- LLM Feedback Generation Request ---")
         # print(f"Verilog Code (first 200 chars):\n{verilog_code[:200]}...")
         # print(f"Simulation Log (first 500 chars):\n{simulation_log[:500]}...")
         # print(f"Model: {self.model_name}, Temperature: {temperature}, Max Tokens: {max_tokens}, Top P: {top_p}")
 
-        # --- 시스템 프롬프트 수정 ---
-        # 점수 채점 및 포맷팅 지침이 추가되었습니다.
+        # --- System prompt content for the LLM ---
         system_prompt_content = (
             # Role is expanded from a debugging expert to a broader Verilog expert.
             "You are a Verilog expert specializing in design, debugging, and optimization. You will be given a problem description, Verilog code, and a simulation log.\n\n"
@@ -431,9 +505,11 @@ class LLMInterface:
                         max_tokens=max_tokens,
                         top_p=top_p,
                     )
-                    feedback_text = chat_completion.choices[0].message.content.strip()
-                    # print("LLM Response Received. Parsing feedback...")
-                    return self._parse_feedback_response(feedback_text)
+                    if chat_completion.choices[0].message.content:
+                        return self._parse_feedback_response(
+                            chat_completion.choices[0].message.content.strip()
+                        )
+
                 except (
                     APIConnectionError,
                     RateLimitError,
@@ -470,7 +546,9 @@ class LLMInterface:
             "analysis": f"Could not generate feedback due to an API errors after {self.max_retries} attempts.",
         }
 
-    def _parse_feedback_response(self, feedback_text):
+    def _parse_feedback_response(
+        self, feedback_text: str
+    ) -> dict[str, int | str | None]:
         # Helper to parse the structured feedback response
         # This function extracts the score, justification, and analysis from the LLM response
         parsed_feedback = {
@@ -500,12 +578,24 @@ class LLMInterface:
         return parsed_feedback
 
     # Method for batching code generation requests
-    async def generate_batch_responses(self, prompts, temperature, top_p, max_tokens):
+    async def generate_batch_responses(
+        self,
+        prompts: list[str],
+        temperature: float = 1.0,
+        top_p: float = 0.95,
+        max_tokens: int = 2048,
+    ) -> list[tuple[str | None, str | None]]:
         """
-        Generates responses for a batch of prompts concurrently.
+        Generates responses for a batch of different prompts concurrently.
+
+        :param prompts: A list of prompt strings.
+        :param temperature: Sampling temperature.
+        :param top_p: Nucleus sampling threshold.
+        :param max_tokens: Maximum tokens to generate.
+        :return: A list of (thought, code) tuples corresponding to each prompt.
         """
         print(f"\n--- Sending Batch LLM Request for {len(prompts)} prompts ---")
-        tasks = [
+        tasks: list[Coroutine[Any, Any, tuple[str | None, str | None]]] = [
             self.generate_response(prompt, temperature, top_p, max_tokens)
             for prompt in prompts
         ]
@@ -519,12 +609,18 @@ class LLMInterface:
     ):
         """
         Generates feedback for a batch of candidates concurrently.
-        Each request is a dictionary with problem_def, verilog_code, and simulation_log.
+
+        :param feedback_requests: A list of dictionaries, each with 'problem_def',
+                                  'verilog_code', and 'simulation_log'.
+        :param temperature: Sampling temperature.
+        :param top_p: Nucleus sampling threshold.
+        :param max_tokens: Maximum tokens to generate.
+        :return: A list of feedback dictionaries.
         """
         print(
             f"\n--- Sending Batch LLM Feedback Request for {len(feedback_requests)} candidates ---"
         )
-        tasks = [
+        tasks: list[Coroutine[Any, Any, dict[str, int | str | None]]] = [
             self.generate_feedback(
                 req["problem_def"],
                 req["verilog_code"],
