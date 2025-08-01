@@ -1,71 +1,110 @@
-import os
-import json
 import datetime
+import json
+import os
 from collections import defaultdict
+from typing import Any
+
 import numpy as np
-from typing import List, Dict, Any, Optional
+
+# Import Heuristic class from local module
+from .algorithm import Heuristic
 
 
 class EoHLogger:
     """
     Handles logging for the evolutionary coding process.
-    Creates a detailed generation-by-generation log and a final summary for each problem.
+
+    Creates a detailed generation-by-generation log (JSON-lines) and a final summary
+    (JSON) for each problem, including PPA statistics, success rates, strategy usage,
+    and accumulated rewards.
     """
 
-    def __init__(self, problem_name, benchmark_name, model_name, save_path, ref_ppa):
-        self.problem_name = problem_name
-        self.benchmark_name = benchmark_name
-        self.model_name = model_name
-        self.ref_ppa_metrics = ref_ppa or {}
+    def __init__(
+        self,
+        problem_name: str,
+        benchmark_name: str,
+        model_name: str,
+        save_path: str,
+        ref_ppa: dict[str, Any] | None,
+    ):
+        """
+        Initialize logger directories, file paths, and counters.
+
+        :param problem_name:     Identifier for the current problem instance.
+        :param benchmark_name:   Name of the benchmark suite.
+        :param model_name:       Name of the LLM or method generating candidates.
+        :param save_path:        Root folder where logs and summaries will be written.
+        :param ref_ppa:          Reference PPA metrics to compare against (may be None).
+        """
+
+        self.problem_name: str = problem_name
+        self.benchmark_name: str = benchmark_name
+        self.model_name: str = model_name
+        self.ref_ppa_metrics: dict[str, Any] = ref_ppa or {}
 
         # Setup save paths
         model_name_cleaned = model_name.replace("/", "_")
-        self.log_dir = os.path.join(
+        self.log_dir: str = os.path.join(
             save_path, model_name_cleaned, benchmark_name, problem_name
         )
         os.makedirs(self.log_dir, exist_ok=True)
-        self.gen_log_path = os.path.join(self.log_dir, "generation_log.jsonl")
-        self.summary_path = os.path.join(self.log_dir, f"{problem_name}_summary.json")
+        self.gen_log_path: str = os.path.join(self.log_dir, "generation_log.jsonl")
+        self.summary_path: str = os.path.join(
+            self.log_dir, f"{problem_name}_summary.json"
+        )
 
         # Initialize generation log file delete if it exists
         if os.path.exists(self.gen_log_path):
             os.remove(self.gen_log_path)
 
         # Data for final summary
-        self.generation_stats_summary = []
-        self.all_candidates_generated = set()
-        self.all_syntax_passed = set()
-        self.all_func_passed = set()
-        self.all_synth_passed = set()
-        self.total_llm_api_calls = 0
-        self.strategy_counter = defaultdict(
+        self.generation_stats_summary: list[dict[str, Any]] = []
+        self.all_candidates_generated: set[str] = set()
+        self.all_syntax_passed: set[str] = set()
+        self.all_func_passed: set[str] = set()
+        self.all_synth_passed: set[str] = set()
+        self.total_llm_api_calls: int = 0
+        self.strategy_counter: defaultdict[str, int] = defaultdict(
             int
         )  # Accumulated across generations, count of how many times each strategy was used
-        self.strategy_counter_fail = defaultdict(
+        self.strategy_counter_fail: defaultdict[str, int] = defaultdict(
             int
         )  # Count of how many times each strategy resulted in a failure (syntax, functionality, or synthesis)
-        self.strategy_counter_success = defaultdict(
+        self.strategy_counter_success: defaultdict[str, int] = defaultdict(
             int
         )  # Count of how many times each strategy resulted in a success (syntax, functionality, and synthesis)
-        self.strategy_counter_origin_pool_fail = defaultdict(
+        self.strategy_counter_origin_pool_fail: defaultdict[str, int] = defaultdict(
             int
         )  # Count of how many times each strategy was used in the fail pool
-        self.strategy_counter_origin_pool_success = defaultdict(
+        self.strategy_counter_origin_pool_success: defaultdict[str, int] = defaultdict(
             int
         )  # Count of how many times each strategy was used in the success pool
-        self.strategy_counter_origin_pool_initial = defaultdict(
+        self.strategy_counter_origin_pool_initial: defaultdict[str, int] = defaultdict(
             int
         )  # Count of how many times each strategy was used in the initial pool
         # Add attributes for tracking rewards and meta-strategies
         # Initialize rewards for fail and success pools as dictionaries with default float values(0.0)
-        self.fail_pool_strategy_rewards = defaultdict(float)
-        self.success_pool_strategy_rewards = defaultdict(float)
-        self.meta_strategy_name = (
+        self.fail_pool_strategy_rewards: defaultdict[str, float] = defaultdict(float)
+        self.success_pool_strategy_rewards: defaultdict[str, float] = defaultdict(float)
+        self.meta_strategy_name: str = (
             "random"  # Default meta-strategy name to be updated by engine
         )
 
-    def _calculate_ppa_stats(self, ppa_candidates):
-        """Helper to calculate best/avg PPA metrics and scores for a list of candidates."""
+    def _calculate_ppa_stats(
+        self, ppa_candidates: list[Heuristic] | None
+    ) -> dict[str, float | dict[str, float] | None]:
+        """
+        Compute best and average PPA scores and metrics over a list of candidates.
+
+        :param ppa_candidates:  List of Heuristic instances whose `.score` and
+                                `.ppa_metrics` fields will be aggregated.
+        :return: A dict with keys
+                 - best_score:       Maximum of all candidate scores, or None if empty.
+                 - average_score:    Mean of all scores, or None if empty.
+                 - best_metrics:     ppa_metrics dict from the top-scoring candidate.
+                 - average_metrics:  Dict mapping each metric name to its average
+                                     across candidates.
+        """
         if not ppa_candidates:
             return {
                 "best_score": None,
@@ -99,25 +138,45 @@ class EoHLogger:
                     avg_metrics[key] = np.mean(values)
 
         return {
-            "best_score": max(scores) if scores else None,
-            "average_score": np.mean(scores) if scores else None,
+            "best_score": float(max(scores)) if scores else None,
+            "average_score": float(np.mean(scores)) if scores else None,
             "best_metrics": best_cand.ppa_metrics if best_cand else {},
             "average_metrics": avg_metrics,
         }
 
     def log_generation(
         self,
-        generation_num,
-        candidates_this_gen,
-        runtime_sec,
-        llm_calls_this_gen,
-        fail_rewards_this_gen,
-        success_rewards_this_gen,
-        fail_strategy_stats,
-        success_strategy_stats,
-        strategy_avg_selection_probabilities,
-    ):
-        """Logs the statistics for a single generation."""
+        generation_num: int,
+        candidates_this_gen: list[Heuristic],
+        runtime_sec: float,
+        llm_calls_this_gen: int,
+        fail_rewards_this_gen: defaultdict[str, float],
+        success_rewards_this_gen: defaultdict[str, float],
+        fail_strategy_stats: dict[str, dict[str, int | float]],
+        success_strategy_stats: dict[str, dict[str, int | float]],
+        strategy_avg_selection_probabilities: dict[str, dict[str, float]],
+    ) -> None:
+        """
+        Record all per-generation statistics to the JSONL log file.
+
+        :param generation_num:                     Zero-based index of this generation.
+        :param candidates_this_gen:                All Heuristic objects produced.
+        :param runtime_sec:                        Wall-clock time in seconds for this generation.
+        :param llm_calls_this_gen:                 Number of LLM API calls made.
+        :param fail_rewards_this_gen:              Mapping from strategy name to
+                                                   the reward obtained for fail-pool Q.
+        :param success_rewards_this_gen:           Mapping from strategy name to
+                                                   the reward obtained for success-pool Q.
+        :param fail_strategy_stats:                Q-value dicts for each strategy in the
+                                                   fail pool (contains “count” and “value”).
+        :param success_strategy_stats:             Q-value dicts for each strategy in the
+                                                   success pool (contains “count” and “value”).
+        :param strategy_avg_selection_probabilities:
+                                                   Mapping from strategy name to its
+                                                   selection probabilities (next generation).
+        :return: None (appends one JSON line to `generation_log.jsonl`).
+        """
+
         total_generated = len(candidates_this_gen)
         if total_generated == 0:
             print("Logger: No new candidates to log for this generation.")
@@ -302,9 +361,25 @@ class EoHLogger:
                 self.all_synth_passed.add(c.id)
 
     def finalize_summary(
-        self, start_utc, end_utc, total_runtime_sec, total_generations, final_ppa_pool
-    ):
-        """Calculates and writes the final problem summary."""
+        self,
+        start_utc: datetime.datetime,
+        end_utc: datetime.datetime,
+        total_runtime_sec: float,
+        total_generations: int,
+        final_ppa_pool: list[Heuristic],
+    ) -> None:
+        """
+        Compute overall statistics across all generations and write the final summary file.
+
+        :param start_utc:             UTC timestamp when evolution began.
+        :param end_utc:               UTC timestamp when evolution ended.
+        :param total_runtime_sec:     Total elapsed time (sum of all generation runtimes).
+        :param total_generations:     Count of generations executed.
+        :param final_ppa_pool:        List of Heuristic objects from the last generation
+                                      (used to compute final PPA stats).
+        :return: None (writes a JSON summary to `<problem>_summary.json`).
+        """
+
         # 1. Final PPA stats from the last generation's ppa_pool
         final_ppa_stats = self._calculate_ppa_stats(final_ppa_pool)
         # Collect detailed PPA metrics for all successful individuals in the final population pool
@@ -333,7 +408,7 @@ class EoHLogger:
 
         # 3. Accumulated success rates across all generations
         total_unique_generated = len(self.all_candidates_generated)
-        acc_rates = {"syntax": 0, "functionality": 0, "synthesis_ppa": 0}
+        acc_rates = {"syntax": 0.0, "functionality": 0.0, "synthesis_ppa": 0.0}
         if total_unique_generated > 0:
             acc_rates["syntax"] = len(self.all_syntax_passed) / total_unique_generated
             acc_rates["functionality"] = (
