@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 import datetime
 import json
 import os
 from collections import defaultdict
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-# Import Heuristic class from local module
-from .algorithm import EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
+# Import Heuristic class from local module for type checking
+if TYPE_CHECKING:
+    from .algorithm import EvolStrategyMethodFail, EvolStrategyMethodSuccess, Heuristic
 
 
 class EoHLogger:
@@ -91,7 +94,7 @@ class EoHLogger:
         )
 
     def _calculate_ppa_stats(
-        self, ppa_candidates: list[Heuristic] | None
+        self, ppa_candidates: list["Heuristic"] | None
     ) -> dict[str, float | dict[str, float] | None]:
         """
         Compute best and average PPA scores and metrics over a list of candidates.
@@ -147,13 +150,15 @@ class EoHLogger:
     def log_generation(
         self,
         generation_num: int,
-        candidates_this_gen: list[Heuristic],
+        candidates_this_gen: list["Heuristic"],
         runtime_sec: float,
         llm_calls_this_gen: int,
         fail_rewards_this_gen: defaultdict[str, float],
         success_rewards_this_gen: defaultdict[str, float],
-        fail_strategy_stats: dict[EvolStrategyMethodFail, dict[str, int | float]],
-        success_strategy_stats: dict[EvolStrategyMethodSuccess, dict[str, int | float]],
+        fail_strategy_stats: dict["EvolStrategyMethodFail", dict[str, int | float]],
+        success_strategy_stats: dict[
+            "EvolStrategyMethodSuccess", dict[str, int | float]
+        ],
         strategy_avg_selection_probabilities: dict[str, float]
         | dict[str, dict[str, float]],
     ) -> None:
@@ -379,7 +384,7 @@ class EoHLogger:
         end_utc: datetime.datetime,
         total_runtime_sec: float,
         total_generations: int,
-        final_ppa_pool: list[Heuristic],
+        final_ppa_pool: list["Heuristic"],
     ) -> None:
         """
         Compute overall statistics across all generations and write the final summary file.
