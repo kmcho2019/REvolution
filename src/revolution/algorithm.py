@@ -1596,3 +1596,140 @@ class EoHEngine:
         else:
             print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
+
+
+class SingleShotEngine(EoHEngine):
+    """
+    A simplified engine for performing n-shot evaluation without evolution.
+
+    This class generates an initial population of a specified size (`num_samples`),
+    evaluates all candidates through the full syntax, functionality, and PPA
+    pipeline, and then reports the results. It is functionally equivalent to
+    running the `EoHEngine` for zero generations (i.e., only the initialization step).
+
+    This is useful for establishing baseline performance for a given LLM on a
+    problem set without the influence of evolutionary feedback.
+
+    :param benchmark_name: Name of the benchmark being solved.
+    :type benchmark_name: str
+    :param problem_name: Name of the specific problem being solved.
+    :type problem_name: str
+    :param llm_interface: The interface for communicating with LLMs.
+    :type llm_interface: LLMInterface
+    :param verilog_evaluator: The tool for Verilog simulation.
+    :type verilog_evaluator: VerilogEvaluator
+    :param synthesis_evaluator: The tool for synthesis and PPA evaluation.
+    :type synthesis_evaluator: SynthesisEvaluator
+    :param num_samples: The number of initial candidates to generate and evaluate (n-shot) (Default: 20).
+    :type num_samples: int
+    :param default_llm_temp: Default temperature for LLM sampling.
+    :type default_llm_temp: float
+    :param default_llm_top_p: Default top-p sampling parameter for LLM.
+    :type default_llm_top_p: float
+    :param default_llm_max_tokens: Default maximum tokens for LLM responses.
+    :type default_llm_max_tokens: int
+    :param base_save_path: Base directory for saving results.
+    :type base_save_path: str
+    """
+
+    def __init__(
+        self,
+        benchmark_name: str,
+        problem_name: str,
+        llm_interface: LLMInterface,
+        verilog_evaluator: VerilogEvaluator,
+        synthesis_evaluator: SynthesisEvaluator,
+        num_samples: int = 20,
+        default_llm_temp: float = 1.0,
+        default_llm_top_p: float = 0.95,
+        default_llm_max_tokens: int = 2048,
+        base_save_path: str | None = None,
+    ):
+        # Initialize the parent EoHEngine with num_generations=0.
+        # This makes the single-shot engine a special case of the evolutionary engine.
+        super().__init__(
+            benchmark_name=benchmark_name,
+            problem_name=problem_name,
+            llm_interface=llm_interface,
+            verilog_evaluator=verilog_evaluator,
+            synthesis_evaluator=synthesis_evaluator,
+            population_size=num_samples,  # Use num_samples as the population size
+            num_generations=0,  # Key difference: no evolution
+            default_llm_temp=default_llm_temp,
+            default_llm_top_p=default_llm_top_p,
+            default_llm_max_tokens=default_llm_max_tokens,
+            base_save_path=base_save_path,
+            # Evolutionary parameters are not used but required by parent __init__
+            strategy_selection_method="random",
+            epsilon=0.1,
+            ucb_c=2.0,
+        )
+
+    def run(self) -> str:
+        """
+        Main entry point to run the single-shot evaluation.
+
+        This method orchestrates the process:
+        1. Sets up the run environment and logger.
+        2. Calculates reference PPA metrics.
+        3. Initializes the population by generating `num_samples` candidates.
+        4. Evaluates all candidates.
+        5. Finalizes logging and reports the best-performing candidate.
+
+        :return: A string summarizing the outcome of the run.
+        :rtype: str
+        """
+        print(
+            f"--- Starting Single-Shot Run (n={self.population_size}): Problem '{self.benchmark_name}/{self.problem_name}' ---"
+        )
+        self.run_start_time = time.time()
+        self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
+
+        try:
+            self._calculate_reference_ppa()
+            self.logger = EoHLogger(
+                self.problem_name,
+                self.benchmark_name,
+                self.llm.model_name,
+                self.base_save_path,
+                self.ref_ppa_metrics,
+            )
+            self.logger.meta_strategy_name = (
+                "n-shot"  # Indicate this is not an evolutionary run
+            )
+            self.initialize_population()  # This generates, evaluates, and logs Gen 0
+        except Exception as e:
+            print(f"Critical error during single-shot run: {e}")
+            import traceback
+
+            traceback.print_exc()
+            return f"{self.problem_name},single_shot_failed"
+
+        # The evolutionary loop from EoHEngine.run() is intentionally omitted.
+
+        print("\n--- Single-Shot Run Finished ---")
+        total_runtime = time.time() - self.run_start_time
+        end_utc = datetime.datetime.now(datetime.timezone.utc)
+
+        if self.logger:
+            # Finalize the summary after the single generation (Gen 0)
+            self.logger.finalize_summary(
+                self.run_start_utc,
+                end_utc,
+                total_runtime,
+                self.current_generation,  # Will be 0
+                self.success_pool,
+            )
+
+        if self.success_pool:
+            # The success_pool is sorted by score within initialize_population.
+            best_solution = self.success_pool[0]
+            print(f"Final Best Solution Found:\n{best_solution}")
+            final_report = best_solution.ppa_metrics.get("report_path", "N/A")
+            final_score = (
+                best_solution.score if best_solution.score is not None else "N/A"
+            )
+            return f"{self.problem_name},success,{best_solution.code_file_path},{final_report},{final_score}"
+        else:
+            print("No functionally correct and synthesizable solution found.")
+            return f"{self.problem_name},failed"
