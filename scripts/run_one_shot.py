@@ -5,6 +5,8 @@ import os
 import sys
 import time
 
+from tqdm import tqdm
+
 # Ensure the src directory is in the Python path for imports
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -82,6 +84,85 @@ def run_problem_worker(args_tuple):
         # Return the result string and the path to the individual log file created for this problem
         print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
     return result_str, individual_log_path
+
+
+# Wrapper function for multiprocessing
+def run_indexed_problem_worker(indexed_task):
+    """
+    Wrapper function to run a single problem instance.
+    This function will be executed by each worker process.
+    All stdout/stderr from this process is redirected to a problem-specific log file.
+
+    This version includes the index of the task for better tracking.
+    To support parallel processing with imap_unordered, while preserving the order of tasks,
+    we need to index the tasks before passing them to the pool.
+
+    :param indexed_task: A tuple containing the index and a tuple of (benchmark, problem, args).
+    :type indexed_task: tuple
+    :return: A tuple containing the index and the result tuple(result_str, individual_log_path) from the EoHEngine run.
+    :rtype: tuple
+
+    """
+    # Unpack arguments
+    index, args_tuple = indexed_task
+    benchmark, problem, args = args_tuple
+
+    # Individual Log Setup
+    model_name_cleaned = args.model_name.replace("/", "_")
+    problem_log_dir = os.path.join(
+        args.save_path, model_name_cleaned, benchmark, problem
+    )
+    # The EoHEngine will create this directory, but we ensure it exists early.
+    os.makedirs(problem_log_dir, exist_ok=True)
+    individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
+
+    # Redirect all output from this worker to the individual log file
+    with StreamRedirector(filepath=individual_log_path):
+        print(
+            f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n"
+        )
+
+        # Initialize objects within the worker process to avoid pickling issues
+        # Determine the API key based on the selected backend
+        api_key = None
+        if args.api_backend == "openai":
+            api_key = os.getenv("OPENAI_API_KEY")
+        elif args.api_backend == "openrouter":
+            api_key = os.getenv("OPENROUTER_API_KEY")
+        elif args.api_backend == "deepseek":
+            api_key = os.getenv("DEEPSEEK_API_KEY")
+
+        if args.api_backend != "vllm":  # vllm does not require an API key
+            if not api_key:
+                raise ValueError(
+                    f"API key for backend '{args.api_backend}' not found. "
+                    f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
+                )
+        llm_interface = LLMInterface(
+            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend
+        )
+        verilog_evaluator = VerilogEvaluator(
+            iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+        )
+        synthesis_evaluator = SynthesisEvaluator()
+
+        eoh_engine = SingleShotEngine(
+            problem_name=problem,
+            benchmark_name=benchmark,
+            llm_interface=llm_interface,
+            verilog_evaluator=verilog_evaluator,
+            synthesis_evaluator=synthesis_evaluator,
+            num_samples=args.num_samples,
+            base_save_path=args.save_path,
+            default_llm_temp=args.temperature,
+            default_llm_top_p=args.top_p,
+            default_llm_max_tokens=args.max_tokens,
+        )
+        result_str = eoh_engine.run()
+        # Return the result string and the path to the individual log file created for this problem
+        print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
+    result = (result_str, individual_log_path)
+    return index, result
 
 
 def main():
@@ -191,6 +272,11 @@ def main():
     results_data = []
     tasks_to_run = []  # Define this before the try block
 
+    # Save a reference to the real stdout before it gets redirected
+    # This allows us to print to the console even when redirecting output
+    # This is to allow the progress bar to print to the console
+    original_stdout = sys.stdout
+
     # The `finally` block will handle aggregation.
     try:
         # Redirect all output from this main script to the comprehensive log file
@@ -224,9 +310,25 @@ def main():
                     f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems."
                 )
 
+                # Index the tasks before running, as imap_unordered does not preserve order
+                indexed_tasks = list(enumerate(tasks_to_run))
+
                 with multiprocessing.Pool(processes=args.num_workers) as pool:
-                    # This is the line that might fail
-                    results_data = pool.map(run_problem_worker, tasks_to_run)
+                    results_iterator = pool.imap_unordered(
+                        run_indexed_problem_worker, indexed_tasks
+                    )
+                    unordered_results = list(
+                        tqdm(
+                            results_iterator,
+                            total=len(indexed_tasks),
+                            desc="Running problems",
+                            file=original_stdout,  # Use the original stdout for progress bar
+                        )
+                    )
+                # Sort the results by the original index to maintain order
+                unordered_results.sort(key=lambda x: x[0])
+                # Strip the index from the results
+                results_data = [result[1] for result in unordered_results]
 
                 print("\n--- All parallel tasks completed successfully.---")
 
