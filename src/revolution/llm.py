@@ -2,7 +2,7 @@ import asyncio
 import random
 import re
 from collections.abc import Coroutine
-from typing import Any
+from typing import Any, Literal
 
 from openai import (
     APIConnectionError,
@@ -12,6 +12,7 @@ from openai import (
     InternalServerError,
     RateLimitError,
 )
+from openai.types.chat import ChatCompletion
 
 
 class LLMInterface:
@@ -71,32 +72,76 @@ class LLMInterface:
             )
 
         self.api_call_count: int = 0  # Initialize API call counter
+        self.prompt_tokens_count = 0  # Initialize prompt tokens counter
+        self.completion_tokens_count = 0  # Initialize completion tokens counter
+        self.code_prompt_tokens_count = 0  # Initialize code prompt tokens counter
+        self.code_completion_tokens_count = (
+            0  # Initialize code completion tokens counter
+        )
+        self.feedback_prompt_tokens_count = (
+            0  # Initialize feedback prompt tokens counter
+        )
+        self.feedback_completion_tokens_count = (
+            0  # Initialize feedback completion tokens counter
+        )
         self.lock: asyncio.Lock = (
             asyncio.Lock()
         )  # Make counter thread-safe with async calls
 
     # Method for managing API call count in a thread-safe manner
-    async def _increment_call_count(self, n: int = 1) -> None:
+    async def _update_stats(
+        self,
+        completion: ChatCompletion,
+        n_calls: int = 1,
+        completion_type: Literal["code", "feedback"] = "code",
+    ) -> None:
         """
-        Thread-safe increment of the internal API call counter.
+        Thread-safe update of the internal counters for API calls and token usage.
+        Dependeing on the completion type, it updates the respective token counters.
 
-        :param n: Number of calls to add (default: 1).
+        :param completion: The ChatCompletion object from the API call.
+        :param n_calls:    Number of calls to add (default: 1).
+        :param completion_type: Type of completion ("code" or "feedback").
         """
         async with self.lock:
-            self.api_call_count += n
+            self.api_call_count += n_calls
+            if completion and completion.usage:
+                self.prompt_tokens_count += completion.usage.prompt_tokens
+                self.completion_tokens_count += completion.usage.completion_tokens
+                if completion_type == "code":
+                    self.code_prompt_tokens_count += completion.usage.prompt_tokens
+                    self.code_completion_tokens_count += (
+                        completion.usage.completion_tokens
+                    )
+                elif completion_type == "feedback":
+                    self.feedback_prompt_tokens_count += completion.usage.prompt_tokens
+                    self.feedback_completion_tokens_count += (
+                        completion.usage.completion_tokens
+                    )
 
     # Synchronous method that will be called my main engine thread
-    async def get_and_reset_api_calls(self) -> int:
+    async def get_and_reset_usage_stats(self) -> dict[str, int]:
         """
-        Retrieve the accumulated API-call count since last reset, then zero it.
-        This operation is now async to be thread-safe.
+        Retrieve accumulated stats since the last reset, then zero them out.
+        This operation is async to be thread-safe.
 
-        :return: The count of API calls made.
+        :return: A dictionary with counts for API calls, prompt tokens, and completion tokens.
         """
         async with self.lock:
-            count = self.api_call_count
-            self.api_call_count = 0  # Reset the counter after getting the value
-            return count
+            stats = {
+                "api_calls": self.api_call_count,
+                "prompt_tokens": self.prompt_tokens_count,
+                "completion_tokens": self.completion_tokens_count,
+                "code_prompt_tokens": self.code_prompt_tokens_count,
+                "code_completion_tokens": self.code_completion_tokens_count,
+                "feedback_prompt_tokens": self.feedback_prompt_tokens_count,
+                "feedback_completion_tokens": self.feedback_completion_tokens_count,
+            }
+            # Reset counters
+            self.api_call_count = 0
+            self.prompt_tokens_count = 0
+            self.completion_tokens_count = 0
+            return stats
 
     def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
         """
@@ -193,8 +238,6 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    # Increment the API call count
-                    await self._increment_call_count()
                     chat_completion = await client.chat.completions.create(
                         messages=[
                             {
@@ -210,6 +253,10 @@ class LLMInterface:
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
+                    )
+                    # Increment the API call count and token usage
+                    await self._update_stats(
+                        chat_completion, n_calls=1, completion_type="code"
                     )
 
                     content = chat_completion.choices[0].message.content
@@ -294,10 +341,6 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    # Increment the API call count
-                    await self._increment_call_count(
-                        n
-                    )  # Increment by 'n' since we're requesting n completions
                     chat_completion = await client.chat.completions.create(
                         messages=[
                             {"role": "system", "content": system_prompt_content},
@@ -308,6 +351,10 @@ class LLMInterface:
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
+                    )
+                    # Increment the API call count and token usage
+                    await self._update_stats(
+                        chat_completion, n_calls=n, completion_type="code"
                     )
 
                     # *** START: WORKAROUND FOR OPENROUTER AND SIMILAR APIS ***
@@ -493,8 +540,6 @@ class LLMInterface:
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
-                    # Increment the API call count
-                    await self._increment_call_count()
                     chat_completion = await client.chat.completions.create(
                         messages=[
                             {"role": "system", "content": system_prompt_content},
@@ -504,6 +549,10 @@ class LLMInterface:
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
+                    )
+                    # Increment the API call count and token usage
+                    await self._update_stats(
+                        chat_completion, n_calls=1, completion_type="feedback"
                     )
                     if chat_completion.choices[0].message.content:
                         return self._parse_feedback_response(

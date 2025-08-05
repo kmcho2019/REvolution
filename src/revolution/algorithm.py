@@ -958,13 +958,29 @@ class EoHEngine:
                 self.fail_pool.append(cand)
 
         gen0_runtime = time.time() - self.gen_start_time
-        llm_calls = asyncio.run(self.llm.get_and_reset_api_calls())
+        llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
+        llm_calls = llm_stat_dict.get("api_calls", 0)
+        llm_prompt_tokens = llm_stat_dict.get("prompt_tokens", 0)
+        llm_completion_tokens = llm_stat_dict.get("completion_tokens", 0)
+        llm_code_prompt_tokens = llm_stat_dict.get("code_prompt_tokens", 0)
+        llm_code_completion_tokens = llm_stat_dict.get("code_completion_tokens", 0)
+        llm_feedback_prompt_tokens = llm_stat_dict.get("feedback_prompt_tokens", 0)
+        llm_feedback_completion_tokens = llm_stat_dict.get(
+            "feedback_completion_tokens", 0
+        )
         if self.logger:
             self.logger.log_generation(
                 0,
                 initial_candidates,
                 gen0_runtime,
                 llm_calls,
+                llm_prompt_tokens,
+                llm_completion_tokens,
+                llm_code_prompt_tokens,
+                llm_code_completion_tokens,
+                llm_feedback_prompt_tokens,
+                llm_feedback_completion_tokens,
+                llm_stat_dict,
                 defaultdict(float),
                 defaultdict(float),
                 self.fail_strategy_stats,
@@ -1516,9 +1532,18 @@ class EoHEngine:
                 self.fail_pool.append(cand)
 
         gen_runtime = time.time() - self.gen_start_time
-        # get_and_reset_api_calls is an async function, so we need to run it in the event loop
-        # This will reset the API call count for the next generation
-        llm_calls = asyncio.run(self.llm.get_and_reset_api_calls())
+        # get_and_reset_usage_stats is an async function, so we need to run it in the event loop
+        # This will reset the API call count and usage stats for the next generation
+        llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
+        llm_calls = llm_stat_dict.get("api_calls", 0)
+        llm_prompt_tokens = llm_stat_dict.get("prompt_tokens", 0)
+        llm_completion_tokens = llm_stat_dict.get("completion_tokens", 0)
+        llm_code_prompt_tokens = llm_stat_dict.get("code_prompt_tokens", 0)
+        llm_code_completion_tokens = llm_stat_dict.get("code_completion_tokens", 0)
+        llm_feedback_prompt_tokens = llm_stat_dict.get("feedback_prompt_tokens", 0)
+        llm_feedback_completion_tokens = llm_stat_dict.get(
+            "feedback_completion_tokens", 0
+        )
         # Check that self.logger is not None before logging should have been initialized during initialization
         if self.logger:
             self.logger.log_generation(
@@ -1526,6 +1551,13 @@ class EoHEngine:
                 new_offspring,
                 gen_runtime,
                 llm_calls,
+                llm_prompt_tokens,
+                llm_completion_tokens,
+                llm_code_prompt_tokens,
+                llm_code_completion_tokens,
+                llm_feedback_prompt_tokens,
+                llm_feedback_completion_tokens,
+                llm_stat_dict,
                 fail_rewards_this_gen,
                 success_rewards_this_gen,
                 self.fail_strategy_stats,
