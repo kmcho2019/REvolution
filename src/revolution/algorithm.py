@@ -1697,6 +1697,111 @@ class SingleShotEngine(EoHEngine):
             ucb_c=2.0,
         )
 
+    def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
+        """
+        Evaluates candidates for the single-shot run.
+
+        This overridden method performs syntax, functional, and synthesis
+        evaluations but **skips the expensive LLM feedback generation step**,
+        as it is not needed for baseline n-shot analysis.
+
+        :param candidates_to_evaluate: List of Heuristic candidates to evaluate.
+        :type candidates_to_evaluate: list[Heuristic]
+
+        :return: None
+        :rtype: None
+        """
+        if not candidates_to_evaluate:
+            return
+
+        print(
+            f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates (No Feedback) ---"
+        )
+        test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+
+        func_passed = []
+
+        # Stage 1: Functional Simulation
+        for cand in candidates_to_evaluate:
+            sim_results = self.evaluator.evaluate(
+                cand.code_file_path, test_sv_file, ref_sv_file
+            )
+
+            if sim_results["status"] == "compilation_error":
+                cand.status = "failed_syntax"
+            else:
+                is_success = False
+                if sim_results["status"] == "success":
+                    output = sim_results.get("simulation_stdout", "")
+                    m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+                    if (
+                        m_match and int(m_match.group(1)) == 0
+                    ) or "===========Your Design Passed===========" in output:
+                        is_success = True
+
+                if is_success:
+                    func_passed.append(cand)
+                    continue
+                else:
+                    cand.status = "failed_functionality"
+
+            # If we reach here, the candidate has failed. Set score and continue.
+            cand.score = -float("inf")
+
+        # Stage 2: Synthesis and PPA for functionally correct candidates
+        for cand in func_passed:
+            report_base_path = cand.code_file_path.rsplit(".", 1)[0]
+            output_dir = os.path.dirname(cand.code_file_path)
+
+            # Get top module name for synthesis
+            top_module_name_file = os.path.join(
+                self.benchmark_path, "synthesis_top_module_names.json"
+            )
+            if not os.path.exists(top_module_name_file):
+                top_module_name = "TopModule"
+            else:
+                with open(top_module_name_file, "r") as f:
+                    top_module_names = json.load(f)
+                top_module_name = top_module_names.get(self.problem_name, "TopModule")
+
+            synth_results = self.synthesis_evaluator.evaluate(
+                cand.code_file_path,
+                self.problem_name,
+                top_module_name,
+                output_dir,
+                report_base_path,
+                self.evaluator,
+                test_sv_file,
+                ref_sv_file,
+            )
+
+            if (
+                synth_results["synthesis_success"]
+                and synth_results["synthesis_functionality_success"]
+                and synth_results["ppa_success"]
+            ):
+                cand.status = "success"
+                cand.synthesis_success = True
+                cand.synthesis_functionality = True
+                cand.ppa_success = True
+                cand.ppa_metrics = synth_results["ppa_metrics"]
+                cand.score = self._calculate_fitness_score(cand)
+            else:
+                cand.score = -float("inf")
+                cand.synthesis_success = synth_results["synthesis_success"]
+                cand.synthesis_functionality = synth_results[
+                    "synthesis_functionality_success"
+                ]
+                if not synth_results["synthesis_success"]:
+                    cand.status = "failed_synthesis"
+                elif not synth_results["synthesis_functionality_success"]:
+                    cand.status = "failed_synthesis_functionality"
+                else:
+                    cand.status = "failed_synthesis"
+
+        # <<< Stage 3 (LLM Feedback Generation) is intentionally omitted. >>>
+
     def run(self) -> str:
         """
         Main entry point to run the single-shot evaluation.
