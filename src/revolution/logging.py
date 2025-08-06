@@ -4,7 +4,7 @@ import datetime
 import json
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 
@@ -29,6 +29,7 @@ class EoHLogger:
         model_name: str,
         save_path: str,
         ref_ppa: dict[str, Any] | None,
+        generation_mode: Literal["whole", "diff"] = "whole",
     ):
         """
         Initialize logger directories, file paths, and counters.
@@ -38,12 +39,14 @@ class EoHLogger:
         :param model_name:       Name of the LLM or method generating candidates.
         :param save_path:        Root folder where logs and summaries will be written.
         :param ref_ppa:          Reference PPA metrics to compare against (may be None).
+        :param generation_mode:  Mode of generation, either "whole" (full code) or "diff" (code diffs).
         """
 
         self.problem_name: str = problem_name
         self.benchmark_name: str = benchmark_name
         self.model_name: str = model_name
         self.ref_ppa_metrics: dict[str, Any] = ref_ppa or {}
+        self.generation_mode: Literal["whole", "diff"] = generation_mode
 
         # Setup save paths
         model_name_cleaned = model_name.replace("/", "_")
@@ -342,6 +345,7 @@ class EoHLogger:
             "llm_stat_dict": dict(
                 llm_stat_dict
             ),  # Convert to regular dict for JSON serialization
+            "generation_mode": self.generation_mode,
             "strategy_counts_this_generation": dict(strategy_count_this_gen),
             "strategy_counts_for_each_origin_pool": {
                 "fail_pool": strategy_count_for_fail_pool,
@@ -493,6 +497,7 @@ class EoHLogger:
             "benchmark_name": self.benchmark_name,
             "model_name": self.model_name,
             "strategy_selection_method": self.meta_strategy_name,
+            "generation_mode": self.generation_mode,
             "start_time": start_utc.isoformat(),
             "end_time": end_utc.isoformat(),
             "total_runtime_seconds": total_runtime_sec,

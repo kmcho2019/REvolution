@@ -157,6 +157,7 @@ def run_indexed_problem_worker(indexed_task):
             default_llm_temp=args.temperature,
             default_llm_top_p=args.top_p,
             default_llm_max_tokens=args.max_tokens,
+            generation_mode=args.generation_mode,  # Pass the generation mode
         )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
@@ -232,6 +233,16 @@ def main():
         type=int,
         default=20,
         help="The number of initial candidates to generate and evaluate (n-shot).",
+    )
+    # Whole or diff generation mode
+    parser.add_argument(
+        "--generation_mode",
+        type=str,
+        default="whole",
+        choices=["whole", "diff"],
+        help="Mode of generation, either 'whole' (full code) or 'diff' (code diffs). "
+        "In 'whole' mode, the entire code is generated. "
+        "In 'diff' mode, only the differences from the original code are generated.",
     )
 
     args = parser.parse_args()

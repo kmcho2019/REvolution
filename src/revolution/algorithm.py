@@ -9,11 +9,11 @@ import shutil
 import time
 import uuid
 from collections import defaultdict
-from typing import Any, Literal, TypeVar, cast, get_args, overload
+from typing import Any, Iterator, Literal, TypeVar, cast, get_args, overload
 
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
-from .llm import LLMInterface
+from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
@@ -259,6 +259,8 @@ class EoHEngine:
     :type run_start_utc: datetime.datetime
     :param gen_start_time: Start time of the current generation.
     :type gen_start_time: float
+    :param generation_mode: Mode for generation (whole or diff).
+    :type generation_mode: Literal["whole", "diff"]
     """
 
     def __init__(
@@ -278,7 +280,9 @@ class EoHEngine:
         strategy_selection_method: StrategySelectionMethod = "random",
         epsilon: float = 0.1,
         ucb_c: float = 2.0,
+        generation_mode: Literal["whole", "diff"] = "whole",
     ):
+        self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.base_save_path: str = (
             base_save_path
             if base_save_path
@@ -403,6 +407,7 @@ class EoHEngine:
         generation_num: int,
         sample_idx_in_generation: int,
         strategy: EvolStrategyMethod | None = None,
+        diff_content: str | None = None,
     ) -> tuple[str, str]:
         """
         Save the generated code and thought process to ``<save_path>/Gen<k>/``.
@@ -417,6 +422,8 @@ class EoHEngine:
         :type sample_idx_in_generation: int
         :param strategy: The evolutionary strategy used to generate this candidate.
         :type strategy: EvolStrategyMethod | None
+        :param diff_content: The diff content if applicable (for "diff" generation mode).
+        :type diff_content: str | None
 
         :return: Tuple containing the file paths of the saved code and thought files.
         :rtype: tuple[str, str]
@@ -434,11 +441,17 @@ class EoHEngine:
         base_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}"
         code_file_path = os.path.join(directory_path, f"{base_name}.sv")
         thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
+        diff_file_path = os.path.join(directory_path, f"{base_name}.diff")
 
         with open(code_file_path, "w") as f:
             f.write(str(code_content))
         with open(thought_file_path, "w") as f:
             f.write(str(thought_content))
+
+        # Also save the diff file if content is provided
+        if diff_content:
+            with open(diff_file_path, "w") as f:
+                f.write(str(diff_content))
 
         self._copy_misc_files(directory_path)
         return code_file_path, thought_file_path
@@ -815,11 +828,40 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent_info = self._format_parent_for_prompt(parents[0])
-        return (
-            f"{self.problem_description}\n\nThe following attempt failed. Use the feedback to fix it.\n\n"
-            f"{parent_info}\nYour task is to fix the code based on the feedback. Provide a new thought process explaining the fix and the corrected code."
-        )
+        parent = parents[0]
+        if self.generation_mode == "whole":
+            parent_info = self._format_parent_for_prompt(parent)
+            return (
+                f"{self.problem_description}\n\nThe following attempt failed. Use the feedback to fix it.\n\n"
+                f"{parent_info}\nYour task is to fix the code based on the feedback. Provide a new thought process explaining the fix and the corrected code."
+            )
+        else:  # diff mode
+            # Read the parent code from the file
+            with open(parent.code_file_path, "r") as f:
+                parent_code = f.read()
+            ppa_info_prompt = ""
+            if parent.ppa_success:
+                ppa_info_prompt += (
+                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+                )
+            # Use the parent code to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"The following attempt failed. Use the feedback to fix it.\n\n"
+                f"Thought process:\n```thought\n{parent.thought}\n```\n"
+                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
+                "This is the original content of the file:\n"
+                "---BEGIN-FILE---\n"
+                f"{parent_code}\n"
+                "---END-FILE---\n\n"
+                f"The previous attempt produced this feedback:\n"
+                f"```feedback\n{parent.feedback}\n```\n\n"
+                f"{ppa_info_prompt}"
+                "Your task is to modify the file to fix the issues described in the feedback. "
+                "You must respond with a `thought` block explaining your changes, followed by a `code` block. "
+                "The `code` block must contain *only* the edits in the specified diff format, starting with the file path."
+            )
 
     def _create_prompt_M_S(self, parents: list[Heuristic]) -> str:  # Simplify
         """
@@ -830,11 +872,39 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent_info = self._format_parent_for_prompt(parents[0])
-        return (
-            f"{self.problem_description}\n\nHere is a previous solution.\n\n{parent_info}\n"
-            f"Your task is to simplify this solution. Reduce complexity while maintaining functionality. Provide your simplified thought and code."
-        )
+        parent = parents[0]
+        if self.generation_mode == "whole":
+            parent_info = self._format_parent_for_prompt(parent)
+            return (
+                f"{self.problem_description}\n\nHere is a previous solution.\n\n{parent_info}\n"
+                f"Your task is to simplify this solution. Reduce complexity while maintaining functionality. Provide your simplified thought and code."
+            )
+        else:  # diff mode
+            # Read the parent code from the file
+            with open(parent.code_file_path, "r") as f:
+                parent_code = f.read()
+            ppa_info_prompt = ""
+            if parent.ppa_success:
+                ppa_info_prompt += (
+                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+                )
+            # Use the parent code to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"Here is the previous solution.\n\n"
+                f"Thought process:\n```thought\n{parent.thought}\n```\n"
+                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
+                "This is the original content of the file:\n"
+                "---BEGIN-FILE---\n"
+                f"{parent_code}\n"
+                "---END-FILE---\n\n"
+                f"The previous attempt produced this feedback:\n"
+                f"```feedback\n{parent.feedback}\n```\n\n"
+                f"{ppa_info_prompt}"
+                "Your task is to simplify this solution by editing the file. Reduce complexity while maintaining functionality. "
+                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+            )
 
     def _create_prompt_M_E(self, parents: list[Heuristic]) -> str:  # Explore
         """
@@ -845,11 +915,39 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent_info = self._format_parent_for_prompt(parents[0])
-        return (
-            f"{self.problem_description}\n\nHere is one approach.\n\n{parent_info}\n"
-            f"Your task is to generate a completely new and different solution. Come up with a novel architectural idea. Describe your new idea and provide the code."
-        )
+        parent = parents[0]
+        if self.generation_mode == "whole":
+            parent_info = self._format_parent_for_prompt(parent)
+            return (
+                f"{self.problem_description}\n\nHere is one approach.\n\n{parent_info}\n"
+                f"Your task is to generate a completely new and different solution. Come up with a novel architectural idea. Describe your new idea and provide the code."
+            )
+        else:  # diff mode
+            # Read the parent code from the file
+            with open(parent.code_file_path, "r") as f:
+                parent_code = f.read()
+            ppa_info_prompt = ""
+            if parent.ppa_success:
+                ppa_info_prompt += (
+                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+                )
+            # Use the parent code to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"Here is one approach.\n\n"
+                f"Thought process:\n```thought\n{parent.thought}\n```\n"
+                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
+                "This is the original content of the file:\n"
+                "---BEGIN-FILE---\n"
+                f"{parent_code}\n"
+                "---END-FILE---\n\n"
+                f"The previous attempt produced this feedback:\n"
+                f"```feedback\n{parent.feedback}\n```\n\n"
+                f"{ppa_info_prompt}"
+                "Your task is to generate a completely new and different solution. Come up with a novel architectural idea. "
+                "You must respond with a `thought` block explaining your new idea, followed by a `code` block containing the new code."
+            )
 
     def _create_prompt_M_R(self, parents: list[Heuristic]) -> str:  # Refactor
         """
@@ -860,11 +958,40 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent_info = self._format_parent_for_prompt(parents[0])
-        return (
-            f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
-            f"Your task is to refactor this code. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). Explain the refactoring and provide the new code."
-        )
+        parent = parents[0]
+        if self.generation_mode == "whole":
+            parent_info = self._format_parent_for_prompt(parent)
+            return (
+                f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
+                f"Your task is to refactor this code. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). Explain the refactoring and provide the new code."
+            )
+        else:  # diff mode
+            # Read the parent code from the file
+            with open(parent.code_file_path, "r") as f:
+                parent_code = f.read()
+            ppa_info_prompt = ""
+            if parent.ppa_success:
+                ppa_info_prompt += (
+                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+                )
+            # Use the parent code to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"Here is a previous solution.\n\n"
+                f"Thought process:\n```thought\n{parent.thought}\n```\n"
+                "You are tasked with refactoring the code in the file.\n"
+                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
+                "This is the original content of the file:\n"
+                "---BEGIN-FILE---\n"
+                f"{parent_code}\n"
+                "---END-FILE---\n\n"
+                f"The previous attempt produced this feedback:\n"
+                f"```feedback\n{parent.feedback}\n```\n\n"
+                f"{ppa_info_prompt}"
+                "Your task is to refactor this code by editing the file. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). "
+                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+            )
 
     def _create_prompt_M_I(self, parents: list[Heuristic]) -> str:  # Improve
         """
@@ -875,11 +1002,40 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent_info = self._format_parent_for_prompt(parents[0])
-        return (
-            f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
-            f"Your task is to improve this solution. If it failed, make it correct. If it succeeded, optimize it for better PPA based on its metrics. Describe your improvement strategy and provide the improved code."
-        )
+        parent = parents[0]
+        if self.generation_mode == "whole":
+            parent_info = self._format_parent_for_prompt(parent)
+            return (
+                f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
+                f"Your task is to improve this solution. If it failed, make it correct. If it succeeded, optimize it for better PPA based on its metrics. Describe your improvement strategy and provide the improved code."
+            )
+        else:  # diff mode
+            # Read the parent code from the file
+            with open(parent.code_file_path, "r") as f:
+                parent_code = f.read()
+            ppa_info_prompt = ""
+            if parent.ppa_success:
+                ppa_info_prompt += (
+                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
+                )
+            # Use the parent code to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"Here is a previous solution.\n\n"
+                f"Thought process:\n```thought\n{parent.thought}\n```\n"
+                "You are tasked with improving the code in the file.\n"
+                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
+                "This is the original content of the file:\n"
+                "---BEGIN-FILE---\n"
+                f"{parent_code}\n"
+                "---END-FILE---\n\n"
+                f"The previous attempt produced this feedback:\n"
+                f"```feedback\n{parent.feedback}\n```\n\n"
+                f"{ppa_info_prompt}"
+                "Your task is to improve this solution by editing the file. If it failed, make it correct. If it succeeded, optimize for PPA. "
+                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+            )
 
     def _create_prompt_C_F(self, parents: list[Heuristic]) -> str:  # Fusion
         """
@@ -890,12 +1046,157 @@ class EoHEngine:
         :return: The formatted prompt string.
         :rtype: str
         """
-        parent1_info = self._format_parent_for_prompt(parents[0], 1)
-        parent2_info = self._format_parent_for_prompt(parents[1], 2)
-        return (
-            f"{self.problem_description}\n\nHere are two different successful solutions.\n\n{parent1_info}\n{parent2_info}\n"
-            f"Your task is to create a superior solution by fusing the best ideas from both examples. Analyze their strengths and combine them. Explain your fusion strategy and provide the new code."
-        )
+        parent1 = parents[0]
+        parent2 = parents[1]
+        if self.generation_mode == "whole":
+            parent1_info = self._format_parent_for_prompt(parent1, 1)
+            parent2_info = self._format_parent_for_prompt(parent2, 2)
+            return (
+                f"{self.problem_description}\n\nHere are two different successful solutions.\n\n{parent1_info}\n{parent2_info}\n"
+                f"Your task is to create a superior solution by fusing the best ideas from both examples. Analyze their strengths and combine them. Explain your fusion strategy and provide the new code."
+            )
+        else:  # diff mode
+            # Read the parent codes from the files
+            with open(parent1.code_file_path, "r") as f:
+                parent1_code = f.read()
+            with open(parent2.code_file_path, "r") as f:
+                parent2_code = f.read()
+            parent1_ppa_info = ""
+            parent2_ppa_info = ""
+            if parent1.ppa_success:
+                parent1_ppa_info += f"```ppa_metrics\n{json.dumps(parent1.ppa_metrics, indent=2)}\n```\n"
+            if parent2.ppa_success:
+                parent2_ppa_info += f"```ppa_metrics\n{json.dumps(parent2.ppa_metrics, indent=2)}\n```\n"
+            # Use the parent codes to generate diff
+            return (
+                "You are an expert Verilog design assistant tasked with editing a file.\n"
+                f"The problem description is as follows:\n{self.problem_description}\n\n"
+                f"Here are two different successful solutions.\n\n"
+                f"<Example 1>:\n```thought\n{parent1.thought}\n```\n"
+                f"```code\n{parent1_code}\n```\n"
+                f"```feedback\n{parent1.feedback}\n```\n"
+                f"{parent1_ppa_info}"
+                f"<Example 2>:\n```thought\n{parent2.thought}\n```\n"
+                f"```code\n{parent2_code}\n```\n"
+                f"```feedback\n{parent2.feedback}\n```\n"
+                f"{parent2_ppa_info}"
+                f"Generate a new solution by editing Example 1's code file `{parent1.code_file_path}`.\n"
+                "Your task is to create a superior solution by fusing the best ideas from both examples. "
+                "Analyze their strengths and combine them. "
+                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+            )
+
+    def _parse_diff_block(self, diff_text: str) -> Iterator[tuple[str, str, str]]:
+        """
+        Parses a diff text and yields tuples of (file_path, search_block, replace_block).
+
+        :param diff_text: The diff text to parse.
+        :return: An iterator of tuples, where each tuple contains the file path,
+                the search block, and the replace block.
+        :rtype: Iterator[tuple[str, str, str]]
+        """
+        lines = diff_text.splitlines(keepends=True)
+        i = 0
+        while i < len(lines):
+            file_path = lines[i].strip()
+            i += 1
+            if i < len(lines) and lines[i].strip() == "```":
+                i += 1
+
+            # Find search block
+            if i < len(lines) and lines[i].strip() == "<<<<<<< SEARCH":
+                i += 1
+                search_block = []
+                while i < len(lines) and lines[i].strip() != "=======":
+                    search_block.append(lines[i])
+                    i += 1
+
+                # Find replace block
+                if i < len(lines) and lines[i].strip() == "=======":
+                    i += 1
+                    replace_block = []
+                    while i < len(lines) and lines[i].strip() != ">>>>>>> REPLACE":
+                        replace_block.append(lines[i])
+                        i += 1
+
+                    if i < len(lines) and lines[i].strip() == ">>>>>>> REPLACE":
+                        i += 1
+                        if i < len(lines) and lines[i].strip() == "```":
+                            i += 1
+                        yield file_path, "".join(search_block), "".join(replace_block)
+                        continue
+            i += 1
+
+    def _do_replace(self, content: str, original: str, updated: str) -> str | None:
+        """
+        Helper to perform a single, exact SEARCH/REPLACE on the content.
+
+        :param content: The original content to modify.
+        :type content: str
+        :param original: The exact text to search for in the content.
+        :type original: str
+        :param updated: The text to replace the original with.
+        :type updated: str
+        :return: The modified content with the original replaced by updated, or None if the replacement failed.
+        :rtype: str | None
+        """
+        if not original.strip():  # New file case
+            return content + updated
+
+        # For simplicity, we implement exact, single-occurrence replacement.
+        if content.count(original) == 1:
+            return content.replace(original, updated, 1)
+        elif content.count(original) > 1:
+            print(
+                f"WARNING: Diff application failed. SEARCH block is not unique:\n{original}"
+            )
+            return None
+        else:
+            print(
+                f"WARNING: Diff application failed. SEARCH block not found:\n{original}"
+            )
+            return None
+
+    def _apply_diff(self, original_content: str, diff_text: str) -> str | None:
+        """
+        Applies a diff text with one or more SEARCH/REPLACE blocks to the original content.
+
+        :param original_content: The original content to modify.
+        :type original_content: str
+        :param diff_text: The diff text containing one or more SEARCH/REPLACE blocks.
+        :type diff_text: str
+        :return: The modified content after applying all SEARCH/REPLACE blocks, or None if any replacement failed.
+        :rtype: str | None
+        """
+        new_content = original_content
+        edits = list(self._parse_diff_block(diff_text))
+
+        if not edits:
+            print(
+                "WARNING: Could not parse any valid diff blocks from the LLM response."
+            )
+            print(f"Original diff_text:\n{diff_text}\n")
+            return None
+
+        for _, search_block, replace_block in edits:
+            # Strip trailing newlines added by LLM
+            search_block = search_block.rstrip("\n")
+            # The user's provided logic expects a newline, let's stick to simple replacement
+            if not search_block.endswith("\n"):
+                search_block += "\n"
+            if not replace_block.endswith("\n"):
+                replace_block += "\n"
+
+            result = self._do_replace(new_content, search_block, replace_block)
+            if result is None:
+                # Debug print diff_text if it fails
+                # Print original diff_text for debugging
+                print(
+                    f"DEBUG: Original diff_text for failed replacement:\n{diff_text}\n"
+                )
+                return None  # Abort on first failed replacement
+            new_content = result
+        return new_content
 
     def initialize_population(self) -> None:
         """
@@ -920,18 +1221,42 @@ class EoHEngine:
                 temperature=self.default_llm_temp,
                 top_p=self.default_llm_top_p,
                 max_tokens=self.default_llm_max_tokens,
+                generation_mode=self.generation_mode,
             )
         )
 
         initial_candidates = []
-        for i, (thought, code) in enumerate(results):
-            if thought and code:
+        for i, (thought, code_content) in enumerate(results):
+            if thought and code_content:
+                final_code, diff_to_save = "", None
+                if self.generation_mode == "diff":
+                    diff_to_save = code_content
+                    original_code = ""
+                    new_code = self._apply_diff(original_code, diff_to_save)
+                    if new_code:
+                        final_code = new_code
+                    else:
+                        print(
+                            f"WARNING: Diff application failed for candidate {i + 1} in initial population generation. Applying fallback logic."
+                        )
+                        # Save the original code with diff appended as a fallback
+                        diff_fail_warning = "WARNING: Diff application failed. Using original code with diff appended."
+                        final_code = (
+                            original_code
+                            + "\n"
+                            + diff_fail_warning
+                            + "\n"
+                            + diff_to_save
+                        )
+                else:  # whole mode
+                    final_code = code_content
+
                 code_path, _ = self._save_result_to_file(
-                    code, thought, 0, i + 1, "initial"
+                    final_code, thought, 0, i + 1, "initial", diff_to_save
                 )
                 cand = Heuristic(
                     thought=thought,
-                    code=code,
+                    code=final_code,
                     feedback="",
                     generation=0,
                     strategy="initial",
@@ -1242,7 +1567,8 @@ class EoHEngine:
         )
         num_from_success = self.num_offspring_lambda - num_from_fail
 
-        prompts: list[str] = []
+        # Key: "prompt" or "generation_mode", Value: the actual prompt string or generation mode Literal["whole", "diff"]
+        llm_requests: list[LLMRequest] = []
         metadata: list[dict[str, Any]] = []
 
         success_strategy_average_probabilities = {s: 0.0 for s in self.success_strats}
@@ -1265,7 +1591,12 @@ class EoHEngine:
                 parents = random.choices(
                     self.fail_pool, k=strategies[strat_name]["num_parents"]
                 )
-                prompts.append(strategies[strat_name]["func"](parents))
+                llm_requests.append(
+                    {
+                        "prompt": strategies[strat_name]["func"](parents),
+                        "generation_mode": self.generation_mode,
+                    }
+                )
                 metadata.append(
                     {
                         "parents": parents,
@@ -1331,7 +1662,12 @@ class EoHEngine:
                             available_strategies, weights=updated_weights, k=1
                         )[0]
                 # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
-                prompts.append(strategies[strat_name]["func"](parents))
+                llm_requests.append(
+                    {
+                        "prompt": strategies[strat_name]["func"](parents),
+                        "generation_mode": self.generation_mode,
+                    }
+                )
                 metadata.append(
                     {
                         "parents": parents,
@@ -1356,12 +1692,12 @@ class EoHEngine:
             "success_pool": success_strategy_average_probabilities,
         }
 
-        if not prompts:
+        if not llm_requests:
             return "STOP"
 
         llm_results = asyncio.run(
             self.llm.generate_batch_responses(
-                prompts,
+                llm_requests,
                 self.default_llm_temp,
                 self.default_llm_top_p,
                 self.default_llm_max_tokens,
@@ -1369,11 +1705,42 @@ class EoHEngine:
         )
 
         new_offspring = []
-        for i, (thought, code) in enumerate(llm_results):
-            if thought and code:
+        for i, (thought, code_content) in enumerate(llm_results):
+            if thought and code_content:
                 meta = metadata[i]
+                strategy = meta["strategy"]
+                final_code, diff_to_save = "", None
+
+                if self.generation_mode == "diff":
+                    diff_to_save = code_content
+                    original_code = ""
+                    with open(meta["parents"][0].code_file_path, "r") as f:
+                        original_code = f.read()
+                    new_code = self._apply_diff(original_code, diff_to_save)
+                    if new_code:
+                        final_code = new_code
+                    else:
+                        print(
+                            f"WARNING: Diff application failed for candidate {i + 1} in generation {self.current_generation}. Applying fallback logic."
+                        )
+                        # Save the original code with diff appended as a fallback
+                        diff_fail_warning = "WARNING: Diff application failed. Using original code with diff appended."
+                        final_code = (
+                            original_code
+                            + "\n"
+                            + diff_fail_warning
+                            + "\n"
+                            + diff_to_save
+                        )
+                else:  # whole mode
+                    final_code = code_content
                 code_path, _ = self._save_result_to_file(
-                    code, thought, self.current_generation, i + 1, meta["strategy"]
+                    final_code,
+                    thought,
+                    self.current_generation,
+                    i + 1,
+                    strategy,
+                    diff_to_save,
                 )
                 # pool_type
                 if meta["pool"] == "fail":
@@ -1382,7 +1749,7 @@ class EoHEngine:
                     candidate_origin_pool = "success_pool"
                 cand = Heuristic(
                     thought=thought,
-                    code=code,
+                    code=final_code,
                     feedback="",
                     generation=self.current_generation,
                     parent_ids=[p.id for p in meta["parents"]],
@@ -1592,6 +1959,7 @@ class EoHEngine:
                 self.llm.model_name,
                 self.base_save_path,
                 self.ref_ppa_metrics,
+                self.generation_mode,
             )
             self.logger.meta_strategy_name = self.strategy_selection_method
             self.initialize_population()
@@ -1676,6 +2044,7 @@ class SingleShotEngine(EoHEngine):
         default_llm_top_p: float = 0.95,
         default_llm_max_tokens: int = 2048,
         base_save_path: str | None = None,
+        generation_mode: Literal["whole", "diff"] = "whole",
     ):
         # Initialize the parent EoHEngine with num_generations=0.
         # This makes the single-shot engine a special case of the evolutionary engine.
@@ -1695,6 +2064,7 @@ class SingleShotEngine(EoHEngine):
             strategy_selection_method="random",
             epsilon=0.1,
             ucb_c=2.0,
+            generation_mode=generation_mode,
         )
 
     def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:

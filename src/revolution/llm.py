@@ -2,7 +2,7 @@ import asyncio
 import random
 import re
 from collections.abc import Coroutine
-from typing import Any, Literal
+from typing import Any, Literal, NotRequired, TypedDict
 
 from openai import (
     APIConnectionError,
@@ -13,6 +13,26 @@ from openai import (
     RateLimitError,
 )
 from openai.types.chat import ChatCompletion
+
+
+# Define the precise shape of an LLM request dictionary
+class LLMRequest(TypedDict):
+    """
+    Defines the structure for a single request to the language model.
+
+    This dictionary specifies the prompt and the mode of generation to be used
+    for producing code or text.
+
+    Attributes:
+        prompt (str): The required prompt string to be sent to the LLM.
+        generation_mode (Literal["whole", "diff"], optional): The strategy for
+            code generation. 'whole' indicates the LLM should generate a
+            complete file, while 'diff' indicates it should generate a patch
+            in the diff format. Defaults to 'whole' if omitted.
+    """
+
+    prompt: str
+    generation_mode: NotRequired[Literal["whole", "diff"]]
 
 
 class LLMInterface:
@@ -198,6 +218,7 @@ class LLMInterface:
         temperature: float = 1.0,
         top_p: float = 0.95,
         max_tokens: int = 2048,
+        generation_mode: Literal["whole", "diff"] = "whole",
     ) -> tuple[str | None, str | None]:
         """
         Generate a single (thought, code) reply for a user prompt.
@@ -208,9 +229,15 @@ class LLMInterface:
         Retries on transient errors with exponential backoff + jitter.
 
         :param prompt:       The user`s Verilog/design question.
+        :type prompt: str
         :param temperature:  Sampling temperature.
+        :type temperature: float
         :param top_p:        Nucleus sampling threshold.
+        :type top_p: float
         :param max_tokens:   Maximum tokens to generate.
+        :type max_tokens: int
+        :param generation_mode: Mode of generation, either "whole" or "diff".
+        :type generation_mode: Literal["whole", "diff"]
         :return: A (thought, code) tuple, or (None, None) on failure.
         """
         # print(f"\n--- LLM Request ---")
@@ -219,20 +246,55 @@ class LLMInterface:
 
         full_response_text = ""
 
-        system_prompt_content = (
-            "You are an expert Verilog design assistant. "
-            "Your role is to address Verilog-related problems posed by the user. "
-            "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-            "The 'thought' is your conceptual idea for solving the problem. "
-            "The 'code' is the Verilog implementation of your 'thought'.\n"
-            "Strictly format your response as follows:\n"
-            "```thought\n"
-            "[Your concise design idea (thought) here]\n"
-            "```\n"
-            "```code\n"
-            "[Your complete, runnable Verilog implementation of the thought here]\n"
-            "```"
-        )
+        system_prompt_content = ""
+        if generation_mode == "whole":
+            system_prompt_content = (
+                "You are an expert Verilog design assistant. "
+                "Your role is to address Verilog-related problems posed by the user. "
+                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
+                "The 'thought' is your conceptual idea for solving the problem. "
+                "The 'code' is the Verilog implementation of your 'thought'.\n"
+                "Strictly format your response as follows:\n"
+                "```thought\n"
+                "[Your concise design idea (thought) here]\n"
+                "```\n"
+                "```code\n"
+                "[Your complete, runnable Verilog implementation of the thought here]\n"
+                "```"
+            )
+        else:  # diff mode
+            system_prompt_content = (
+                "You are an expert Verilog design assistant that modifies code based on user requests.\n"
+                "You will be given the file path, the file content, and instructions for what to change.\n"
+                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
+                "You MUST format your response with a `thought` block and a `code` block.\n"
+                "The 'thought' is your conceptual idea for solving the problem. "
+                "The 'code' is the contains the diff block containing the Verilog implementation for your 'thought'.\n"
+                "Strictly format your response as follows:\n"
+                "```thought\n"
+                "[Your concise design idea (thought) here]\n"
+                "```\n"
+                "```code\n"
+                "[diff block containing the Verilog implementation for your thought here]\n"
+                "```"
+                "The `code` block must contain *only* the edits in the specified diff format.\n"
+                "The diff format for the `code` block is as follows:\n\n"
+                "the/full/path/to/the/file.sv\n"
+                "```\n"
+                "<<<<<<< SEARCH\n"
+                "A contiguous block of lines to search for.\n"
+                "=======\n"
+                "The lines to replace the SEARCH block with.\n"
+                ">>>>>>> REPLACE\n"
+                "```\n\n"
+                "- The `SEARCH` block must match the existing file content *exactly*, including whitespace and comments.\n"
+                "- You can use multiple `SEARCH/REPLACE` blocks for a single file.\n"
+                "- To create a new file (e.g., from a Crossover strategy or initial generation), use a *SEARCH/REPLACE block* with:\n"
+                "  - A new file path, including dir name if needed\n"
+                "  - An empty `SEARCH` section\n"
+                "  - The new file's contents in the `REPLACE` section\n"
+                "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
+            )
 
         # Use 'async with' to manage the client's lifecycle correctly
         async with AsyncOpenAI(**self.client_args) as client:
@@ -306,6 +368,7 @@ class LLMInterface:
         temperature: float = 1.0,
         top_p: float = 0.95,
         max_tokens: int = 2048,
+        generation_mode: Literal["whole", "diff"] = "whole",
     ) -> list[tuple[str | None, str | None]]:
         """
         Generates 'n' different responses for a single prompt.
@@ -315,28 +378,70 @@ class LLMInterface:
         to making 'n' individual, concurrent requests.
 
         :param prompt: The user's Verilog/design question.
+        :type prompt: str
         :param n: The number of desired responses.
+        :type n: int
         :param temperature: Sampling temperature.
+        :type temperature: float
         :param top_p: Nucleus sampling threshold.
+        :type top_p: float
         :param max_tokens: Maximum tokens to generate.
+        :type max_tokens: int
+        :param generation_mode: Mode of generation, either "whole" or "diff".
+        :type generation_mode: Literal["whole", "diff"]
         :return: A list of (thought, code) tuples.
         """
         print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
 
-        system_prompt_content = (
-            "You are an expert Verilog design assistant. "
-            "Your role is to address Verilog-related problems posed by the user. "
-            "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-            "The 'thought' is your conceptual idea for solving the problem. "
-            "The 'code' is the Verilog implementation of your 'thought'.\n"
-            "Strictly format your response as follows:\n"
-            "```thought\n"
-            "[Your concise design idea (thought) here]\n"
-            "```\n"
-            "```code\n"
-            "[Your complete, runnable Verilog implementation of the thought here]\n"
-            "```"
-        )
+        system_prompt_content = ""
+        if generation_mode == "whole":
+            system_prompt_content = (
+                "You are an expert Verilog design assistant. "
+                "Your role is to address Verilog-related problems posed by the user. "
+                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
+                "The 'thought' is your conceptual idea for solving the problem. "
+                "The 'code' is the Verilog implementation of your 'thought'.\n"
+                "Strictly format your response as follows:\n"
+                "```thought\n"
+                "[Your concise design idea (thought) here]\n"
+                "```\n"
+                "```code\n"
+                "[Your complete, runnable Verilog implementation of the thought here]\n"
+                "```"
+            )
+        else:  # diff mode
+            system_prompt_content = (
+                "You are an expert Verilog design assistant that modifies code based on user requests.\n"
+                "You will be given the file path, the file content, and instructions for what to change.\n"
+                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
+                "You MUST format your response with a `thought` block and a `code` block.\n"
+                "The 'thought' is your conceptual idea for solving the problem. "
+                "The 'code' is the contains the diff block containing the Verilog implementation for your 'thought'.\n"
+                "Strictly format your response as follows:\n"
+                "```thought\n"
+                "[Your concise design idea (thought) here]\n"
+                "```\n"
+                "```code\n"
+                "[diff block containing the Verilog implementation for your thought here]\n"
+                "```"
+                "The `code` block must contain *only* the edits in the specified diff format.\n"
+                "The diff format for the `code` block is as follows:\n\n"
+                "the/full/path/to/the/file.sv\n"
+                "```\n"
+                "<<<<<<< SEARCH\n"
+                "A contiguous block of lines to search for.\n"
+                "=======\n"
+                "The lines to replace the SEARCH block with.\n"
+                ">>>>>>> REPLACE\n"
+                "```\n\n"
+                "- The `SEARCH` block must match the existing file content *exactly*, including whitespace and comments.\n"
+                "- You can use multiple `SEARCH/REPLACE` blocks for a single file.\n"
+                "- To create a new file (e.g., from a Crossover strategy or initial generation), use a *SEARCH/REPLACE block* with:\n"
+                "  - A new file path, including dir name if needed\n"
+                "  - An empty `SEARCH` section\n"
+                "  - The new file's contents in the `REPLACE` section\n"
+                "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
+            )
 
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
@@ -379,7 +484,11 @@ class LLMInterface:
                         )
                         tasks = [
                             self.generate_response(
-                                prompt, temperature, top_p, max_tokens
+                                prompt,
+                                temperature,
+                                top_p,
+                                max_tokens,
+                                generation_mode=generation_mode,
                             )
                             for _ in range(num_remaining)
                         ]
@@ -416,7 +525,11 @@ class LLMInterface:
                         # The individual 'generate_response' calls will handle their own retries and counting.
                         tasks = [
                             self.generate_response(
-                                prompt, temperature, top_p, max_tokens
+                                prompt,
+                                temperature,
+                                top_p,
+                                max_tokens,
+                                generation_mode=generation_mode,
                             )
                             for _ in range(n)
                         ]
@@ -629,7 +742,7 @@ class LLMInterface:
     # Method for batching code generation requests
     async def generate_batch_responses(
         self,
-        prompts: list[str],
+        prompts: list[LLMRequest],
         temperature: float = 1.0,
         top_p: float = 0.95,
         max_tokens: int = 2048,
@@ -637,16 +750,28 @@ class LLMInterface:
         """
         Generates responses for a batch of different prompts concurrently.
 
-        :param prompts: A list of prompt strings.
+        :param prompts: A list of prompt dictionaries(LLMRequest),
+        each with a "prompt" and optional "generation_mode" key storing the prompt string and generation mode string.
+        :type prompts: list[LLMRequest]
         :param temperature: Sampling temperature.
+        :type temperature: float
         :param top_p: Nucleus sampling threshold.
+        :type top_p: float
         :param max_tokens: Maximum tokens to generate.
+        :type max_tokens: int
         :return: A list of (thought, code) tuples corresponding to each prompt.
+        :rtype: list[tuple[str | None, str | None]]
         """
         print(f"\n--- Sending Batch LLM Request for {len(prompts)} prompts ---")
         tasks: list[Coroutine[Any, Any, tuple[str | None, str | None]]] = [
-            self.generate_response(prompt, temperature, top_p, max_tokens)
-            for prompt in prompts
+            self.generate_response(
+                p["prompt"],
+                temperature,
+                top_p,
+                max_tokens,
+                generation_mode=p.get("generation_mode", "whole"),
+            )
+            for p in prompts
         ]
         results = await asyncio.gather(*tasks)
         print("--- Batch LLM Response Received ---")

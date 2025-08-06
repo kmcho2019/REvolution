@@ -165,6 +165,7 @@ def run_indexed_problem_worker(indexed_task):
             strategy_selection_method=args.strategy_selection,
             epsilon=args.epsilon,
             ucb_c=args.ucb_c,
+            generation_mode=args.generation_mode,
         )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
@@ -264,6 +265,15 @@ def main():
         type=float,
         default=2.0,
         help="The exploration constant (c) for the UCB strategy.",
+    )
+    parser.add_argument(  # Choice of generation mode either "whole" or "diff"
+        "--generation_mode",
+        type=str,
+        default="whole",
+        choices=["whole", "diff"],
+        help="Mode of generation, either 'whole' (full code) or 'diff' (code diffs). "
+        "In 'whole' mode, the entire code is generated. "
+        "In 'diff' mode, only the differences from the original code are generated.",
     )
 
     args = parser.parse_args()
