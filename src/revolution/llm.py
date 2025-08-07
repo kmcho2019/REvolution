@@ -81,6 +81,10 @@ class LLMInterface:
             self.client_args["base_url"] = "https://openrouter.ai/api/v1"
         elif api_backend == "deepseek":
             self.client_args["base_url"] = "https://api.deepseek.com"
+        elif api_backend == "gemini":
+            self.client_args["base_url"] = (
+                "https://generativelanguage.googleapis.com/v1beta/openai"
+            )
         elif api_backend == "vllm":
             self.client_args["base_url"] = (
                 "http://localhost:8000/v1"  # Assuming that vLLM server is running locally
@@ -520,6 +524,36 @@ class LLMInterface:
                     ):
                         print(
                             f"Warning: API backend '{self.api_backend}' does not support n > 1. Falling back to {n} individual requests."
+                        )
+
+                        # The individual 'generate_response' calls will handle their own retries and counting.
+                        tasks = [
+                            self.generate_response(
+                                prompt,
+                                temperature,
+                                top_p,
+                                max_tokens,
+                                generation_mode=generation_mode,
+                            )
+                            for _ in range(n)
+                        ]
+                        results = await asyncio.gather(*tasks)
+                        print(
+                            f"--- Fallback with {n} individual requests completed ---"
+                        )
+                        return results
+                    # Found that Gemini API does not support only support n(candidateCount) of 1~8.
+                    # As of 2025/08/07, OpenAI's API supports 'n' > 1, while Gemini has a limit of 8.
+                    # This is a workaround for APIs that have a limit on 'n'.
+                    # Example of error message:
+                    # Error code: Error code: 400 - [{'error': {'code': 400, 'message': 'Invalid value of n: should be between 1 and 8, got 10', 'status': 'INVALID_ARGUMENT'}}]
+                    # This is the key fallback logic and workaround for Gemini and potentially other APIs that has a limit on 'n'.
+                    elif (
+                        "invalid value of n" in error_message
+                        and "should be between 1 and 8" in error_message
+                    ):
+                        print(
+                            f"Warning: API backend '{self.api_backend}' supports n only between 1 and 8. Falling back to {n} individual requests."
                         )
 
                         # The individual 'generate_response' calls will handle their own retries and counting.

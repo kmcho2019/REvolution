@@ -53,6 +53,8 @@ def run_problem_worker(args_tuple):
             api_key = os.getenv("OPENROUTER_API_KEY")
         elif args.api_backend == "deepseek":
             api_key = os.getenv("DEEPSEEK_API_KEY")
+        elif args.api_backend == "gemini":
+            api_key = os.getenv("GEMINI_API_KEY")
 
         if args.api_backend != "vllm":  # vllm does not require an API key
             if not api_key:
@@ -131,6 +133,8 @@ def run_indexed_problem_worker(indexed_task):
             api_key = os.getenv("OPENROUTER_API_KEY")
         elif args.api_backend == "deepseek":
             api_key = os.getenv("DEEPSEEK_API_KEY")
+        elif args.api_backend == "gemini":
+            api_key = os.getenv("GEMINI_API_KEY")
 
         if args.api_backend != "vllm":  # vllm does not require an API key
             if not api_key:
@@ -201,7 +205,7 @@ def main():
         "--api_backend",
         type=str,
         default="openai",
-        choices=["openai", "openrouter", "deepseek", "vllm"],
+        choices=["openai", "openrouter", "deepseek", "gemini", "vllm"],
         help="The API backend to use for LLM calls.",
     )
     parser.add_argument(
