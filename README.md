@@ -29,6 +29,45 @@ The repository is organized as follows:
   - `exp/`: The default output directory for experimental results and logs.
 -----
 
+---
+
+## ⚙️ Setup with Docker (Recommended)
+
+To ensure a consistent and reproducible environment, we recommend using Docker. The provided `Dockerfile` automates the installation of all specific tool versions and dependencies.
+
+### 1. Prerequisites
+
+Make sure you have **Docker** installed on your system. You can find installation instructions on the [official Docker website](https://docs.docker.com/get-docker/).
+
+
+
+### 2. Build the Docker Image
+
+Navigate to the root directory of this repository (where the `Dockerfile` is located) and run the following command to build the Docker image. This process will take some time as it compiles all the necessary EDA tools from the source.
+
+```bash
+docker build -t revolution-env .
+```
+
+After the build completes, you'll have a Docker image named `revolution-env` with all the required dependencies.
+
+### 3. Run the Docker Container
+
+To start an interactive session inside the container, use the command below. This command mounts your current project directory into the container's `/workspace` and passes your LLM API keys as environment variables.
+
+```bash
+docker run --rm -it \
+  -v "$(pwd)":/workspace \
+  -e OPENAI_API_KEY="your-key-for-openai" \
+  -e DEEPSEEK_API_KEY="your-key-for-deepseek" \
+  -e OPENROUTER_API_KEY="your-key-for-openrouter" \
+  revolution-env
+```
+
+You are now inside the container's shell, with the Python environment activated and all tools ready to use.
+
+---
+
 ## ⚙️ Setup and Installation
 
 Follow these steps to set up the required environment.
