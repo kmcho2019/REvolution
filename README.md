@@ -57,7 +57,6 @@ To start an interactive session inside the container, use the command below. Thi
 
 ```bash
 docker run --rm -it \
-  -v "$(pwd)":/workspace \
   -e OPENAI_API_KEY="your-key-for-openai" \
   -e DEEPSEEK_API_KEY="your-key-for-deepseek" \
   -e OPENROUTER_API_KEY="your-key-for-openrouter" \
