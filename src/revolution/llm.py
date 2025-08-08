@@ -165,6 +165,10 @@ class LLMInterface:
             self.api_call_count = 0
             self.prompt_tokens_count = 0
             self.completion_tokens_count = 0
+            self.code_prompt_tokens_count = 0
+            self.code_completion_tokens_count = 0
+            self.feedback_prompt_tokens_count = 0
+            self.feedback_completion_tokens_count = 0
             return stats
 
     def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
