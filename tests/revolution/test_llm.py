@@ -41,4 +41,5 @@ async def test_llm_generate_response_success(mocker):
     assert thought == "Test thought."
     assert code == "Test code."
     # Ensure the API call counter was incremented
-    assert await llm.get_and_reset_api_calls() == 1
+    result_dict = await llm.get_and_reset_usage_stats()
+    assert result_dict["api_calls"] == 1
