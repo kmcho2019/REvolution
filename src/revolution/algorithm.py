@@ -7,6 +7,7 @@ import random
 import re
 import shutil
 import time
+import traceback
 import uuid
 from collections import defaultdict
 from typing import Any, Iterator, Literal, TypeVar, cast, get_args, overload
@@ -90,6 +91,9 @@ Defines the strategy selection methods for dynamic strategy selection.
 - **epsilon-greedy**: Greedy selection with exploration (epsilon) for strategy selection.
 - **ucb**: Upper Confidence Bound selection for balancing exploration and exploitation but, uses softmax probabilities for selection.
 """
+
+# Literal Typing to add a toggle type for population layout
+PopulationPoolMode = Literal["dual", "single"]
 
 
 class Heuristic:
@@ -261,6 +265,9 @@ class EoHEngine:
     :type gen_start_time: float
     :param generation_mode: Mode for generation (whole or diff).
     :type generation_mode: Literal["whole", "diff"]
+    :param population_pool_mode: "dual" (existing behavior) or "single" to keep all candidates in one pool.
+                                 Strategies still respect status: M-F selects failed parents; C-F selects successful parents.
+    :type population_pool_mode: PopulationPoolMode
     """
 
     def __init__(
@@ -281,6 +288,8 @@ class EoHEngine:
         epsilon: float = 0.1,
         ucb_c: float = 2.0,
         generation_mode: Literal["whole", "diff"] = "whole",
+        champion_metrics_config: list[dict[str, Any]] | None = None,
+        population_pool_mode: PopulationPoolMode = "dual",
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.base_save_path: str = (
@@ -313,6 +322,36 @@ class EoHEngine:
         self.default_llm_top_p: float = default_llm_top_p
         self.default_llm_max_tokens: int = default_llm_max_tokens
         self.clk_period: float = synthesis_evaluator.clk_period
+
+        # Champion Metrics Configuration
+        # Defines the configuration for champion metrics.
+        # It allows the best candidate to be selected based on specific metrics.
+        # This was added to allow for more flexible champion selection based on user-defined metrics.
+        # If None, it defaults to the original behavior of selecting based on power, area, and effective clock period.
+        # Each metric can have a goal (e.g., "minimize" or "maximize") and an optional condition for when to apply it.
+        self.champion_metrics_config: list[dict[str, Any]]
+        if champion_metrics_config is None:
+            # Default configuration for RTL (original behavior)
+            self.champion_metrics_config = [
+                {"name": "power", "goal": "minimize"},
+                {"name": "area", "goal": "minimize"},
+                {
+                    "name": "eff_clk_period",
+                    "goal": "minimize",
+                    "condition": lambda engine, candidates: engine.ref_ppa_metrics.get(
+                        "eff_clk_period", 0.0
+                    )
+                    != 0.0,
+                },
+            ]
+        else:
+            self.champion_metrics_config = champion_metrics_config
+
+        # Population pool mode + single-pool storage
+        self.population_pool_mode: PopulationPoolMode = population_pool_mode
+        self.population: list[
+            Heuristic
+        ] = []  # used when population_pool_mode == "single"
 
         # Simplified to two population pools
         self.fail_pool: list[Heuristic] = []
@@ -1198,6 +1237,19 @@ class EoHEngine:
             new_content = result
         return new_content
 
+    # Helpers (_get_fail_view, _get_success_view) to view pools depending on mode
+    def _get_fail_view(self) -> list[Heuristic]:
+        """Return the current 'failed' parents view based on population mode."""
+        if self.population_pool_mode == "single":
+            return [c for c in self.population if c.status != "success"]
+        return self.fail_pool
+
+    def _get_success_view(self) -> list[Heuristic]:
+        """Return the current 'successful' parents view based on population mode."""
+        if self.population_pool_mode == "single":
+            return [c for c in self.population if c.status == "success"]
+        return self.success_pool
+
     def initialize_population(self) -> None:
         """
         Creates and evaluates the initial population.
@@ -1281,6 +1333,10 @@ class EoHEngine:
                 self.success_pool.append(cand)
             else:
                 self.fail_pool.append(cand)
+
+        # In single-pool mode, keep everyone together
+        if self.population_pool_mode == "single":
+            self.population = initial_candidates[:]
 
         gen0_runtime = time.time() - self.gen_start_time
         llm_stat_dict = asyncio.run(self.llm.get_and_reset_usage_stats())
@@ -1542,11 +1598,22 @@ class EoHEngine:
                 sel_gen,
             )
 
+    def _get_generation_system_prompt(self) -> str | None:
+        """
+        Returns the system prompt for code generation during evolution.
+        Subclasses can override this to provide a custom system prompt.
+        By default, it returns None, causing the LLMInterface to use its default.
+        """
+        return None
+
     def evolve_one_generation(self):
         """Performs one generation of the REvolution algorithm."""
         self.current_generation += 1
         print(f"\n--- Starting Generation {self.current_generation} ---")
         self.gen_start_time = time.time()
+
+        # Allows current default system prompt to be overriden if necessary
+        generation_system_prompt = self._get_generation_system_prompt()
 
         strategies = {
             "M-F": {"func": self._create_prompt_M_F, "num_parents": 1},
@@ -1558,28 +1625,29 @@ class EoHEngine:
         }
         # fail_strats, success_strats = ['M-F','M-S','M-E','M-R','M-I'], ['M-S','M-E','M-R','M-I','C-F']
 
-        total_current_pop = len(self.fail_pool) + len(self.success_pool)
+        # Compute views from selected mode
+        fail_view = self._get_fail_view()
+        success_view = self._get_success_view()
+        total_current_pop = len(fail_view) + len(success_view)
         if total_current_pop == 0:
             return "STOP"
 
         num_from_fail = round(
-            self.num_offspring_lambda * len(self.fail_pool) / total_current_pop
+            self.num_offspring_lambda * len(fail_view) / total_current_pop
         )
         num_from_success = self.num_offspring_lambda - num_from_fail
 
-        # Key: "prompt" or "generation_mode", Value: the actual prompt string or generation mode Literal["whole", "diff"]
         llm_requests: list[LLMRequest] = []
         metadata: list[dict[str, Any]] = []
 
         success_strategy_average_probabilities = {s: 0.0 for s in self.success_strats}
         fail_strategy_average_probabilities = {s: 0.0 for s in self.fail_strats}
 
-        # Track strategies selected in this generation's loop for UCB
         fail_strategies_selected_this_gen = set()
         success_strategies_selected_this_gen = set()
 
-        # Generate from Fail Pool
-        if self.fail_pool:
+        # Generate from "failed" parents (M-F, M-S/E/R/I)
+        if fail_view:
             for _ in range(num_from_fail):
                 strat_name, prob_dist_dict = self._select_strategy(
                     "fail", self.fail_strats, fail_strategies_selected_this_gen
@@ -1589,14 +1657,22 @@ class EoHEngine:
                     continue
                 fail_strategies_selected_this_gen.add(strat_name)
                 parents = random.choices(
-                    self.fail_pool, k=strategies[strat_name]["num_parents"]
+                    fail_view, k=strategies[strat_name]["num_parents"]
                 )
-                llm_requests.append(
-                    {
-                        "prompt": strategies[strat_name]["func"](parents),
-                        "generation_mode": self.generation_mode,
-                    }
-                )
+
+                if generation_system_prompt:
+                    llm_request = LLMRequest(
+                        prompt=strategies[strat_name]["func"](parents),
+                        generation_mode=self.generation_mode,
+                        system_prompt=generation_system_prompt,
+                    )
+                else:
+                    llm_request = LLMRequest(
+                        prompt=strategies[strat_name]["func"](parents),
+                        generation_mode=self.generation_mode,
+                    )
+
+                llm_requests.append(llm_request)
                 metadata.append(
                     {
                         "parents": parents,
@@ -1605,21 +1681,16 @@ class EoHEngine:
                         "prob_dist": prob_dist_dict,
                     }
                 )
-                print(
-                    f"Fail Pool Evolve Debug: Selected parents {parents} for strategy {strat_name} with prob_dist {prob_dist_dict}"
-                )
                 for k, v in prob_dist_dict.items():
                     fail_strategy_average_probabilities[k] += v
-            # Normalize probabilities for fail strategies
             if num_from_fail > 0:
                 for k in fail_strategy_average_probabilities.keys():
                     fail_strategy_average_probabilities[k] /= num_from_fail
 
-        # Generate from Success Pool
-        if self.success_pool:
+        # Generate from "successful" parents (M-S/E/R/I and C-F)
+        if success_view:
             available_success_strategies = self.success_strats.copy()
-            # First check if we have enough candidates in the success pool for the strategy that requires fusion
-            if len(self.success_pool) < 2:
+            if len(success_view) < 2 and "C-F" in available_success_strategies:
                 available_success_strategies.remove("C-F")
             for _ in range(num_from_success):
                 strat_name, prob_dist_dict = self._select_strategy(
@@ -1631,43 +1702,43 @@ class EoHEngine:
                     print("No valid success strategies available. Skipping...")
                     continue
                 success_strategies_selected_this_gen.add(strat_name)
-                # Weighted selection for success pool
-                weights = [
-                    c.score - min(p.score for p in self.success_pool) + 0.1
-                    for c in self.success_pool
-                ]
+
+                # Weighted parent choice by score among successes
+                base = min(p.score for p in success_view) if success_view else 0.0
+                weights = [c.score - base + 0.1 for c in success_view]
                 parents = random.choices(
-                    self.success_pool,
+                    success_view,
                     weights=weights,
                     k=strategies[strat_name]["num_parents"],
                 )
-                # if the strategy is fusion, we need two parents that are different
+
+                # Ensure different parents for C-F
                 if (
                     strat_name == "C-F"
                     and len(parents) == 2
                     and parents[0].id == parents[1].id
                 ):
-                    # If both parents are the same, we need to select a different one
-                    # This is a rare case, but can happen if the success pool has only one candidate
-                    # Sample again without the same parent and weights
-                    available_strategies = [
-                        p for p in self.success_pool if p.id != parents[0].id
-                    ]
-                    updated_weights = [
-                        c.score - min(p.score for p in available_strategies) + 0.1
-                        for c in available_strategies
-                    ]
-                    if available_strategies:
-                        parents[1] = random.choices(
-                            available_strategies, weights=updated_weights, k=1
-                        )[0]
-                # print(f'Debug: Selected parents {parents} for strategy {strat_name} with weights {weights} with available strategies {available_strategies}')
-                llm_requests.append(
-                    {
-                        "prompt": strategies[strat_name]["func"](parents),
-                        "generation_mode": self.generation_mode,
-                    }
-                )
+                    alt_pool = [p for p in success_view if p.id != parents[0].id]
+                    if alt_pool:
+                        base_alt = min(p.score for p in alt_pool)
+                        alt_weights = [c.score - base_alt + 0.1 for c in alt_pool]
+                        parents[1] = random.choices(alt_pool, weights=alt_weights, k=1)[
+                            0
+                        ]
+
+                if generation_system_prompt:
+                    llm_request = LLMRequest(
+                        prompt=strategies[strat_name]["func"](parents),
+                        generation_mode=self.generation_mode,
+                        system_prompt=generation_system_prompt,
+                    )
+                else:
+                    llm_request = LLMRequest(
+                        prompt=strategies[strat_name]["func"](parents),
+                        generation_mode=self.generation_mode,
+                    )
+
+                llm_requests.append(llm_request)
                 metadata.append(
                     {
                         "parents": parents,
@@ -1676,12 +1747,8 @@ class EoHEngine:
                         "prob_dist": prob_dist_dict,
                     }
                 )
-                print(
-                    f"Success Pool Evolve Debug: Selected parents {parents} for strategy {strat_name} with prob_dist {prob_dist_dict}"
-                )
                 for k, v in prob_dist_dict.items():
                     success_strategy_average_probabilities[k] += v
-            # Normalize probabilities for success strategies
             if num_from_success > 0:
                 for k in success_strategy_average_probabilities.keys():
                     success_strategy_average_probabilities[k] /= num_from_success
@@ -1850,28 +1917,39 @@ class EoHEngine:
             # 2. Identify champions for each metric
             # These champions are always relevant
             best_by_score = max(successful_candidates, key=lambda c: c.score)
-            best_by_power = min(
-                successful_candidates,
-                key=lambda c: c.ppa_metrics.get("power", float("inf")),
-            )
-            best_by_area = min(
-                successful_candidates,
-                key=lambda c: c.ppa_metrics.get("area", float("inf")),
-            )
+            champions = [best_by_score]
 
-            champions = [best_by_score, best_by_power, best_by_area]
-
-            # Conditionally add the delay champion for sequential circuits only
-            # As combinatorial circuits do not have a meaningful clock period and eff_clk_period are set to 0.0
-            # Current clk_period(0.01 ns) is used as a threshold to determine if the circuit is sequential
-            # This is a heuristic, but it works well for most cases
-            is_sequential = self.ref_ppa_metrics.get("eff_clk_period") != 0.0
-            if is_sequential:
-                best_by_delay = min(
-                    successful_candidates,
-                    key=lambda c: c.ppa_metrics.get("eff_clk_period", float("inf")),
+            # Dynamically select other champions based on the configuration
+            for metric_config in self.champion_metrics_config:
+                # Check if the condition for this champion is met
+                condition = metric_config.get(
+                    "condition", lambda engine, candidates: True
                 )
-                champions.append(best_by_delay)
+                if not condition(self, successful_candidates):
+                    continue
+
+                metric_name = metric_config["name"]
+
+                # Filter for candidates that actually have this metric
+                candidates_with_metric = [
+                    c for c in successful_candidates if metric_name in c.ppa_metrics
+                ]
+                if not candidates_with_metric:
+                    continue
+
+                goal = metric_config["goal"]
+                champion = None
+                if goal == "minimize":
+                    champion = min(
+                        candidates_with_metric, key=lambda c: c.ppa_metrics[metric_name]
+                    )
+                elif goal == "maximize":
+                    champion = max(
+                        candidates_with_metric, key=lambda c: c.ppa_metrics[metric_name]
+                    )
+
+                if champion:
+                    champions.append(champion)
 
             # 3. Add unique champions to the next generation
             for champ in champions:
@@ -1897,6 +1975,10 @@ class EoHEngine:
                 self.success_pool.append(cand)
             else:
                 self.fail_pool.append(cand)
+
+        # In single-pool mode, the authoritative pool is one list
+        if self.population_pool_mode == "single":
+            self.population = next_gen_population
 
         gen_runtime = time.time() - self.gen_start_time
         # get_and_reset_usage_stats is an async function, so we need to run it in the event loop
@@ -1965,6 +2047,10 @@ class EoHEngine:
             self.initialize_population()
         except Exception as e:
             print(f"Critical error during initialization: {e}")
+            # Print the full call stack, showing exactly where the error occurred.
+            print(f"An exception of type {type(e).__name__} occurred.")
+            print("Detailed traceback:")
+            traceback.print_exc()  # Used to print traces
             return f"{self.problem_name},initialization_failed"
 
         for _ in range(self.num_generations):
@@ -2207,8 +2293,6 @@ class SingleShotEngine(EoHEngine):
             self.initialize_population()  # This generates, evaluates, and logs Gen 0
         except Exception as e:
             print(f"Critical error during single-shot run: {e}")
-            import traceback
-
             traceback.print_exc()
             return f"{self.problem_name},single_shot_failed"
 

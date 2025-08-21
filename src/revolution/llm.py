@@ -29,10 +29,13 @@ class LLMRequest(TypedDict):
             code generation. 'whole' indicates the LLM should generate a
             complete file, while 'diff' indicates it should generate a patch
             in the diff format. Defaults to 'whole' if omitted.
+        system_prompt (str, optional): An optional system prompt to override
+            the default.
     """
 
     prompt: str
     generation_mode: NotRequired[Literal["whole", "diff"]]
+    system_prompt: NotRequired[str]
 
 
 class LLMInterface:
@@ -50,6 +53,8 @@ class LLMInterface:
         api_backend: str = "openai",
         max_retries: int = 10,
         base_delay: float = 2.0,
+        port: int = 8000,
+        debug: bool = False,
     ) -> None:
         """
         :param api_key:      Your LLM API key (not required for 'vllm' backend).
@@ -57,11 +62,15 @@ class LLMInterface:
         :param api_backend:  One of "openai", "openrouter", "deepseek", or "vllm".
         :param max_retries:  Maximum number of retry attempts for transient errors.
         :param base_delay:   Initial backoff delay in seconds (doubles each retry).
+        :param port:         Port for the vLLM server (default: 8000).
+        :param debug:       Enable debug mode for verbose logging. (Prints prompt+response)
         :raises ValueError:  If api_key is missing for non-vllm backends, or
                              api_backend is unsupported.
         """
         if not api_key and api_backend != "vllm":
             raise ValueError("API key is required for LLMInterface initialization.")
+
+        self.debug: bool = debug  # Store debug state
 
         self.api_backend: str = api_backend  # Backend API to use, e.g., "openai", "openrouter", "deepseek", etc.
         self.model_name: str = model_name
@@ -71,7 +80,7 @@ class LLMInterface:
         # Configure arguments for the AsyncOpenAI client based on the backend
         self.client_args: dict[str, Any] = {
             "api_key": api_key,
-            "timeout": 120.0,  # Set a reasonable timeout for API calls
+            "timeout": 120.0 * 1000,  # Set a reasonable timeout for API calls
         }
 
         if api_backend == "openai":
@@ -87,7 +96,7 @@ class LLMInterface:
             )
         elif api_backend == "vllm":
             self.client_args["base_url"] = (
-                "http://localhost:8000/v1"  # Assuming that vLLM server is running locally
+                f"http://localhost:{port}/v1"  # Assuming that vLLM server is running locally
             )
 
         else:
@@ -111,6 +120,18 @@ class LLMInterface:
         self.lock: asyncio.Lock = (
             asyncio.Lock()
         )  # Make counter thread-safe with async calls
+
+    def set_debug(self, enabled: bool) -> None:
+        """
+        Enable or disable debug logging at runtime.
+
+        :param enabled: Set to True to turn on debug prints, False to turn them off.
+        """
+        self.debug = enabled
+        if self.debug:
+            print("--- Debug logging has been enabled. ---")
+        else:
+            print("--- Debug logging has been disabled. ---")
 
     # Method for managing API call count in a thread-safe manner
     async def _update_stats(
@@ -173,52 +194,89 @@ class LLMInterface:
 
     def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
         """
-        Extract the “thought” and “code” blocks from a raw LLM completion.
+        Flexibly extracts the "thought" and "code" blocks from a raw LLM completion.
 
-        Expects:
-            ```thought
-            ...
-            ```
-            ```code
-            ...
-            ```
+        This parser is designed to handle several common formats, including:
+        1.  Standard ```thought ... ``` and ```code ... ``` blocks.
+        2.  Markdown-style headers like **thought** or **Algorithm plan**.
+        3.  Plain thought text that directly precedes a code block.
+
+        It works by identifying the last python/code block and treating all
+        preceding text as the thought process.
 
         :param response_text: Full text from the LLM.
-        :return: A (thought, code) tuple, each `None` if parsing failed.
-                 If either is missing, returns `(full_text_with_warnings, full_text_with_warnings)`.
+        :return: A (thought, code) tuple. If parsing fails or a block is
+                 missing, returns (full_text_with_warnings, full_text_with_warnings).
         """
-        thought_match = re.search(
-            r"```thought\s*\n(.*?)\n```", response_text, re.DOTALL
+        # Debug print to show the response text
+        # print(f"Response text:\n{response_text}\n{'-' * 40}")
+
+        # Regex to find the last code block, which can be marked as 'python' or 'code'
+        code_block_pattern = re.compile(
+            r"```(python|code)\s*\n(.*?)\n```", re.DOTALL | re.IGNORECASE
         )
-        code_match = re.search(r"```code\s*\n(.*?)\n```", response_text, re.DOTALL)
 
-        thought = thought_match.group(1).strip() if thought_match else None
-        code = code_match.group(1).strip() if code_match else None
+        # Find all code blocks and use the last one as the definitive code
+        code_matches = list(code_block_pattern.finditer(response_text))
 
-        # When either thought or code is not found, we do not raise an exception.
-        # Instead of raising exception ValueError for parsing issues or missing blocks,
-        # we just return the original response text.
-        # This allows the caller to handle the error gracefully, e.g., by logging it or
-        # retrying with a different prompt.
+        if not code_matches:
+            # If no code block is found, we cannot parse.
+            return self._handle_parse_failure(response_text, code_missing=True)
 
-        if thought is None or code is None:
-            append_text = "\n\n--- WARNING: Parsing Issues ---\n"
-            if thought is None:
-                print(
-                    f"Warning: Could not parse 'thought' from LLM response. Expected ```thought ... ``` block. Response:\n{response_text[:500]}..."
-                )
-                append_text += "Could not parse 'thought' from LLM response. Expected ```thought ... ``` block.(PARSE_ERROR)\n"
-            if code is None:
-                print(
-                    f"Warning: Could not parse 'code' from LLM response. Expected ```code ... ``` block. Response:\n{response_text[:500]}..."
-                )
-                append_text += "Could not parse 'code' from LLM response. Expected ```code ... ``` block.(PARSE_ERROR)\n"
+        # The definitive code is the content of the last matched code block
+        last_match = code_matches[-1]
+        code = last_match.group(2).strip()
 
-            # Append to the response text to indicate parsing issues
-            response_text_with_issues = response_text + append_text
-            return response_text_with_issues, response_text_with_issues
-        else:
-            return thought, code
+        # The text before the last code block is considered the thought process
+        potential_thought = response_text[: last_match.start()].strip()
+
+        # Clean up the thought text by removing common headers and trailers
+        # Remove headers like 'thought', '**thought**', 'Algorithm plan', etc.
+        thought = re.sub(
+            r"^(?:```thought|\*\*thought\*\*|thought|algorithm plan)\s*",
+            "",
+            potential_thought,
+            flags=re.IGNORECASE,
+        )
+
+        thought = re.sub(
+            r"(?:```code|\*\*code\*\*|code)\s*$",
+            "",
+            thought,
+            flags=re.IGNORECASE,
+        ).strip()
+
+        # If after cleaning, thought is empty, it's a parsing issue.
+        if not thought or not code:
+            return self._handle_parse_failure(
+                response_text, thought_missing=not thought, code_missing=not code
+            )
+
+        return thought, code
+
+    def _handle_parse_failure(
+        self,
+        response_text: str,
+        thought_missing: bool = False,
+        code_missing: bool = False,
+    ) -> tuple[str, str]:
+        """
+        Helper function to format a standardized failure response.
+        """
+        append_text = "\n\n--- WARNING: Parsing Issues ---\n"
+        if thought_missing:
+            print(
+                f"Warning: Could not parse 'thought' from LLM response. Expected text before code block. Response:\n{response_text[:500]}..."
+            )
+            append_text += "Could not parse 'thought' from LLM response.(PARSE_ERROR)\n"
+        if code_missing:
+            print(
+                f"Warning: Could not parse 'code' from LLM response. Expected ```code ... ``` or ```python ... ``` block. Response:\n{response_text[:500]}..."
+            )
+            append_text += "Could not parse 'code' from LLM response.(PARSE_ERROR)\n"
+
+        response_text_with_issues = response_text + append_text
+        return response_text_with_issues, response_text_with_issues
 
     async def generate_response(
         self,
@@ -227,6 +285,7 @@ class LLMInterface:
         top_p: float = 0.95,
         max_tokens: int = 2048,
         generation_mode: Literal["whole", "diff"] = "whole",
+        system_prompt_override: str | None = None,
     ) -> tuple[str | None, str | None]:
         """
         Generate a single (thought, code) reply for a user prompt.
@@ -246,6 +305,8 @@ class LLMInterface:
         :type max_tokens: int
         :param generation_mode: Mode of generation, either "whole" or "diff".
         :type generation_mode: Literal["whole", "diff"]
+        :param system_prompt_override: Optional custom system prompt to override the default.
+        :type system_prompt_override: str | None
         :return: A (thought, code) tuple, or (None, None) on failure.
         """
         # print(f"\n--- LLM Request ---")
@@ -304,6 +365,18 @@ class LLMInterface:
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
             )
 
+        # If system_prompt_override is provided, use it instead of the default
+        if system_prompt_override:
+            system_prompt_content = system_prompt_override
+
+        # --- DEBUG: Print the final input prompts ---
+        if self.debug:
+            print("\n" + "=" * 80)
+            print("--- DEBUG: LLM INPUT (generate_response) ---")
+            print(f"--- SYSTEM PROMPT ---\n{system_prompt_content}")
+            print(f"\n--- USER PROMPT ---\n{prompt}")
+            print("=" * 80 + "\n")
+
         # Use 'async with' to manage the client's lifecycle correctly
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
@@ -330,6 +403,13 @@ class LLMInterface:
                     )
 
                     content = chat_completion.choices[0].message.content
+
+                    # --- DEBUG: Print the raw model output ---
+                    if self.debug:
+                        print("\n" + "=" * 80)
+                        print("--- DEBUG: RAW LLM OUTPUT (generate_response) ---")
+                        print(content)
+                        print("=" * 80 + "\n")
 
                     # If the response content is valid, parse it and return.
                     if content and content.strip():
@@ -377,6 +457,7 @@ class LLMInterface:
         top_p: float = 0.95,
         max_tokens: int = 2048,
         generation_mode: Literal["whole", "diff"] = "whole",
+        system_prompt_override: str | None = None,
     ) -> list[tuple[str | None, str | None]]:
         """
         Generates 'n' different responses for a single prompt.
@@ -397,6 +478,8 @@ class LLMInterface:
         :type max_tokens: int
         :param generation_mode: Mode of generation, either "whole" or "diff".
         :type generation_mode: Literal["whole", "diff"]
+        :param system_prompt_override: Optional custom system prompt to override the default.
+        :type system_prompt_override: str | None
         :return: A list of (thought, code) tuples.
         """
         print(f"\n--- Sending Single-Prompt Batch Request for {n} responses ---")
@@ -451,6 +534,18 @@ class LLMInterface:
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
             )
 
+        # If system_prompt_override is provided, use it instead of the default
+        if system_prompt_override:
+            system_prompt_content = system_prompt_override
+
+        # --- DEBUG: Print the final input prompts ---
+        if self.debug:
+            print("\n" + "=" * 80)
+            print(f"--- DEBUG: LLM INPUT (generate_n_responses, n={n}) ---")
+            print(f"--- SYSTEM PROMPT ---\n{system_prompt_content}")
+            print(f"\n--- USER PROMPT ---\n{prompt}")
+            print("=" * 80 + "\n")
+
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
                 try:
@@ -469,6 +564,17 @@ class LLMInterface:
                     await self._update_stats(
                         chat_completion, n_calls=n, completion_type="code"
                     )
+
+                    # --- DEBUG: Print the raw model outputs ---
+                    if self.debug:
+                        print("\n" + "=" * 80)
+                        print("--- DEBUG: RAW LLM OUTPUT (generate_n_responses) ---")
+                        for i, choice in enumerate(chat_completion.choices):
+                            print(
+                                f"\n--- Response {i + 1}/{len(chat_completion.choices)} ---"
+                            )
+                            print(choice.message.content)
+                        print("=" * 80 + "\n")
 
                     # *** START: WORKAROUND FOR OPENROUTER AND SIMILAR APIS ***
                     # Check if the API returned fewer responses than requested. This handles
@@ -497,6 +603,7 @@ class LLMInterface:
                                 top_p,
                                 max_tokens,
                                 generation_mode=generation_mode,
+                                system_prompt_override=system_prompt_override,
                             )
                             for _ in range(num_remaining)
                         ]
@@ -538,6 +645,7 @@ class LLMInterface:
                                 top_p,
                                 max_tokens,
                                 generation_mode=generation_mode,
+                                system_prompt_override=system_prompt_override,
                             )
                             for _ in range(n)
                         ]
@@ -568,6 +676,7 @@ class LLMInterface:
                                 top_p,
                                 max_tokens,
                                 generation_mode=generation_mode,
+                                system_prompt_override=system_prompt_override,
                             )
                             for _ in range(n)
                         ]
@@ -577,11 +686,27 @@ class LLMInterface:
                         )
                         return results
                     else:
-                        # It's a different, non-retriable bad request.
+                        # Try again with just self.generate_response just in case of other issues.
                         print(
-                            f"A non-retriable BadRequestError occurred in generate_n_responses: {e}"
+                            f"BadRequestError occurred: {e}. Retrying with individual requests."
                         )
-                        return [(None, None)] * n
+                        # The individual 'generate_response' calls will handle their own retries and counting.
+                        tasks = [
+                            self.generate_response(
+                                prompt,
+                                temperature,
+                                top_p,
+                                max_tokens,
+                                generation_mode=generation_mode,
+                                system_prompt_override=system_prompt_override,
+                            )
+                            for _ in range(n)
+                        ]
+                        results = await asyncio.gather(*tasks)
+                        print(
+                            f"--- Fallback with {n} individual requests completed ---"
+                        )
+                        return results
 
                 except (
                     APIConnectionError,
@@ -617,16 +742,28 @@ class LLMInterface:
         temperature: float = 1.0,
         top_p: float = 0.95,
         max_tokens: int = 2048,
+        system_prompt_override: str | None = None,
+        user_prompt_override: str | None = None,
     ) -> dict[str, int | str | None]:
         """
         Analyzes Verilog code against a problem and simulation log to provide feedback.
 
         :param problem_def: The high-level problem description.
+        :type problem_def: str
         :param verilog_code: The user's Verilog code submission.
+        :type verilog_code: str
         :param simulation_log: The log output from simulating the code.
+        :type simulation_log: str
         :param temperature: Sampling temperature for the feedback model.
+        :type temperature: float
         :param top_p: Nucleus sampling threshold.
+        :type top_p: float
         :param max_tokens: Maximum tokens for the feedback response.
+        :type max_tokens: int
+        :param system_prompt_override: Optional custom system prompt to override the default.
+        :type system_prompt_override: str | None
+        :param user_prompt_override: Optional custom user prompt to override the default.
+        :type user_prompt_override: str | None
         :return: A dictionary containing 'score', 'justification', and 'analysis'.
         """
         # print(f"\n--- LLM Feedback Generation Request ---")
@@ -671,6 +808,10 @@ class LLMInterface:
             "```"
         )
 
+        # If a custom system prompt is provided, use it instead of the default
+        if system_prompt_override:
+            system_prompt_content = system_prompt_override
+
         user_prompt = (
             "I wrote some Verilog code to solve a given problem. "
             "Please analyze the code and provide your feedback in the requested format.\n\n"
@@ -687,6 +828,18 @@ class LLMInterface:
             f"{simulation_log}\n"
             "```\n\n"
         )
+
+        # If a custom user prompt is provided, use it instead of the default
+        if user_prompt_override:
+            user_prompt = user_prompt_override
+
+        # --- DEBUG: Print the final input prompts ---
+        if self.debug:
+            print("\n" + "=" * 80)
+            print("--- DEBUG: LLM INPUT (generate_feedback) ---")
+            print(f"--- SYSTEM PROMPT ---\n{system_prompt_content}")
+            print(f"\n--- USER PROMPT ---\n{user_prompt}")
+            print("=" * 80 + "\n")
 
         async with AsyncOpenAI(**self.client_args) as client:
             for attempt in range(self.max_retries):
@@ -705,10 +858,18 @@ class LLMInterface:
                     await self._update_stats(
                         chat_completion, n_calls=1, completion_type="feedback"
                     )
-                    if chat_completion.choices[0].message.content:
-                        return self._parse_feedback_response(
-                            chat_completion.choices[0].message.content.strip()
-                        )
+
+                    raw_content = chat_completion.choices[0].message.content
+
+                    # --- DEBUG: Print the raw model output ---
+                    if self.debug:
+                        print("\n" + "=" * 80)
+                        print("--- DEBUG: RAW LLM OUTPUT (generate_feedback) ---")
+                        print(raw_content)
+                        print("=" * 80 + "\n")
+
+                    if raw_content:
+                        return self._parse_feedback_response(raw_content.strip())
 
                 except (
                     APIConnectionError,
@@ -808,6 +969,9 @@ class LLMInterface:
                 top_p,
                 max_tokens,
                 generation_mode=p.get("generation_mode", "whole"),
+                system_prompt_override=p.get(
+                    "system_prompt"
+                ),  # Allows override of system prompt if LLMRequest is constructed with a custom prompt
             )
             for p in prompts
         ]
@@ -817,7 +981,13 @@ class LLMInterface:
 
     # Method for batching feedback generation requests
     async def generate_batch_feedback(
-        self, feedback_requests, temperature, top_p, max_tokens
+        self,
+        feedback_requests,
+        temperature,
+        top_p,
+        max_tokens,
+        system_prompt_override: list[str] | None = None,
+        user_prompt_override: list[str] | None = None,
     ):
         """
         Generates feedback for a batch of candidates concurrently.
@@ -827,11 +997,35 @@ class LLMInterface:
         :param temperature: Sampling temperature.
         :param top_p: Nucleus sampling threshold.
         :param max_tokens: Maximum tokens to generate.
+        :param system_prompt_override: Optional custom system prompt to override the default.
+        :param user_prompt_override: Optional custom user prompt to override the default.
         :return: A list of feedback dictionaries.
         """
         print(
             f"\n--- Sending Batch LLM Feedback Request for {len(feedback_requests)} candidates ---"
         )
+
+        # If the overrides are provided check that they are lists of the same length as feedback_requests
+        if system_prompt_override and len(system_prompt_override) != len(
+            feedback_requests
+        ):
+            raise ValueError(
+                "system_prompt_override must be a list of the same length as feedback_requests"
+            )
+        if user_prompt_override and len(user_prompt_override) != len(feedback_requests):
+            raise ValueError(
+                "user_prompt_override must be a list of the same length as feedback_requests"
+            )
+        # Convert the feedback_requests and overrides to a list of tasks (feedback_requests, sys_prompt_overrides, user_prompt_overrides)
+        feedback_overrides = [
+            (
+                req,
+                system_prompt_override[i] if system_prompt_override else None,
+                user_prompt_override[i] if user_prompt_override else None,
+            )
+            for i, req in enumerate(feedback_requests)
+        ]
+
         tasks: list[Coroutine[Any, Any, dict[str, int | str | None]]] = [
             self.generate_feedback(
                 req["problem_def"],
@@ -840,8 +1034,10 @@ class LLMInterface:
                 temperature,
                 top_p,
                 max_tokens,
+                system_prompt_override=sys_prompt_override,
+                user_prompt_override=user_prompt_override,
             )
-            for req in feedback_requests
+            for req, sys_prompt_override, user_prompt_override in feedback_overrides
         ]
         results = await asyncio.gather(*tasks)
         print("--- Batch LLM Feedback Received ---")
