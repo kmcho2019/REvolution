@@ -439,6 +439,39 @@ class EoHEngine:
             if not os.path.exists(dest_path):
                 shutil.copy(source_path, dest_path)
 
+    def _normalize_code_text(self, s: str) -> str:
+        """
+        Convert escaped sequences (\\n, \\t, \\r) into real characters when it looks like
+        we got an escaped JSON string instead of plain code. Heuristics avoid over-decoding.
+        """
+        # Always normalize CRLF -> LF
+        s0 = s.replace("\r\n", "\n")
+
+        # If there are MANY literal "\n" and FEW real newlines, treat as escaped
+        lit = s0.count("\\n")
+        real = s0.count("\n")
+        if lit >= 2 and real <= max(1, lit // 4):
+            # Try a safe one-pass decode
+            try:
+                # decode common escapes: \n, \t, \r, \", \uXXXX
+                s1 = s0.encode("utf-8").decode("unicode_escape")
+            except Exception:
+                # Fallback conservative replacements
+                s1 = (
+                    s0.replace("\\r\\n", "\n")
+                    .replace("\\n", "\n")
+                    .replace("\\t", "\t")
+                    .replace('\\"', '"')
+                )
+            # Strip accidental outer quotes (rare, but happens)
+            if (s1.startswith('"') and s1.endswith('"')) or (s1.startswith("'") and s1.endswith("'")):
+                # Only strip if it looks like a single-line wrapper
+                if "\n" in s1[1:-1]:
+                    s1 = s1[1:-1]
+            return s1
+
+        return s0
+
     def _save_result_to_file(
         self,
         code_content: str,
@@ -487,7 +520,9 @@ class EoHEngine:
         json_diff_file_path = os.path.join(directory_path, f"{base_name}_diff.json")
 
         with open(code_file_path, "w") as f:
-            f.write(str(code_content))
+            # Normalize escaped newlines/tabs/quotes if present
+            normalized_code = self._normalize_code_text(str(code_content))
+            f.write(normalized_code)
         with open(thought_file_path, "w") as f:
             f.write(str(thought_content))
 
@@ -933,7 +968,8 @@ class EoHEngine:
                 '  "thought": "<brief explanation of the fix>",\n'
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
-                "Rules: valid JSON only (no markdown). Escape newlines as \\n and quotes."
+                "Rules: valid JSON only (no markdown). Escape newlines as \\n and quotes.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:  # diff mode
             with open(parent.code_file_path, "r") as f:
@@ -964,7 +1000,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; SEARCH must match exactly; escape newlines as \\n."
+                "Rules: valid JSON only; SEARCH must match exactly; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_S(self, parents: list[Heuristic]) -> str:  # Simplify
@@ -996,7 +1033,8 @@ class EoHEngine:
                 '  "thought": "<how you simplify without changing behavior>",\n'
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
-                "Rules: valid JSON only; escape newlines as \\n and quotes."
+                "Rules: valid JSON only; escape newlines as \\n and quotes.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1027,7 +1065,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
 
@@ -1060,7 +1099,8 @@ class EoHEngine:
                 '  "thought": "<your new idea>",\n'
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
-                "Rules: valid JSON only; escape newlines as \\n."
+                "Rules: valid JSON only; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1091,7 +1131,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_R(self, parents: list[Heuristic]) -> str:  # Refactor
@@ -1123,7 +1164,8 @@ class EoHEngine:
                 '  "thought": "<what you refactor and why>",\n'
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
-                "Rules: valid JSON only; escape newlines as \\n."
+                "Rules: valid JSON only; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1154,7 +1196,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_I(self, parents: list[Heuristic]) -> str:  # Improve
@@ -1186,7 +1229,8 @@ class EoHEngine:
                 '  "thought": "<improvement strategy>",\n'
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
-                "Rules: valid JSON only; escape newlines as \\n."
+                "Rules: valid JSON only; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1217,7 +1261,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_C_F(self, parents: list[Heuristic]) -> str:  # Fusion
@@ -1288,7 +1333,8 @@ class EoHEngine:
                 "    ]\n"
                 "  }\n"
                 "}\n"
-                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _parse_diff_block(self, diff_text: str) -> Iterator[tuple[str, str, str]]:
@@ -1528,7 +1574,7 @@ class EoHEngine:
                 temperature=self.default_llm_temp,
                 top_p=self.default_llm_top_p,
                 max_tokens=self.default_llm_max_tokens,
-                generation_mode=self.generation_mode,
+                generation_mode="whole", #self.generation_mode, # Always use "whole" mode for initial generation.
             )
         )
 
@@ -1536,7 +1582,11 @@ class EoHEngine:
         for i, (thought, code_content) in enumerate(results):
             if thought and code_content:
                 final_code, diff_to_save = "", None
-                if self.generation_mode == "diff":
+
+                # For initial generation always use "whole" mode
+                # generation_mode_to_use = self.generation_mode
+                generation_mode_to_use = "whole" # For initial generation always use "whole" mode
+                if generation_mode_to_use == "diff":
                     diff_to_save = code_content
                     original_code = ""
                     new_code = self._apply_diff(original_code, diff_to_save)
@@ -1547,7 +1597,7 @@ class EoHEngine:
                             f"WARNING: Diff application failed for candidate {i + 1} in initial population generation. Applying fallback logic."
                         )
                         # Save the original code with diff appended as a fallback
-                        diff_fail_warning = "WARNING: Diff application failed. Using original code with diff appended."
+                        diff_fail_warning = "//WARNING: Diff application failed. Using original code with diff appended."
                         final_code = (
                             original_code
                             + "\n"
@@ -1853,13 +1903,34 @@ class EoHEngine:
                 sel_gen,
             )
 
-    def _get_generation_system_prompt(self) -> str | None:
+    # Allow per-request system-prompt selection
+    def _get_generation_system_prompt(self, mode: Literal["whole","diff"] | None = None) -> str | None:
         """
         Returns the system prompt for code generation during evolution.
         Subclasses can override this to provide a custom system prompt.
         By default, it returns None, causing the LLMInterface to use its default.
         """
         return None
+
+    # A helper: call a prompt-builder under a temporary generation_mode
+    def _with_mode(self, mode: Literal["whole", "diff"], fn, *args, **kwargs) -> str:
+        """
+        A helper function with calls a prompt-builder under a temporary generation_mode.
+        Helps to tempoarily switch self.generation_mode just for prompt construction.
+        This is used to override generation_mode settings for init/failed where it will always use whole.
+        Where it doesn't make sense to use diff mode.
+
+        :param mode: The generation mode to temporarily set ('whole' or 'diff').
+        :type Literal["whole", "diff"]
+
+        :rtype str
+        """
+        old_mode = self.generation_mode
+        try:
+            self.generation_mode = mode
+            return fn(*args, **kwargs)
+        finally:
+            self.generation_mode = old_mode
 
     def evolve_one_generation(self):
         """Performs one generation of the REvolution algorithm."""
@@ -1915,16 +1986,20 @@ class EoHEngine:
                     fail_view, k=strategies[strat_name]["num_parents"]
                 )
 
-                if generation_system_prompt:
+                # This snippet enforces "whole" mode for failed parents and allows inherited classes to override default system prompt
+                req_mode = "whole" # Always override input config to use "whole" generation mode for failed candidates
+                prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
+                request_system_prompt = self._get_generation_system_prompt(req_mode)
+                if request_system_prompt:
                     llm_request = LLMRequest(
-                        prompt=strategies[strat_name]["func"](parents),
-                        generation_mode=self.generation_mode,
-                        system_prompt=generation_system_prompt,
+                        prompt=prompt_text,
+                        generation_mode=req_mode,
+                        system_prompt=request_system_prompt,
                     )
                 else:
                     llm_request = LLMRequest(
-                        prompt=strategies[strat_name]["func"](parents),
-                        generation_mode=self.generation_mode,
+                        prompt=prompt_text,
+                        generation_mode=req_mode,
                     )
 
                 llm_requests.append(llm_request)
@@ -1934,6 +2009,7 @@ class EoHEngine:
                         "strategy": strat_name,
                         "pool": "fail",
                         "prob_dist": prob_dist_dict,
+                        "resolved_mode": req_mode,
                     }
                 )
                 for k, v in prob_dist_dict.items():
@@ -1981,16 +2057,20 @@ class EoHEngine:
                             0
                         ]
 
-                if generation_system_prompt:
+                # This snippet allows inherited classes to override default system prompt
+                req_mode = self.generation_mode  # respect the engine's original/global setting if parent(s) isn't from fail_pool or is a success
+                prompt_text = self._with_mode(req_mode, strategies[strat_name]["func"], parents) # Switches prompt_text based on req_mode
+                request_system_prompt = self._get_generation_system_prompt(req_mode)
+                if request_system_prompt:
                     llm_request = LLMRequest(
-                        prompt=strategies[strat_name]["func"](parents),
-                        generation_mode=self.generation_mode,
-                        system_prompt=generation_system_prompt,
+                        prompt=prompt_text,
+                        generation_mode=req_mode,
+                        system_prompt=request_system_prompt,
                     )
                 else:
                     llm_request = LLMRequest(
-                        prompt=strategies[strat_name]["func"](parents),
-                        generation_mode=self.generation_mode,
+                        prompt=prompt_text,
+                        generation_mode=req_mode,
                     )
 
                 llm_requests.append(llm_request)
@@ -2000,6 +2080,7 @@ class EoHEngine:
                         "strategy": strat_name,
                         "pool": "success",
                         "prob_dist": prob_dist_dict,
+                        "resolved_mode": req_mode,
                     }
                 )
                 for k, v in prob_dist_dict.items():
@@ -2033,7 +2114,13 @@ class EoHEngine:
                 strategy = meta["strategy"]
                 final_code, diff_to_save = "", None
 
-                if self.generation_mode == "diff":
+                # Check if the offspring was generated using "whole" or "diff"
+                # Decide using per-request resolved mode, not the global engine setting
+                # As sometimes the global engine setting is sometimes overriden for initial generation or for failed parents.
+                resolved_mode = meta.get("resolved_mode", self.generation_mode)
+
+                # If offspring was generated under "diff" mode then _apply_diff is needed
+                if resolved_mode == "diff":
                     diff_to_save = code_content
                     original_code = ""
                     with open(meta["parents"][0].code_file_path, "r") as f:

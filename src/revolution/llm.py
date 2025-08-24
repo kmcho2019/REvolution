@@ -55,7 +55,7 @@ class LLMInterface:
         max_retries: int = 10,
         base_delay: float = 2.0,
         port: int = 8000,
-        debug: bool = False,
+        debug: bool = True,
     ) -> None:
         """
         :param api_key:      Your LLM API key (not required for 'vllm' backend).
@@ -193,6 +193,53 @@ class LLMInterface:
             self.feedback_completion_tokens_count = 0
             return stats
 
+    # A small helper to repair common LLM JSON mistakes (unescaped newlines/quotes, trailing commas)
+    def _repair_json_like(self, s: str) -> dict[str, Any] | None:
+        txt = s.strip()
+
+        # strip common code fences
+        if txt.startswith("```"):
+            txt = re.sub(r"^```[a-zA-Z0-9]*\s*", "", txt)
+            txt = re.sub(r"\s*```$", "", txt)
+
+        # replace curly quotes with regular quotes
+        txt = txt.replace("“", '"').replace("”", '"').replace("’", "'")
+
+        # remove trailing commas before } or ]
+        txt = re.sub(r",(\s*[}\]])", r"\1", txt)
+
+        # escape raw newlines that occur inside quoted strings
+        out = []
+        in_str = False
+        escaped = False
+        for ch in txt:
+            if in_str:
+                if escaped:
+                    out.append(ch)
+                    escaped = False
+                else:
+                    if ch == '\\':
+                        out.append(ch); escaped = True
+                    elif ch == '"':
+                        out.append(ch); in_str = False
+                    elif ch == '\n':
+                        out.append('\\n')
+                    elif ch == '\r':
+                        out.append('\\r')
+                    else:
+                        out.append(ch)
+            else:
+                out.append(ch)
+                if ch == '"':
+                    # begin string (if not escaped — but outside string, slash cannot escape)
+                    in_str = True
+        txt2 = "".join(out)
+
+        try:
+            return json.loads(txt2)
+        except Exception:
+            return None
+
     def _extract_json_obj(self, text: str) -> dict[str, Any] | None:
         """
         Try very hard to find a JSON object in `text`. Supports:
@@ -204,18 +251,24 @@ class LLMInterface:
         # Try fenced JSON first
         m = re.search(r"```json\s*(\{[\s\S]*?\})\s*```", text, re.IGNORECASE)
         if m:
+            blob = m.group(1)
             try:
-                return json.loads(m.group(1))
+                return json.loads(blob)
             except Exception:
-                pass
+                repaired = self._repair_json_like(blob)
+                if repaired is not None:
+                    return repaired
 
         # Try any fenced block that looks like JSON
         m2 = re.search(r"```[\w]*\s*(\{[\s\S]*?\})\s*```", text, re.IGNORECASE)
         if m2:
+            blob = m2.group(1)
             try:
-                return json.loads(m2.group(1))
+                return json.loads(blob)
             except Exception:
-                pass
+                repaired = self._repair_json_like(blob)
+                if repaired is not None:
+                    return repaired
 
         # Fallback: first '{' to last '}' slice
         start = text.find("{")
@@ -225,21 +278,65 @@ class LLMInterface:
             try:
                 return json.loads(candidate)
             except Exception:
-                return None
+                repaired = self._repair_json_like(candidate)
+                if repaired is not None:
+                    return repaired
         return None
 
     def _json_to_thought_code(self, obj: dict[str, Any]) -> tuple[str, str] | None:
         """
         Validate minimal schema and extract (thought, code).
-        Accepts: {"format":"eoh_v1", "mode":"whole|diff", "thought":str, "code":str, ...}
+        Accepts:
+        - {"format":"eoh_v1", "mode":"whole|diff", "thought":str, "code":str|dict}
+        - {"format":"eoh_v1", "mode":"diff", "thought":str, "edits":[...]}  # lenient
+        Returns (thought, code_json_string) for diff, or (thought, code_str) for whole.
         """
         if not isinstance(obj, dict):
             return None
+
         thought = obj.get("thought")
+        mode = obj.get("mode")
         code = obj.get("code")
-        if isinstance(thought, str) and isinstance(code, str):
+
+        # lenient top-level edits for diff outputs that omit "code": { "edits": [...] }
+        if code is None and obj.get("edits") and isinstance(obj["edits"], list):
+            code = {"edits": obj["edits"]}
+
+        if not isinstance(thought, str):
+            return None
+
+        # whole: must be a string
+        if mode == "whole" and isinstance(code, str):
             return thought.strip(), code.strip()
+
+        # diff: allow dict (we will re-serialize to JSON)
+        if mode == "diff" and isinstance(code, dict):
+            try:
+                return thought.strip(), json.dumps(code, separators=(",", ":"))
+            except Exception:
+                return None
+
+        # be permissive: if code is a string in diff (rare), still return
+        if mode == "diff" and isinstance(code, str):
+            return thought.strip(), code.strip()
+
         return None
+    
+    def _maybe_unescape_code(self, s: str) -> str:
+        """
+        If the model double-escapes or you occasionally skip the strict JSON path, 
+        unescape once in the parser so everything downstream is already clean.
+        """
+        # If it already has plenty of real newlines, leave it alone
+        if s.count("\\n") >= 2 and s.count("\n") <= max(1, s.count("\\n") // 4):
+            try:
+                return s.encode("utf-8").decode("unicode_escape")
+            except Exception:
+                return (s.replace("\\r\\n", "\n")
+                        .replace("\\n", "\n")
+                        .replace("\\t", "\t")
+                        .replace('\\"', '"'))
+        return s.replace("\r\n", "\n")
 
 
     def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
@@ -272,7 +369,10 @@ class LLMInterface:
         if obj is not None:
             pair = self._json_to_thought_code(obj)
             if pair is not None:
-                return pair
+                thought, code = pair
+                # Normalize code once here to avoid escaped literals downstream
+                code = self._maybe_unescape_code(code)
+                return thought, code
 
 
         # Legacy fallback
@@ -389,6 +489,7 @@ class LLMInterface:
                 "You are an expert Verilog design assistant. "
                 "Your role is to address Verilog-related problems posed by the user. "
                 "You MUST provide your response as a single JSON object for each problem.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
                 "The JSON object must have four keys:\n"
                 '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
                 '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
@@ -411,6 +512,7 @@ class LLMInterface:
                 "You are an expert Verilog design assistant that modifies code based on user requests.\n"
                 "You will be given the file path, the file content, and instructions for what to change.\n"
                 "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
                 "The JSON object must have four keys:\n"
                 '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
                 '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
@@ -427,8 +529,13 @@ class LLMInterface:
                 "  ]\n"
                 "}\n\n"
                 "Rules:\n"
-                "- The SEARCH text must match the existing file content exactly (including whitespace and comments).\n"
+                "- The search text must match the existing file content exactly (including whitespace and comments).\n"
                 "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
                 "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
                 "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
@@ -580,6 +687,7 @@ class LLMInterface:
                 "You are an expert Verilog design assistant. "
                 "Your role is to address Verilog-related problems posed by the user. "
                 "You MUST provide your response as a single JSON object for each problem.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
                 "The JSON object must have four keys:\n"
                 '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
                 '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
@@ -602,6 +710,7 @@ class LLMInterface:
                 "You are an expert Verilog design assistant that modifies code based on user requests.\n"
                 "You will be given the file path, the file content, and instructions for what to change.\n"
                 "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
+                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.\n'
                 "The JSON object must have four keys:\n"
                 '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
                 '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
@@ -618,8 +727,13 @@ class LLMInterface:
                 "  ]\n"
                 "}\n\n"
                 "Rules:\n"
-                "- The SEARCH text must match the existing file content exactly (including whitespace and comments).\n"
+                "- The search text must match the existing file content exactly (including whitespace and comments).\n"
                 "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
                 "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
                 "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
