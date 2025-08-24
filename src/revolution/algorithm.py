@@ -11,6 +11,7 @@ import traceback
 import uuid
 from collections import defaultdict
 from typing import Any, Iterator, Literal, TypeVar, cast, get_args, overload
+from difflib import SequenceMatcher # Used for fuzzy matching in "diff" mode
 
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
@@ -386,6 +387,12 @@ class EoHEngine:
         self.run_start_time: float = 0
         self.run_start_utc: datetime.datetime | None = None
         self.gen_start_time: float = 0
+
+        # --- Diff application tunables (ported from Aider-style behavior) ---
+        self.diff_similarity_threshold: float = 0.80   # accept fuzzy match if >= this ratio
+        self.diff_length_scale: float = 0.10           # +/- window around SEARCH size (in lines)
+        self.diff_allow_dots: bool = True              # treat "..." lines in SEARCH/REPLACE as wildcards
+
 
     def load_problem_description(self) -> str:
         """
@@ -1378,9 +1385,10 @@ class EoHEngine:
                         continue
             i += 1
 
-    def _do_replace(self, content: str, original: str, updated: str) -> str | None:
+    def _do_replace(self, content: str, original: str, updated: str, filename: str | None = None) -> str | None:
         """
-        Helper to perform a single, exact SEARCH/REPLACE on the content.
+        Perform a SEARCH/REPLACE on `content`, allowing whitespace drift, '...' wildcards,
+        and fuzzy matching (SequenceMatcher) as a last resort.
 
         :param content: The original content to modify.
         :type content: str
@@ -1388,27 +1396,243 @@ class EoHEngine:
         :type original: str
         :param updated: The text to replace the original with.
         :type updated: str
+        :param filename: The filename optionally used to strip accidental filename wrappers.
+        :type filenmae: str
         :return: The modified content with the original replaced by updated, or None if the replacement failed.
         :rtype: str | None
         """
-        if not original.strip():  # New file case
-            return content + updated
+        if content is None:
+            return None
 
-        # For simplicity, we implement exact, single-occurrence replacement.
-        if content.count(original) == 1:
+        # New-file or "append" case: empty SEARCH means "append REPLACE"
+        if not original.strip():
+            return (content or "") + updated
+
+        # Be robust to accidental code fences / filename wrappers
+        original = self._strip_quoted_wrapping(original, filename)
+        updated  = self._strip_quoted_wrapping(updated, filename)
+
+        # Exact unique match first (fast path)
+        count = content.count(original)
+        if count == 1:
             return content.replace(original, updated, 1)
-        elif content.count(original) > 1:
-            print(
-                f"WARNING: Diff application failed. SEARCH block is not unique:\n{original}"
-            )
+        # If multiple identical occurrences exist, we'll try the fuzzy path to pick one.
+
+        # Progressive strategies
+        res = self._replace_most_similar_chunk(content, original, updated)
+        return res
+
+    # ----- _do_replace helpers start
+    # Functions inspired by Aider's diff style.
+    # Particularly https://github.com/Aider-AI/aider/blob/main/aider/coders/editblock_coder.py
+    def _strip_quoted_wrapping(self, text: str, fname: str | None = None) -> str:
+        """
+        Remove simple wrappers like triple-backtick fences and an optional leading filename line.
+        Kept intentionally conservative.
+        """
+        if not text:
+            return text
+
+        lines = text.splitlines()
+        if not lines:
+            return text
+
+        # strip an initial filename line if it looks like "<name>" or "<name>:"
+        if fname:
+            base = os.path.basename(fname)
+            head = lines[0].strip().strip("`").rstrip(":")
+            if head == base or head == fname:
+                lines = lines[1:] if len(lines) > 1 else []
+
+        # strip triple backtick fences
+        if len(lines) >= 2 and lines[0].strip().startswith("```") and lines[-1].strip().startswith("```"):
+            lines = lines[1:-1]
+
+        out = "\n".join(lines)
+        if out and not out.endswith("\n"):
+            out += "\n"
+        return out
+
+
+    def _prep_lines(self, s: str) -> tuple[str, list[str]]:
+        if s and not s.endswith("\n"):
+            s += "\n"
+        return s, s.splitlines(keepends=True)
+
+
+    def _perfect_replace(self, whole_lines: list[str], part_lines: list[str], replace_lines: list[str]) -> str | None:
+        part_len = len(part_lines)
+        if part_len == 0:
             return None
-        else:
-            print(
-                f"WARNING: Diff application failed. SEARCH block not found:\n{original}"
-            )
+        part_tup = tuple(part_lines)
+        for i in range(0, len(whole_lines) - part_len + 1):
+            if tuple(whole_lines[i:i+part_len]) == part_tup:
+                return "".join(whole_lines[:i] + replace_lines + whole_lines[i+part_len:])
+        return None
+
+
+    def _match_but_for_leading_whitespace(self, whole_lines: list[str], part_lines: list[str]) -> str | None:
+        num = len(part_lines)
+        if num == 0:
             return None
 
-    # [JSON-PORT] Apply JSON-based edit hunks (code.edits[])
+        # all non-whitespace equal?
+        if not all(whole_lines[i].lstrip() == part_lines[i].lstrip() for i in range(num)):
+            return None
+
+        # uniform indent delta?
+        indents = set(
+            whole_lines[i][: len(whole_lines[i]) - len(part_lines[i])]
+            for i in range(num) if whole_lines[i].strip()
+        )
+        if len(indents) != 1:
+            return None
+        return indents.pop()
+
+
+    def _replace_missing_leading_ws(self, whole_lines: list[str], part_lines: list[str], replace_lines: list[str]) -> str | None:
+        # compute the minimum left trim among non-empty lines (both SEARCH and REPLACE)
+        leading = [len(p) - len(p.lstrip()) for p in part_lines if p.strip()] + \
+                [len(p) - len(p.lstrip()) for p in replace_lines if p.strip()]
+        if leading and min(leading) > 0:
+            k = min(leading)
+            part_lines    = [p[k:] if p.strip() else p for p in part_lines]
+            replace_lines = [p[k:] if p.strip() else p for p in replace_lines]
+
+        n = len(part_lines)
+        for i in range(0, len(whole_lines) - n + 1):
+            add = self._match_but_for_leading_whitespace(whole_lines[i:i+n], part_lines)
+            if add is None:
+                continue
+            fixed_replace = [add + r if r.strip() else r for r in replace_lines]
+            return "".join(whole_lines[:i] + fixed_replace + whole_lines[i+n:])
+        return None
+
+
+    def _try_dotdotdots(self, whole: str, part: str, replace: str) -> str | None:
+        """
+        Support '...' lines in SEARCH/REPLACE as wildcards between fixed chunks.
+        """
+        if not self.diff_allow_dots:
+            return None
+
+        dots_re = re.compile(r"(^\s*\.\.\.\n)", re.MULTILINE | re.DOTALL)
+
+        part_pieces    = re.split(dots_re, part)
+        replace_pieces = re.split(dots_re, replace)
+        # same number of pieces and all wildcard separators identical?
+        if len(part_pieces) != len(replace_pieces):
+            return None
+        if len(part_pieces) == 1:
+            return None  # no dots at all
+
+        if not all(part_pieces[i] == replace_pieces[i] for i in range(1, len(part_pieces), 2)):
+            return None
+
+        # keep only the literal chunks at even indices; wildcards at odd indices
+        part_chunks    = [part_pieces[i] for i in range(0, len(part_pieces), 2)]
+        replace_chunks = [replace_pieces[i] for i in range(0, len(replace_pieces), 2)]
+
+        # now do an exact replace for each literal chunk (must be unique)
+        w = whole
+        for p, r in zip(part_chunks, replace_chunks):
+            if not p and not r:
+                continue
+            if not p and r:
+                if not w.endswith("\n"):
+                    w += "\n"
+                w += r
+                continue
+            # unique exact occurrence?
+            c = w.count(p)
+            if c != 1:
+                return None
+            w = w.replace(p, r, 1)
+        return w
+
+
+    def _replace_closest_edit_distance(
+        self,
+        whole_lines: list[str],
+        part: str,
+        part_lines: list[str],
+        replace_lines: list[str],
+    ) -> str | None:
+        """
+        Sliding-window fuzzy match: pick the chunk with the highest ratio to SEARCH.
+        Window length varies +/- diff_length_scale around SEARCH length (in lines).
+        """
+        min_len = max(1, math.floor(len(part_lines) * (1.0 - self.diff_length_scale)))
+        max_len = max(min_len, math.ceil(len(part_lines) * (1.0 + self.diff_length_scale)))
+
+        best_ratio = 0.0
+        best_i = -1
+        best_j = -1
+
+        for length in range(min_len, max_len + 1):
+            for i in range(0, len(whole_lines) - length + 1):
+                cand = "".join(whole_lines[i:i+length])
+                ratio = SequenceMatcher(None, cand, part).ratio()
+                if ratio > best_ratio:
+                    best_ratio = ratio
+                    best_i = i
+                    best_j = i + length
+
+        if best_ratio >= self.diff_similarity_threshold and best_i >= 0:
+            return "".join(whole_lines[:best_i] + replace_lines + whole_lines[best_j:])
+        return None
+
+
+    def _perfect_or_ws(self, whole_lines: list[str], part_lines: list[str], replace_lines: list[str]) -> str | None:
+        # exact
+        res = self._perfect_replace(whole_lines, part_lines, replace_lines)
+        if res:
+            return res
+        # flexible on leading whitespace
+        return self._replace_missing_leading_ws(whole_lines, part_lines, replace_lines)
+
+
+    def _replace_most_similar_chunk(self, whole: str, part: str, replace: str) -> str | None:
+        """
+        Best-effort replace:
+        1) exact / leading-whitespace-tolerant
+        2) tolerate leading blank line in SEARCH
+        3) '...' wildcard chunks
+        4) fuzzy sliding-window (SequenceMatcher)
+        """
+        whole, whole_lines     = self._prep_lines(whole)
+        part, part_lines       = self._prep_lines(part)
+        replace, replace_lines = self._prep_lines(replace)
+
+        # 1) exact or whitespace-tolerant
+        res = self._perfect_or_ws(whole_lines, part_lines, replace_lines)
+        if res:
+            return res
+
+        # 2) drop spurious leading blank line in SEARCH
+        if len(part_lines) > 2 and not part_lines[0].strip():
+            res = self._perfect_or_ws(whole_lines, part_lines[1:], replace_lines)
+            if res:
+                return res
+
+        # 3) '...' wildcards
+        try:
+            res = self._try_dotdotdots(whole, part, replace)
+            if res:
+                return res
+        except Exception:
+            # fall back to fuzzy
+            pass
+
+        # 4) fuzzy sliding-window
+        res = self._replace_closest_edit_distance(whole_lines, part, part_lines, replace_lines)
+        if res:
+            return res
+
+        return None
+    # ----- _do_replace helpers end
+
+    # Apply JSON-based edit hunks (code.edits[])
     def _apply_json_edits(
         self,
         original_content: str,
@@ -1475,7 +1699,8 @@ class EoHEngine:
             if replace and not replace.endswith("\n"):
                 replace += "\n"
 
-            result = self._do_replace(new_content, search, replace)
+            file_hint = chosen_edit.get("file") if isinstance(chosen_edit, dict) else None
+            result = self._do_replace(new_content, search, replace, filename=file_hint or target_file_path)
             if result is None:
                 return None
             new_content = result
@@ -1518,7 +1743,7 @@ class EoHEngine:
             print(f"Original diff_text:\n{diff_text}\n")
             return None
 
-        for _, search_block, replace_block in edits:
+        for file_path, search_block, replace_block in edits:
             # Strip trailing newlines added by LLM
             search_block = search_block.rstrip("\n")
             # The user's provided logic expects a newline, let's stick to simple replacement
@@ -1527,7 +1752,7 @@ class EoHEngine:
             if not replace_block.endswith("\n"):
                 replace_block += "\n"
 
-            result = self._do_replace(new_content, search_block, replace_block)
+            result = self._do_replace(new_content, search_block, replace_block, filename=file_path)
             if result is None:
                 # Debug print diff_text if it fails
                 # Print original diff_text for debugging
