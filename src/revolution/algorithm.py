@@ -450,6 +450,9 @@ class EoHEngine:
     ) -> tuple[str, str]:
         """
         Save the generated code and thought process to ``<save_path>/Gen<k>/``.
+        If diff_content is JSON with code.edits, also write {base_name}_diff.json
+        and emit a legacy fenced .diff synthesized from the JSON hunks.
+        If diff_content is legacy text, write it as-is to {base_name}.diff.
 
         :param code_content: The Verilog code to save.
         :type code_content: str
@@ -477,20 +480,64 @@ class EoHEngine:
         )
         os.makedirs(directory_path, exist_ok=True)
 
-        base_name = f"{self.problem_name}_{strategy}_sample{sample_idx_in_generation}"
+        base_name = f"{self.problem_name}_sample{sample_idx_in_generation}_{strategy}"
         code_file_path = os.path.join(directory_path, f"{base_name}.sv")
         thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
         diff_file_path = os.path.join(directory_path, f"{base_name}.diff")
+        json_diff_file_path = os.path.join(directory_path, f"{base_name}_diff.json")
 
         with open(code_file_path, "w") as f:
             f.write(str(code_content))
         with open(thought_file_path, "w") as f:
             f.write(str(thought_content))
 
-        # Also save the diff file if content is provided
+        # Also save diff artifacts if provided
         if diff_content:
-            with open(diff_file_path, "w") as f:
-                f.write(str(diff_content))
+            wrote_legacy = False
+            try:
+                parsed = json.loads(diff_content)
+                # Treat as JSON diff; save pretty JSON
+                with open(json_diff_file_path, "w") as f:
+                    f.write(json.dumps(parsed, indent=2))
+
+                # Extract edits: support both top-level "edits" and "code": {"edits": ...}
+                edits = None
+                if isinstance(parsed, dict):
+                    if isinstance(parsed.get("code"), dict) and "edits" in parsed["code"]:
+                        edits = parsed["code"]["edits"]
+                    elif "edits" in parsed:
+                        edits = parsed["edits"]
+
+                legacy_parts: list[str] = []
+                if isinstance(edits, list) and edits:
+                    for edit in edits:
+                        file_path = (edit.get("file") or code_file_path)
+                        hunks = edit.get("hunks", [])
+                        for h in hunks:
+                            search = h.get("search", "")
+                            replace = h.get("replace", "")
+                            # Ensure trailing newlines for parser compatibility
+                            if search and not search.endswith("\n"):
+                                search += "\n"
+                            if replace and not replace.endswith("\n"):
+                                replace += "\n"
+                            legacy_parts.append(
+                                f"{file_path}\n```\n"
+                                f"<<<<<<< SEARCH\n{search}=======\n{replace}>>>>>>> REPLACE\n"
+                                f"```\n"
+                            )
+                # If we built at least one block, write legacy .diff; otherwise fall back to raw content
+                legacy_text = "".join(legacy_parts) if legacy_parts else str(diff_content)
+                with open(diff_file_path, "w") as f:
+                    f.write(legacy_text)
+                wrote_legacy = True
+            except Exception:
+                # Not JSON; write legacy diff as-is
+                pass
+
+            if not wrote_legacy:
+                with open(diff_file_path, "w") as f:
+                    f.write(str(diff_content))
 
         self._copy_misc_files(directory_path)
         return code_file_path, thought_file_path
@@ -723,7 +770,7 @@ class EoHEngine:
             feedback_requests.append(
                 {
                     "problem_def": self.problem_description,
-                    "verilog_code": cand.code,
+                    "code": cand.code,
                     "simulation_log": log,
                 }
             )
@@ -783,7 +830,7 @@ class EoHEngine:
                 feedback_requests.append(
                     {
                         "problem_def": self.problem_description,
-                        "verilog_code": cand.code,
+                        "code": cand.code,
                         "simulation_log": cand.feedback,
                     }
                 )
@@ -808,7 +855,7 @@ class EoHEngine:
                 feedback_requests.append(
                     {
                         "problem_def": self.problem_description,
-                        "verilog_code": cand.code,
+                        "code": cand.code,
                         "simulation_log": log,
                     }
                 )
@@ -839,23 +886,22 @@ class EoHEngine:
     def _format_parent_for_prompt(self, parent: Heuristic, example_num: int = 1) -> str:
         """
         Helper to format a parent candidate for inclusion in a prompt.
+        Returns a JSON string (no markdown fences).
 
         :param parent: The parent candidate to format.
         :type parent: Heuristic
         :param example_num: The example number for formatting. (default is 1) Useful for fusion strategy where we have two parents.
         :type example_num: int
         """
-        parent_prompt = (
-            f"<Example {example_num}>:\n"
-            f"```thought\n{parent.thought}\n```\n"
-            f"```code\n{parent.code}\n```\n"
-            f"```feedback\n{parent.feedback}\n```\n"
-        )
+        parent_payload: dict[str, Any] = {
+            "example": example_num,
+            "thought": parent.thought,
+            "code": parent.code,
+            "feedback": parent.feedback,
+        }
         if parent.ppa_success:
-            parent_prompt += (
-                f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-            )
-        return parent_prompt
+            parent_payload["ppa_metrics"] = parent.ppa_metrics
+        return json.dumps(parent_payload, indent=2)
 
     def _create_prompt_M_F(self, parents: list[Heuristic]) -> str:  # Fix
         """
@@ -869,37 +915,56 @@ class EoHEngine:
         """
         parent = parents[0]
         if self.generation_mode == "whole":
-            parent_info = self._format_parent_for_prompt(parent)
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "fix_failed_attempt",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+            }
             return (
-                f"{self.problem_description}\n\nThe following attempt failed. Use the feedback to fix it.\n\n"
-                f"{parent_info}\nYour task is to fix the code based on the feedback. Provide a new thought process explaining the fix and the corrected code."
+                "You are an expert Verilog design assistant.\n"
+                "Use the JSON context to generate a corrected solution.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<brief explanation of the fix>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only (no markdown). Escape newlines as \\n and quotes."
             )
         else:  # diff mode
-            # Read the parent code from the file
             with open(parent.code_file_path, "r") as f:
                 parent_code = f.read()
-            ppa_info_prompt = ""
-            if parent.ppa_success:
-                ppa_info_prompt += (
-                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-                )
-            # Use the parent code to generate diff
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "fix_failed_attempt_via_patch",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent.code_file_path,
+                "original_file": parent_code,
+                "parent": parent_obj,
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"The following attempt failed. Use the feedback to fix it.\n\n"
-                f"Thought process:\n```thought\n{parent.thought}\n```\n"
-                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
-                "This is the original content of the file:\n"
-                "---BEGIN-FILE---\n"
-                f"{parent_code}\n"
-                "---END-FILE---\n\n"
-                f"The previous attempt produced this feedback:\n"
-                f"```feedback\n{parent.feedback}\n```\n\n"
-                f"{ppa_info_prompt}"
-                "Your task is to modify the file to fix the issues described in the feedback. "
-                "You must respond with a `thought` block explaining your changes, followed by a `code` block. "
-                "The `code` block must contain *only* the edits in the specified diff format, starting with the file path."
+                "You are an expert Verilog design assistant.\n"
+                "Use the JSON context to propose precise edits.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<brief explanation of the changes>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; SEARCH must match exactly; escape newlines as \\n."
             )
 
     def _create_prompt_M_S(self, parents: list[Heuristic]) -> str:  # Simplify
@@ -913,37 +978,58 @@ class EoHEngine:
         """
         parent = parents[0]
         if self.generation_mode == "whole":
-            parent_info = self._format_parent_for_prompt(parent)
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "simplify_solution",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+            }
             return (
-                f"{self.problem_description}\n\nHere is a previous solution.\n\n{parent_info}\n"
-                f"Your task is to simplify this solution. Reduce complexity while maintaining functionality. Provide your simplified thought and code."
+                "You are an expert Verilog design assistant.\n"
+                "Simplify the solution while preserving functionality.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<how you simplify without changing behavior>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only; escape newlines as \\n and quotes."
             )
-        else:  # diff mode
-            # Read the parent code from the file
+        else:
             with open(parent.code_file_path, "r") as f:
                 parent_code = f.read()
-            ppa_info_prompt = ""
-            if parent.ppa_success:
-                ppa_info_prompt += (
-                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-                )
-            # Use the parent code to generate diff
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "simplify_via_patch",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent.code_file_path,
+                "original_file": parent_code,
+                "parent": parent_obj,
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"Here is the previous solution.\n\n"
-                f"Thought process:\n```thought\n{parent.thought}\n```\n"
-                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
-                "This is the original content of the file:\n"
-                "---BEGIN-FILE---\n"
-                f"{parent_code}\n"
-                "---END-FILE---\n\n"
-                f"The previous attempt produced this feedback:\n"
-                f"```feedback\n{parent.feedback}\n```\n\n"
-                f"{ppa_info_prompt}"
-                "Your task is to simplify this solution by editing the file. Reduce complexity while maintaining functionality. "
-                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+                "You are an expert Verilog design assistant.\n"
+                "Edit the file to reduce complexity while preserving behavior.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<what you simplified and why>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
             )
+
 
     def _create_prompt_M_E(self, parents: list[Heuristic]) -> str:  # Explore
         """
@@ -956,36 +1042,56 @@ class EoHEngine:
         """
         parent = parents[0]
         if self.generation_mode == "whole":
-            parent_info = self._format_parent_for_prompt(parent)
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "explore_new_architecture",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+            }
             return (
-                f"{self.problem_description}\n\nHere is one approach.\n\n{parent_info}\n"
-                f"Your task is to generate a completely new and different solution. Come up with a novel architectural idea. Describe your new idea and provide the code."
+                "You are an expert Verilog design assistant.\n"
+                "Propose a novel architectural idea (different from the parent).\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<your new idea>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only; escape newlines as \\n."
             )
-        else:  # diff mode
-            # Read the parent code from the file
+        else:
             with open(parent.code_file_path, "r") as f:
                 parent_code = f.read()
-            ppa_info_prompt = ""
-            if parent.ppa_success:
-                ppa_info_prompt += (
-                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-                )
-            # Use the parent code to generate diff
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "explore_new_architecture_via_patch",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent.code_file_path,
+                "original_file": parent_code,
+                "parent": parent_obj,
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"Here is one approach.\n\n"
-                f"Thought process:\n```thought\n{parent.thought}\n```\n"
-                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
-                "This is the original content of the file:\n"
-                "---BEGIN-FILE---\n"
-                f"{parent_code}\n"
-                "---END-FILE---\n\n"
-                f"The previous attempt produced this feedback:\n"
-                f"```feedback\n{parent.feedback}\n```\n\n"
-                f"{ppa_info_prompt}"
-                "Your task is to generate a completely new and different solution. Come up with a novel architectural idea. "
-                "You must respond with a `thought` block explaining your new idea, followed by a `code` block containing the new code."
+                "You are an expert Verilog design assistant.\n"
+                "Edit the file to implement a substantially different solution.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<describe the new direction>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
             )
 
     def _create_prompt_M_R(self, parents: list[Heuristic]) -> str:  # Refactor
@@ -999,37 +1105,56 @@ class EoHEngine:
         """
         parent = parents[0]
         if self.generation_mode == "whole":
-            parent_info = self._format_parent_for_prompt(parent)
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "refactor_code_same_intent",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+            }
             return (
-                f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
-                f"Your task is to refactor this code. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). Explain the refactoring and provide the new code."
+                "You are an expert Verilog design assistant.\n"
+                "Refactor to a cleaner structure while preserving the core idea.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<what you refactor and why>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only; escape newlines as \\n."
             )
-        else:  # diff mode
-            # Read the parent code from the file
+        else:
             with open(parent.code_file_path, "r") as f:
                 parent_code = f.read()
-            ppa_info_prompt = ""
-            if parent.ppa_success:
-                ppa_info_prompt += (
-                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-                )
-            # Use the parent code to generate diff
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "refactor_via_patch_same_intent",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent.code_file_path,
+                "original_file": parent_code,
+                "parent": parent_obj,
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"Here is a previous solution.\n\n"
-                f"Thought process:\n```thought\n{parent.thought}\n```\n"
-                "You are tasked with refactoring the code in the file.\n"
-                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
-                "This is the original content of the file:\n"
-                "---BEGIN-FILE---\n"
-                f"{parent_code}\n"
-                "---END-FILE---\n\n"
-                f"The previous attempt produced this feedback:\n"
-                f"```feedback\n{parent.feedback}\n```\n\n"
-                f"{ppa_info_prompt}"
-                "Your task is to refactor this code by editing the file. The core idea must be the same, but implement it with a different structure (e.g., use `assign` instead of `always`, restructure a state machine). "
-                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+                "You are an expert Verilog design assistant.\n"
+                "Edit the file to refactor structure (same intent).\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<refactoring plan>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
             )
 
     def _create_prompt_M_I(self, parents: list[Heuristic]) -> str:  # Improve
@@ -1043,37 +1168,56 @@ class EoHEngine:
         """
         parent = parents[0]
         if self.generation_mode == "whole":
-            parent_info = self._format_parent_for_prompt(parent)
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "improve_solution",
+                "problem_description": self.problem_description,
+                "parent": parent_obj,
+            }
             return (
-                f"{self.problem_description}\n\nHere is a solution.\n\n{parent_info}\n"
-                f"Your task is to improve this solution. If it failed, make it correct. If it succeeded, optimize it for better PPA based on its metrics. Describe your improvement strategy and provide the improved code."
+                "You are an expert Verilog design assistant.\n"
+                "Improve correctness (if failed) or PPA (if succeeded).\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<improvement strategy>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only; escape newlines as \\n."
             )
-        else:  # diff mode
-            # Read the parent code from the file
+        else:
             with open(parent.code_file_path, "r") as f:
                 parent_code = f.read()
-            ppa_info_prompt = ""
-            if parent.ppa_success:
-                ppa_info_prompt += (
-                    f"```ppa_metrics\n{json.dumps(parent.ppa_metrics, indent=2)}\n```\n"
-                )
-            # Use the parent code to generate diff
+            parent_obj = json.loads(self._format_parent_for_prompt(parent, 1))
+            context_obj = {
+                "task": "improve_via_patch",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent.code_file_path,
+                "original_file": parent_code,
+                "parent": parent_obj,
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"Here is a previous solution.\n\n"
-                f"Thought process:\n```thought\n{parent.thought}\n```\n"
-                "You are tasked with improving the code in the file.\n"
-                f"The file to edit is at this path: `{parent.code_file_path}`\n\n"
-                "This is the original content of the file:\n"
-                "---BEGIN-FILE---\n"
-                f"{parent_code}\n"
-                "---END-FILE---\n\n"
-                f"The previous attempt produced this feedback:\n"
-                f"```feedback\n{parent.feedback}\n```\n\n"
-                f"{ppa_info_prompt}"
-                "Your task is to improve this solution by editing the file. If it failed, make it correct. If it succeeded, optimize for PPA. "
-                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+                "You are an expert Verilog design assistant.\n"
+                "Edit the file to fix issues and/or optimize PPA.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<what you improved and why>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
             )
 
     def _create_prompt_C_F(self, parents: list[Heuristic]) -> str:  # Fusion
@@ -1088,41 +1232,63 @@ class EoHEngine:
         parent1 = parents[0]
         parent2 = parents[1]
         if self.generation_mode == "whole":
-            parent1_info = self._format_parent_for_prompt(parent1, 1)
-            parent2_info = self._format_parent_for_prompt(parent2, 2)
+            p1_obj = json.loads(self._format_parent_for_prompt(parent1, 1))
+            p2_obj = json.loads(self._format_parent_for_prompt(parent2, 2))
+            context_obj = {
+                "task": "fuse_two_successes",
+                "problem_description": self.problem_description,
+                "parents": [p1_obj, p2_obj],
+            }
             return (
-                f"{self.problem_description}\n\nHere are two different successful solutions.\n\n{parent1_info}\n{parent2_info}\n"
-                f"Your task is to create a superior solution by fusing the best ideas from both examples. Analyze their strengths and combine them. Explain your fusion strategy and provide the new code."
+                "You are an expert Verilog design assistant.\n"
+                "Fuse the best ideas from both successful solutions into a superior one.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "<fusion strategy>",\n'
+                '  "code": "<full, runnable Verilog as one JSON string>"\n'
+                "}\n"
+                "Rules: valid JSON only; escape newlines as \\n."
             )
-        else:  # diff mode
-            # Read the parent codes from the files
+        else:
             with open(parent1.code_file_path, "r") as f:
                 parent1_code = f.read()
             with open(parent2.code_file_path, "r") as f:
                 parent2_code = f.read()
-            parent1_ppa_info = ""
-            parent2_ppa_info = ""
-            if parent1.ppa_success:
-                parent1_ppa_info += f"```ppa_metrics\n{json.dumps(parent1.ppa_metrics, indent=2)}\n```\n"
-            if parent2.ppa_success:
-                parent2_ppa_info += f"```ppa_metrics\n{json.dumps(parent2.ppa_metrics, indent=2)}\n```\n"
-            # Use the parent codes to generate diff
+            p1_obj = json.loads(self._format_parent_for_prompt(parent1, 1))
+            p2_obj = json.loads(self._format_parent_for_prompt(parent2, 2))
+            # update p1_obj/p2_obj 'code' to reflect exact on-disk content for precise diff context
+            p1_obj["code"] = parent1_code
+            p2_obj["code"] = parent2_code
+            context_obj = {
+                "task": "fuse_two_successes_via_patch",
+                "problem_description": self.problem_description,
+                "file_to_edit": parent1.code_file_path,  # edit Example 1 by default
+                "original_file": parent1_code,
+                "parents": [p1_obj, p2_obj],
+            }
             return (
-                "You are an expert Verilog design assistant tasked with editing a file.\n"
-                f"The problem description is as follows:\n{self.problem_description}\n\n"
-                f"Here are two different successful solutions.\n\n"
-                f"<Example 1>:\n```thought\n{parent1.thought}\n```\n"
-                f"```code\n{parent1_code}\n```\n"
-                f"```feedback\n{parent1.feedback}\n```\n"
-                f"{parent1_ppa_info}"
-                f"<Example 2>:\n```thought\n{parent2.thought}\n```\n"
-                f"```code\n{parent2_code}\n```\n"
-                f"```feedback\n{parent2.feedback}\n```\n"
-                f"{parent2_ppa_info}"
-                f"Generate a new solution by editing Example 1's code file `{parent1.code_file_path}`.\n"
-                "Your task is to create a superior solution by fusing the best ideas from both examples. "
-                "Analyze their strengths and combine them. "
-                "You must respond with a `thought` block explaining your changes, followed by a `code` block containing the diff."
+                "You are an expert Verilog design assistant.\n"
+                "Edit Example 1 by fusing the best ideas from both examples.\n\n"
+                "CONTEXT_JSON:\n"
+                f"{json.dumps(context_obj, indent=2)}\n\n"
+                "Return exactly ONE JSON object and nothing else:\n"
+                "{\n"
+                '  "format": "eoh_v1",\n'
+                '  "mode": "diff",\n'
+                '  "thought": "<fusion rationale and changes>",\n'
+                '  "code": {\n'
+                '    "edits": [\n'
+                f'      {{ "file": "{parent1.code_file_path}", "hunks": [\n'
+                '          { "search": "<exact original text>\\n", "replace": "<replacement text>\\n" }\n'
+                "        ] }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
+                "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n."
             )
 
     def _parse_diff_block(self, diff_text: str) -> Iterator[tuple[str, str, str]]:
@@ -1196,9 +1362,89 @@ class EoHEngine:
             )
             return None
 
-    def _apply_diff(self, original_content: str, diff_text: str) -> str | None:
+    # [JSON-PORT] Apply JSON-based edit hunks (code.edits[])
+    def _apply_json_edits(
+        self,
+        original_content: str,
+        edits_obj: dict[str, Any],
+        target_file_path: str | None = None,
+    ) -> str | None:
+        """
+        Apply JSON diff object of the form:
+        {
+        "edits": [
+            {
+            "file": "<path/to/file>",
+            "hunks": [
+                {"search": "<exact text>\\n", "replace": "<replacement>\\n"}
+            ]
+            },
+            ...
+        ]
+        }
+
+        If target_file_path is provided, prefer that file's edits. Otherwise:
+        - if there is exactly one edit, use it;
+        - else use the first edit block.
+
+        :param original_content: The original content to modify.
+        :type original_content: str
+        :param edits_obj: The JSON diff object containing edits.
+        :type edits_obj: dict[str, Any]
+        :param target_file_path: Optional file path which tells the diff-applier which file's edits to use when the JSON contains edits for multiple files.
+        :type target_file_path: str | None
+        :return: The modified content after applying all edits, or None if any replacement failed.
+        :rtype: str | None
+        """
+        edits = edits_obj.get("edits")
+        if not isinstance(edits, list) or not edits:
+            print("WARNING: JSON diff object missing or empty 'edits'.")
+            return None
+
+        chosen_edit = None
+        if target_file_path:
+            for e in edits:
+                if isinstance(e, dict) and e.get("file") == target_file_path:
+                    chosen_edit = e
+                    break
+        if chosen_edit is None:
+            chosen_edit = edits[0]
+
+        hunks = chosen_edit.get("hunks")
+        if not isinstance(hunks, list) or not hunks:
+            print("WARNING: JSON diff edit missing or empty 'hunks'.")
+            return None
+
+        new_content = original_content
+        for h in hunks:
+            if not isinstance(h, dict):
+                print(f"WARNING: Malformed hunk: {h}")
+                return None
+            search = h.get("search", "")
+            replace = h.get("replace", "")
+
+            # Keep newline semantics consistent with legacy path
+            if search and not search.endswith("\n"):
+                search += "\n"
+            if replace and not replace.endswith("\n"):
+                replace += "\n"
+
+            result = self._do_replace(new_content, search, replace)
+            if result is None:
+                return None
+            new_content = result
+
+        return new_content
+
+
+    def _apply_diff(self, original_content: str, diff_text: str, target_file_path: str | None = None) -> str | None:
         """
         Applies a diff text with one or more SEARCH/REPLACE blocks to the original content.
+        Applies either:
+        - JSON diff (preferred): {"edits":[{"file":..., "hunks":[{"search":..., "replace":...}, ...]}, ...]}
+        - Legacy fenced diff format with <<<<<<< SEARCH / ======= / >>>>>>> REPLACE
+
+        If JSON contains multiple files, will prefer edits for target_file_path if provided.
 
         :param original_content: The original content to modify.
         :type original_content: str
@@ -1207,6 +1453,15 @@ class EoHEngine:
         :return: The modified content after applying all SEARCH/REPLACE blocks, or None if any replacement failed.
         :rtype: str | None
         """
+        # First try JSON
+        try:
+            obj = json.loads(diff_text)
+            if isinstance(obj, dict) and "edits" in obj:
+                return self._apply_json_edits(original_content, obj, target_file_path)
+        except Exception:
+            pass  # Not JSON; fall through to legacy parser
+
+        # --- Legacy fenced diff path (existing code below unchanged) ---
         new_content = original_content
         edits = list(self._parse_diff_block(diff_text))
 
@@ -1783,7 +2038,7 @@ class EoHEngine:
                     original_code = ""
                     with open(meta["parents"][0].code_file_path, "r") as f:
                         original_code = f.read()
-                    new_code = self._apply_diff(original_code, diff_to_save)
+                    new_code = self._apply_diff(original_code, diff_to_save, target_file_path=meta["parents"][0].code_file_path)
                     if new_code:
                         final_code = new_code
                     else:

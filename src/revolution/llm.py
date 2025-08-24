@@ -3,6 +3,7 @@ import random
 import re
 from collections.abc import Coroutine
 from typing import Any, Literal, NotRequired, TypedDict
+import json
 
 from openai import (
     APIConnectionError,
@@ -192,9 +193,66 @@ class LLMInterface:
             self.feedback_completion_tokens_count = 0
             return stats
 
+    def _extract_json_obj(self, text: str) -> dict[str, Any] | None:
+        """
+        Try very hard to find a JSON object in `text`. Supports:
+        - Raw JSON
+        - Fenced ```json ... ``` blocks
+        - 'first { ... last }' heuristic
+        Returns dict or None.
+        """
+        # Try fenced JSON first
+        m = re.search(r"```json\s*(\{[\s\S]*?\})\s*```", text, re.IGNORECASE)
+        if m:
+            try:
+                return json.loads(m.group(1))
+            except Exception:
+                pass
+
+        # Try any fenced block that looks like JSON
+        m2 = re.search(r"```[\w]*\s*(\{[\s\S]*?\})\s*```", text, re.IGNORECASE)
+        if m2:
+            try:
+                return json.loads(m2.group(1))
+            except Exception:
+                pass
+
+        # Fallback: first '{' to last '}' slice
+        start = text.find("{")
+        end = text.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            candidate = text[start : end + 1]
+            try:
+                return json.loads(candidate)
+            except Exception:
+                return None
+        return None
+
+    def _json_to_thought_code(self, obj: dict[str, Any]) -> tuple[str, str] | None:
+        """
+        Validate minimal schema and extract (thought, code).
+        Accepts: {"format":"eoh_v1", "mode":"whole|diff", "thought":str, "code":str, ...}
+        """
+        if not isinstance(obj, dict):
+            return None
+        thought = obj.get("thought")
+        code = obj.get("code")
+        if isinstance(thought, str) and isinstance(code, str):
+            return thought.strip(), code.strip()
+        return None
+
+
     def parse_thought_and_code(self, response_text: str) -> tuple[str, str]:
         """
         Flexibly extracts the "thought" and "code" blocks from a raw LLM completion.
+        Format: {"format":"eoh_v1", "mode":"whole|diff", "thought":str, "code":str, ...}
+        First try strict JSON; 
+        - Raw JSON
+        - Fenced ```json ... ``` blocks
+        - 'first { ... last }' heuristic
+        
+        If not found, gracefully fall back to legacy
+        ```thought``` / ```code``` parsing.
 
         This parser is designed to handle several common formats, including:
         1.  Standard ```thought ... ``` and ```code ... ``` blocks.
@@ -208,6 +266,16 @@ class LLMInterface:
         :return: A (thought, code) tuple. If parsing fails or a block is
                  missing, returns (full_text_with_warnings, full_text_with_warnings).
         """
+
+        # JSON-first
+        obj = self._extract_json_obj(response_text)
+        if obj is not None:
+            pair = self._json_to_thought_code(obj)
+            if pair is not None:
+                return pair
+
+
+        # Legacy fallback
         # Debug print to show the response text
         # print(f"Response text:\n{response_text}\n{'-' * 40}")
 
@@ -320,49 +388,71 @@ class LLMInterface:
             system_prompt_content = (
                 "You are an expert Verilog design assistant. "
                 "Your role is to address Verilog-related problems posed by the user. "
-                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-                "The 'thought' is your conceptual idea for solving the problem. "
-                "The 'code' is the Verilog implementation of your 'thought'.\n"
-                "Strictly format your response as follows:\n"
-                "```thought\n"
-                "[Your concise design idea (thought) here]\n"
-                "```\n"
-                "```code\n"
-                "[Your complete, runnable Verilog implementation of the thought here]\n"
-                "```"
+                "You MUST provide your response as a single JSON object for each problem.\n"
+                "The JSON object must have four keys:\n"
+                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
+                '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
+                '3. "thought": A string containing your concise design idea or conceptual plan.\n'
+                '4. "code": A string containing the complete, runnable Verilog implementation of your thought.\n'
+                "Rules:\n"
+                "- The response must be valid JSON."
+                "- Escape newlines in strings as \n and double quotes as \" as required by JSON."
+                "- Do not include commentary outside the JSON.\n"
+                "Example format:\n"
+                '{\n'
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "My design plan is to use a finite state machine to control the traffic light sequence.",\n'
+                '  "code": "module traffic_light(...);\\n  // ... verilog code ...\\nendmodule"\n'
+                '}\n'
             )
         else:  # diff mode
             system_prompt_content = (
                 "You are an expert Verilog design assistant that modifies code based on user requests.\n"
                 "You will be given the file path, the file content, and instructions for what to change.\n"
-                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-                "You MUST format your response with a `thought` block and a `code` block.\n"
-                "The 'thought' is your conceptual idea for solving the problem. "
-                "The 'code' is the contains the diff block containing the Verilog implementation for your 'thought'.\n"
-                "Strictly format your response as follows:\n"
-                "```thought\n"
-                "[Your concise design idea (thought) here]\n"
-                "```\n"
-                "```code\n"
-                "[diff block containing the Verilog implementation for your thought here]\n"
-                "```"
-                "The `code` block must contain *only* the edits in the specified diff format.\n"
-                "The diff format for the `code` block is as follows:\n\n"
-                "the/full/path/to/the/file.sv\n"
-                "```\n"
-                "<<<<<<< SEARCH\n"
-                "A contiguous block of lines to search for.\n"
-                "=======\n"
-                "The lines to replace the SEARCH block with.\n"
-                ">>>>>>> REPLACE\n"
-                "```\n\n"
-                "- The `SEARCH` block must match the existing file content *exactly*, including whitespace and comments.\n"
-                "- You can use multiple `SEARCH/REPLACE` blocks for a single file.\n"
-                "- To create a new file (e.g., from a Crossover strategy or initial generation), use a *SEARCH/REPLACE block* with:\n"
-                "  - A new file path, including dir name if needed\n"
-                "  - An empty `SEARCH` section\n"
-                "  - The new file's contents in the `REPLACE` section\n"
+                "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
+                "The JSON object must have four keys:\n"
+                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
+                '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
+                '3. "thought": A string containing your conceptual idea for the changes.\n'
+                "4) \"code\": An object describing edits with this schema:\n\n"
+                "\"code\": {\n"
+                "  \"edits\": [\n"
+                "    {\n"
+                "      \"file\": \"<path/to/file.sv>\",\n"
+                "      \"hunks\": [\n"
+                "        { \"search\": \"<exact text to match>\\n\", \"replace\": \"<replacement text>\\n\" }\n"
+                "      ]\n"
+                "    }\n"
+                "  ]\n"
+                "}\n\n"
+                "Rules:\n"
+                "- The SEARCH text must match the existing file content exactly (including whitespace and comments).\n"
+                "- Use multiple hunks per file if needed.\n"
+                "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
+                "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
+                "- The response must be valid JSON (no Markdown, no backticks).\n"
+                "- Escape newlines as \\n and quotes as needed.\n\n"
+                "Example:\n"
+                "{\n"
+                "  \"format\": \"eoh_v1\",\n"
+                "  \"mode\": \"diff\",\n"
+                "  \"thought\": \"Import math to support new calculations.\",\n"
+                "  \"code\": {\n"
+                "    \"edits\": [\n"
+                "      {\n"
+                "        \"file\": \"mathweb/flask/app.py\",\n"
+                "        \"hunks\": [\n"
+                "          {\n"
+                "            \"search\": \"from flask import Flask\\n\",\n"
+                "            \"replace\": \"import math\\nfrom flask import Flask\\n\"\n"
+                "          }\n"
+                "        ]\n"
+                "      }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
             )
 
         # If system_prompt_override is provided, use it instead of the default
@@ -489,49 +579,71 @@ class LLMInterface:
             system_prompt_content = (
                 "You are an expert Verilog design assistant. "
                 "Your role is to address Verilog-related problems posed by the user. "
-                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-                "The 'thought' is your conceptual idea for solving the problem. "
-                "The 'code' is the Verilog implementation of your 'thought'.\n"
-                "Strictly format your response as follows:\n"
-                "```thought\n"
-                "[Your concise design idea (thought) here]\n"
-                "```\n"
-                "```code\n"
-                "[Your complete, runnable Verilog implementation of the thought here]\n"
-                "```"
+                "You MUST provide your response as a single JSON object for each problem.\n"
+                "The JSON object must have four keys:\n"
+                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
+                '2. "mode": "whole"\n'  # The mode of generation (The mode of generation either whole or diff, currently whole)
+                '3. "thought": A string containing your concise design idea or conceptual plan.\n'
+                '4. "code": A string containing the complete, runnable Verilog implementation of your thought.\n'
+                "Rules:\n"
+                "- The response must be valid JSON."
+                "- Escape newlines in strings as \n and double quotes as \" as required by JSON."
+                "- Do not include commentary outside the JSON.\n"
+                "Example format:\n"
+                '{\n'
+                '  "format": "eoh_v1",\n'
+                '  "mode": "whole",\n'
+                '  "thought": "My design plan is to use a finite state machine to control the traffic light sequence.",\n'
+                '  "code": "module traffic_light(...);\\n  // ... verilog code ...\\nendmodule"\n'
+                '}\n'
             )
         else:  # diff mode
             system_prompt_content = (
                 "You are an expert Verilog design assistant that modifies code based on user requests.\n"
                 "You will be given the file path, the file content, and instructions for what to change.\n"
-                "For each problem, you must provide both a 'thought' and the corresponding 'code'. "
-                "You MUST format your response with a `thought` block and a `code` block.\n"
-                "The 'thought' is your conceptual idea for solving the problem. "
-                "The 'code' is the contains the diff block containing the Verilog implementation for your 'thought'.\n"
-                "Strictly format your response as follows:\n"
-                "```thought\n"
-                "[Your concise design idea (thought) here]\n"
-                "```\n"
-                "```code\n"
-                "[diff block containing the Verilog implementation for your thought here]\n"
-                "```"
-                "The `code` block must contain *only* the edits in the specified diff format.\n"
-                "The diff format for the `code` block is as follows:\n\n"
-                "the/full/path/to/the/file.sv\n"
-                "```\n"
-                "<<<<<<< SEARCH\n"
-                "A contiguous block of lines to search for.\n"
-                "=======\n"
-                "The lines to replace the SEARCH block with.\n"
-                ">>>>>>> REPLACE\n"
-                "```\n\n"
-                "- The `SEARCH` block must match the existing file content *exactly*, including whitespace and comments.\n"
-                "- You can use multiple `SEARCH/REPLACE` blocks for a single file.\n"
-                "- To create a new file (e.g., from a Crossover strategy or initial generation), use a *SEARCH/REPLACE block* with:\n"
-                "  - A new file path, including dir name if needed\n"
-                "  - An empty `SEARCH` section\n"
-                "  - The new file's contents in the `REPLACE` section\n"
+                "Return exactly ONE JSON object and nothing else. Do not include Markdown code fences, backticks, or extra text.\n"
+                "The JSON object must have four keys:\n"
+                '1. "format": "eoh_v1"\n'  # The format version of the response (The format version of the response currently eoh_v1)
+                '2. "mode": "diff"\n'  # The mode of generation (The mode of generation either whole or diff, currently diff)
+                '3. "thought": A string containing your conceptual idea for the changes.\n'
+                "4) \"code\": An object describing edits with this schema:\n\n"
+                "\"code\": {\n"
+                "  \"edits\": [\n"
+                "    {\n"
+                "      \"file\": \"<path/to/file.sv>\",\n"
+                "      \"hunks\": [\n"
+                "        { \"search\": \"<exact text to match>\\n\", \"replace\": \"<replacement text>\\n\" }\n"
+                "      ]\n"
+                "    }\n"
+                "  ]\n"
+                "}\n\n"
+                "Rules:\n"
+                "- The SEARCH text must match the existing file content exactly (including whitespace and comments).\n"
+                "- Use multiple hunks per file if needed.\n"
+                "- To create a new file (e.g., from a Crossover strategy or initial generation), include an edit with an empty search: "
+                "{ \"file\": \"new_file.sv\", \"hunks\": [ { \"search\": \"\", \"replace\": \"<full file contents>\\n\" } ] }.\n"
                 "- Sometimes the file path may not be known, in which case you can use a placeholder like `new_file.sv`.\n"
+                "- The response must be valid JSON (no Markdown, no backticks).\n"
+                "- Escape newlines as \\n and quotes as needed.\n\n"
+                "Example:\n"
+                "{\n"
+                "  \"format\": \"eoh_v1\",\n"
+                "  \"mode\": \"diff\",\n"
+                "  \"thought\": \"Import math to support new calculations.\",\n"
+                "  \"code\": {\n"
+                "    \"edits\": [\n"
+                "      {\n"
+                "        \"file\": \"mathweb/flask/app.py\",\n"
+                "        \"hunks\": [\n"
+                "          {\n"
+                "            \"search\": \"from flask import Flask\\n\",\n"
+                "            \"replace\": \"import math\\nfrom flask import Flask\\n\"\n"
+                "          }\n"
+                "        ]\n"
+                "      }\n"
+                "    ]\n"
+                "  }\n"
+                "}\n"
             )
 
         # If system_prompt_override is provided, use it instead of the default
@@ -776,7 +888,7 @@ class LLMInterface:
             # Role is expanded from a debugging expert to a broader Verilog expert.
             "You are a Verilog expert specializing in design, debugging, and optimization. You will be given a problem description, Verilog code, and a simulation log.\n\n"
             # Logic is now conditional based on the simulation outcome.
-            "Your task is to analyze the submission. First, determine if the simulation log indicates a success or a failure.\n\n"
+            "Your task is to analyze the submission and provide feedback as a single JSON object. First, determine if the simulation log indicates a success or a failure.\n\n"
             "**If the simulation log shows failures (functional or syntax errors):**\n"
             "1. Use the problem description to understand the high-level design intent.\n"
             "2. Analyze the Verilog code and simulation log to pinpoint the exact code sections causing the errors.\n"
@@ -794,18 +906,16 @@ class LLMInterface:
             "* **10 points:** The code is functionally correct and passes all simulation tests. Your analysis for this score **must** focus on PPA improvements.\n"
             "* **1-9 points:** The code is syntactically correct but fails simulation. The score should reflect the severity and number of functional errors.\n"
             "* **0 points:** The code has syntax errors and would not compile.\n\n"
-            "Your entire response **must** strictly follow this format, using the provided tags. Do not add any text outside the tags:\n"
-            "```text\n"
-            "<SCORE>\n"
-            "[Your score from 0 to 10]\n"
-            "</SCORE>\n\n"
-            "<JUSTIFICATION>\n"
-            "[A brief, one or two-sentence justification for your score. If successful, state that it's functionally correct.]\n"
-            "</JUSTIFICATION>\n\n"
-            "<ANALYSIS>\n"
-            "[Your detailed analysis. For failures, explain the bugs. For successes (score 10), provide PPA optimization feedback. **Remember: Do NOT suggest any fixes or write corrected code in this section.**]\n"
-            "</ANALYSIS>\n"
-            "```"
+            "The JSON object must have three keys:\n"
+            '1. "score": An integer from 0 to 10 based on the scoring criteria.\n'
+            '2. "justification": A brief, one or two-sentence justification for your score.\n'
+            '3. "analysis": Your detailed analysis. For failures, explain the bugs. For successes (score 10), provide PPA optimization feedback. **Remember: Do NOT suggest any fixes or write corrected code in this section.**\n\n'
+            "Example format:\n"
+            '{\n'
+            '  "score": 7,\n'
+            '  "justification": "The code is syntactically correct but fails one of the corner case tests related to reset logic.",\n'
+            '  "analysis": "The main functional error is in the always_ff block for the state register. The reset condition does not correctly initialize the `count` variable to zero, leading to functional mismatches when reset is asserted mid-operation. Additionally, for PPA, consider using a one-hot encoding for the state machine which might improve timing performance."\n'
+            '}\n'
         )
 
         # If a custom system prompt is provided, use it instead of the default
@@ -814,19 +924,13 @@ class LLMInterface:
 
         user_prompt = (
             "I wrote some Verilog code to solve a given problem. "
-            "Please analyze the code and provide your feedback in the requested format.\n\n"
+            "Please analyze the code and provide your feedback in the requested JSON format.\n\n"
             "Problem Description:\n"
-            "```problem\n"
-            f"{problem_def}\n"
-            "```\n\n"
-            "Verilog Code:\n"
-            "```verilog\n"
-            f"{verilog_code}\n"
-            "```\n\n"
-            "Simulation Log:\n"
-            "```log\n"
-            f"{simulation_log}\n"
-            "```\n\n"
+            '{\n'
+            f'  "problem": {problem_def},\n'
+            f'  "code": {verilog_code},\n'
+            f'  "simulation_log": {simulation_log}\n'
+            '}\n\n'
         )
 
         # If a custom user prompt is provided, use it instead of the default
@@ -869,7 +973,8 @@ class LLMInterface:
                         print("=" * 80 + "\n")
 
                     if raw_content:
-                        return self._parse_feedback_response(raw_content.strip())
+                        return self._parse_json_feedback_response(raw_content.strip())
+                        # return self._parse_feedback_response(raw_content.strip())
 
                 except (
                     APIConnectionError,
@@ -906,6 +1011,35 @@ class LLMInterface:
             "justification": "LLM call for feedback failed.",
             "analysis": f"Could not generate feedback due to an API errors after {self.max_retries} attempts.",
         }
+
+    def _parse_json_feedback_response(self, response_text: str) -> dict[str, int | str | None]:
+        """
+        Robustly parses a JSON feedback response from the LLM.
+        Uses _extract_json_obj to attempt to identify json and extract keys from it.
+        """
+
+        obj = self._extract_json_obj(response_text)
+        if obj is not None:
+            score = obj.get("score")
+            # Ensure score is an integer if it exists
+            if score is not None:
+                score = int(score)
+            else:
+                score = 0 # Set 0 minimum score if score is None
+
+            return {
+                "score": score,
+                "justification": obj.get("justification", "Parsing failed: 'justification' key missing."),
+                "analysis": obj.get("analysis", "Parsing failed: 'analysis' key missing."),
+            }
+
+        else: # Could not parse json from response_text error
+            print(f"No JSON block found in the feedback response.")
+            return {
+                "score": 0,
+                "justification": "Failed to parse the LLM's JSON response.",
+                "analysis": f"PARSE_ERROR\nRAW_RESPONSE:\n{response_text}",
+            }
 
     def _parse_feedback_response(
         self, feedback_text: str
@@ -993,7 +1127,7 @@ class LLMInterface:
         Generates feedback for a batch of candidates concurrently.
 
         :param feedback_requests: A list of dictionaries, each with 'problem_def',
-                                  'verilog_code', and 'simulation_log'.
+                                  'code', and 'simulation_log'.
         :param temperature: Sampling temperature.
         :param top_p: Nucleus sampling threshold.
         :param max_tokens: Maximum tokens to generate.
@@ -1029,7 +1163,7 @@ class LLMInterface:
         tasks: list[Coroutine[Any, Any, dict[str, int | str | None]]] = [
             self.generate_feedback(
                 req["problem_def"],
-                req["verilog_code"],
+                req["code"],
                 req["simulation_log"],
                 temperature,
                 top_p,
