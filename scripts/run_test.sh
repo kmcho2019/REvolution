@@ -10,17 +10,20 @@ set -e # Exit immediately if a command fails
 
 
 # --- Configuration ---
-MODEL_NAME="/root/.cache/huggingface/models/openai-gpt-oss-120b" #"openrouter/horizon-alpha" #"/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct" #"google/gemini-2.5-flash-lite"
+MODEL_NAME="/root/.cache/huggingface/models/Qwen3-235B-A22B-Instruct-2507-FP8" #"/root/.cache/huggingface/models/openai-gpt-oss-120b" #"openrouter/horizon-alpha" #"/root/.cache/huggingface/models/Qwen3-Coder-30B-A3B-Instruct" #"google/gemini-2.5-flash-lite"
 BENCHMARKS="RTLLM VerilogEval-Spec-to-RTL"
 API_BACKEND="vllm" # "vllm" #"openrouter"
-#PROBLEMS="Prob001_zero Prob010_mt2015_q4a Prob052_gates100 Prob068_countbcd Prob096_review2015_fsmseq Prob116_m2014_q3 Prob129_ece241_2013_q8 Prob001_accu Prob021_counter_12 Prob022_ring_counter"
-PROBLEMS="Prob001_zero"
+PROBLEMS="Prob001_zero Prob010_mt2015_q4a Prob052_gates100 Prob068_countbcd Prob096_review2015_fsmseq Prob116_m2014_q3 Prob129_ece241_2013_q8 Prob001_accu Prob021_counter_12 Prob022_ring_counter"
+# PROBLEMS="Prob001_zero Prob010_mt2015_q4a Prob001_accu"
+PROBLEMS="Prob009_div_16bit Prob048_pe Prob045_alu Prob016_fixed_point_adder Prob011_multi_16bit Prob144_conwaylife Prob124_rule110 Prob108_rule90 Prob021_mux256to1v Prob153_gshare" # Top 5 for each bench by gatecount
 POP_SIZE=10
 NUM_GEN=4
-NUM_WORKERS=1 #10
+NUM_WORKERS=10
 STRATEGY="ucb"
-MAX_TOKENS=4096
-CUR_TIME=202508250300
+MAX_TOKENS=8192
+TEMP=0.7
+TOPP=0.8
+CUR_TIME=$(date +%Y%m%d_%H%M)
 VLLM_PORT=8888
 EDIT_MODE="diff" # "whole" or "diff"
 
@@ -28,12 +31,13 @@ EDIT_MODE="diff" # "whole" or "diff"
 # Replace '/' in model name with '_' to match the script's output directory format
 SANITIZED_MODEL_NAME=${MODEL_NAME//\//_}
 BASE_EXP_DIR="./exp/${SANITIZED_MODEL_NAME}"
-SAVE_DIR="/home/kmcho/1_RESEARCH/LLM_Evol_Legalization/PisoCode/submodules/rtl-llm-evo/exp/exp_${CUR_TIME}"
+SAVE_DIR="/home/kmcho/1_RESEARCH/LLM_Evol_Legalization/PisoCode/submodules/rtl-llm-evo/exp/exp_${CUR_TIME}_${EDIT_MODE}"
 ORIGINAL_EXP_DIR="${BASE_EXP_DIR}_test"
 REFACTORED_EXP_DIR="${BASE_EXP_DIR}_refactored"
 
 # --- Test Execution ---
 echo "🚀 Starting regression test..."
+echo "Script started at: $CUR_TIME"
 echo "--------------------------------------------------"
 
 # 1. Run the original script and generate its report
@@ -50,7 +54,9 @@ python3 scripts/run_evolution.py \
     --max_tokens $MAX_TOKENS \
     --save_path $SAVE_DIR \
     --vllm_port $VLLM_PORT \
-    --generation_mode $EDIT_MODE
+    --generation_mode $EDIT_MODE \
+    --temperature $TEMP \
+    --top_p $TOPP
 
 
 echo "2. Generating report for ORIGINAL run..."
