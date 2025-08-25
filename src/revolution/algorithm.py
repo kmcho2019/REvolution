@@ -1008,7 +1008,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; SEARCH must match exactly; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_S(self, parents: list[Heuristic]) -> str:  # Simplify
@@ -1073,7 +1079,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
 
@@ -1107,7 +1119,13 @@ class EoHEngine:
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
                 "Rules: valid JSON only; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1139,7 +1157,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_R(self, parents: list[Heuristic]) -> str:  # Refactor
@@ -1172,7 +1196,13 @@ class EoHEngine:
                 '  "code": "<full, runnable Verilog as one JSON string>"\n'
                 "}\n"
                 "Rules: valid JSON only; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
         else:
             with open(parent.code_file_path, "r") as f:
@@ -1204,7 +1234,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_M_I(self, parents: list[Heuristic]) -> str:  # Improve
@@ -1269,7 +1305,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _create_prompt_C_F(self, parents: list[Heuristic]) -> str:  # Fusion
@@ -1341,7 +1383,13 @@ class EoHEngine:
                 "  }\n"
                 "}\n"
                 "Rules: valid JSON only; exact SEARCH match; escape newlines as \\n.\n"
-                r'All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
+                "- Use multiple hunks per file if needed.\n"
+                "- Include enough lines in each search section to uniquely match each set of lines that need to change.\n"
+                "- Keep search/replace hunks concise.\n"
+                "- Break large search/replace hunks into a series of smaller hunks that each change a small portion of the file.\n"
+                "- Include just the changing lines, and a few surrounding lines if needed for uniqueness.\n"
+                "- Do not include long runs of unchanging lines in search/replace hunks.\n"
+                r'- All content inside JSON strings, must be properly escaped. This means every literal double quote `"` must become `\\"` and every literal newline must become `\\n`.'
             )
 
     def _parse_diff_block(self, diff_text: str) -> Iterator[tuple[str, str, str]]:
