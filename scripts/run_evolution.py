@@ -83,6 +83,8 @@ def run_problem_worker(args_tuple):
             strategy_selection_method=args.strategy_selection,
             epsilon=args.epsilon,
             ucb_c=args.ucb_c,
+            generation_mode=args.generation_mode,
+            population_pool_mode=args.population_pool_mode,
         )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
@@ -168,6 +170,7 @@ def run_indexed_problem_worker(indexed_task):
             epsilon=args.epsilon,
             ucb_c=args.ucb_c,
             generation_mode=args.generation_mode,
+            population_pool_mode=args.population_pool_mode,
         )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
@@ -282,6 +285,13 @@ def main():
         help="Mode of generation, either 'whole' (full code) or 'diff' (code diffs). "
         "In 'whole' mode, the entire code is generated. "
         "In 'diff' mode, only the differences from the original code are generated.",
+    )
+    parser.add_argument(
+        "--population_pool_mode",
+        type=str,
+        default="dual",
+        choices=["dual", "single"],
+        help="Mode of population pool, either 'dual' (separate success/fail pools, more balanced exploration strategy tries to explore more diverse solutions from failed candidates) or 'single' (combined pool, more aggressive exploitation strategy focusing on successful candidates)."
     )
 
     args = parser.parse_args()

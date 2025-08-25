@@ -393,6 +393,11 @@ class EoHEngine:
         self.diff_length_scale: float = 0.10           # +/- window around SEARCH size (in lines)
         self.diff_allow_dots: bool = True              # treat "..." lines in SEARCH/REPLACE as wildcards
 
+        # (single-pool ablation knobs; no effect in "dual")
+        self.single_fail_allocation_cap: float = 0.25     # max fraction of offspring from failed parents once any success exists
+        self.single_success_min_fraction: float = 0.80    # survivor selection keeps at least this fraction successes
+        self.single_success_weight_exp: float = 1.5       # >1.0 increases winner-take-all among successful parents
+
 
     def load_problem_description(self) -> str:
         """
@@ -2231,10 +2236,20 @@ class EoHEngine:
         if total_current_pop == 0:
             return "STOP"
 
-        num_from_fail = round(
-            self.num_offspring_lambda * len(fail_view) / total_current_pop
-        )
+        # (single-mode resource coupling: starve fails once we have successes)
+        if self.population_pool_mode == "single" and len(success_view) > 0:
+            raw_fail = round(self.num_offspring_lambda * len(fail_view) / total_current_pop)
+            cap = math.floor(self.num_offspring_lambda * self.single_fail_allocation_cap)
+            num_from_fail = max(1 if len(fail_view) > 0 else 0, min(raw_fail, cap))
+        else: # dual-mode, no starvation, fail/success allocated proportionately
+            num_from_fail = round(
+                self.num_offspring_lambda * len(fail_view) / total_current_pop
+            )
         num_from_success = self.num_offspring_lambda - num_from_fail
+
+        if self.population_pool_mode == "single":
+            print(f"[single] offspring allocation -> fail:{num_from_fail}, "
+                f"success:{num_from_success} (cap={self.single_fail_allocation_cap:.2f})")
 
         llm_requests: list[LLMRequest] = []
         metadata: list[dict[str, Any]] = []
@@ -2309,7 +2324,14 @@ class EoHEngine:
 
                 # Weighted parent choice by score among successes
                 base = min(p.score for p in success_view) if success_view else 0.0
-                weights = [c.score - base + 0.1 for c in success_view]
+                # (accentuate exploitation only in single mode)
+                if self.population_pool_mode == "single":
+                    weights = [
+                        max(c.score - base + 0.1, 1e-6) ** self.single_success_weight_exp
+                        for c in success_view
+                    ]
+                else: # dual-mode, no accentuation, with base weight 0.1, score linearly weighs parent selection probability
+                    weights = [c.score - base + 0.1 for c in success_view]
                 parents = random.choices(
                     success_view,
                     weights=weights,
