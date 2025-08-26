@@ -7,13 +7,18 @@ import time
 
 from tqdm import tqdm
 
+# Imports for CVDP Integration
+import json
+from pathlib import Path
+
+
 # Ensure the src directory is in the Python path for imports
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
 
 # Import the core logic from new src package
-from revolution.algorithm import EoHEngine
+from revolution.algorithm import EoHEngine, CVDPEngine
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
@@ -53,6 +58,9 @@ def run_problem_worker(args_tuple):
             api_key = os.getenv("OPENROUTER_API_KEY")
         elif args.api_backend == "deepseek":
             api_key = os.getenv("DEEPSEEK_API_KEY")
+        elif args.api_backend == "gemini":
+            api_key = os.getenv("GEMINI_API_KEY")
+
 
         if args.api_backend != "vllm":  # vllm does not require an API key
             if not api_key:
@@ -68,24 +76,47 @@ def run_problem_worker(args_tuple):
         )
         synthesis_evaluator = SynthesisEvaluator()
 
-        eoh_engine = EoHEngine(
-            problem_name=problem,
-            benchmark_name=benchmark,
-            llm_interface=llm_interface,
-            verilog_evaluator=verilog_evaluator,
-            synthesis_evaluator=synthesis_evaluator,
-            population_size=args.population_size,
-            num_generations=args.num_generations,
-            base_save_path=args.save_path,
-            default_llm_temp=args.temperature,
-            default_llm_top_p=args.top_p,
-            default_llm_max_tokens=args.max_tokens,
-            strategy_selection_method=args.strategy_selection,
-            epsilon=args.epsilon,
-            ucb_c=args.ucb_c,
-            generation_mode=args.generation_mode,
-            population_pool_mode=args.population_pool_mode,
-        )
+        # Choose engine based on benchmarks
+        if benchmark.lower() == "cvdp":
+            eoh_engine = CVDPEngine(
+                cvdp_jsonl_path=args.cvdp_jsonl,
+                cvdp_id=problem,                         # 'problem' is the CVDP item id
+                problem_name=problem,                    # for logging/paths
+                benchmark_name=benchmark,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,     # unused by CVDP adapter, but fine
+                synthesis_evaluator=synthesis_evaluator, # unused for CVDP
+                population_size=args.population_size,
+                num_generations=args.num_generations,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                strategy_selection_method=args.strategy_selection,
+                epsilon=args.epsilon,
+                ucb_c=args.ucb_c,
+                generation_mode=args.generation_mode,
+                population_pool_mode=args.population_pool_mode,
+            )
+        else: # None CVDP benchmarks (e.g. RTLLM, VerilogEval)
+            eoh_engine = EoHEngine(
+                problem_name=problem,
+                benchmark_name=benchmark,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
+                population_size=args.population_size,
+                num_generations=args.num_generations,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                strategy_selection_method=args.strategy_selection,
+                epsilon=args.epsilon,
+                ucb_c=args.ucb_c,
+                generation_mode=args.generation_mode,
+                population_pool_mode=args.population_pool_mode,
+            )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
         print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
@@ -154,24 +185,48 @@ def run_indexed_problem_worker(indexed_task):
         )
         synthesis_evaluator = SynthesisEvaluator()
 
-        eoh_engine = EoHEngine(
-            problem_name=problem,
-            benchmark_name=benchmark,
-            llm_interface=llm_interface,
-            verilog_evaluator=verilog_evaluator,
-            synthesis_evaluator=synthesis_evaluator,
-            population_size=args.population_size,
-            num_generations=args.num_generations,
-            base_save_path=args.save_path,
-            default_llm_temp=args.temperature,
-            default_llm_top_p=args.top_p,
-            default_llm_max_tokens=args.max_tokens,
-            strategy_selection_method=args.strategy_selection,
-            epsilon=args.epsilon,
-            ucb_c=args.ucb_c,
-            generation_mode=args.generation_mode,
-            population_pool_mode=args.population_pool_mode,
-        )
+        # Choose engine based on benchmark
+        if benchmark.lower() == "cvdp":
+            eoh_engine = CVDPEngine(
+                cvdp_jsonl_path=args.cvdp_jsonl,
+                cvdp_id=problem,
+                problem_name=problem,
+                benchmark_name=benchmark,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
+                population_size=args.population_size,
+                num_generations=args.num_generations,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                strategy_selection_method=args.strategy_selection,
+                epsilon=args.epsilon,
+                ucb_c=args.ucb_c,
+                generation_mode=args.generation_mode,
+                population_pool_mode=args.population_pool_mode,
+            )
+        else:
+            eoh_engine = EoHEngine(
+                problem_name=problem,
+                benchmark_name=benchmark,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
+                population_size=args.population_size,
+                num_generations=args.num_generations,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                strategy_selection_method=args.strategy_selection,
+                epsilon=args.epsilon,
+                ucb_c=args.ucb_c,
+                generation_mode=args.generation_mode,
+                population_pool_mode=args.population_pool_mode,
+            )
+
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
         print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
@@ -294,6 +349,25 @@ def main():
         help="Mode of population pool, either 'dual' (separate success/fail pools, more balanced exploration strategy tries to explore more diverse solutions from failed candidates) or 'single' (combined pool, more aggressive exploitation strategy focusing on successful candidates)."
     )
 
+    # CVDP INTEGRATION: CVDP JSONL path and category filter
+    # Currently only supports non-agentic, no-commercial code generation
+    # cid002 and cid003
+    default_cvdp_jsonl = os.path.join(
+        benchmark_root, "cvdp", "cvdp_v1.0.2_nonagentic_code_generation_no_commercial.jsonl"
+    )
+    parser.add_argument(
+        "--cvdp_jsonl",
+        type=str,
+        default=default_cvdp_jsonl,
+        help="Path to the CVDP non-agentic, no-commercial JSONL file.",
+    )
+    parser.add_argument(
+        "--cvdp_categories",
+        nargs="+",
+        default=["cid002", "cid003"],
+        help="CVDP category filter (default: cid002 cid003).",
+    )
+
     args = parser.parse_args()
 
     api_key = None
@@ -314,6 +388,41 @@ def main():
                     f"LLM Initialization Error: The environment variable '{required_key_var}' must be set for the '{args.api_backend}' backend."
                 )
                 exit(1)
+
+    # --- Task helpers ---
+    # >>> CVDP INTEGRATION: helper to read CVDP ids filtered by categories (case-insensitive)
+    def _load_cvdp_ids(jsonl_path: str, allowed_categories: list[str], selected_ids: list[str] | None):
+        allowed = {c.lower() for c in allowed_categories}
+        ids = []
+        try:
+            with open(jsonl_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        obj = json.loads(line)
+                    except Exception:
+                        continue
+                    cid = obj.get("id")
+                    cats = [c.lower() for c in obj.get("categories", [])]
+                    # print('---\n')
+                    # print(cid)
+                    # print(cats)
+                    if not cid:
+                        continue
+                    # If user specified explicit ids for cvdp, keep intersection only
+                    if selected_ids is not None and cid not in selected_ids:
+                        # print(f"[CVDP] Skipping non-selected id: {cid}, selected_ids={selected_ids}")
+                        continue
+                    # Keep only items having any of the allowed categories
+                    if any(c in allowed for c in cats):
+                        # print(f"[CVDP] Keeping id: {cid}")
+                        ids.append(cid)
+        except FileNotFoundError:
+            print(f"[CVDP] JSONL not found: {jsonl_path}")
+        return ids
+
 
     # Main execution block now handles comprehensive, aggregated logging
     # --- Task Preparation ---
@@ -350,6 +459,20 @@ def main():
             # Task preparation loop to populate tasks_to_run
             for benchmark in args.benchmarks:
                 benchmark_dir = os.path.join(benchmark_root, benchmark)
+
+                # CVDP INTEGRATION: build tasks from JSONL
+                if benchmark.lower() == "cvdp":
+                    # For cvdp, if --problems provided treat them as explicit CVDP ids
+                    selected_ids = args.problems if args.problems else None
+                    cvdp_ids = _load_cvdp_ids(args.cvdp_jsonl, args.cvdp_categories, selected_ids)
+                    if not cvdp_ids:
+                        print(f"[CVDP] No matching problems found (categories={args.cvdp_categories}). Skipping.")
+                        continue
+                    for cid in cvdp_ids:
+                        tasks_to_run.append((benchmark, cid, args))
+                    continue
+
+                # Non-CVDP flow: use problems.txt
                 problems_file = os.path.join(benchmark_dir, "problems.txt")
                 if not os.path.exists(problems_file):
                     print(

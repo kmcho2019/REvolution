@@ -13,6 +13,10 @@ from collections import defaultdict
 from typing import Any, Iterator, Literal, TypeVar, cast, get_args, overload
 from difflib import SequenceMatcher # Used for fuzzy matching in "diff" mode
 
+# Imports used for CVDP Integration
+import subprocess
+from pathlib import Path
+
 # Import from local modules
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
 from .llm import LLMInterface, LLMRequest
@@ -2961,3 +2965,344 @@ class SingleShotEngine(EoHEngine):
         else:
             print("No functionally correct and synthesizable solution found.")
             return f"{self.problem_name},failed"
+
+# >>> CVDP INTEGRATION: New subclass for CVDP problems
+# Prototype, with limited functionality
+# Works only for non-agentic, no-commercial problems
+# Currently aimed at non-agentic, no-commercial cid002, cid003 category problems.
+# Does not support PPA metrics only functionality
+# Plan on adding PPA metric support through Yosys + OpenROAD
+# Expanding to more benchmarks
+class CVDPEngine(EoHEngine):
+    """
+    Adapter engine for CVDP (non-agentic, no-commercial) problems that ship with a
+    cocotb/pytest harness. It bypasses VerilogEval-style testbenches and runs the
+    provided Python tests directly.
+
+    Usage:
+        engine = CVDPEngine(
+            cvdp_jsonl_path="data/bench/cvdp/cvdp_v1.0.2_nonagentic_code_generation_no_commercial.jsonl",
+            cvdp_id="cvdp_copilot_64b66b_decoder_0001",   # or another 'id' in the JSONL
+            benchmark_name="cvdp",
+            problem_name="cvdp_copilot_64b66b_decoder_0001",
+            llm_interface=llm,
+            verilog_evaluator=verilog_evaluator,   # unused here but required by base
+            synthesis_evaluator=synthesis_evaluator, # unused for CVDP; safe to pass a dummy
+            population_size=10,
+            num_generations=5,
+        )
+    """
+
+    def __init__(
+        self,
+        cvdp_jsonl_path: str,
+        cvdp_id: str,
+        *args,
+        **kwargs,
+    ):
+        # Stash CVDP config BEFORE calling super().__init__ so our overridden
+        # load_problem_description() can see them when base __init__ calls it.
+        self.cvdp_jsonl_path: str = cvdp_jsonl_path
+        self.cvdp_id: str = cvdp_id
+        self.cvdp_record: dict[str, Any] | None = None
+
+        super().__init__(*args, **kwargs)  # calls load_problem_description()
+
+        # CVDP: turn off PPA logic (we don't synthesize in this adapter)
+        self.ref_ppa_metrics = {}  # keep empty
+        # The base class occasionally copies “misc files” from a benchmark dir.
+        # There's no on-disk bench folder for CVDP, so make this a no-op by flag.
+        self._cvdp_noop_copy_misc = True
+
+    # ---- Overrides & helpers ----
+
+    def _copy_misc_files(self, output_directory: str) -> None:
+        # For CVDP nothing to copy from a static bench dir.
+        if getattr(self, "_cvdp_noop_copy_misc", False):
+            return
+        return super()._copy_misc_files(output_directory)
+
+    def load_problem_description(self) -> str:
+        """
+        For CVDP, load the JSONL and return the 'input.prompt' for cvdp_id.
+        """
+        if not self.cvdp_record:
+            rec = self._cvdp_find_record(self.cvdp_jsonl_path, self.cvdp_id)
+            if rec is None:
+                raise FileNotFoundError(
+                    f"CVDP id '{self.cvdp_id}' not found in: {self.cvdp_jsonl_path}"
+                )
+            self.cvdp_record = rec
+        # Plain prompt text becomes the initial generation problem description.
+        return self.cvdp_record["input"]["prompt"]
+
+    def _calculate_reference_ppa(self) -> None:
+        """
+        Disable PPA baseline for CVDP (we don't synthesize / run OpenROAD here).
+        """
+        self.ref_ppa_metrics = {}
+
+    def _cvdp_find_record(self, jsonl_path: str, rec_id: str) -> dict | None:
+        with open(jsonl_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except Exception:
+                    continue
+                if obj.get("id") == rec_id:
+                    return obj
+        return None
+
+    def _cvdp_materialize_harness(
+        self,
+        run_root: Path,
+        candidate_sv_text: str,
+    ) -> dict[str, str]:
+        """
+        Write the CVDP harness files to 'run_root' and drop the current candidate's
+        RTL into the requested 'rtl/<file>.sv'. Also rewrite src/.env to point to
+        absolute paths on this machine (no Docker compose required).
+
+        Returns a dict with: {
+          "dut_path": str,
+          "pytest_entry": str,
+          "log_path": str
+        }
+        """
+        assert self.cvdp_record is not None, "cvdp_record must be loaded first"
+        harness_files: dict[str, str] = self.cvdp_record["harness"]["files"]
+        out_ctx: dict[str, str] = self.cvdp_record["output"]["context"]
+
+        run_root.mkdir(parents=True, exist_ok=True)
+
+        # 1) Write all harness files verbatim
+        for rel, content in harness_files.items():
+            out_path = run_root / rel
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            text = content
+
+            # Fix src/.env to use absolute local paths (no container paths)
+            if rel == "src/.env":
+                # Determine the DUT relative path CVDP expects (first key in context)
+                # e.g., "rtl/decoder_64b66b.sv"
+                dut_rel = next(iter(out_ctx.keys()))
+                dut_abs = (run_root / dut_rel).resolve()
+                src_abs = (run_root / "src").resolve()
+                
+                # Replace only the relevant lines; keep others intact.
+                # VERILOG_SOURCES= <abs path>
+                # PYTHONPATH should point to local src
+                lines = []
+                for line in text.splitlines():
+                    if line.strip().startswith("VERILOG_SOURCES"):
+                        lines.append(f"VERILOG_SOURCES = {str(dut_abs).replace('\\', '/')}")
+                    elif line.strip().startswith("PYTHONPATH"):
+                        lines.append(f"PYTHONPATH = {str(src_abs).replace('\\', '/')}")
+                    else:
+                        lines.append(line)
+                text = "\n".join(lines)
+
+
+            out_path.write_text(text, encoding="utf-8")
+
+        # 2) Write the candidate DUT into requested 'rtl/<file>.sv'
+        dut_rel = next(iter(out_ctx.keys()))
+        dut_abs = (run_root / dut_rel)
+        dut_abs.parent.mkdir(parents=True, exist_ok=True)
+
+        # normalize escaped sequences in case the LLM returned JSON-escaped string
+        normalized_code = self._normalize_code_text(candidate_sv_text)
+        dut_abs.write_text(normalized_code, encoding="utf-8")
+
+        return {
+            "dut_path": str(dut_abs),
+            "pytest_entry": str((run_root / "src" / "test_runner.py").resolve()),
+            "log_path": str((run_root / "pytest.log").resolve()),
+            "env_file": str((run_root / "src" / ".env").resolve()),
+        }
+
+    # Simple .env parser
+    def _cvdp_parse_envfile(self, env_path: Path) -> dict[str, str]:
+        """
+        Parse KEY=VALUE lines, ignoring blanks and comments; keep last occurrence.
+        """
+        env = {}
+        try:
+            for raw in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k = k.strip()
+                v = v.strip()
+                # strip optional surrounding quotes
+                if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+                    v = v[1:-1]
+                env[k] = v
+        except FileNotFoundError:
+            pass
+        return env
+
+    def _cvdp_run_pytest(self, run_root: Path, pytest_entry: str, log_path: str, env_file: str) -> tuple[str, str, str, int]:
+        """
+        Run `pytest` on the provided harness. Return (status, stdout, stderr, returncode).
+        """
+        cmd = [
+            "pytest",
+            "-o", f"cache_dir={str((run_root / '.cache').resolve())}",
+            pytest_entry,
+            "-v",
+            "-s",
+        ]
+        try:
+            # Load env from src/.env and pass it to pytest
+            child_env = os.environ.copy()
+            dot_env = self._cvdp_parse_envfile(Path(env_file))
+            # Ensure PYTHONPATH includes the src path from .env
+            if "PYTHONPATH" in dot_env and dot_env["PYTHONPATH"]:
+                pp = dot_env["PYTHONPATH"]
+                child_env["PYTHONPATH"] = pp if "PYTHONPATH" not in child_env else (pp + os.pathsep + child_env["PYTHONPATH"])
+            # Copy all .env vars (VERILOG_SOURCES, SIM, TOPLEVEL, MODULE, etc.)
+            for k, v in dot_env.items():
+                child_env[k] = v
+
+            proc = subprocess.run(
+                cmd,
+                cwd=str(run_root),
+                capture_output=True,
+                text=True,
+                check=False,
+                env=child_env,
+            )
+        except FileNotFoundError as e:
+            # pytest not installed / not on PATH
+            out, err, rc = "", f"Pytest invocation failed: {e}", 127
+            Path(log_path).write_text(f"COMMAND: {' '.join(cmd)}\nSTDERR:\n{err}\n", encoding="utf-8")
+            return "simulation_error", out, err, rc
+
+        stdout = proc.stdout or ""
+        stderr = proc.stderr or ""
+        Path(log_path).write_text(
+            f"COMMAND: {' '.join(cmd)}\n\nSTDOUT:\n{stdout}\n\nSTDERR:\n{stderr}\n",
+            encoding="utf-8",
+        )
+
+        status = "success" if proc.returncode == 0 else "simulation_error"
+        return status, stdout, stderr, proc.returncode
+
+    # --- Core override: evaluate via cocotb/pytest instead of VerilogEval ---
+    def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
+        """
+        CVDP path: run the provided cocotb harness (pytest). If all tests pass,
+        mark candidate as 'success' with score=0. Otherwise, classify failures:
+
+        - Non-zero pytest exit → failed_functionality
+        - Can't compile/simulate → failed_syntax (best-effort heuristic)
+        """
+        if not candidates_to_evaluate:
+            return
+
+        print(f"\n--- [CVDP] Evaluating {len(candidates_to_evaluate)} candidates via cocotb/pytest ---")
+        assert self.cvdp_record is not None, "cvdp_record must be loaded first"
+
+        # FEEDBACK: we will collect logs and then request batch LLM feedback
+        feedback_requests: list[dict[str, str]] = []
+        feedback_request_candidates: list[Heuristic] = []
+
+        for cand in candidates_to_evaluate:
+            # Put a per-candidate harness beside its saved code
+            cand_dir = Path(cand.code_file_path).parent
+            run_root = cand_dir / f"cvdp_harness_{cand.id[:8]}"
+            try:
+                paths = self._cvdp_materialize_harness(run_root, cand.code)
+                status, stdout, stderr, rc = self._cvdp_run_pytest(
+                    run_root, paths["pytest_entry"], paths["log_path"], paths["env_file"]
+                )
+
+                combined_log = (
+                    f"=== PYTEST COMMAND ===\n"
+                    f"{(run_root / 'pytest.log').read_text(encoding='utf-8') if Path(paths['log_path']).exists() else ''}\n"
+                    f"=== STDOUT ===\n{stdout}\n\n=== STDERR ===\n{stderr}\n"
+                )
+
+                if status == "success":
+                    cand.status = "success"
+                    cand.score = 0.0
+                    # FEEDBACK: successes also get feedback to guide simplification/robustness
+                    cand.feedback = "CVDP cocotb harness: all tests passed."
+                    feedback_request_candidates.append(cand)
+                    feedback_requests.append({
+                        "problem_def": self.problem_description,
+                        "code": cand.code,
+                        # Ask LLM to propose safe, incremental improvements without breaking interface
+                        "simulation_log": (
+                            "All tests passed under the CVDP cocotb harness.\n"
+                            "Provide targeted suggestions to simplify RTL, remove redundant logic, "
+                            "and improve synthesizability/robustness while preserving the DUT name, "
+                            "ports, parameter defaults, and behavior expected by the harness.\n\n"
+                            + combined_log
+                        ),
+                    })
+                else:
+                    # Heuristic: if stderr mentions syntax/parse, call it syntax; else functionality.
+                    if re.search(r"(syntax error|parse error|unexpected token)", stderr, re.I):
+                        cand.status = "failed_syntax"
+                    else:
+                        cand.status = "failed_functionality"
+                    cand.score = -float("inf")
+                    # FEEDBACK: failed candidates ask for precise, actionable fixes
+                    cand.feedback = "CVDP harness failed; LLM feedback requested for fix."
+                    feedback_request_candidates.append(cand)
+                    feedback_requests.append({
+                        "problem_def": self.problem_description,
+                        "code": cand.code,
+                        "simulation_log": (
+                            "The cocotb/pytest harness failed. "
+                            "Analyze the logs to identify the root cause (module/name/port mismatches, "
+                            "reset/latency, wrong header decoding, signed arithmetic, packing order, etc.). "
+                            "Give concrete patch-style guidance and minimal fixes that keep the public interface "
+                            "and module name compatible with the harness.\n\n"
+                            + combined_log
+                        ),
+                    })
+            except Exception as e:
+                cand.status = "failed_functionality"
+                cand.score = -float("inf")
+                cand.feedback = f"CVDP evaluation exception: {e}"
+                # FEEDBACK: still try to get LLM feedback on exception
+                feedback_request_candidates.append(cand)
+                feedback_requests.append({
+                    "problem_def": self.problem_description,
+                    "code": cand.code,
+                    "simulation_log": f"Exception while running harness:\n{e}\n",
+                })
+
+        # FEEDBACK: batch LLM feedback (mirrors your base engine behavior)
+        if feedback_requests:
+            try:
+                feedback_results = asyncio.run(
+                    self.llm.generate_batch_feedback(
+                        feedback_requests,
+                        self.default_llm_temp,
+                        self.default_llm_top_p,
+                        self.default_llm_max_tokens,
+                    )
+                )
+                for cand, fb in zip(feedback_request_candidates, feedback_results):
+                    # Persist detailed analysis for downstream strategies (M-F/M-S/…)
+                    feedback = fb.get("analysis", "Feedback generation failed.")
+                    # If feedback not str assign it as one
+                    if not isinstance(feedback, str):
+                        feedback = "Feedback generation failed."
+                    cand.feedback = feedback
+                    self._save_feedback_files(cand, fb)  # writes <base>_feedback.txt
+            except Exception as e:
+                print(f"[CVDP] Feedback generation error: {e}")
+
+        # NOTE: No synthesis/PPA step for CVDP yet. Still pending.
+# <<< CVDP INTEGRATION
