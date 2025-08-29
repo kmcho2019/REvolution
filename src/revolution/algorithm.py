@@ -2997,6 +2997,7 @@ class CVDPEngine(EoHEngine):
         self,
         cvdp_jsonl_path: str,
         cvdp_id: str,
+        simulation_timeout_s: int = 300,
         *args,
         **kwargs,
     ):
@@ -3013,6 +3014,9 @@ class CVDPEngine(EoHEngine):
         # The base class occasionally copies “misc files” from a benchmark dir.
         # There's no on-disk bench folder for CVDP, so make this a no-op by flag.
         self._cvdp_noop_copy_misc = True
+
+        # Set simulation timeout time
+        self.simulation_timeout_s = simulation_timeout_s
 
     # ---- Overrides & helpers ----
 
@@ -3178,6 +3182,7 @@ class CVDPEngine(EoHEngine):
                 text=True,
                 check=False,
                 env=child_env,
+                timeout=self.simulation_timeout_s
             )
         except FileNotFoundError as e:
             # pytest not installed / not on PATH

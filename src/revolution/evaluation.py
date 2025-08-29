@@ -190,6 +190,7 @@ class VerilogEvaluator:
                     capture_output=True,
                     text=True,
                     check=False,  # Do not raise exception on non-zero exit
+                    timeout=simulation_timeout_seconds,
                 )
                 comp_stdout = compile_process.stdout or ""
                 comp_stderr = compile_process.stderr or ""
@@ -438,6 +439,8 @@ class SynthesisEvaluator:
         verilog_evaluator: VerilogEvaluator,
         test_sv_file: str,
         ref_sv_file: str | None,
+        simulation_timeout_s: int = 300,
+        synthesis_timeout_s: int = 300,
     ) -> dict[str, bool | str | None | dict[str, Any]]:
         """
         Performs synthesis, PPA analysis, and post-synthesis verification.
@@ -455,6 +458,7 @@ class SynthesisEvaluator:
         :param verilog_evaluator: An instance of VerilogEvaluator for simulation.
         :param test_sv_file: Path to the testbench for functional verification.
         :param ref_sv_file: Path to the reference design for the testbench (optional).
+        :param simulation_timeout_s: Timeout for the simulation in seconds.
         :return: A dictionary containing the synthesis and PPA results.
         """
         if not os.path.exists(output_directory):
@@ -519,6 +523,7 @@ class SynthesisEvaluator:
         output_directory: str,
         report_base_path: str,
         synthesized_netlist_path: str,
+        synthesis_timeout_s: int = 300,
     ) -> tuple[bool, str]:
         """
         Runs the Yosys and OpenROAD synthesis script.
@@ -529,6 +534,7 @@ class SynthesisEvaluator:
         :param output_directory: Directory for all generated files.
         :param report_base_path: Base path for naming report files.
         :param synthesized_netlist_path: Path to save the synthesized netlist.
+        :param synthesis_timeout_s: Timeout for the synthesis process in seconds.
         :return: A tuple containing a success boolean and the path to the report log.
         """
 
@@ -561,7 +567,7 @@ class SynthesisEvaluator:
         print(f"INFO: Running synthesis command: {command}")
 
         process = subprocess.run(
-            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=synthesis_timeout_s
         )
 
         if process.returncode == 0:
@@ -584,6 +590,7 @@ class SynthesisEvaluator:
         tb_top_module: str,
         output_dir: str,
         verilog_evaluator: VerilogEvaluator,
+        simulation_timeout_s: int = 300,
     ) -> tuple[bool, str]:
         """
         Runs a functional simulation on the synthesized netlist using the provided testbench.
@@ -594,6 +601,7 @@ class SynthesisEvaluator:
         :param tb_top_module: Name of the top-level module in the testbench.
         :param output_dir: Directory for output files.
         :param verilog_evaluator: An instance of VerilogEvaluator for simulation.
+        :param simulation_timeout_s: Timeout for the simulation in seconds.
         :return: A tuple containing a success boolean and the log of the simulation.
         """
         # need to include the verilog files from pdk for simulation of synthesized netlist
@@ -616,6 +624,7 @@ class SynthesisEvaluator:
             test_sv_file=test_sv,
             ref_sv_file=ref_sv,
             top_module_name=tb_top_module,
+            simulation_timeout_seconds=simulation_timeout_s,
             # Don't use output_directory here, if we pass the synthesized_netlist its .syn suffix will differentiate it from the rtl simulation
         )
 
