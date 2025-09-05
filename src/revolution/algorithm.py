@@ -64,6 +64,8 @@ Defines a generic type variable for strategy types, which can be either EvolStra
 HeuristicStatus = Literal[
     "new",
     "success",
+    "failed_format",
+    "failed_diff",
     "failed_syntax",
     "failed_functionality",
     "failed_synthesis",
@@ -73,6 +75,8 @@ HeuristicStatus = Literal[
 Defines the status of a heuristic candidate.
 - **new**: Newly created candidate, not yet evaluated.
 - **success**: Successfully passed all evaluations (syntax, functionality, synthesis, PPA).
+- **failed_format**: LLM code output violated required output format/schema (e.g., violated JSON format).
+- **failed_diff**: LLM produced a 'diff' but it could not be applied cleanly. (only occurs during 'diff' mode, never in 'whole' mode)
 - **failed_syntax**: Failed syntax check during compilation.
 - **failed_functionality**: Failed functional simulation against the reference design.
 - **failed_synthesis**: Failed synthesis process.
@@ -140,6 +144,8 @@ class Heuristic:
     :type reward_from_parent: float
     :param origin_pool: The population pool this heuristic originated from.
     :type origin_pool: HeuristicOriginPool
+    :param generated_mode: Which mode produced this candidate ("whole" or "diff").
+    :type generated_mode: Literal["whole", "diff"] | None
     """
 
     def __init__(
@@ -176,6 +182,7 @@ class Heuristic:
         self.origin_pool: HeuristicOriginPool = (
             origin_pool  # "initial", "fail_pool", or "success_pool"
         )
+        self.generated_mode: Literal["whole", "diff"] | None = None
 
     def __repr__(self) -> str:
         """String representation for debugging and logging."""
@@ -273,6 +280,8 @@ class EoHEngine:
     :param population_pool_mode: "dual" (existing behavior) or "single" to keep all candidates in one pool.
                                  Strategies still respect status: M-F selects failed parents; C-F selects successful parents.
     :type population_pool_mode: PopulationPoolMode
+    :param require_strict_format: Whether to require strict adherence to output format/schema.
+    :type require_strict_format: bool
     """
 
     def __init__(
@@ -295,6 +304,7 @@ class EoHEngine:
         generation_mode: Literal["whole", "diff"] = "whole",
         champion_metrics_config: list[dict[str, Any]] | None = None,
         population_pool_mode: PopulationPoolMode = "dual",
+        require_strict_format: bool = True,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.base_save_path: str = (
@@ -327,6 +337,8 @@ class EoHEngine:
         self.default_llm_top_p: float = default_llm_top_p
         self.default_llm_max_tokens: int = default_llm_max_tokens
         self.clk_period: float = synthesis_evaluator.clk_period
+
+        self.require_strict_format: bool = require_strict_format
 
         # Champion Metrics Configuration
         # Defines the configuration for champion metrics.
@@ -782,50 +794,66 @@ class EoHEngine:
         )
 
         # Stage 1: Functional Simulation
+        # Stage 1-1: Check if candidate adheres to format (failed_format or failed_diff)
+        # Stage 1-2: Check for syntax and semantic errors
         for cand in candidates_to_evaluate:
-            sim_results = self.evaluator.evaluate(
-                cand.code_file_path, test_sv_file, ref_sv_file
-            )
-
-            if sim_results["status"] == "compilation_error":
-                cand.status = "failed_syntax"
-                log = sim_results.get(
-                    "compilation_stderr", "Compilation log not available."
+            # Stage 1-1: Check if candidate adheres to format (failed_format or failed_diff)
+            if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
+                cand.score = -float("inf")
+                feedback_request_candidates.append(cand)
+                feedback_requests.append(
+                    {
+                        "problem_def": self.problem_description,
+                        "code": cand.code,
+                        "simulation_log": f"Candidate failed format or diff compliance checks. Status: {cand.status}",
+                    }
                 )
+                func_failed.append(cand)
             else:
-                is_success = False
-                if sim_results["status"] == "success":
-                    output = sim_results.get("simulation_stdout", "")
-                    m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
-                    # Check for simulation success based on output in two ways:
-                    # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
-                    # This regex matches the expected output format from VerilogEval
-                    # It captures the number of mismatches in the first group.
-                    # If there are no mismatches (X==0), it means the design is functionally correct.
-                    # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
-                    if (
-                        m_match and int(m_match.group(1)) == 0
-                    ) or "===========Your Design Passed===========" in output:
-                        is_success = True
+                # Stage 1-2: Check for syntax and semantic errors
+                sim_results = self.evaluator.evaluate(
+                    cand.code_file_path, test_sv_file, ref_sv_file
+                )
 
-                if is_success:
-                    func_passed.append(cand)
-                    continue
+                if sim_results["status"] == "compilation_error":
+                    cand.status = "failed_syntax"
+                    log = sim_results.get(
+                        "compilation_stderr", "Compilation log not available."
+                    )
                 else:
-                    cand.status = "failed_functionality"
-                    log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
+                    is_success = False
+                    if sim_results["status"] == "success":
+                        output = sim_results.get("simulation_stdout", "")
+                        m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+                        # Check for simulation success based on output in two ways:
+                        # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
+                        # This regex matches the expected output format from VerilogEval
+                        # It captures the number of mismatches in the first group.
+                        # If there are no mismatches (X==0), it means the design is functionally correct.
+                        # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
+                        if (
+                            m_match and int(m_match.group(1)) == 0
+                        ) or "===========Your Design Passed===========" in output:
+                            is_success = True
 
-            # If we reach here, the candidate has failed syntax or functionality
-            cand.score = -float("inf")
-            feedback_request_candidates.append(cand)
-            feedback_requests.append(
-                {
-                    "problem_def": self.problem_description,
-                    "code": cand.code,
-                    "simulation_log": log,
-                }
-            )
-            func_failed.append(cand)
+                    if is_success:
+                        func_passed.append(cand)
+                        continue
+                    else:
+                        cand.status = "failed_functionality"
+                        log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
+
+                # If we reach here, the candidate has failed syntax or functionality
+                cand.score = -float("inf")
+                feedback_request_candidates.append(cand)
+                feedback_requests.append(
+                    {
+                        "problem_def": self.problem_description,
+                        "code": cand.code,
+                        "simulation_log": log,
+                    }
+                )
+                func_failed.append(cand)
 
         # Stage 2: Synthesis and PPA for functionally correct candidates
         for cand in func_passed:
@@ -1833,6 +1861,62 @@ class EoHEngine:
             return [c for c in self.population if c.status == "success"]
         return self.success_pool
 
+    def _save_format_error_artifacts(self, code_file_path: str, fmt_meta: dict[str, Any]) -> None:
+        """
+        Persist raw model output + parse error for audit/metrics.
+        For LLM format errors, this captures the original code and the error details.
+
+        :param code_file_path: The path to the code file being processed.
+        :type code_file_path: str
+        :param fmt_meta: Metadata about the formatting process, including any errors.
+        :type fmt_meta: dict[str, Any]
+
+        """
+        base = code_file_path.rsplit(".", 1)[0]
+        meta_path = f"{base}_format_error.json"
+        try:
+            fmt_meta_out = {
+                "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                **fmt_meta,
+            }
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(fmt_meta_out, f, indent=2)
+        except Exception:
+            pass
+
+    def _save_diff_error_artifacts(
+        self,
+        code_file_path: str,
+        diff_payload: str,
+        parent_file: str | None = None,
+        reason: str | None = None,
+    ) -> None:
+        """
+        Persist the failed diff payload and context for auditing.
+
+        :param code_file_path: The path to the code file being processed.
+        :type code_file_path: str
+        :param diff_payload: The diff payload that failed to apply.
+        :type diff_payload: str
+        :param parent_file: The parent file being modified, if any.
+        :type parent_file: str | None
+        :param reason: The reason for the failure.
+        :type reason: str | None
+        """
+        base = code_file_path.rsplit(".", 1)[0]
+        meta_path = f"{base}_diff_apply_error.json"
+        try:
+            meta = {
+                "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "parent_file": parent_file,
+                "reason": reason or "apply_diff returned None",
+                "diff": diff_payload,
+            }
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(meta, f, indent=2)
+        except Exception:
+            pass
+
     def initialize_population(self) -> None:
         """
         Creates and evaluates the initial population.
@@ -1849,7 +1933,7 @@ class EoHEngine:
         strategy_avg_selection_probabilities = {
             "initial": 1.0
         }  # Only the initial strategy is available
-        results = asyncio.run(
+        results_with_meta = asyncio.run(
             self.llm.generate_n_responses(
                 prompt=self.problem_description,
                 n=self.population_size,
@@ -1861,57 +1945,35 @@ class EoHEngine:
         )
 
         initial_candidates = []
-        for i, (thought, code_content) in enumerate(results):
-            if thought and code_content:
-                final_code, diff_to_save = "", None
+        for i, (thought, code_content, meta) in enumerate(results_with_meta):
+            # [FORMAT-ERROR] Decide status up front based on strict parse
+            is_format_ok = meta.get("format_ok", False)
 
-                # For initial generation always use "whole" mode
-                # generation_mode_to_use = self.generation_mode
-                generation_mode_to_use = "whole" # For initial generation always use "whole" mode
-                if generation_mode_to_use == "diff":
-                    diff_to_save = code_content
-                    original_code = ""
-                    new_code = self._apply_diff(original_code, diff_to_save)
-                    if new_code:
-                        final_code = new_code
-                    else:
-                        print(
-                            f"WARNING: Diff application failed for candidate {i + 1} in initial population generation. Applying fallback logic."
-                        )
-                        # Save the original code with diff appended as a fallback
-                        diff_fail_warning = "//WARNING: Diff application failed. Using original code with diff appended."
-                        final_code = (
-                            original_code
-                            + "\n"
-                            + diff_fail_warning
-                            + "\n"
-                            + diff_to_save
-                        )
-                else:  # whole mode
-                    final_code = code_content
+            # Choose something to save as "code" even if format is bad (for auditing)
+            material_to_save = code_content or meta.get("raw", "") or ""
 
-                code_path, _ = self._save_result_to_file(
-                    final_code, thought, 0, i + 1, "initial", diff_to_save
-                )
-                cand = Heuristic(
-                    thought=thought,
-                    code=final_code,
-                    feedback="",
-                    generation=0,
-                    strategy="initial",
-                    origin_pool="initial",
-                )
-                cand.code_file_path = code_path
-                initial_candidates.append(cand)
-
-        if not initial_candidates:
-            print(
-                "WARNING: No valid candidates generated during initialization. Check LLM responses."
+            code_path, _ = self._save_result_to_file(
+                material_to_save, thought or "", 0, i + 1, "initial", None
             )
-            print(f"LLM Responses: {results}")
-            raise RuntimeError(
-                "Failed to generate any valid candidates during initialization."
+
+            cand = Heuristic(
+                thought=thought or "",
+                code=material_to_save,
+                feedback=("" if is_format_ok else f"FORMAT_ERROR: {meta.get('error','unknown')}"),
+                generation=0,
+                strategy="initial",
+                origin_pool="initial",
+                status=("new" if is_format_ok else "failed_format"),  # [FORMAT-ERROR] NEW
             )
+            cand.code_file_path = code_path
+            cand.generated_mode = "whole"  # Initial Gen0 generations is always "whole"
+
+            if not is_format_ok and self.require_strict_format:
+                # Persist error artifacts; do NOT evaluate this candidate
+                self._save_format_error_artifacts(code_path, meta)  # [FORMAT-ERROR] NEW
+
+            initial_candidates.append(cand)
+            
         print(f"Generated {len(initial_candidates)} initial candidates. Evaluating...")
         self._evaluate_candidates(initial_candidates)
 
@@ -2397,7 +2459,7 @@ class EoHEngine:
         if not llm_requests:
             return "STOP"
 
-        llm_results = asyncio.run(
+        llm_results_with_meta = asyncio.run(
             self.llm.generate_batch_responses(
                 llm_requests,
                 self.default_llm_temp,
@@ -2407,65 +2469,121 @@ class EoHEngine:
         )
 
         new_offspring = []
-        for i, (thought, code_content) in enumerate(llm_results):
-            if thought and code_content:
-                meta = metadata[i]
-                strategy = meta["strategy"]
-                final_code, diff_to_save = "", None
+        for i, (thought, code_content, meta) in enumerate(llm_results_with_meta):
+            meta_rec = metadata[i]
+            strategy = meta_rec["strategy"]
+            is_format_ok = meta.get("format_ok", False)
 
-                # Check if the offspring was generated using "whole" or "diff"
-                # Decide using per-request resolved mode, not the global engine setting
-                # As sometimes the global engine setting is sometimes overriden for initial generation or for failed parents.
-                resolved_mode = meta.get("resolved_mode", self.generation_mode)
-
-                # If offspring was generated under "diff" mode then _apply_diff is needed
-                if resolved_mode == "diff":
-                    diff_to_save = code_content
-                    original_code = ""
-                    with open(meta["parents"][0].code_file_path, "r") as f:
-                        original_code = f.read()
-                    new_code = self._apply_diff(original_code, diff_to_save, target_file_path=meta["parents"][0].code_file_path)
-                    if new_code:
-                        final_code = new_code
-                    else:
-                        print(
-                            f"WARNING: Diff application failed for candidate {i + 1} in generation {self.current_generation}. Applying fallback logic."
-                        )
-                        # Save the original code with diff appended as a fallback
-                        diff_fail_warning = "WARNING: Diff application failed. Using original code with diff appended."
-                        final_code = (
-                            original_code
-                            + "\n"
-                            + diff_fail_warning
-                            + "\n"
-                            + diff_to_save
-                        )
-                else:  # whole mode
-                    final_code = code_content
+            # When format fails, we still save the raw for auditing—skip diff application/execution
+            if not is_format_ok and self.require_strict_format:
                 code_path, _ = self._save_result_to_file(
-                    final_code,
-                    thought,
+                    (code_content or meta.get("raw", "") or ""),
+                    thought or "",
                     self.current_generation,
                     i + 1,
                     strategy,
-                    diff_to_save,
+                    None,
                 )
-                # pool_type
-                if meta["pool"] == "fail":
-                    candidate_origin_pool = "fail_pool"
-                else:
-                    candidate_origin_pool = "success_pool"
+                self._save_format_error_artifacts(code_path, meta)  # [FORMAT-ERROR] NEW
                 cand = Heuristic(
-                    thought=thought,
-                    code=final_code,
-                    feedback="",
+                    thought=thought or "",
+                    code=(code_content or meta.get("raw", "") or ""),
+                    feedback=f"FORMAT_ERROR: {meta.get('error','unknown')}",
                     generation=self.current_generation,
-                    parent_ids=[p.id for p in meta["parents"]],
-                    strategy=meta["strategy"],
-                    origin_pool=candidate_origin_pool,
+                    parent_ids=[p.id for p in meta_rec["parents"]],
+                    strategy=strategy,
+                    origin_pool=("fail_pool" if meta_rec["pool"] == "fail" else "success_pool"),
+                    status="failed_format",  # [FORMAT-ERROR] NEW
                 )
                 cand.code_file_path = code_path
                 new_offspring.append(cand)
+                continue  # Skip diff/whole processing for bad format
+
+            # When the format is good apply the necessary transformations
+            final_code, diff_to_save = "", ""
+            # Check if the offspring was generated using "whole" or "diff"
+            # Decide using per-request resolved mode, not the global engine setting
+            # As sometimes the global engine setting is sometimes overriden for initial generation or for failed parents.
+            resolved_mode = meta_rec.get("resolved_mode", self.generation_mode)
+
+            # If offspring was generated under "diff" mode then _apply_diff is needed
+            if resolved_mode == "diff":
+                diff_to_save = code_content
+                original_code = ""
+                with open(meta_rec["parents"][0].code_file_path, "r") as f:
+                    original_code = f.read()
+                # If original_code or diff_to_save is None then save it as "" empty string
+                if original_code is None:
+                    original_code = ""
+                if diff_to_save is None:
+                    diff_to_save = ""
+                new_code = self._apply_diff(original_code, diff_to_save, target_file_path=meta_rec["parents"][0].code_file_path)
+                if new_code:  # Diff application successful
+                    final_code = new_code
+                else:  # Diff application failed
+                    print(f"WARNING: Diff application failed for candidate {i + 1} in generation {self.current_generation}. Applying fallback logic.")
+                    # Save the original code with diff appended as a fallback
+                    diff_fail_warning = "WARNING: Diff application failed. Using original code with diff appended."
+                    final_code = (
+                        original_code
+                        + "\n"
+                        + diff_fail_warning
+                        + "\n"
+                        + diff_to_save
+                    )
+
+                    code_path, _ = self._save_result_to_file(
+                        final_code or "",
+                        thought or "",
+                        self.current_generation,
+                        i + 1,
+                        strategy,
+                        diff_to_save,
+                    )
+                    self._save_diff_error_artifacts(
+                        code_path,
+                        diff_to_save,
+                        parent_file=meta_rec["parents"][0].code_file_path,
+                        reason="SEARCH/REPLACE did not match",
+                    )
+                    cand = Heuristic(
+                        thought=thought or "",
+                        code=original_code,
+                        feedback="DIFF_APPLY_ERROR: could not apply LLM diff.",
+                        generation=self.current_generation,
+                        parent_ids=[p.id for p in meta_rec["parents"]],
+                        strategy=strategy,
+                        origin_pool=("fail_pool" if meta_rec["pool"] == "fail" else "success_pool"),
+                        status="failed_diff",  # [DIFF-ERROR]
+                    )
+                    cand.code_file_path = code_path
+                    cand.generated_mode = "diff"  # [DIFF-ERROR]
+                    new_offspring.append(cand)
+                    continue                     
+            else:  # whole mode
+                final_code = code_content
+
+            # When the returned code satisfies output and diff formats
+            code_path, _ = self._save_result_to_file(
+                final_code or "", thought or "", self.current_generation, i + 1, strategy, diff_to_save
+            )
+            # pool_type
+            if meta_rec["pool"] == "fail":
+                candidate_origin_pool = "fail_pool"
+            else:
+                candidate_origin_pool = "success_pool"
+            cand = Heuristic(
+                thought=thought or "",
+                code=final_code or "",
+                feedback="",
+                generation=self.current_generation,
+                parent_ids=[p.id for p in meta_rec["parents"]],
+                strategy=meta_rec["strategy"],
+                origin_pool=candidate_origin_pool,
+            )
+            cand.code_file_path = code_path
+            cand.generated_mode = resolved_mode
+            new_offspring.append(cand)
 
         self._evaluate_candidates(new_offspring)
 
@@ -2821,6 +2939,10 @@ class SingleShotEngine(EoHEngine):
 
         # Stage 1: Functional Simulation
         for cand in candidates_to_evaluate:
+            # Stage 1-1: Check for formatting errors
+            if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
+                cand.score = -float("inf")
+                continue
             sim_results = self.evaluator.evaluate(
                 cand.code_file_path, test_sv_file, ref_sv_file
             )
@@ -3220,6 +3342,18 @@ class CVDPEngine(EoHEngine):
         feedback_request_candidates: list[Heuristic] = []
 
         for cand in candidates_to_evaluate:
+            # Check if the response adheres to format
+            if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
+                cand.score = -float("inf")
+                feedback_request_candidates.append(cand)
+                feedback_requests.append(
+                    {
+                        "problem_def": self.problem_description,
+                        "code": cand.code,
+                        "simulation_log": f"Candidate failed format or diff compliance checks. Status: {cand.status}",
+                    }
+                )
+                continue
             # Put a per-candidate harness beside its saved code
             cand_dir = Path(cand.code_file_path).parent
             run_root = cand_dir / f"cvdp_harness_{cand.id[:8]}"

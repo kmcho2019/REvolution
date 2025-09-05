@@ -55,7 +55,7 @@ class LLMInterface:
         max_retries: int = 10,
         base_delay: float = 2.0,
         port: int = 8000,
-        debug: bool = True,
+        debug: bool = False,
     ) -> None:
         """
         :param api_key:      Your LLM API key (not required for 'vllm' backend).
@@ -446,6 +446,46 @@ class LLMInterface:
         response_text_with_issues = response_text + append_text
         return response_text_with_issues, response_text_with_issues
 
+
+    def _strict_validate_eoh(self, text: str) -> tuple[bool, dict[str, Any], str | None]:
+        """
+        [FORMAT-ERROR] Strictly require a single JSON object with:
+          - format == "eoh_v1"
+          - mode in {"whole","diff"}
+          - thought: str (non-empty)
+          - code: str (non-empty, for whole) OR dict with 'edits': list[...] (for diff)
+
+        Returns (ok, payload, error_message_or_None).
+        On ok=True, payload = {"mode": "...", "thought": str, "code": str|dict}.
+        """
+        obj = self._extract_json_obj(text)
+        if obj is None:
+            return False, {}, "no JSON object found"
+
+        if not isinstance(obj, dict):
+            return False, {}, "top-level is not an object"
+
+        if obj.get("format") != "eoh_v1":
+            return False, {}, 'missing/invalid "format":"eoh_v1"'
+
+        mode = obj.get("mode")
+        if mode not in ("whole", "diff"):
+            return False, {}, 'missing/invalid "mode" ("whole"|"diff")'
+
+        thought = obj.get("thought")
+        if not isinstance(thought, str) or not thought:
+            return False, {}, 'missing/invalid "thought" (non-empty string required)'
+
+        code = obj.get("code")
+        if mode == "whole":
+            if not isinstance(code, str) or not code:
+                return False, {}, 'missing/invalid "code" (non-empty string required for whole)'
+        else:  # diff
+            if not isinstance(code, dict) or "edits" not in code or not isinstance(code["edits"], list):
+                return False, {}, 'missing/invalid "code.edits" (list required for diff)'
+
+        return True, {"mode": mode, "thought": thought, "code": code}, None
+
     async def generate_response(
         self,
         prompt: str,
@@ -454,9 +494,14 @@ class LLMInterface:
         max_tokens: int = 2048,
         generation_mode: Literal["whole", "diff"] = "whole",
         system_prompt_override: str | None = None,
-    ) -> tuple[str | None, str | None]:
+    ) -> tuple[str | None, str | None, dict[str, Any]]:
         """
-        Generate a single (thought, code) reply for a user prompt.
+        Generate a single (thought, code, meta) reply for a user prompt.
+
+        thought: High-level design idea or conceptual plan.
+        code: Complete, runnable Verilog/design implementation of the thought.
+        meta: Handles API response metadata, checks for formatting issues.
+            meta = {"format_ok": bool, "error": str|None, "raw": str, "parsed_mode": str|None}
 
         Handles API calls, retries on transient errors with exponential backoff,
         and parsing of the response.
@@ -475,7 +520,7 @@ class LLMInterface:
         :type generation_mode: Literal["whole", "diff"]
         :param system_prompt_override: Optional custom system prompt to override the default.
         :type system_prompt_override: str | None
-        :return: A (thought, code) tuple, or (None, None) on failure.
+        :return: A (thought, code, meta) tuple, or (None, None, None) on failure.
         """
         # print(f"\n--- LLM Request ---")
         # print(f"Prompt (first 200 chars):\n{prompt[:200]}...")
@@ -599,20 +644,30 @@ class LLMInterface:
                         chat_completion, n_calls=1, completion_type="code"
                     )
 
-                    content = chat_completion.choices[0].message.content
+                    raw = (chat_completion.choices[0].message.content or "").strip()
 
                     # --- DEBUG: Print the raw model output ---
                     if self.debug:
                         print("\n" + "=" * 80)
                         print("--- DEBUG: RAW LLM OUTPUT (generate_response) ---")
-                        print(content)
+                        print(raw)
                         print("=" * 80 + "\n")
+                    
+                    format_ok, payload, err = self._strict_validate_eoh(raw)
+                    if format_ok:
+                        mode = payload["mode"]
+                        thought = (payload["thought"] or "").strip()
+                        code = payload["code"]
+                        # normalize code to string for downstream
+                        code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
+                        return thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}
 
-                    # If the response content is valid, parse it and return.
-                    if content and content.strip():
-                        full_response_text = content.strip()
-                        thought, code = self.parse_thought_and_code(full_response_text)
-                        return thought, code
+                    # fallback: lenient parse for convenience, but mark as error
+                    thought_loose, code_loose = self.parse_thought_and_code(raw)
+
+                    # If the response content is non-empty, return the leniently parsed values.
+                    if raw:
+                        return thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}
 
                     # If content is None or empty, we'll treat it as a retriable issue.
                     # The code will fall through to the retry logic below.
@@ -631,7 +686,7 @@ class LLMInterface:
                     )
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
-                        return None, None
+                        return None, None, {"format_ok": False, "error": f"api-error: {e}", "raw": "", "parsed_mode": None}
 
                     delay = (self.base_delay * 2**attempt) + random.uniform(0, 1)
                     print(f"Waiting for {delay:.2f} seconds before retrying...")
@@ -639,11 +694,20 @@ class LLMInterface:
 
                 except Exception as e:
                     print(
-                        f"An unexpected, non-retriable error occurred in generate_response: {e}"
+                        f"An unexpected, error occurred in generate_response: {e}"
                     )
-                    return None, None
+                    print(
+                        f"OpenAI API call failed on attempt {attempt + 1}/{self.max_retries}: {e}"
+                    )
+                    if attempt + 1 == self.max_retries:
+                        print("Max retries reached. Failing the request.")
+                        return None, None, {"format_ok": False, "error": f"api-error: {e}", "raw": "", "parsed_mode": None}
+
+                    delay = (self.base_delay * 2**attempt) + random.uniform(0, 1)
+                    print(f"Waiting for {delay:.2f} seconds before retrying...")
+                    await asyncio.sleep(delay)
         print("Failed to generate a response after multiple retries.")
-        return None, None
+        return None, None, {"format_ok": False, "error": "exhausted-retries", "raw": "", "parsed_mode": None}
 
     # This new method uses the 'n' parameter for more efficient batching of identical prompts.
     async def generate_n_responses(
@@ -655,9 +719,16 @@ class LLMInterface:
         max_tokens: int = 2048,
         generation_mode: Literal["whole", "diff"] = "whole",
         system_prompt_override: str | None = None,
-    ) -> list[tuple[str | None, str | None]]:
+    ) -> list[tuple[str | None, str | None, dict[str, Any]]]:
         """
         Generates 'n' different responses for a single prompt.
+
+        With each response consisting of list of tuple (thought, code, meta) for a user prompt.
+
+        thought: High-level design idea or conceptual plan.
+        code: Complete, runnable Verilog/design implementation of the thought.
+        meta: Handles API response metadata, checks for formatting issues.
+            meta = {"format_ok": bool, "error": str|None, "raw": str, "parsed_mode": str|None}
 
         Attempts to use the 'n' parameter for a single, efficient API call.
         If the backend does not support 'n' > 1, it gracefully falls back
@@ -811,14 +882,26 @@ class LLMInterface:
                         print(
                             f"Warning: API returned {len(chat_completion.choices)}/{n} responses. Requesting remaining concurrently."
                         )
+
                         # Parse the responses that were successfully received.
-                        parsed = [
-                            self.parse_thought_and_code(c.message.content.strip())
-                            for c in chat_completion.choices
-                            if c.message.content
-                        ]
+                        out = []
+                        for ch in chat_completion.choices:
+                            raw = (ch.message.content or "").strip()
+                            ok_format, payload, err = self._strict_validate_eoh(raw)
+                            if ok_format:
+                                mode = payload["mode"]
+                                thought = (payload["thought"] or "").strip()
+                                code = payload["code"]
+                                code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
+                                out.append((thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}))
+                            else:
+                                # If content is not empty, add a failed response
+                                if raw:
+                                    thought_loose, code_loose = self.parse_thought_and_code(raw)
+                                    out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+
                         # Concurrently request the remaining responses.
-                        num_remaining = n - len(parsed)
+                        num_remaining = n - len(out)
                         print(
                             f"Falling back to {num_remaining} individual concurrent requests for the remainder."
                         )
@@ -837,15 +920,27 @@ class LLMInterface:
                         print(
                             f"--- Fallback with {num_remaining} individual requests completed ---"
                         )
-                        return parsed + remaining_results
+                        return out + remaining_results
                     # *** END: WORKAROUND ***
 
                     # Parse each of the 'n' choices in the response
-                    return [
-                        self.parse_thought_and_code(c.message.content.strip())
-                        for c in chat_completion.choices
-                        if c.message.content
-                    ]
+                    # Parse the responses.
+                    out = []
+                    for ch in chat_completion.choices:
+                        raw = (ch.message.content or "").strip()
+                        ok_format, payload, err = self._strict_validate_eoh(raw)
+                        if ok_format:
+                            mode = payload["mode"]
+                            thought = (payload["thought"] or "").strip()
+                            code = payload["code"]
+                            code_str = self._maybe_unescape_code(code) if isinstance(code, str) else json.dumps(code, separators=(",", ":"))
+                            out.append((thought, code_str, {"format_ok": True, "error": None, "raw": raw, "parsed_mode": mode}))
+                        else:
+                            # If content is not empty, add a failed response
+                            if raw:
+                                thought_loose, code_loose = self.parse_thought_and_code(raw)
+                                out.append((thought_loose, code_loose, {"format_ok": False, "error": f"strict-parse failed: {err}", "raw": raw, "parsed_mode": None}))
+                    return out
 
                 except BadRequestError as e:
                     # Found that DeepSeek API does not support 'n' > 1, so we need to handle this case.
@@ -945,7 +1040,8 @@ class LLMInterface:
                     )
                     if attempt + 1 == self.max_retries:
                         print("Max retries reached. Failing the request.")
-                        return [(None, None)] * n  # Return failures
+                        fail_dict = {"format_ok": False, "error": str(e) + " Maximum retries reached", "raw": "", "parsed_mode": None}
+                        return [(None, None, fail_dict)] * n  # Return failures
 
                     # Exponential backoff with jitter
                     delay = (self.base_delay * 2**attempt) + random.uniform(0, 1)
@@ -954,11 +1050,22 @@ class LLMInterface:
 
                 except Exception as e:
                     print(
-                        f"An unexpected, non-retriable error occurred in generate_n_responses: {e}"
+                        f"An unexpected, error occurred in generate_n_responses: {e}"
                     )
-                    return [(None, None)] * n
+
+                    if attempt + 1 == self.max_retries:
+                        print("Max retries reached. Failing the request.")
+                        fail_dict = {"format_ok": False, "error": str(e) + " Maximum retries reached", "raw": "", "parsed_mode": None}
+                        return [(None, None, fail_dict)] * n  # Return failures
+
+                    # Exponential backoff with jitter
+                    delay = (self.base_delay * 2**attempt) + random.uniform(0, 1)
+                    print(f"Waiting for {delay:.2f} seconds before retrying...")
+                    await asyncio.sleep(delay)
+
         print("Failed to generate responses after multiple retries.")
-        return [(None, None)] * n  # Return failures if all retries fail
+        fail_dict = {"format_ok": False, "error": "Max retries reached", "raw": "", "parsed_mode": None}
+        return [(None, None, fail_dict)] * n  # Return failures if all retries fail
 
     async def generate_feedback(
         self,
@@ -1193,7 +1300,7 @@ class LLMInterface:
         temperature: float = 1.0,
         top_p: float = 0.95,
         max_tokens: int = 2048,
-    ) -> list[tuple[str | None, str | None]]:
+    ) -> list[tuple[str | None, str | None, dict[str, Any]]]:
         """
         Generates responses for a batch of different prompts concurrently.
 
@@ -1207,10 +1314,10 @@ class LLMInterface:
         :param max_tokens: Maximum tokens to generate.
         :type max_tokens: int
         :return: A list of (thought, code) tuples corresponding to each prompt.
-        :rtype: list[tuple[str | None, str | None]]
+        :rtype: list[tuple[str | None, str | None, dict[str, Any]]]
         """
         print(f"\n--- Sending Batch LLM Request for {len(prompts)} prompts ---")
-        tasks: list[Coroutine[Any, Any, tuple[str | None, str | None]]] = [
+        tasks: list[Coroutine[Any, Any, tuple[str | None, str | None, dict[str, Any]]]] = [
             self.generate_response(
                 p["prompt"],
                 temperature,
