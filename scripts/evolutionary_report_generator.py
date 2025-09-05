@@ -336,6 +336,85 @@ def generate_benchmark_report(
     return stats
 
 
+def parse_generation_log_fallback(log_path: pathlib.Path) -> dict | None:
+    """
+    Parses a generation_log.jsonl file to extract summary data
+    when a _summary.json file is not available. This is useful for runs
+    that terminated prematurely.
+    """
+    if not log_path.exists():
+        return None
+
+    lines = []
+    try:
+        with open(log_path, "r", encoding="utf-8") as f:
+            for line in f:
+                lines.append(json.loads(line))
+    except (IOError, json.JSONDecodeError) as e:
+        print(f"Error reading or parsing {log_path}: {e}")
+        return None
+
+    if not lines:
+        return None
+
+    first_gen = lines[0]
+    last_gen = lines[-1]
+
+    # Determine problem name: from log file content first, then from directory name
+    problem_name = first_gen.get("problem_name")
+    if not problem_name or problem_name == "N/A":
+        problem_name = log_path.parent.name
+        print(f"INFO: 'problem_name' not in generation_log.jsonl, inferring from directory: {problem_name}")
+
+
+    # Initialize summary data structure from the first generation
+    summary_data = {
+        "problem_name": problem_name,
+        "benchmark_name": first_gen.get("benchmark_name", "N/A"),
+        "ref_ppa_metric": first_gen.get("ref_ppa_metric", {}),
+        "total_runtime_seconds": 0,
+        "total_llm_api_calls": 0,
+        "total_llm_prompt_tokens": 0,
+        "total_llm_completion_tokens": 0,
+        "accumulated_strategy_counts:": defaultdict(int),
+        "accumulated_strategy_rewards": defaultdict(lambda: defaultdict(int)),
+    }
+
+    # Aggregate data across all generations
+    for gen_data in lines:
+        summary_data["total_runtime_seconds"] += gen_data.get("runtime_seconds", 0)
+        summary_data["total_llm_api_calls"] += gen_data.get("llm_api_calls", 0)
+        
+        # This assumes token usage is logged per generation.
+        # The exact key names might need adjustment based on the log file's schema.
+        # We check for 'llm_usage' list first, then fall back to simple keys.
+        if "llm_usage" in gen_data and isinstance(gen_data["llm_usage"], list):
+             for usage in gen_data["llm_usage"]:
+                 summary_data["total_llm_prompt_tokens"] += usage.get("prompt_tokens", 0)
+                 summary_data["total_llm_completion_tokens"] += usage.get("completion_tokens", 0)
+        else:
+             summary_data["total_llm_prompt_tokens"] += gen_data.get("prompt_tokens", 0)
+             summary_data["total_llm_completion_tokens"] += gen_data.get("completion_tokens", 0)
+
+
+        if "strategy_counts" in gen_data:
+            for strategy, count in gen_data["strategy_counts"].items():
+                summary_data["accumulated_strategy_counts:"][strategy] += count
+
+        if "strategy_rewards" in gen_data:
+            for pool_id, rewards in gen_data["strategy_rewards"].items():
+                for strategy, reward in rewards.items():
+                    if reward is not None:
+                        # Mimics original logic: count successes, not reward values
+                        summary_data["accumulated_strategy_rewards"][pool_id][strategy] += 1
+
+    # Get final state from the last generation
+    summary_data["accumulated_success_rates"] = last_gen.get("success_rates", {})
+    summary_data["final_population_ppa"] = last_gen.get("population_ppa", {})
+
+    return summary_data
+
+
 def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
     """Parses all experiment summary files, generates reports, and optionally saves them."""
     if not experiment_path.is_dir():
@@ -371,16 +450,42 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
         }
     )
 
-    summary_files = sorted(experiment_path.glob("*/*/*_summary.json"))
-    if not summary_files:
-        print(f"⚠️ No `_summary.json` files found: {experiment_path}/*/*/*_summary.json")
+    # --- MODIFIED: Find all problem directories by looking for either summary or log files ---
+    summary_files = experiment_path.glob("*/*/*_summary.json")
+    log_files = experiment_path.glob("*/*/generation_log.jsonl")
+
+    # Get unique parent directories from both lists of files
+    problem_dirs = sorted(list(set([p.parent for p in summary_files] + [p.parent for p in log_files])))
+
+    if not problem_dirs:
+        print(f"⚠️ No `_summary.json` or `generation_log.jsonl` files found in subdirectories of: {experiment_path}")
         return
 
-    for file_path in summary_files:
-        try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+    for dir_path in problem_dirs:
+        data = None
+        # Prioritize the summary file if it exists
+        summary_file = dir_path / f"{dir_path.name}_summary.json"
+        log_file = dir_path / "generation_log.jsonl"
+        file_path_for_error_msg = dir_path
 
+        try:
+            if summary_file.exists():
+                file_path_for_error_msg = summary_file
+                with open(summary_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            elif log_file.exists():
+                print(f"INFO: `_summary.json` not found in {dir_path}. Falling back to `generation_log.jsonl`.")
+                file_path_for_error_msg = log_file
+                data = parse_generation_log_fallback(log_file)
+            else:
+                # This case should not be reached due to the directory discovery logic
+                continue
+
+            if not data:
+                print(f"Warning: Failed to load or parse data from {dir_path}. Skipping.")
+                continue
+
+            # --- The rest of the processing logic is largely unchanged ---
             problem_name = data["problem_name"]
             benchmark_name = data["benchmark_name"]
             stats = benchmark_data[benchmark_name]
@@ -411,7 +516,7 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
                 data.get("total_llm_completion_tokens", 0)
             )
 
-            gen_log_path = file_path.parent / "generation_log.jsonl"
+            gen_log_path = dir_path / "generation_log.jsonl"
             initial_rates = {
                 "total_syntax": 0.0,
                 "total_functionality": 0.0,
@@ -533,7 +638,7 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             )
 
         except (json.JSONDecodeError, KeyError, IndexError, TypeError) as e:
-            print(f"⚠️ Could not process file {file_path}: {e} - Skipping.")
+            print(f"⚠️ Could not process data from {file_path_for_error_msg}: {e} - Skipping.")
             continue
 
     all_benchmark_stats = {}
@@ -542,7 +647,7 @@ def analyze_experiments(experiment_path: pathlib.Path, save_markdown: bool):
             experiment_path, benchmark, stats, save_markdown
         )
 
-    if len(all_benchmark_stats) > 0:
+    if len(all_benchmark_stats) > 1:
         generate_overall_report(
             experiment_path, all_benchmark_stats, run_args, save_markdown
         )
