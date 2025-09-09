@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import subprocess
+import traceback
 from typing import Any, Literal
 
 
@@ -566,19 +567,36 @@ class SynthesisEvaluator:
 
         print(f"INFO: Running synthesis command: {command}")
 
-        process = subprocess.run(
-            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=synthesis_timeout_s
-        )
+        try:
+            process = subprocess.run(
+                command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=synthesis_timeout_s
+            )
 
-        if process.returncode == 0:
-            print(f"Synthesis completed successfully. Report saved to {report_path}")
-            return True, report_path
-        else:
-            print(f"Synthesis failed. Error: {process.stderr.decode()}")
-            # Return the path to the report even on failure to aid debugging
-            with open(report_path, "a") as f:
-                f.write("\n\n--- SYNTHESIS FAILED ---\n")
-                f.write(process.stderr.decode())
+            if process.returncode == 0:
+                print(f"Synthesis completed successfully. Report saved to {report_path}")
+                return True, report_path
+            else:
+                print(f"Synthesis failed. Error: {process.stderr.decode()}")
+                # Return the path to the report even on failure to aid debugging
+                with open(report_path, "a") as f:
+                    f.write("\n\n--- SYNTHESIS FAILED ---\n")
+                    f.write(process.stderr.decode())
+                return False, report_path
+        except subprocess.TimeoutExpired:
+            timeout_msg = f"Synthesis/Physical Design timed out after {synthesis_timeout_s} seconds (likely due to an infinite loop or complex design)."
+            print(f"ERROR: {timeout_msg}")
+            # Overwrite the report file with a clear timeout message
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write(f"--- SYNTHESIS/Physical Design FAILED: TIMEOUT ---\n{timeout_msg}\n")
+            return False, report_path
+
+        except Exception as e:
+            error_msg = f"An unexpected error occurred while running the synthesis process: {e}"
+            tb = traceback.format_exc()
+            print(f"ERROR: {error_msg}")
+            # Overwrite the report file with the crash details
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write(f"--- SYNTHESIS/Physical Design FAILED: UNEXPECTED CRASH ---\n{error_msg}\n\nTraceback:\n{tb}\n")
             return False, report_path
 
     # Method for post-synthesis functionality check/verification
