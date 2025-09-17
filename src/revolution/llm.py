@@ -52,7 +52,7 @@ class LLMInterface:
         api_key: str | None = None,
         model_name: str = "gpt-3.5-turbo",
         api_backend: str = "openai",
-        max_retries: int = 10,
+        max_retries: int = 15,
         base_delay: float = 2.0,
         port: int = 8000,
         debug: bool = False,
