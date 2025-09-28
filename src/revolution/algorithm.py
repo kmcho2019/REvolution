@@ -21,6 +21,8 @@ from pathlib import Path
 from .evaluation import SynthesisEvaluator, VerilogEvaluator
 from .llm import LLMInterface, LLMRequest
 from .logging import EoHLogger
+from .prompt_store import PromptStore, safe_format # Able to load prompts from files
+
 
 # Literal Typing for strategies (M-F, M-S, M-E, M-R, M-I, C-F, ...)
 EvolStrategyMethod = Literal["initial", "M-F", "M-S", "M-E", "M-R", "M-I", "C-F"]
@@ -305,6 +307,8 @@ class EoHEngine:
         champion_metrics_config: list[dict[str, Any]] | None = None,
         population_pool_mode: PopulationPoolMode = "dual",
         require_strict_format: bool = True,
+        prompt_profile: str = "default",
+        prompt_root: str | None = None,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.base_save_path: str = (
@@ -413,6 +417,12 @@ class EoHEngine:
         self.single_fail_allocation_cap: float = 0.25     # max fraction of offspring from failed parents once any success exists
         self.single_success_min_fraction: float = 0.80    # survivor selection keeps at least this fraction successes
         self.single_success_weight_exp: float = 1.5       # >1.0 increases winner-take-all among successful parents
+
+       # Where to look for prompts; default to data/prompts/<profile>
+        pr_root = prompt_root or os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "prompts"
+        )
+        self.prompts = PromptStore(root_dir=os.path.abspath(pr_root), profile=prompt_profile)
 
 
     def load_problem_description(self) -> str:
@@ -945,12 +955,16 @@ class EoHEngine:
             print(
                 f"Requesting LLM feedback for {len(feedback_request_candidates)} candidates (both failed and successful)..."
             )
+            feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
+            feedback_rtl_user_prompt = self.prompts.read("feedback/user")
             feedback_results = asyncio.run(
                 self.llm.generate_batch_feedback(
                     feedback_requests,
                     self.default_llm_temp,
                     self.default_llm_top_p,
                     self.default_llm_max_tokens,
+                    system_prompt_override=[feedback_rtl_sys_prompt] * len(feedback_requests) if feedback_rtl_sys_prompt else None,
+                    user_prompt_override=[feedback_rtl_user_prompt] * len(feedback_requests) if feedback_rtl_user_prompt else None,
                 )
             )
             for cand, feedback_data in zip(
@@ -1000,6 +1014,11 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-F/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Use the JSON context to generate a corrected solution.\n\n"
@@ -1026,6 +1045,15 @@ class EoHEngine:
                 "original_file": parent_code,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-F/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent.code_file_path,
+                    original_file=parent_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Use the JSON context to propose precise edits.\n\n"
@@ -1071,6 +1099,10 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-S/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Simplify the solution while preserving functionality.\n\n"
@@ -1097,6 +1129,15 @@ class EoHEngine:
                 "original_file": parent_code,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-S/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent.code_file_path,
+                    original_file=parent_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Edit the file to reduce complexity while preserving behavior.\n\n"
@@ -1143,6 +1184,10 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-E/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Propose a novel architectural idea (different from the parent).\n\n"
@@ -1175,6 +1220,15 @@ class EoHEngine:
                 "original_file": parent_code,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-E/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent.code_file_path,
+                    original_file=parent_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Edit the file to implement a substantially different solution.\n\n"
@@ -1220,6 +1274,10 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-R/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Refactor to a cleaner structure while preserving the core idea.\n\n"
@@ -1252,6 +1310,15 @@ class EoHEngine:
                 "original_file": parent_code,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-R/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent.code_file_path,
+                    original_file=parent_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Edit the file to refactor structure (same intent).\n\n"
@@ -1297,6 +1364,10 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-I/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Improve correctness (if failed) or PPA (if succeeded).\n\n"
@@ -1323,6 +1394,15 @@ class EoHEngine:
                 "original_file": parent_code,
                 "parent": parent_obj,
             }
+            tpl = self.prompts.read("evolve/M-I/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent.code_file_path,
+                    original_file=parent_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Edit the file to fix issues and/or optimize PPA.\n\n"
@@ -1370,6 +1450,10 @@ class EoHEngine:
                 "problem_description": self.problem_description,
                 "parents": [p1_obj, p2_obj],
             }
+            tpl = self.prompts.read("evolve/C-F/whole")
+            if tpl:
+                return safe_format(tpl, context_json=json.dumps(context_obj, indent=2))
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Fuse the best ideas from both successful solutions into a superior one.\n\n"
@@ -1401,6 +1485,15 @@ class EoHEngine:
                 "original_file": parent1_code,
                 "parents": [p1_obj, p2_obj],
             }
+            tpl = self.prompts.read("evolve/C-F/diff")
+            if tpl:
+                return safe_format(
+                    tpl,
+                    context_json=json.dumps(context_obj, indent=2),
+                    file_to_edit=parent1.code_file_path,
+                    original_file=parent1_code,
+                )
+            # Fallback to built-in prompt if no template found
             return (
                 "You are an expert Verilog design assistant.\n"
                 "Edit Example 1 by fusing the best ideas from both examples.\n\n"
@@ -1941,6 +2034,7 @@ class EoHEngine:
                 top_p=self.default_llm_top_p,
                 max_tokens=self.default_llm_max_tokens,
                 generation_mode="whole", #self.generation_mode, # Always use "whole" mode for initial generation.
+                system_prompt_override=self._get_generation_system_prompt("whole"),
             )
         )
 
@@ -2252,9 +2346,17 @@ class EoHEngine:
         """
         Returns the system prompt for code generation during evolution.
         Subclasses can override this to provide a custom system prompt.
-        By default, it returns None, causing the LLMInterface to use its default.
+        By default, it loads the system prompt in the default directory of data/prompts/default/
+
+        :param mode: Optional generation mode ('whole' or 'diff') to select a specific system prompt.
+                        If None, uses the instance's current generation_mode.
+        :type mode: Literal["whole","diff"] | None
+        :return: The system prompt string, or None if not found.
+        :rtype: str | None
         """
-        return None
+        use_mode = mode or self.generation_mode
+        # First try profile-specific files (e.g., default/system/whole.txt)
+        return self.prompts.read(f"system/{use_mode}")
 
     # A helper: call a prompt-builder under a temporary generation_mode
     def _with_mode(self, mode: Literal["whole", "diff"], fn, *args, **kwargs) -> str:
@@ -2890,6 +2992,8 @@ class SingleShotEngine(EoHEngine):
         default_llm_max_tokens: int = 2048,
         base_save_path: str | None = None,
         generation_mode: Literal["whole", "diff"] = "whole",
+        prompt_profile: str = "default",
+        prompt_root: str | None = None,
     ):
         # Initialize the parent EoHEngine with num_generations=0.
         # This makes the single-shot engine a special case of the evolutionary engine.
@@ -2910,6 +3014,8 @@ class SingleShotEngine(EoHEngine):
             epsilon=0.1,
             ucb_c=2.0,
             generation_mode=generation_mode,
+            prompt_profile=prompt_profile,
+            prompt_root=prompt_root,
         )
 
     def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
@@ -3120,6 +3226,8 @@ class CVDPEngine(EoHEngine):
         cvdp_jsonl_path: str,
         cvdp_id: str,
         simulation_timeout_s: int = 300,
+        prompt_profile: str = "default",
+        prompt_root: str | None = None,
         *args,
         **kwargs,
     ):
@@ -3129,7 +3237,11 @@ class CVDPEngine(EoHEngine):
         self.cvdp_id: str = cvdp_id
         self.cvdp_record: dict[str, Any] | None = None
 
-        super().__init__(*args, **kwargs)  # calls load_problem_description()
+        super().__init__(
+            prompt_profile=prompt_profile,
+            prompt_root=prompt_root,
+            *args, **kwargs
+            )  # calls load_problem_description()
 
         # CVDP: turn off PPA logic (we don't synthesize in this adapter)
         self.ref_ppa_metrics = {}  # keep empty
@@ -3424,12 +3536,19 @@ class CVDPEngine(EoHEngine):
         # FEEDBACK: batch LLM feedback (mirrors your base engine behavior)
         if feedback_requests:
             try:
+                print(f"[CVDP] Requesting LLM feedback for {len(feedback_requests)} candidates...")
+                feedback_rtl_sys_prompt = self.prompts.read("feedback/system")
+                feedback_rtl_user_prompt = self.prompts.read("feedback/user")
+                input_system_prompt_override = [feedback_rtl_sys_prompt] * len(feedback_requests) if feedback_rtl_sys_prompt else None
+                input_user_prompt_override = [feedback_rtl_user_prompt] * len(feedback_requests) if feedback_rtl_user_prompt else None
                 feedback_results = asyncio.run(
                     self.llm.generate_batch_feedback(
                         feedback_requests,
                         self.default_llm_temp,
                         self.default_llm_top_p,
                         self.default_llm_max_tokens,
+                        system_prompt_override=input_system_prompt_override,
+                        user_prompt_override=input_user_prompt_override,
                     )
                 )
                 for cand, fb in zip(feedback_request_candidates, feedback_results):
