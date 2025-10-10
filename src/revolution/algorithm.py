@@ -3232,6 +3232,191 @@ class SingleShotEngine(EoHEngine):
 # Does not support PPA metrics only functionality
 # Plan on adding PPA metric support through Yosys + OpenROAD
 # Expanding to more benchmarks
+class _NoOpVerilogEvaluator:
+    """Placeholder evaluator used by latency-only mode."""
+
+    def evaluate(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        raise RuntimeError("Verilog evaluation not available in Gen0 latency mode.")
+
+
+class _NoOpSynthesisEvaluator:
+    """Placeholder synthesis evaluator used by latency-only mode."""
+
+    clk_period: float = 0.0
+
+    def evaluate(self, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        raise RuntimeError("Synthesis not available in Gen0 latency mode.")
+
+
+class Gen0LatencyEngine(EoHEngine):
+    """Generate Gen0 candidates, score via LLM feedback, and return the top option."""
+
+    def __init__(
+        self,
+        benchmark_name: str,
+        problem_name: str,
+        llm_interface: LLMInterface,
+        verilog_evaluator: VerilogEvaluator | None,
+        synthesis_evaluator: SynthesisEvaluator | None,
+        population_size: int = 10,
+        base_save_path: str | None = None,
+        default_llm_temp: float = 1.0,
+        default_llm_top_p: float = 0.95,
+        default_llm_max_tokens: int = 2048,
+        require_strict_format: bool = True,
+        prompt_profile: str = "default",
+        prompt_root: str | None = None,
+        candidate_workers: int | None = None,
+    ) -> None:
+        stub_eval = verilog_evaluator or _NoOpVerilogEvaluator()
+        stub_synth = synthesis_evaluator or _NoOpSynthesisEvaluator()
+        super().__init__(
+            benchmark_name=benchmark_name,
+            problem_name=problem_name,
+            llm_interface=llm_interface,
+            verilog_evaluator=stub_eval,  # type: ignore[arg-type]
+            synthesis_evaluator=stub_synth,  # type: ignore[arg-type]
+            population_size=population_size,
+            num_generations=0,
+            base_save_path=base_save_path,
+            default_llm_temp=default_llm_temp,
+            default_llm_top_p=default_llm_top_p,
+            default_llm_max_tokens=default_llm_max_tokens,
+            strategy_selection_method="random",
+            epsilon=0.0,
+            ucb_c=0.0,
+            generation_mode="whole",
+            population_pool_mode="single",
+            require_strict_format=require_strict_format,
+            prompt_profile=prompt_profile,
+            prompt_root=prompt_root,
+            candidate_workers=candidate_workers,
+        )
+        self.population_size = population_size
+        self.best_candidate: Heuristic | None = None
+
+    def run(self) -> str:
+        print(
+            f"--- Starting Gen0 Latency Run: Problem '{self.benchmark_name}/{self.problem_name}' ---"
+        )
+        self.run_start_time = time.time()
+        self.run_start_utc = datetime.datetime.now(datetime.timezone.utc)
+
+        try:
+            candidates = self._generate_gen0_candidates()
+            scored_candidates = self._score_candidates_via_feedback(candidates)
+        except Exception as exc:
+            print(f"Gen0 latency run failed: {exc}")
+            traceback.print_exc()
+            return f"{self.problem_name},gen0_failed"
+
+        if scored_candidates:
+            self.best_candidate = scored_candidates[0]
+            print(
+                f"Selected best candidate {self.best_candidate.id} with feedback score {self.best_candidate.score:.2f}"
+            )
+            return (
+                f"{self.problem_name},gen0_success,{self.best_candidate.code_file_path},{self.best_candidate.score}"
+            )
+
+        print("No viable candidates scored during Gen0 latency run.")
+        return f"{self.problem_name},gen0_failed"
+
+    def _generate_gen0_candidates(self) -> list[Heuristic]:
+        print(f"\n--- Generating Gen0 Candidates (Size: {self.population_size}) ---")
+        self.gen_start_time = time.time()
+        results_with_meta = asyncio.run(
+            self.llm.generate_n_responses(
+                prompt=self.problem_description,
+                n=self.population_size,
+                temperature=self.default_llm_temp,
+                top_p=self.default_llm_top_p,
+                max_tokens=self.default_llm_max_tokens,
+                generation_mode="whole",
+                system_prompt_override=self._get_generation_system_prompt("whole"),
+            )
+        )
+
+        candidates: list[Heuristic] = []
+        for i, (thought, code_content, meta) in enumerate(results_with_meta):
+            is_format_ok = bool(meta.get("format_ok", False))
+            material_to_save = code_content or meta.get("raw", "") or ""
+            code_path, _ = self._save_result_to_file(
+                material_to_save,
+                thought or "",
+                0,
+                i + 1,
+                "initial",
+                None,
+            )
+            cand = Heuristic(
+                thought=thought or "",
+                code=material_to_save,
+                feedback="" if is_format_ok else f"FORMAT_ERROR: {meta.get('error', 'unknown')}",
+                generation=0,
+                strategy="initial",
+                origin_pool="initial",
+                status="new" if is_format_ok else "failed_format",
+            )
+            cand.code_file_path = code_path
+            cand.generated_mode = "whole"
+            if not is_format_ok and self.require_strict_format:
+                self._save_format_error_artifacts(code_path, meta)
+            candidates.append(cand)
+
+        return candidates
+
+    def _score_candidates_via_feedback(
+        self, candidates: list[Heuristic]
+    ) -> list[Heuristic]:
+        if not candidates:
+            return []
+
+        feedback_requests: list[dict[str, str]] = []
+        for cand in candidates:
+            simulation_log = (
+                "Latencymode: no simulation available. Provide quality estimate using heuristics."
+            )
+            if cand.status == "failed_format":
+                simulation_log = (
+                    f"Candidate failed format parsing. Details: {cand.feedback}. Provide guidance and score despite format issue."
+                )
+            feedback_requests.append(
+                {
+                    "problem_def": self.problem_description,
+                    "code": cand.code,
+                    "simulation_log": simulation_log,
+                }
+            )
+            cand.score = float("-inf")
+
+        feedback_results = asyncio.run(
+            self.llm.generate_batch_feedback(
+                feedback_requests,
+                self.default_llm_temp,
+                self.default_llm_top_p,
+                self.default_llm_max_tokens,
+            )
+        )
+
+        for cand, feedback in zip(candidates, feedback_results):
+            score_val = feedback.get("score")
+            try:
+                cand.score = float(score_val)
+            except (TypeError, ValueError):
+                cand.score = float("-inf")
+            cand.feedback = feedback.get("analysis", "")
+            self._save_feedback_files(cand, feedback)
+
+        candidates.sort(
+            key=lambda c: c.score if c.score is not None else float("-inf"),
+            reverse=True,
+        )
+        self.success_pool = candidates[:]
+        self.fail_pool = []
+        return candidates
+
+
 class CVDPEngine(EoHEngine):
     """
     Adapter engine for CVDP (non-agentic, no-commercial) problems that ship with a

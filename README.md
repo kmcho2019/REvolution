@@ -83,6 +83,7 @@ This script distributes problems across worker processes and executes the full e
 - `--generation_mode`: request whole-file or diff-based offspring generation.
 - `--population_pool_mode`: dual or single pool scheduling.
 - `--api_backend`, `--model_name`, `--vllm_port`: LLM configuration.
+- `--evaluation_mode`: use `gen0` for the new latency-optimised initial-generation scorer or `standard` for full evolution.
 - `--cvdp_jsonl`, `--cvdp_categories`: enable CVDP dataset integration.
 
 Example (RTLLM + VerilogEval with OpenRouter):
@@ -96,6 +97,17 @@ python scripts/run_evolution.py \
   --num_workers 32 \
   --population_size 10 \
   --num_generations 20
+```
+
+Latency-only Gen0 sampling (no simulation or synthesis) for a single problem:
+
+```bash
+python scripts/run_evolution.py \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob001_example \
+  --evaluation_mode gen0 \
+  --population_size 16 \
+  --num_workers 1
 ```
 
 ### Single-shot baseline (`scripts/run_one_shot.py`)

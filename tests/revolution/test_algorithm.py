@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from revolution.algorithm import EoHEngine, Heuristic, SingleShotEngine
+from revolution.algorithm import EoHEngine, Heuristic, SingleShotEngine, Gen0LatencyEngine
 
 
 def test_heuristic_initialization():
@@ -655,6 +655,44 @@ def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0):
     # Provide a reasonable reference PPA (sequential)
     eng.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 2.0}
     return eng, llm
+
+
+def test_gen0_latency_engine_uses_feedback_scores(mocker, tmp_path):
+    mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
+    llm = mocker.MagicMock()
+    llm.model_name = "latency-model"
+    llm.generate_n_responses = mocker.AsyncMock(
+        return_value=[
+            ("T1", "module A; endmodule", {"format_ok": True}),
+            ("T2", "module B; endmodule", {"format_ok": True}),
+        ]
+    )
+    llm.generate_batch_feedback = mocker.AsyncMock(
+        return_value=[
+            {"score": 1, "analysis": "ok", "justification": "baseline"},
+            {"score": 7, "analysis": "better", "justification": "preferred"},
+        ]
+    )
+
+    engine = Gen0LatencyEngine(
+        benchmark_name="bench",
+        problem_name="prob",
+        llm_interface=llm,
+        verilog_evaluator=None,
+        synthesis_evaluator=None,
+        population_size=2,
+        base_save_path=str(tmp_path),
+    )
+
+    mocker.patch.object(engine, "_copy_misc_files", return_value=None)
+
+    result = engine.run()
+
+    assert result.startswith("prob,gen0_success")
+    assert engine.best_candidate is not None
+    assert engine.best_candidate.thought == "T2"
+    assert engine.best_candidate.score == 7
+    assert llm.generate_batch_feedback.await_count == 1
 
 
 def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):

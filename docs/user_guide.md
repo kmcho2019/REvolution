@@ -64,6 +64,7 @@ Essential arguments:
 - `--epsilon`, `--ucb_c`: exploration constants used by the meta-strategies.
 - `--generation_mode {whole,diff}`: default offspring mode for successful parents. Failed parents always fall back to `whole`.
 - `--population_pool_mode {dual,single}`: dual maintains separate fail/success pools; single blends them but throttles fail-derived offspring once successes are available.
+- `--evaluation_mode {standard,gen0}`: switch between the full pipeline and the latency-only Gen0 scorer.
 - `--cvdp_jsonl <path>` / `--cvdp_categories <list>`: enable CVDP dataset support (`bench/cvdp/...`).
 
 Example (dual-pool UCB search):
@@ -79,6 +80,19 @@ python scripts/run_evolution.py \
   --strategy_selection ucb \
   --generation_mode diff
 ```
+
+Latency-optimised Gen0 sampling (no simulation or synthesis):
+
+```bash
+python scripts/run_evolution.py \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob001_example \
+  --evaluation_mode gen0 \
+  --population_size 16 \
+  --num_workers 1
+```
+
+The `gen0` mode skips test benches, synthesis, and PPA analysis. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
 
 ### 3.2 Baseline n-shot runs (`scripts/run_one_shot.py`)
 

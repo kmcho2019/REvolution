@@ -18,7 +18,7 @@ sys.path.insert(
 )
 
 # Import the core logic from new src package
-from revolution.algorithm import EoHEngine, CVDPEngine
+from revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
@@ -43,8 +43,11 @@ def run_problem_worker(args_tuple):
     os.makedirs(problem_log_dir, exist_ok=True)
     individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
 
+    evaluation_mode = getattr(args, "evaluation_mode", "standard")
     candidate_workers = (
-        args.num_workers if getattr(args, "multiprocessing_mode", "problem") == "candidate" else 0
+        args.num_workers
+        if evaluation_mode != "gen0" and getattr(args, "multiprocessing_mode", "problem") == "candidate"
+        else 0
     )
 
     # Redirect all output from this worker to the individual log file
@@ -73,15 +76,38 @@ def run_problem_worker(args_tuple):
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
         llm_interface = LLMInterface(
-            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend,port=args.vllm_port
+            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend, port=args.vllm_port
         )
-        verilog_evaluator = VerilogEvaluator(
-            iverilog_executable_path="iverilog", vvp_executable_path="vvp"
-        )
-        synthesis_evaluator = SynthesisEvaluator()
+
+        if evaluation_mode == "gen0":
+            verilog_evaluator = None
+            synthesis_evaluator = None
+        else:
+            verilog_evaluator = VerilogEvaluator(
+                iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+            )
+            synthesis_evaluator = SynthesisEvaluator()
 
         # Choose engine based on benchmarks
-        if benchmark.lower() == "cvdp":
+        if evaluation_mode == "gen0":
+            if benchmark.lower() == "cvdp":
+                raise ValueError("Gen0 latency mode is not supported for CVDP benchmarks.")
+            eoh_engine = Gen0LatencyEngine(
+                benchmark_name=benchmark,
+                problem_name=problem,
+                llm_interface=llm_interface,
+                verilog_evaluator=verilog_evaluator,
+                synthesis_evaluator=synthesis_evaluator,
+                population_size=args.population_size,
+                base_save_path=args.save_path,
+                default_llm_temp=args.temperature,
+                default_llm_top_p=args.top_p,
+                default_llm_max_tokens=args.max_tokens,
+                require_strict_format=True,
+                prompt_profile="default",
+                prompt_root=None,
+            )
+        elif benchmark.lower() == "cvdp":
             eoh_engine = CVDPEngine(
                 cvdp_jsonl_path=args.cvdp_jsonl,
                 cvdp_id=problem,                         # 'problem' is the CVDP item id
@@ -146,97 +172,9 @@ def run_indexed_problem_worker(indexed_task):
     :rtype: tuple
 
     """
-    # Unpack arguments
     index, args_tuple = indexed_task
     benchmark, problem, args = args_tuple
-
-    # Individual Log Setup
-    model_name_cleaned = args.model_name.replace("/", "_")
-    problem_log_dir = os.path.join(
-        args.save_path, model_name_cleaned, benchmark, problem
-    )
-    # The EoHEngine will create this directory, but we ensure it exists early.
-    os.makedirs(problem_log_dir, exist_ok=True)
-    individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
-
-    # Redirect all output from this worker to the individual log file
-    with StreamRedirector(filepath=individual_log_path):
-        print(
-            f"\n[Worker PID: {os.getpid()}] Starting problem: {benchmark}/{problem}\n"
-        )
-
-        # Initialize objects within the worker process to avoid pickling issues
-        # Determine the API key based on the selected backend
-        api_key = None
-        if args.api_backend == "openai":
-            api_key = os.getenv("OPENAI_API_KEY")
-        elif args.api_backend == "openrouter":
-            api_key = os.getenv("OPENROUTER_API_KEY")
-        elif args.api_backend == "deepseek":
-            api_key = os.getenv("DEEPSEEK_API_KEY")
-        elif args.api_backend == "gemini":
-            api_key = os.getenv("GEMINI_API_KEY")
-
-        if args.api_backend != "vllm":  # vllm does not require an API key
-            if not api_key:
-                raise ValueError(
-                    f"API key for backend '{args.api_backend}' not found. "
-                    f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
-                )
-        llm_interface = LLMInterface(
-            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend,port=args.vllm_port
-        )
-        verilog_evaluator = VerilogEvaluator(
-            iverilog_executable_path="iverilog", vvp_executable_path="vvp"
-        )
-        synthesis_evaluator = SynthesisEvaluator()
-
-        # Choose engine based on benchmark
-        if benchmark.lower() == "cvdp":
-            eoh_engine = CVDPEngine(
-                cvdp_jsonl_path=args.cvdp_jsonl,
-                cvdp_id=problem,
-                problem_name=problem,
-                benchmark_name=benchmark,
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,
-                synthesis_evaluator=synthesis_evaluator,
-                population_size=args.population_size,
-                num_generations=args.num_generations,
-                base_save_path=args.save_path,
-                default_llm_temp=args.temperature,
-                default_llm_top_p=args.top_p,
-                default_llm_max_tokens=args.max_tokens,
-                strategy_selection_method=args.strategy_selection,
-                epsilon=args.epsilon,
-                ucb_c=args.ucb_c,
-                generation_mode=args.generation_mode,
-                population_pool_mode=args.population_pool_mode,
-            )
-        else:
-            eoh_engine = EoHEngine(
-                problem_name=problem,
-                benchmark_name=benchmark,
-                llm_interface=llm_interface,
-                verilog_evaluator=verilog_evaluator,
-                synthesis_evaluator=synthesis_evaluator,
-                population_size=args.population_size,
-                num_generations=args.num_generations,
-                base_save_path=args.save_path,
-                default_llm_temp=args.temperature,
-                default_llm_top_p=args.top_p,
-                default_llm_max_tokens=args.max_tokens,
-                strategy_selection_method=args.strategy_selection,
-                epsilon=args.epsilon,
-                ucb_c=args.ucb_c,
-                generation_mode=args.generation_mode,
-                population_pool_mode=args.population_pool_mode,
-            )
-
-        result_str = eoh_engine.run()
-        # Return the result string and the path to the individual log file created for this problem
-        print(f"[Worker PID: {os.getpid()}] Finished problem: {benchmark}/{problem}\n")
-        result = (result_str, individual_log_path)
+    result = run_problem_worker((benchmark, problem, args))
     return (index, result)
 
 
@@ -353,6 +291,13 @@ def main():
         default="dual",
         choices=["dual", "single"],
         help="Mode of population pool, either 'dual' (separate success/fail pools, more balanced exploration strategy tries to explore more diverse solutions from failed candidates) or 'single' (combined pool, more aggressive exploitation strategy focusing on successful candidates)."
+    )
+    parser.add_argument(
+        "--evaluation_mode",
+        type=str,
+        default="standard",
+        choices=["standard", "gen0"],
+        help="Select 'gen0' for latency-optimized initial generation scoring; default 'standard' runs the full evolutionary loop.",
     )
     parser.add_argument(
         "--multiprocessing_mode",
@@ -503,7 +448,20 @@ def main():
             if not tasks_to_run:
                 print("No valid problems found to run. Exiting.")
             else:
-                if args.multiprocessing_mode == "candidate":
+                if args.evaluation_mode == "gen0":
+                    print(
+                        f"\nRunning Gen0 latency mode sequentially for {len(tasks_to_run)} problems."
+                    )
+                    results_data = [
+                        run_problem_worker(task)
+                        for task in tqdm(
+                            tasks_to_run,
+                            total=len(tasks_to_run),
+                            desc="Running problems",
+                            file=original_stdout,
+                        )
+                    ]
+                elif args.multiprocessing_mode == "candidate":
                     worker_count = max(1, args.num_workers)
                     print(
                         f"\nStarting candidate-level evaluation with {worker_count} worker(s) per problem across {len(tasks_to_run)} problems."

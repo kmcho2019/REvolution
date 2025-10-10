@@ -9,7 +9,7 @@ REvolution centres around the `EoHEngine` class (`src/revolution/algorithm.py`),
 - evaluation of generated RTL via `VerilogEvaluator` (syntax and functional checks) and `SynthesisEvaluator` (Yosys + OpenROAD + post-synthesis regression),
 - logging and summarisation through `EoHLogger`.
 
-The framework also exposes `SingleShotEngine` for baseline n-shot evaluation and `CVDPEngine` for JSONL-defined hardware design prompts.
+The framework also exposes `SingleShotEngine` for baseline n-shot evaluation, the new `Gen0LatencyEngine` for feedback-only scoring without simulation, and `CVDPEngine` for JSONL-defined hardware design prompts.
 
 ## Candidate representation
 
