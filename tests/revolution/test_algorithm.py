@@ -636,7 +636,7 @@ def test_fusion_prompts_cover_expected_scaffolding(base_engine, tmp_path, mode):
 # initialization and evolution
 
 
-def _mk_engine(mocker, tmp_path, pop_size=4):
+def _mk_engine(mocker, tmp_path, pop_size=4, candidate_workers=0):
     mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
     llm = MagicMock()
     llm.model_name = "test-model"
@@ -650,10 +650,90 @@ def _mk_engine(mocker, tmp_path, pop_size=4):
         synthesis_evaluator=synth,
         population_size=pop_size,
         base_save_path=str(tmp_path),
+        candidate_workers=candidate_workers,
     )
     # Provide a reasonable reference PPA (sequential)
     eng.ref_ppa_metrics = {"power": 1.0, "area": 100.0, "eff_clk_period": 2.0}
     return eng, llm
+
+
+def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=1, candidate_workers=2)
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+
+    code_path, _ = eng._save_result_to_file(
+        "module foo; endmodule",
+        "thought",
+        generation_num=0,
+        sample_idx_in_generation=1,
+        strategy="initial",
+    )
+    cand = Heuristic("thought", "module foo; endmodule", "")
+    cand.code_file_path = code_path
+
+    class DummyFuture:
+        def __init__(self, fn, args):
+            self._fn = fn
+            self._args = args
+
+        def result(self):
+            return self._fn(*self._args)
+
+    class DummyExecutor:
+        def __init__(self, max_workers):
+            self.max_workers = max_workers
+            self.submitted = []
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, exc_type, exc, tb):
+            return False
+
+        def submit(self, fn, *args, **kwargs):
+            self.submitted.append((fn, args, kwargs))
+            return DummyFuture(fn, args)
+
+    executor_instances: list[DummyExecutor] = []
+
+    def make_executor(max_workers):
+        inst = DummyExecutor(max_workers)
+        executor_instances.append(inst)
+        return inst
+
+    mocker.patch("revolution.algorithm.ThreadPoolExecutor", side_effect=make_executor)
+
+    mocker.patch.object(
+        eng.evaluator,
+        "evaluate",
+        return_value={
+            "status": "success",
+            "simulation_stdout": "===========Your Design Passed===========",
+            "simulation_stderr": "",
+            "compilation_stderr": "",
+        },
+    )
+    mocker.patch.object(
+        eng.synthesis_evaluator,
+        "evaluate",
+        return_value={
+            "synthesis_success": True,
+            "synthesis_functionality_success": True,
+            "ppa_success": True,
+            "ppa_metrics": {"power": 1.0, "area": 1.0, "eff_clk_period": 0.0},
+        },
+    )
+    mocker.patch.object(
+        eng.llm,
+        "generate_batch_feedback",
+        mocker.AsyncMock(return_value=[{"analysis": "ok", "justification": "", "score": 0}]),
+    )
+
+    eng._evaluate_candidates([cand])
+
+    assert executor_instances
+    assert executor_instances[0].max_workers == 2
+    assert cand.status == "success"
 
 
 def test_initialize_population_whole_splits_pools_and_writes(mocker, tmp_path):

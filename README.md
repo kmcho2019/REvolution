@@ -76,7 +76,8 @@ For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (o
 This script distributes problems across worker processes and executes the full evolutionary loop. Key arguments:
 
 - `--benchmarks` / `--problems`: control which suites and problem IDs run.
-- `--num_workers`: process-level parallelism across problems.
+- `--num_workers`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
+- `--multiprocessing_mode`: `problem` (default) or `candidate` to switch between multi-problem and per-problem parallelism.
 - `--population_size`, `--num_generations`: evolutionary dynamics.
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
 - `--generation_mode`: request whole-file or diff-based offspring generation.

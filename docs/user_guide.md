@@ -54,7 +54,8 @@ Essential arguments:
 
 - `--benchmarks <names>`: select suites from `data/bench` (default: all).
 - `--problems <ids>`: restrict to specific problems (optional).
-- `--num_workers <int>`: parallel processes (one problem per worker).
+- `--num_workers <int>`: worker count (processes in `problem` mode, candidate-evaluation threads in `candidate` mode).
+- `--multiprocessing_mode {problem,candidate}`: distribute work across problems (default) or evaluate candidates inside a problem in parallel.
 - `--population_size <int>` / `--num_generations <int>`: evolutionary parameters.
 - `--save_path <dir>`: base directory for artefacts (default: `./exp` relative to the repo).
 - `--model_name <str>` / `--api_backend {openai,openrouter,deepseek,gemini,vllm}` / `--vllm_port <int>`: LLM configuration.

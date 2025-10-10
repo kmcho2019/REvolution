@@ -1,4 +1,5 @@
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import datetime
 import json
 import math
@@ -284,6 +285,8 @@ class EoHEngine:
     :type population_pool_mode: PopulationPoolMode
     :param require_strict_format: Whether to require strict adherence to output format/schema.
     :type require_strict_format: bool
+    :param candidate_workers: Number of parallel workers to use when evaluating candidates within a generation. Values <= 1 disable candidate-level parallelism.
+    :type candidate_workers: int | None
     """
 
     def __init__(
@@ -309,6 +312,7 @@ class EoHEngine:
         require_strict_format: bool = True,
         prompt_profile: str = "default",
         prompt_root: str | None = None,
+        candidate_workers: int | None = None,
     ):
         self.generation_mode: Literal["whole", "diff"] = generation_mode
         self.base_save_path: str = (
@@ -343,6 +347,12 @@ class EoHEngine:
         self.clk_period: float = synthesis_evaluator.clk_period
 
         self.require_strict_format: bool = require_strict_format
+
+        # Candidate-level concurrency configuration
+        self.candidate_workers: int = (
+            candidate_workers if candidate_workers and candidate_workers > 0 else 0
+        )
+        self.parallelize_candidates: bool = self.candidate_workers > 1
 
         # Champion Metrics Configuration
         # Defines the configuration for champion metrics.
@@ -781,6 +791,148 @@ class EoHEngine:
                 f"Score: {feedback.get('score', 'N/A')}\nJustification: {feedback.get('justification', 'N/A')}\n\nANALYSIS:\n{feedback.get('analysis', '')}"
             )
 
+    def _resolve_top_module_name(self) -> str:
+        top_module_name_file = os.path.join(
+            self.benchmark_path, "synthesis_top_module_names.json"
+        )
+        if not os.path.exists(top_module_name_file):
+            print(
+                "WARNING: Top module name file not found. Using default module name 'TopModule'."
+            )
+            return "TopModule"
+        with open(top_module_name_file, "r", encoding="utf-8") as f:
+            top_module_names = json.load(f)
+        return top_module_names.get(self.problem_name, "TopModule")
+
+    def _evaluate_candidate_pipeline(
+        self,
+        cand: Heuristic,
+        test_sv_file: str,
+        ref_sv_file: str | None,
+        top_module_name: str,
+    ) -> tuple[Heuristic, dict[str, str] | None]:
+        feedback_payload: dict[str, str] | None = None
+
+        if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
+            cand.score = -float("inf")
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": f"Candidate failed format or diff compliance checks. Status: {cand.status}",
+            }
+            return cand, feedback_payload
+
+        sim_results = self.evaluator.evaluate(
+            cand.code_file_path, test_sv_file, ref_sv_file
+        )
+
+        if sim_results["status"] == "compilation_error":
+            cand.status = "failed_syntax"
+            cand.score = -float("inf")
+            log = sim_results.get(
+                "compilation_stderr", "Compilation log not available."
+            )
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": log,
+            }
+            return cand, feedback_payload
+
+        is_success = False
+        if sim_results["status"] == "success":
+            output = sim_results.get("simulation_stdout", "")
+            m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
+            if (m_match and int(m_match.group(1)) == 0) or (
+                "===========Your Design Passed===========" in output
+            ):
+                is_success = True
+
+        if not is_success:
+            cand.status = "failed_functionality"
+            cand.score = -float("inf")
+            log = (
+                f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\n"
+                f"Simulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
+            )
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": log,
+            }
+            return cand, feedback_payload
+
+        # Stage 2: Synthesis and PPA for functionally correct candidates
+        report_base_path = cand.code_file_path.rsplit(".", 1)[0]
+        output_dir = os.path.dirname(cand.code_file_path)
+        synth_results = self.synthesis_evaluator.evaluate(
+            cand.code_file_path,
+            self.problem_name,
+            top_module_name,
+            output_dir,
+            report_base_path,
+            self.evaluator,
+            test_sv_file,
+            ref_sv_file,
+        )
+
+        if (
+            synth_results["synthesis_success"]
+            and synth_results["synthesis_functionality_success"]
+            and synth_results["ppa_success"]
+        ):
+            cand.status = "success"
+            cand.synthesis_success = True
+            cand.synthesis_functionality = True
+            cand.ppa_success = True
+            cand.ppa_metrics = synth_results["ppa_metrics"]
+            cand.score = self._calculate_fitness_score(cand)
+            cand.feedback = (
+                "Functionality OK and Synthesis OK. Now focus on improving PPA metrics while "
+                "preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): "
+                f"{cand.ppa_metrics}, Reference PPA metrics: {self.ref_ppa_metrics},  PPA score: {cand.score:.4f}, "
+                "Try to improve PPA metrics further. If effective clockspeed is close to 0.0, than focus on improving area and power metrics."
+            )
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": cand.feedback,
+            }
+        else:
+            cand.score = -float("inf")
+            cand.synthesis_success = synth_results["synthesis_success"]
+            cand.synthesis_functionality = synth_results[
+                "synthesis_functionality_success"
+            ]
+
+            if not synth_results["synthesis_success"]:
+                cand.status = "failed_synthesis"
+                log = (
+                    "Functionality OK, but synthesis failed.\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+            elif not synth_results["synthesis_functionality_success"]:
+                cand.status = "failed_synthesis_functionality"
+                log = (
+                    "Functionality OK, Synthesis OK, but Post-Synthesis Functional Check failed "
+                    "(Yosys have trouble synthesizing the implementation try to improve synthesizability).\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+            else:
+                cand.status = "failed_synthesis"
+                log = (
+                    "Synthesis or PPA failed.\nLog:\n"
+                    f"{synth_results.get('synthesis_log', 'N/A')}"
+                )
+
+            feedback_payload = {
+                "problem_def": self.problem_description,
+                "code": cand.code,
+                "simulation_log": log,
+            }
+
+        return cand, feedback_payload
+
     def _evaluate_candidates(self, candidates_to_evaluate: list[Heuristic]) -> None:
         """
         Evaluates a list of new candidates through the full pipeline (syntax, func, synth).
@@ -798,160 +950,36 @@ class EoHEngine:
         print(f"\n--- Evaluating {len(candidates_to_evaluate)} New Candidates ---")
         test_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
         ref_sv_file = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+        top_module_name = self._resolve_top_module_name()
 
-        func_passed, func_failed, feedback_requests, feedback_request_candidates = (
-            [],
-            [],
-            [],
-            [],
-        )
-
-        # Stage 1: Functional Simulation
-        # Stage 1-1: Check if candidate adheres to format (failed_format or failed_diff)
-        # Stage 1-2: Check for syntax and semantic errors
-        for cand in candidates_to_evaluate:
-            # Stage 1-1: Check if candidate adheres to format (failed_format or failed_diff)
-            if getattr(cand, "status", None) in ("failed_format", "failed_diff"):
-                cand.score = -float("inf")
-                feedback_request_candidates.append(cand)
-                feedback_requests.append(
-                    {
-                        "problem_def": self.problem_description,
-                        "code": cand.code,
-                        "simulation_log": f"Candidate failed format or diff compliance checks. Status: {cand.status}",
-                    }
-                )
-                func_failed.append(cand)
-            else:
-                # Stage 1-2: Check for syntax and semantic errors
-                sim_results = self.evaluator.evaluate(
-                    cand.code_file_path, test_sv_file, ref_sv_file
-                )
-
-                if sim_results["status"] == "compilation_error":
-                    cand.status = "failed_syntax"
-                    log = sim_results.get(
-                        "compilation_stderr", "Compilation log not available."
+        if self.parallelize_candidates:
+            with ThreadPoolExecutor(max_workers=self.candidate_workers) as executor:
+                results = [
+                    executor.submit(
+                        self._evaluate_candidate_pipeline,
+                        cand,
+                        test_sv_file,
+                        ref_sv_file,
+                        top_module_name,
                     )
-                else:
-                    is_success = False
-                    if sim_results["status"] == "success":
-                        output = sim_results.get("simulation_stdout", "")
-                        m_match = re.search(r"^Mismatches: (\d+)", output, re.M)
-                        # Check for simulation success based on output in two ways:
-                        # Case 1: Check for "Mismatches: X in Y samples" in simulation output (VerilogEvalv2 format)
-                        # This regex matches the expected output format from VerilogEval
-                        # It captures the number of mismatches in the first group.
-                        # If there are no mismatches (X==0), it means the design is functionally correct.
-                        # Case 2: Check for "===========Your Design Passed===========" in simulation output (RTLLMv2 format)
-                        if (
-                            m_match and int(m_match.group(1)) == 0
-                        ) or "===========Your Design Passed===========" in output:
-                            is_success = True
-
-                    if is_success:
-                        func_passed.append(cand)
-                        continue
-                    else:
-                        cand.status = "failed_functionality"
-                        log = f"Compilation Log:\n{sim_results.get('compilation_stderr')}\n\nSimulation Log:\n{sim_results.get('simulation_stdout')}\n{sim_results.get('simulation_stderr')}"
-
-                # If we reach here, the candidate has failed syntax or functionality
-                cand.score = -float("inf")
-                feedback_request_candidates.append(cand)
-                feedback_requests.append(
-                    {
-                        "problem_def": self.problem_description,
-                        "code": cand.code,
-                        "simulation_log": log,
-                    }
-                )
-                func_failed.append(cand)
-
-        # Stage 2: Synthesis and PPA for functionally correct candidates
-        for cand in func_passed:
-            report_base_path = cand.code_file_path.rsplit(".", 1)[0]
-            output_dir = os.path.dirname(cand.code_file_path)
-
-            # Find the module name from the reference file (synthesis_top_module_names.json is expected to exist within the benchmark directory)
-            # This is needed to ensure the synthesis evaluator knows which module to synthesize.
-            # Important as each benchmark may have a different top module name.
-            # (RTLLM uses individual problem name and VerilogEvalv2 uses TopModule)
-            # And sometimes the LLM will generate multiple modules in the same file as part of hierarchical design.
-            # In previous versions, we used the first module name found in the file.
-            # This lead to some situations where the synthesized module was not the intended top module.
-            # Now, we will use a JSON file that maps problem names to top module names.
-            # If the file does not exist, we will use a default module name "TopModule".
-            # This is a fallback mechanism to ensure synthesis can proceed even if the JSON file is missing
-            top_module_name_file = os.path.join(
-                self.benchmark_path, "synthesis_top_module_names.json"
-            )
-            if not os.path.exists(top_module_name_file):
-                print(
-                    "WARNING: Top module name file not found. Using default module name 'TopModule'."
-                )
-                top_module_name = "TopModule"
-            else:
-                with open(top_module_name_file, "r") as f:
-                    top_module_names = json.load(f)
-                top_module_name = top_module_names.get(self.problem_name, "TopModule")
-            synth_results = self.synthesis_evaluator.evaluate(
-                cand.code_file_path,
-                self.problem_name,
-                top_module_name,
-                output_dir,
-                report_base_path,
-                self.evaluator,
-                test_sv_file,
-                ref_sv_file,
-            )
-
-            if (
-                synth_results["synthesis_success"]
-                and synth_results["synthesis_functionality_success"]
-                and synth_results["ppa_success"]
-            ):
-                cand.status = "success"
-                cand.synthesis_success = True
-                cand.synthesis_functionality = True
-                cand.ppa_success = True
-                cand.ppa_metrics = synth_results["ppa_metrics"]
-                cand.score = self._calculate_fitness_score(cand)
-                cand.feedback = f"Functionality OK and Synthesis OK. Now focus on improving PPA metrics while preserving functionality. PPA metrics (tns/wns/eff_clk_period: ns, power: W, area: um^2): {cand.ppa_metrics}, Reference PPA metrics: {self.ref_ppa_metrics},  PPA score: {cand.score:.4f}, Try to improve PPA metrics further. If effective clockspeed is close to 0.0, than focus on improving area and power metrics."
-                feedback_request_candidates.append(cand)
-                feedback_requests.append(
-                    {
-                        "problem_def": self.problem_description,
-                        "code": cand.code,
-                        "simulation_log": cand.feedback,
-                    }
-                )
-            else:
-                cand.score = -float("inf")
-                cand.synthesis_success = synth_results["synthesis_success"]
-                cand.synthesis_functionality = synth_results[
-                    "synthesis_functionality_success"
+                    for cand in candidates_to_evaluate
                 ]
-                log = f"Synthesis or PPA failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
-
-                if not synth_results["synthesis_success"]:
-                    cand.status = "failed_synthesis"
-                    log = f"Functionality OK, but synthesis failed.\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
-                elif not synth_results["synthesis_functionality_success"]:
-                    cand.status = "failed_synthesis_functionality"
-                    log = f"Functionality OK, Synthesis OK, but Post-Synthesis Functional Check failed (Yosys have trouble synthesizing the implementation try to improve synthesizability).\nLog:\n{synth_results.get('synthesis_log', 'N/A')}"
-                else:  # PPA failed but synth was ok
-                    cand.status = "failed_synthesis"
-
-                feedback_request_candidates.append(cand)
-                feedback_requests.append(
-                    {
-                        "problem_def": self.problem_description,
-                        "code": cand.code,
-                        "simulation_log": log,
-                    }
+                evaluated = [future.result() for future in results]
+        else:
+            evaluated = [
+                self._evaluate_candidate_pipeline(
+                    cand, test_sv_file, ref_sv_file, top_module_name
                 )
-                func_failed.append(cand)
+                for cand in candidates_to_evaluate
+            ]
+
+        feedback_request_candidates: list[Heuristic] = []
+        feedback_requests: list[dict[str, str]] = []
+
+        for cand, feedback_payload in evaluated:
+            if feedback_payload:
+                feedback_request_candidates.append(cand)
+                feedback_requests.append(feedback_payload)
 
         # Stage 3: Batch LLM Feedback Generation for all failures
         if feedback_requests:

@@ -43,6 +43,10 @@ def run_problem_worker(args_tuple):
     os.makedirs(problem_log_dir, exist_ok=True)
     individual_log_path = os.path.join(problem_log_dir, "problem_run.log")
 
+    candidate_workers = (
+        args.num_workers if getattr(args, "multiprocessing_mode", "problem") == "candidate" else 0
+    )
+
     # Redirect all output from this worker to the individual log file
     with StreamRedirector(filepath=individual_log_path):
         print(
@@ -97,6 +101,7 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                candidate_workers=candidate_workers,
             )
         else: # None CVDP benchmarks (e.g. RTLLM, VerilogEval)
             eoh_engine = EoHEngine(
@@ -116,6 +121,7 @@ def run_problem_worker(args_tuple):
                 ucb_c=args.ucb_c,
                 generation_mode=args.generation_mode,
                 population_pool_mode=args.population_pool_mode,
+                candidate_workers=candidate_workers,
             )
         result_str = eoh_engine.run()
         # Return the result string and the path to the individual log file created for this problem
@@ -308,7 +314,7 @@ def main():
         "--num_workers",
         type=int,
         default=10,
-        help="Number of parallel processes to use.",
+        help="Number of worker processes (problem mode) or candidate-evaluation threads (candidate mode).",
     )
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--top_p", type=float, default=0.95)
@@ -347,6 +353,13 @@ def main():
         default="dual",
         choices=["dual", "single"],
         help="Mode of population pool, either 'dual' (separate success/fail pools, more balanced exploration strategy tries to explore more diverse solutions from failed candidates) or 'single' (combined pool, more aggressive exploitation strategy focusing on successful candidates)."
+    )
+    parser.add_argument(
+        "--multiprocessing_mode",
+        type=str,
+        default="problem",
+        choices=["problem", "candidate"],
+        help="Parallelism granularity: 'problem' (default) distributes problems across processes; 'candidate' keeps one problem per process and parallelizes candidate evaluation within the engine.",
     )
 
     # CVDP INTEGRATION: CVDP JSONL path and category filter
@@ -490,31 +503,56 @@ def main():
             if not tasks_to_run:
                 print("No valid problems found to run. Exiting.")
             else:
-                print(
-                    f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems."
-                )
-
-                # Index the tasks before running, as imap_unordered does not preserve order
-                indexed_tasks = list(enumerate(tasks_to_run))
-
-                with multiprocessing.Pool(processes=args.num_workers) as pool:
-                    results_iterator = pool.imap_unordered(
-                        run_indexed_problem_worker, indexed_tasks
+                if args.multiprocessing_mode == "candidate":
+                    worker_count = max(1, args.num_workers)
+                    print(
+                        f"\nStarting candidate-level evaluation with {worker_count} worker(s) per problem across {len(tasks_to_run)} problems."
                     )
-
-                    unordered_results = list(
-                        tqdm(
-                            results_iterator,
-                            total=len(indexed_tasks),
+                    results_data = [
+                        run_problem_worker(task)
+                        for task in tqdm(
+                            tasks_to_run,
+                            total=len(tasks_to_run),
                             desc="Running problems",
-                            file=original_stdout,  # Use the original stdout for progress bar
+                            file=original_stdout,
                         )
+                    ]
+                elif args.num_workers <= 1:
+                    print(
+                        f"\nStarting sequential execution for {len(tasks_to_run)} problems."
                     )
-                # Sort the results by the original index to maintain order
-                unordered_results.sort(key=lambda x: x[0])
-                # Strip the index from the results
-                results_data = [result[1] for result in unordered_results]
-                print("\n--- All parallel tasks completed successfully.---")
+                    results_data = [
+                        run_problem_worker(task)
+                        for task in tqdm(
+                            tasks_to_run,
+                            total=len(tasks_to_run),
+                            desc="Running problems",
+                            file=original_stdout,
+                        )
+                    ]
+                else:
+                    print(
+                        f"\nStarting parallel execution with {args.num_workers} workers for {len(tasks_to_run)} problems."
+                    )
+
+                    indexed_tasks = list(enumerate(tasks_to_run))
+
+                    with multiprocessing.Pool(processes=args.num_workers) as pool:
+                        results_iterator = pool.imap_unordered(
+                            run_indexed_problem_worker, indexed_tasks
+                        )
+
+                        unordered_results = list(
+                            tqdm(
+                                results_iterator,
+                                total=len(indexed_tasks),
+                                desc="Running problems",
+                                file=original_stdout,
+                            )
+                        )
+                    unordered_results.sort(key=lambda x: x[0])
+                    results_data = [result[1] for result in unordered_results]
+                    print("\n--- All parallel tasks completed successfully.---")
 
     finally:
         end_time = time.time()
