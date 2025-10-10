@@ -129,6 +129,11 @@ All Python helper scripts accept `--help` to show the full argument list.
   ```bash
   pytest
   ```
+- Capture coverage and inspect missing lines:
+  ```bash
+  pytest --cov=src/revolution --cov-report=term-missing
+  ```
+  The suite includes targeted checks for the single-pool evolutionary mode, `PromptStore` helpers, `StreamRedirector`, and `EoHLogger` to make it clear when regression risk touches prompting, logging, or path management.
 - Use `scripts/run_test.sh` for smoke coverage across a small benchmark subset after modifying core logic.
 - When altering prompts or evaluation hooks, regenerate reports for a known run and confirm metrics match expectations.
 - The summary JSON exposes `all_*_passed` sets to count how many unique candidates cleared each evaluation stage—use these to spot regressions in compilation or synthesis rates.

@@ -1,4 +1,5 @@
 import asyncio
+import json
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -13,8 +14,13 @@ async def test_llm_generate_response_success(mocker):
     """
     # Arrange: Mock the AsyncOpenAI client and its methods
     mock_choice = MagicMock()
-    mock_choice.message.content = (
-        "```thought\nTest thought.\n```\n```code\nTest code.\n```"
+    mock_choice.message.content = json.dumps(
+        {
+            "format": "eoh_v1",
+            "mode": "whole",
+            "thought": "Test thought.",
+            "code": "Test code.",
+        }
     )
 
     mock_completion = MagicMock()
@@ -36,14 +42,50 @@ async def test_llm_generate_response_success(mocker):
     llm = LLMInterface(api_key="fake_key", model_name="test_model")
 
     # Action
-    thought, code = await llm.generate_response("some prompt")
+    thought, code, meta = await llm.generate_response("some prompt")
 
     # Assert
     assert thought == "Test thought."
     assert code == "Test code."
+    assert meta["format_ok"] is True
     # Ensure the API call counter was incremented
     result_dict = await llm.get_and_reset_usage_stats()
     assert result_dict["api_calls"] == 1
+
+
+@pytest.mark.asyncio
+async def test_generate_batch_responses_dispatches_individual_prompts(mocker):
+    llm = LLMInterface(api_key="fake")
+    calls = []
+
+    async def fake_generate(prompt, temperature, top_p, max_tokens, generation_mode="whole", system_prompt_override=None):
+        calls.append((prompt, generation_mode, temperature, top_p, max_tokens))
+        idx = len(calls)
+        return (f"thought-{idx}", f"code-{idx}", {"format_ok": True})
+
+    mocker.patch.object(
+        llm,
+        "generate_response",
+        side_effect=fake_generate,
+    )
+
+    prompts: list[LLMRequest] = [
+        {"prompt": "p1", "generation_mode": "whole"},
+        {"prompt": "p2", "generation_mode": "diff", "system_prompt": "sys"},
+    ]
+
+    results = await llm.generate_batch_responses(
+        prompts,
+        temperature=0.7,
+        top_p=0.9,
+        max_tokens=512,
+    )
+
+    assert [r[0] for r in results] == ["thought-1", "thought-2"]
+    assert calls[0][:2] == ("p1", "whole")
+    assert calls[1][:2] == ("p2", "diff")
+    # Temperature/top_p/max_tokens forwarded unchanged
+    assert calls[0][2:] == (0.7, 0.9, 512)
 
 
 # ---------------------------
@@ -169,7 +211,7 @@ def test_backend_base_urls():
 
 def test_parse_thought_and_code_happy_path():
     llm = LLMInterface(api_key="k")
-    text = "```thought\nT\n```\n```code\nC\n```"
+    text = json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T", "code": "C"})
     t, c = llm.parse_thought_and_code(text)
     assert t == "T" and c == "C"
 
@@ -226,12 +268,15 @@ async def test_update_stats_concurrent_and_reset():
 
 @pytest.mark.asyncio
 async def test_generate_response_success_and_system_prompt_modes(mocker):
-    completion = make_chat_completion(["```thought\nT\n```\n```code\nC\n```"])
+    completion = make_chat_completion(
+        [json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T", "code": "C"})]
+    )
     create = patch_async_openai(mocker, completion)
 
     llm = LLMInterface(api_key="k", model_name="m")
-    t, c = await llm.generate_response("p", generation_mode="whole")
+    t, c, meta = await llm.generate_response("p", generation_mode="whole")
     assert (t, c) == ("T", "C")
+    assert meta["format_ok"] is True and meta["parsed_mode"] == "whole"
 
     # Ensure system prompt for 'whole' was used
     msgs = create.call_args.kwargs["messages"]
@@ -241,20 +286,33 @@ async def test_generate_response_success_and_system_prompt_modes(mocker):
     )
 
     # Now check 'diff' content shows diff-format hints
-    completion2 = make_chat_completion(["```thought\nT2\n```\n```code\nC2\n```"])
-    create.side_effect = [completion2]  # next call
-    t2, c2 = await llm.generate_response("p2", generation_mode="diff")
-    assert (t2, c2) == ("T2", "C2")
-    msgs2 = create.call_args.kwargs["messages"]
-    assert (
-        "SEARCH/REPLACE" in msgs2[0]["content"] or "diff format" in msgs2[0]["content"]
+    completion2 = make_chat_completion(
+        [
+            json.dumps(
+                {
+                    "format": "eoh_v1",
+                    "mode": "diff",
+                    "thought": "T2",
+                    "code": {"edits": []},
+                }
+            )
+        ]
     )
+    create.side_effect = [completion2]  # next call
+    t2, c2, meta2 = await llm.generate_response("p2", generation_mode="diff")
+    assert t2 == "T2"
+    assert c2 == json.dumps({"edits": []}, separators=(",", ":"))
+    assert meta2["format_ok"] is True and meta2["parsed_mode"] == "diff"
+    msgs2 = create.call_args.kwargs["messages"]
+    assert "The search text must match the existing file content exactly" in msgs2[0]["content"]
 
 
 @pytest.mark.asyncio
 async def test_generate_response_empty_content_then_success(mocker):
     empty = make_chat_completion(["  "])
-    good = make_chat_completion(["```thought\nA\n```\n```code\nB\n```"])
+    good = make_chat_completion(
+        [json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "A", "code": "B"})]
+    )
     create = patch_async_openai(mocker, [empty, good])
     # no-op sleep
     mock_sleep = AsyncMock()
@@ -263,8 +321,9 @@ async def test_generate_response_empty_content_then_success(mocker):
     )
 
     llm = LLMInterface(api_key="k", max_retries=2)
-    t, c = await llm.generate_response("prompt")
+    t, c, meta = await llm.generate_response("prompt")
     assert (t, c) == ("A", "B")
+    assert meta["format_ok"] is True
     assert create.await_count == 2  # retried once
 
 
@@ -275,7 +334,12 @@ async def test_generate_response_retriable_then_success(
     BadRate = patch_simple_exceptions["RateLimitError"]
     create = patch_async_openai(
         mocker,
-        [BadRate("x"), make_chat_completion(["```thought\nT\n```\n```code\nC\n```"])],
+        [
+            BadRate("x"),
+            make_chat_completion(
+                [json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T", "code": "C"})]
+            ),
+        ],
     )
     # no-op sleep
     mock_sleep = AsyncMock()
@@ -284,8 +348,9 @@ async def test_generate_response_retriable_then_success(
     )
 
     llm = LLMInterface(api_key="k", max_retries=2)
-    t, c = await llm.generate_response("p")
+    t, c, meta = await llm.generate_response("p")
     assert (t, c) == ("T", "C")
+    assert meta["format_ok"] is True
     assert create.await_count == 2
     assert mock_sleep.await_count == 1
 
@@ -303,8 +368,9 @@ async def test_generate_response_max_retries_fails(mocker, patch_simple_exceptio
     )
 
     llm = LLMInterface(api_key="k", max_retries=3)
-    t, c = await llm.generate_response("p")
+    t, c, meta = await llm.generate_response("p")
     assert (t, c) == (None, None)
+    assert meta["format_ok"] is False
     assert create.await_count == 3
     assert mock_sleep.await_count == 2  # between attempts
 
@@ -316,9 +382,10 @@ async def test_generate_response_bad_request_immediate_fail(
     BadReq = patch_simple_exceptions["BadRequestError"]
     create = patch_async_openai(mocker, BadReq("nope"))
     llm = LLMInterface(api_key="k", max_retries=3)
-    t, c = await llm.generate_response("p")
+    t, c, meta = await llm.generate_response("p")
     assert (t, c) == (None, None)
-    assert create.await_count == 1
+    assert meta["format_ok"] is False
+    assert create.await_count == llm.max_retries
 
 
 # ---------------------------
@@ -330,16 +397,16 @@ async def test_generate_response_bad_request_immediate_fail(
 async def test_generate_n_responses_success_counts_and_parsing(mocker):
     n = 3
     texts = [
-        "```thought\nT1\n```\n```code\nC1\n```",
-        "```thought\nT2\n```\n```code\nC2\n```",
-        "```thought\nT3\n```\n```code\nC3\n```",
+        json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T1", "code": "C1"}),
+        json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T2", "code": "C2"}),
+        json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "T3", "code": "C3"}),
     ]
     completion = make_chat_completion(texts, prompt_tokens=9, completion_tokens=12)
     patch_async_openai(mocker, completion)
 
     llm = LLMInterface(api_key="k")
     out = await llm.generate_n_responses("p", n=n)
-    assert out == [("T1", "C1"), ("T2", "C2"), ("T3", "C3")]
+    assert [(t, c) for t, c, _ in out] == [("T1", "C1"), ("T2", "C2"), ("T3", "C3")]
 
     # Stats: api_calls += n (n_calls=n), tokens add once from usage (current implementation)
     stats = await llm.get_and_reset_usage_stats()
@@ -351,15 +418,19 @@ async def test_generate_n_responses_success_counts_and_parsing(mocker):
 @pytest.mark.asyncio
 async def test_generate_n_responses_partial_then_fallback(mocker):
     # API returns only 1 choice even though n=3, then we fallback to two individual calls.
-    first = make_chat_completion(["```thought\nA\n```\n```code\nB\n```"])
+    first = make_chat_completion(
+        [json.dumps({"format": "eoh_v1", "mode": "whole", "thought": "A", "code": "B"})]
+    )
     create = patch_async_openai(mocker, first)
 
     llm = LLMInterface(api_key="k")
     # Patch generate_response for the fallback remainder
-    llm.generate_response = AsyncMock(side_effect=[("T2", "C2"), ("T3", "C3")])
+    llm.generate_response = AsyncMock(
+        side_effect=[("T2", "C2", {"format_ok": True}), ("T3", "C3", {"format_ok": True})]
+    )
 
     out = await llm.generate_n_responses("p", n=3)
-    assert out == [("A", "B"), ("T2", "C2"), ("T3", "C3")]
+    assert [(t, c) for t, c, _ in out] == [("A", "B"), ("T2", "C2"), ("T3", "C3")]
     assert llm.generate_response.await_count == 2
 
 
@@ -373,10 +444,14 @@ async def test_generate_n_responses_badrequest_invalid_n_fallback(
     )
     llm = LLMInterface(api_key="k")
     llm.generate_response = AsyncMock(
-        side_effect=[("X1", "Y1"), ("X2", "Y2"), ("X3", "Y3")]
+        side_effect=[
+            ("X1", "Y1", {"format_ok": True}),
+            ("X2", "Y2", {"format_ok": True}),
+            ("X3", "Y3", {"format_ok": True}),
+        ]
     )
     out = await llm.generate_n_responses("p", n=3)
-    assert out == [("X1", "Y1"), ("X2", "Y2"), ("X3", "Y3")]
+    assert [(t, c) for t, c, _ in out] == [("X1", "Y1"), ("X2", "Y2"), ("X3", "Y3")]
     assert llm.generate_response.await_count == 3
     assert create.await_count == 1  # single failed try with n>1
 
@@ -390,9 +465,11 @@ async def test_generate_n_responses_badrequest_gemini_limit_fallback(
         mocker, BadReq("Invalid value of n: should be between 1 and 8, got 10")
     )
     llm = LLMInterface(api_key="k")
-    llm.generate_response = AsyncMock(side_effect=[("g1", "h1")] * 10)
+    llm.generate_response = AsyncMock(
+        side_effect=[("g1", "h1", {"format_ok": True})] * 10
+    )
     out = await llm.generate_n_responses("p", n=10)
-    assert len(out) == 10 and all(pair == ("g1", "h1") for pair in out)
+    assert len(out) == 10 and all((t, c) == ("g1", "h1") for t, c, _ in out)
     assert llm.generate_response.await_count == 10
     assert create.await_count == 1
 
@@ -411,7 +488,10 @@ async def test_generate_n_responses_retriable_errors_until_fail(
 
     llm = LLMInterface(api_key="k", max_retries=3)
     out = await llm.generate_n_responses("p", n=4)
-    assert out == [(None, None)] * 4
+    assert len(out) == 4
+    for t, c, meta in out:
+        assert (t, c) == (None, None)
+        assert meta["format_ok"] is False
     assert create.await_count == 3
     # sleeps between attempts: 2 times (between 1->2 and 2->3)
     assert mock_sleep.await_count == 2
@@ -424,10 +504,12 @@ async def test_generate_n_responses_retriable_errors_until_fail(
 
 @pytest.mark.asyncio
 async def test_generate_feedback_success_and_stats(mocker):
-    txt = (
-        "<SCORE>\n10\n</SCORE>\n\n"
-        "<JUSTIFICATION>\nAll good\n</JUSTIFICATION>\n\n"
-        "<ANALYSIS>\nDiscuss PPA.\n</ANALYSIS>"
+    txt = json.dumps(
+        {
+            "score": 10,
+            "justification": "All good",
+            "analysis": "Discuss PPA.",
+        }
     )
     completion = make_chat_completion([txt], prompt_tokens=4, completion_tokens=8)
     patch_async_openai(mocker, completion)
@@ -458,7 +540,7 @@ async def test_generate_feedback_retriable_then_success(
 ):
     Timeout = patch_simple_exceptions["APITimeoutError"]
     completion = make_chat_completion(
-        ["<SCORE>7</SCORE><JUSTIFICATION>ok</JUSTIFICATION><ANALYSIS>stuff</ANALYSIS>"]
+        [json.dumps({"score": 7, "justification": "ok", "analysis": "stuff"})]
     )
     create = patch_async_openai(mocker, [Timeout("t"), completion])
     # no-op sleep
@@ -508,7 +590,11 @@ async def test_generate_batch_responses_dispatch_and_modes(mocker):
     llm = LLMInterface(api_key="k")
     # Spy/patch generate_response so we don't touch the network
     llm.generate_response = AsyncMock(
-        side_effect=[("t1", "c1"), ("t2", "c2"), ("t3", "c3")]
+        side_effect=[
+            ("t1", "c1", {"format_ok": True}),
+            ("t2", "c2", {"format_ok": True}),
+            ("t3", "c3", {"format_ok": True}),
+        ]
     )
     prompts: list[LLMRequest] = [
         {"prompt": "p1"},  # default whole
@@ -518,7 +604,7 @@ async def test_generate_batch_responses_dispatch_and_modes(mocker):
     out = await llm.generate_batch_responses(
         prompts, temperature=0.2, top_p=0.9, max_tokens=99
     )
-    assert out == [("t1", "c1"), ("t2", "c2"), ("t3", "c3")]
+    assert [(r[0], r[1]) for r in out] == [("t1", "c1"), ("t2", "c2"), ("t3", "c3")]
     # Ensure the 'diff' mode was passed to the second call
     args_list = llm.generate_response.call_args_list
     assert args_list[1].kwargs["generation_mode"] == "diff"
@@ -534,10 +620,58 @@ async def test_generate_batch_feedback_dispatch(mocker):
         ]
     )
     reqs = [
-        {"problem_def": "P1", "verilog_code": "V1", "simulation_log": "L1"},
-        {"problem_def": "P2", "verilog_code": "V2", "simulation_log": "L2"},
+        {"problem_def": "P1", "code": "V1", "simulation_log": "L1"},
+        {"problem_def": "P2", "code": "V2", "simulation_log": "L2"},
     ]
     out = await llm.generate_batch_feedback(
         reqs, temperature=0.4, top_p=0.9, max_tokens=50
     )
     assert out[0]["score"] == 1 and out[1]["score"] == 2
+
+
+@pytest.mark.asyncio
+async def test_generate_batch_feedback_validates_override_lengths():
+    llm = LLMInterface(api_key="k")
+    reqs = [{"problem_def": "P", "code": "C", "simulation_log": "L"}]
+
+    with pytest.raises(ValueError):
+        await llm.generate_batch_feedback(
+            reqs,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=64,
+            system_prompt_override=["sys", "extra"],
+        )
+
+    with pytest.raises(ValueError):
+        await llm.generate_batch_feedback(
+            reqs,
+            temperature=0.5,
+            top_p=0.9,
+            max_tokens=64,
+            user_prompt_override=["usr", "extra"],
+        )
+
+
+@pytest.mark.asyncio
+async def test_generate_batch_feedback_forwards_overrides(mocker):
+    llm = LLMInterface(api_key="k")
+    llm.generate_feedback = AsyncMock(
+        return_value={"score": 5, "justification": "ok", "analysis": "notes"}
+    )
+    reqs = [{"problem_def": "P", "code": "C", "simulation_log": "L"}]
+
+    out = await llm.generate_batch_feedback(
+        reqs,
+        temperature=0.3,
+        top_p=0.8,
+        max_tokens=128,
+        system_prompt_override=["sys"],
+        user_prompt_override=["usr"],
+    )
+
+    assert out[0]["score"] == 5
+    assert llm.generate_feedback.await_count == 1
+    kwargs = llm.generate_feedback.await_args.kwargs
+    assert kwargs["system_prompt_override"] == "sys"
+    assert kwargs["user_prompt_override"] == "usr"

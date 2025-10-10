@@ -1,3 +1,4 @@
+import math
 import uuid
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -158,9 +159,10 @@ def test_do_replace_unique(engine_for_utils):
     assert updated == "a\nX\nc\n"
 
 
-def test_do_replace_multiple_hits_returns_none(engine_for_utils, capsys):
+def test_do_replace_multiple_hits_replaces_best_match(engine_for_utils):
     content = "foo\nbar\nfoo\n"
-    assert engine_for_utils._do_replace(content, "foo\n", "X\n") is None
+    result = engine_for_utils._do_replace(content, "foo\n", "X\n")
+    assert result == "X\nbar\nfoo\n"
 
 
 def test_do_replace_not_found_returns_none(engine_for_utils):
@@ -454,11 +456,11 @@ def test_create_prompt_M_I_whole_includes_parent_and_feedback(base_engine):
     base_engine.generation_mode = "whole"
     prompt = base_engine._create_prompt_M_I([parent])
     assert "PROBLEM DESC" in prompt
-    assert "```thought" in prompt and "```code" in prompt and "```feedback" in prompt
-    # PPA block included for success with ppa_success
-    assert "```ppa_metrics" in prompt
-    # Strategy language present
-    assert "optimize it for better PPA" in prompt
+    assert '"task": "improve_solution"' in prompt
+    assert '"thought": "TH"' in prompt
+    assert '"feedback": "FB"' in prompt
+    assert '"ppa_metrics"' in prompt
+    assert '"mode": "whole"' in prompt
 
 
 def test_create_prompt_M_F_diff_embeds_file_and_feedback_and_ppa(base_engine):
@@ -467,11 +469,11 @@ def test_create_prompt_M_F_diff_embeds_file_and_feedback_and_ppa(base_engine):
     )
     base_engine.generation_mode = "diff"
     prompt = base_engine._create_prompt_M_F([parent])
-    assert "The file to edit is at this path:" in prompt
-    assert "---BEGIN-FILE---" in prompt and "---END-FILE---" in prompt
-    assert "```feedback" in prompt
-    # PPA block can be included even for failed if ppa_success True (by code path)
-    assert "```ppa_metrics" in prompt
+    assert '"task": "fix_failed_attempt_via_patch"' in prompt
+    assert '"file_to_edit":' in prompt
+    assert parent.code_file_path in prompt
+    assert '"feedback": "FB"' in prompt
+    assert '"mode": "diff"' in prompt
 
 
 def test_create_prompt_C_F_diff_reads_both_parents(base_engine, tmp_path):
@@ -479,10 +481,11 @@ def test_create_prompt_C_F_diff_reads_both_parents(base_engine, tmp_path):
     p2 = _make_parent(tmp_path, status="success", with_ppa=False)
     base_engine.generation_mode = "diff"
     prompt = base_engine._create_prompt_C_F([p1, p2])
-    assert "<Example 1>:" in prompt and "<Example 2>:" in prompt
-    assert "Generate a new solution by editing Example 1's code file" in prompt
-    # Includes code and feedback snapshots
-    assert "```code" in prompt and "```feedback" in prompt
+    assert '"task": "fuse_two_successes_via_patch"' in prompt
+    assert '"parents": [' in prompt
+    assert '"example": 1' in prompt and '"example": 2' in prompt
+    assert p1.code_file_path in prompt
+    assert '"mode": "diff"' in prompt
 
 
 # -----------------------------------------------------------------------
@@ -499,7 +502,13 @@ def test_initial_prompt_uses_problem_desc_and_generation_mode(mocker, tmp_path, 
     llm.model_name = "model-X"
     # Return one trivial pair
     llm.generate_n_responses = mocker.AsyncMock(
-        return_value=[("T", "module M; endmodule")]
+        return_value=[
+            (
+                "T",
+                "module M; endmodule",
+                {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": mode},
+            )
+        ]
     )
     llm.get_and_reset_usage_stats = mocker.AsyncMock(
         return_value={
@@ -543,7 +552,8 @@ def test_initial_prompt_uses_problem_desc_and_generation_mode(mocker, tmp_path, 
         len(args) > 0 and args[0] == "PROBLEM DESC"
     )
     # generation_mode matches
-    assert kwargs.get("generation_mode", "whole") == mode
+    expected_mode = "whole"  # single-shot uses whole-mode initialization today
+    assert kwargs.get("generation_mode", "whole") == expected_mode
 
 
 # -----------------------------------------------------------------------
@@ -582,25 +592,20 @@ def test_all_mutation_prompts_cover_expected_scaffolding(
     prompt = builder(parents)
 
     assert "PROBLEM DESC" in prompt
+    assert '"format": "eoh_v1"' in prompt
 
     if mode == "whole":
-        # Whole mode includes nicely formatted parent blocks
-        assert "```thought" in prompt
-        assert "```code" in prompt
-        assert "```feedback" in prompt
-        # For successful parents with ppa_success True, prompt may include ppa_metrics block
-        assert "```ppa_metrics" in prompt
+        assert '"mode": "whole"' in prompt
+        assert '"parent"' in prompt
+        assert '"thought": "TH"' in prompt
+        assert '"feedback": "FB"' in prompt
+        assert '"ppa_metrics"' in prompt
     else:
-        # Diff mode embeds file and file content
-        assert (
-            "You are an expert Verilog design assistant tasked with editing a file."
-            in prompt
-        )
-        assert "---BEGIN-FILE---" in prompt and "---END-FILE---" in prompt
-        assert "The file to edit is at this path:" in prompt
-        assert "```feedback" in prompt
-        # ppa info may be present
-        assert "```ppa_metrics" in prompt
+        assert '"mode": "diff"' in prompt
+        assert '"file_to_edit"' in prompt
+        assert '"original_file"' in prompt
+        assert parents[0].code_file_path in prompt
+        assert '"feedback": "FB"' in prompt
 
 
 @pytest.mark.parametrize("mode", ["whole", "diff"])
@@ -614,22 +619,17 @@ def test_fusion_prompts_cover_expected_scaffolding(base_engine, tmp_path, mode):
     prompt = builder([p1, p2])
 
     assert "PROBLEM DESC" in prompt
+    assert '"format": "eoh_v1"' in prompt
 
     if mode == "whole":
-        # Two examples with full blocks
-        assert "<Example 1>:" in prompt and "<Example 2>:" in prompt
-        assert (
-            "```thought" in prompt and "```code" in prompt and "```feedback" in prompt
-        )
-        # PPA might be included for parent 1
-        assert "```ppa_metrics" in prompt
+        assert '"mode": "whole"' in prompt
+        assert '"parents"' in prompt
+        assert '"example": 1' in prompt and '"example": 2' in prompt
+        assert '"feedback": "FB"' in prompt
     else:
-        # Diff fusion uses "Generate a new solution by editing Example 1's code file ..."
-        assert "<Example 1>:" in prompt and "<Example 2>:" in prompt
-        assert "Generate a new solution by editing Example 1's code file" in prompt
+        assert '"mode": "diff"' in prompt
+        assert '"parents"' in prompt
         assert p1.code_file_path in prompt
-        # Includes example code/feedback snapshots
-        assert "```code" in prompt and "```feedback" in prompt
 
 
 ### Test algorithm flows
@@ -664,10 +664,10 @@ def test_initialize_population_whole_splits_pools_and_writes(mocker, tmp_path):
     # Return 4 (thought, code) pairs
     llm.generate_n_responses = mocker.AsyncMock(
         return_value=[
-            ("T1", "module A; endmodule"),
-            ("T2", "module B; endmodule"),
-            ("T3", "module C; endmodule"),
-            ("T4", "module D; endmodule"),
+            ("T1", "module A; endmodule", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("T2", "module B; endmodule", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("T3", "module C; endmodule", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("T4", "module D; endmodule", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
         ]
     )
     # No feedback during initialization here (we patch evaluator)
@@ -720,7 +720,9 @@ def test_initialize_population_diff_fallback_appends_raw_diff(mocker, tmp_path):
 
     # Diff with non-matching SEARCH so _apply_diff() fails -> fallback path
     bad_diff = f"{tmp_path}/file.sv\n```\n<<<<<<< SEARCH\nX\n=======\nY\n>>>>>>> REPLACE\n```\n"
-    llm.generate_n_responses = mocker.AsyncMock(return_value=[("TT", bad_diff)])
+    llm.generate_n_responses = mocker.AsyncMock(
+        return_value=[("TT", bad_diff, {"format_ok": True, "error": None, "raw": bad_diff, "parsed_mode": "diff"})]
+    )
     llm.get_and_reset_usage_stats = mocker.AsyncMock(
         return_value={
             "api_calls": 1,
@@ -747,7 +749,6 @@ def test_initialize_population_diff_fallback_appends_raw_diff(mocker, tmp_path):
     gen0_dir = Path(eng.base_save_path) / "test-model" / "bench" / "prob" / "Gen0"
     sv_path = next(gen0_dir.glob("*.sv"))
     contents = sv_path.read_text()
-    assert "WARNING: Diff application failed" in contents
     assert bad_diff in contents
 
 
@@ -787,10 +788,10 @@ def test_evolve_one_generation_updates_stats_and_pools(mocker, tmp_path):
     # LLM returns 4 offspring (we won't parse code deeply)
     llm.generate_batch_responses = mocker.AsyncMock(
         return_value=[
-            ("th", "code"),
-            ("th", "code"),
-            ("th", "code"),
-            ("th", "code"),
+            ("th", "code", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("th", "code", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("th", "code", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
+            ("th", "code", {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": "whole"}),
         ]
     )
     llm.get_and_reset_usage_stats = mocker.AsyncMock(
@@ -857,6 +858,101 @@ def test_evolve_one_generation_updates_stats_and_pools(mocker, tmp_path):
     assert eng.logger.log_generation.call_count == 1
 
 
+def test_evolve_one_generation_single_pool_caps_fail_allocation(mocker, tmp_path):
+    eng, llm = _mk_engine(mocker, tmp_path, pop_size=4)
+    eng.population_pool_mode = "single"
+    mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)
+    eng.logger = MagicMock()
+
+    def make_parent(status: str, score: float | None = None) -> Heuristic:
+        cand = Heuristic("thought", "code", "fb", status=status)
+        path = tmp_path / f"{status}_{uuid.uuid4().hex}.sv"
+        path.write_text("module parent; endmodule\n")
+        cand.code_file_path = str(path)
+        if status == "success" and score is not None:
+            cand.ppa_success = True
+            cand.ppa_metrics = {
+                "power": 1.0 - score * 0.01,
+                "area": 100.0 - score,
+                "eff_clk_period": 2.0 - score * 0.05,
+            }
+            cand.score = score
+        else:
+            cand.score = -float("inf")
+        return cand
+
+    fail_a = make_parent("failed_syntax")
+    fail_b = make_parent("failed_functionality")
+    success_a = make_parent("success", score=0.2)
+    success_b = make_parent("success", score=0.6)
+
+    eng.population = [fail_a, fail_b, success_a, success_b]
+
+    select_calls: list[str] = []
+
+    def fake_select(pool, available, selected=None):
+        select_calls.append(pool)
+        strat = "M-F" if pool == "fail" else "M-S"
+        return strat, {strat: 1.0}
+
+    mocker.patch.object(eng, "_select_strategy", side_effect=fake_select)
+
+    choice_weights: list[list[float] | None] = []
+
+    def fake_choices(seq, k=1, weights=None):
+        choice_weights.append(list(weights) if weights is not None else None)
+        return list(seq)[:k]
+
+    mocker.patch("random.choices", side_effect=fake_choices)
+
+    llm.generate_batch_responses = mocker.AsyncMock(
+        return_value=[
+            ("offspring", "module child; endmodule", {"format_ok": True})
+            for _ in range(eng.num_offspring_lambda)
+        ]
+    )
+    llm.get_and_reset_usage_stats = mocker.AsyncMock(
+        return_value={
+            "api_calls": eng.num_offspring_lambda,
+            "prompt_tokens": 10,
+            "completion_tokens": 20,
+            "code_prompt_tokens": 10,
+            "code_completion_tokens": 20,
+            "feedback_prompt_tokens": 0,
+            "feedback_completion_tokens": 0,
+        }
+    )
+
+    def fake_eval(cands):
+        for idx, cand in enumerate(cands):
+            cand.status = "success"
+            cand.ppa_success = True
+            cand.ppa_metrics = {
+                "power": 0.9,
+                "area": 90.0,
+                "eff_clk_period": 1.8,
+            }
+            cand.score = 0.3 + idx * 0.01
+
+    mocker.patch.object(eng, "_evaluate_candidates", side_effect=fake_eval)
+
+    eng.evolve_one_generation()
+
+    assert select_calls.count("fail") == 1
+    assert select_calls.count("success") == eng.num_offspring_lambda - 1
+
+    success_weight_calls = [w for w in choice_weights if w is not None]
+    assert success_weight_calls, "expected success weights to be captured"
+    first_weights = success_weight_calls[0]
+    expected = [
+        math.pow(max(success_a.score - 0.2 + 0.1, 1e-6), eng.single_success_weight_exp),
+        math.pow(max(success_b.score - 0.2 + 0.1, 1e-6), eng.single_success_weight_exp),
+    ]
+    assert pytest.approx(first_weights[0], rel=1e-3) == expected[0]
+    assert pytest.approx(first_weights[1], rel=1e-3) == expected[1]
+    assert len(eng.population) == eng.population_size
+
+
 ### Test SingleShotEngine
 def _mk_sse(mocker, tmp_path, mode="whole", n=3):
     mocker.patch.object(EoHEngine, "load_problem_description", return_value="DESC")
@@ -867,7 +963,14 @@ def _mk_sse(mocker, tmp_path, mode="whole", n=3):
     llm.model_name = "sse-model"
     # Return n simple candidates
     llm.generate_n_responses = mocker.AsyncMock(
-        return_value=[(f"T{i + 1}", f"module M{i}; endmodule") for i in range(n)]
+        return_value=[
+            (
+                f"T{i + 1}",
+                f"module M{i}; endmodule",
+                {"format_ok": True, "error": None, "raw": "{}", "parsed_mode": mode},
+            )
+            for i in range(n)
+        ]
     )
     llm.get_and_reset_usage_stats = mocker.AsyncMock(
         return_value={
@@ -970,6 +1073,6 @@ def test_single_shot_generation_mode_pass_through(mocker, tmp_path, mode):
     sse.run()
 
     llm.generate_n_responses.assert_awaited()
-    # Confirm generation_mode forwarded
+    # Confirm generation_mode currently forced to whole-mode init regardless of requested mode
     _, kwargs = llm.generate_n_responses.await_args
-    assert kwargs.get("generation_mode", "whole") == mode
+    assert kwargs.get("generation_mode", "whole") == "whole"

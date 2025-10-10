@@ -127,6 +127,10 @@ Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`, including candi
   ```bash
   pytest
   ```
+- Generate a coverage report to confirm the newly added cases (PromptStore, logging, stream redirection, and single-pool evolution) are exercised:
+  ```bash
+  pytest --cov=src/revolution --cov-report=term-missing
+  ```
 - Hardware regressions and example flows are provided under `scripts/run_test.sh`, `scripts/run_regression_test.sh`, and `scripts/run_cvdp_test.sh`. These rely on the same toolchain dependencies as the main engine.
 
 Refer to `docs/user_guide.md` for troubleshooting tips, recommended validation steps, and more CLI examples.

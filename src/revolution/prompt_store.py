@@ -235,7 +235,28 @@ def safe_format(template: str, **vars: object) -> str:
     """
     Like str.format_map but doesn't crash on missing keys.
     """
-    return template.format_map(_Missing(vars))
+    markers: dict[str, str] = {}
+
+    def _extract_known(match: re.Match[str]) -> str:
+        key = match.group(1)
+        if key in vars:
+            marker = f"__SAFE_FMT__{key}__"
+            markers[marker] = key
+            return marker
+        return match.group(0)
+
+    # Temporarily replace known placeholders so we can escape remaining braces safely.
+    placeholder_pattern = re.compile(r"\{([A-Za-z0-9_./-]+)\}")
+    templ = placeholder_pattern.sub(_extract_known, template)
+
+    # Escape any other braces that should remain literal (e.g., JSON scaffolding).
+    templ = templ.replace("{", "{{").replace("}", "}}")
+
+    # Restore the known placeholders.
+    for marker, key in markers.items():
+        templ = templ.replace(marker, f"{{{key}}}")
+
+    return templ.format_map(_Missing(vars))
 
 
 @dataclass

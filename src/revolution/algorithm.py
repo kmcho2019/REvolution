@@ -3336,9 +3336,9 @@ class CVDPEngine(EoHEngine):
                 lines = []
                 for line in text.splitlines():
                     if line.strip().startswith("VERILOG_SOURCES"):
-                        lines.append(f"VERILOG_SOURCES = {str(dut_abs).replace('\\', '/')}")
+                        lines.append(f"VERILOG_SOURCES = {dut_abs.as_posix()}")
                     elif line.strip().startswith("PYTHONPATH"):
-                        lines.append(f"PYTHONPATH = {str(src_abs).replace('\\', '/')}")
+                        lines.append(f"PYTHONPATH = {src_abs.as_posix()}")
                     else:
                         lines.append(line)
                 text = "\n".join(lines)
