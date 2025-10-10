@@ -1,224 +1,132 @@
 
 -----
 
-# REvolution: An Evolutionary Framework for RTL Generation driven by Large Language Models
+# REvolution: Evolutionary RTL Generation with Large Language Models
 
------
+## Overview
 
-## 📜 Abstract
+**REvolution** orchestrates large language models (LLMs), logic simulation, and full physical design analysis to iteratively synthesize register-transfer level (RTL) implementations. Candidates are evolved across generations: each one captures an LLM thought process, Verilog code, and evaluation feedback; dual success/fail pools and adaptive strategy selection keep the exploration productive while pushing power, performance, and area (PPA) forward.
 
+## Key Features
 
-Large Language Models (LLMs) are used for Register-Transfer Level (RTL) code generation, but they face two main challenges: functional correctness and Power, Performance, and Area (PPA) optimization. Iterative, feedback-based methods partially address these, but they are limited to local search, hindering the discovery of a global optimum. This paper introduces **REvolution**, a framework that combines Evolutionary Computation (EC) with LLMs for automatic RTL generation and optimization. REvolution evolves a population of candidates in parallel, each defined by a design strategy (Thought), RTL implementation (Code), and evaluation feedback. The framework includes a dual-population algorithm that divides candidates into Fail and Success groups for bug fixing and PPA optimization, respectively. An adaptive mechanism further improves search efficiency by dynamically adjusting the selection probability according to the success rates.
-Experiments on the VerilogEval and RTLLM benchmarks show that REvolution increased the initial pass rate of various LLMs by up to 24.0 percentage points. The DeepSeekV3 model achieved a final pass rate of 95.5\%, comparable to state-of-the-art results, without the need for separate training or domain-specific tools. Additionally, the generated RTL designs showed significant PPA improvements over reference designs. This work introduces a new RTL design paradigm by combining LLMs' generative capabilities with EC's broad search power, overcoming the local-search limitations of previous methods.
+- Dual-pool evolutionary engine with configurable strategies (`M-*`, `C-F`) and meta-strategy selection (random, epsilon-greedy, UCB).
+- End-to-end evaluation pipeline: Icarus Verilog for syntax/functional checks, Yosys + OpenROAD for PPA, and post-synthesis regression.
+- Unified LLM client with retry/backoff, prompt templating, diff/whole generation modes, and multi-backend support (OpenAI, OpenRouter, DeepSeek, Gemini, vLLM).
+- Detailed JSONL logging, per-problem summaries, and prebuilt scripts for table generation and visualization.
+- Benchmarks bundled from VerilogEval, RTLLM, and CVDP with reusable PDK assets.
 
------
+## Documentation
 
-## 📂 Repository Structure
+The `docs/` directory contains deeper dives:
 
-The repository is organized as follows:
+- `docs/implementation_details.md` – architecture and component responsibilities.
+- `docs/module_structure.md` – file-by-file breakdown of the codebase.
+- `docs/method_interaction_and_evolutionary_loop.md` – data flow through the evolutionary loop.
+- `docs/user_guide.md` – setup, CLI usage, troubleshooting, and testing guidance.
 
-  - `src/revolution/`: The core Python package containing the **REvolution** framework.
-    - `algorithm.py`: Implements the main evolutionary engine, including population management, selection, and the dual-pool strategy.
-    - `evaluation.py`: Contains the `VerilogEvaluator` (for Icarus Verilog simulation) and `SynthesisEvaluator` (for Yosys/OpenROAD PPA analysis).
-    - `llm.py`: Provides a unified `LLMInterface` for interacting with various LLM backends (OpenAI, OpenRouter, etc.).
-    - `logging.py`:  Manages detailed generation-by-generation logging and final summary reports.
-  - `scripts/`: Contains executable scripts for running experiments and generating reports.
-    - `run_evolution.py`: The main entry point to run the REvolution framework.
-    - `evolutionary_report_generator.py`: Generates detailed reports from experiment logs.
-  - `data/`: Contains benchmark problems (`bench/`) and the Process Design Kit (`pdk/`).
-  - `exp/`: The default output directory for experimental results and logs.
------
+## Environment Setup
 
----
+### Docker workflow (recommended)
 
-## ⚙️ Setup with Docker (Recommended)
+1. Install Docker.
+2. Build the image (installs toolchains and Python dependencies):
+   ```bash
+   docker build -t revolution-env .
+   ```
+3. Start an interactive container with API keys:
+   ```bash
+   docker run --rm -it \
+     -e OPENAI_API_KEY="your-openai-key" \
+     -e DEEPSEEK_API_KEY="your-deepseek-key" \
+     -e OPENROUTER_API_KEY="your-openrouter-key" \
+     revolution-env
+   ```
+   The project is mounted at `/workspace` with all required EDA tools available.
 
-To ensure a consistent and reproducible environment, we recommend using Docker. The provided `Dockerfile` automates the installation of all specific tool versions and dependencies.
+### Local development setup
 
-### 1. Prerequisites
+1. Install the external binaries and ensure they are on `PATH`:
+   - Yosys `0.54+29`
+   - Icarus Verilog `v12_0`
+   - OpenROAD `v2.0-22560-gb571c4b471`
+2. Install [uv](https://github.com/astral-sh/uv) and provision the virtual environment:
+   ```bash
+   uv sync
+   source .venv/bin/activate
+   ```
+3. The bundled `pyproject.toml` and `uv.lock` will install the Python dependencies used by the framework and scripts.
 
-Make sure you have **Docker** installed on your system. You can find installation instructions on the [official Docker website](https://docs.docker.com/get-docker/).
+### LLM API configuration
 
-
-
-### 2. Build the Docker Image
-
-Navigate to the root directory of this repository (where the `Dockerfile` is located) and run the following command to build the Docker image. This process will take some time as it compiles all the necessary EDA tools from the source.
-
-```bash
-docker build -t revolution-env .
-```
-
-After the build completes, you'll have a Docker image named `revolution-env` with all the required dependencies.
-
-### 3. Run the Docker Container
-
-To start an interactive session inside the container, use the command below. This command mounts your current project directory into the container's `/workspace` and passes your LLM API keys as environment variables.
-
-```bash
-docker run --rm -it \
-  -e OPENAI_API_KEY="your-key-for-openai" \
-  -e DEEPSEEK_API_KEY="your-key-for-deepseek" \
-  -e OPENROUTER_API_KEY="your-key-for-openrouter" \
-  revolution-env
-```
-
-You are now inside the container's shell, with the Python environment activated and all tools ready to use.
-
----
-
-## ⚙️ Setup and Installation
-
-Follow these steps to set up the required environment.
-
-### 1\. System Dependencies
-
-First, ensure you have the following tools installed and available in your system's `PATH`. The versions used in our experiments are specified below:
-
-  - **Yosys**: `0.54+29`
-  - **Icarus Verilog**: `v12_0`
-  - **OpenROAD**: `v2.0-22560-gb571c4b471`
-
-### 2\. Python Environment
-
-The Python environment is managed using `uv`.
-
-1.  **Install uv**: If you don't have `uv`, install it by following the official instructions.
-2.  **Create Virtual Environment**: Run the following command in the repository root to create and sync the virtual environment using the provided lock file.
-    ```bash
-    uv sync
-    ```
-3.  **Activate Environment**: Activate the newly created environment.
-    ```bash
-    source .venv/bin/activate
-    ```
-
-### 3\. LLM API Configuration
-
-The framework supports multiple LLM backends.
-
-  - **External APIs (OpenAI, DeepSeek, OpenRouter)**: Set the appropriate environment variable with your API key.
-    ```bash
-    # For OpenAI
-    export OPENAI_API_KEY="your-key-here"
-
-    # For DeepSeek
-    export DEEPSEEK_API_KEY="your-key-here"
-
-    # For OpenRouter
-    export OPENROUTER_API_KEY="your-key-here"
-    ```
-  - **Local vLLM Server**: If you're using a local vLLM instance, ensure it's running and accessible at `http://localhost:8000/v1`. No API key is needed for this setup.
-
------
-
-## 🚀 Running Experiments
-
-The following commands can be used to reproduce the experiments presented in the paper. Adjust the `--num_workers` argument based on your available computing resources.
-
-### Baseline Run (Llama-3.3-70B)
-
-This command runs the baseline experiment without the evolutionary framework to calculate pass@200.
+Set the appropriate environment variables before running any script:
 
 ```bash
-python3 scripts/run_evolution.py \
-    --strategy_selection ucb \
-    --api_backend openrouter \
-    --model_name meta-llama/llama-3.3-70b-instruct \
-    --num_workers 32 \
-    --num_generations 0 \
-    --benchmarks VerilogEval-Spec-to-RTL RTLLM \
-    --max_tokens 4096 \
-    --temperature 1.0 \
-    --top_p 0.95 \
-    --population_size 200
+export OPENAI_API_KEY="..."
+export OPENROUTER_API_KEY="..."
+export DEEPSEEK_API_KEY="..."
+export GEMINI_API_KEY="..."   # optional
 ```
 
-### REvolution Runs
+For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (or override with `--vllm_port`) and no API key is required.
 
-These commands execute the REvolution framework for different models.
+## Running the Framework
 
-**Llama-3.3-70B-Instruct**
+### Multi-problem evolution (`scripts/run_evolution.py`)
+
+This script distributes problems across worker processes and executes the full evolutionary loop. Key arguments:
+
+- `--benchmarks` / `--problems`: control which suites and problem IDs run.
+- `--num_workers`: process-level parallelism across problems.
+- `--population_size`, `--num_generations`: evolutionary dynamics.
+- `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
+- `--generation_mode`: request whole-file or diff-based offspring generation.
+- `--population_pool_mode`: dual or single pool scheduling.
+- `--api_backend`, `--model_name`, `--vllm_port`: LLM configuration.
+- `--cvdp_jsonl`, `--cvdp_categories`: enable CVDP dataset integration.
+
+Example (RTLLM + VerilogEval with OpenRouter):
 
 ```bash
-python3 scripts/run_evolution.py \
-    --strategy_selection ucb \
-    --api_backend openrouter \
-    --model_name meta-llama/llama-3.3-70b-instruct \
-    --num_workers 48 \
-    --num_generations 20 \
-    --benchmarks VerilogEval-Spec-to-RTL \
-    --max_tokens 4096 \
-    --temperature 1.0 \
-    --top_p 0.95 \
-    --population_size 10
+python scripts/run_evolution.py \
+  --benchmarks RTLLM VerilogEval-Spec-to-RTL \
+  --model_name meta-llama/llama-3.3-70b-instruct \
+  --api_backend openrouter \
+  --strategy_selection ucb \
+  --num_workers 32 \
+  --population_size 10 \
+  --num_generations 20
 ```
 
-**DeepSeek-V3-0324**
+### Single-shot baseline (`scripts/run_one_shot.py`)
+
+Generate and evaluate an `n`-shot population without any evolutionary iterations—useful for baseline pass-rate estimation:
 
 ```bash
-python3 scripts/run_evolution.py \
-    --strategy_selection ucb \
-    --api_backend deepseek \
-    --model_name deepseek-chat \
-    --num_workers 20 \
-    --num_generations 20 \
-    --benchmarks RTLLM VerilogEval-Spec-to-RTL \
-    --max_tokens 4096 \
-    --temperature 1.0 \
-    --top_p 0.95 \
-    --population_size 10
+python scripts/run_one_shot.py \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --num_samples 50 \
+  --model_name gpt-4.1-mini \
+  --api_backend openai
 ```
 
-**GPT-4.1-mini**
+### Output layout
 
-```bash
-python3 scripts/run_evolution.py \
-    --strategy_selection ucb \
-    --model_name gpt-4.1-mini \
-    --num_workers 32 \
-    --num_generations 20 \
-    --benchmarks RTLLM VerilogEval-Spec-to-RTL \
-    --max_tokens 4096 \
-    --temperature 1.0 \
-    --top_p 0.95 \
-    --population_size 10
-```
+Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`, including candidate Verilog, simulation logs, synthesis reports, JSONL generation logs, and a `<problem>_summary.json` summary.
 
------
+## Report Generation and Utilities
 
-## 📊 Generating Reports
+- `scripts/evolutionary_report_generator.py`: turn a problem directory into a Markdown report with candidate-level PPA stats.
+- `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a gate-count cutoff (default 50).
+- `scripts/generate_compiled_table.py` and friends: batch aggregations across experiments.
+- `scripts/plot_problem_pareto.py`: recreate the PPA scatter plots for selected problems.
+- `scripts/prompt_file_manager.py`: manage concatenated prompt bundles for `PromptStore`.
 
-After running the experiments, you can generate reports to view the results.
+## Testing and Validation
 
-### Individual Run Report
+- Unit tests live in `tests/` and can be executed with:
+  ```bash
+  pytest
+  ```
+- Hardware regressions and example flows are provided under `scripts/run_test.sh`, `scripts/run_regression_test.sh`, and `scripts/run_cvdp_test.sh`. These rely on the same toolchain dependencies as the main engine.
 
-To generate a detailed markdown report for a specific experimental run, use the `evolutionary_report_generator.py` script. This report includes PPA metrics but does **not** apply the gate-level cutoff used in the paper.
-
-```bash
-python scripts/evolutionary_report_generator.py \
-    --experiment_path ./exp/deepseek_clean_results \
-    --save_markdown
-```
-
-This will save a report named `(benchmark_name)_evolutionary_report.md` inside the specified experiment directory.
-
-### Final Paper Results
-
-To generate the final, PPA-filtered results as reported in our paper, run the following shell script. It applies a gate count (50) cutoff to filter the results.
-
-```bash
-./scripts/generate_cutoff_compile_result_variants.sh --gate 50
-```
-
-This will create a `compile_results_gate_cutoff_50.md` file in the base directory, containing the table of results presented in the paper.
-
-### PPA Scatterplot
-
-To recreate the PPA scatterplot for the `VerilogEval-Spec-to-RTL/Prob033_ece241_2014_q1c` problem, run the following script:
-
-```bash
-python3 scripts/plot_problem_pareto.py
-```
-
-This script will generate the plots and save them in a newly created directory named `VerilogEval_Prob033_ece241_2014_q1c_plots`.
+Refer to `docs/user_guide.md` for troubleshooting tips, recommended validation steps, and more CLI examples.
