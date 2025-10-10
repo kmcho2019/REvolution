@@ -231,8 +231,8 @@ def test_save_result_to_file_writes(engine_for_utils, mocker, tmp_path):
     )
     assert Path(code_path).read_text() == "module m; endmodule"
     assert Path(thought_path).read_text() == "thought here"
-    # Diff gets saved next to code
-    diff_path = Path(code_path).with_suffix(".diff")
+    # Diff gets saved next to code in the candidate directory
+    diff_path = Path(code_path).with_name("diff.txt")
     assert diff_path.exists()
 
 
@@ -704,13 +704,17 @@ def test_initialize_population_whole_splits_pools_and_writes(mocker, tmp_path):
     assert len(eng.success_pool) == 2
     assert len(eng.fail_pool) == 2
 
-    # Files written under base_save_path/<model>/<bench>/<prob>/Gen0/
+    # Files written under base_save_path/<model>/<bench>/<prob>/Gen0/<candidate>/
     gen0_dir = Path(eng.base_save_path) / "test-model" / "bench" / "prob" / "Gen0"
     assert gen0_dir.exists()
-    # .sv and _thought.txt exist
-    svs = sorted(p.name for p in gen0_dir.glob("*.sv"))
-    ths = sorted(p.name for p in gen0_dir.glob("*_thought.txt"))
-    assert len(svs) == 4 and len(ths) == 4
+    candidate_dirs = sorted(p for p in gen0_dir.iterdir() if p.is_dir())
+    assert len(candidate_dirs) == 4
+    for candidate in candidate_dirs:
+        code_file = candidate / "code.sv"
+        thought_file = candidate / "thought.txt"
+        assert code_file.exists()
+        assert thought_file.exists()
+        assert candidate.name.startswith("prob_sample")
 
 
 def test_initialize_population_diff_fallback_appends_raw_diff(mocker, tmp_path):
@@ -747,8 +751,9 @@ def test_initialize_population_diff_fallback_appends_raw_diff(mocker, tmp_path):
 
     # Verify fallback content (warning + diff appended) was saved
     gen0_dir = Path(eng.base_save_path) / "test-model" / "bench" / "prob" / "Gen0"
-    sv_path = next(gen0_dir.glob("*.sv"))
-    contents = sv_path.read_text()
+    candidate_dir = next(p for p in gen0_dir.iterdir() if p.is_dir())
+    code_path = candidate_dir / "code.sv"
+    contents = code_path.read_text()
     assert bad_diff in contents
 
 
@@ -856,6 +861,12 @@ def test_evolve_one_generation_updates_stats_and_pools(mocker, tmp_path):
 
     # Logger received a generation log
     assert eng.logger.log_generation.call_count == 1
+
+    gen1_dir = Path(eng.base_save_path) / "test-model" / "bench" / "prob" / "Gen1"
+    candidate_dirs = sorted(p for p in gen1_dir.iterdir() if p.is_dir())
+    assert len(candidate_dirs) == eng.num_offspring_lambda
+    for candidate in candidate_dirs:
+        assert (candidate / "code.sv").exists()
 
 
 def test_evolve_one_generation_single_pool_caps_fail_allocation(mocker, tmp_path):

@@ -17,6 +17,7 @@ The `SingleShotEngine` subclasses `EoHEngine` with `num_generations=0` so it sha
 `initialize_population` uses `LLMInterface.generate_n_responses` to request `population_size` JSON objects in “whole” mode. The engine:
 
 - Saves the thought, raw JSON, and Verilog under `Gen0`.
+- Places each artefact in a unique subdirectory named like `Gen0/prob_sample1_initial/`, containing `code.sv`, `thought.txt`, diff metadata, and any feedback files so concurrent evaluations do not clobber one another.
 - Marks candidates with `status="failed_format"` when the JSON schema is invalid and, if `require_strict_format=True`, writes debug artefacts before skipping evaluation.
 - Evaluates conforming candidates via `_evaluate_candidates`.
 - Populates `fail_pool` and `success_pool` based on evaluation outcomes, or stores everyone in `self.population` when `population_pool_mode="single"`.

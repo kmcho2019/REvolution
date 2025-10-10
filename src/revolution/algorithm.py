@@ -542,20 +542,23 @@ class EoHEngine:
         :rtype: tuple[str, str]
         """
         model_name_cleaned = self.llm.model_name.replace("/", "_")
-        directory_path = os.path.join(
+        generation_path = os.path.join(
             self.base_save_path,
             model_name_cleaned,
             self.benchmark_name,
             self.problem_name,
             f"Gen{generation_num}",
         )
-        os.makedirs(directory_path, exist_ok=True)
+        os.makedirs(generation_path, exist_ok=True)
 
         base_name = f"{self.problem_name}_sample{sample_idx_in_generation}_{strategy}"
-        code_file_path = os.path.join(directory_path, f"{base_name}.sv")
-        thought_file_path = os.path.join(directory_path, f"{base_name}_thought.txt")
-        diff_file_path = os.path.join(directory_path, f"{base_name}.diff")
-        json_diff_file_path = os.path.join(directory_path, f"{base_name}_diff.json")
+        candidate_dir = os.path.join(generation_path, base_name)
+        os.makedirs(candidate_dir, exist_ok=True)
+
+        code_file_path = os.path.join(candidate_dir, "code.sv")
+        thought_file_path = os.path.join(candidate_dir, "thought.txt")
+        diff_file_path = os.path.join(candidate_dir, "diff.txt")
+        json_diff_file_path = os.path.join(candidate_dir, "diff.json")
 
         with open(code_file_path, "w") as f:
             # Normalize escaped newlines/tabs/quotes if present
@@ -612,7 +615,7 @@ class EoHEngine:
                 with open(diff_file_path, "w") as f:
                     f.write(str(diff_content))
 
-        self._copy_misc_files(directory_path)
+        self._copy_misc_files(candidate_dir)
         return code_file_path, thought_file_path
 
     def _calculate_reference_ppa(self) -> None:

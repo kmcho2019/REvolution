@@ -111,7 +111,7 @@ python scripts/run_one_shot.py \
 
 ### Output layout
 
-Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`, including candidate Verilog, simulation logs, synthesis reports, JSONL generation logs, and a `<problem>_summary.json` summary.
+Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`. Each generation now has per-candidate folders such as `Gen5/prob_sample3_M-F/` that contain `code.sv`, `thought.txt`, optional diff artifacts, and any feedback files. Generation-wide log files (`generation_log.jsonl`) and `<problem>_summary.json` live alongside the `Gen*` directories.
 
 ## Report Generation and Utilities
 

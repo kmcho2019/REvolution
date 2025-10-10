@@ -52,7 +52,7 @@ Prompt construction is delegated to `PromptStore`. Templates live in `data/promp
 
 The engine writes everything necessary to reproduce a candidate:
 
-- Generated code and thoughts under `exp/<model>/<benchmark>/<problem>/Gen<idx>/`.
+- Generated code and thoughts under `exp/<model>/<benchmark>/<problem>/Gen<idx>/<problem_sample_strategy>/`, where each candidate folder is self-contained (code, thought, diff artefacts, feedback) to avoid collisions during parallel evaluation.
 - Simulation logs, synthesis reports, and diff application traces.
 - JSONL generation logs with per-candidate metadata and strategy stats.
 - A final `<problem>_summary.json` containing aggregated metrics, champion details, reward histories, and token usage.
