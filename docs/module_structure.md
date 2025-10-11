@@ -10,6 +10,7 @@
 - `data/`: benchmark assets.
   - `bench/`: VerilogEval, RTLLM, and CVDP problem definitions, reference designs, and synthesis metadata.
   - `prompts/`: prompt templates grouped by profile for `PromptStore`.
+  - `configs/`: YAML templates demonstrating `--config` usage for the main scripts.
 - `pdk/`: technology collateral used by the synthesis flow.
 - `exp/`: default output directory for run artefacts (created at runtime).
 - `Dockerfile`: reproducible environment for CI or local development.
@@ -27,6 +28,7 @@
 - `llm.py`: unified async LLM client with retry/backoff, token tracking, and JSON parsing helpers.
 - `logging.py`: `EoHLogger` for JSONL generation logs, per-run summaries, and reward statistics.
 - `prompt_store.py`: filesystem-backed prompt templating system with concatenated bundle support and tolerant `safe_format`.
+- `configuration.py`: shared helpers for loading CLI configuration files, validating options, and recording run snapshots.
 - `utils.py`: utility helpers (e.g., `StreamRedirector` for redirecting worker stdout/stderr to files).
 
 ## `scripts/`

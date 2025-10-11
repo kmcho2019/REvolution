@@ -94,6 +94,12 @@ python scripts/run_evolution.py \
 
 The `gen0` mode skips test benches, synthesis, and PPA analysis. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
 
+#### Configuration files
+
+`scripts/run_evolution.py` accepts `--config path/to/settings.yaml` (or `.json`). The file can contain any subset of CLI options; unspecified values fall back to the parser defaults. When both a config file and explicit CLI switches are supplied, the CLI values win. Curated examples live under `data/configs/`—copy them as a starting point for reproducible experiment setups.
+
+Every invocation writes `<timestamp>_config.yaml` next to the summary/log files in `exp/<model>/`. The snapshot records the merged argument set along with the originating CLI invocation and, when present, the config file contents. This makes it straightforward to re-run an experiment with identical settings.
+
 ### 3.2 Baseline n-shot runs (`scripts/run_one_shot.py`)
 
 Generates `--num_samples` candidates per problem, evaluates them once, and skips the evolutionary loop. CLI arguments mirror `run_evolution.py` with two differences:

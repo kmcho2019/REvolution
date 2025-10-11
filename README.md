@@ -110,6 +110,12 @@ python scripts/run_evolution.py \
   --num_workers 1
 ```
 
+#### Configuration files
+
+Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
+
+Every run records the exact configuration that was used by writing `<timestamp>_config.yaml` next to the summary and log files under `exp/<model>/`. These snapshots merge the resolved arguments, the originating CLI invocation, and the on-disk config so experiments can be reproduced verbatim.
+
 ### Single-shot baseline (`scripts/run_one_shot.py`)
 
 Generate and evaluate an `n`-shot population without any evolutionary iterations—useful for baseline pass-rate estimation:

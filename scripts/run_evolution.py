@@ -22,6 +22,11 @@ from revolution.algorithm import EoHEngine, CVDPEngine, Gen0LatencyEngine
 from revolution.evaluation import SynthesisEvaluator, VerilogEvaluator
 from revolution.llm import LLMInterface
 from revolution.utils import StreamRedirector
+from revolution.configuration import (
+    ConfigError,
+    parse_args_with_config,
+    snapshot_run_configuration,
+)
 
 
 # Wrapper function for multiprocessing
@@ -181,8 +186,16 @@ def run_indexed_problem_worker(indexed_task):
 def main():
     """Main function to parse arguments and orchestrate the evolutionary run."""
     # Use argparse to make the script configurable
+    config_parser = argparse.ArgumentParser(add_help=False)
+    config_parser.add_argument(
+        "--config",
+        type=str,
+        help="Path to a YAML or JSON config file supplying default arguments.",
+    )
+
     parser = argparse.ArgumentParser(
-        description="Run the EoH framework on specified Verilog benchmarks."
+        description="Run the EoH framework on specified Verilog benchmarks.",
+        parents=[config_parser],
     )
 
     # List of all available benchmarks in the 'bench' directory
@@ -326,7 +339,13 @@ def main():
         help="CVDP category filter (default: cid002 cid003).",
     )
 
-    args = parser.parse_args()
+    try:
+        args, config_from_file, raw_argv = parse_args_with_config(
+            parser, config_parser
+        )
+    except ConfigError as exc:
+        print(f"Configuration error: {exc}")
+        sys.exit(2)
 
     api_key = None
     if args.api_backend != "vllm":  # vllm does not require an API key
@@ -389,11 +408,19 @@ def main():
     model_name_cleaned = args.model_name.replace("/", "_")
     # Define path for the new comprehensive log file for the entire run
     master_log_dir = os.path.join(args.save_path, model_name_cleaned)
+    os.makedirs(master_log_dir, exist_ok=True)
     comprehensive_log_path = os.path.join(master_log_dir, f"{run_datetime}_run_log.txt")
 
     # Define path for the summary results file (similar to the original script's master log)
     summary_results_path = os.path.join(
         master_log_dir, f"{run_datetime}_summary_results.txt"
+    )
+    run_config_path = os.path.join(master_log_dir, f"{run_datetime}_config.yaml")
+    snapshot_run_configuration(
+        args,
+        run_config_path,
+        config_from_file=config_from_file,
+        argv=raw_argv,
     )
 
     # Use a list to store results before writing to files
