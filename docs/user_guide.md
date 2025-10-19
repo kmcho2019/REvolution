@@ -97,6 +97,17 @@ The `gen0` mode skips test benches, synthesis, and PPA analysis by default. It s
 
 Add `--gen0_evaluate_best` to re-run the winning candidate through the full evaluation pipeline. The artefacts are copied to `Gen0/best_candidate/`, which contains the mirrored `code.sv`, the latest feedback, an evaluation summary, and any simulation/synthesis logs generated during the optional pass. If the benchmark does not ship a matching `<problem>_test.sv` the optional run aborts gracefully and documents the reason in `best_candidate_metadata.json`.
 
+When you want to explore ideas that are not part of any bundled benchmark, point Gen0 at a standalone text file:
+
+```bash
+python scripts/run_evolution.py \
+  --evaluation_mode gen0 \
+  --gen0_prompt_file prompts/pipelined_fifo.txt \
+  --population_size 8
+```
+
+The prompt file is read verbatim (UTF-8 by default) and becomes the `problem_description` for the run. The synthetic problem name defaults to the filename stem; set `--gen0_prompt_name` if you need predictable folder names. Because no testbench or reference design exists, `--gen0_evaluate_best` is automatically ignored in custom prompt mode.
+
 #### Configuration files
 
 `scripts/run_evolution.py` accepts `--config path/to/settings.yaml` (or `.json`). The file can contain any subset of CLI options; unspecified values fall back to the parser defaults. When both a config file and explicit CLI switches are supplied, the CLI values win. Curated examples live under `data/configs/`—copy them as a starting point for reproducible experiment setups.

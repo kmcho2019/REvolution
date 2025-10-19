@@ -814,6 +814,44 @@ def test_gen0_latency_engine_optional_evaluation_missing_testbench(
     metadata = json.loads(metadata_path.read_text())
     assert metadata["evaluation"]["status"] == "skipped_missing_testbench"
     assert "Gen0 optional evaluation will be skipped." in metadata["evaluation"]["reason"]
+
+
+def test_gen0_latency_engine_custom_prompt(tmp_path, mocker):
+    prompt_text = "Design a 1-bit full adder.\nReturn synthesizable Verilog."
+    prompt_file = tmp_path / "adder_prompt.txt"
+    prompt_file.write_text(prompt_text, encoding="utf-8")
+
+    llm = mocker.MagicMock()
+    llm.model_name = "latency-model"
+    llm.generate_n_responses = mocker.AsyncMock(
+        return_value=[("Thought", "module a; endmodule", {"format_ok": True})]
+    )
+    llm.generate_batch_feedback = mocker.AsyncMock(
+        return_value=[{"score": 4.5, "analysis": "Looks plausible."}]
+    )
+
+    synth_eval = mocker.MagicMock()
+    synth_eval.clk_period = 0.0
+
+    engine = Gen0LatencyEngine(
+        benchmark_name="CustomPrompt",
+        problem_name="custom_problem",
+        llm_interface=llm,
+        verilog_evaluator=None,
+        synthesis_evaluator=synth_eval,
+        population_size=1,
+        base_save_path=str(tmp_path),
+        custom_prompt_path=str(prompt_file),
+    )
+
+    assert engine.custom_prompt_mode is True
+    assert engine.problem_description == prompt_text
+    assert engine.enable_full_evaluation is False
+
+    result = engine.run()
+    assert result.startswith("custom_problem,gen0_success")
+    assert llm.generate_n_responses.await_count == 1
+    assert llm.generate_batch_feedback.await_count == 1
 def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     eng, llm = _mk_engine(mocker, tmp_path, pop_size=1, candidate_workers=2)
     mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)

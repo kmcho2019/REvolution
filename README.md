@@ -121,6 +121,18 @@ python scripts/run_evolution.py \
   --population_size 16
 ```
 
+Custom prompt exploration without a benchmark folder is also supported. Provide a standalone text file and Gen0 mode will treat it as the problem description, skipping benchmark discovery entirely:
+
+```bash
+python scripts/run_evolution.py \
+  --evaluation_mode gen0 \
+  --gen0_prompt_file path/to/custom_prompt.txt \
+  --population_size 12 \
+  --model_name gpt-4.1-mini
+```
+
+The prompt name defaults to the file stem; override it with `--gen0_prompt_name`. Because no benchmark assets exist, `--gen0_evaluate_best` is ignored in this mode.
+
 #### Configuration files
 
 Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.

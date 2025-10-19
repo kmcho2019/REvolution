@@ -3267,8 +3267,16 @@ class Gen0LatencyEngine(EoHEngine):
         prompt_profile: str = "default",
         prompt_root: str | None = None,
         candidate_workers: int | None = None,
+        custom_prompt_path: str | None = None,
+        custom_prompt_encoding: str = "utf-8",
         evaluate_best_candidate: bool = False,
     ) -> None:
+        self._custom_prompt_path: str | None = (
+            os.path.abspath(custom_prompt_path) if custom_prompt_path else None
+        )
+        self._custom_prompt_encoding: str = custom_prompt_encoding
+        self._custom_prompt_text_cache: str | None = None
+        self.custom_prompt_mode: bool = self._custom_prompt_path is not None
         stub_eval = verilog_evaluator or _NoOpVerilogEvaluator()
         stub_synth = synthesis_evaluator or _NoOpSynthesisEvaluator()
         super().__init__(
@@ -3298,7 +3306,13 @@ class Gen0LatencyEngine(EoHEngine):
         self.best_candidate_dir: str | None = None
         self.best_candidate_snapshot_dir: str | None = None
         self.best_candidate_metadata_path: str | None = None
-        self.enable_full_evaluation: bool = evaluate_best_candidate
+        self.enable_full_evaluation: bool = (
+            evaluate_best_candidate and not self.custom_prompt_mode
+        )
+        if evaluate_best_candidate and self.custom_prompt_mode:
+            print(
+                "Gen0 custom prompt mode detected; --gen0_evaluate_best is ignored because no benchmark artefacts exist."
+            )
         self._provided_verilog_evaluator = verilog_evaluator
         self._provided_synthesis_evaluator = synthesis_evaluator
 
@@ -3734,6 +3748,36 @@ class Gen0LatencyEngine(EoHEngine):
         self.success_pool = candidates[:]
         self.fail_pool = []
         return candidates
+
+    def load_problem_description(self) -> str:
+        """
+        Load a custom Gen0 prompt when provided, otherwise defer to the benchmark prompt.
+        """
+        if self.custom_prompt_mode:
+            if self._custom_prompt_text_cache is not None:
+                return self._custom_prompt_text_cache
+            if self._custom_prompt_path is None:
+                raise RuntimeError(
+                    "Gen0 custom prompt mode flagged without a prompt path."
+                )
+            prompt_path = Path(self._custom_prompt_path)
+            if not prompt_path.is_file():
+                raise FileNotFoundError(
+                    f"Custom Gen0 prompt file not found: {prompt_path}"
+                )
+            text = prompt_path.read_text(encoding=self._custom_prompt_encoding).strip()
+            if not text:
+                raise ValueError(
+                    f"Custom Gen0 prompt file '{prompt_path}' is empty."
+                )
+            self._custom_prompt_text_cache = text
+            return text
+        return super().load_problem_description()
+
+    def _copy_misc_files(self, output_directory: str) -> None:
+        if self.custom_prompt_mode:
+            return
+        super()._copy_misc_files(output_directory)
 
 
 class CVDPEngine(EoHEngine):

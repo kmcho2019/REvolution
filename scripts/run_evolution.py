@@ -28,6 +28,8 @@ from revolution.configuration import (
     snapshot_run_configuration,
 )
 
+CUSTOM_PROMPT_BENCHMARK = "CustomPrompt"
+
 
 # Wrapper function for multiprocessing
 def run_problem_worker(args_tuple):
@@ -54,6 +56,9 @@ def run_problem_worker(args_tuple):
         if evaluation_mode != "gen0" and getattr(args, "multiprocessing_mode", "problem") == "candidate"
         else 0
     )
+    custom_prompt_path = getattr(args, "gen0_prompt_file", None)
+    custom_prompt_encoding = getattr(args, "gen0_prompt_encoding", "utf-8")
+    custom_prompt_benchmark = getattr(args, "gen0_prompt_benchmark", None)
 
     # Redirect all output from this worker to the individual log file
     with StreamRedirector(filepath=individual_log_path):
@@ -122,6 +127,13 @@ def run_problem_worker(args_tuple):
                 require_strict_format=True,
                 prompt_profile="default",
                 prompt_root=None,
+                custom_prompt_path=(
+                    custom_prompt_path
+                    if custom_prompt_benchmark
+                    and benchmark == custom_prompt_benchmark
+                    else None
+                ),
+                custom_prompt_encoding=custom_prompt_encoding,
                 evaluate_best_candidate=gen0_eval_best,
             )
         elif benchmark.lower() == "cvdp":
@@ -336,6 +348,23 @@ def main():
         help="When running in Gen0 mode, also run full functional, synthesis, and PPA evaluation on the selected best candidate and store the logs under Gen0/best_candidate/.",
     )
     parser.add_argument(
+        "--gen0_prompt_file",
+        type=str,
+        help="Path to a standalone text file describing the problem for Gen0 mode. When provided, benchmark discovery is skipped and a single custom Gen0 run is executed.",
+    )
+    parser.add_argument(
+        "--gen0_prompt_name",
+        type=str,
+        default=None,
+        help="Optional name to use for the synthetic problem when --gen0_prompt_file is supplied. Defaults to the prompt filename stem.",
+    )
+    parser.add_argument(
+        "--gen0_prompt_encoding",
+        type=str,
+        default="utf-8",
+        help="Encoding to use when reading --gen0_prompt_file (default: utf-8).",
+    )
+    parser.add_argument(
         "--multiprocessing_mode",
         type=str,
         default="problem",
@@ -369,6 +398,31 @@ def main():
     except ConfigError as exc:
         print(f"Configuration error: {exc}")
         sys.exit(2)
+
+    custom_prompt_mode = bool(args.gen0_prompt_file)
+    if custom_prompt_mode:
+        if args.evaluation_mode != "gen0":
+            print(
+                "Custom Gen0 prompt mode requires '--evaluation_mode gen0'. Please update the arguments."
+            )
+            sys.exit(2)
+        prompt_path = os.path.abspath(args.gen0_prompt_file)
+        if not os.path.isfile(prompt_path):
+            print(f"Custom Gen0 prompt file not found: {prompt_path}")
+            sys.exit(1)
+        args.gen0_prompt_file = prompt_path
+        if args.gen0_prompt_name:
+            prompt_label = args.gen0_prompt_name
+        else:
+            prompt_label = Path(prompt_path).stem or "custom_prompt"
+            args.gen0_prompt_name = prompt_label
+        if args.problems:
+            print("Warning: --problems is ignored when --gen0_prompt_file is supplied.")
+        args.problems = [prompt_label]
+        args.benchmarks = [CUSTOM_PROMPT_BENCHMARK]
+        args.gen0_prompt_benchmark = CUSTOM_PROMPT_BENCHMARK
+    else:
+        args.gen0_prompt_benchmark = None
 
     api_key = None
     if args.api_backend != "vllm":  # vllm does not require an API key
@@ -465,37 +519,49 @@ def main():
 
             # --- Task Preparation ---
             # Task preparation loop to populate tasks_to_run
-            for benchmark in args.benchmarks:
-                benchmark_dir = os.path.join(benchmark_root, benchmark)
-                print(f"benchmark_dir: {benchmark_dir}, benchmark_root: {benchmark_root}, benchmark: {benchmark}\n")
+            if custom_prompt_mode:
+                print(
+                    f"Custom Gen0 prompt run: benchmark='{args.gen0_prompt_benchmark}', problem='{args.gen0_prompt_name}', prompt_file='{args.gen0_prompt_file}'."
+                )
+                tasks_to_run.append(
+                    (args.gen0_prompt_benchmark, args.gen0_prompt_name, args)
+                )
+            else:
+                for benchmark in args.benchmarks:
+                    benchmark_dir = os.path.join(benchmark_root, benchmark)
+                    print(f"benchmark_dir: {benchmark_dir}, benchmark_root: {benchmark_root}, benchmark: {benchmark}\n")
 
-                # CVDP INTEGRATION: build tasks from JSONL
-                if benchmark.lower() == "cvdp":
-                    # For cvdp, if --problems provided treat them as explicit CVDP ids
-                    selected_ids = args.problems if args.problems else None
-                    cvdp_ids = _load_cvdp_ids(args.cvdp_jsonl, args.cvdp_categories, selected_ids)
-                    if not cvdp_ids:
-                        print(f"[CVDP] No matching problems found (categories={args.cvdp_categories}). Skipping.")
+                    # CVDP INTEGRATION: build tasks from JSONL
+                    if benchmark.lower() == "cvdp":
+                        # For cvdp, if --problems provided treat them as explicit CVDP ids
+                        selected_ids = args.problems if args.problems else None
+                        cvdp_ids = _load_cvdp_ids(
+                            args.cvdp_jsonl, args.cvdp_categories, selected_ids
+                        )
+                        if not cvdp_ids:
+                            print(
+                                f"[CVDP] No matching problems found (categories={args.cvdp_categories}). Skipping."
+                            )
+                            continue
+                        for cid in cvdp_ids:
+                            tasks_to_run.append((benchmark, cid, args))
                         continue
-                    for cid in cvdp_ids:
-                        tasks_to_run.append((benchmark, cid, args))
-                    continue
 
-                # Non-CVDP flow: use problems.txt
-                problems_file = os.path.join(benchmark_dir, "problems.txt")
-                if not os.path.exists(problems_file):
-                    print(
-                        f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
-                    )
-                    continue
-                with open(problems_file, "r") as f:
-                    all_problems = [line.strip() for line in f if line.strip()]
+                    # Non-CVDP flow: use problems.txt
+                    problems_file = os.path.join(benchmark_dir, "problems.txt")
+                    if not os.path.exists(problems_file):
+                        print(
+                            f"Warning: 'problems.txt' not found in {benchmark_dir}. Skipping."
+                        )
+                        continue
+                    with open(problems_file, "r") as f:
+                        all_problems = [line.strip() for line in f if line.strip()]
 
-                problems_to_process = args.problems if args.problems else all_problems
-                print(f"problems_to_process: {problems_to_process}\n")
-                for problem in problems_to_process:
-                    if problem in all_problems:
-                        tasks_to_run.append((benchmark, problem, args))
+                    problems_to_process = args.problems if args.problems else all_problems
+                    print(f"problems_to_process: {problems_to_process}\n")
+                    for problem in problems_to_process:
+                        if problem in all_problems:
+                            tasks_to_run.append((benchmark, problem, args))
 
             if not tasks_to_run:
                 print("No valid problems found to run. Exiting.")
