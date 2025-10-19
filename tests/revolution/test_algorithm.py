@@ -1,3 +1,4 @@
+import json
 import math
 import uuid
 from pathlib import Path
@@ -693,8 +694,126 @@ def test_gen0_latency_engine_uses_feedback_scores(mocker, tmp_path):
     assert engine.best_candidate.thought == "T2"
     assert engine.best_candidate.score == 7
     assert llm.generate_batch_feedback.await_count == 1
+    assert engine.best_candidate_dir is not None
+    assert engine.best_candidate_snapshot_dir is not None
+    metadata_path = (
+        Path(engine.best_candidate_snapshot_dir) / "best_candidate_metadata.json"
+    )
+    assert metadata_path.exists()
+    metadata = json.loads(metadata_path.read_text())
+    assert metadata["candidate_id"] == engine.best_candidate.id
+    assert metadata["score"] == 7
 
 
+def test_gen0_latency_engine_optional_evaluation_success(mocker, tmp_path):
+    mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
+    llm = mocker.MagicMock()
+    llm.model_name = "latency-model"
+    llm.generate_n_responses = mocker.AsyncMock(
+        return_value=[
+            ("T1", "module A; endmodule", {"format_ok": True}),
+            ("T2", "module B; endmodule", {"format_ok": True}),
+        ]
+    )
+    llm.generate_batch_feedback = mocker.AsyncMock(
+        return_value=[
+            {"score": 1, "analysis": "ok", "justification": "baseline"},
+            {"score": 7, "analysis": "better", "justification": "preferred"},
+        ]
+    )
+
+    verilog_eval = mocker.MagicMock()
+    verilog_eval.evaluate.return_value = {
+        "status": "success",
+        "log_file_path": str(tmp_path / "sim.log"),
+        "compiled_file_path": str(tmp_path / "code.vvp"),
+        "compilation_stderr": "",
+        "simulation_stderr": "",
+    }
+    synth_eval = mocker.MagicMock()
+    synth_eval.clk_period = 1.0
+    synth_eval.evaluate.return_value = {
+        "synthesis_success": True,
+        "synthesis_functionality_success": True,
+        "ppa_success": True,
+        "synthesis_log": str(tmp_path / "synth.log"),
+        "ppa_metrics": {"power": 0.9, "area": 90.0, "eff_clk_period": 1.8},
+    }
+
+    engine = Gen0LatencyEngine(
+        benchmark_name="bench",
+        problem_name="prob",
+        llm_interface=llm,
+        verilog_evaluator=verilog_eval,
+        synthesis_evaluator=synth_eval,
+        population_size=2,
+        base_save_path=str(tmp_path),
+        evaluate_best_candidate=True,
+    )
+    mocker.patch.object(engine, "_copy_misc_files", return_value=None)
+    engine.benchmark_path = str(tmp_path)
+    (tmp_path / "prob_test.sv").write_text("module tb; endmodule\n", encoding="utf-8")
+
+    result = engine.run()
+
+    assert result.startswith("prob,gen0_success")
+    assert verilog_eval.evaluate.call_count == 1
+    assert synth_eval.evaluate.call_count == 1
+    assert engine.best_candidate.status == "success"
+    metadata_path = (
+        Path(engine.best_candidate_snapshot_dir) / "best_candidate_metadata.json"
+    )
+    metadata = json.loads(metadata_path.read_text())
+    assert metadata["evaluation"]["status"] == "completed"
+    assert metadata["evaluation"]["simulation"]["status"] == "success"
+    assert metadata["evaluation"]["testbench"].endswith("prob_test.sv")
+
+
+def test_gen0_latency_engine_optional_evaluation_missing_testbench(
+    mocker, tmp_path
+):
+    mocker.patch.object(EoHEngine, "load_problem_description", return_value="desc")
+    llm = mocker.MagicMock()
+    llm.model_name = "latency-model"
+    llm.generate_n_responses = mocker.AsyncMock(
+        return_value=[
+            ("T1", "module A; endmodule", {"format_ok": True}),
+            ("T2", "module B; endmodule", {"format_ok": True}),
+        ]
+    )
+    llm.generate_batch_feedback = mocker.AsyncMock(
+        return_value=[
+            {"score": 7, "analysis": "best", "justification": "preferred"},
+            {"score": 1, "analysis": "ok", "justification": "baseline"},
+        ]
+    )
+
+    verilog_eval = mocker.MagicMock()
+    synth_eval = mocker.MagicMock()
+    synth_eval.clk_period = 1.0
+
+    engine = Gen0LatencyEngine(
+        benchmark_name="bench",
+        problem_name="prob",
+        llm_interface=llm,
+        verilog_evaluator=verilog_eval,
+        synthesis_evaluator=synth_eval,
+        population_size=2,
+        base_save_path=str(tmp_path),
+        evaluate_best_candidate=True,
+    )
+    mocker.patch.object(engine, "_copy_misc_files", return_value=None)
+    engine.benchmark_path = str(tmp_path)
+
+    engine.run()
+
+    assert verilog_eval.evaluate.call_count == 0
+    metadata_path = (
+        Path(engine.best_candidate_snapshot_dir) / "best_candidate_metadata.json"
+    )
+    metadata = json.loads(metadata_path.read_text())
+    assert metadata["evaluation"]["status"] == "skipped_missing_testbench"
+    assert "Gen0 optional evaluation will be skipped." in metadata["evaluation"]["reason"]
 def test_evaluate_candidates_parallel_uses_thread_pool(mocker, tmp_path):
     eng, llm = _mk_engine(mocker, tmp_path, pop_size=1, candidate_workers=2)
     mocker.patch.object(EoHEngine, "_copy_misc_files", return_value=None)

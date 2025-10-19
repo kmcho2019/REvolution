@@ -88,9 +88,16 @@ def run_problem_worker(args_tuple):
             vllm_host=args.vllm_host,
         )
 
+        gen0_eval_best = getattr(args, "gen0_evaluate_best", False)
         if evaluation_mode == "gen0":
-            verilog_evaluator = None
-            synthesis_evaluator = None
+            if gen0_eval_best:
+                verilog_evaluator = VerilogEvaluator(
+                    iverilog_executable_path="iverilog", vvp_executable_path="vvp"
+                )
+                synthesis_evaluator = SynthesisEvaluator()
+            else:
+                verilog_evaluator = None
+                synthesis_evaluator = None
         else:
             verilog_evaluator = VerilogEvaluator(
                 iverilog_executable_path="iverilog", vvp_executable_path="vvp"
@@ -115,6 +122,7 @@ def run_problem_worker(args_tuple):
                 require_strict_format=True,
                 prompt_profile="default",
                 prompt_root=None,
+                evaluate_best_candidate=gen0_eval_best,
             )
         elif benchmark.lower() == "cvdp":
             eoh_engine = CVDPEngine(
@@ -321,6 +329,11 @@ def main():
         default="standard",
         choices=["standard", "gen0"],
         help="Select 'gen0' for latency-optimized initial generation scoring; default 'standard' runs the full evolutionary loop.",
+    )
+    parser.add_argument(
+        "--gen0_evaluate_best",
+        action="store_true",
+        help="When running in Gen0 mode, also run full functional, synthesis, and PPA evaluation on the selected best candidate and store the logs under Gen0/best_candidate/.",
     )
     parser.add_argument(
         "--multiprocessing_mode",

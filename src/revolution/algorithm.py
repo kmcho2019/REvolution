@@ -3267,6 +3267,7 @@ class Gen0LatencyEngine(EoHEngine):
         prompt_profile: str = "default",
         prompt_root: str | None = None,
         candidate_workers: int | None = None,
+        evaluate_best_candidate: bool = False,
     ) -> None:
         stub_eval = verilog_evaluator or _NoOpVerilogEvaluator()
         stub_synth = synthesis_evaluator or _NoOpSynthesisEvaluator()
@@ -3294,6 +3295,12 @@ class Gen0LatencyEngine(EoHEngine):
         )
         self.population_size = population_size
         self.best_candidate: Heuristic | None = None
+        self.best_candidate_dir: str | None = None
+        self.best_candidate_snapshot_dir: str | None = None
+        self.best_candidate_metadata_path: str | None = None
+        self.enable_full_evaluation: bool = evaluate_best_candidate
+        self._provided_verilog_evaluator = verilog_evaluator
+        self._provided_synthesis_evaluator = synthesis_evaluator
 
     def run(self) -> str:
         print(
@@ -3312,15 +3319,327 @@ class Gen0LatencyEngine(EoHEngine):
 
         if scored_candidates:
             self.best_candidate = scored_candidates[0]
-            print(
-                f"Selected best candidate {self.best_candidate.id} with feedback score {self.best_candidate.score:.2f}"
+            self.best_candidate_dir = os.path.dirname(
+                self.best_candidate.code_file_path
             )
+            candidate_dirname = (
+                os.path.basename(self.best_candidate_dir)
+                if self.best_candidate_dir
+                else "unknown"
+            )
+            print(
+                f"Selected best candidate {self.best_candidate.id} ({candidate_dirname}) with feedback score {self.best_candidate.score:.2f}"
+            )
+            snapshot_dir = None
+            if self.best_candidate_dir:
+                snapshot_dir = self._snapshot_best_candidate(self.best_candidate_dir)
+                self.best_candidate_snapshot_dir = snapshot_dir
+                if snapshot_dir:
+                    print(
+                        f"Copied best candidate artefacts to '{snapshot_dir}' for quick access."
+                    )
+            evaluation_root = snapshot_dir or self.best_candidate_dir
+            if self.enable_full_evaluation and evaluation_root:
+                self._evaluate_best_candidate(evaluation_root)
             return (
                 f"{self.problem_name},gen0_success,{self.best_candidate.code_file_path},{self.best_candidate.score}"
             )
 
         print("No viable candidates scored during Gen0 latency run.")
         return f"{self.problem_name},gen0_failed"
+
+    def _snapshot_best_candidate(self, candidate_dir: str) -> str | None:
+        """
+        Copy the best candidate's artefacts into a dedicated quick-reference directory.
+
+        :param candidate_dir: The source directory containing the candidate artefacts.
+        :return: The destination directory path, or None if the copy failed.
+        """
+        if not os.path.isdir(candidate_dir):
+            print(
+                f"Unable to snapshot best candidate: source directory '{candidate_dir}' is missing."
+            )
+            return None
+
+        model_name_cleaned = self.llm.model_name.replace("/", "_")
+        gen0_root = os.path.join(
+            self.base_save_path,
+            model_name_cleaned,
+            self.benchmark_name,
+            self.problem_name,
+            "Gen0",
+        )
+        snapshot_dir = os.path.join(gen0_root, "best_candidate")
+        os.makedirs(snapshot_dir, exist_ok=True)
+
+        try:
+            shutil.copytree(
+                candidate_dir,
+                snapshot_dir,
+                dirs_exist_ok=True,
+            )
+            metadata_path = os.path.join(snapshot_dir, "best_candidate_metadata.json")
+            payload = {
+                "candidate_directory": candidate_dir,
+                "candidate_id": getattr(self.best_candidate, "id", None),
+                "score": getattr(self.best_candidate, "score", None),
+                "copied_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            }
+            with open(metadata_path, "w", encoding="utf-8") as meta_file:
+                json.dump(payload, meta_file, indent=2)
+            self.best_candidate_metadata_path = metadata_path
+        except Exception as exc:  # pragma: no cover - filesystem errors are rare
+            print(f"Failed to copy best candidate artefacts: {exc}")
+            traceback.print_exc()
+            return None
+
+        return snapshot_dir
+
+    def _update_best_candidate_metadata(
+        self, artefact_dir: str, updates: dict[str, Any]
+    ) -> None:
+        """Merge additional information into the best-candidate metadata file."""
+        metadata_path = self.best_candidate_metadata_path
+        if not metadata_path or not metadata_path.startswith(artefact_dir):
+            metadata_path = os.path.join(
+                artefact_dir, "best_candidate_metadata.json"
+            )
+
+        existing: dict[str, Any] = {}
+        if os.path.exists(metadata_path):
+            try:
+                with open(metadata_path, "r", encoding="utf-8") as meta_file:
+                    existing = json.load(meta_file)
+            except json.JSONDecodeError:  # pragma: no cover - corrupted file rare
+                existing = {}
+
+        # Ensure candidate basics remain available even if created outside snapshot helper.
+        if "candidate_id" not in existing and self.best_candidate:
+            existing["candidate_id"] = self.best_candidate.id
+        if "candidate_directory" not in existing and self.best_candidate_dir:
+            existing["candidate_directory"] = self.best_candidate_dir
+
+        existing.update(updates)
+
+        with open(metadata_path, "w", encoding="utf-8") as meta_file:
+            json.dump(existing, meta_file, indent=2)
+        self.best_candidate_metadata_path = metadata_path
+
+    def _evaluate_best_candidate(self, artefact_dir: str) -> None:
+        """Optionally run full evaluation on the selected best candidate."""
+        if not self.enable_full_evaluation or not self.best_candidate:
+            return
+
+        verilog_eval = self._provided_verilog_evaluator
+        synth_eval = self._provided_synthesis_evaluator
+        if verilog_eval is None or synth_eval is None:
+            message = (
+                "Skipping Gen0 optional evaluation because evaluators were not provided."
+            )
+            print(message)
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": "skipped_no_evaluator",
+                        "reason": message,
+                        "timestamp": datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).isoformat(),
+                    }
+                },
+            )
+            return
+
+        code_path = os.path.join(artefact_dir, "code.sv")
+        if not os.path.exists(code_path):
+            message = (
+                f"Skipping Gen0 optional evaluation; missing code artefact at '{code_path}'."
+            )
+            print(message)
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": "skipped_missing_code",
+                        "reason": message,
+                        "timestamp": datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).isoformat(),
+                    }
+                },
+            )
+            return
+
+        test_sv = os.path.join(self.benchmark_path, f"{self.problem_name}_test.sv")
+        if not os.path.exists(test_sv):
+            message = (
+                f"No matching testbench found at '{test_sv}'. "
+                "Gen0 optional evaluation will be skipped."
+            )
+            print(message)
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": "skipped_missing_testbench",
+                        "reason": message,
+                        "timestamp": datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).isoformat(),
+                    }
+                },
+            )
+            return
+
+        ref_sv = os.path.join(self.benchmark_path, f"{self.problem_name}_ref.sv")
+        if not os.path.exists(ref_sv):
+            ref_sv = None
+
+        evaluation_timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        simulation_summary: dict[str, Any] = {"status": "not_run"}
+        synthesis_summary: dict[str, Any] = {}
+        final_status = "pending"
+
+        try:
+            sim_results = verilog_eval.evaluate(
+                code_path,
+                test_sv,
+                ref_sv,
+                output_directory=artefact_dir,
+            )
+            simulation_summary = {
+                "status": sim_results.get("status"),
+                "log_file": sim_results.get("log_file_path"),
+                "compiled_file": sim_results.get("compiled_file_path"),
+                "compilation_stderr": sim_results.get("compilation_stderr"),
+                "simulation_stderr": sim_results.get("simulation_stderr"),
+            }
+        except Exception as exc:  # pragma: no cover - subprocess errors mocked in tests
+            final_status = "simulation_exception"
+            message = f"Gen0 optional evaluation failed during simulation: {exc}"
+            print(message)
+            self.best_candidate.status = "failed_functionality"
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": final_status,
+                        "reason": message,
+                        "timestamp": evaluation_timestamp,
+                        "simulation": simulation_summary,
+                    }
+                },
+            )
+            return
+
+        if simulation_summary["status"] != "success":
+            final_status = "simulation_failed"
+            self.best_candidate.status = "failed_functionality"
+            print(
+                f"Gen0 optional evaluation halted: simulation returned status '{simulation_summary['status']}'."
+            )
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": final_status,
+                        "timestamp": evaluation_timestamp,
+                        "simulation": simulation_summary,
+                    }
+                },
+            )
+            return
+
+        top_module_name = self._resolve_top_module_name()
+        report_base_path = os.path.join(artefact_dir, "best_candidate")
+        ppa_metrics: dict[str, Any] | None = None
+        try:
+            synth_results = synth_eval.evaluate(
+                code_path,
+                self.problem_name,
+                top_module_name,
+                artefact_dir,
+                report_base_path,
+                verilog_eval,
+                test_sv,
+                ref_sv,
+            )
+            synthesis_summary = {
+                "synthesis_success": synth_results.get("synthesis_success"),
+                "synthesis_functionality_success": synth_results.get(
+                    "synthesis_functionality_success"
+                ),
+                "ppa_success": synth_results.get("ppa_success"),
+                "synthesis_log": synth_results.get("synthesis_log"),
+            }
+            ppa_metrics = synth_results.get("ppa_metrics")
+        except Exception as exc:  # pragma: no cover - subprocess errors mocked in tests
+            final_status = "synthesis_exception"
+            message = f"Gen0 optional evaluation failed during synthesis/PPA: {exc}"
+            print(message)
+            self._update_best_candidate_metadata(
+                artefact_dir,
+                {
+                    "evaluation": {
+                        "status": final_status,
+                        "reason": message,
+                        "timestamp": evaluation_timestamp,
+                        "simulation": simulation_summary,
+                        "synthesis": synthesis_summary,
+                    }
+                },
+            )
+            return
+
+        all_success = (
+            synthesis_summary.get("synthesis_success")
+            and synthesis_summary.get("synthesis_functionality_success")
+            and synthesis_summary.get("ppa_success")
+        )
+
+        if all_success:
+            final_status = "completed"
+            print("Gen0 optional evaluation completed successfully.")
+            if isinstance(ppa_metrics, dict):
+                self.best_candidate.ppa_metrics = ppa_metrics
+                self.best_candidate.ppa_success = True
+                self.best_candidate.synthesis_success = True
+                self.best_candidate.synthesis_functionality = True
+                self.best_candidate.status = "success"
+        else:
+            final_status = "synthesis_failed"
+            print("Gen0 optional evaluation finished with synthesis/PPA failures.")
+            self.best_candidate.synthesis_success = bool(
+                synthesis_summary.get("synthesis_success")
+            )
+            self.best_candidate.synthesis_functionality = bool(
+                synthesis_summary.get("synthesis_functionality_success")
+            )
+            self.best_candidate.ppa_success = bool(
+                synthesis_summary.get("ppa_success")
+            )
+            if not synthesis_summary.get("synthesis_success"):
+                self.best_candidate.status = "failed_synthesis"
+            elif not synthesis_summary.get("synthesis_functionality_success"):
+                self.best_candidate.status = "failed_synthesis_functionality"
+            else:
+                self.best_candidate.status = "failed_synthesis"
+
+        self._update_best_candidate_metadata(
+            artefact_dir,
+            {
+                "evaluation": {
+                    "status": final_status,
+                    "timestamp": evaluation_timestamp,
+                    "simulation": simulation_summary,
+                    "synthesis": synthesis_summary,
+                    "ppa_metrics": ppa_metrics if all_success else None,
+                    "testbench": test_sv,
+                    "reference": ref_sv,
+                }
+            },
+        )
 
     def _generate_gen0_candidates(self) -> list[Heuristic]:
         print(f"\n--- Generating Gen0 Candidates (Size: {self.population_size}) ---")

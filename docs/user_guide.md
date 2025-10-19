@@ -65,6 +65,7 @@ Essential arguments:
 - `--generation_mode {whole,diff}`: default offspring mode for successful parents. Failed parents always fall back to `whole`.
 - `--population_pool_mode {dual,single}`: dual maintains separate fail/success pools; single blends them but throttles fail-derived offspring once successes are available.
 - `--evaluation_mode {standard,gen0}`: switch between the full pipeline and the latency-only Gen0 scorer.
+- `--gen0_evaluate_best`: when used with `--evaluation_mode gen0`, replay the top-ranked candidate through the full functional testbench, synthesis, and OpenROAD PPA flow and store the logs under `Gen0/best_candidate/`.
 - `--cvdp_jsonl <path>` / `--cvdp_categories <list>`: enable CVDP dataset support (`bench/cvdp/...`).
 
 Example (dual-pool UCB search):
@@ -92,7 +93,9 @@ python scripts/run_evolution.py \
   --num_workers 1
 ```
 
-The `gen0` mode skips test benches, synthesis, and PPA analysis. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
+The `gen0` mode skips test benches, synthesis, and PPA analysis by default. It simply collects `population_size` candidates, scores them using the feedback LLM (the returned `score` field), and keeps the top-ranked artefacts under `Gen0/<problem>_sample*/`.
+
+Add `--gen0_evaluate_best` to re-run the winning candidate through the full evaluation pipeline. The artefacts are copied to `Gen0/best_candidate/`, which contains the mirrored `code.sv`, the latest feedback, an evaluation summary, and any simulation/synthesis logs generated during the optional pass. If the benchmark does not ship a matching `<problem>_test.sv` the optional run aborts gracefully and documents the reason in `best_candidate_metadata.json`.
 
 #### Configuration files
 
@@ -121,7 +124,7 @@ python scripts/run_one_shot.py \
 
 Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 
-- `Gen0/`, `Gen1/`, …: per-generation folders with `candidate_<idx>_thought.txt`, `candidate_<idx>.sv`, logs, and diff artefacts.
+- `Gen0/`, `Gen1/`, …: per-generation folders with `candidate_<idx>_thought.txt`, `candidate_<idx>.sv`, logs, and diff artefacts. In Gen0 runs the best artefact is also mirrored to `Gen0/best_candidate/` along with an evaluation summary when `--gen0_evaluate_best` is used.
 - `generation_log.jsonl`: append-only record of every candidate with status, metrics, strategy metadata, and reward signals.
 - `<problem>_summary.json`: final summary with champion metrics, runtime statistics, and token usage.
 - `problem_run.log`: merged stdout/stderr captured by `StreamRedirector` from each worker process.

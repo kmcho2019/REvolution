@@ -110,6 +110,17 @@ python scripts/run_evolution.py \
   --num_workers 1
 ```
 
+Add `--gen0_evaluate_best` to run the same search but also execute the functional testbench, synthesis, and OpenROAD PPA flow for the top-ranked candidate. The resulting logs are collated under `Gen0/best_candidate/` alongside a metadata summary:
+
+```bash
+python scripts/run_evolution.py \
+  --benchmarks VerilogEval-Spec-to-RTL \
+  --problems Prob001_example \
+  --evaluation_mode gen0 \
+  --gen0_evaluate_best \
+  --population_size 16
+```
+
 #### Configuration files
 
 Both `run_evolution.py` and `run_one_shot.py` accept a `--config path/to/config.yaml` (or `.json`) flag. The file provides defaults for any CLI option and can contain only the parameters you wish to override; explicit CLI arguments always take precedence. Example templates live in `data/configs/` and mirror the available flags for each script.
@@ -131,6 +142,8 @@ python scripts/run_one_shot.py \
 ### Output layout
 
 Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`. Each generation now has per-candidate folders such as `Gen5/prob_sample3_M-F/` that contain `code.sv`, `thought.txt`, optional diff artifacts, and any feedback files. Generation-wide log files (`generation_log.jsonl`) and `<problem>_summary.json` live alongside the `Gen*` directories.
+
+In Gen0 mode, the top candidate is also mirrored to `Gen0/best_candidate/` for quick inspection. When `--gen0_evaluate_best` is enabled this directory includes the optional evaluation logs and a `best_candidate_metadata.json` file that records the source folder, score, and end-to-end status.
 
 ## Report Generation and Utilities
 

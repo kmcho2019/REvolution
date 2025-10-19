@@ -22,7 +22,7 @@ The `SingleShotEngine` subclasses `EoHEngine` with `num_generations=0` so it sha
 - Evaluates conforming candidates via `_evaluate_candidates`.
 - Populates `fail_pool` and `success_pool` based on evaluation outcomes, or stores everyone in `self.population` when `population_pool_mode="single"`.
 
-For rapid experimentation, `Gen0LatencyEngine` short-circuits after this stage: it requests feedback-only scoring for every candidate, writes the feedback artefacts, assigns the returned `score`, and selects the highest-ranked design without running simulation, synthesis, or PPA analysis.
+For rapid experimentation, `Gen0LatencyEngine` short-circuits after this stage: it requests feedback-only scoring for every candidate, writes the feedback artefacts, assigns the returned `score`, and selects the highest-ranked design. The chosen candidate is mirrored into `Gen0/best_candidate/` for quick inspection. When `--gen0_evaluate_best` is supplied, the engine continues by running the standard simulation, synthesis, and PPA checks on that mirrored artefact and stores the resulting logs and summaries in the same folder (skipping gracefully if the benchmark lacks a matching testbench).
 
 LLM usage statistics are collected through `LLMInterface.get_and_reset_usage_stats()` and passed to `EoHLogger.log_generation` to seed the metrics timeline.
 
