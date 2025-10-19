@@ -889,7 +889,16 @@ class VerilogEvaluator:
         }
 
 class LLMInterface:
-    def __init__(self, api_key=None, model_name="gpt-3.5-turbo", api_backend="openai", max_retries=10, base_delay=2):
+    def __init__(
+        self,
+        api_key=None,
+        model_name="gpt-3.5-turbo",
+        api_backend="openai",
+        max_retries=10,
+        base_delay=2,
+        port=8000,
+        vllm_host="localhost",
+    ):
         if not api_key and api_backend != "vllm":
             raise ValueError("API key is required for LLMInterface initialization.")
 
@@ -912,7 +921,14 @@ class LLMInterface:
         elif api_backend == "deepseek":
             self.client_args["base_url"] = "https://api.deepseek.com"
         elif api_backend == "vllm":
-            self.client_args["base_url"] = "http://localhost:8000/v1"  # Assuming that vLLM server is running locally
+            host = (vllm_host or "localhost").strip()
+            if host.startswith(("http://", "https://")):
+                base = host.rstrip("/")
+                if not base.endswith("/v1"):
+                    base = f"{base}/v1"
+                self.client_args["base_url"] = base
+            else:
+                self.client_args["base_url"] = f"http://{host}:{port}/v1"
 
         else:
             raise ValueError(f"Unsupported API backend: '{api_backend}'. Choose from 'openai', 'openrouter', 'deepseek'.")
@@ -2160,7 +2176,13 @@ def run_problem_worker(args_tuple):
                     f"API key for backend '{args.api_backend}' not found. "
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
-        llm_interface = LLMInterface(api_key=api_key, model_name=args.model_name, api_backend=args.api_backend)
+        llm_interface = LLMInterface(
+            api_key=api_key,
+            model_name=args.model_name,
+            api_backend=args.api_backend,
+            port=args.vllm_port,
+            vllm_host=args.vllm_host,
+        )
         verilog_evaluator = VerilogEvaluator(iverilog_executable_path=IVERILOG_EXECUTABLE, vvp_executable_path=VVP_EXECUTABLE)
         synthesis_evaluator = SynthesisEvaluator()
 
@@ -2204,8 +2226,20 @@ if __name__ == "__main__":
     parser.add_argument('--problems', nargs='+',
                         help='A list of specific problem names to run. If not provided, all problems in the suite will be run.')
     parser.add_argument('--api_backend', type=str, default='openai',
-                        choices=['openai', 'openrouter', 'deepseek', 'vllm'],
+                        choices=['openai', 'openrouter', 'deepseek', 'gemini', 'vllm'],
                         help='The API backend to use for LLM calls.')
+    parser.add_argument(
+        '--vllm_port',
+        type=int,
+        default=8888,
+        help='Port for the vLLM OpenAI-compatible server.',
+    )
+    parser.add_argument(
+        '--vllm_host',
+        type=str,
+        default='localhost',
+        help='Hostname or IP for the vLLM OpenAI-compatible server.',
+    )
     parser.add_argument('--model_name', type=str, default="gpt-4.1-mini", help='Name of the OpenAI model to use.')
     parser.add_argument('--population_size', type=int, default=5, help='Number of candidates in each generation.')
     parser.add_argument('--num_generations', type=int, default=5, help='Number of evolutionary generations to run.')
@@ -2231,7 +2265,8 @@ if __name__ == "__main__":
         api_key_env_vars = {
             'openai': 'OPENAI_API_KEY',
             'openrouter': 'OPENROUTER_API_KEY',
-            'deepseek': 'DEEPSEEK_API_KEY'
+            'deepseek': 'DEEPSEEK_API_KEY',
+            'gemini': 'GEMINI_API_KEY',
         }
         # Check for the correct key based on the selected backend
         required_key_var = api_key_env_vars.get(args.api_backend, None)

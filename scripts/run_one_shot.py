@@ -68,7 +68,11 @@ def run_problem_worker(args_tuple):
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
         llm_interface = LLMInterface(
-            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend
+            api_key=api_key,
+            model_name=args.model_name,
+            api_backend=args.api_backend,
+            port=args.vllm_port,
+            vllm_host=args.vllm_host,
         )
         verilog_evaluator = VerilogEvaluator(
             iverilog_executable_path="iverilog", vvp_executable_path="vvp"
@@ -148,7 +152,11 @@ def run_indexed_problem_worker(indexed_task):
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
         llm_interface = LLMInterface(
-            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend
+            api_key=api_key,
+            model_name=args.model_name,
+            api_backend=args.api_backend,
+            port=args.vllm_port,
+            vllm_host=args.vllm_host,
         )
         verilog_evaluator = VerilogEvaluator(
             iverilog_executable_path="iverilog", vvp_executable_path="vvp"
@@ -219,6 +227,18 @@ def main():
         default="openai",
         choices=["openai", "openrouter", "deepseek", "gemini", "vllm"],
         help="The API backend to use for LLM calls.",
+    )
+    parser.add_argument(
+        "--vllm_port",
+        type=int,
+        default=8888,
+        help="Port for the vLLM OpenAI-compatible server.",
+    )
+    parser.add_argument(
+        "--vllm_host",
+        type=str,
+        default="localhost",
+        help="Hostname or IP for the vLLM OpenAI-compatible server.",
     )
     parser.add_argument(
         "--model_name",

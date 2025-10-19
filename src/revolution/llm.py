@@ -55,6 +55,7 @@ class LLMInterface:
         max_retries: int = 15,
         base_delay: float = 2.0,
         port: int = 8000,
+        vllm_host: str = "localhost",
         debug: bool = False,
     ) -> None:
         """
@@ -64,6 +65,7 @@ class LLMInterface:
         :param max_retries:  Maximum number of retry attempts for transient errors.
         :param base_delay:   Initial backoff delay in seconds (doubles each retry).
         :param port:         Port for the vLLM server (default: 8000).
+        :param vllm_host:    Hostname or IP address for the vLLM server (default: "localhost").
         :param debug:       Enable debug mode for verbose logging. (Prints prompt+response)
         :raises ValueError:  If api_key is missing for non-vllm backends, or
                              api_backend is unsupported.
@@ -96,9 +98,14 @@ class LLMInterface:
                 "https://generativelanguage.googleapis.com/v1beta/openai"
             )
         elif api_backend == "vllm":
-            self.client_args["base_url"] = (
-                f"http://localhost:{port}/v1"  # Assuming that vLLM server is running locally
-            )
+            host = (vllm_host or "localhost").strip()
+            if host.startswith(("http://", "https://")):
+                base = host.rstrip("/")
+                if not base.endswith("/v1"):
+                    base = f"{base}/v1"
+                self.client_args["base_url"] = base
+            else:
+                self.client_args["base_url"] = f"http://{host}:{port}/v1"
 
         else:
             raise ValueError(

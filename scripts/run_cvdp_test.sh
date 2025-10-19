@@ -24,6 +24,7 @@ TEMP=0.7
 TOPP=0.8
 CUR_TIME=$(date +%Y%m%d_%H%M)
 VLLM_PORT=8888
+VLLM_HOST="localhost"
 EDIT_MODE="whole" # "whole" or "diff"
 POPULATION_POOL_MODE="dual" # "dual" or "single"
 
@@ -55,6 +56,7 @@ CMD_ARGS=(
     --max_tokens "$MAX_TOKENS"
     --save_path "$SAVE_DIR"
     --vllm_port "$VLLM_PORT"
+    --vllm_host "$VLLM_HOST"
     --generation_mode "$EDIT_MODE"
     --temperature "$TEMP"
     --top_p "$TOPP"

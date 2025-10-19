@@ -67,7 +67,7 @@ export DEEPSEEK_API_KEY="..."
 export GEMINI_API_KEY="..."   # optional
 ```
 
-For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (or override with `--vllm_port`) and no API key is required.
+For a local vLLM server, ensure it is reachable at `http://localhost:8888/v1` (override with `--vllm_host` / `--vllm_port`) and no API key is required.
 
 ## Running the Framework
 
@@ -82,7 +82,7 @@ This script distributes problems across worker processes and executes the full e
 - `--strategy_selection`: choose meta-strategy (`random`, `epsilon-greedy`, `ucb`).
 - `--generation_mode`: request whole-file or diff-based offspring generation.
 - `--population_pool_mode`: dual or single pool scheduling.
-- `--api_backend`, `--model_name`, `--vllm_port`: LLM configuration.
+- `--api_backend`, `--model_name`, `--vllm_host`, `--vllm_port`: LLM configuration.
 - `--evaluation_mode`: use `gen0` for the new latency-optimised initial-generation scorer or `standard` for full evolution.
 - `--cvdp_jsonl`, `--cvdp_categories`: enable CVDP dataset integration.
 

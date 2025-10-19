@@ -81,7 +81,11 @@ def run_problem_worker(args_tuple):
                     f"Please set the corresponding environment variable (e.g., OPENAI_API_KEY, OPENROUTER_API_KEY, DEEPSEEK_API_KEY)."
                 )
         llm_interface = LLMInterface(
-            api_key=api_key, model_name=args.model_name, api_backend=args.api_backend, port=args.vllm_port
+            api_key=api_key,
+            model_name=args.model_name,
+            api_backend=args.api_backend,
+            port=args.vllm_port,
+            vllm_host=args.vllm_host,
         )
 
         if evaluation_mode == "gen0":
@@ -234,6 +238,12 @@ def main():
         type=int,
         default=8888,
         help="Port for the vLLM OpenAI-compatible server.",
+    )
+    parser.add_argument(
+        "--vllm_host",
+        type=str,
+        default="localhost",
+        help="Hostname or IP for the vLLM OpenAI-compatible server.",
     )
     parser.add_argument(
         "--model_name",
@@ -444,6 +454,7 @@ def main():
             # Task preparation loop to populate tasks_to_run
             for benchmark in args.benchmarks:
                 benchmark_dir = os.path.join(benchmark_root, benchmark)
+                print(f"benchmark_dir: {benchmark_dir}, benchmark_root: {benchmark_root}, benchmark: {benchmark}\n")
 
                 # CVDP INTEGRATION: build tasks from JSONL
                 if benchmark.lower() == "cvdp":
@@ -468,6 +479,7 @@ def main():
                     all_problems = [line.strip() for line in f if line.strip()]
 
                 problems_to_process = args.problems if args.problems else all_problems
+                print(f"problems_to_process: {problems_to_process}\n")
                 for problem in problems_to_process:
                     if problem in all_problems:
                         tasks_to_run.append((benchmark, problem, args))

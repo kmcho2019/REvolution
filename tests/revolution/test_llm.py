@@ -187,6 +187,16 @@ def test_init_requires_api_key_except_vllm():
     assert llm.client_args["base_url"].startswith("http://localhost")
 
 
+def test_vllm_custom_host_and_port():
+    llm = LLMInterface(
+        api_key=None,
+        api_backend="vllm",
+        port=9001,
+        vllm_host="172.17.0.1",
+    )
+    assert llm.client_args["base_url"] == "http://172.17.0.1:9001/v1"
+
+
 def test_backend_base_urls():
     llm = LLMInterface(api_key="k", api_backend="openai")
     assert "base_url" not in llm.client_args
