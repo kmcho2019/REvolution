@@ -157,9 +157,12 @@ Runs write artifacts under `exp/<model>/<benchmark>/<problem>/`. Each generation
 
 In Gen0 mode, the top candidate is also mirrored to `Gen0/best_candidate/` for quick inspection. When `--gen0_evaluate_best` is enabled this directory includes the optional evaluation logs and a `best_candidate_metadata.json` file that records the source folder, score, and end-to-end status.
 
+Use `scripts/gen0_report_generator.py --experiment_path exp/<run>/<model>` to audit those snapshots in bulk. The report flags compilation, simulation, and synthesis outcomes and can emit a Markdown summary with `--save_markdown`.
+
 ## Report Generation and Utilities
 
 - `scripts/evolutionary_report_generator.py`: turn a problem directory into a Markdown report with candidate-level PPA stats.
+- `scripts/gen0_report_generator.py`: scan `Gen0/best_candidate` snapshots and summarise syntax, simulation, and PPA outcomes (use `--save_markdown` to export a table).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a gate-count cutoff (default 50).
 - `scripts/generate_compiled_table.py` and friends: batch aggregations across experiments.
 - `scripts/plot_problem_pareto.py`: recreate the PPA scatter plots for selected problems.

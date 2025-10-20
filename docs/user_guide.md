@@ -97,6 +97,16 @@ The `gen0` mode skips test benches, synthesis, and PPA analysis by default. It s
 
 Add `--gen0_evaluate_best` to re-run the winning candidate through the full evaluation pipeline. The artefacts are copied to `Gen0/best_candidate/`, which contains the mirrored `code.sv`, the latest feedback, an evaluation summary, and any simulation/synthesis logs generated during the optional pass. If the benchmark does not ship a matching `<problem>_test.sv` the optional run aborts gracefully and documents the reason in `best_candidate_metadata.json`.
 
+To review those snapshots in bulk, run:
+
+```bash
+python scripts/gen0_report_generator.py \
+  --experiment_path exp/gen0_mode_experiment_202510192348/_root_.cache_huggingface_models_openai-gpt-oss-120b \
+  --save_markdown
+```
+
+The console table highlights syntax, simulation, and PPA outcomes for each problem and writes `GEN0_BEST_CANDIDATE_REPORT.md` unless `--markdown_path` is provided.
+
 When you want to explore ideas that are not part of any bundled benchmark, point Gen0 at a standalone text file:
 
 ```bash
@@ -143,6 +153,7 @@ Both scripts create a hierarchy under `exp/<model>/<benchmark>/<problem>/`:
 ## 4. Utility scripts
 
 - `scripts/evolutionary_report_generator.py`: generate Markdown reports summarising a run (`--experiment_path path/to/exp/...`).
+- `scripts/gen0_report_generator.py`: inspect `Gen0/best_candidate` snapshots, check syntax/simulation/synthesis status, and optionally export Markdown (`--save_markdown`).
 - `scripts/generate_cutoff_compile_result_variants.sh`: reproduce paper tables with a specified gate cutoff (`--gate 50` by default).
 - `scripts/generate_visualizations*.py` and `plot_problem_pareto.py`: create PPA scatter plots or aggregate charts.
 - `scripts/prompt_file_manager.py`: split and merge concatenated prompt bundles.
