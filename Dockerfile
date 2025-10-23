@@ -115,7 +115,10 @@ USER $USERNAME
 ENV PATH="/home/$USERNAME/.local/bin:${PATH}"
 
 # 12. Install Python dependencies using uv
-RUN uv sync
+# Use version Python 3.11
+RUN uv python install 3.11 && \
+    uv python pin 3.11 && \
+    uv sync --frozen
 
 # 13. Copy the rest of the application source code
 COPY --chown=$USERNAME:$USERNAME . .
